@@ -687,8 +687,8 @@ const getDefaultConfig = () => ({
     fontFamily: "sans-serif",
 });
 
-// Create client
-export const createGitDrawClient = (parent, config) => {
+// Create board
+export const createGitDrawBoard = (parent, config) => {
     const ctx = {
         parent: parent,
         config: Object.assign({}, getDefaultConfig(), config),
