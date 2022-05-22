@@ -334,6 +334,7 @@ const getAvailableElements = config => ({
             strokeOpacity: 1.0,
             radius: 0,
             textColor: config.defaultColor, // colors.black,
+            textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
             textSize: 16,
             textContent: "",
@@ -390,6 +391,7 @@ const getAvailableElements = config => ({
             strokeWidth: 1,
             strokeDash: false,
             textColor: config.defaultColor, // colors.black,
+            textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
             textSize: 16,
             textContent: ""
@@ -543,8 +545,7 @@ const drawInnerText = (canvas, element) => {
         return null; // Nothing to render
     }
     canvas.beginPath();
-    // context.font = `${element.textSize}px ${element.textFont}`;
-    canvas.font = `${element.textSize}px ${config.fontFamily}`;
+    canvas.font = `${element.textSize}px ${element.textFont}`;
     canvas.fillStyle = parseColor(element.textColor, element.textOpacity);
     canvas.textAlign = "center"; //Center text in the rectangle
     canvas.textBaseline = "middle"; //Center text in the line position
@@ -1062,6 +1063,7 @@ export const createBoard = (parent, config) => {
         // this.forceUpdate(); //Force update to display/hide the stylebar
         // Draw
         ctx.draw();
+        ctx.trigger("selection:change");
     };
     // Handle resize --> update the canvas width and height
     ctx.resize = () => {
@@ -1089,8 +1091,8 @@ export const createBoard = (parent, config) => {
     // Handle selection update
     ctx.updateSelection = (key, value) => {
         ctx.selection.forEach(element => {
-            element[key] = value; // Update the element key
-            updateElement(element); // Update the element
+            element[key] = value;
+            ctx.updateElement(element);
         });
         // TODO: force an update
         ctx.draw();
