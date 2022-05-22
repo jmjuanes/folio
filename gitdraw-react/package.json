@@ -1,0 +1,15 @@
+{
+    "name": "@gitdraw/react",
+    "version": "0.0.0",
+    "description": "",
+    "private": true,
+    "repository": "https://github.com/jmjuanes/gitdraw",
+    "author": "Josemi Juanes <hello@josemi.xyz>",
+    "bugs": "https://github.com/jmjuanes/gitdraw/issues",
+    "type": "module",
+    "main": "index.js",
+    "license": "MIT",
+    "dependencies": {
+        "kofi": "^0.5.1"
+    }
+}
