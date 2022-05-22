@@ -1,32 +1,21 @@
 // Globals
 const resizeRadius = 5;
 const lineCapTypes = ["none", "arrow", "square", "circle"];
-const colors = {
-    blue: [78, 145, 228], // "#4e91e4",
-    mint: [76, 205, 172], // "#4ccdac",
-    green: [74, 207, 127], // "#4acf7f",
-    yellow: [251 ,200, 80], // "#fbc850",
-    orange: [247, 128, 85], // "#f78055",
-    red: [238, 103, 93], // "#ee675d",
-    purple: [157, 129, 228], // "#9d81e4",
-    brown: [167, 93, 88], // "#a75d58",
-    gray: [238, 242, 247], // "#eef2f7",
-    black: [0, 0, 0],
-    white: [255, 255, 255],
-    transparent: "transparent",
-};
 
 // Color parser
-const parseColor = (color, opacity) => {
-    if (color === "transparent") {
-        return color; // Nothing to do if color is transparent
-    }
-    else if (typeof opacity !== "number") {
-        return `rgb(${color.join(",")})`;
-    }
-    // Return the color with the transparency applied
-    // return hex + (opacity * 255).toString(16);
-    return `rgba(${color.join(",")},${opacity})`;
+export const parseColor = (c, o) => {
+    return c;
+    // if (c === "transparent") {
+    //     return c; // Nothing to do if color is transparent
+    // }
+    // // Return the color with the transparency applied
+    // // return hex + (opacity * 255).toString(16);
+    // return typeof o === "number" ? `rgba(${c},${o})` : `rgb(${c})`;
+};
+
+// Color formatter
+export const formatColor = (c, o) => {
+    return c;
 };
 
 // Convert a data to blob
@@ -317,280 +306,236 @@ const inResizePoint = (element, x, y) => {
     return null;
 };
 
-// Selection element
-const selectionElement = {
-    defaultConfig: {
-        color: "rgb(78, 145, 228)",
-        opacity: 0.1,
+// Get available elements
+const getAvailableElements = config => ({
+    selection: {
+        defaultConfig: {
+            color: config.selectionColor, // "rgb(78, 145, 228)",
+            opacity: config.selectionOpacity, // 0.1,
+        },
+        draw: (canvas, element) => {
+            canvas.globalAlpha = element.opacity;
+            canvas.beginPath();
+            canvas.fillStyle = element.color;
+            canvas.rect(element.x, element.y, element.width, element.height);
+            canvas.fill();
+            canvas.globalAlpha = 1; // Reset alpha
+        },
+        update: () => null,
     },
-    draw: (canvas, element) => {
-        canvas.globalAlpha = element.opacity;
-        canvas.beginPath();
-        canvas.fillStyle = element.color;
-        canvas.rect(element.x, element.y, element.width, element.height);
-        canvas.fill();
-        canvas.globalAlpha = 1; // Reset alpha
-    },
-    update: () => null,
-};
-
-// Rectangle element
-const rectangleElement = {
-    // icon: "square",
-    defaultConfig: {
-        fillColor: "transparent",
-        fillOpacity: 1.0,
-        strokeColor: colors.black,
-        strokeWidth: 1,
-        strokeDash: false,
-        strokeOpacity: 1.0,
-        radius: 0,
-        textColor: colors.black,
-        textOpacity: 1.0,
-        textSize: 16,
-        textContent: "",
-    },
-    draw: (canvas, element) => {
-        const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
-        const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
-        const radius = Math.min(element.radius, Math.abs(element.width) / 2, Math.abs(element.height) / 2);
-        // canvas.restore();
-        canvas.beginPath();
-        // canvas.globalAlpha = element.opacity;
-        // canvas.rect(element.x, element.y, element.width, element.height);
-        canvas.moveTo(xStart + radius, yStart);
-        canvas.lineTo(xEnd - radius, yStart);
-        canvas.quadraticCurveTo(xEnd, yStart, xEnd, yStart + radius);
-        canvas.lineTo(xEnd, yEnd - radius);
-        canvas.quadraticCurveTo(xEnd, yEnd, xEnd - radius, yEnd);
-        canvas.lineTo(xStart + radius, yEnd);
-        canvas.quadraticCurveTo(xStart, yEnd, xStart, yEnd - radius);
-        canvas.lineTo(xStart, yStart + radius);
-        canvas.quadraticCurveTo(xStart, yStart, xStart + radius, yStart);
-        canvas.closePath();
-        canvas.fillStyle = parseColor(element.fillColor, element.fillOpacity);
-        canvas.fill();
-        // Check for no stroke color --> render rectangle stroke
-        if (element.strokeWidth > 0 && element.strokeColor !== "transparent") {
-            canvas.strokeStyle = parseColor(element.strokeColor, element.strokeOpacity);
-            canvas.lineWidth = element.strokeWidth; // + px;
-            // Check for line dash
-            if (element.strokeDash === true) {
-                const lineDash = element.strokeWidth * 3;
-                canvas.setLineDash([lineDash, lineDash]); // Set default line-dash
+    rectangle: {
+        // icon: "square",
+        defaultConfig: {
+            fillColor: "transparent",
+            fillOpacity: 1.0,
+            strokeColor: config.defaultColor, // colors.black,
+            strokeWidth: 1,
+            strokeDash: false,
+            strokeOpacity: 1.0,
+            radius: 0,
+            textColor: config.defaultColor, // colors.black,
+            textOpacity: 1.0,
+            textSize: 16,
+            textContent: "",
+        },
+        draw: (canvas, element) => {
+            const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
+            const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
+            const halfWidth = Math.abs(element.width) / 2;
+            const halfHeight = Math.abs(element.height) / 2;
+            const radius = Math.min(element.radius, halfWidth, halfHeight);
+            // canvas.restore();
+            canvas.beginPath();
+            // canvas.globalAlpha = element.opacity;
+            // canvas.rect(element.x, element.y, element.width, element.height);
+            canvas.moveTo(xStart + radius, yStart);
+            canvas.lineTo(xEnd - radius, yStart);
+            canvas.quadraticCurveTo(xEnd, yStart, xEnd, yStart + radius);
+            canvas.lineTo(xEnd, yEnd - radius);
+            canvas.quadraticCurveTo(xEnd, yEnd, xEnd - radius, yEnd);
+            canvas.lineTo(xStart + radius, yEnd);
+            canvas.quadraticCurveTo(xStart, yEnd, xStart, yEnd - radius);
+            canvas.lineTo(xStart, yStart + radius);
+            canvas.quadraticCurveTo(xStart, yStart, xStart + radius, yStart);
+            canvas.closePath();
+            canvas.fillStyle = parseColor(element.fillColor, element.fillOpacity);
+            canvas.fill();
+            // Check for no stroke color --> render rectangle stroke
+            if (element.strokeWidth > 0 && element.strokeColor !== "transparent") {
+                canvas.strokeStyle = parseColor(element.strokeColor, element.strokeOpacity);
+                canvas.lineWidth = element.strokeWidth; // + px;
+                // Check for line dash
+                if (element.strokeDash === true) {
+                    const lineDash = element.strokeWidth * 3;
+                    canvas.setLineDash([lineDash, lineDash]); // Set default line-dash
+                }
+                else {
+                    canvas.setLineDash([]); // Clear line-dash style
+                }
+                // Apply stroke
+                canvas.stroke();
             }
-            else {
-                canvas.setLineDash([]); // Clear line-dash style
+            drawInnerText(canvas, element);
+            // context.globalAlpha = 1; // Reset opacity
+        },
+        update: () => null,
+    },
+    ellipse: {
+        // icon: "circle",
+        defaultConfig: {
+            fillColor: "transparent",
+            fillOpacity: 1.0,
+            strokeColor: config.defaultColor, // colors.black,
+            strokeOpacity: 1.0,
+            strokeWidth: 1,
+            strokeDash: false,
+            textColor: config.defaultColor, // colors.black,
+            textOpacity: 1.0,
+            textSize: 16,
+            textContent: ""
+        },
+        draw: (canvas, element) => {
+            const rx = element.width / 2;
+            const ry = element.height / 2;
+            canvas.beginPath();
+            // canvas.globalAlpha = element.opacity;
+            canvas.ellipse(element.x + rx, element.y + ry, Math.abs(rx), Math.abs(ry), 0, 0, 2*Math.PI);
+            canvas.fillStyle = parseColor(element.fillColor, element.fillOpacity);
+            canvas.fill();
+            // Check for no stroke color --> render rectangle stroke
+            if (element.strokeWidth > 0 && element.strokeColor !== "transparent") {
+                canvas.strokeStyle = parseColor(element.strokeColor, element.strokeOpacity);
+                canvas.lineWidth = element.strokeWidth; // + "px";
+                // Check for line dash
+                if (element.strokeDash === true) {
+                    const lineDash = element.strokeWidth * 3;
+                    canvas.setLineDash([lineDash, lineDash]);
+                }
+                else {
+                    canvas.setLineDash([]);
+                }
+                // Apply stroke
+                canvas.stroke();
             }
-            // Apply stroke
-            canvas.stroke();
-        }
-        drawInnerText(canvas, element);
-        // context.globalAlpha = 1; // Reset opacity
+            drawInnerText(canvas, element);
+            // canvas.globalAlpha = 1; //Reset opacity
+        },
+        update: () => null,
     },
-    update: () => null,
-};
-
-// Ellipse element
-const ellipseElement = {
-    // icon: "circle",
-    defaultConfig: {
-        fillColor: "transparent",
-        fillOpacity: 1.0,
-        strokeColor: colors.black,
-        strokeOpacity: 1.0,
-        strokeWidth: 1,
-        strokeDash: false,
-        textColor: colors.black,
-        textOpacity: 1.0,
-        textSize: 16,
-        textContent: ""
-    },
-    draw: (canvas, element) => {
-        const rx = element.width / 2;
-        const ry = element.height / 2;
-        canvas.beginPath();
-        // canvas.globalAlpha = element.opacity;
-        canvas.ellipse(element.x + rx, element.y + ry, Math.abs(rx), Math.abs(ry), 0, 0, 2*Math.PI);
-        canvas.fillStyle = parseColor(element.fillColor, element.fillOpacity);
-        canvas.fill();
-        // Check for no stroke color --> render rectangle stroke
-        if (element.strokeWidth > 0 && element.strokeColor !== "transparent") {
+    line: {
+        // icon: "minus",
+        defaultConfig: {
+            strokeColor: config.defaultColor, // colors.black,
+            strokeWidth: 1,
+            strokeDash: false,
+            strokeOpacity: 1.0,
+            lineStart: "none",
+            lineEnd: "none",
+        },
+        draw: (canvas, element) => {
+            if (element.strokeWidth === 0 || element.strokeColor === "transparent") {
+                return null; // Nothing to render
+            }
+            const length = Math.sqrt(Math.pow(element.width, 2) + Math.pow(element.height, 2));
+            canvas.beginPath();
+            // canvas.globalAlpha = element.opacity;
             canvas.strokeStyle = parseColor(element.strokeColor, element.strokeOpacity);
             canvas.lineWidth = element.strokeWidth; // + "px";
-            // Check for line dash
+            canvas.lineCap = "butt"; // Default linecap
+            canvas.setLineDash([]); // Clear line-dash style
             if (element.strokeDash === true) {
                 const lineDash = element.strokeWidth * 3;
                 canvas.setLineDash([lineDash, lineDash]);
             }
-            else {
-                canvas.setLineDash([]);
-            }
-            // Apply stroke
+            canvas.moveTo(element.x, element.y);
+            canvas.lineTo(element.x + element.width, element.y + element.height);
             canvas.stroke();
-        }
-        drawInnerText(canvas, element);
-        // canvas.globalAlpha = 1; //Reset opacity
+            canvas.setLineDash([]); // Clear line-dash style
+            // Add line start style
+            if (element.lineStart && element.lineStart !== "none") {
+                drawGlyph(canvas, element.lineStart, "start", element, length);
+            }
+            // Add line end style
+            if (element.lineEnd && element.lineEnd !== "none") {
+                drawGlyph(canvas, element.lineEnd, "end", element, length);
+            }
+            // canvas.globalAlpha = 1; // Reset opacity
+        },
+        update: () => null,
     },
-    update: () => null,
-};
-
-// Line element
-const lineElement = {
-    // icon: "minus",
-    defaultConfig: {
-        strokeColor: colors.black,
-        strokeWidth: 1,
-        strokeDash: false,
-        strokeOpacity: 1.0,
-        lineStart: "none",
-        lineEnd: "none",
+    text: {
+        // icon: "text",
+        defaultConfig: {
+            textAlign: "left",
+            textColor: config.defaultColor, // colors.black,
+            textSize: 16,
+            textFont: config.fontFamily, // "sans-serif",
+            textOpacity: 1.0,
+            textContent: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+        },
+        draw: (canvas, element) => {
+            canvas.save();
+            canvas.beginPath();
+            canvas.rect(element.x, element.y, element.width, element.height);
+            canvas.clip();
+            // canvas.globalAlpha = element.opacity;
+            canvas.font = `${element.textSize}px ${element.textFont}`;
+            canvas.textAlign = element.textAlign; // "start"; // Text left aligned
+            canvas.textBaseline = "alphabetic"; // Default baseline
+            canvas.fillStyle = parseColor(element.textColor, element.textOpacity);
+            const lines = element.textContent.replace(/\r\n?/g, "\n").split("\n");
+            let x = element.x; // Default left aligned
+            if (element.textAlign === "center") {
+                x = x + element.width / 2; // Center text position
+            }
+            else if (element.textAlign === "right") {
+                x = x + element.width; // Right aligned text
+            }
+            // let lineHeight = element.height / lines.length;
+            // let offset = element.height - element.baseline;
+            for (let i = 0; i < lines.length; i++) {
+                canvas.fillText(lines[i], x, element.y + (i + 1) * element.textSize); 
+            }
+            // canvas.fill();
+            // canvas.closePath();
+            canvas.restore();
+            // canvas.globalAlpha = 1; // Reset opacity
+        },
+        update: () => null,
     },
-    draw: (canvas, element) => {
-        if (element.strokeWidth === 0 || element.strokeColor === "transparent") {
-            return null; // Nothing to render
-        }
-        const length = Math.sqrt(Math.pow(element.width, 2) + Math.pow(element.height, 2));
-        canvas.beginPath();
-        // canvas.globalAlpha = element.opacity;
-        canvas.strokeStyle = parseColor(element.strokeColor, element.strokeOpacity);
-        canvas.lineWidth = element.strokeWidth; // + "px";
-        canvas.lineCap = "butt"; // Default linecap
-        canvas.setLineDash([]); // Clear line-dash style
-        if (element.strokeDash === true) {
-            const lineDash = element.strokeWidth * 3;
-            canvas.setLineDash([lineDash, lineDash]);
-        }
-        canvas.moveTo(element.x, element.y);
-        canvas.lineTo(element.x + element.width, element.y + element.height);
-        canvas.stroke();
-        canvas.setLineDash([]); // Clear line-dash style
-        // Add line start style
-        if (element.lineStart && element.lineStart !== "none") {
-            drawGlyph(canvas, element.lineStart, "start", element, length);
-        }
-        // Add line end style
-        if (element.lineEnd && element.lineEnd !== "none") {
-            drawGlyph(canvas, element.lineEnd, "end", element, length);
-        }
-        // canvas.globalAlpha = 1; // Reset opacity
+    image: {
+        // icon: "image",
+        defaultConfig: {
+            content: null,
+            img: null,
+            opacity: 1.0,
+        },
+        draw: (canvas, element) => {
+            canvas.globalAlpha = element.opacity;
+            if (element.img !== null) {
+                canvas.drawImage(element.img, element.x, element.y, element.width, element.height);
+            }
+            canvas.globalAlpha = 1; // Reset alpha
+        },
+        update: () => null,
     },
-    update: () => null,
-};
-
-// Text element
-const textElement = {
-    // icon: "text",
-    defaultConfig: {
-        textAlign: "left",
-        textColor: colors.black,
-        textSize: 16,
-        textFont: "sans-serif", // TODO: get from config
-        textOpacity: 1.0,
-        textContent: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+    screenshot: {
+        // icon: null,
+        defaultConfig: {
+            color: config.screenshotColor, // "rgb(76, 205, 172)",
+            opacity: config.screenshotOpacity,
+        },
+        draw: (canvas, element) => {
+            canvas.globalAlpha = element.opacity;
+            canvas.beginPath();
+            canvas.fillStyle = element.color;
+            canvas.rect(element.x, element.y, element.width, element.height);
+            canvas.fill();
+            canvas.globalAlpha = 1; //Reset alpha
+        },
+        update: () => null,
     },
-    draw: (canvas, element) => {
-        canvas.save();
-        canvas.beginPath();
-        canvas.rect(element.x, element.y, element.width, element.height);
-        canvas.clip();
-        // canvas.globalAlpha = element.opacity;
-        canvas.font = `${element.textSize}px ${element.textFont}`;
-        canvas.textAlign = element.textAlign; // "start"; // Text left aligned
-        canvas.textBaseline = "alphabetic"; // Default baseline
-        canvas.fillStyle = parseColor(element.textColor, element.textOpacity);
-        const lines = element.textContent.replace(/\r\n?/g, "\n").split("\n");
-        let x = element.x; // Default left aligned
-        if (element.textAlign === "center") {
-            x = x + element.width / 2; // Center text position
-        }
-        else if (element.textAlign === "right") {
-            x = x + element.width; // Right aligned text
-        }
-        // let lineHeight = element.height / lines.length;
-        // let offset = element.height - element.baseline;
-        for (let i = 0; i < lines.length; i++) {
-            canvas.fillText(lines[i], x, element.y + (i + 1) * element.textSize); 
-        }
-        // canvas.fill();
-        // canvas.closePath();
-        canvas.restore();
-        // canvas.globalAlpha = 1; // Reset opacity
-    },
-    update: () => null,
-};
-
-// Image element
-const imageElement = {
-    // icon: "image",
-    defaultConfig: {
-        content: null,
-        img: null,
-        opacity: 1.0,
-    },
-    draw: (canvas, element) => {
-        canvas.globalAlpha = element.opacity;
-        if (element.img !== null) {
-            canvas.drawImage(element.img, element.x, element.y, element.width, element.height);
-        }
-        canvas.globalAlpha = 1; // Reset alpha
-    },
-    update: () => null,
-};
-
-// Screenshot selection element
-const screenshotElement = {
-    // icon: null,
-    defaultConfig: {
-        color: "rgb(76, 205, 172)",
-        opacity: 0.1,
-    },
-    draw: (canvas, element) => {
-        canvas.globalAlpha = element.opacity;
-        canvas.beginPath();
-        canvas.fillStyle = element.color;
-        canvas.rect(element.x, element.y, element.width, element.height);
-        canvas.fill();
-        canvas.globalAlpha = 1; //Reset alpha
-    },
-    update: () => null,
-};
-
-// Available elements
-const allElements = {
-    selection: selectionElement,
-    rectangle: rectangleElement,
-    ellipse: ellipseElement,
-    line: lineElement,
-    text: textElement,
-    image: imageElement,
-    screenshot: screenshotElement,
-};
-
-// Get an element by ID
-const getElement = name => allElements[name];
-
-// Create a new element
-const createElement = options => {
-    const el = getElement(options.type);
-    return Object.assign({}, el.defaultConfig, options, {
-        id: Date.now(), // TODO: replace this
-        width: 0,
-        height: 0,
-        selected: false,
-        locked: false,
-    });
-};
-
-// Update the element
-const updateElement = element => {
-    return getElement(element.type).update(element); // Call the update method
-};
-
-// Draw the provided element
-const drawElement = (canvas, element) => {
-    return getElement(element.type).draw(canvas, element);
-};
+});
 
 // Render element inner text
 const drawInnerText = (canvas, element) => {
@@ -664,9 +609,9 @@ const drawGlyph = (canvas, type, position, element, length) => {
 };
 
 // Get default configuration
-const getDefaultConfig = () => ({
-    colors: colors,
-    lineCap: lineCapTypes,
+export const getDefaultConfig = () => ({
+    defaultColor: "rgb(0,0,0)",
+    lineCaps: lineCapTypes,
     //Selection values
     selectionColor: "rgb(78, 145, 228)",
     selectionOpacity: 0.1,
@@ -688,10 +633,13 @@ const getDefaultConfig = () => ({
 });
 
 // Create board
-export const createGitDrawBoard = (parent, config) => {
+export const createBoard = (parent, config) => {
     const ctx = {
         parent: parent,
-        config: Object.assign({}, getDefaultConfig(), config),
+        config: {
+            ...getDefaultConfig(),
+            ...(config || {}),
+        },
         listeners: {},
         current: {},
         currentType: "selection",
@@ -706,6 +654,7 @@ export const createGitDrawBoard = (parent, config) => {
         resizeOrientation: null,
         cursor: null,
         elements: [],
+        availableElements: [],
         width: 200,
         height: 200,
         grid: false,
@@ -730,6 +679,19 @@ export const createGitDrawBoard = (parent, config) => {
             height: ctx.height, // Save current height
         });
     };
+    // Elements management
+    ctx.availableElements = getAvailableElements(ctx.config);
+    ctx.createElement = options => ({
+        ...ctx.availableElements[options.type].defaultConfig,
+        ...options,
+        id: Date.now(), // TODO: replace this
+        width: 0,
+        height: 0,
+        selected: false,
+        locked: false,
+    });
+    ctx.updateElement = el => ctx.availableElements[el.type].update(el);
+    ctx.drawElement = (canvas, el) => ctx.availableElements[el.type].draw(canvas, el);
     // Grid round
     const gridRound = value => {
         return ctx.grid ? Math.round(value / ctx.config.gridSize) * ctx.config.gridSize : value;
@@ -759,7 +721,7 @@ export const createGitDrawBoard = (parent, config) => {
         //}
         // this.elements.forEach(function (element, index) {
         forEachRev(ctx.elements, element => {
-            drawElement(canvas, element);
+            ctx.drawElement(canvas, element);
             // Check if this element is selected --> draw selection area
             if (element.selected === true && element.type !== "selection") {
                 const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
@@ -809,24 +771,25 @@ export const createGitDrawBoard = (parent, config) => {
             // console.log("Copied --> " + type);
             clearSelection(ctx.elements); // Clear the current selection
             parseClipboardBlob(data.type, data.blob).then(content => {
-                const newElement = createElement({
+                const newElement = ctx.createElement({
                     type: data.type,
                     content: content,
                 });
                 // Check for not image type
                 if (type !== "image") {
-                    updateElement(newElement);
+                    ctx.updateElement(newElement);
                     return ctx.addElement(newElement);
                 }
                 // Create a new image
                 // https://stackoverflow.com/a/4776378
                 const img = new Image();
                 img.addEventListener("load", () => {
-                    return ctx.addElement(Object.assign(newElement, {
+                    return ctx.addElement({
+                        ...newElement,
                         width: img.width,
                         height: img.height,
                         img: img,
-                    }));
+                    });
                 });
                 img.src = content; // Set image source
             });
@@ -928,7 +891,7 @@ export const createGitDrawBoard = (parent, config) => {
             }
         }
         // Create a new element
-        const element = createElement({
+        const element = ctx.createElement({
             type: ctx.currentType,
             x: gridRound(ctx.lastX), 
             y: gridRound(ctx.lastY),
@@ -1068,7 +1031,7 @@ export const createGitDrawBoard = (parent, config) => {
         // Check for adding a new element
         if (ctx.currentType !== "selection" && ctx.currentType !== "screenshot") {
             ctx.currentElement.selected = true; // Set the new element as selected
-            updateElement(ctx.currentElement); // Update the current element
+            ctx.updateElement(ctx.currentElement); // Update the current element
         }
         // Remove selection elements
         ctx.elements = ctx.elements.filter(element => {
