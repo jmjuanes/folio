@@ -1,37 +1,35 @@
 import React from "react";
 import kofi from "kofi";
 
-// Color parser
-const parseColor = color => {
-    return typeof color === "string" ? color : `rgb(${color.join(",")})`;
-};
+import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/color.js";
 
 // Option types
 const optionTypes = {
     color: props => (
         <div className="">
-            {(props.theme.colors || []).map(color => {
-                const classStyle = kofi.classNames({
-                    // [style.item]: true,
-                    // [style.transparent]: color === "transparent",
-                });
-                const style = {
-                    backgroundColor: parseColor(color),
-                    color: "white", // getTextColor(props.colors, null),
-                };
-                return (
-                    <div
-                        key={color}
-                        className={classStyle}
-                        onClick={() => props.onChange(color)}
-                        style={style}
-                    >
-                        {kofi.when(color === props.value, () => (
-                            <i className="icon-check" />
-                        ))}
+            <div className="is-flex has-items-center">
+                <div
+                    className="has-radius-md has-mr-2 has-w-full has-maxw-8 has-h-8"
+                    style={{
+                        backgroundColor: rgbToHex(props.value),
+                    }}
+                />
+                <div className="is-flex has-radius-md is-clipped has-bg-white">
+                    <div className="has-bg-gray-200 has-px-2 has-py-1 has-lh-normal">
+                        <strong>#</strong>
                     </div>
-                );
-            })}
+                    <input
+                        type="text"
+                        className="input has-bg-white is-radiusless has-size-0 has-px-2 has-py-0"
+                        onChange={e => {
+                            if (isValidHexColor(e.target.value.replace("#", ""))) {
+                                return props.onChange(hexToRgb(e.target.value));
+                            }
+                        }}
+                        defaultValue={rgbToHex(props.value).replace("#", "")}
+                    />
+                </div>
+            </div>
         </div>
     ),
     font: props => (

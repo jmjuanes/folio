@@ -30,13 +30,12 @@ const groups = {
                     format: pixelValueFormat,
                 },
             },
-            // textColor: {
-            //     type: "color",
-            //     props: {
-            //         title: "Text Color",
-            //         // colors: objectValues(config.colors),
-            //     },
-            // },
+            textColor: {
+                type: "color",
+                props: {
+                    title: "Text Color",
+                },
+            },
             textOpacity: {
                 type: "range",
                 props: {
@@ -57,13 +56,13 @@ const groups = {
         test: "fillColor",
         icon: "fill",
         options: {
-            // fillColor: {
-            //     type: "color",
-            //     props: {
-            //         title: "Fill Color",
-            //         // colors: objectValues(config.colors),
-            //     },
-            // },
+            fillColor: {
+                type: "color",
+                props: {
+                    title: "Fill Color",
+                    // colors: objectValues(config.colors),
+                },
+            },
             fillOpacity: {
                 type: "range",
                 props: {
@@ -87,13 +86,13 @@ const groups = {
                     format: pixelValueFormat,
                 },
             },
-            // strokeColor: {
-            //     type: "color",
-            //     props: {
-            //         title: "Stroke color",
-            //         // colors: objectValues(config.colors),
-            //     },
-            // },
+            strokeColor: {
+                type: "color",
+                props: {
+                    title: "Stroke color",
+                    // colors: objectValues(config.colors),
+                },
+            },
             strokeOpacity: {
                 type: "range",
                 props: {
