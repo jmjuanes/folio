@@ -29,6 +29,7 @@ export const GitDrawBoard = React.forwardRef((props, ref) => {
                 <React.Fragment>
                     <Menubar />
                     <Toolbar
+                        currentElement={ref.current.currentType}
                         onElementClick={type => {
                             ref.current.setCurrentType(type);
                             forceUpdate();

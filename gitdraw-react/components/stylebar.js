@@ -26,6 +26,7 @@ const groups = {
                 props: {
                     title: "Text size",
                     domain: [4, 100],
+                    step: 1,
                     format: pixelValueFormat,
                 },
             },

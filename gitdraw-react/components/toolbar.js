@@ -7,12 +7,14 @@ const availableItems = [
     {name: "rectangle", icon: "square"},
     {name: "ellipse", icon: "circle"},
     {name: "line", icon: "minus"},
-    // {name: "arrow", icon: "arrow-right"},
     {name: "text", icon: "text"},
 ];
 
 export const Toolbar = props => (
-    <div className="is-absolute has-bottom-none has-left-half has-pb-4" style={{transform:"translateX(-50%)"}}>
+    <div
+        className="is-absolute has-bottom-none has-left-half has-pb-4"
+        style={{transform:"translateX(-50%)"}}
+    >
         <div className="has-radius-md has-bg-gray-100 has-p-2 is-flex">
             {/* Available items */}
             {availableItems.map(item => (
