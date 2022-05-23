@@ -3,19 +3,12 @@ const resizeRadius = 5;
 const lineCapTypes = ["none", "arrow", "square", "circle"];
 
 // Color parser
-export const parseColor = (c, o) => {
-    return c;
-    // if (c === "transparent") {
-    //     return c; // Nothing to do if color is transparent
-    // }
-    // // Return the color with the transparency applied
-    // // return hex + (opacity * 255).toString(16);
-    // return typeof o === "number" ? `rgba(${c},${o})` : `rgb(${c})`;
-};
-
-// Color formatter
-export const formatColor = (c, o) => {
-    return c;
+export const parseColor = (color, opacity) => {
+    if (color === "transparent") {
+        return color; // Nothing to do if color is transparent
+    }
+    // Get RGB values from color and return the RGBA color
+    return `rgba(${color.match(/\d+/g).slice(0, 3).join(",")},${opacity})`;
 };
 
 // Convert a data to blob
