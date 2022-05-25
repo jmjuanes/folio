@@ -1,9 +1,7 @@
-// Globals
-const resizeRadius = 5;
-const lineCapTypes = ["none", "arrow", "square", "circle"];
-
 // Available modes
-const TEXT_INPUT_MODE = "mode:text-input";
+const RESIZE_MODE = Symbol("mode:resize");
+const DRAG_MODE = Symbol("mode:drag");
+const TEXT_INPUT_MODE = Symbol("mode:text-input");
 
 // Color parser
 export const parseColor = (color, opacity) => {
@@ -148,10 +146,19 @@ const measureText = (text, textSize, textFont) => {
 // Create a temporal canvas element
 const createCanvas = (width, height) => {
     const canvas = document.createElement("canvas");
-    canvas.width = width; // Set canvas width
-    canvas.height = height; // Set canvas height
-    // canvas.style.display = "none"; //Hide element
+    canvas.width = width;
+    canvas.height = height;
     return canvas;
+};
+
+// Create an image element
+// https://stackoverflow.com/a/4776378
+const createImage = content => {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.addEventListener("load", () => resolve(img));
+        img.src = content; // Set image source
+    });
 };
 
 // Crop canvas
@@ -178,27 +185,16 @@ const isArrowKey = key => {
 };
 
 // Check if the provided event.target is related to an input element
-const isInputTarget = event => {
-    const target = event.target; // Get target element
-    return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
-};
-
-// Parse elements
-const parseElements = list => {
-    if (!list || !Array.isArray(list)) {
-        return []; //Return an empty list
-    }
-    // TODO: parse elements
-    return list;
+const isInputTarget = e => {
+    return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 };
 
 // Set selection
-const setSelection = (selection, elements) => {
-    // Get selection absolute positions
+const setSelection = (selection, elementsList) => {
     const [sxStart, sxEnd] = getAbsolutePositions(selection.x, selection.width);
     const [syStart, syEnd] = getAbsolutePositions(selection.y, selection.height);
-    // Mark all selected elements
-    elements.forEach(element => {
+    
+    elementsList.forEach(element => {
         if (element.type !== "selection") {
             // Get element absolute positions
             const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
@@ -209,52 +205,14 @@ const setSelection = (selection, elements) => {
     });
 };
 
-// Clear selection
-const clearSelection = elements => {
-    return elements.forEach(element => {
-        element.selected = false; //Disable selection
-    });
-};
-
-// Count selected elements
-const countSelection = elements => {
-    let count = 0;
-    elements.forEach(element => {
-        if (element.selected === true) {
-            count = count + 1; // Increment the counter
-        }
-    });
-    return count;
-};
-
-// Get selected elements
-const getSelection = elements => {
-    return elements.filter(element => element.selected);
-};
-
 // Create a snapshot of the selection
-const snapshotSelection = elements => {
-    return elements.map(element => ({
+const snapshotSelection = selection => {
+    return selection.map(element => ({
         x: element.x,
         y: element.y,
         width: element.width,
         height: element.height,
     }));
-};
-
-// Check if all elements of the selection are locked
-const isSelectionLocked = elements => {
-    return elements.every(element => element.locked);
-};
-
-// Lock selection
-const lockSelection = elements => {
-    elements.forEach(element => element.locked = true);
-};
-
-// Unlock selection
-const unlockSelection = elements => {
-    elements.forEach(element => element.locked = false);
 };
 
 // Get resize points
@@ -284,7 +242,7 @@ const getResizePoints = element => {
 };
 
 // Check if the cursor is inside a resize point
-const inResizePoint = (element, x, y) => {
+const inResizePoint = (element, x, y, radius) => {
     const points = getResizePoints(element);
     // Check for no resize points of this element
     if (points.length === 0) {
@@ -292,8 +250,8 @@ const inResizePoint = (element, x, y) => {
     }
     // Check for each resize point
     for (let i = 0; i < points.length; i++) {
-        if (points[i].x - resizeRadius <= x && x <= points[i].x + resizeRadius) {
-            if (points[i].y - resizeRadius <= y && y <= points[i].y + resizeRadius) {
+        if (points[i].x - radius <= x && x <= points[i].x + radius) {
+            if (points[i].y - radius <= y && y <= points[i].y + radius) {
                 return points[i];
             }
         }
@@ -302,13 +260,14 @@ const inResizePoint = (element, x, y) => {
     return null;
 };
 
-// Get available elements
-const getAvailableElements = config => ({
+// Available elements
+export const elements = {
     selection: {
-        defaultConfig: {
+        icon: "pointer",
+        init: config => ({
             color: config.selectionColor, // "rgb(78, 145, 228)",
             opacity: config.selectionOpacity, // 0.1,
-        },
+        }),
         draw: (canvas, element) => {
             canvas.globalAlpha = element.opacity;
             canvas.beginPath();
@@ -320,8 +279,8 @@ const getAvailableElements = config => ({
         update: () => null,
     },
     rectangle: {
-        // icon: "square",
-        defaultConfig: {
+        icon: "square",
+        init: config => ({
             fillColor: "transparent",
             fillOpacity: 1.0,
             strokeColor: config.defaultColor, // colors.black,
@@ -334,7 +293,7 @@ const getAvailableElements = config => ({
             textOpacity: 1.0,
             textSize: 16,
             textContent: "",
-        },
+        }),
         draw: (canvas, element) => {
             const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
             const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
@@ -378,8 +337,8 @@ const getAvailableElements = config => ({
         update: () => null,
     },
     ellipse: {
-        // icon: "circle",
-        defaultConfig: {
+        icon: "circle",
+        init: config => ({
             fillColor: "transparent",
             fillOpacity: 1.0,
             strokeColor: config.defaultColor, // colors.black,
@@ -391,7 +350,7 @@ const getAvailableElements = config => ({
             textOpacity: 1.0,
             textSize: 16,
             textContent: ""
-        },
+        }),
         draw: (canvas, element) => {
             const rx = element.width / 2;
             const ry = element.height / 2;
@@ -421,15 +380,15 @@ const getAvailableElements = config => ({
         update: () => null,
     },
     line: {
-        // icon: "minus",
-        defaultConfig: {
+        icon: "minus",
+        init: config => ({
             strokeColor: config.defaultColor, // colors.black,
             strokeWidth: 1,
             strokeDash: false,
             strokeOpacity: 1.0,
             lineStart: "none",
             lineEnd: "none",
-        },
+        }),
         draw: (canvas, element) => {
             if (element.strokeWidth === 0 || element.strokeColor === "transparent") {
                 return null; // Nothing to render
@@ -462,15 +421,15 @@ const getAvailableElements = config => ({
         update: () => null,
     },
     text: {
-        // icon: "text",
-        defaultConfig: {
+        icon: "text",
+        init: config => ({
             textAlign: "left",
             textColor: config.defaultColor, // colors.black,
             textSize: 16,
             textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
             textContent: "",
-        },
+        }),
         draw: (canvas, element) => {
             canvas.save();
             canvas.beginPath();
@@ -502,12 +461,12 @@ const getAvailableElements = config => ({
         update: () => null,
     },
     image: {
-        // icon: "image",
-        defaultConfig: {
+        icon: "image",
+        init: config => ({
             content: null,
             img: null,
             opacity: 1.0,
-        },
+        }),
         draw: (canvas, element) => {
             canvas.globalAlpha = element.opacity;
             if (element.img !== null) {
@@ -518,11 +477,11 @@ const getAvailableElements = config => ({
         update: () => null,
     },
     screenshot: {
-        // icon: null,
-        defaultConfig: {
+        icon: null,
+        init: config => ({
             color: config.screenshotColor, // "rgb(76, 205, 172)",
             opacity: config.screenshotOpacity,
-        },
+        }),
         draw: (canvas, element) => {
             canvas.globalAlpha = element.opacity;
             canvas.beginPath();
@@ -533,7 +492,7 @@ const getAvailableElements = config => ({
         },
         update: () => null,
     },
-});
+};
 
 // Render element inner text
 const drawInnerText = (canvas, element) => {
@@ -605,203 +564,187 @@ const drawGlyph = (canvas, type, position, element, length) => {
     canvas.fill();
 };
 
-// Get default configuration
-export const getDefaultConfig = () => ({
-    defaultColor: "rgb(0,0,0)",
-    lineCaps: lineCapTypes,
-    //Selection values
-    selectionColor: "rgb(78, 145, 228)",
-    selectionOpacity: 0.1,
-    // Screenshot value
-    screenshotColor: "rgb(76, 205, 172)",
-    screenshotOpacity: 0.2,
-    // Default grid values
-    gridColor: "rgb(238, 242, 247)", 
-    gridWidth: 1, //Grid lines width
-    gridOpacity: 1.0,
-    gridSize: 10,
-    gridStyle: "lined",
-    // Default resize values
-    resizeColor: "rgb(27, 94, 177)",
-    resizeWidth: 2, // Resize line width
-    resizeOpacity: 1.0,
-    // Text configuration
-    fontFamily: "sans-serif",
-});
-
 // Create board
-export const createBoard = (parent, config) => {
+export const createBoard = (parent, opt) => {
+    const options = {
+        defaultColor: "rgb(0,0,0)",
+        //Selection values
+        selectionColor: "rgb(78, 145, 228)",
+        selectionOpacity: 0.1,
+        // Screenshot value
+        screenshotColor: "rgb(76, 205, 172)",
+        screenshotOpacity: 0.2,
+        // Default grid values
+        gridColor: "rgb(238, 242, 247)", 
+        gridWidth: 1, //Grid lines width
+        gridOpacity: 1.0,
+        gridSize: 10,
+        gridStyle: "lined",
+        // Default resize values
+        resizeColor: "rgb(27, 94, 177)",
+        resizeWidth: 2, // Resize line width
+        resizeOpacity: 1.0,
+        resizeRadius: 5,
+        // Text configuration
+        fontFamily: "sans-serif",
+        ...opt,
+    };
+
+    // Initialize board context
     const ctx = {
         parent: parent,
         canvas: createCanvas("100px", "100px"),
-        containers: {},
-        config: {
-            ...getDefaultConfig(),
-            ...(config || {}),
-        },
-        listeners: {},
-        current: {},
+        input: document.createElement("textarea"),
+        options: options,
         mode: "",
-        currentType: "selection",
+        currentTool: "selection",
         currentElement: null,
-        currentElementPrevSelected: false,
-        currentElementDragging: false,
-        currentElementResizing: false,
-        selection: [],
-        selectionLocked: false, // All selected elements are locked?
-        snapshot: [],
-        dragged: false,
+        currentElementSelected: false,
+        currentElementDragged: false,
         resizeOrientation: null,
-        cursor: null,
+        selection: [],
+        selectionLocked: false,
+        snapshot: [],
         elements: [],
-        availableElements: [],
         width: 200,
         height: 200,
         grid: false,
+        listeners: {},
     };
+
     // To register event listeners
     ctx.on = (name, fn) => (ctx.listeners[name] = ctx.listeners[name] || []).push(fn);
     ctx.off = (name, fn) => (ctx.listeners[name] || []).filter(f => f !== fn);
     ctx.trigger = (name, args) => (ctx.listeners[name] || []).forEach(fn => fn(args));
-    // Export the current board object
-    ctx.export = () => {
-        return Object.assign({}, ctx.current, {
-            elements: ctx.elements.map(element => {
-                return Object.assign({}, element, {
-                    selected: false,
-                });
-                // Check for image element --> remove img field
-                // if (element.type === "image") {
-                //     delete exportedElement.img;
-                // }
-            }),
-            width: ctx.width, // Save current width
-            height: ctx.height, // Save current height
-        });
-    };
-    // Elements management
-    ctx.availableElements = getAvailableElements(ctx.config);
-    ctx.createElement = options => ({
-        ...ctx.availableElements[options.type].defaultConfig,
-        ...options,
-        id: Date.now(), // TODO: replace this
-        width: 0,
-        height: 0,
-        selected: false,
-        locked: false,
-    });
-    ctx.updateElement = el => ctx.availableElements[el.type].update(el);
-    ctx.drawElement = (canvas, el) => ctx.availableElements[el.type].draw(canvas, el);
-    ctx.removeElement = el => {
-        ctx.elements = ctx.elements.filter(element => element.id !== el.id);
-        ctx.selection = ctx.selection.filter(element => element.id !== el.id);
-    };
-    // Grid round
-    const gridRound = value => {
-        return ctx.grid ? Math.round(value / ctx.config.gridSize) * ctx.config.gridSize : value;
-    };
+
     // Draw the board
     ctx.draw = () => {
         const canvas = ctx.canvas.getContext("2d");
-        canvas.clearRect(0, 0, ctx.width, ctx.height); //Clear canvas
-        //Check for drawing the grid
-        //if (state.grid === true) {
-        //    context.beginPath();
-        //    context.setLineDash([]);
-        //    context.strokeStyle = config.gridColor;
-        //    context.lineWidth = config.gridWidth; 
-        //    //Horizontal rules
-        //    for (let i = 0; i * state.gridSize < state.height; i++) {
-        //        context.moveTo(0, i * state.gridSize);
-        //        context.lineTo(state.width, i * state.gridSize);
-        //    }
-        //    //Vertical rules
-        //    for (let i = 0; i * state.gridSize < state.width; i++) {
-        //        context.moveTo(i * state.gridSize, 0);
-        //        context.lineTo(i * state.gridSize, state.height);
-        //    }
-        //    //Draw the grid
-        //    context.stroke();
-        //}
-        // this.elements.forEach(function (element, index) {
+        canvas.clearRect(0, 0, ctx.width, ctx.height);
+
         forEachRev(ctx.elements, element => {
             if (ctx.mode === TEXT_INPUT_MODE && ctx.currentElement?.id === element.id && element.type === "text") {
                 return; // Prevent rendering this element
             }
-            ctx.drawElement(canvas, element);
+            ctx.drawElement(element, canvas);
+
             // Check if this element is selected --> draw selection area
             if (element.selected === true && element.type !== "selection") {
                 const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
                 const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
                 canvas.beginPath();
                 canvas.setLineDash([8, 4]);
-                canvas.strokeStyle = ctx.config.resizeColor; // selectionColor;
-                canvas.lineWidth = ctx.config.resizeWidth; // Force line width to 2px
+                canvas.strokeStyle = ctx.options.resizeColor;
+                canvas.lineWidth = ctx.options.resizeWidth;
                 canvas.rect(xStart, yStart, xEnd - xStart, yEnd - yStart);
                 canvas.stroke();
                 canvas.setLineDash([]); // Reset line-dash
                 // Check if is the unique selected elements
                 if (ctx.selection.length === 1 && element.locked === false) {
-                    return getResizePoints(element).forEach(point => {
+                    getResizePoints(element).forEach(point => {
                         canvas.beginPath();
-                        canvas.fillStyle = ctx.config.resizeColor; // selectionColor;
-                        canvas.arc(point.x, point.y, resizeRadius, 0, 2*Math.PI);
+                        canvas.fillStyle = ctx.options.resizeColor; // selectionColor;
+                        canvas.arc(point.x, point.y, ctx.options.resizeRadius, 0, 2*Math.PI);
                         canvas.fill();
                     });
                 }
             }
         });
     };
-    // Clear the board
-    ctx.clear = () => {
-        ctx.elements = []; // Clear elements
-        ctx.selection = []; // Clear selection
-        ctx.draw(); // Draw canvas
+
+    // Elements management
+    ctx.createElement = element => ({
+        ...elements[element.type].init(ctx.options),
+        ...element,
+        id: Date.now(), // TODO: replace this
+        width: 0,
+        height: 0,
+        selected: false,
+        locked: false,
+    });
+    ctx.updateElement = el => elements[el.type].update(el);
+    ctx.drawElement = (el, canvas) => elements[el.type].draw(canvas, el);
+    ctx.removeElement = el => {
+        ctx.elements = ctx.elements.filter(element => element.id !== el.id);
+        ctx.selection = ctx.selection.filter(element => element.id !== el.id);
     };
-    // Add a new element
     ctx.addElement = element => {
         Object.assign(element, {
             selected: true, // Set element as selected
-            x: gridRound((ctx.width - element.width) / 2),
-            y: gridRound((ctx.height - element.height) / 2) 
+            x: ctx.getPosition((ctx.width - element.width) / 2),
+            y: ctx.getPosition((ctx.height - element.height) / 2), 
         });
         ctx.elements.unshift(element); // Save the new element
-        ctx.selection = getSelection(ctx.elements); // Update the selection
-        // this.forceUpdate(); // Force update to display/hide the stylebar
+        ctx.selection = ctx.getSelection(); // Update the selection
     };
+
+    // Selection managers
+    ctx.removeSelection = () => {
+        ctx.elements = ctx.elements.filter(element => !element.selected);
+        ctx.selection = [];
+    };
+    ctx.clearSelection = () => {
+        ctx.elements.forEach(element => element.selected = false);
+        ctx.selection = [];
+    };
+    ctx.getSelection = () => ctx.elements.filter(element => element.selected);
+    ctx.isSelectionLocked = () => ctx.selection.every(element => element.locked);
+
+    // Text input managers
+    ctx.showInput = () => {
+        ctx.input.style.top = ctx.currentElement.y + "px";
+        ctx.input.style.left = ctx.currentElement.x + "px";
+        ctx.input.style.color = ctx.currentElement.textColor;
+        ctx.input.style.fontSize = ctx.currentElement.textSize + "px";
+        ctx.input.style.fontFamily = ctx.currentElement.textFont;
+        ctx.input.value = ctx.currentElement.textContent || ""; // Get text content
+        ctx.input.style.display = "block"; // Show input
+        ctx.input.focus(); // focus in the new input
+    };
+    ctx.hideInput = () => {
+        ctx.input.style.display = "none";
+        ctx.input.value = ""; // Remove current value
+    };
+
+    // Calculate the position
+    ctx.getPosition = v => {
+        return ctx.grid ? Math.round(v / ctx.options.gridSize) * ctx.options.gridSize : v;
+    };
+
     // Handle document paste
     const handleDocumentPaste = event => {
-        // console.log(event.target);
-        // console.log(event.clipboardData);
-        // Parse clipboard data
         return !isInputTarget(event) && getDataFromClipboard(event).then(data => {
-            // console.log("Copied --> " + type);
-            clearSelection(ctx.elements); // Clear the current selection
+            ctx.clearSelection(); // Clear the current selection
             parseClipboardBlob(data.type, data.blob).then(content => {
-                const newElement = ctx.createElement({
-                    type: data.type,
-                    content: content,
-                });
                 // Check for not image type
-                if (type !== "image") {
-                    ctx.updateElement(newElement);
-                    return ctx.addElement(newElement);
+                if (data.type !== "image") {
+                    const element = ctx.createElement({
+                        type: data.type,
+                        textContent: content,
+                    });
+                    ctx.addElement(element);
+                    ctx.updateElement(element);
+                    ctx.draw();
+                    console.log(element);
+                    return ctx.trigger("update");
                 }
-                // Create a new image
-                // https://stackoverflow.com/a/4776378
-                const img = new Image();
-                img.addEventListener("load", () => {
-                    return ctx.addElement({
-                        ...newElement,
+                // Load as a new image
+                createImage(content, img => {
+                    const element = ctx.createElement({
+                        type: "image",
                         width: img.width,
                         height: img.height,
                         img: img,
                     });
+                    ctx.addElement(element);
+                    ctx.updateElement(element);
+                    ctx.draw();
+                    ctx.trigger("update");
                 });
-                img.src = content; // Set image source
             });
         });
     };
+
     // Handle document key down
     const handleDocumentKeyDown = event => {
         if (isInputTarget(event)) {
@@ -810,89 +753,83 @@ export const createBoard = (parent, config) => {
         // Check ESCAPE key --> reset selection
         if (event.key === "Escape") {
             event.preventDefault();
-            return ctx.resetSelection(); // Reset selection
+            ctx.clearSelection();
+            ctx.draw();
+            ctx.trigger("update");
         }
         // Check for backspace key --> remove elements
         if (event.key === "Backspace") {
             event.preventDefault();
-            return ctx.removeSelection();
+            ctx.removeSelection();
+            ctx.draw();
+            ctx.trigger("update");
         }
         // Check for arrow keys --> move elements
         else if (isArrowKey(event.key) === true) {
             event.preventDefault();
-            let step = event.shiftKey ? 5 : 1; // Step value
-            if (ctx.grid === true) {
-                step = ctx.config.gridSize;
-            }
+            const step = ctx.grid ? ctx.options.gridSize : (event.shiftKey ? 5 : 1);
+
             // Move selected elements
-            ctx.elements.forEach(element => {
-                if (element.selected === true) {
-                    if (event.key === "ArrowUp") {
-                        element.y = gridRound(element.y - step);
-                    }
-                    else if (event.key === "ArrowDown") {
-                        element.y = gridRound(element.y + step);
-                    }
-                    else if (event.key === "ArrowLeft") {
-                        element.x = gridRound(element.x - step);
-                    }
-                    else if (event.key === "ArrowRight") {
-                        element.x = gridRound(element.x + step);
-                    }
-                }
-            });
-            return ctx.draw();
+            if (event.key === "ArrowUp") {
+                ctx.selection.forEach(el => el.y = ctx.getPosition(el.y - step));
+            }
+            else if (event.key === "ArrowDown") {
+                ctx.selection.forEach(el => el.y = ctx.getPosition(el.y + step));
+            }
+            else if (event.key === "ArrowLeft") {
+                ctx.selection.forEach(el => el.x = ctx.getPosition(el.x - step));
+            }
+            else if (event.key === "ArrowRight") {
+                ctx.selection.forEach(el => el.x = ctx.getPosition(el.x + step));
+            }
+            ctx.draw();
+            ctx.trigger("update");
         }
     };
+
     // Handle mouse down
     const handleMouseDown = event => {
-        // Check for text input mode
         if (ctx.mode === TEXT_INPUT_MODE) {
             event.preventDefault();
-            const value = ctx.containers.textInput.value || "";
+            const value = ctx.input.value || "";
+            const element = ctx.currentElement;
             if (value) {
-                // ctx.currentElement.textContent = value; // Update the text content
-                Object.assign(ctx.currentElement, {
+                Object.assign(element, {
                     textContent: value,
                     selected: true,
-                    ...measureText(value, ctx.currentElement.textSize, ctx.currentElement.textFont),
+                    ...measureText(value, element.textSize, element.textFont),
                 });
-                ctx.selection = getSelection(ctx.elements);
+                ctx.selection = ctx.getSelection();
                 ctx.selectionLocked = false;
                 ctx.draw();
             } else {
                 // Remove this element
-                ctx.removeElement(ctx.currentElement);
+                ctx.removeElement(element);
                 ctx.currentElement = null;
             }
             ctx.mode = ""; // Reset mode
-            // ctx.trigger("selection:change");
-            return ctx.removeTextInput();
+            ctx.hideInput();
+            return;
         }
+        ctx.currentElement = null;
         ctx.lastX = event.offsetX; // event.clientX - event.target.offsetLeft;
         ctx.lastY = event.offsetY; // event.clientY - event.target.offsetTop;
-        // console.log(`x: ${ctx.lastX}, y: ${ctx.lastY}`);
-        // Reset drag state values
-        ctx.currentElement = null;
-        ctx.currentElementPrevSelected = false;
-        ctx.currentElementDragging = false;
-        ctx.currentElementResizing = false;
-        ctx.dragged = false;
-        // ctx.cursor = null; //Reset cursor
-        // ctx.selectionCount = 0; //Clear number of selected elements
+        ctx.currentElementDragged = false;
+        ctx.currentElementSelected = false;
+
         // Check if we are in a resize point
         if (ctx.selection.length === 1) {
-            const point = inResizePoint(ctx.selection[0], ctx.lastX, ctx.lastY);
+            const point = inResizePoint(ctx.selection[0], ctx.lastX, ctx.lastY, ctx.options.resizeRadius);
             if (point !== null) {
                 ctx.currentElement = ctx.selection[0]; // Save current element
                 ctx.resizeOrientation = point.orientation; // Save resize orientation
-                ctx.currentElementResizing = true; // Resizing element
+                ctx.mode = RESIZE_MODE; // Swtich to resize mode
                 ctx.snapshot = snapshotSelection(ctx.selection); // Create a snapshot of the selection
                 return; // Stop event
             }
         }
         // Check the selected type
-        if (ctx.currentType === "selection") {
+        if (ctx.currentTool === "selection") {
             // Check if the point is inside an element
             const insideElements = ctx.elements.filter(element => {
                 const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
@@ -904,56 +841,49 @@ export const createBoard = (parent, config) => {
             if (insideElements.length > 0) {
                 const el = insideElements[0]; // Get only the first element
                 ctx.currentElement = el; // Save the current dragged element
-                ctx.currentElementPrevSelected = el.selected; // Save if element is already selected
-                ctx.currentElementDragging = true;
+                ctx.currentElementSelected = el.selected; // Save if element is already selected
+                ctx.mode = DRAG_MODE;
                 // Check if this element is not selected
                 if (el.selected === false && !event.shiftKey) {
-                    clearSelection(ctx.elements); // Remove other elements
+                    ctx.clearSelection(); // Remove other elements
                 }
-                // Toggle selection
                 el.selected = true;
-                // this.state.hasSelection = true; // At least has one selected element
-                ctx.selection = getSelection(ctx.elements);
-                ctx.snapshot = snapshotSelection(ctx.selection); // Create a snapshot of the selection
-                ctx.selectionLocked = isSelectionLocked(ctx.selection); // Save is selection is locked
-                // this.renderStatusSelection();
+                ctx.selection = ctx.getSelection();
+                ctx.snapshot = snapshotSelection(ctx.selection);
+                ctx.selectionLocked = ctx.isSelectionLocked();
                 return; // Stop event
             }
         }
         // Create a new element
         const element = ctx.createElement({
-            type: ctx.currentType,
-            x: gridRound(ctx.lastX), 
-            y: gridRound(ctx.lastY),
+            type: ctx.currentTool,
+            x: ctx.getPosition(ctx.lastX), 
+            y: ctx.getPosition(ctx.lastY),
         });
-        // this.elements.push(element);
         ctx.elements.unshift(element);
-        ctx.currentElement = element; // Save dragging element
-        ctx.selection = []; // Clear the current selection
-        clearSelection(ctx.elements);
-        // this.forceUpdate(); // Force update to hide stylebar
+        ctx.currentElement = element;
+        ctx.clearSelection();
     };
+
     // Handle mouse move
     const handleMouseMove = event => {
         const x = event.offsetX; // event.clientX - event.target.offsetLeft;
         const y = event.offsetY; // event.clientY - event.target.offsetTop;
-        // Set mouse position
-        // this.renderStatusPosition(x, y);
         // Check for no selected elements
         if (!ctx.currentElement || ctx.mode === TEXT_INPUT_MODE) {
             return;
         }
-        ctx.dragged = true;
+        ctx.currentElementDragged = true;
         // Check if we are resizing the element
-        if (ctx.currentElementResizing === true) {
-            if (ctx.currentElement.locked === true) {
-                return null; // Element is locked
+        if (ctx.mode === RESIZE_MODE) {
+            if (ctx.currentElement.locked) {
+                return null;
             }
             const element = ctx.currentElement;
             const snapshot = ctx.snapshot[0]; // Get snapshot of the current element
             const orientation = ctx.resizeOrientation;
-            const deltaX = gridRound(x - ctx.lastX);
-            const deltaY = gridRound(y - ctx.lastY);
+            const deltaX = ctx.getPosition(x - ctx.lastX);
+            const deltaY = ctx.getPosition(y - ctx.lastY);
             // Check the orientation
             if (orientation === "rh") {
                 element.width = snapshot.width + deltaX;
@@ -989,11 +919,9 @@ export const createBoard = (parent, config) => {
                 element.width = snapshot.width + deltaX;
                 element.height = snapshot.height + deltaY;
             }
-            // Display in status bar
-            // this.renderStatusAction(`resize:${element.type}:${Math.abs(element.width)}x${Math.abs(element.height)}`);
         }
         // Check if we have selected elements
-        else if (ctx.currentElementDragging === true && ctx.selection.length > 0) {
+        else if (ctx.mode === DRAG_MODE && ctx.selection.length > 0) {
             if (ctx.selectionLocked) {
                 return null; // Move is not allowed --> selection is locked
             }
@@ -1002,20 +930,18 @@ export const createBoard = (parent, config) => {
             // Move all elements
             ctx.selection.forEach((element, index) => {
                 if (!element.locked) {
-                    element.x = gridRound(ctx.snapshot[index].x + incrementX);
-                    element.y = gridRound(ctx.snapshot[index].y + incrementY);
+                    element.x = ctx.getPosition(ctx.snapshot[index].x + incrementX);
+                    element.y = ctx.getPosition(ctx.snapshot[index].y + incrementY);
                 }
             });
-            // Render in status bar
-            // this.renderStatusAction(`move::selection: ${Math.abs(incrementX)},${Math.abs(incrementY)}`);
         }
         // Check if we have a drag element (but not text)
         else if (ctx.currentElement && ctx.currentElement.type !== "text") {
             const element = ctx.currentElement;
-            const deltaX = gridRound(x - element.x);
-            //let deltaY = this.gridRound(y - element.y);
+            const deltaX = ctx.getPosition(x - element.x);
+            //let deltaY = this.ctx.getPosition(y - element.y);
             element.width = deltaX;
-            element.height = event.shiftKey ? deltaX : gridRound(y - element.y);
+            element.height = event.shiftKey ? deltaX : ctx.getPosition(y - element.y);
 
             // Check if the elemement is a selection
             if (element.type === "selection") {
@@ -1030,32 +956,28 @@ export const createBoard = (parent, config) => {
 
         ctx.draw();
     };
+
     // Handle mouse up
     const handleMouseUp = event => {
         // Check for no current element active
         if (!ctx.currentElement || ctx.mode === TEXT_INPUT_MODE) {
             return;
         }
-        // Check for resizing
-        // if (this.view.currentElementResizing === true) {
-        //     delete this.view.currentElement.resizing; //Remove resizing attribute
-        // }
         // Check for clicked element
-        if (ctx.dragged === false && ctx.selection.length > 0) {
-            if (ctx.currentElementPrevSelected === true && event.shiftKey) {
-                // clearSelection(this.elements);
+        if (!ctx.currentElementDragged && ctx.selection.length > 0) {
+            if (ctx.currentElementSelected === true && event.shiftKey) {
                 ctx.currentElement.selected = false;
             }
             // Check if no shift key is pressed --> keep only this current element in selection
             else if (!event.shiftKey) {
-                clearSelection(ctx.elements); // Remove other elements from selection
+                ctx.clearSelection();
                 ctx.currentElement.selected = true;
             }
         }
         // Check for adding a new element
-        if (ctx.currentType !== "selection" && ctx.currentType !== "screenshot") {
-            ctx.currentElement.selected = true; // Set the new element as selected
-            ctx.updateElement(ctx.currentElement); // Update the current element
+        if (ctx.currentTool !== "selection" && ctx.currentTool !== "screenshot") {
+            ctx.currentElement.selected = true;
+            ctx.updateElement(ctx.currentElement);
         }
         // Remove selection elements
         else {
@@ -1064,11 +986,9 @@ export const createBoard = (parent, config) => {
             });
         }
         // Check for screenshot element
-        if (ctx.currentType === "screenshot") {
-            // Calculate absolute positions
+        if (ctx.currentTool === "screenshot") {
             const [xStart, xEnd] = getAbsolutePositions(ctx.currentElement.x, ctx.currentElement.width);
             const [yStart, yEnd] = getAbsolutePositions(ctx.currentElement.y, ctx.currentElement.height);
-            // Process the screenshot
             ctx.trigger("screenshot", {
                 x: xStart,
                 width: xEnd - xStart,
@@ -1077,10 +997,10 @@ export const createBoard = (parent, config) => {
             });
         }
         // Check for text element
-        if (ctx.currentType === "text") {
+        if (ctx.currentTool === "text") {
             ctx.currentElement.selected = false; // Disable selection
             ctx.mode = TEXT_INPUT_MODE;
-            ctx.displayTextInput(ctx.currentElement);
+            ctx.showInput();
         }
         // If no text element, reset current element
         else {
@@ -1088,207 +1008,183 @@ export const createBoard = (parent, config) => {
         }
         
         // Reset selection
-        ctx.selection = getSelection(ctx.elements); // Update the selection
-        ctx.selectionLocked = isSelectionLocked(ctx.selection); // Update is selection is locked
-        ctx.currentType = "selection";
+        ctx.selection = ctx.getSelection();
+        ctx.selectionLocked = ctx.isSelectionLocked();
+        ctx.currentTool = "selection";
         ctx.draw();
-        ctx.trigger("selection:change");
+        ctx.trigger("update");
     };
+
     // Handle double click
-    const handleDoubleClick = e => {
-        e.preventDefault();
+    const handleDoubleClick = event => {
+        event.preventDefault();
         if (ctx.selection.length === 1 && ctx.selection[0].type === "text") {
             ctx.currentElement = ctx.selection[0];
         }
         else {
             ctx.currentElement = ctx.createElement({
                 type: "text",
-                x: parseInt(e.clientX),
-                y: parseInt(e.clientY),
+                x: parseInt(event.clientX),
+                y: parseInt(event.clientY),
             });
             ctx.elements.unshift(ctx.currentElement);
         }
         ctx.mode = TEXT_INPUT_MODE;
-        ctx.resetSelection();
-        ctx.displayTextInput(ctx.currentElement);
-        // ctx.trigger("selection:change");
+        ctx.clearSelection();
+        ctx.showInput();
+        ctx.draw();
+        ctx.trigger("update");
     };
-    // Display a new textarea input element
-    ctx.displayTextInput = (element) => {
-        if (ctx.containers.textInput) {
-            ctx.removeTextInput();
-        }
-        const input = document.createElement("textarea");
-        const updateInputSize = () => {
-            // const lines = (input.value || "").split("\n").length + 1;
-            // input.style.height = (lines * 1.125) + "em";
-            input.style.height = input.scrollHeight + "px";
-            // input.style.width = input.scrollWidth + "px";
-            input.style.width = Math.max.apply(null, input.value.split("\n").map(l => l.length)) + "em";
-        };
-        input.value = element.textContent; // Get text content
-        input.style.position = "absolute";
-        input.style.display = "inline-block";
-        input.style.top = element.y + "px";
-        input.style.left = element.x + "px";
-        input.style.minWidth = "200px";
-        input.style.minHeight = "1em";
-        input.style.outline = "0px";
-        input.style.border = "0px solid transparent";
-        input.style.padding = "0px";
-        input.style.resize = "none";
-        input.style.overflow = "hidden";
-        input.style.color = element.textColor;
-        input.style.fontSize = element.textSize + "px";
-        input.style.fontFamily = element.textFont;
-        input.style.lineHeight = "1";
-        input.style.backgroundColor = "transparent";
-        ctx.containers.textInput = input;
-        ctx.parent.appendChild(input);
-        input.focus(); // focus in the new input
-        input.addEventListener("input", updateInputSize);
-        input.addEventListener("mousedown", e => e.stopPropagation());
-        input.addEventListener("mouseup", e => e.stopPropagation());
-        updateInputSize();
-    };
-    // Remove the text input element
-    ctx.removeTextInput = () => {
-        // ctx.mode = "";
-        ctx.parent.removeChild(ctx.containers.textInput); // Remove from parent
-        delete ctx.containers.textInput;
-    };
-    // Handle resize --> update the canvas width and height
-    ctx.resize = () => {
+
+    // Handle window resize
+    const handleResize = () => {
         ctx.width = ctx.parent.offsetWidth;
         ctx.height = ctx.parent.offsetHeight;
-        // Update canvas size
         ctx.canvas.setAttribute("width", ctx.width + "px");
         ctx.canvas.setAttribute("height", ctx.height + "px");
-        // TODO: force an update
-    };
-    // Handle type change 
-    ctx.setCurrentType = type => {
-        clearSelection(ctx.elements); // Remove selection
-        ctx.selection = []; // Reset selection 
-        ctx.currentType = type;
         ctx.draw();
-        // TODO: force an update
+        // ctx.trigger("update");
     };
-    // Handle grid toggle --> Display or hide the grid
-    ctx.toggleGrid = () => {
-        ctx.grid = !ctx.grid;
-        ctx.draw();
-        // TODO: force an update
-    };
-    // Handle selection update
-    ctx.updateSelection = (key, value) => {
-        ctx.selection.forEach(element => {
-            element[key] = value;
-            ctx.updateElement(element);
-        });
-        // TODO: force an update
-        ctx.draw();
-    };
-    // Clone the current selection
-    ctx.cloneSelection = () => {
-        const newElements = [];
-        // Update the selection with the cloned elements
-        ctx.selection = ctx.selection.map(element => {
-            const clonedElement = Object.assign({}, element, {
-                x: element.x + 10,
-                y: element.y + 10,
-                locked: false, // Reset locked attribute
-            });
-            newElements.push(clonedElement); // Save to the elements list
-            element.selected = false; // Remove this element from selection
-            return clonedElement; // Add to selection
-        });
-        // Add new elements
-        forEachRev(newElements, el => ctx.elements.unshift(el));
-        ctx.selectionLocked = false; // Reset selection locked flag
-        //this.renderStatusSelection(); // Update status selection
-        ctx.draw();
-        ctx.trigger("selection:change");
-    };
-    // Remove current selection
-    ctx.removeSelection = () => {
-        // Remove current selection
-        ctx.elements = ctx.elements.filter(element => !element.selected);
-        ctx.selection = []; // Remove selection
-        // this.renderStatusSelection(); //Update status selection
-        ctx.draw();
-        ctx.trigger("selection:change");
-    };
-    // Reorder the selection
-    ctx.orderSelection = position => {
-        const elements = ctx.elements;
-        // ctx.selection.forEach(function (element) {
-        forEachRev(ctx.selection, selectedEl => {
-            const index = elements.findIndex(el => el.id === selectedEl.id);
-            // TODO: check for not found element????
-            // Move the elment to back
-            if (position === "back" && index + 1 < elements.length) {
-                elements.splice(index, 0, elements.splice(index + 1, 1)[0]);
-            }
-            // Move the element to front
-            else if (position === "front" && index - 1 >= 0) {
-                elements.splice(index, 0, elements.splice(index - 1, 1)[0]);
-            }
-        });
-        ctx.draw(); // Only draw
-    };
-    // Toggle selection lock
-    ctx.toggleSelectionLock = () => {
-        if (ctx.selectionLocked === true) {
-            unlockElements(ctx.selection);
-        }
-        else {
-            lockElements(ctx.selection);
-        }
-        // Toggle selection locked
-        ctx.selectionLocked = !ctx.selectionLocked;
-        // TODO: force update
-    };
-    // Reset the selection
-    ctx.resetSelection = () => {
-        ctx.elements.forEach(element => {
-            element.selected = false; // Set selected as false
-        });
-        ctx.selection = []; // Clear selection list
-        ctx.draw();
-        ctx.trigger("selection:change");
-    };
-    // Initialize
-    ctx.init = () => {
-        // Append elements and update parent styles
-        ctx.parent.style.width = "100%";
-        ctx.parent.style.height = "100%";
-        ctx.parent.style.position = "relative";
-        ctx.parent.appendChild(ctx.canvas);
-        // Register event listeners
-        ctx.canvas.addEventListener("mousedown", handleMouseDown);
-        ctx.canvas.addEventListener("mousemove", handleMouseMove);
-        ctx.canvas.addEventListener("mouseup", handleMouseUp);
-        ctx.canvas.addEventListener("dblclick", handleDoubleClick);
-        // Register document event listener
-        document.addEventListener("keydown", handleDocumentKeyDown, false);
-        document.addEventListener("paste", handleDocumentPaste, false);
-        window.addEventListener("resize", ctx.resize, false);
-        ctx.resize(); // Update the canvas with the correct size
-    };
+
+    // Append elements and update parent styles
+    ctx.parent.style.width = "100%";
+    ctx.parent.style.height = "100%";
+    ctx.parent.style.position = "relative";
+
+    // Input styles
+    ctx.input.style.display = "none";
+    ctx.input.style.position = "absolute";
+    ctx.input.style.display = "inline-block";
+    ctx.input.style.minWidth = "200px";
+    ctx.input.style.minHeight = "1em";
+    ctx.input.style.outline = "0px";
+    ctx.input.style.border = "0px solid transparent";
+    ctx.input.style.padding = "0px";
+    ctx.input.style.resize = "none";
+    ctx.input.style.overflow = "hidden";
+    ctx.input.style.lineHeight = "1";
+    ctx.input.style.backgroundColor = "transparent";
+
+    // Append child items
+    ctx.parent.appendChild(ctx.canvas);
+    ctx.parent.appendChild(ctx.input);
+
+    // Register event listeners
+    ctx.canvas.addEventListener("mousedown", handleMouseDown);
+    ctx.canvas.addEventListener("mousemove", handleMouseMove);
+    ctx.canvas.addEventListener("mouseup", handleMouseUp);
+    ctx.canvas.addEventListener("dblclick", handleDoubleClick);
+
+    // Register text input event listeners
+    ctx.input.addEventListener("input", () => {
+        ctx.input.style.height = ctx.input.scrollHeight + "px";
+        ctx.input.style.width = Math.max.apply(null, ctx.input.value.split("\n").map(l => l.length)) + "em";
+    });
+    ctx.input.addEventListener("mousedown", e => e.stopPropagation());
+    ctx.input.addEventListener("mouseup", e => e.stopPropagation());
+
+    // Register document event listeners
+    document.addEventListener("keydown", handleDocumentKeyDown, false);
+    document.addEventListener("paste", handleDocumentPaste, false);
+    window.addEventListener("resize", handleResize, false);
+
+    // Force a resize of the canvas
+    handleResize();
+    // ctx.draw();
+
     // Remove all event listeners
     ctx.destroy = () => {
-        //Remove canvas listeners
-        ctx.canvas.removeEventListener("mousedown", handleMouseDown);
-        ctx.canvas.removeEventListener("mousemove", handleMouseMove);
-        ctx.canvas.removeEventListener("mouseup", handleMouseUp);
-        ctx.canvas.removeEventListener("dblclick", handleDoubleClick);
         //Remove window/document listeners
         document.removeEventListener("keydown", handleDocumentKeyDown, false);
         document.removeEventListener("paste", handleDocumentPaste, false);
-        window.removeEventListener("resize", ctx.resize, false);
+        window.removeEventListener("resize", handleResize, false);
+
+        // Remove dom elements
+        ctx.parent.removeChild(ctx.canvas);
+        ctx.parent.removeChild(ctx.input);
     };
-    ctx.init();
-    // Return context instance
-    return ctx;
+
+    // Return public api
+    return {
+        on: ctx.on,
+        off: ctx.off,
+        destroy: ctx.destroy,
+        clear: () => {
+            ctx.elements = [];
+            ctx.selection = [];
+            ctx.draw();
+        },
+        updateOptions: newOptions => {
+            Object.assign(ctx.options, newOptions);
+            ctx.draw();
+        },
+        forceUpdate: () => {},
+        // load: null,
+        export: () => ({
+            elements: ctx.elements.map(element => ({
+                ...element,
+                selected: false,
+            })),
+            width: ctx.width,
+            height: ctx.height,
+        }),
+        setCurrentTool: tool => {
+            ctx.clearSelection();
+            ctx.currentTool = tool || "selection";
+            ctx.draw();
+        },
+        getCurrentTool: () => ctx.currentTool,
+        showGrid: () => {
+            ctx.grid = true;
+            ctx.draw();
+        },
+        hideGrid: () => {
+            ctx.grid = false;
+            ctx.draw();
+        },
+        isGridVisible: () => ctx.grid,
+        updateSelection: (key, value) => {
+            ctx.selection.forEach(element => {
+                element[key] = value;
+                ctx.updateElement(element);
+            });
+            ctx.draw();
+        },
+        cloneSelection: () => {
+            const newElements = [];
+            // Update the selection with the cloned elements
+            ctx.selection = ctx.selection.map(element => {
+                const clonedElement = {
+                    ...element,
+                    x: element.x + 10,
+                    y: element.y + 10,
+                    locked: false, // Reset locked attribute
+                };
+                newElements.push(clonedElement); // Save to the elements list
+                element.selected = false; // Remove this element from selection
+                return clonedElement;
+            });
+            forEachRev(newElements, el => ctx.elements.unshift(el));
+            ctx.selectionLocked = false; // Reset selection locked flag
+            ctx.draw();
+        },
+        lockSelection: () => {
+            ctx.selectionLocked = true;
+            ctx.selection.forEach(element => element.locked = true);
+        },
+        unlockSelection: () => {
+            ctx.selectionLocked = false;
+            ctx.selection.forEach(element => element.locked = false);
+        },
+        clearSelection: () => {
+            ctx.clearSelection();
+            ctx.draw();
+        },
+        removeSelection: () => {
+            ctx.removeSelection();
+            ctx.draw();
+        },
+        getSelection: () => ctx.selection,
+        isSelectionLocked: () => ctx.selectionLocked,
+    };
 };
