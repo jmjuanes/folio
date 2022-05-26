@@ -1,6 +1,6 @@
 import React from "react";
 // import kofi from "kofi";
-import {Button} from "./button.js";
+import {Button} from "./Button.js";
 
 export const Menubar = props => {
     const [active, setActive] = React.useState(false);

@@ -1,8 +1,8 @@
 import React from "react";
 import kofi from "kofi";
-import {Dialog} from "./dialog.js";
-import {Button} from "./button.js";
-import {Option} from "./option.js";
+import {Dialog} from "./Dialog.js";
+import {Button} from "./Button.js";
+import {Option} from "./Option.js";
 
 // Pixel format utility
 const pixelValueFormat = v => v + "px";
@@ -42,12 +42,6 @@ const groups = {
                     title: "Text opacity",
                     domain: [0, 1],
                     step: 0.1,
-                },
-            },
-            textContent: {
-                type: "text",
-                props: {
-                    title: "Text content",
                 },
             },
         },

@@ -1,5 +1,5 @@
 import React from "react";
-import {Button} from "./button.js";
+import {Button} from "./Button.js";
 
 // Available items
 const availableItems = [
