@@ -698,12 +698,17 @@ export const createBoard = (parent, opt) => {
         ctx.input.style.fontSize = ctx.currentElement.textSize + "px";
         ctx.input.style.fontFamily = ctx.currentElement.textFont;
         ctx.input.value = ctx.currentElement.textContent || ""; // Get text content
-        ctx.input.style.display = "block"; // Show input
+        ctx.input.style.display = "inline-block"; // Show input
         ctx.input.focus(); // focus in the new input
+        ctx.updateInput();
     };
     ctx.hideInput = () => {
         ctx.input.style.display = "none";
         ctx.input.value = ""; // Remove current value
+    };
+    ctx.updateInput = () => {
+        ctx.input.style.height = ctx.input.scrollHeight + "px";
+        ctx.input.style.width = Math.max.apply(null, ctx.input.value.split("\n").map(l => l.length)) + "em";
     };
 
     // Calculate the position
@@ -1054,7 +1059,6 @@ export const createBoard = (parent, opt) => {
     // Input styles
     ctx.input.style.display = "none";
     ctx.input.style.position = "absolute";
-    ctx.input.style.display = "inline-block";
     ctx.input.style.minWidth = "200px";
     ctx.input.style.minHeight = "1em";
     ctx.input.style.outline = "0px";
@@ -1066,6 +1070,9 @@ export const createBoard = (parent, opt) => {
     ctx.input.style.backgroundColor = "transparent";
 
     // Append child items
+    ctx.parent.style.width = "100%";
+    ctx.parent.style.height = "100%";
+    ctx.parent.style.overflow = "hidden";
     ctx.parent.appendChild(ctx.canvas);
     ctx.parent.appendChild(ctx.input);
 
@@ -1076,10 +1083,7 @@ export const createBoard = (parent, opt) => {
     ctx.canvas.addEventListener("dblclick", handleDoubleClick);
 
     // Register text input event listeners
-    ctx.input.addEventListener("input", () => {
-        ctx.input.style.height = ctx.input.scrollHeight + "px";
-        ctx.input.style.width = Math.max.apply(null, ctx.input.value.split("\n").map(l => l.length)) + "em";
-    });
+    ctx.input.addEventListener("input", () => ctx.updateInput());
     ctx.input.addEventListener("mousedown", e => e.stopPropagation());
     ctx.input.addEventListener("mouseup", e => e.stopPropagation());
 
