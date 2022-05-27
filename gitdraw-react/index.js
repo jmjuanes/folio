@@ -1,55 +1,74 @@
 import React from "react";
 import kofi from "kofi";
-import {createBoard} from "@gitdraw/board";
 
-import {Menubar} from "./components/menubar.js";
-import {Stylebar} from "./components/stylebar.js";
-import {Toolbar} from "./components/toolbar.js";
+import {useBoard} from "./hooks/useBoard.js";
+import {useNotifications} from "./hooks/useNotifications.js";
 
-export const GitDrawBoard = React.forwardRef((props, ref) => {
+// import {Menubar} from "./components/Menubar.js";
+import {Stylebar} from "./components/Stylebar.js";
+import {Toolbar} from "./components/Toolbar.js";
+import {Toasts} from "./components/Toasts.js";
+
+import {blobToClipboard} from "./utils/blobUtils.js";
+
+export const GitDrawBoard = props => {
     const parentRef = React.useRef(null);
+    const boardRef = useBoard(parentRef, props.options);
+    const notifications = useNotifications();
+
     const [ready, setReady] = React.useState(false);
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
 
     React.useEffect(() => {
-        ref.current = createBoard(parentRef.current, props.options || {});
-        ref.current.on("selection:change", () => forceUpdate());
+        // Register event listeners to the board
+        boardRef.current.on("update", () => forceUpdate());
+        boardRef.current.on("screenshot", region => {
+            kofi.delay(500, () => {
+                boardRef.current.screenshot(region).then(blob => {
+                    blobToClipboard(blob);
+                    notifications.success("Screenshot copied to clipboard");
+                });
+            });
+        });
 
+        // Board ready --> Display board bars
         setReady(true);
-
-        return () => ref.current.destroy();
     }, []);
 
     return (
         <div className="has-w-full has-h-full is-relative">
-            <div className="has-w-full has-h-full">
-                <canvas ref={parentRef} width="100px" height="100px" />
-            </div>
+            <div ref={parentRef} className="has-w-full has-h-full" />
             {kofi.when(ready, () => (
                 <React.Fragment>
-                    <Menubar />
+                    {/* <Menubar /> */}
                     <Toolbar
-                        currentElement={ref.current.currentType}
-                        onElementClick={type => {
-                            ref.current.setCurrentType(type);
+                        currentElement={boardRef.current.getCurrentTool()}
+                        onElementClick={tool => {
+                            boardRef.current.setCurrentTool(tool);
                             forceUpdate();
                         }}
                     />
                     <Stylebar
                         key={updateKey}
-                        selection={ref.current.selection || []}
-                        selectionLocked={!!ref.current.selectionLocked}
-                        onChange={(n, v) => ref.current.updateSelection(n, v)}
+                        selection={boardRef.current.getSelection()}
+                        selectionLocked={boardRef.current.isSelectionLocked()}
+                        onChange={(n, v) => {
+                            boardRef.current.updateSelection(n, v);
+                        }}
                         onRemove={() => {
-                            ref.current.removeSelection();
+                            boardRef.current.removeSelection();
                             forceUpdate();
                         }}
+                    />
+                    <Toasts
+                        items={notifications.getAll()}
+                        onDelete={id => notifications.remove(id)}
                     />
                 </React.Fragment>
             ))}
         </div>
     );
-});
+};
 
 GitDrawBoard.defaultProps = {
     options: {},
