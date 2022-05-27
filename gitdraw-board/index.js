@@ -20,34 +20,6 @@ const toBlob = (content, type) => {
     });
 };
 
-// Save Blob to file
-// Based on https://stackoverflow.com/a/19328891
-const blobToFile = (blob, name) => {
-    // Create the link element to download the file
-    const link = document.createElement("a");
-    link.style.display = "none"; // Hide link element
-    document.body.appendChild(link); // Append to body
-    // let blob = new Blob([content], {
-    //     "type": type
-    // });
-    const url = window.URL.createObjectURL(blob); // Create url
-    link.href = url; // Set the link url as the generated url
-    link.download = name; // Set the filename
-    link.click(); // Download the file
-    window.URL.revokeObjectURL(url); // Revoke url
-    document.body.removeChild(link); // Remove from body
-};
-
-// Save Blob to clopboard
-// Based on https://stackoverflow.com/a/57546936
-const blobToClipboard = blob => {
-    return navigator.clipboard.write([
-        new ClipboardItem({
-            [blob.type]: blob,
-        }),
-    ]);
-};
-
 // Convert DataURL to blob
 // https://stackoverflow.com/a/30407959
 const dataUrlToBlob = data => {
@@ -82,7 +54,7 @@ const getDataFromClipboard = event => {
         for (let i = 0; i < items.length; i++) {
             const item = items[i]; // Get current item
             if (item.type.indexOf("image") !== -1) {
-                return resolve({type: "image", blog: item.getAsFile()});
+                return resolve({type: "image", blob: item.getAsFile()});
             }
             else if (item.type.indexOf("text") !== -1) {
                 return item.getAsString(content => {
@@ -91,11 +63,6 @@ const getDataFromClipboard = event => {
             }
         }
     });
-};
-
-//Copy to clipboard
-const copyToClipboard = text => {
-    return Promise.resolve(null);
 };
 
 // Parse clipboard data
@@ -155,26 +122,28 @@ const createCanvas = (width, height) => {
 // https://stackoverflow.com/a/4776378
 const createImage = content => {
     return new Promise(resolve => {
-        const img = new Image();
-        img.addEventListener("load", () => resolve(img));
-        img.src = content; // Set image source
+        const image = new Image();
+        image.addEventListener("load", () => resolve(image));
+        image.src = content; // Set image source
     });
 };
 
-// Crop canvas
+// Generate a screenshot of the provided canvas and the specified region
 // https://stackoverflow.com/a/13074780
-const cropCanvas = (originalCanvas, options) => {
+const screenshot = (originalCanvas, region) => {
     return new Promise(resolve => {
-        if (!options) {
+        if (!region) {
             return originalCanvas.toBlob(blob => resolve(blob));
         }
         // Get screenshot
         const originalContext = originalCanvas.getContext("2d");
-        const image = originalContext.getImageData(options.x || 0, options.y || 0, options.width, options.height);
+        const image = originalContext.getImageData(region.x || 0, region.y || 0, region.width, region.height);
+    
         // Create a new canvas to draw the screenshot
-        const canvas = createCanvas(options.width, options.height); // New canvas
+        const canvas = createCanvas(region.width, region.height); // New canvas
         const context = canvas.getContext("2d");
         context.putImageData(image, 0, 0);
+
         return canvas.toBlob(blob => resolve(blob));
     });
 };
@@ -458,7 +427,13 @@ export const elements = {
             canvas.restore();
             // canvas.globalAlpha = 1; // Reset opacity
         },
-        update: () => null,
+        update: (element, changedKeys) => {
+            if (changedKeys.has("textContent") || changedKeys.has("textSize") || changedKeys.has("textFont")) {
+                Object.assign(element, {
+                    ...measureText(element.textContent, element.textSize, element.textFont),
+                });
+            }
+        },
     },
     image: {
         icon: "image",
@@ -657,12 +632,12 @@ export const createBoard = (parent, opt) => {
         ...elements[element.type].init(ctx.options),
         ...element,
         id: Date.now(), // TODO: replace this
-        width: 0,
-        height: 0,
+        width: element.width || 0,
+        height: element.height || 0,
         selected: false,
         locked: false,
     });
-    ctx.updateElement = el => elements[el.type].update(el);
+    ctx.updateElement = (el, changed) => elements[el.type].update(el, new Set(changed || []));
     ctx.drawElement = (el, canvas) => elements[el.type].draw(canvas, el);
     ctx.removeElement = el => {
         ctx.elements = ctx.elements.filter(element => element.id !== el.id);
@@ -728,13 +703,13 @@ export const createBoard = (parent, opt) => {
                         textContent: content,
                     });
                     ctx.addElement(element);
-                    ctx.updateElement(element);
+                    ctx.updateElement(element, ["x", "y", "textContent"]);
                     ctx.draw();
                     console.log(element);
                     return ctx.trigger("update");
                 }
                 // Load as a new image
-                createImage(content, img => {
+                createImage(content).then(img => {
                     const element = ctx.createElement({
                         type: "image",
                         width: img.width,
@@ -742,7 +717,7 @@ export const createBoard = (parent, opt) => {
                         img: img,
                     });
                     ctx.addElement(element);
-                    ctx.updateElement(element);
+                    ctx.updateElement(element, ["img", "width", "height"]);
                     ctx.draw();
                     ctx.trigger("update");
                 });
@@ -802,8 +777,8 @@ export const createBoard = (parent, opt) => {
                 Object.assign(element, {
                     textContent: value,
                     selected: true,
-                    ...measureText(value, element.textSize, element.textFont),
                 });
+                ctx.updateElement(element, ["textContent"]);
                 ctx.selection = ctx.getSelection();
                 ctx.selectionLocked = false;
                 ctx.draw();
@@ -982,7 +957,7 @@ export const createBoard = (parent, opt) => {
         // Check for adding a new element
         if (ctx.currentTool !== "selection" && ctx.currentTool !== "screenshot") {
             ctx.currentElement.selected = true;
-            ctx.updateElement(ctx.currentElement);
+            ctx.updateElement(ctx.currentElement, ["selected"]);
         }
         // Remove selection elements
         else {
@@ -1010,6 +985,7 @@ export const createBoard = (parent, opt) => {
         // If no text element, reset current element
         else {
             ctx.currentElement = null;
+            ctx.mode = "";
         }
         
         // Reset selection
@@ -1150,7 +1126,7 @@ export const createBoard = (parent, opt) => {
         updateSelection: (key, value) => {
             ctx.selection.forEach(element => {
                 element[key] = value;
-                ctx.updateElement(element);
+                ctx.updateElement(element, [key]);
             });
             ctx.draw();
         },
@@ -1190,5 +1166,6 @@ export const createBoard = (parent, opt) => {
         },
         getSelection: () => ctx.selection,
         isSelectionLocked: () => ctx.selectionLocked,
+        screenshot: region => screenshot(ctx.canvas, region),
     };
 };
