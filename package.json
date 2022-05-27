@@ -1,0 +1,36 @@
+{
+    "name": "gitdraw",
+    "version": "0.0.0",
+    "description": "",
+    "private": true,
+    "repository": "https://github.com/jmjuanes/gitdraw",
+    "author": "Josemi Juanes <hello@josemi.xyz>",
+    "bugs": "https://github.com/jmjuanes/gitdraw/issues",
+    "workspaces": [
+        "app",
+        "gitdraw-board",
+        "gitdraw-react"
+    ],
+    "scripts": {
+        "build": "webpack build --config ./webpack.config.js",
+        "clean": "rm -rf ./public",
+        "serve": "stattic --folder ./public --port 5000"
+    },
+    "dependencies": {
+        "@babel/core": "^7.18.0",
+        "@babel/plugin-transform-react-jsx": "^7.17.12",
+        "@babel/plugin-transform-runtime": "^7.18.0",
+        "@babel/preset-env": "^7.18.0",
+        "@babel/preset-react": "^7.17.12",
+        "babel-loader": "^8.2.5",
+        "copy-webpack-plugin": "^11.0.0",
+        "html-webpack-plugin": "^5.5.0",
+        "react": "^18.1.0",
+        "react-dom": "^18.1.0",
+        "siimple": "^4.0.0",
+        "stattic": "^0.4.0",
+        "webpack": "^5.72.1",
+        "webpack-cli": "^4.9.2"
+    },
+    "license": "MIT"
+}
