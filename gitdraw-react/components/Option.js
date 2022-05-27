@@ -1,7 +1,7 @@
 import React from "react";
 import kofi from "kofi";
 
-import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/color.js";
+import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colorUtils.js";
 
 // Option types
 const optionTypes = {
