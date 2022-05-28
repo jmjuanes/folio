@@ -591,6 +591,7 @@ export const createBoard = (parent, opt) => {
     const ctx = {
         parent: parent,
         canvas: createCanvas("100px", "100px"),
+        canvasGrid: createCanvas("100px", "100px"),
         input: document.createElement("textarea"),
         options: options,
         mode: "",
@@ -605,7 +606,7 @@ export const createBoard = (parent, opt) => {
         elements: [],
         width: 200,
         height: 200,
-        grid: false,
+        grid: true,
         listeners: {},
     };
 
@@ -647,6 +648,31 @@ export const createBoard = (parent, opt) => {
                 }
             }
         });
+    };
+
+    ctx.drawGrid = () => {
+        const canvas = ctx.canvasGrid.getContext("2d");
+        canvas.clearRect(0, 0, ctx.width, ctx.height);
+    
+        // Check for drawing the grid
+        if (ctx.grid === true) {
+            canvas.beginPath();
+            canvas.setLineDash([]);
+            canvas.strokeStyle = ctx.options.gridColor;
+            canvas.lineWidth = ctx.options.gridWidth; 
+            // Horizontal rules
+            for (let i = 0; i * ctx.options.gridSize < ctx.height; i++) {
+                canvas.moveTo(0, i * ctx.options.gridSize);
+                canvas.lineTo(ctx.width, i * ctx.options.gridSize);
+            }
+            // Vertical rules
+            for (let i = 0; i * ctx.options.gridSize < ctx.width; i++) {
+                canvas.moveTo(i * ctx.options.gridSize, 0);
+                canvas.lineTo(i * ctx.options.gridSize, ctx.height);
+            }
+            // Draw the grid
+            canvas.stroke();
+        }
     };
 
     // Elements management
@@ -905,42 +931,42 @@ export const createBoard = (parent, opt) => {
             const element = ctx.currentElement;
             const snapshot = ctx.snapshot[0]; // Get snapshot of the current element
             const orientation = ctx.resizeOrientation;
-            const deltaX = ctx.getPosition(x - ctx.lastX);
-            const deltaY = ctx.getPosition(y - ctx.lastY);
+            const deltaX = x - ctx.lastX; // ctx.getPosition(x - ctx.lastX);
+            const deltaY = y - ctx.lastY; // ctx.getPosition(y - ctx.lastY);
             // Check the orientation
             if (orientation === "rh") {
-                element.width = snapshot.width + deltaX;
+                element.width = ctx.getPosition(element.x + snapshot.width + deltaX) - element.x;
             }
             else if (orientation === "lh") {
-                element.x = snapshot.x + deltaX;
-                element.width = snapshot.width - deltaX;
+                element.x = ctx.getPosition(snapshot.x + deltaX);
+                element.width = snapshot.width + (snapshot.x - element.x);
             }
             else if (orientation === "bv") {
-                element.height = snapshot.height + deltaY;
+                element.height = ctx.getPosition(element.y + snapshot.height + deltaY) - element.y;
             }
             else if (orientation === "tv") {
-                element.y = snapshot.y + deltaY;
-                element.height = snapshot.height - deltaY;
+                element.y = ctx.getPosition(snapshot.y + deltaY);
+                element.height = snapshot.height + (snapshot.y - element.y);
             }
             else if (orientation === "ltd") {
-                element.x = snapshot.x + deltaX;
-                element.y = snapshot.y + deltaY;
-                element.width = snapshot.width - deltaX;
-                element.height = snapshot.height - deltaY;
+                element.x = ctx.getPosition(snapshot.x + deltaX);
+                element.y = ctx.getPosition(snapshot.y + deltaY);
+                element.width = snapshot.width + (snapshot.x - element.x);
+                element.height = snapshot.height + (snapshot.y - element.y);
             }
             else if (orientation === "rtd") {
-                element.y = snapshot.y + deltaY;
-                element.width = snapshot.width + deltaX;
-                element.height = snapshot.height - deltaY;
+                element.y = ctx.getPosition(snapshot.y + deltaY);
+                element.height = snapshot.height + (snapshot.y - element.y);
+                element.width = ctx.getPosition(element.x + snapshot.width + deltaX) - element.x;
             }
             else if (orientation === "lbd") {
-                element.x = snapshot.x + deltaX;
-                element.width = snapshot.width - deltaX;
-                element.height = snapshot.height + deltaY;
+                element.x = ctx.getPosition(snapshot.x + deltaX);
+                element.width = snapshot.width + (snapshot.x - element.x);
+                element.height = ctx.getPosition(element.y + snapshot.height + deltaY) - element.y;
             }
             else if (orientation === "rbd") {
-                element.width = snapshot.width + deltaX;
-                element.height = snapshot.height + deltaY;
+                element.width = ctx.getPosition(element.x + snapshot.width + deltaX) - element.x;
+                element.height = ctx.getPosition(element.y + snapshot.height + deltaY) - element.y;
             }
         }
         // Check if we have selected elements
@@ -973,8 +999,8 @@ export const createBoard = (parent, opt) => {
         }
         // Check for text element --> update only text position
         else if (ctx.currentElement && ctx.currentElement.type === "text") {
-            ctx.currentElement.x = x;
-            ctx.currentElement.y = y;
+            ctx.currentElement.x = ctx.getPosition(x);
+            ctx.currentElement.y = ctx.getPosition(y);
         }
 
         ctx.draw();
@@ -1068,14 +1094,16 @@ export const createBoard = (parent, opt) => {
         ctx.height = ctx.parent.offsetHeight;
         ctx.canvas.setAttribute("width", ctx.width + "px");
         ctx.canvas.setAttribute("height", ctx.height + "px");
+        ctx.canvasGrid.setAttribute("width", ctx.width + "px");
+        ctx.canvasGrid.setAttribute("height", ctx.height + "px");
         ctx.draw();
+        ctx.drawGrid();
         // ctx.trigger("update");
     };
 
     // Append elements and update parent styles
     ctx.parent.style.width = "100%";
     ctx.parent.style.height = "100%";
-    // ctx.parent.style.position = "relative";
     ctx.parent.style.position = "fixed";
     ctx.parent.style.top = "0px";
     ctx.parent.style.left = "0px";
@@ -1085,7 +1113,12 @@ export const createBoard = (parent, opt) => {
     document.querySelector("body").style.overflow = "hidden";
 
     // Canvas styles
-    ctx.canvas.style.userSelect = "none";
+    [ctx.canvas, ctx.canvasGrid].forEach(el => {
+        el.style.userSelect = "none";
+        el.style.position = "absolute";
+        el.style.top = "0px";
+        el.style.bottom = "0px";
+    });
 
     // Input styles
     ctx.input.style.display = "none";
@@ -1105,13 +1138,14 @@ export const createBoard = (parent, opt) => {
     ctx.parent.style.height = "100%";
     ctx.parent.style.overflow = "hidden";
     ctx.parent.appendChild(ctx.canvas);
+    ctx.parent.appendChild(ctx.canvasGrid);
     ctx.parent.appendChild(ctx.input);
 
     // Register event listeners
-    ctx.canvas.addEventListener("pointerdown", handlePointerDown);
-    ctx.canvas.addEventListener("pointermove", handlePointerMove);
-    ctx.canvas.addEventListener("pointerup", handlePointerUp);
-    ctx.canvas.addEventListener("dblclick", handleDoubleClick);
+    ctx.canvasGrid.addEventListener("pointerdown", handlePointerDown);
+    ctx.canvasGrid.addEventListener("pointermove", handlePointerMove);
+    ctx.canvasGrid.addEventListener("pointerup", handlePointerUp);
+    ctx.canvasGrid.addEventListener("dblclick", handleDoubleClick);
 
     // Register text input event listeners
     ctx.input.addEventListener("input", () => ctx.updateInput());
@@ -1136,6 +1170,7 @@ export const createBoard = (parent, opt) => {
 
         // Remove dom elements
         ctx.parent.removeChild(ctx.canvas);
+        ctx.parent.removeChild(ctx.canvasGrid);
         ctx.parent.removeChild(ctx.input);
 
         // Reset body styles
@@ -1174,11 +1209,15 @@ export const createBoard = (parent, opt) => {
         getCurrentTool: () => ctx.currentTool,
         showGrid: () => {
             ctx.grid = true;
-            ctx.draw();
+            ctx.drawGrid();
         },
         hideGrid: () => {
             ctx.grid = false;
-            ctx.draw();
+            ctx.drawGrid();
+        },
+        toggleGrid: () => {
+            ctx.grid = !ctx.grid;
+            ctx.drawGrid();
         },
         isGridVisible: () => ctx.grid,
         updateSelection: (key, value) => {

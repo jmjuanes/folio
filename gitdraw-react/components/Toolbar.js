@@ -30,14 +30,12 @@ export const Toolbar = props => (
             <div className="" />
             {/* Render grid option */}
             <Button
-                className=""
-                active={props.isGridActive}
+                active={props.gridButtonActive}
                 icon="grid"
-                onClick={() => props.onGridClick()}
+                onClick={() => props.onGridButtonClick()}
             />
             {/* Render screenshot option */}
             <Button
-                className=""
                 active={props.currentElement === "screenshot"}
                 icon="camera"
                 onClick={() => props.onElementClick("screenshot")}

@@ -42,8 +42,13 @@ export const GitDrawBoard = props => {
                     {/* <Menubar /> */}
                     <Toolbar
                         currentElement={boardRef.current.getCurrentTool()}
+                        gridButtonActive={boardRef.current.isGridVisible()}
                         onElementClick={tool => {
                             boardRef.current.setCurrentTool(tool);
+                            forceUpdate();
+                        }}
+                        onGridButtonClick={() => {
+                            boardRef.current.toggleGrid();
                             forceUpdate();
                         }}
                     />
