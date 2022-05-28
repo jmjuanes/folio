@@ -3,6 +3,16 @@ const RESIZE_MODE = Symbol("mode:resize");
 const DRAG_MODE = Symbol("mode:drag");
 const TEXT_INPUT_MODE = Symbol("mode:text-input");
 
+// Available keys
+const KEYS = {
+    ESCAPE: "Escape",
+    BACKSPACE: "Backspace",
+    ARROW_DOWN: "ArrowDown",
+    ARROW_LEFT: "ArrowLeft",
+    ARROW_RIGHT: "ArrowRight",
+    ARROW_UP: "ArrowUp",
+};
+
 // Color parser
 export const parseColor = (color, opacity) => {
     if (color === "transparent") {
@@ -150,7 +160,7 @@ const screenshot = (originalCanvas, region) => {
 
 // Check for arrow keys
 const isArrowKey = key => {
-    return key === "ArrowUp" || key === "ArrowDown" || key === "ArrowLeft" || key === "ArrowRight";
+    return key === KEYS.ARROW_DOWN || key === KEYS.ARROW_LEFT || key === KEYS.ARROW_RIGHT || key === KEYS.ARROW_UP;
 };
 
 // Check if the provided event.target is related to an input element
@@ -705,14 +715,33 @@ export const createBoard = (parent, opt) => {
             ctx.input.style.left = (ctx.currentElement.x + ((ctx.currentElement.width - ctx.input.offsetWidth) / 2)) + "px";
         }
     };
+    ctx.submitInput = () => {
+        const value = ctx.input.value || "";
+        const element = ctx.currentElement;
+        if (value || element.type !== "text") {
+            Object.assign(element, {
+                textContent: value || "",
+                selected: true,
+            });
+            ctx.updateElement(element, ["textContent"]);
+            ctx.selection = ctx.getSelection();
+            ctx.selectionLocked = false;
+        } else {
+            // Remove this element
+            ctx.removeElement(element);
+        }
+        ctx.currentElement = null;
+        ctx.mode = ""; // Reset mode
+        ctx.hideInput();
+    };
 
     // Calculate the position
     ctx.getPosition = v => {
         return ctx.grid ? Math.round(v / ctx.options.gridSize) * ctx.options.gridSize : v;
     };
 
-    // Handle document paste
-    const handleDocumentPaste = event => {
+    // Handle paste
+    const handlePaste = event => {
         return !isInputTarget(event) && getDataFromClipboard(event).then(data => {
             ctx.clearSelection(); // Clear the current selection
             parseClipboardBlob(data.type, data.blob).then(content => {
@@ -746,19 +775,26 @@ export const createBoard = (parent, opt) => {
     };
 
     // Handle document key down
-    const handleDocumentKeyDown = event => {
+    const handleKeyDown = event => {
         if (isInputTarget(event)) {
+            if (ctx.mode === TEXT_INPUT_MODE && event.key === KEYS.ESCAPE) {
+                event.preventDefault();
+                ctx.submitInput();
+                ctx.draw();
+                ctx.trigger("update");
+            }
+
             return; // Stop event processing
         }
         // Check ESCAPE key --> reset selection
-        if (event.key === "Escape") {
+        else if (event.key === KEYS.ESCAPE) {
             event.preventDefault();
             ctx.clearSelection();
             ctx.draw();
             ctx.trigger("update");
         }
         // Check for backspace key --> remove elements
-        if (event.key === "Backspace") {
+        else if (event.key === KEYS.BACKSPACE) {
             event.preventDefault();
             ctx.removeSelection();
             ctx.draw();
@@ -770,16 +806,16 @@ export const createBoard = (parent, opt) => {
             const step = ctx.grid ? ctx.options.gridSize : (event.shiftKey ? 5 : 1);
 
             // Move selected elements
-            if (event.key === "ArrowUp") {
+            if (event.key === KEYS.ARROW_UP) {
                 ctx.selection.forEach(el => el.y = ctx.getPosition(el.y - step));
             }
-            else if (event.key === "ArrowDown") {
+            else if (event.key === KEYS.ARROW_DOWN) {
                 ctx.selection.forEach(el => el.y = ctx.getPosition(el.y + step));
             }
-            else if (event.key === "ArrowLeft") {
+            else if (event.key === KEYS.ARROW_LEFT) {
                 ctx.selection.forEach(el => el.x = ctx.getPosition(el.x - step));
             }
-            else if (event.key === "ArrowRight") {
+            else if (event.key === KEYS.ARROW_RIGHT) {
                 ctx.selection.forEach(el => el.x = ctx.getPosition(el.x + step));
             }
             ctx.draw();
@@ -787,28 +823,13 @@ export const createBoard = (parent, opt) => {
         }
     };
 
-    // Handle mouse down
-    const handleMouseDown = event => {
+    // Handle pointer down event
+    const handlePointerDown = event => {
         if (ctx.mode === TEXT_INPUT_MODE) {
             event.preventDefault();
-            const value = ctx.input.value || "";
-            const element = ctx.currentElement;
-            if (value || element.type !== "text") {
-                Object.assign(element, {
-                    textContent: value || "",
-                    selected: true,
-                });
-                ctx.updateElement(element, ["textContent"]);
-                ctx.selection = ctx.getSelection();
-                ctx.selectionLocked = false;
-            } else {
-                // Remove this element
-                ctx.removeElement(element);
-            }
-            ctx.currentElement = null;
-            ctx.mode = ""; // Reset mode
-            ctx.hideInput();
+            ctx.submitInput();
             ctx.draw();
+            ctx.trigger("update");
             return;
         }
         ctx.currentElement = null;
@@ -865,8 +886,8 @@ export const createBoard = (parent, opt) => {
         ctx.clearSelection();
     };
 
-    // Handle mouse move
-    const handleMouseMove = event => {
+    // Handle pointer move
+    const handlePointerMove = event => {
         const x = event.offsetX; // event.clientX - event.target.offsetLeft;
         const y = event.offsetY; // event.clientY - event.target.offsetTop;
         // Check for no selected elements
@@ -957,8 +978,8 @@ export const createBoard = (parent, opt) => {
         ctx.draw();
     };
 
-    // Handle mouse up
-    const handleMouseUp = event => {
+    // Handle pointer up
+    const handlePointerUp = event => {
         // Check for no current element active
         if (!ctx.currentElement || ctx.mode === TEXT_INPUT_MODE) {
             return;
@@ -1077,9 +1098,9 @@ export const createBoard = (parent, opt) => {
     ctx.parent.appendChild(ctx.input);
 
     // Register event listeners
-    ctx.canvas.addEventListener("mousedown", handleMouseDown);
-    ctx.canvas.addEventListener("mousemove", handleMouseMove);
-    ctx.canvas.addEventListener("mouseup", handleMouseUp);
+    ctx.canvas.addEventListener("pointerdown", handlePointerDown);
+    ctx.canvas.addEventListener("pointermove", handlePointerMove);
+    ctx.canvas.addEventListener("pointerup", handlePointerUp);
     ctx.canvas.addEventListener("dblclick", handleDoubleClick);
 
     // Register text input event listeners
@@ -1088,8 +1109,8 @@ export const createBoard = (parent, opt) => {
     ctx.input.addEventListener("mouseup", e => e.stopPropagation());
 
     // Register document event listeners
-    document.addEventListener("keydown", handleDocumentKeyDown, false);
-    document.addEventListener("paste", handleDocumentPaste, false);
+    document.addEventListener("keydown", handleKeyDown, false);
+    document.addEventListener("paste", handlePaste, false);
     window.addEventListener("resize", handleResize, false);
 
     // Force a resize of the canvas
@@ -1099,8 +1120,8 @@ export const createBoard = (parent, opt) => {
     // Remove all event listeners
     ctx.destroy = () => {
         //Remove window/document listeners
-        document.removeEventListener("keydown", handleDocumentKeyDown, false);
-        document.removeEventListener("paste", handleDocumentPaste, false);
+        document.removeEventListener("keydown", handleKeyDown, false);
+        document.removeEventListener("paste", handlePaste, false);
         window.removeEventListener("resize", handleResize, false);
 
         // Remove dom elements
