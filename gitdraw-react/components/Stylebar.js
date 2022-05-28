@@ -15,6 +15,13 @@ const lineCapTypes = [
     "circle",
 ];
 
+// text align
+const textAlign = {
+    "left": "align-left",
+    "center": "align-center",
+    "right": "align-right",
+};
+
 // Groups options
 const groups = {
     text: {
@@ -42,6 +49,13 @@ const groups = {
                     title: "Text opacity",
                     domain: [0, 1],
                     step: 0.1,
+                },
+            },
+            textAlign: {
+                type: "selectIcon",
+                props: {
+                    title: "Text align",
+                    values: textAlign,
                 },
             },
         },
@@ -171,7 +185,9 @@ export const Stylebar = props => {
                         return null; // This group is not available
                     }
                     const isActive = currentOption === key;
-                    const availableOptions = Object.keys(groups[key].options);
+                    const availableOptions = Object.keys(groups[key].options).filter(name => {
+                        return typeof props.selection[0][name] !== "undefined";
+                    });
                     return (
                         <div key={key} className="is-relative">
                             <Button

@@ -116,6 +116,22 @@ const optionTypes = {
             ))}
         </select>
     ),
+    selectIcon: props => (
+        <div className="is-flex" style={{gap:"0.25rem"}}>
+            {Object.keys(props.values).map(key => {
+                const classList = kofi.classNames({
+                    "has-p-2 has-radius-md is-clickable has-w-full has-text-center": true,
+                    "has-bg-gray-200 has-bg-gray-300-hover": key !== props.value, 
+                    "has-bg-blue-500 has-text-white": key === props.value,
+                });
+                return (
+                    <div key={key} className={classList} onClick={() => props.onChange(key)}>
+                        <i className={`icon-${props.values[key]}`} />
+                    </div>
+                );
+            })}
+        </div>
+    ),
     switch: props => (
         <div className="is-flex">
             <div className="has-size-0 has-text-gray-500 has-weight-bold">Off</div>

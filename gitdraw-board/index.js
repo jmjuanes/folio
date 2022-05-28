@@ -257,13 +257,14 @@ export const elements = {
             strokeDash: false,
             strokeOpacity: 1.0,
             radius: 0,
+            textAlign: "center",
             textColor: config.defaultColor, // colors.black,
             textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
             textSize: 16,
             textContent: "",
         }),
-        draw: (canvas, element) => {
+        draw: (canvas, element, shouldDrawInnerText) => {
             const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
             const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
             const halfWidth = Math.abs(element.width) / 2;
@@ -285,6 +286,7 @@ export const elements = {
             canvas.closePath();
             canvas.fillStyle = parseColor(element.fillColor, element.fillOpacity);
             canvas.fill();
+
             // Check for no stroke color --> render rectangle stroke
             if (element.strokeWidth > 0 && element.strokeColor !== "transparent") {
                 canvas.strokeStyle = parseColor(element.strokeColor, element.strokeOpacity);
@@ -300,7 +302,10 @@ export const elements = {
                 // Apply stroke
                 canvas.stroke();
             }
-            drawInnerText(canvas, element);
+
+            if (shouldDrawInnerText) {
+                drawInnerText(canvas, element);
+            }
             // context.globalAlpha = 1; // Reset opacity
         },
         update: () => null,
@@ -314,13 +319,14 @@ export const elements = {
             strokeOpacity: 1.0,
             strokeWidth: 1,
             strokeDash: false,
+            textAlign: "center",
             textColor: config.defaultColor, // colors.black,
             textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
             textSize: 16,
             textContent: ""
         }),
-        draw: (canvas, element) => {
+        draw: (canvas, element, shouldDrawInnerText) => {
             const rx = element.width / 2;
             const ry = element.height / 2;
             canvas.beginPath();
@@ -328,6 +334,7 @@ export const elements = {
             canvas.ellipse(element.x + rx, element.y + ry, Math.abs(rx), Math.abs(ry), 0, 0, 2*Math.PI);
             canvas.fillStyle = parseColor(element.fillColor, element.fillOpacity);
             canvas.fill();
+
             // Check for no stroke color --> render rectangle stroke
             if (element.strokeWidth > 0 && element.strokeColor !== "transparent") {
                 canvas.strokeStyle = parseColor(element.strokeColor, element.strokeOpacity);
@@ -343,7 +350,10 @@ export const elements = {
                 // Apply stroke
                 canvas.stroke();
             }
-            drawInnerText(canvas, element);
+
+            if (shouldDrawInnerText) {
+                drawInnerText(canvas, element);
+            }
             // canvas.globalAlpha = 1; //Reset opacity
         },
         update: () => null,
@@ -399,33 +409,35 @@ export const elements = {
             textOpacity: 1.0,
             textContent: "",
         }),
-        draw: (canvas, element) => {
-            canvas.save();
-            canvas.beginPath();
-            canvas.rect(element.x, element.y, element.width, element.height);
-            canvas.clip();
-            // canvas.globalAlpha = element.opacity;
-            canvas.font = `${element.textSize}px ${element.textFont}`;
-            canvas.textAlign = element.textAlign; // "start"; // Text left aligned
-            canvas.textBaseline = "alphabetic"; // Default baseline
-            canvas.fillStyle = parseColor(element.textColor, element.textOpacity);
-            const lines = element.textContent.replace(/\r\n?/g, "\n").split("\n");
-            let x = element.x; // Default left aligned
-            if (element.textAlign === "center") {
-                x = x + element.width / 2; // Center text position
+        draw: (canvas, element, shouldDrawText) => {
+            if (shouldDrawText) {
+                canvas.save();
+                canvas.beginPath();
+                canvas.rect(element.x, element.y, element.width, element.height);
+                canvas.clip();
+                // canvas.globalAlpha = element.opacity;
+                canvas.font = `${element.textSize}px ${element.textFont}`;
+                canvas.textAlign = element.textAlign; // "start"; // Text left aligned
+                canvas.textBaseline = "alphabetic"; // Default baseline
+                canvas.fillStyle = parseColor(element.textColor, element.textOpacity);
+                const lines = element.textContent.replace(/\r\n?/g, "\n").split("\n");
+                let x = element.x; // Default left aligned
+                if (element.textAlign === "center") {
+                    x = x + element.width / 2; // Center text position
+                }
+                else if (element.textAlign === "right") {
+                    x = x + element.width; // Right aligned text
+                }
+                // let lineHeight = element.height / lines.length;
+                // let offset = element.height - element.baseline;
+                for (let i = 0; i < lines.length; i++) {
+                    canvas.fillText(lines[i], x, element.y + (i + 1) * element.textSize); 
+                }
+                // canvas.fill();
+                // canvas.closePath();
+                canvas.restore();
+                // canvas.globalAlpha = 1; // Reset opacity
             }
-            else if (element.textAlign === "right") {
-                x = x + element.width; // Right aligned text
-            }
-            // let lineHeight = element.height / lines.length;
-            // let offset = element.height - element.baseline;
-            for (let i = 0; i < lines.length; i++) {
-                canvas.fillText(lines[i], x, element.y + (i + 1) * element.textSize); 
-            }
-            // canvas.fill();
-            // canvas.closePath();
-            canvas.restore();
-            // canvas.globalAlpha = 1; // Reset opacity
         },
         update: (element, changedKeys) => {
             if (changedKeys.has("textContent") || changedKeys.has("textSize") || changedKeys.has("textFont")) {
@@ -598,13 +610,13 @@ export const createBoard = (parent, opt) => {
         canvas.clearRect(0, 0, ctx.width, ctx.height);
 
         forEachRev(ctx.elements, element => {
-            if (ctx.mode === TEXT_INPUT_MODE && ctx.currentElement?.id === element.id && element.type === "text") {
-                return; // Prevent rendering this element
-            }
-            ctx.drawElement(element, canvas);
+            const shouldDrawInnerText = ctx.mode !== TEXT_INPUT_MODE || ctx.currentElement?.id !== element.id;
+            
+            // Draw the element
+            ctx.drawElement(element, canvas, shouldDrawInnerText);
 
             // Check if this element is selected --> draw selection area
-            if (element.selected === true && element.type !== "selection") {
+            if (shouldDrawInnerText && element.selected === true && element.type !== "selection") {
                 const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
                 const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
                 canvas.beginPath();
@@ -638,7 +650,7 @@ export const createBoard = (parent, opt) => {
         locked: false,
     });
     ctx.updateElement = (el, changed) => elements[el.type].update(el, new Set(changed || []));
-    ctx.drawElement = (el, canvas) => elements[el.type].draw(canvas, el);
+    ctx.drawElement = (el, canvas, shouldDrawInnerText) => elements[el.type].draw(canvas, el, shouldDrawInnerText);
     ctx.removeElement = el => {
         ctx.elements = ctx.elements.filter(element => element.id !== el.id);
         ctx.selection = ctx.selection.filter(element => element.id !== el.id);
@@ -672,6 +684,7 @@ export const createBoard = (parent, opt) => {
         ctx.input.style.color = ctx.currentElement.textColor;
         ctx.input.style.fontSize = ctx.currentElement.textSize + "px";
         ctx.input.style.fontFamily = ctx.currentElement.textFont;
+        ctx.input.style.textAlign = ctx.currentElement.textAlign;
         ctx.input.value = ctx.currentElement.textContent || ""; // Get text content
         ctx.input.style.display = "inline-block"; // Show input
         ctx.input.focus(); // focus in the new input
@@ -682,8 +695,15 @@ export const createBoard = (parent, opt) => {
         ctx.input.value = ""; // Remove current value
     };
     ctx.updateInput = () => {
+        ctx.input.style.height = "1em";
         ctx.input.style.height = ctx.input.scrollHeight + "px";
         ctx.input.style.width = Math.max.apply(null, ctx.input.value.split("\n").map(l => l.length)) + "em";
+
+        // Move text input to the correct position
+        if (ctx.currentElement.type !== "text") {
+            ctx.input.style.top = (ctx.currentElement.y + ((ctx.currentElement.height - ctx.input.offsetHeight) / 2)) + "px";
+            ctx.input.style.left = (ctx.currentElement.x + ((ctx.currentElement.width - ctx.input.offsetWidth) / 2)) + "px";
+        }
     };
 
     // Calculate the position
@@ -773,22 +793,22 @@ export const createBoard = (parent, opt) => {
             event.preventDefault();
             const value = ctx.input.value || "";
             const element = ctx.currentElement;
-            if (value) {
+            if (value || element.type !== "text") {
                 Object.assign(element, {
-                    textContent: value,
+                    textContent: value || "",
                     selected: true,
                 });
                 ctx.updateElement(element, ["textContent"]);
                 ctx.selection = ctx.getSelection();
                 ctx.selectionLocked = false;
-                ctx.draw();
             } else {
                 // Remove this element
                 ctx.removeElement(element);
-                ctx.currentElement = null;
             }
+            ctx.currentElement = null;
             ctx.mode = ""; // Reset mode
             ctx.hideInput();
+            ctx.draw();
             return;
         }
         ctx.currentElement = null;
@@ -999,7 +1019,8 @@ export const createBoard = (parent, opt) => {
     // Handle double click
     const handleDoubleClick = event => {
         event.preventDefault();
-        if (ctx.selection.length === 1 && ctx.selection[0].type === "text") {
+        // if (ctx.selection.length === 1 && ctx.selection[0].type === "text") {
+        if (ctx.selection.length === 1 && typeof ctx.selection[0].textContent === "string") {
             ctx.currentElement = ctx.selection[0];
         }
         else {
@@ -1031,12 +1052,15 @@ export const createBoard = (parent, opt) => {
     ctx.parent.style.width = "100%";
     ctx.parent.style.height = "100%";
     ctx.parent.style.position = "relative";
+    
+    // Apply body styles
+    document.querySelector("body").style.overflow = "hidden";
 
     // Input styles
     ctx.input.style.display = "none";
     ctx.input.style.position = "absolute";
     ctx.input.style.minWidth = "200px";
-    ctx.input.style.minHeight = "1em";
+    // ctx.input.style.minHeight = "1em";
     ctx.input.style.outline = "0px";
     ctx.input.style.border = "0px solid transparent";
     ctx.input.style.padding = "0px";
@@ -1082,6 +1106,9 @@ export const createBoard = (parent, opt) => {
         // Remove dom elements
         ctx.parent.removeChild(ctx.canvas);
         ctx.parent.removeChild(ctx.input);
+
+        // Reset body styles
+        document.querySelector("body").style.overflow = "";
     };
 
     // Return public api
