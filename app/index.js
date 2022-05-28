@@ -5,7 +5,7 @@ import {GitDrawBoard} from "@gitdraw/react";
 
 const App = () => {
     return (
-        <div className="has-w-full has-h-full">
+        <div className="">
             <GitDrawBoard />
         </div>
     );

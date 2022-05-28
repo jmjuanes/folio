@@ -36,8 +36,7 @@ export const GitDrawBoard = props => {
     }, []);
 
     return (
-        <div className="has-w-full has-h-full is-relative">
-            <div ref={parentRef} className="has-w-full has-h-full" />
+        <div ref={parentRef}>
             {kofi.when(ready, () => (
                 <React.Fragment>
                     {/* <Menubar /> */}

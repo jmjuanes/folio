@@ -825,6 +825,7 @@ export const createBoard = (parent, opt) => {
 
     // Handle pointer down event
     const handlePointerDown = event => {
+        event.preventDefault();
         if (ctx.mode === TEXT_INPUT_MODE) {
             event.preventDefault();
             ctx.submitInput();
@@ -888,6 +889,7 @@ export const createBoard = (parent, opt) => {
 
     // Handle pointer move
     const handlePointerMove = event => {
+        event.preventDefault();
         const x = event.offsetX; // event.clientX - event.target.offsetLeft;
         const y = event.offsetY; // event.clientY - event.target.offsetTop;
         // Check for no selected elements
@@ -980,6 +982,7 @@ export const createBoard = (parent, opt) => {
 
     // Handle pointer up
     const handlePointerUp = event => {
+        event.preventDefault();
         // Check for no current element active
         if (!ctx.currentElement || ctx.mode === TEXT_INPUT_MODE) {
             return;
@@ -1072,10 +1075,17 @@ export const createBoard = (parent, opt) => {
     // Append elements and update parent styles
     ctx.parent.style.width = "100%";
     ctx.parent.style.height = "100%";
-    ctx.parent.style.position = "relative";
+    // ctx.parent.style.position = "relative";
+    ctx.parent.style.position = "fixed";
+    ctx.parent.style.top = "0px";
+    ctx.parent.style.left = "0px";
     
     // Apply body styles
+    document.querySelector("body").style.touchAction = "pan-y";
     document.querySelector("body").style.overflow = "hidden";
+
+    // Canvas styles
+    ctx.canvas.style.userSelect = "none";
 
     // Input styles
     ctx.input.style.display = "none";
