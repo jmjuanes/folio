@@ -4,3 +4,9 @@ node_modules
 # Outputs
 public
 styles.css
+firebase-debug.log
+.firebase
+
+# Configuration files
+.env
+.firebaserc
