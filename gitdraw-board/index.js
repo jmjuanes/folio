@@ -103,18 +103,22 @@ const getAbsolutePositions = (position, size) => {
 const measureText = (text, textSize, textFont) => {
     const size = {width: 0, height: 0}; // To store the computed text size
     if (text.length > 0) {
-        const div = document.createElement("div");
-        div.innerHTML = text.replace(/\r\n?/g, "\n").split("\n").join("<br>");
-        div.style.position = "absolute";
-        div.style.top = "-9999px";
-        div.style.left = "-9999px";
-        div.style.fontFamily = textFont;
-        div.style.fontSize = textSize + "px";
-        div.style.lineHeight = "normal"; // Set line-height as normal
-        document.body.appendChild(div); // Append the div element
-        size.width = div.offsetWidth; // Set computed width
-        size.height = div.offsetHeight; // Set computed height
-        document.body.removeChild(div); // Remove div from DOM
+        if (!measureText.div) {
+            measureText.div = document.createElement("div");
+            measureText.div.style.position = "absolute";
+            measureText.div.style.visibility = "hidden";
+            measureText.div.style.top = "-9999px";
+            measureText.div.style.left = "-9999px";
+            measureText.div.style.lineHeight = "normal"; // Set line-height as normal
+            measureText.div.style.whiteSpace = "pre";
+            document.body.appendChild(measureText.div);
+        }
+        measureText.div.innerHTML = text.replace(/\r\n?/g, "\n").split("\n").join("<br>");
+        measureText.div.style.fontFamily = textFont;
+        measureText.div.style.fontSize = textSize + "px";
+        size.width = measureText.div.offsetWidth; // Set computed width
+        size.height = measureText.div.offsetHeight; // Set computed height
+        // document.body.removeChild(div); // Remove div from DOM
     }
     // Return the text size
     return size;
@@ -574,7 +578,7 @@ export const createBoard = (parent, opt) => {
         // Default grid values
         gridColor: "rgb(238, 242, 247)", 
         gridWidth: 1, //Grid lines width
-        gridOpacity: 1.0,
+        gridOpacity: 0.8,
         gridSize: 10,
         gridStyle: "lined",
         // Default resize values
@@ -656,6 +660,7 @@ export const createBoard = (parent, opt) => {
     
         // Check for drawing the grid
         if (ctx.grid === true) {
+            canvas.globalAlpha = ctx.options.gridOpacity;
             canvas.beginPath();
             canvas.setLineDash([]);
             canvas.strokeStyle = ctx.options.gridColor;
@@ -672,6 +677,7 @@ export const createBoard = (parent, opt) => {
             }
             // Draw the grid
             canvas.stroke();
+            canvas.globalAlpha = 1;
         }
     };
 
@@ -729,16 +735,26 @@ export const createBoard = (parent, opt) => {
     ctx.hideInput = () => {
         ctx.input.style.display = "none";
         ctx.input.value = ""; // Remove current value
+        ctx.input.blur();
     };
     ctx.updateInput = () => {
         ctx.input.style.height = "1em";
-        ctx.input.style.height = ctx.input.scrollHeight + "px";
-        ctx.input.style.width = Math.max.apply(null, ctx.input.value.split("\n").map(l => l.length)) + "em";
+        const size = measureText(ctx.input.value || "", ctx.currentElement.textSize, ctx.currentElement.textFont);
+        const width = Math.max(size.width + 1, ctx.currentElement.width);
+        const height = Math.max(ctx.input.scrollHeight, ctx.currentElement.height);
+        ctx.input.style.width = width;
+        ctx.input.style.height = height;
 
         // Move text input to the correct position
         if (ctx.currentElement.type !== "text") {
-            ctx.input.style.top = (ctx.currentElement.y + ((ctx.currentElement.height - ctx.input.offsetHeight) / 2)) + "px";
-            ctx.input.style.left = (ctx.currentElement.x + ((ctx.currentElement.width - ctx.input.offsetWidth) / 2)) + "px";
+            ctx.input.style.top = ctx.currentElement.y + ((ctx.currentElement.height - ctx.input.offsetHeight) / 2);
+            // ctx.input.style.left = (ctx.currentElement.x + ((ctx.currentElement.width - ctx.input.offsetWidth) / 2)) + "px";
+            if (ctx.currentElement.textAlign === "center") {
+                ctx.input.style.left = ctx.currentElement.x - (width - ctx.currentElement.width) / 2;
+            }
+            else if (ctx.currentElement.textAlign === "right") {
+                ctx.input.style.left = ctx.currentElement.x - (width - ctx.currentElement.width);
+            }
         }
     };
     ctx.submitInput = () => {
@@ -802,7 +818,7 @@ export const createBoard = (parent, opt) => {
 
     // Handle document key down
     const handleKeyDown = event => {
-        if (isInputTarget(event)) {
+        if (ctx.mode === TEXT_INPUT_MODE || isInputTarget(event)) {
             if (ctx.mode === TEXT_INPUT_MODE && event.key === KEYS.ESCAPE) {
                 event.preventDefault();
                 ctx.submitInput();
@@ -852,13 +868,21 @@ export const createBoard = (parent, opt) => {
     // Handle pointer down event
     const handlePointerDown = event => {
         event.preventDefault();
+
+        // Remove current selection
+        const currentSelection = document.getSelection();
+        if (currentSelection?.anchorNode) {
+            currentSelection.removeAllRanges();
+        }
+
+        // Check for text input mode --> submit text
         if (ctx.mode === TEXT_INPUT_MODE) {
-            event.preventDefault();
             ctx.submitInput();
             ctx.draw();
             ctx.trigger("update");
             return;
         }
+
         ctx.currentElement = null;
         ctx.lastX = event.offsetX; // event.clientX - event.target.offsetLeft;
         ctx.lastY = event.offsetY; // event.clientY - event.target.offsetTop;
@@ -1109,29 +1133,35 @@ export const createBoard = (parent, opt) => {
     ctx.parent.style.left = "0px";
     
     // Apply body styles
-    document.querySelector("body").style.touchAction = "pan-y";
+    // document.querySelector("body").style.touchAction = "pan-y";
     document.querySelector("body").style.overflow = "hidden";
 
     // Canvas styles
     [ctx.canvas, ctx.canvasGrid].forEach(el => {
         el.style.userSelect = "none";
+        el.style.touchAction = "none";
         el.style.position = "absolute";
         el.style.top = "0px";
         el.style.bottom = "0px";
     });
 
-    // Input styles
+    // Input style
     ctx.input.style.display = "none";
     ctx.input.style.position = "absolute";
-    ctx.input.style.minWidth = "200px";
-    // ctx.input.style.minHeight = "1em";
+    ctx.input.style.width = "auto";
+    ctx.input.style.minWidth = "1em";
+    ctx.input.style.minHeight = "1em";
     ctx.input.style.outline = "0px";
     ctx.input.style.border = "0px solid transparent";
-    ctx.input.style.padding = "0px";
+    // ctx.input.style.padding = "0px";
+    ctx.input.style.padding = "3px 0px"; // Terrible hack to fix text position
+    ctx.input.style.margin = "0px";
     ctx.input.style.resize = "none";
     ctx.input.style.overflow = "hidden";
     ctx.input.style.lineHeight = "1";
     ctx.input.style.backgroundColor = "transparent";
+    ctx.input.style.wordBreak = "pre";
+    ctx.input.style.whiteSpace = "break-word";
 
     // Append child items
     ctx.parent.style.width = "100%";
