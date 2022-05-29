@@ -272,6 +272,7 @@ export const elements = {
             strokeOpacity: 1.0,
             radius: 0,
             textAlign: "center",
+            textVerticalAlign: "middle",
             textColor: config.defaultColor, // colors.black,
             textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
@@ -334,6 +335,7 @@ export const elements = {
             strokeWidth: 1,
             strokeDash: false,
             textAlign: "center",
+            textVerticalAlign: "middle",
             textColor: config.defaultColor, // colors.black,
             textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
@@ -741,14 +743,20 @@ export const createBoard = (parent, opt) => {
         ctx.input.style.height = "1em";
         const size = measureText(ctx.input.value || "", ctx.currentElement.textSize, ctx.currentElement.textFont);
         const width = Math.max(size.width + 1, ctx.currentElement.width);
-        const height = Math.max(ctx.input.scrollHeight, ctx.currentElement.height);
+        const height = ctx.input.scrollHeight; // .max(ctx.input.scrollHeight, ctx.currentElement.height);
         ctx.input.style.width = width;
         ctx.input.style.height = height;
 
         // Move text input to the correct position
         if (ctx.currentElement.type !== "text") {
-            ctx.input.style.top = ctx.currentElement.y + ((ctx.currentElement.height - ctx.input.offsetHeight) / 2);
-            // ctx.input.style.left = (ctx.currentElement.x + ((ctx.currentElement.width - ctx.input.offsetWidth) / 2)) + "px";
+            // Vertical align
+            if (ctx.currentElement.textVerticalAlign === "middle") {
+                ctx.input.style.top = ctx.currentElement.y + (ctx.currentElement.height - height) / 2;
+            }
+            else if (ctx.currentElement.textVerticalAlign === "bottom") {
+                ctx.input.style.top = ctx.currentElement.y + (ctx.currentElement.height - height);
+            }
+            // Horizontal align
             if (ctx.currentElement.textAlign === "center") {
                 ctx.input.style.left = ctx.currentElement.x - (width - ctx.currentElement.width) / 2;
             }
