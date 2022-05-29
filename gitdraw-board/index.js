@@ -264,8 +264,8 @@ export const elements = {
     rectangle: {
         icon: "square",
         init: config => ({
-            fillColor: "transparent",
-            fillOpacity: 1.0,
+            fillColor: config.defaultColor,
+            fillOpacity: 0,
             strokeColor: config.defaultColor, // colors.black,
             strokeWidth: 1,
             strokeDash: false,
@@ -328,8 +328,8 @@ export const elements = {
     ellipse: {
         icon: "circle",
         init: config => ({
-            fillColor: "transparent",
-            fillOpacity: 1.0,
+            fillColor: config.defaultColor,
+            fillOpacity: 0,
             strokeColor: config.defaultColor, // colors.black,
             strokeOpacity: 1.0,
             strokeWidth: 1,
@@ -1297,6 +1297,22 @@ export const createBoard = (parent, opt) => {
         },
         removeSelection: () => {
             ctx.removeSelection();
+            ctx.draw();
+        },
+        bringSelectionForward: () => {
+            forEachRev(ctx.selection, element => {
+                const index = ctx.elements.findIndex(el => el.id === element.id);
+                ctx.elements.splice(index, 1);
+                ctx.elements.splice(Math.max(index - 1, 0), 0, element);
+            });
+            ctx.draw();
+        },
+        sendSelectionBackward: () => {
+            ctx.selection.forEach(element => {
+                const index = ctx.elements.findIndex(el => el.id === element.id);
+                ctx.elements.splice(index, 1);
+                ctx.elements.splice(Math.min(index + 1, ctx.elements.length), 0, element);
+            });
             ctx.draw();
         },
         getSelection: () => ctx.selection,

@@ -63,6 +63,12 @@ export const GitDrawBoard = props => {
                             boardRef.current.removeSelection();
                             forceUpdate();
                         }}
+                        onBringForwardClick={() => {
+                            boardRef.current.bringSelectionForward();
+                        }}
+                        onSendBackwardClick={() => {
+                            boardRef.current.sendSelectionBackward();
+                        }}
                     />
                     <Toasts
                         items={notifications.getAll()}

@@ -171,8 +171,6 @@ export const Stylebar = props => {
         props.onChange(name, value);
         forceUpdate();
     };
-    const handleForward = () => props.onOrderChange("front");
-    const handleBackward = () => props.onOrderChange("back");
     const classList = kofi.classNames({
         "is-absolute has-mr-4 has-mt-4 has-right-none has-top-none": true,
         "is-hidden": props.selection.length === 0,
@@ -214,16 +212,26 @@ export const Stylebar = props => {
                 {/* Order buttons */}
                 {kofi.when(props.selection.length === 1, () => (
                     <React.Fragment>
-                        <Button className="has-mb-1" icon="bring-forward" onClick={handleForward} />
-                        <Button className="has-mb-1" icon="send-backward" onClick={handleBackward} />
+                        <Button
+                            className="has-mb-1"
+                            icon="bring-forward"
+                            onClick={props.onBringForwardClick}
+                        />
+                        <Button
+                            className="has-mb-1"
+                            icon="send-backward"
+                            onClick={props.onSendBackwardClick}
+                        />
                     </React.Fragment>
                 ))}
                 {/* Clone current selection */}
+                {/*
                 <Button
                     className="has-mb-1"
                     icon="clone"
                     onClick={props.onClone}
                 />
+                */}
                 {/* Remove current selection */}
                 <Button
                     className=""
