@@ -1,17 +1,10 @@
-// Available modes
-const RESIZE_MODE = Symbol("mode:resize");
-const DRAG_MODE = Symbol("mode:drag");
-const TEXT_INPUT_MODE = Symbol("mode:text-input");
-
-// Available keys
-const KEYS = {
-    ESCAPE: "Escape",
-    BACKSPACE: "Backspace",
-    ARROW_DOWN: "ArrowDown",
-    ARROW_LEFT: "ArrowLeft",
-    ARROW_RIGHT: "ArrowRight",
-    ARROW_UP: "ArrowUp",
-};
+import {
+    KEYS,
+    INTERACTION_MODES,
+    TEXT_ALIGNS,
+    TEXT_VERTICAL_ALIGNS,
+    LINE_CAPS,
+} from "./constants.js";
 
 // Color parser
 export const parseColor = (color, opacity) => {
@@ -264,16 +257,16 @@ export const elements = {
     rectangle: {
         icon: "square",
         init: config => ({
-            fillColor: config.defaultColor,
-            fillOpacity: 0,
-            strokeColor: config.defaultColor, // colors.black,
+            fillColor: config.fillColor,
+            fillOpacity: 1.0,
+            strokeColor: config.strokeColor, // colors.black,
             strokeWidth: 1,
             strokeDash: false,
             strokeOpacity: 1.0,
             radius: 0,
             textAlign: "center",
             textVerticalAlign: "middle",
-            textColor: config.defaultColor, // colors.black,
+            textColor: config.textColor, // colors.black,
             textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
             textSize: 16,
@@ -328,15 +321,15 @@ export const elements = {
     ellipse: {
         icon: "circle",
         init: config => ({
-            fillColor: config.defaultColor,
-            fillOpacity: 0,
-            strokeColor: config.defaultColor, // colors.black,
+            fillColor: config.fillColor,
+            fillOpacity: 1.0,
+            strokeColor: config.strokeColor, // colors.black,
             strokeOpacity: 1.0,
             strokeWidth: 1,
             strokeDash: false,
             textAlign: "center",
             textVerticalAlign: "middle",
-            textColor: config.defaultColor, // colors.black,
+            textColor: config.textColor, // colors.black,
             textFont: config.fontFamily, // "sans-serif",
             textOpacity: 1.0,
             textSize: 16,
@@ -377,7 +370,7 @@ export const elements = {
     line: {
         icon: "minus",
         init: config => ({
-            strokeColor: config.defaultColor, // colors.black,
+            strokeColor: config.strokeColor, // colors.black,
             strokeWidth: 1,
             strokeDash: false,
             strokeOpacity: 1.0,
@@ -404,11 +397,11 @@ export const elements = {
             canvas.stroke();
             canvas.setLineDash([]); // Clear line-dash style
             // Add line start style
-            if (element.lineStart && element.lineStart !== "none") {
+            if (element.lineStart && element.lineStart !== LINE_CAPS.NONE) {
                 drawGlyph(canvas, element.lineStart, "start", element, length);
             }
             // Add line end style
-            if (element.lineEnd && element.lineEnd !== "none") {
+            if (element.lineEnd && element.lineEnd !== LINE_CAPS.NONE) {
                 drawGlyph(canvas, element.lineEnd, "end", element, length);
             }
             // canvas.globalAlpha = 1; // Reset opacity
@@ -419,9 +412,9 @@ export const elements = {
         icon: "text",
         init: config => ({
             textAlign: "left",
-            textColor: config.defaultColor, // colors.black,
+            textColor: config.textColor,
             textSize: 16,
-            textFont: config.fontFamily, // "sans-serif",
+            textFont: config.fontFamily,
             textOpacity: 1.0,
             textContent: "",
         }),
@@ -465,7 +458,7 @@ export const elements = {
     },
     image: {
         icon: "image",
-        init: config => ({
+        init: () => ({
             content: null,
             img: null,
             opacity: 1.0,
@@ -505,7 +498,7 @@ const drawInnerText = (canvas, element) => {
     canvas.beginPath();
     canvas.font = `${element.textSize}px ${element.textFont}`;
     canvas.fillStyle = parseColor(element.textColor, element.textOpacity);
-    canvas.textAlign = "center"; //Center text in the rectangle
+    canvas.textAlign = TEXT_ALIGNS.CENTER; //Center text in the rectangle
     canvas.textBaseline = "middle"; //Center text in the line position
     const lines = element.textContent.replace(/\r\n?/g, "\n").split("\n");
     const lineHeight = element.textSize; //element.height / lines.length;
@@ -533,7 +526,7 @@ const drawGlyph = (canvas, type, position, element, length) => {
     canvas.beginPath();
     canvas.setLineDash([]); // Clear line-dash style
     // Check for arrow element
-    if (type === "arrow") {
+    if (type === LINE_CAPS.ARROW) {
         const angle2 = Math.PI / 8;
         const hip = size * 4 / 3;
         canvas.moveTo(x, y);
@@ -541,7 +534,7 @@ const drawGlyph = (canvas, type, position, element, length) => {
         canvas.lineTo(x + sign * hip * Math.cos(angle2 + angle), y + sign * hip * Math.sin(angle2 + angle));
     }
     // Check for square element
-    else if (type === "square") {
+    else if (type === LINE_CAPS.SQUARE) {
         const angle2 = Math.atan(0.5); // Second angle for the rectangle
         const hsize = size / 2; // Half of the size
         const hip = Math.sqrt(size * size + hsize * hsize);
@@ -552,7 +545,7 @@ const drawGlyph = (canvas, type, position, element, length) => {
         canvas.lineTo(x - sign * hsize * Math.sin(angle), y + sign * hsize * Math.cos(angle));
     }
     // Check for circle
-    else if (type === "circle") {
+    else if (type === LINE_CAPS.CIRCLE) {
         const hsize = size / 2; // Half of the size
         const cx = x + sign * hsize * Math.cos(angle);
         const cy = y + sign * hsize * Math.sin(angle);
@@ -570,8 +563,11 @@ const drawGlyph = (canvas, type, position, element, length) => {
 // Create board
 export const createBoard = (parent, opt) => {
     const options = {
-        defaultColor: "rgb(0,0,0)",
-        //Selection values
+        // Initial colors
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgb(0,0,0)",
+        textColor: "rgb(0,0,0)",
+        // Selection values
         selectionColor: "rgb(78, 145, 228)",
         selectionOpacity: 0.1,
         // Screenshot value
@@ -627,7 +623,7 @@ export const createBoard = (parent, opt) => {
         canvas.clearRect(0, 0, ctx.width, ctx.height);
 
         forEachRev(ctx.elements, element => {
-            const shouldDrawInnerText = ctx.mode !== TEXT_INPUT_MODE || ctx.currentElement?.id !== element.id;
+            const shouldDrawInnerText = ctx.mode !== INTERACTION_MODES.INPUT || ctx.currentElement?.id !== element.id;
             
             // Draw the element
             ctx.drawElement(element, canvas, shouldDrawInnerText);
@@ -750,17 +746,17 @@ export const createBoard = (parent, opt) => {
         // Move text input to the correct position
         if (ctx.currentElement.type !== "text") {
             // Vertical align
-            if (ctx.currentElement.textVerticalAlign === "middle") {
+            if (ctx.currentElement.textVerticalAlign === TEXT_VERTICAL_ALIGNS.MIDDLE) {
                 ctx.input.style.top = ctx.currentElement.y + (ctx.currentElement.height - height) / 2;
             }
-            else if (ctx.currentElement.textVerticalAlign === "bottom") {
+            else if (ctx.currentElement.textVerticalAlign === TEXT_VERTICAL_ALIGNS.BOTTOM) {
                 ctx.input.style.top = ctx.currentElement.y + (ctx.currentElement.height - height);
             }
             // Horizontal align
-            if (ctx.currentElement.textAlign === "center") {
+            if (ctx.currentElement.textAlign === TEXT_ALIGNS.CENTER) {
                 ctx.input.style.left = ctx.currentElement.x - (width - ctx.currentElement.width) / 2;
             }
-            else if (ctx.currentElement.textAlign === "right") {
+            else if (ctx.currentElement.textAlign === TEXT_ALIGNS.RIGHT) {
                 ctx.input.style.left = ctx.currentElement.x - (width - ctx.currentElement.width);
             }
         }
@@ -826,8 +822,8 @@ export const createBoard = (parent, opt) => {
 
     // Handle document key down
     const handleKeyDown = event => {
-        if (ctx.mode === TEXT_INPUT_MODE || isInputTarget(event)) {
-            if (ctx.mode === TEXT_INPUT_MODE && event.key === KEYS.ESCAPE) {
+        if (ctx.mode === INTERACTION_MODES.INPUT || isInputTarget(event)) {
+            if (ctx.mode === INTERACTION_MODES.INPUT && event.key === KEYS.ESCAPE) {
                 event.preventDefault();
                 ctx.submitInput();
                 ctx.draw();
@@ -884,7 +880,7 @@ export const createBoard = (parent, opt) => {
         }
 
         // Check for text input mode --> submit text
-        if (ctx.mode === TEXT_INPUT_MODE) {
+        if (ctx.mode === INTERACTION_MODES.INPUT) {
             ctx.submitInput();
             ctx.draw();
             ctx.trigger("update");
@@ -903,7 +899,7 @@ export const createBoard = (parent, opt) => {
             if (point !== null) {
                 ctx.currentElement = ctx.selection[0]; // Save current element
                 ctx.resizeOrientation = point.orientation; // Save resize orientation
-                ctx.mode = RESIZE_MODE; // Swtich to resize mode
+                ctx.mode = INTERACTION_MODES.RESIZE; // Swtich to resize mode
                 ctx.snapshot = snapshotSelection(ctx.selection); // Create a snapshot of the selection
                 return; // Stop event
             }
@@ -922,7 +918,7 @@ export const createBoard = (parent, opt) => {
                 const el = insideElements[0]; // Get only the first element
                 ctx.currentElement = el; // Save the current dragged element
                 ctx.currentElementSelected = el.selected; // Save if element is already selected
-                ctx.mode = DRAG_MODE;
+                ctx.mode = INTERACTION_MODES.DRAG;
                 // Check if this element is not selected
                 if (el.selected === false && !event.shiftKey) {
                     ctx.clearSelection(); // Remove other elements
@@ -951,12 +947,12 @@ export const createBoard = (parent, opt) => {
         const x = event.offsetX; // event.clientX - event.target.offsetLeft;
         const y = event.offsetY; // event.clientY - event.target.offsetTop;
         // Check for no selected elements
-        if (!ctx.currentElement || ctx.mode === TEXT_INPUT_MODE) {
+        if (!ctx.currentElement || ctx.mode === INTERACTION_MODES.INPUT) {
             return;
         }
         ctx.currentElementDragged = true;
         // Check if we are resizing the element
-        if (ctx.mode === RESIZE_MODE) {
+        if (ctx.mode === INTERACTION_MODES.RESIZE) {
             if (ctx.currentElement.locked) {
                 return null;
             }
@@ -1002,7 +998,7 @@ export const createBoard = (parent, opt) => {
             }
         }
         // Check if we have selected elements
-        else if (ctx.mode === DRAG_MODE && ctx.selection.length > 0) {
+        else if (ctx.mode === INTERACTION_MODES.DRAG && ctx.selection.length > 0) {
             if (ctx.selectionLocked) {
                 return null; // Move is not allowed --> selection is locked
             }
@@ -1042,7 +1038,7 @@ export const createBoard = (parent, opt) => {
     const handlePointerUp = event => {
         event.preventDefault();
         // Check for no current element active
-        if (!ctx.currentElement || ctx.mode === TEXT_INPUT_MODE) {
+        if (!ctx.currentElement || ctx.mode === INTERACTION_MODES.INPUT) {
             return;
         }
         // Check for clicked element
@@ -1081,7 +1077,7 @@ export const createBoard = (parent, opt) => {
         // Check for text element
         if (ctx.currentTool === "text") {
             ctx.currentElement.selected = false; // Disable selection
-            ctx.mode = TEXT_INPUT_MODE;
+            ctx.mode = INTERACTION_MODES.INPUT;
             ctx.showInput();
         }
         // If no text element, reset current element
@@ -1113,7 +1109,7 @@ export const createBoard = (parent, opt) => {
             });
             ctx.elements.unshift(ctx.currentElement);
         }
-        ctx.mode = TEXT_INPUT_MODE;
+        ctx.mode = INTERACTION_MODES.INPUT;
         ctx.clearSelection();
         ctx.showInput();
         ctx.draw();
