@@ -1,25 +1,30 @@
 import React from "react";
 import kofi from "kofi";
+
+import {
+    LINE_CAPS,
+    TEXT_ALIGNS,
+} from "@gitdraw/board/constants.js";
+
 import {Dialog} from "./Dialog.js";
 import {Button} from "./Button.js";
 import {Option} from "./Option.js";
+import colors from "../colors.js";
 
 // Pixel format utility
 const pixelValueFormat = v => v + "px";
 
-// Line cap types
 const lineCapTypes = [
-    "none",
-    "arrow",
-    "square",
-    "circle",
+    LINE_CAPS.NONE,
+    LINE_CAPS.ARROW,
+    LINE_CAPS.SQUARE,
+    LINE_CAPS.CIRCLE,
 ];
 
-// text align
 const textAlign = {
-    "left": "align-left",
-    "center": "align-center",
-    "right": "align-right",
+    [TEXT_ALIGNS.LEFT]: "align-left",
+    [TEXT_ALIGNS.CENTER]: "align-center",
+    [TEXT_ALIGNS.RIGHT]: "align-right",
 };
 
 // Groups options
@@ -41,6 +46,7 @@ const groups = {
                 type: "color",
                 props: {
                     title: "Text Color",
+                    colors: colors.textColors,
                 },
             },
             textOpacity: {
@@ -68,7 +74,7 @@ const groups = {
                 type: "color",
                 props: {
                     title: "Fill Color",
-                    // colors: objectValues(config.colors),
+                    colors: colors.fillColors,
                 },
             },
             fillOpacity: {
@@ -98,7 +104,7 @@ const groups = {
                 type: "color",
                 props: {
                     title: "Stroke color",
-                    // colors: objectValues(config.colors),
+                    colors: colors.strokeColors,
                 },
             },
             strokeOpacity: {
@@ -201,7 +207,6 @@ export const Stylebar = props => {
                                         key={name}
                                         type={groups[key].options[name].type}
                                         value={props.selection[0][name]}
-                                        theme={props.theme || {}}
                                         onChange={v => handleChange(name, v)}
                                     />
                                 ))}

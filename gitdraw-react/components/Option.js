@@ -1,37 +1,62 @@
 import React from "react";
 import kofi from "kofi";
-
 import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colorUtils.js";
 
 // Option types
 const optionTypes = {
-    color: props => (
-        <div className="">
-            <div className="is-flex has-items-center">
-                <div
-                    className="has-radius-md has-mr-2 has-w-full has-maxw-8 has-h-8"
-                    style={{
-                        backgroundColor: rgbToHex(props.value),
-                    }}
-                />
-                <div className="is-flex has-radius-md is-clipped has-bg-white">
-                    <div className="has-bg-gray-200 has-px-2 has-py-1 has-lh-normal">
-                        <strong>#</strong>
-                    </div>
-                    <input
-                        type="text"
-                        className="input has-bg-white is-radiusless has-size-0 has-px-2 has-py-0"
-                        onChange={e => {
-                            if (isValidHexColor(e.target.value.replace("#", ""))) {
-                                return props.onChange(hexToRgb(e.target.value));
-                            }
+    color: props => {
+        const colorRef = React.useRef(null);
+        return (
+            <div className="">
+                <div className="is-flex has-items-center has-mb-2">
+                    <div
+                        className="has-radius-md has-mr-2 has-w-full has-maxw-8 has-h-8"
+                        style={{
+                            backgroundColor: rgbToHex(props.value),
                         }}
-                        defaultValue={rgbToHex(props.value).replace("#", "")}
                     />
+                    <div className="is-flex has-radius-md is-clipped has-bg-white">
+                        <div className="has-bg-gray-200 has-px-2 has-py-1 has-lh-normal">
+                            <strong>#</strong>
+                        </div>
+                        <input
+                            ref={colorRef}
+                            type="text"
+                            className="input has-bg-white is-radiusless has-size-0 has-px-2 has-py-0"
+                            onChange={e => {
+                                if (isValidHexColor(e.target.value.replace("#", ""))) {
+                                    return props.onChange(hexToRgb(e.target.value));
+                                }
+                            }}
+                            defaultValue={rgbToHex(props.value).replace("#", "")}
+                        />
+                    </div>
+                </div>
+                <div
+                    className="has-w-full"
+                    style={{
+                        display: "grid",
+                        gridGap: "0.125rem",
+                        gridTemplateColumns: "repeat(5, auto)",
+                    }}
+                >
+                    {(props.colors || []).map(value => (
+                        <div
+                            key={value}
+                            className="has-radius-md has-py-4 is-clickable"
+                            style={{
+                                backgroundColor: rgbToHex(value),
+                            }}
+                            onClick={() => {
+                                props.onChange(value);
+                                colorRef.current.value = rgbToHex(value).replace("#", "");
+                            }}
+                        />
+                    ))}
                 </div>
             </div>
-        </div>
-    ),
+        );
+    },
     font: props => (
         <div className="">
             {(props.theme.fonts || []).map(mame => {
