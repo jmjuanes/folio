@@ -41,14 +41,10 @@ export const GitDrawBoard = props => {
                 <React.Fragment>
                     {/* <Menubar /> */}
                     <Toolbar
-                        currentTool={boardRef.current.getCurrentTool()}
-                        gridButtonActive={boardRef.current.isGridVisible()}
-                        onToolButtonClick={tool => {
-                            boardRef.current.setCurrentTool(tool);
-                            forceUpdate();
-                        }}
-                        onGridButtonClick={() => {
-                            boardRef.current.toggleGrid();
+                        currentTool={boardRef.current.getType()}
+                        gridButtonActive={false}
+                        onToolButtonClick={type => {
+                            boardRef.current.setType(type);
                             forceUpdate();
                         }}
                     />
