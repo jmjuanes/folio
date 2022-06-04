@@ -10,6 +10,7 @@ export const KEYS = {
 
 // Available interaction modes
 export const INTERACTION_MODES = {
+    NONE: Symbol("mode:none"),
     RESIZE: Symbol("mode:resize"),
     DRAG: Symbol("mode:drag"),
     INPUT: Symbol("mode:input"),
@@ -46,12 +47,12 @@ export const ELEMENT_TYPES = {
     SHAPE_LINE: "line",
     IMAGE: "image",
     TEXT: "text",
-    GROUP: "group",
+    // GROUP: "group",
 };
 
 export const RESIZE_TYPES = {
     NONE: "none",
-    PRIMARY: "primary", // lt and rb
+    MAIN_DIAGONAL: "main-diagonal", // lt and rb
     ALL: "all", // all orientations
 };
 

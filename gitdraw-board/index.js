@@ -9,6 +9,8 @@ import {
     RESIZE_ORIENTATIONS,
 } from "./constants.js";
 
+const uid = () => Date.now() + "";
+
 // Color parser
 export const parseColor = (color, opacity) => {
     if (color === "transparent") {
@@ -168,22 +170,6 @@ const isInputTarget = e => {
     return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 };
 
-// Set selection
-const setSelection = (selection, elementsList) => {
-    const [sxStart, sxEnd] = getAbsolutePositions(selection.x, selection.width);
-    const [syStart, syEnd] = getAbsolutePositions(selection.y, selection.height);
-    
-    elementsList.forEach(element => {
-        if (element.type !== ELEMENT_TYPES.SELECTION) {
-            // Get element absolute positions
-            const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
-            const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
-            // Set if this element is selected
-            element.selected = sxStart <= xStart && syStart <= yStart && xEnd <= sxEnd && yEnd <= syEnd;
-        }
-    });
-};
-
 // Create a snapshot of the selection
 const snapshotSelection = selection => {
     return selection.map(element => ({
@@ -195,22 +181,24 @@ const snapshotSelection = selection => {
 };
 
 const getResizePoints = element => {
+    const [x0, x1] = getAbsolutePositions(element.x, element.width);
+    const [y0, y1] = getAbsolutePositions(element.y, element.height);
     if (element.resize === RESIZE_TYPES.ALL) {
         return [
-            {orientation: RESIZE_ORIENTATIONS.LEFT_TOP, x: element.x, y: element.y},
-            {orientation: RESIZE_ORIENTATIONS.TOP, x: element.x + element.width / 2, y: element.y},
-            {orientation: RESIZE_ORIENTATIONS.RIGHT_TOP, x: element.x + element.width, y: element.y},
-            {orientation: RESIZE_ORIENTATIONS.LEFT, x: element.x, y: element.y + element.height / 2},
-            {orientation: RESIZE_ORIENTATIONS.RIGHT, x: element.x + element.width, y: element.y + element.height / 2},
-            {orientation: RESIZE_ORIENTATIONS.LEFT_BOTTOM, x: element.x, y: element.y + element.height},
-            {orientation: RESIZE_ORIENTATIONS.RIGHT_BOTTOM, x: element.x + element.width, y: element.y + element.height},
-            {orientation: RESIZE_ORIENTATIONS.BOTTOM, x: element.x + element.width / 2, y: element.y + element.height},
+            {orientation: RESIZE_ORIENTATIONS.LEFT_TOP, x: x0, y: y0, xs: -1, ys: -1},
+            {orientation: RESIZE_ORIENTATIONS.TOP, x: (x0 + x1) / 2, y: y0, xs: -0.5, ys: -1},
+            {orientation: RESIZE_ORIENTATIONS.RIGHT_TOP, x: x1, y: y0, xs: 0, ys: -1},
+            {orientation: RESIZE_ORIENTATIONS.LEFT, x: x0, y: (y0 + y1) / 2, xs: -1, ys: -0.5},
+            {orientation: RESIZE_ORIENTATIONS.RIGHT, x: x1, y: (y0 + y1) / 2, xs: 0, ys: -0.5},
+            {orientation: RESIZE_ORIENTATIONS.LEFT_BOTTOM, x: x0, y: y1, xs: -1, ys: 0},
+            {orientation: RESIZE_ORIENTATIONS.RIGHT_BOTTOM, x: x1, y: y1, xs: 0, ys: 0},
+            {orientation: RESIZE_ORIENTATIONS.BOTTOM, x: (x0 + x1) / 2, y: y1, xs: -0.5, ys: 0},
         ];
     }
-    else if (element.type === RESIZE_TYPES.PRIMARY) {
+    else if (element.resize === RESIZE_TYPES.MAIN_DIAGONAL) {
         return [
-            {orientation: RESIZE_ORIENTATIONS.LEFT_TOP, x: element.x, y: element.y},
-            {orientation: RESIZE_ORIENTATIONS.RIGHT_BOTTOM, x: element.x + element.width, y: element.y + element.height},
+            {orientation: RESIZE_ORIENTATIONS.LEFT_TOP, x: x0, y: y0, xs: -1, ys: -1},
+            {orientation: RESIZE_ORIENTATIONS.RIGHT_BOTTOM, x: x1, y: y1, xs: 0, ys: 0},
         ];
     }
     // Default: no resize points
@@ -218,22 +206,12 @@ const getResizePoints = element => {
 };
 
 // Check if the cursor is inside a resize point
-const inResizePoint = (element, x, y, radius) => {
-    const points = getResizePoints(element);
-    // Check for no resize points of this element
-    if (points.length === 0) {
-        return null;
-    }
-    // Check for each resize point
-    for (let i = 0; i < points.length; i++) {
-        if (points[i].x - radius <= x && x <= points[i].x + radius) {
-            if (points[i].y - radius <= y && y <= points[i].y + radius) {
-                return points[i];
-            }
-        }
-    }
-    // Default: no resize point found
-    return null;
+const inResizePoint = (element, x, y, size) => {
+    return getResizePoints(element).find(point => {
+        const px = point.x + point.xs * size;
+        const py = point.y + point.ys * size;
+        return px <= x && x <= px + size && py <= y && y <= py + size;
+    });
 };
 
 // Draw a simple rectangle
@@ -449,7 +427,7 @@ const elements = {
     },
     [ELEMENT_TYPES.SHAPE_LINE]: {
         init: options => ({
-            resize: RESIZE_TYPES.PRIMARY,
+            resize: RESIZE_TYPES.MAIN_DIAGONAL,
             strokeColor: options.strokeColor, // colors.black,
             strokeWidth: 1,
             strokeDash: false,
@@ -535,7 +513,7 @@ const elements = {
     },
     [ELEMENT_TYPES.IMAGE]: {
         init: () => ({
-            resize: RESIZE_TYPES.PRIMARY,
+            resize: RESIZE_TYPES.MAIN_DIAGONAL,
             content: null,
             img: null,
             opacity: 1.0,
@@ -570,11 +548,21 @@ export const createBoard = (parent, opt) => {
         gridOpacity: 0.8,
         gridSize: 10,
         gridStyle: "lined",
-        // Default resize values
-        resizeColor: "rgb(27, 94, 177)",
-        resizeWidth: 2, // Resize line width
-        resizeOpacity: 1.0,
-        resizeRadius: 5,
+        // Element selection
+        elementSelectionColor: "rgb(0,0,0)",
+        elementSelectionWidth: 0.5,
+        elementSelectionOpacity: 1.0,
+        elementSelectionOffset: 4,
+        // Element resize
+        elementResizeColor: "rgb(0,0,0)",
+        elementResizeWidth: 0.5,
+        elementResizeOpacity: 1.0,
+        elementResizeRadius: 5,
+        // Group selection
+        groupSelectionColor: "rgb(0,0,0)",
+        groupSelectionWidth: 0.5,
+        groupSelectionOpacity: 1,
+        groupSelectionOffset: 8,
         // Text configuration
         fontFamily: "sans-serif",
         ...opt,
@@ -587,9 +575,10 @@ export const createBoard = (parent, opt) => {
         canvasGrid: createCanvas("100px", "100px"),
         input: document.createElement("textarea"),
         options: options,
-        mode: "",
+        mode: INTERACTION_MODES.NONE,
         type: ELEMENT_TYPES.SELECTION,
         typeLocked: false,
+        currentGroup: null,
         currentElement: null,
         currentElementSelected: false,
         currentElementDragged: false,
@@ -598,9 +587,10 @@ export const createBoard = (parent, opt) => {
         selectionLocked: false,
         snapshot: [],
         elements: [],
+        groups: {},
         width: 200,
         height: 200,
-        grid: true,
+        grid: false,
         listeners: {},
     };
 
@@ -611,7 +601,9 @@ export const createBoard = (parent, opt) => {
 
     // Draw the board
     ctx.draw = () => {
+        const offset = ctx.options.elementSelectionOffset;
         const canvas = ctx.canvas.getContext("2d");
+        const selectedGroups = new Set();
         canvas.clearRect(0, 0, ctx.width, ctx.height);
 
         forEachRev(ctx.elements, element => {
@@ -620,28 +612,54 @@ export const createBoard = (parent, opt) => {
             // Draw the element
             ctx.drawElement(element, canvas, shouldDrawInnerText);
 
+            // Add this element to the list of groups to display
+            if (element.group && (element.selected || ctx.currentGroup?.id === element.group)) {
+                selectedGroups.add(element.group);
+            }
+
             // Check if this element is selected --> draw selection area
-            if (shouldDrawInnerText && element.selected === true && element.type !== "selection") {
+            if (shouldDrawInnerText && element.selected === true && element.type !== ELEMENT_TYPES.SELECTION) {
                 const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
                 const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
+                canvas.globalAlpha = 1.0;
                 canvas.beginPath();
                 canvas.setLineDash([8, 4]);
-                canvas.strokeStyle = ctx.options.resizeColor;
-                canvas.lineWidth = ctx.options.resizeWidth;
-                canvas.rect(xStart, yStart, xEnd - xStart, yEnd - yStart);
+                canvas.strokeStyle = ctx.options.elementSelectionColor;
+                canvas.lineWidth = ctx.options.elementSelectionWidth;
+                canvas.rect(xStart - offset, yStart - offset, xEnd - xStart + 2 * offset, yEnd - yStart + 2 * offset);
                 canvas.stroke();
                 canvas.setLineDash([]); // Reset line-dash
                 // Check if is the unique selected elements
                 if (ctx.selection.length === 1 && element.locked === false) {
-                    getResizePoints(element).forEach(point => {
+                    const radius = ctx.options.elementResizeRadius;
+                    getResizePoints(element).forEach(p => {
                         canvas.beginPath();
-                        canvas.fillStyle = ctx.options.resizeColor; // selectionColor;
-                        canvas.arc(point.x, point.y, ctx.options.resizeRadius, 0, 2*Math.PI);
+                        canvas.strokeStyle = ctx.options.elementResizeColor;
+                        canvas.lineWidth = ctx.options.elementResizeWidth;
+                        canvas.fillStyle = "rgb(255,255,255)";
+                        canvas.rect(p.x + p.xs * 2 * radius, p.y + p.ys * 2 * radius, 2 * radius, 2 * radius);
                         canvas.fill();
+                        canvas.stroke();
                     });
                 }
             }
         });
+
+        // Render group selections
+        if (ctx.mode === INTERACTION_MODES.NONE && selectedGroups.size > 0) {
+            const offset = ctx.options.groupSelectionOffset;
+            selectedGroups.forEach(id => {
+                const group = ctx.groups[id];
+                canvas.globalAlpha = 1.0;
+                canvas.beginPath();
+                canvas.setLineDash([4, 2]);
+                canvas.strokeStyle = ctx.options.groupSelectionColor;
+                canvas.lineWidth = ctx.options.groupSelectionWidth;
+                canvas.rect(group.x - offset, group.y - offset, group.width + 2 * offset, group.height + 2 * offset);
+                canvas.stroke();
+                canvas.setLineDash([]);
+            });
+        }
     };
 
     ctx.drawGrid = () => {
@@ -675,11 +693,12 @@ export const createBoard = (parent, opt) => {
     ctx.createElement = element => ({
         ...elements[element.type].init(ctx.options),
         ...element,
-        id: Date.now(), // TODO: replace this
+        id: uid(),
         width: element.width || 0,
         height: element.height || 0,
         selected: false,
         locked: false,
+        group: null,
     });
     ctx.updateElement = (el, changed) => elements[el.type].update(el, new Set(changed || []));
     ctx.drawElement = (el, canvas, shouldDrawInnerText) => elements[el.type].draw(canvas, el, shouldDrawInnerText);
@@ -700,6 +719,7 @@ export const createBoard = (parent, opt) => {
     // Selection managers
     ctx.removeSelection = () => {
         ctx.elements = ctx.elements.filter(element => !element.selected);
+        ctx.removeEmptyGroups();
         ctx.selection = [];
     };
     ctx.clearSelection = () => {
@@ -708,6 +728,116 @@ export const createBoard = (parent, opt) => {
     };
     ctx.getSelection = () => ctx.elements.filter(element => element.selected);
     ctx.isSelectionLocked = () => ctx.selection.every(element => element.locked);
+    ctx.setSelection = selection => {
+        const [sxStart, sxEnd] = getAbsolutePositions(selection.x, selection.width);
+        const [syStart, syEnd] = getAbsolutePositions(selection.y, selection.height);
+        const selectedGroups = new Set();
+
+        ctx.elements.forEach(element => {
+            if (element.type !== ELEMENT_TYPES.SELECTION && element.type !== ELEMENT_TYPES.SCREENSHOT) {
+                if (!ctx.currentGroup && element.group && selectedGroups.has(element.group)) {
+                    element.selected = true;
+                    return;
+                }
+                // Get element absolute positions
+                const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
+                const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
+                // Set if this element is selected
+                element.selected = sxStart <= xStart && syStart <= yStart && xEnd <= sxEnd && yEnd <= syEnd;
+
+                // Add the group of this element to the list of groups
+                if (!ctx.currentGroup && element.group && element.selected) {
+                    selectedGroups.add(element.group);
+                }
+            }
+        });
+
+        // Check for adding other elements in groups
+        if (selectedGroups.size > 0) {
+            ctx.elements.forEach(element => {
+                if (element.group && selectedGroups.has(element.group)) {
+                    element.selected = true;
+                }
+            });
+        }
+    };
+
+    // Group managers
+    ctx.createGroup = () => ({
+        id: uid(),
+        x: 0,
+        y: 0 ,
+        width: 0,
+        height: 0,
+        locked: false,
+    });
+    ctx.removeGroup = id => {
+        // ctx.elements.forEach(element => element.group = null);
+        ctx.elements = ctx.elements.filter(element => element.group !== id);
+        delete ctx.groups[id];
+    };
+    ctx.groupSelection = () => {
+        const removedGroups = new Set();
+        const newGroup = ctx.createGroup();
+        ctx.selection.forEach(element => {
+            if (element.group) {
+                removedGroups.add(element.group);
+            }
+            element.group = newGroup.id;
+        });
+        removedGroups.forEach(id => delete ctx.groups[id]);
+        ctx.groups[newGroup.id] = newGroup;
+        ctx.currentGroup = newGroup;
+        ctx.updateGroup(newGroup.id);
+    };
+    ctx.ungroupSelection = () => {
+        const removedGroups = new Set();
+        ctx.selection.forEach(element => removedGroups.add(element.group));
+        ctx.elements.forEach(element => {
+            if (removedGroups.has(element.group)) {
+                element.group = null;
+                element.selected = true;
+            }
+        });
+        removedGroups.forEach(id => delete ctx.groups[id]);
+        ctx.currentGroup = null;
+        ctx.selection = ctx.getSelection(); // Reset selection
+    };
+    ctx.getGroupsInSelection = () => {
+        const groups = new Set();
+        ctx.selection.forEach(el => el.group && groups.add(el.group));
+        return Array.from(groups);
+    };
+    ctx.selectAllElementsInGroup = id => {
+        ctx.elements.forEach(element => element.selected = element.group === id || element.selected);
+    };
+    ctx.updateGroup = id => {
+        const group = ctx.groups[id];
+        let xStart = Infinity, yStart = Infinity, xEnd = 0, yEnd = 0;
+        ctx.elements.forEach(el => {
+            if (el.group === group.id) {
+                const [x0, x1] = getAbsolutePositions(el.x, el.width);
+                const [y0, y1] = getAbsolutePositions(el.y, el.height);
+                xStart = Math.min(x0, xStart);
+                xEnd = Math.max(x1, xEnd);
+                yStart = Math.min(y0, yStart);
+                yEnd = Math.max(y1, yEnd);
+            }
+        });
+        group.x = xStart;
+        group.y = yStart;
+        group.width = Math.abs(xEnd - xStart);
+        group.height = Math.abs(yEnd - yStart);
+    };
+    ctx.removeEmptyGroups = () => {
+        const emptyGroups = Object.keys(ctx.groups).filter(id => !ctx.elements.some(el => el.group === id));
+        emptyGroups.forEach(id => delete ctx.groups[id]);
+        
+        // Reset current group
+        if (ctx.currentGroup && emptyGroups.includes(ctx.currentGroup.id)) {
+            ctx.currentGroup = null;
+        }
+    };
 
     // Text input managers
     ctx.showInput = () => {
@@ -769,7 +899,7 @@ export const createBoard = (parent, opt) => {
             ctx.removeElement(element);
         }
         ctx.currentElement = null;
-        ctx.mode = ""; // Reset mode
+        ctx.mode = INTERACTION_MODES.NONE; // Reset mode
         ctx.hideInput();
     };
 
@@ -782,6 +912,7 @@ export const createBoard = (parent, opt) => {
     const handlePaste = event => {
         return !isInputTarget(event) && getDataFromClipboard(event).then(data => {
             ctx.clearSelection(); // Clear the current selection
+            ctx.currentGroup = null;
             parseClipboardBlob(data.type, data.blob).then(content => {
                 // Check for not image type
                 if (data.type !== "image") {
@@ -792,7 +923,6 @@ export const createBoard = (parent, opt) => {
                     ctx.addElement(element);
                     ctx.updateElement(element, ["x", "y", "textContent"]);
                     ctx.draw();
-                    console.log(element);
                     return ctx.trigger("update");
                 }
                 // Load as a new image
@@ -821,13 +951,12 @@ export const createBoard = (parent, opt) => {
                 ctx.draw();
                 ctx.trigger("update");
             }
-
-            return; // Stop event processing
         }
         // Check ESCAPE key --> reset selection
         else if (event.key === KEYS.ESCAPE) {
             event.preventDefault();
             ctx.clearSelection();
+            ctx.currentGroup = null;
             ctx.draw();
             ctx.trigger("update");
         }
@@ -856,6 +985,8 @@ export const createBoard = (parent, opt) => {
             else if (event.key === KEYS.ARROW_RIGHT) {
                 ctx.selection.forEach(el => el.x = ctx.getPosition(el.x + step));
             }
+
+            ctx.getGroupsInSelection().forEach(id => ctx.updateGroup(id)); // Update groups
             ctx.draw();
             ctx.trigger("update");
         }
@@ -887,8 +1018,9 @@ export const createBoard = (parent, opt) => {
 
         // Check if we are in a resize point
         if (ctx.selection.length === 1) {
-            const point = inResizePoint(ctx.selection[0], ctx.lastX, ctx.lastY, ctx.options.resizeRadius);
-            if (point !== null) {
+            const radius = 2 * ctx.options.elementResizeRadius;
+            const point = inResizePoint(ctx.selection[0], ctx.lastX, ctx.lastY, radius);
+            if (point) {
                 ctx.currentElement = ctx.selection[0]; // Save current element
                 ctx.resizeOrientation = point.orientation; // Save resize orientation
                 ctx.mode = INTERACTION_MODES.RESIZE; // Swtich to resize mode
@@ -915,6 +1047,10 @@ export const createBoard = (parent, opt) => {
                 if (el.selected === false && !event.shiftKey) {
                     ctx.clearSelection(); // Remove other elements
                 }
+                // Add elements of this group
+                if (!ctx.currentGroup && el.group) {
+                    ctx.selectAllElementsInGroup(el.group);
+                }
                 el.selected = true;
                 ctx.selection = ctx.getSelection();
                 ctx.snapshot = snapshotSelection(ctx.selection);
@@ -931,6 +1067,17 @@ export const createBoard = (parent, opt) => {
         ctx.elements.unshift(element);
         ctx.currentElement = element;
         ctx.clearSelection();
+
+        // Check if we should clear the current group
+        if (ctx.currentGroup && element.type === ELEMENT_TYPES.SELECTION) {
+            const g = ctx.currentGroup;
+            if (element.x < g.x || g.x + g.width < element.x || element.y < g.y || g.y + g.height < element.y) {
+                ctx.currentGroup = null; // Reset current group
+            }
+        } else {
+            // Clear the current group just in case
+            ctx.currentGroup = null;
+        }
     };
 
     // Handle pointer move
@@ -1014,7 +1161,7 @@ export const createBoard = (parent, opt) => {
 
             // Check if the elemement is a selection
             if (element.type === ELEMENT_TYPES.SELECTION) {
-                setSelection(element, ctx.elements);
+                ctx.setSelection(element);
             }
         }
         // Check for text element --> update only text position
@@ -1037,11 +1184,17 @@ export const createBoard = (parent, opt) => {
         if (!ctx.currentElementDragged && ctx.selection.length > 0) {
             if (ctx.currentElementSelected === true && event.shiftKey) {
                 ctx.currentElement.selected = false;
+                // TODO: check if this element is part of a group
             }
             // Check if no shift key is pressed --> keep only this current element in selection
             else if (!event.shiftKey) {
                 ctx.clearSelection();
                 ctx.currentElement.selected = true;
+            }
+            // Check if this elements is part of a group
+            // This will disable the shift action if the element is in a group
+            if (ctx.currentElement.group && !ctx.currentGroup) {
+                ctx.selectAllElementsInGroup(ctx.currentElement.group);
             }
         }
         // Check for adding a new element
@@ -1075,13 +1228,14 @@ export const createBoard = (parent, opt) => {
         // If no text element, reset current element
         else {
             ctx.currentElement = null;
-            ctx.mode = "";
+            ctx.mode = INTERACTION_MODES.NONE;
         }
         
         // Reset selection
         ctx.selection = ctx.getSelection();
         ctx.selectionLocked = ctx.isSelectionLocked();
         ctx.type = ELEMENT_TYPES.SELECTION;
+        ctx.getGroupsInSelection().forEach(id => ctx.updateGroup(id)); // Update groups
         ctx.draw();
         ctx.trigger("update");
     };
@@ -1089,6 +1243,18 @@ export const createBoard = (parent, opt) => {
     // Handle double click
     const handleDoubleClick = event => {
         event.preventDefault();
+        // Check if all selected elements are in a group
+        if (ctx.selection.length > 0 && !ctx.currentGroup) {
+            const group = ctx.selection[0].group;
+            const sameGroup = ctx.selection.every(el => el.group === group);
+            if (group && sameGroup) {
+                ctx.clearSelection();
+                ctx.currentGroup = ctx.groups[group]; // Set current group
+                ctx.draw();
+                ctx.trigger("update");
+                return;
+            }
+        }
         // if (ctx.selection.length === 1 && ctx.selection[0].type === "text") {
         if (ctx.selection.length === 1 && typeof ctx.selection[0].textContent === "string") {
             ctx.currentElement = ctx.selection[0];
@@ -1276,23 +1442,31 @@ export const createBoard = (parent, opt) => {
             ctx.draw();
         },
         bringSelectionForward: () => {
-            forEachRev(ctx.selection, element => {
-                const index = ctx.elements.findIndex(el => el.id === element.id);
-                ctx.elements.splice(index, 1);
-                ctx.elements.splice(Math.max(index - 1, 0), 0, element);
-            });
-            ctx.draw();
+            // forEachRev(ctx.selection, element => {
+            //     const index = ctx.elements.findIndex(el => el.id === element.id);
+            //     ctx.elements.splice(index, 1);
+            //     ctx.elements.splice(Math.max(index - 1, 0), 0, element);
+            // });
+            // ctx.draw();
         },
         sendSelectionBackward: () => {
-            ctx.selection.forEach(element => {
-                const index = ctx.elements.findIndex(el => el.id === element.id);
-                ctx.elements.splice(index, 1);
-                ctx.elements.splice(Math.min(index + 1, ctx.elements.length), 0, element);
-            });
-            ctx.draw();
+            // ctx.selection.forEach(element => {
+            //     const index = ctx.elements.findIndex(el => el.id === element.id);
+            //     ctx.elements.splice(index, 1);
+            //     ctx.elements.splice(Math.min(index + 1, ctx.elements.length), 0, element);
+            // });
+            // ctx.draw();
         },
         getSelection: () => ctx.selection,
         isSelectionLocked: () => ctx.selectionLocked,
+        groupSelection: () => {
+            ctx.groupSelection();
+            ctx.draw();
+        },
+        ungroupSelection: () => {
+            ctx.ungroupSelection();
+            ctx.draw();
+        },
         screenshot: region => screenshot(ctx.canvas, region),
     };
 };
