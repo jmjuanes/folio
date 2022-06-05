@@ -1509,6 +1509,7 @@ export const createBoard = (parent, opt) => {
             ctx.ungroupSelection();
             ctx.draw();
         },
+        getActiveGroup: () => ctx.currentGroup,
         undo: () => {
             if (ctx.historyIndex < ctx.history.length) {
                 const entry = ctx.history[ctx.historyIndex];
@@ -1547,6 +1548,8 @@ export const createBoard = (parent, opt) => {
                 ctx.draw();
             }
         },
+        isUndoDisabled: () => ctx.historyIndex >= ctx.history.length,
+        isRedoDisabled: () => ctx.historyIndex === 0 || ctx.history.length < 1,
         screenshot: region => screenshot(ctx.canvas, region),
     };
 };
