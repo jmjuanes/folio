@@ -1,8 +1,9 @@
 import React from "react";
 import {Button} from "./Button.js";
 
-// Available items
-const availableItems = [
+// Available types
+const availableTypes = [
+    {name: "selection", icon: "pointer"},
     {name: "rectangle", icon: "square"},
     {name: "ellipse", icon: "circle"},
     {name: "line", icon: "minus"},
@@ -15,42 +16,21 @@ export const Toolbar = props => (
         style={{transform:"translateX(-50%)"}}
     >
         <div className="has-radius-md has-bg-gray-100 has-p-2 is-flex">
-            {/* Selection */}
-            <Button
-                active={props.currentTool === "selection"}
-                icon="pointer"
-                onClick={() => props.onToolButtonClick("selection")}
-            />
-            {/* Available items */}
-            {availableItems.map(item => (
+            {availableTypes.map(item => (
                 <Button
                     key={item.name}
                     className="has-ml-1"
-                    active={props.currentTool === item.name}
+                    active={props.currentType === item.name}
                     icon={item.icon}
-                    onClick={() => props.onToolButtonClick(item.name)}
+                    onClick={() => props.onTypeChange(item.name)}
                 />
             ))}
-            {/* Divider */}
-            <div
-                className="has-bg-gray-200 has-mx-2"
-                style={{
-                    width: "1px",
-                }}
-            />
-            {/* Render grid option */}
+            <div className="has-bg-gray-200 has-mx-2" style={{width: "1px"}} />
             <Button
                 className="has-ml-1"
-                active={props.gridButtonActive}
-                icon="grid"
-                onClick={() => props.onGridButtonClick()}
-            />
-            {/* Render screenshot option */}
-            <Button
-                className="has-ml-1"
-                active={props.currentTool === "screenshot"}
+                active={props.currentType === "screenshot"}
                 icon="camera"
-                onClick={() => props.onToolButtonClick("screenshot")}
+                onClick={() => props.onTypeChange("screenshot")}
             />
         </div>
     </div>
