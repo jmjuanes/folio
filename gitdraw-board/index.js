@@ -5,6 +5,7 @@ import {
     TEXT_VERTICAL_ALIGNS,
     LINE_CAPS,
     ELEMENT_TYPES,
+    ELEMENT_CHANGE_TYPES,
     RESIZE_TYPES,
     RESIZE_ORIENTATIONS,
 } from "./constants.js";
@@ -588,6 +589,8 @@ export const createBoard = (parent, opt) => {
         snapshot: [],
         elements: [],
         groups: {},
+        history: [],
+        historyIndex: 0,
         width: 200,
         height: 200,
         grid: false,
@@ -779,6 +782,7 @@ export const createBoard = (parent, opt) => {
     ctx.groupSelection = () => {
         const removedGroups = new Set();
         const newGroup = ctx.createGroup();
+        ctx.registerSelectionUpdate(["group"], [newGroup.id]);
         ctx.selection.forEach(element => {
             if (element.group) {
                 removedGroups.add(element.group);
@@ -792,6 +796,7 @@ export const createBoard = (parent, opt) => {
     };
     ctx.ungroupSelection = () => {
         const removedGroups = new Set();
+        ctx.registerSelectionUpdate(["group"], [null]);
         ctx.selection.forEach(element => removedGroups.add(element.group));
         ctx.elements.forEach(element => {
             if (removedGroups.has(element.group)) {
@@ -839,6 +844,55 @@ export const createBoard = (parent, opt) => {
         }
     };
 
+    // History elements
+    ctx.addHistoryEntry = entry => {
+        if (ctx.historyIndex > 0) {
+            ctx.history = ctx.history.slice(ctx.historyIndex);
+        }
+        ctx.history.unshift(entry);
+        ctx.historyIndex = 0;
+    };
+    ctx.registerSelectionUpdate = (keys, values) => {
+        ctx.addHistoryEntry({
+            type: ELEMENT_CHANGE_TYPES.UPDATE,
+            elements: ctx.selection.map(element => ({
+                id: element.id,
+                prevValues: Object.fromEntries(keys.map(key => [key, element[key]])),
+                newValues: Object.fromEntries(keys.map((key, index) => [key, values[index]])),
+            })),
+        });
+    };
+    ctx.registerSelectionRemove = () => {
+        ctx.addHistoryEntry({
+            type: ELEMENT_CHANGE_TYPES.REMOVE,
+            elements: ctx.selection.map(element => ({
+                id: element.id,
+                prevValues: {...element},
+                newValues: null,
+            })),
+        });
+    };
+    ctx.registerElementCreate = element => {
+        ctx.addHistoryEntry({
+            type: ELEMENT_CHANGE_TYPES.CREATE,
+            elements: [{
+                id: element.id,
+                prevValues: null,
+                newValues: {...element},
+            }],
+        });
+    };
+    ctx.registerElementRemove = element => {
+        ctx.addHistoryEntry({
+            type: ELEMENT_CHANGE_TYPES.REMOVE,
+            elements: [{
+                id: element.id,
+                prevValues: {...element},
+                newValues: null,
+            }],
+        });
+    };
+
     // Text input managers
     ctx.showInput = () => {
         ctx.input.style.top = ctx.currentElement.y + "px";
@@ -884,19 +938,30 @@ export const createBoard = (parent, opt) => {
         }
     };
     ctx.submitInput = () => {
+        const first = ctx.history[0] || null;
         const value = ctx.input.value || "";
         const element = ctx.currentElement;
+        const prevContent = element.textContent;
+        element.selected = true;
+        ctx.selection = ctx.getSelection();
+        ctx.selectionLocked = false;
         if (value || element.type !== ELEMENT_TYPES.TEXT) {
-            Object.assign(element, {
-                textContent: value || "",
-                selected: true,
-            });
+            if (first?.type === ELEMENT_CHANGE_TYPES.CREATE && first.elements[0].id === element.id && !prevContent) {
+                first.elements[0].textContent = value; // Replace the value in history
+            } else {
+                ctx.registerSelectionUpdate(["textContent"], [value]); // Register as update
+            }
+            element.textContent = value;
             ctx.updateElement(element, ["textContent"]);
-            ctx.selection = ctx.getSelection();
-            ctx.selectionLocked = false;
+            // ctx.selection = ctx.getSelection();
         } else {
-            // Remove this element
+            if (first?.type === ELEMENT_CHANGE_TYPES.CREATE && first.elements[0].id === element.id && !prevContent) {
+                ctx.history.shift(); // remove this from history
+            } else {
+                ctx.registerElementRemove(element);
+            }
             ctx.removeElement(element);
+            ctx.selection = ctx.getSelection();
         }
         ctx.currentElement = null;
         ctx.mode = INTERACTION_MODES.NONE; // Reset mode
@@ -922,6 +987,7 @@ export const createBoard = (parent, opt) => {
                     });
                     ctx.addElement(element);
                     ctx.updateElement(element, ["x", "y", "textContent"]);
+                    ctx.registerElementCreate(element);
                     ctx.draw();
                     return ctx.trigger("update");
                 }
@@ -935,6 +1001,7 @@ export const createBoard = (parent, opt) => {
                     });
                     ctx.addElement(element);
                     ctx.updateElement(element, ["img", "width", "height"]);
+                    ctx.registerElementCreate(element);
                     ctx.draw();
                     ctx.trigger("update");
                 });
@@ -963,6 +1030,7 @@ export const createBoard = (parent, opt) => {
         // Check for backspace key --> remove elements
         else if (event.key === KEYS.BACKSPACE) {
             event.preventDefault();
+            ctx.registerSelectionRemove();
             ctx.removeSelection();
             ctx.draw();
             ctx.trigger("update");
@@ -972,20 +1040,20 @@ export const createBoard = (parent, opt) => {
             event.preventDefault();
             const step = ctx.grid ? ctx.options.gridSize : (event.shiftKey ? 5 : 1);
 
-            // Move selected elements
-            if (event.key === KEYS.ARROW_UP) {
-                ctx.selection.forEach(el => el.y = ctx.getPosition(el.y - step));
-            }
-            else if (event.key === KEYS.ARROW_DOWN) {
-                ctx.selection.forEach(el => el.y = ctx.getPosition(el.y + step));
-            }
-            else if (event.key === KEYS.ARROW_LEFT) {
-                ctx.selection.forEach(el => el.x = ctx.getPosition(el.x - step));
-            }
-            else if (event.key === KEYS.ARROW_RIGHT) {
-                ctx.selection.forEach(el => el.x = ctx.getPosition(el.x + step));
-            }
-
+            ctx.addHistoryEntry({
+                type: ELEMENT_CHANGE_TYPES.UPDATE,
+                elements: ctx.selection.map(element => {
+                    const key = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
+                    const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
+                    const prevValue = element[key];
+                    element[key] = prevValue + step * sign;
+                    return {
+                        id: element.id,
+                        prevValues: {[key]: prevValue},
+                        nextValues: {[key]: element[key]},
+                    };
+                }),
+            });
             ctx.getGroupsInSelection().forEach(id => ctx.updateGroup(id)); // Update groups
             ctx.draw();
             ctx.trigger("update");
@@ -1184,7 +1252,6 @@ export const createBoard = (parent, opt) => {
         if (!ctx.currentElementDragged && ctx.selection.length > 0) {
             if (ctx.currentElementSelected === true && event.shiftKey) {
                 ctx.currentElement.selected = false;
-                // TODO: check if this element is part of a group
             }
             // Check if no shift key is pressed --> keep only this current element in selection
             else if (!event.shiftKey) {
@@ -1201,6 +1268,7 @@ export const createBoard = (parent, opt) => {
         if (ctx.type !== ELEMENT_TYPES.SELECTION && ctx.type !== ELEMENT_TYPES.SCREENSHOT) {
             ctx.currentElement.selected = true;
             ctx.updateElement(ctx.currentElement, ["selected"]);
+            ctx.registerElementCreate(ctx.currentElement);
         }
         // Remove selection elements
         else {
@@ -1218,6 +1286,19 @@ export const createBoard = (parent, opt) => {
                 y: yStart,
                 height: yEnd - yStart,
             });
+        }
+        else if (ctx.selection.length > 0 || ctx.currentElementDragged) {
+            if (ctx.mode === INTERACTION_MODES.DRAG || ctx.mode === INTERACTION_MODES.RESIZE) {
+                const keys = ctx.mode === INTERACTION_MODES.DRAG ? ["x", "y"] : ["x", "y", "width", "height"];
+                ctx.addHistoryEntry({
+                    type: ELEMENT_CHANGE_TYPES.UPDATE,
+                    elements: ctx.selection.map((element, index) => ({
+                        id: element.id,
+                        prevValues: Object.fromEntries(keys.map(key => [key, ctx.snapshot[index][key]])),
+                        nextValues: Object.fromEntries(keys.map(key => [key, element[key]])),
+                    })),
+                });
+            }
         }
         // Check for text element
         if (ctx.type === ELEMENT_TYPES.TEXT) {
@@ -1266,6 +1347,7 @@ export const createBoard = (parent, opt) => {
                 y: parseInt(event.clientY),
             });
             ctx.elements.unshift(ctx.currentElement);
+            ctx.registerElementCreate(ctx.currentElement);
         }
         ctx.mode = INTERACTION_MODES.INPUT;
         ctx.clearSelection();
@@ -1401,6 +1483,7 @@ export const createBoard = (parent, opt) => {
         },
         getType: () => ctx.type,
         updateSelection: (key, value) => {
+            ctx.registerSelectionUpdate([key], [value]);
             ctx.selection.forEach(element => {
                 element[key] = value;
                 ctx.updateElement(element, [key]);
@@ -1426,18 +1509,23 @@ export const createBoard = (parent, opt) => {
             ctx.draw();
         },
         lockSelection: () => {
+            ctx.registerSelectionUpdate(["locked"], [true]);
             ctx.selectionLocked = true;
             ctx.selection.forEach(element => element.locked = true);
+            ctx.draw();
         },
         unlockSelection: () => {
+            ctx.registerSelectionUpdate(["locked"], [false]);
             ctx.selectionLocked = false;
             ctx.selection.forEach(element => element.locked = false);
+            ctx.draw();
         },
         clearSelection: () => {
             ctx.clearSelection();
             ctx.draw();
         },
         removeSelection: () => {
+            ctx.registerSelectionRemove();
             ctx.removeSelection();
             ctx.draw();
         },
@@ -1466,6 +1554,40 @@ export const createBoard = (parent, opt) => {
         ungroupSelection: () => {
             ctx.ungroupSelection();
             ctx.draw();
+        },
+        undo: () => {
+            if (ctx.historyIndex < ctx.history.length) {
+                // ctx.clearSelection();
+                const entry = ctx.history[ctx.historyIndex];
+                if (entry.type === ELEMENT_CHANGE_TYPES.CREATE) {
+                    const removeElements = new Set(entry.elements.map(el => el.id));
+                    ctx.elements = ctx.elements.filter(el => !removeElements.has(el.id));
+                } else if (entry.type === ELEMENT_CHANGE_TYPES.REMOVE) {
+                    entry.elements.forEach(el => ctx.elements.unshift(el));
+                } else if (entry.type === ELEMENT_CHANGE_TYPES.UPDATE) {
+                    entry.elements.forEach(element => {
+                        Object.assign(ctx.elements.find(el => el.id === element.id), element.prevValues);
+                    });
+                }
+                ctx.historyIndex = ctx.historyIndex + 1;
+            }
+        },
+        redo: () => {
+            if (ctx.historyIndex > 0 && ctx.history.length > 0) {
+                // ctx.clearSelection();
+                ctx.historyIndex = ctx.historyIndex - 1;
+                const entry = ctx.history[ctx.historyIndex];
+                if (entry.type === ELEMENT_CHANGE_TYPES.CREATE) {
+                    entry.elements.forEach(el => ctx.elements.unshift(el));
+                } else if (entry.type === ELEMENT_CHANGE_TYPES.REMOVE) {
+                    const removeElements = new Set(entry.elements.map(el => el.id));
+                    ctx.elements = ctx.elements.filter(el => !removeElements.has(el.id));
+                } else if (entry.type === ELEMENT_CHANGE_TYPES.UPDATE) {
+                    entry.elements.forEach(element => {
+                        Object.assign(ctx.elements.find(el => el.id === element.id), element.nextValues);
+                    });
+                }
+            }
         },
         screenshot: region => screenshot(ctx.canvas, region),
     };

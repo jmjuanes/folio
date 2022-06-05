@@ -50,6 +50,13 @@ export const ELEMENT_TYPES = {
     // GROUP: "group",
 };
 
+// Element change types
+export const ELEMENT_CHANGE_TYPES = {
+    CREATE: "element:create",
+    UPDATE: "element:update",
+    REMOVE: "element:remove",
+};
+
 export const RESIZE_TYPES = {
     NONE: "none",
     MAIN_DIAGONAL: "main-diagonal", // lt and rb
