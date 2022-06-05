@@ -7,6 +7,7 @@ import {useNotifications} from "./hooks/useNotifications.js";
 // import {Menubar} from "./components/Menubar.js";
 import {Stylebar} from "./components/Stylebar.js";
 import {Toolbar} from "./components/Toolbar.js";
+import {Historybar} from "./components/Historybar.js";
 import {Toasts} from "./components/Toasts.js";
 
 import {blobToClipboard} from "./utils/blobUtils.js";
@@ -41,9 +42,8 @@ export const GitDrawBoard = props => {
                 <React.Fragment>
                     {/* <Menubar /> */}
                     <Toolbar
-                        currentTool={boardRef.current.getType()}
-                        gridButtonActive={false}
-                        onToolButtonClick={type => {
+                        currentType={boardRef.current.getType()}
+                        onTypeChange={type => {
                             boardRef.current.setType(type);
                             forceUpdate();
                         }}
@@ -52,10 +52,11 @@ export const GitDrawBoard = props => {
                         key={updateKey}
                         selection={boardRef.current.getSelection()}
                         selectionLocked={boardRef.current.isSelectionLocked()}
+                        activeGroup={boardRef.current.getActiveGroup()}
                         onChange={(n, v) => {
                             boardRef.current.updateSelection(n, v);
                         }}
-                        onRemove={() => {
+                        onRemoveClick={() => {
                             boardRef.current.removeSelection();
                             forceUpdate();
                         }}
@@ -64,6 +65,26 @@ export const GitDrawBoard = props => {
                         }}
                         onSendBackwardClick={() => {
                             boardRef.current.sendSelectionBackward();
+                        }}
+                        onGroupSelectionClick={() => {
+                            boardRef.current.groupSelection();
+                            forceUpdate();
+                        }}
+                        onUngroupSelectionClick={() => {
+                            boardRef.current.ungroupSelection();
+                            forceUpdate();
+                        }}
+                    />
+                    <Historybar
+                        undoDisabled={boardRef.current.isUndoDisabled()}
+                        redoDisabled={boardRef.current.isRedoDisabled()}
+                        onUndoClick={() => {
+                            boardRef.current.undo();
+                            forceUpdate();
+                        }}
+                        onRedoClick={() => {
+                            boardRef.current.redo();
+                            forceUpdate();
                         }}
                     />
                     <Toasts

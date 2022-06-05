@@ -159,7 +159,15 @@ const groups = {
     },
 };
 
-// Stylebar component
+const isGroupSelectionVisible = selection => {
+    const selectedGroups = new Set(selection.map(el => el.group));
+    return selection.length > 1 && (selectedGroups.size > 1 || selectedGroups.has(null));
+};
+
+const isUngroupSelectionVisible = selection => {
+    return selection.length > 0 && selection.some(el => !!el.group);
+};
+
 export const Stylebar = props => {
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     const [currentOption, setCurrentOption] = React.useState("");
@@ -169,7 +177,8 @@ export const Stylebar = props => {
             return [key, typeof element[groups[key].test] !== "undefined"];
         }));
     });
-    // Handle option change
+    const hasGroupVisible = Object.keys(visibleGroups).some(key => visibleGroups[key]);
+    const hasActiveGroup = !!props.activeGroup;
     const handleOptionChange = option => {
         setCurrentOption(option === currentOption ? "" : option);
     };
@@ -214,8 +223,11 @@ export const Stylebar = props => {
                         </div>
                     );
                 })}
+                {kofi.when(hasGroupVisible, () => (
+                    <div className="has-bg-gray-200 has-my-2" style={{height: "1px"}} />
+                ))}
                 {/* Order buttons */}
-                {kofi.when(props.selection.length === 1, () => (
+                {kofi.when(false, () => (
                     <React.Fragment>
                         <Button
                             className="has-mb-1"
@@ -229,19 +241,26 @@ export const Stylebar = props => {
                         />
                     </React.Fragment>
                 ))}
-                {/* Clone current selection */}
-                {/*
-                <Button
-                    className="has-mb-1"
-                    icon="clone"
-                    onClick={props.onClone}
-                />
-                */}
+                {/* Group selection */}
+                {kofi.when(!hasActiveGroup && isGroupSelectionVisible(props.selection), () => (
+                    <Button
+                        className="has-mb-1"
+                        icon="visible"
+                        onClick={props.onGroupSelectionClick}
+                    />
+                ))}
+                {/* Ungroup selection */}
+                {kofi.when(!hasActiveGroup && isUngroupSelectionVisible(props.selection), () => (
+                    <Button
+                        className="has-mb-1"
+                        icon="invisible"
+                        onClick={props.onUngroupSelectionClick}
+                    />
+                ))}
                 {/* Remove current selection */}
                 <Button
-                    className=""
                     icon="trash"
-                    onClick={props.onRemove}
+                    onClick={props.onRemoveClick}
                 />
             </div>
         </div>
