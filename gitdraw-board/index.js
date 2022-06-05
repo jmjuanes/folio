@@ -1050,7 +1050,7 @@ export const createBoard = (parent, opt) => {
                     return {
                         id: element.id,
                         prevValues: {[key]: prevValue},
-                        nextValues: {[key]: element[key]},
+                        newValues: {[key]: element[key]},
                     };
                 }),
             });
@@ -1295,7 +1295,7 @@ export const createBoard = (parent, opt) => {
                     elements: ctx.selection.map((element, index) => ({
                         id: element.id,
                         prevValues: Object.fromEntries(keys.map(key => [key, ctx.snapshot[index][key]])),
-                        nextValues: Object.fromEntries(keys.map(key => [key, element[key]])),
+                        newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
                     })),
                 });
             }
@@ -1557,36 +1557,38 @@ export const createBoard = (parent, opt) => {
         },
         undo: () => {
             if (ctx.historyIndex < ctx.history.length) {
-                // ctx.clearSelection();
                 const entry = ctx.history[ctx.historyIndex];
                 if (entry.type === ELEMENT_CHANGE_TYPES.CREATE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
                     ctx.elements = ctx.elements.filter(el => !removeElements.has(el.id));
                 } else if (entry.type === ELEMENT_CHANGE_TYPES.REMOVE) {
-                    entry.elements.forEach(el => ctx.elements.unshift(el));
+                    entry.elements.forEach(el => ctx.elements.unshift({...el.prevValues}));
                 } else if (entry.type === ELEMENT_CHANGE_TYPES.UPDATE) {
                     entry.elements.forEach(element => {
                         Object.assign(ctx.elements.find(el => el.id === element.id), element.prevValues);
                     });
                 }
                 ctx.historyIndex = ctx.historyIndex + 1;
+                ctx.clearSelection();
+                ctx.draw();
             }
         },
         redo: () => {
             if (ctx.historyIndex > 0 && ctx.history.length > 0) {
-                // ctx.clearSelection();
                 ctx.historyIndex = ctx.historyIndex - 1;
                 const entry = ctx.history[ctx.historyIndex];
                 if (entry.type === ELEMENT_CHANGE_TYPES.CREATE) {
-                    entry.elements.forEach(el => ctx.elements.unshift(el));
+                    entry.elements.forEach(el => ctx.elements.unshift({...el.newValues}));
                 } else if (entry.type === ELEMENT_CHANGE_TYPES.REMOVE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
                     ctx.elements = ctx.elements.filter(el => !removeElements.has(el.id));
                 } else if (entry.type === ELEMENT_CHANGE_TYPES.UPDATE) {
                     entry.elements.forEach(element => {
-                        Object.assign(ctx.elements.find(el => el.id === element.id), element.nextValues);
+                        Object.assign(ctx.elements.find(el => el.id === element.id) || {}, element.newValues);
                     });
                 }
+                ctx.clearSelection();
+                ctx.draw();
             }
         },
         screenshot: region => screenshot(ctx.canvas, region),
