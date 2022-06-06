@@ -10,6 +10,18 @@ import {
     RESIZE_ORIENTATIONS,
 } from "./constants.js";
 
+// Inverse resize orientations
+const inverseResizeOrientations = {
+    [RESIZE_ORIENTATIONS.LEFT_TOP]: [RESIZE_ORIENTATIONS.RIGHT_BOTTOM, RESIZE_ORIENTATIONS.RIGHT_TOP, RESIZE_ORIENTATIONS.LEFT_BOTTOM],
+    [RESIZE_ORIENTATIONS.LEFT_BOTTOM]: [RESIZE_ORIENTATIONS.RIGHT_TOP, RESIZE_ORIENTATIONS.RIGHT_BOTTOM, RESIZE_ORIENTATIONS.LEFT_TOP],
+    [RESIZE_ORIENTATIONS.RIGHT_TOP]: [RESIZE_ORIENTATIONS.LEFT_BOTTOM, RESIZE_ORIENTATIONS.LEFT_TOP, RESIZE_ORIENTATIONS.RIGHT_BOTTOM],
+    [RESIZE_ORIENTATIONS.RIGHT_BOTTOM]: [RESIZE_ORIENTATIONS.LEFT_TOP, RESIZE_ORIENTATIONS.LEFT_BOTTOM, RESIZE_ORIENTATIONS.RIGHT_TOP],
+    [RESIZE_ORIENTATIONS.LEFT]: [RESIZE_ORIENTATIONS.RIGHT, RESIZE_ORIENTATIONS.RIGHT, RESIZE_ORIENTATIONS.LEFT],
+    [RESIZE_ORIENTATIONS.RIGHT]: [RESIZE_ORIENTATIONS.LEFT, RESIZE_ORIENTATIONS.LEFT, RESIZE_ORIENTATIONS.RIGHT],
+    [RESIZE_ORIENTATIONS.TOP]: [RESIZE_ORIENTATIONS.BOTTOM, RESIZE_ORIENTATIONS.TOP, RESIZE_ORIENTATIONS.BOTTOM],
+    [RESIZE_ORIENTATIONS.BOTTOM]: [RESIZE_ORIENTATIONS.TOP, RESIZE_ORIENTATIONS.BOTTOM, RESIZE_ORIENTATIONS.TOP],
+};
+
 const uid = () => Date.now() + "";
 
 // Color parser
@@ -181,25 +193,25 @@ const snapshotSelection = selection => {
     }));
 };
 
-const getResizePoints = element => {
+const getResizePoints = (element, offset) => {
     const [x0, x1] = getAbsolutePositions(element.x, element.width);
     const [y0, y1] = getAbsolutePositions(element.y, element.height);
     if (element.resize === RESIZE_TYPES.ALL) {
         return [
-            {orientation: RESIZE_ORIENTATIONS.LEFT_TOP, x: x0, y: y0, xs: -1, ys: -1},
-            {orientation: RESIZE_ORIENTATIONS.TOP, x: (x0 + x1) / 2, y: y0, xs: -0.5, ys: -1},
-            {orientation: RESIZE_ORIENTATIONS.RIGHT_TOP, x: x1, y: y0, xs: 0, ys: -1},
-            {orientation: RESIZE_ORIENTATIONS.LEFT, x: x0, y: (y0 + y1) / 2, xs: -1, ys: -0.5},
-            {orientation: RESIZE_ORIENTATIONS.RIGHT, x: x1, y: (y0 + y1) / 2, xs: 0, ys: -0.5},
-            {orientation: RESIZE_ORIENTATIONS.LEFT_BOTTOM, x: x0, y: y1, xs: -1, ys: 0},
-            {orientation: RESIZE_ORIENTATIONS.RIGHT_BOTTOM, x: x1, y: y1, xs: 0, ys: 0},
-            {orientation: RESIZE_ORIENTATIONS.BOTTOM, x: (x0 + x1) / 2, y: y1, xs: -0.5, ys: 0},
+            {orientation: RESIZE_ORIENTATIONS.LEFT_TOP, x: x0 - offset, y: y0 - offset, xs: -1, ys: -1},
+            {orientation: RESIZE_ORIENTATIONS.TOP, x: (x0 + x1) / 2, y: y0 - offset, xs: -0.5, ys: -1},
+            {orientation: RESIZE_ORIENTATIONS.RIGHT_TOP, x: x1 + offset, y: y0 - offset, xs: 0, ys: -1},
+            {orientation: RESIZE_ORIENTATIONS.LEFT, x: x0 - offset, y: (y0 + y1) / 2, xs: -1, ys: -0.5},
+            {orientation: RESIZE_ORIENTATIONS.RIGHT, x: x1 + offset, y: (y0 + y1) / 2, xs: 0, ys: -0.5},
+            {orientation: RESIZE_ORIENTATIONS.LEFT_BOTTOM, x: x0 - offset, y: y1 + offset, xs: -1, ys: 0},
+            {orientation: RESIZE_ORIENTATIONS.RIGHT_BOTTOM, x: x1 + offset, y: y1 + offset, xs: 0, ys: 0},
+            {orientation: RESIZE_ORIENTATIONS.BOTTOM, x: (x0 + x1) / 2, y: y1 + offset, xs: -0.5, ys: 0},
         ];
     }
     else if (element.resize === RESIZE_TYPES.MAIN_DIAGONAL) {
         return [
-            {orientation: RESIZE_ORIENTATIONS.LEFT_TOP, x: x0, y: y0, xs: -1, ys: -1},
-            {orientation: RESIZE_ORIENTATIONS.RIGHT_BOTTOM, x: x1, y: y1, xs: 0, ys: 0},
+            {orientation: RESIZE_ORIENTATIONS.LEFT_TOP, x: x0 - offset, y: y0 - offset, xs: -1, ys: -1},
+            {orientation: RESIZE_ORIENTATIONS.RIGHT_BOTTOM, x: x1 + offset, y: y1 + offset, xs: 0, ys: 0},
         ];
     }
     // Default: no resize points
@@ -207,12 +219,24 @@ const getResizePoints = element => {
 };
 
 // Check if the cursor is inside a resize point
-const inResizePoint = (element, x, y, size) => {
-    return getResizePoints(element).find(point => {
+const inResizePoint = (element, x, y, size, offset) => {
+    return getResizePoints(element, offset).find(point => {
         const px = point.x + point.xs * size;
         const py = point.y + point.ys * size;
         return px <= x && x <= px + size && py <= y && y <= py + size;
     });
+};
+
+// Fix resize orientation
+const fixResizeOrientation = (element, orientation) => {
+    if (element.width < 0 && element.height < 0) {
+        return inverseResizeOrientations[orientation][0];
+    } else if (element.width < 0) {
+        return inverseResizeOrientations[orientation][1];
+    } else if (element.height < 0) {
+        return inverseResizeOrientations[orientation][2];
+    }
+    return orientation;
 };
 
 // Draw a simple rectangle
@@ -603,7 +627,6 @@ export const createBoard = (parent, opt) => {
 
     // Draw the board
     ctx.draw = () => {
-        const offset = ctx.options.elementSelectionOffset;
         const canvas = ctx.canvas.getContext("2d");
         const renderedGroups = new Set();
         canvas.clearRect(0, 0, ctx.width, ctx.height);
@@ -613,6 +636,8 @@ export const createBoard = (parent, opt) => {
 
             // Check if this element is selected --> draw selection area
             if (shouldDrawInnerText && element.selected === true && element.type !== ELEMENT_TYPES.SELECTION) {
+                const radius = ctx.options.elementResizeRadius;
+                const offset = ctx.options.elementSelectionOffset;
                 const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
                 const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
                 canvas.globalAlpha = 1.0;
@@ -625,8 +650,7 @@ export const createBoard = (parent, opt) => {
                 canvas.setLineDash([]); // Reset line-dash
                 // Check if is the unique selected elements
                 if (ctx.selection.length === 1 && element.locked === false) {
-                    const radius = ctx.options.elementResizeRadius;
-                    getResizePoints(element).forEach(p => {
+                    getResizePoints(element, offset).forEach(p => {
                         canvas.beginPath();
                         canvas.strokeStyle = ctx.options.elementResizeColor;
                         canvas.lineWidth = ctx.options.elementResizeWidth;
@@ -1041,10 +1065,11 @@ export const createBoard = (parent, opt) => {
         // Check if we are in a resize point
         if (ctx.selection.length === 1) {
             const radius = 2 * ctx.options.elementResizeRadius;
-            const point = inResizePoint(ctx.selection[0], ctx.lastX, ctx.lastY, radius);
+            const offset = ctx.options.elementSelectionOffset;
+            const point = inResizePoint(ctx.selection[0], ctx.lastX, ctx.lastY, radius, offset);
             if (point) {
                 ctx.currentElement = ctx.selection[0]; // Save current element
-                ctx.resizeOrientation = point.orientation; // Save resize orientation
+                ctx.resizeOrientation = fixResizeOrientation(ctx.currentElement, point.orientation);
                 ctx.mode = INTERACTION_MODES.RESIZE; // Swtich to resize mode
                 ctx.snapshot = snapshotSelection(ctx.selection); // Create a snapshot of the selection
                 return; // Stop event
