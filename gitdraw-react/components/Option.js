@@ -7,22 +7,22 @@ const optionTypes = {
     color: props => {
         const colorRef = React.useRef(null);
         return (
-            <div className="">
+            <div className="has-mb-4">
                 <div className="is-flex has-items-center has-mb-2">
                     <div
-                        className="has-radius-md has-mr-2 has-w-full has-maxw-8 has-h-8"
+                        className="has-radius-md has-mr-2 has-w-full has-maxw-8 has-p-4 is-bordered"
                         style={{
                             backgroundColor: rgbToHex(props.value),
                         }}
                     />
-                    <div className="is-flex has-radius-md is-clipped has-bg-white">
-                        <div className="has-bg-gray-200 has-px-2 has-py-1 has-lh-normal">
+                    <div className="is-flex has-radius-md is-clipped has-bg-white is-bordered has-items-center">
+                        <div className="has-bg-muted has-px-2 has-py-1 has-lh-normal">
                             <strong>#</strong>
                         </div>
                         <input
                             ref={colorRef}
                             type="text"
-                            className="input has-bg-white is-radiusless has-size-0 has-px-2 has-py-0"
+                            className="input has-bg-white is-radiusless has-size-0 has-px-2 has-py-1"
                             onChange={e => {
                                 if (isValidHexColor(e.target.value.replace("#", ""))) {
                                     return props.onChange(hexToRgb(e.target.value));
@@ -43,7 +43,7 @@ const optionTypes = {
                     {(props.colors || []).map(value => (
                         <div
                             key={value}
-                            className="has-radius-md has-py-4 is-clickable"
+                            className="has-radius-md has-py-4 is-clickable is-bordered"
                             style={{
                                 backgroundColor: rgbToHex(value),
                             }}
@@ -99,18 +99,22 @@ const optionTypes = {
         </div>
     ),
     pixel: props => (
-        <div className="">
+        <div className="is-flex has-radius-md is-clipped has-bg-white is-bordered has-items-center">
             <input
                 type="number"
-                className="input"
+                className="has-bg-white has-size-0 has-px-2 has-py-1 has-w-full has-text-right"
+                defaultValue={props.value}
                 min={props.min || 0}
                 max={props.max || null}
-                step={props.step || 1}
-                defaultValue={props.value}
-                onChange={e => props.onChange(Math.max(0, Number(e.target.value)))}
+                step="1"
+                style={{
+                    border: "0px solid transparent",
+                    outline: "none",
+                }}
+                onChange={e => props.onChange(Math.max(props.min || 0, Number(e.target.value)))}
             />
-            <div className="">
-                <strong>{props.suffix || "px"}</strong>
+            <div className="has-bg-muted has-px-2 has-py-1 has-lh-normal">
+                <strong>px</strong>
             </div>
         </div>
     ),
@@ -125,8 +129,8 @@ const optionTypes = {
                 step={props.step || 0.1}
                 defaultValue={props.value}
             />
-            <div className="has-size-0 has-text-gray-500 has-text-right has-minw-12">
-                {props.format ? props.format(props.value) : props.value}
+            <div className="has-size-0 has-opacity-75 has-text-right has-minw-8">
+                {props.value}
             </div>
         </div>
     ),
@@ -145,9 +149,9 @@ const optionTypes = {
         <div className="is-flex" style={{gap:"0.25rem"}}>
             {Object.keys(props.values).map(key => {
                 const classList = kofi.classNames({
-                    "has-p-2 has-radius-md is-clickable has-w-full has-text-center": true,
-                    "has-bg-gray-200 has-bg-gray-300-hover": key !== props.value, 
-                    "has-bg-blue-500 has-text-white": key === props.value,
+                    "has-p-1 has-size-2 has-radius-md is-clickable has-w-full has-text-center is-bordered": true,
+                    "has-text-primary-hover": key !== props.value, 
+                    "has-bg-primary has-text-white": key === props.value,
                 });
                 return (
                     <div key={key} className={classList} onClick={() => props.onChange(key)}>

@@ -12,9 +12,9 @@ const Toast = props => {
 
     const classList = kofi.classNames({
         "alert is-flex has-mb-0 has-mt-2": true,
-        "has-bg-red-500": props.type === "error",
-        "has-bg-yellow-500": props.type === "warning",
-        "has-bg-green-500": props.type === "success",
+        "has-bg-error": props.type === "error",
+        "has-bg-primary": props.type === "warning",
+        "has-bg-success": props.type === "success",
     });
 
     return (

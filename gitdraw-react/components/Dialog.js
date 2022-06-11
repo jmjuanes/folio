@@ -11,7 +11,7 @@ export function Dialog (props) {
     });
     return (
         <div className={classList} style={props.style}>
-            <div className="has-radius-md has-w-48 has-p-4 has-bg-gray-100">
+            <div className="has-radius-md has-p-4 has-bg-white is-bordered" style={{width:"15rem"}}>
                 {props.children}
             </div>
         </div>

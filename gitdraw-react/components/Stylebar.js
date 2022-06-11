@@ -12,10 +12,6 @@ import {Option} from "./Option.js";
 import colors from "../colors.js";
 import ICONS from "../icons.js";
 
-// Pixel format utility
-const pixelValueFormat = v => v + "px";
-
-// Groups options
 const groups = {
     text: {
         test: "textSize",
@@ -25,9 +21,8 @@ const groups = {
                 type: "range",
                 props: {
                     title: "Text size",
-                    domain: [4, 100],
-                    step: 1,
-                    format: pixelValueFormat,
+                    domain: [8, 96],
+                    step: 4,
                 },
             },
             textColor: {
@@ -86,10 +81,9 @@ const groups = {
             strokeWidth: {
                 type: "range",
                 props: {
-                    title: "Stroke size",
-                    domain: [0, 20],
+                    title: "Stroke width",
+                    domain: [0, 10],
                     step: 1,
-                    format: pixelValueFormat,
                 },
             },
             strokeColor: {
@@ -123,7 +117,6 @@ const groups = {
                 type: "selectIcon",
                 props: {
                     title: "Line start",
-                    // values: lineCapTypes,
                     values: {
                         [LINE_CAPS.NONE]: ICONS.LINE_HORIZONTAL,
                         [LINE_CAPS.ARROW]: ICONS.LINE_START_ARROW,
@@ -136,7 +129,6 @@ const groups = {
                 type: "selectIcon",
                 props: {
                     title: "Line end",
-                    // values: lineCapTypes,
                     values: {
                         [LINE_CAPS.NONE]: ICONS.LINE_HORIZONTAL,
                         [LINE_CAPS.ARROW]: ICONS.LINE_END_ARROW,
@@ -156,7 +148,7 @@ const groups = {
                 props: {
                     title: "Radius",
                     domain: [0, 50],
-                    step: 1,
+                    step: 2,
                 },
             },
         },
@@ -196,7 +188,7 @@ export const Stylebar = props => {
     });
     return (
         <div className={classList}>
-            <div className="has-radius-md has-bg-gray-100 has-p-2">
+            <div className="has-radius-md has-bg-white is-bordered has-p-2">
                 {Object.keys(groups).map(key => {
                     if (!visibleGroups[key]) {
                         return null; // This group is not available
@@ -206,14 +198,14 @@ export const Stylebar = props => {
                         return typeof props.selection[0][name] !== "undefined";
                     });
                     return (
-                        <div key={key} className="is-relative">
+                        <div key={key}>
                             <Button
                                 className="has-mb-1"
                                 icon={groups[key].icon}
                                 active={isActive}
                                 onClick={() => handleOptionChange(key)}
                             />
-                            <Dialog active={isActive} className="has-top-none has-right-none has-mr-12">
+                            <Dialog active={isActive} className="has-top-none has-right-none has-mr-16">
                                 {availableOptions.map(name => (
                                     <Option
                                         {...groups[key].options[name].props}
@@ -228,7 +220,7 @@ export const Stylebar = props => {
                     );
                 })}
                 {kofi.when(hasGroupVisible, () => (
-                    <div className="has-bg-gray-200 has-my-2" style={{height: "1px"}} />
+                    <div className="has-bg-body has-opacity-50 has-my-2" style={{height: "2px"}} />
                 ))}
                 {/* Order buttons */}
                 {kofi.when(false, () => (

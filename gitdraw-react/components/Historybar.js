@@ -7,8 +7,8 @@ const HistoryButton = props => (
     <div
         className={kofi.classNames({
             "has-p-2 has-radius-md has-lh-none": true,
-            "has-bg-gray-200-hover is-clickable": !props.disabled,
-            "has-text-gray-500": props.disabled,
+            "has-text-primary-hover is-clickable": !props.disabled,
+            "has-opacity-25": props.disabled,
         })}
         onClick={props.onClick}
     >
@@ -18,7 +18,7 @@ const HistoryButton = props => (
 
 export const Historybar = props => (
     <div className="is-absolute has-pb-4 has-pl-4 has-bottom-none has-left-none">
-        <div className="has-radius-md has-p-2 has-bg-gray-100 is-flex">
+        <div className="has-radius-md has-p-2 has-bg-white is-bordered is-flex">
             <HistoryButton
                 icon={ICONS.UNDO}
                 disabled={!!props.undoDisabled}
