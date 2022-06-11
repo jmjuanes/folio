@@ -151,7 +151,7 @@ const optionTypes = {
                 });
                 return (
                     <div key={key} className={classList} onClick={() => props.onChange(key)}>
-                        <i className={`icon-${props.values[key]}`} />
+                        {props.values[key]}
                     </div>
                 );
             })}

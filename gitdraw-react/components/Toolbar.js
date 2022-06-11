@@ -1,13 +1,14 @@
 import React from "react";
 import {Button} from "./Button.js";
+import ICONS from "../icons.js";
 
 // Available types
 const availableTypes = [
-    {name: "selection", icon: "pointer"},
-    {name: "rectangle", icon: "square"},
-    {name: "ellipse", icon: "circle"},
-    {name: "line", icon: "minus"},
-    {name: "text", icon: "text"},
+    {name: "selection", icon: ICONS.POINTER},
+    {name: "rectangle", icon: ICONS.SQUARE},
+    {name: "ellipse", icon: ICONS.CIRCLE},
+    {name: "line", icon: ICONS.LINE},
+    {name: "text", icon: ICONS.TEXT},
 ];
 
 export const Toolbar = props => (
@@ -29,7 +30,7 @@ export const Toolbar = props => (
             <Button
                 className="has-ml-1"
                 active={props.currentType === "screenshot"}
-                icon="camera"
+                icon={ICONS.CAMERA}
                 onClick={() => props.onTypeChange("screenshot")}
             />
         </div>

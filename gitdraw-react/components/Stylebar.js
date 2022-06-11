@@ -10,28 +10,16 @@ import {Dialog} from "./Dialog.js";
 import {Button} from "./Button.js";
 import {Option} from "./Option.js";
 import colors from "../colors.js";
+import ICONS from "../icons.js";
 
 // Pixel format utility
 const pixelValueFormat = v => v + "px";
-
-const lineCapTypes = [
-    LINE_CAPS.NONE,
-    LINE_CAPS.ARROW,
-    LINE_CAPS.SQUARE,
-    LINE_CAPS.CIRCLE,
-];
-
-const textAlign = {
-    [TEXT_ALIGNS.LEFT]: "align-left",
-    [TEXT_ALIGNS.CENTER]: "align-center",
-    [TEXT_ALIGNS.RIGHT]: "align-right",
-};
 
 // Groups options
 const groups = {
     text: {
         test: "textSize",
-        icon: "font",
+        icon: ICONS.TEXT,
         options: {
             textSize: {
                 type: "range",
@@ -61,14 +49,18 @@ const groups = {
                 type: "selectIcon",
                 props: {
                     title: "Text align",
-                    values: textAlign,
+                    values: {
+                        [TEXT_ALIGNS.LEFT]: ICONS.TEXT_LEFT,
+                        [TEXT_ALIGNS.CENTER]: ICONS.TEXT_CENTER,
+                        [TEXT_ALIGNS.RIGHT]: ICONS.TEXT_RIGHT,
+                    },
                 },
             },
         },
     },
     fill: {
         test: "fillColor",
-        icon: "fill",
+        icon: ICONS.FILL,
         options: {
             fillColor: {
                 type: "color",
@@ -89,7 +81,7 @@ const groups = {
     },
     stroke: {
         test: "strokeWidth",
-        icon: "minus",
+        icon: ICONS.LINE_HORIZONTAL,
         options: {
             strokeWidth: {
                 type: "range",
@@ -125,27 +117,39 @@ const groups = {
     },
     cap: {
         test: "lineStart",
-        icon: "pointer",
+        icon: ICONS.LINE_END_ARROW,
         options: {
             lineStart: {
-                type: "select",
+                type: "selectIcon",
                 props: {
                     title: "Line start",
-                    values: lineCapTypes,
+                    // values: lineCapTypes,
+                    values: {
+                        [LINE_CAPS.NONE]: ICONS.LINE_HORIZONTAL,
+                        [LINE_CAPS.ARROW]: ICONS.LINE_START_ARROW,
+                        [LINE_CAPS.CIRCLE]: ICONS.LINE_START_CIRCLE,
+                        [LINE_CAPS.SQUARE]: ICONS.LINE_START_SQUARE,
+                    },
                 },
             },
             lineEnd: {
-                type: "select",
+                type: "selectIcon",
                 props: {
                     title: "Line end",
-                    values: lineCapTypes,
+                    // values: lineCapTypes,
+                    values: {
+                        [LINE_CAPS.NONE]: ICONS.LINE_HORIZONTAL,
+                        [LINE_CAPS.ARROW]: ICONS.LINE_END_ARROW,
+                        [LINE_CAPS.CIRCLE]: ICONS.LINE_END_CIRCLE,
+                        [LINE_CAPS.SQUARE]: ICONS.LINE_END_SQUARE
+                    },
                 },
             },
         },
     },
     radius: {
         test: "radius",
-        icon: "corner",
+        icon: ICONS.CORNERS,
         options: {
             radius: {
                 type: "range",
@@ -245,7 +249,7 @@ export const Stylebar = props => {
                 {kofi.when(!hasActiveGroup && isGroupSelectionVisible(props.selection), () => (
                     <Button
                         className="has-mb-1"
-                        icon="visible"
+                        icon={ICONS.OBJECT_GROUP}
                         onClick={props.onGroupSelectionClick}
                     />
                 ))}
@@ -253,13 +257,13 @@ export const Stylebar = props => {
                 {kofi.when(!hasActiveGroup && isUngroupSelectionVisible(props.selection), () => (
                     <Button
                         className="has-mb-1"
-                        icon="invisible"
+                        icon={ICONS.OBJECT_UNGROUP}
                         onClick={props.onUngroupSelectionClick}
                     />
                 ))}
                 {/* Remove current selection */}
                 <Button
-                    icon="trash"
+                    icon={ICONS.TRASH}
                     onClick={props.onRemoveClick}
                 />
             </div>

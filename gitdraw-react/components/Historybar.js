@@ -1,6 +1,8 @@
 import React from "react";
 import kofi from "kofi";
 
+import ICONS from "../icons.js";
+
 const HistoryButton = props => (
     <div
         className={kofi.classNames({
@@ -10,7 +12,7 @@ const HistoryButton = props => (
         })}
         onClick={props.onClick}
     >
-        <i className={`icon-${props.icon}`} />
+        {props.icon}
     </div>
 );
 
@@ -18,12 +20,12 @@ export const Historybar = props => (
     <div className="is-absolute has-pb-4 has-pl-4 has-bottom-none has-left-none">
         <div className="has-radius-md has-p-2 has-bg-gray-100 is-flex">
             <HistoryButton
-                icon="undo"
+                icon={ICONS.UNDO}
                 disabled={!!props.undoDisabled}
                 onClick={props.onUndoClick}
             />
             <HistoryButton
-                icon="redo"
+                icon={ICONS.REDO}
                 disabled={!!props.redoDisabled}
                 onClick={props.onRedoClick}
             />
