@@ -12,7 +12,9 @@
         "gitdraw-react"
     ],
     "scripts": {
-        "build": "webpack build --config ./webpack.config.js",
+        "build": "npm run build:css && npm run build:app",
+        "build:app": "webpack build --config ./webpack.config.js",
+        "build:css": "siimple -c ./siimple.config.mjs -o styles.css",
         "clean": "rm -rf ./public",
         "serve": "stattic --folder ./public --port 5000"
     },

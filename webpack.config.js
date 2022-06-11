@@ -52,7 +52,8 @@ module.exports = {
         }),
         new CopyPlugin({
             patterns: [
-                path.resolve(__dirname, "node_modules", "siimple", "siimple.css"),
+                // path.resolve(__dirname, "node_modules", "siimple", "siimple.css"),
+                path.join(__dirname, "styles.css"),
             ],
         }),
         new HtmlWebpackPlugin({
