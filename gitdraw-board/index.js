@@ -786,12 +786,12 @@ export const createBoard = (parent, opt) => {
     // Group managers
     ctx.groupSelection = () => {
         const group = uid();
-        ctx.registerSelectionUpdate(["group"], [group]);
+        ctx.registerSelectionUpdate(["group"], [group], false);
         ctx.selection.forEach(element => element.group = group);
         ctx.currentGroup = null;
     };
     ctx.ungroupSelection = () => {
-        ctx.registerSelectionUpdate(["group"], [null]);
+        ctx.registerSelectionUpdate(["group"], [null], false);
         ctx.selection.forEach(element => element.group = null);
         ctx.currentGroup = null;
     };
@@ -829,13 +829,29 @@ export const createBoard = (parent, opt) => {
     ctx.addHistoryEntry = entry => {
         if (ctx.historyIndex > 0) {
             ctx.history = ctx.history.slice(ctx.historyIndex);
+            ctx.historyIndex = 0;
         }
+        // Check for updating the same elements and the same keys
+        if (entry.keys && entry.ids && ctx.history.length > 0) {
+            const last = ctx.history[0];
+            if (last.ids === entry.ids && last.keys === entry.keys) {
+                const keys = entry.keys.split(",");
+                last.elements.forEach((element, index) => {
+                    element.newValues = Object.fromEntries(keys.map(key => {
+                        return [key, entry.elements[index].newValues[key]];
+                    }));
+                });
+                return;
+            }
+        }
+        // Register the new history entry
         ctx.history.unshift(entry);
-        ctx.historyIndex = 0;
     };
-    ctx.registerSelectionUpdate = (keys, values) => {
+    ctx.registerSelectionUpdate = (keys, values, groupChanges) => {
         ctx.addHistoryEntry({
             type: ELEMENT_CHANGE_TYPES.UPDATE,
+            ids: groupChanges && ctx.selection.map(el => el.id).join(","),
+            keys: groupChanges && keys.join(","),
             elements: ctx.selection.map(element => ({
                 id: element.id,
                 prevValues: Object.fromEntries(keys.map(key => [key, element[key]])),
@@ -930,7 +946,7 @@ export const createBoard = (parent, opt) => {
             if (first?.type === ELEMENT_CHANGE_TYPES.CREATE && first.elements[0].id === element.id && !prevContent) {
                 first.elements[0].textContent = value; // Replace the value in history
             } else {
-                ctx.registerSelectionUpdate(["textContent"], [value]); // Register as update
+                ctx.registerSelectionUpdate(["textContent"], [value], false);
             }
             element.textContent = value;
             ctx.updateElement(element, ["textContent"]);
@@ -1019,12 +1035,14 @@ export const createBoard = (parent, opt) => {
         else if (isArrowKey(event.key) === true) {
             event.preventDefault();
             const step = ctx.grid ? ctx.options.gridSize : (event.shiftKey ? 5 : 1);
+            const key = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
+            const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
 
             ctx.addHistoryEntry({
                 type: ELEMENT_CHANGE_TYPES.UPDATE,
+                ids: ctx.selection.map(el => el.id).join(","),
+                keys: key,
                 elements: ctx.selection.map(element => {
-                    const key = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
-                    const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
                     const prevValue = element[key];
                     element[key] = prevValue + step * sign;
                     return {
@@ -1463,7 +1481,7 @@ export const createBoard = (parent, opt) => {
         },
         getType: () => ctx.type,
         updateSelection: (key, value) => {
-            ctx.registerSelectionUpdate([key], [value]);
+            ctx.registerSelectionUpdate([key], [value], true);
             ctx.selection.forEach(element => {
                 element[key] = value;
                 ctx.updateElement(element, [key]);
@@ -1489,13 +1507,13 @@ export const createBoard = (parent, opt) => {
             ctx.draw();
         },
         lockSelection: () => {
-            ctx.registerSelectionUpdate(["locked"], [true]);
+            ctx.registerSelectionUpdate(["locked"], [true], false);
             ctx.selectionLocked = true;
             ctx.selection.forEach(element => element.locked = true);
             ctx.draw();
         },
         unlockSelection: () => {
-            ctx.registerSelectionUpdate(["locked"], [false]);
+            ctx.registerSelectionUpdate(["locked"], [false], false);
             ctx.selectionLocked = false;
             ctx.selection.forEach(element => element.locked = false);
             ctx.draw();
