@@ -785,9 +785,10 @@ export const createBoard = (parent, opt) => {
 
     // Group managers
     ctx.groupSelection = () => {
-        ctx.currentGroup = uid();
-        ctx.registerSelectionUpdate(["group"], [ctx.currentGroup]);
-        ctx.selection.forEach(element => element.group = ctx.currentGroup);
+        const group = uid();
+        ctx.registerSelectionUpdate(["group"], [group]);
+        ctx.selection.forEach(element => element.group = group);
+        ctx.currentGroup = null;
     };
     ctx.ungroupSelection = () => {
         ctx.registerSelectionUpdate(["group"], [null]);
