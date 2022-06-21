@@ -4,7 +4,7 @@ import kofi from "kofi";
 import {
     LINE_CAPS,
     TEXT_ALIGNS,
-} from "@gitdraw/board/constants.js";
+} from "@folioapp/lib/constants.js";
 
 import {Dialog} from "./Dialog.js";
 import {Button} from "./Button.js";

@@ -12,7 +12,7 @@ import {Historybar} from "./components/Historybar.js";
 
 import {blobToClipboard} from "./utils/blobUtils.js";
 
-export const GitDrawBoard = props => {
+export const FolioBoard = props => {
     const parentRef = React.useRef(null);
     const boardRef = useBoard(parentRef, {});
 
@@ -98,7 +98,7 @@ export const GitDrawBoard = props => {
     );
 };
 
-GitDrawBoard.defaultProps = {
+FolioBoard.defaultProps = {
     client: null,
     id: "",
 };

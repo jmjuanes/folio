@@ -1,15 +1,15 @@
 {
-    "name": "gitdraw",
+    "name": "folioapp",
     "version": "0.0.0",
     "description": "",
     "private": true,
-    "repository": "https://github.com/jmjuanes/gitdraw",
+    "repository": "https://github.com/jmjuanes/folioapp",
     "author": "Josemi Juanes <hello@josemi.xyz>",
-    "bugs": "https://github.com/jmjuanes/gitdraw/issues",
+    "bugs": "https://github.com/jmjuanes/folioapp/issues",
     "workspaces": [
-        "app",
-        "gitdraw-board",
-        "gitdraw-react"
+        "folioapp-react",
+        "folioapp-client",
+        "folioapp-lib"
     ],
     "scripts": {
         "build": "npm run build:css && npm run build:app",

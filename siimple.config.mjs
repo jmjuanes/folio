@@ -3,7 +3,7 @@ import reboot from "@siimple/preset-reboot";
 import elements from "@siimple/preset-elements";
 import helpers from "@siimple/preset-helpers";
 
-// GitDraw theme colors
+// theme colors
 const COLORS = {
     PRIMARY: "#fec56d",
     SECONDARY: "",
