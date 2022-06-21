@@ -32,7 +32,7 @@ const Toast = props => {
 };
 
 export const Toasts = props => (
-    <div className="is-absolute has-bottom-none has-right-none has-mr-4 has-mb-4 has-w-96">
+    <div className="is-absolute has-bottom-none has-right-none has-mr-4 has-mb-4 has-w-96" style={{zIndex:500}}>
         {props.items.map(item => (
             <Toast
                 key={item.id}

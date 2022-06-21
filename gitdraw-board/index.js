@@ -1369,9 +1369,9 @@ export const createBoard = (parent, opt) => {
     // Append elements and update parent styles
     ctx.parent.style.width = "100%";
     ctx.parent.style.height = "100%";
-    ctx.parent.style.position = "fixed";
-    ctx.parent.style.top = "0px";
-    ctx.parent.style.left = "0px";
+    ctx.parent.style.position = "relative";
+    // ctx.parent.style.top = "0px";
+    // ctx.parent.style.left = "0px";
     
     // Apply body styles
     // document.querySelector("body").style.touchAction = "pan-y";

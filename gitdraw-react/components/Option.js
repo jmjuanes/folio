@@ -150,8 +150,8 @@ const optionTypes = {
             {Object.keys(props.values).map(key => {
                 const classList = kofi.classNames({
                     "has-p-1 has-size-2 has-radius-md is-clickable has-w-full has-text-center is-bordered": true,
-                    "has-text-primary-hover": key !== props.value, 
-                    "has-bg-primary has-text-white": key === props.value,
+                    "has-bg-body-hover has-text-white-hover": key !== props.value, 
+                    "has-bg-body has-text-white": key === props.value,
                 });
                 return (
                     <div key={key} className={classList} onClick={() => props.onChange(key)}>

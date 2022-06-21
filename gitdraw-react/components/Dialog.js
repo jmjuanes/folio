@@ -11,7 +11,12 @@ export function Dialog (props) {
     });
     return (
         <div className={classList} style={props.style}>
-            <div className="has-radius-md has-p-4 has-bg-white is-bordered" style={{width:"15rem"}}>
+            <div
+                className="has-radius-md has-p-4 has-bg-white is-bordered has-shadow-sm"
+                style={{
+                    width: props.width,
+                }}
+            >
                 {props.children}
             </div>
         </div>
@@ -22,4 +27,5 @@ export function Dialog (props) {
 Dialog.defaultProps = {
     active: false,
     orientation: "left",
+    width: "15rem",
 };

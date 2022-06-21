@@ -14,9 +14,12 @@ const availableTypes = [
 export const Toolbar = props => (
     <div
         className="is-absolute has-bottom-none has-left-half has-pb-4"
-        style={{transform:"translateX(-50%)"}}
+        style={{
+            transform:"translateX(-50%)",
+            zIndex: 100,
+        }}
     >
-        <div className="has-radius-md has-bg-white is-bordered has-p-2 is-flex">
+        <div className="has-radius-md has-bg-white is-bordered has-p-2 is-flex has-shadow-md">
             {availableTypes.map(item => (
                 <Button
                     key={item.name}

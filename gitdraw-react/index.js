@@ -4,21 +4,21 @@ import kofi from "kofi";
 import {useBoard} from "./hooks/useBoard.js";
 import {useNotifications} from "./hooks/useNotifications.js";
 
-// import {Menubar} from "./components/Menubar.js";
+// import {Menubar} from "./Menubar.js";
+import {Toasts} from "./components/Toasts.js";
 import {Stylebar} from "./components/Stylebar.js";
 import {Toolbar} from "./components/Toolbar.js";
 import {Historybar} from "./components/Historybar.js";
-import {Toasts} from "./components/Toasts.js";
 
 import {blobToClipboard} from "./utils/blobUtils.js";
 
 export const GitDrawBoard = props => {
     const parentRef = React.useRef(null);
-    const boardRef = useBoard(parentRef, props.options);
-    const notifications = useNotifications();
+    const boardRef = useBoard(parentRef, {});
 
-    const [ready, setReady] = React.useState(false);
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
+    const [ready, setReady] = React.useState(false);
+    const notifications = useNotifications();
 
     React.useEffect(() => {
         // Register event listeners to the board
@@ -32,15 +32,16 @@ export const GitDrawBoard = props => {
             });
         });
 
-        // Board ready --> Display board bars
         setReady(true);
+        return () => {
+            boardRef.current.destroy();
+        };
     }, []);
 
     return (
-        <div ref={parentRef}>
+        <div className="is-relative has-w-full has-h-full" ref={parentRef}>
             {kofi.when(ready, () => (
                 <React.Fragment>
-                    {/* <Menubar /> */}
                     <Toolbar
                         currentType={boardRef.current.getType()}
                         onTypeChange={type => {
@@ -87,16 +88,17 @@ export const GitDrawBoard = props => {
                             forceUpdate();
                         }}
                     />
-                    <Toasts
-                        items={notifications.getAll()}
-                        onDelete={id => notifications.remove(id)}
-                    />
                 </React.Fragment>
             ))}
+            <Toasts
+                items={notifications.getAll()}
+                onDelete={id => notifications.remove(id)}
+            />
         </div>
     );
 };
 
 GitDrawBoard.defaultProps = {
-    options: {},
+    client: null,
+    id: "",
 };
