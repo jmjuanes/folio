@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import kofi from "kofi";
 
-import {GitDrawBoard} from "@gitdraw/react";
-// import {createLocalClient} from "@gitdraw/client/local.js";
+import {FolioBoard} from "./index.js";
+// import {createLocalClient} from "@folio/client/local.js";
 
 const App = props => {
     return (
         <div className="is-fixed has-top-none has-left-none has-w-full has-h-full">
-            <GitDrawBoard id={props.id} />
+            <FolioBoard id={props.id} />
         </div>
     );
 };
