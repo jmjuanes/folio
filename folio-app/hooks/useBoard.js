@@ -1,5 +1,5 @@
 import React from "react";
-import {createBoard} from "@folioapp/lib";
+import {createBoard} from "@folio/lib";
 
 // Use board hook
 export const useBoard = (parent, options) => {

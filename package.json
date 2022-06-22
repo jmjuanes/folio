@@ -1,15 +1,15 @@
 {
-    "name": "folioapp",
+    "name": "folio",
     "version": "0.0.0",
     "description": "",
     "private": true,
-    "repository": "https://github.com/jmjuanes/folioapp",
+    "repository": "https://github.com/jmjuanes/folio",
     "author": "Josemi Juanes <hello@josemi.xyz>",
-    "bugs": "https://github.com/jmjuanes/folioapp/issues",
+    "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
-        "folioapp-react",
-        "folioapp-client",
-        "folioapp-lib"
+        "folio-react",
+        "folio-client",
+        "folio-lib"
     ],
     "scripts": {
         "build": "npm run build:css && npm run build:app",

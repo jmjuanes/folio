@@ -1,16 +1,19 @@
 {
-    "name": "@folioapp/lib",
+    "name": "@folio/client",
     "version": "0.0.0",
     "description": "",
     "private": true,
-    "repository": "https://github.com/jmjuanes/folioapp",
+    "repository": "https://github.com/jmjuanes/folio",
     "author": "Josemi Juanes <hello@josemi.xyz>",
-    "bugs": "https://github.com/jmjuanes/folioapp/issues",
+    "bugs": "https://github.com/jmjuanes/folio/issues",
     "type": "module",
     "main": "index.js",
     "files": [
         "README.md",
         "index.js"
     ],
+    "dependencies": {
+        "lz-string": "^1.4.4"
+    },
     "license": "MIT"
 }
