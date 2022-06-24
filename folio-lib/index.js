@@ -1554,6 +1554,11 @@ export const createBoard = (parent, opt) => {
             ctx.draw();
         },
         getActiveGroup: () => ctx.currentGroup,
+        toggleGrid: () => {
+            ctx.grid = !ctx.grid;
+            ctx.drawGrid();
+        },
+        isGridEnabled: () => ctx.grid,
         undo: () => {
             if (ctx.historyIndex < ctx.history.length) {
                 const entry = ctx.history[ctx.historyIndex];
