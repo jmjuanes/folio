@@ -1,10 +1,12 @@
 import React from "react";
 import kofi from "kofi";
 
+import {ELEMENT_TYPES} from "@folio/lib/constants.js";
+
 import {useBoard} from "./hooks/useBoard.js";
 import {useNotifications} from "./hooks/useNotifications.js";
 
-// import {Menubar} from "./Menubar.js";
+import {Menubar} from "./components/Menubar.js";
 import {Toasts} from "./components/Toasts.js";
 import {Stylebar} from "./components/Stylebar.js";
 import {Toolbar} from "./components/Toolbar.js";
@@ -40,7 +42,30 @@ export const FolioBoard = props => {
 
     return (
         <div className="is-relative has-w-full has-h-full" ref={parentRef}>
-            {kofi.when(ready, () => (
+            <Menubar
+                options={boardRef?.current?.getOptions()}
+                gridEnabled={boardRef?.current?.isGridEnabled()}
+                cameraEnabled={boardRef?.current?.getType() === ELEMENT_TYPES.SCREENSHOT}
+                onGridClick={() => {
+                    boardRef.current.toggleGrid();
+                    forceUpdate();
+                }}
+                onCameraClick={() => {
+                    if (boardRef.current.getType() === ELEMENT_TYPES.SCREENSHOT) {
+                        boardRef.current.setType(ELEMENT_TYPES.SELECTION);
+                    }
+                    else {
+                        boardRef.current.setType(ELEMENT_TYPES.SCREENSHOT);
+                    }
+                    forceUpdate();
+                }}
+                onOptionsChange={(name, value) => {
+                    const currentOptions = boardRef.current.getOptions();
+                    currentOptions[name] = value;
+                    boardRef.current.updateOptions(currentOptions);
+                }}
+            />
+            {kofi.when(ready && boardRef?.current?.getType() !== ELEMENT_TYPES.SCREENSHOT, () => (
                 <React.Fragment>
                     <Toolbar
                         currentType={boardRef.current.getType()}

@@ -19,7 +19,7 @@ export const Toolbar = props => (
             zIndex: 100,
         }}
     >
-        <div className="has-radius-md has-bg-white is-bordered has-p-2 is-flex has-shadow-md">
+        <div className="has-radius-md has-bg-white is-bordered has-p-2 is-flex has-shadow-lg">
             {availableTypes.map(item => (
                 <Button
                     key={item.name}
@@ -29,13 +29,6 @@ export const Toolbar = props => (
                     onClick={() => props.onTypeChange(item.name)}
                 />
             ))}
-            <div className="has-bg-body has-opacity-50 has-mx-2" style={{width: "2px"}} />
-            <Button
-                className="has-ml-1"
-                active={props.currentType === "screenshot"}
-                icon={ICONS.CAMERA}
-                onClick={() => props.onTypeChange("screenshot")}
-            />
         </div>
     </div>
 );

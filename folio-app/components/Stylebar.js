@@ -188,7 +188,7 @@ export const Stylebar = props => {
     });
     return (
         <div className={classList} style={{zIndex:100}}>
-            <div className="has-radius-md has-bg-white is-bordered has-p-2 has-shadow-md">
+            <div className="has-radius-md has-bg-white is-bordered has-p-2 has-shadow-lg">
                 {Object.keys(groups).map(key => {
                     if (!visibleGroups[key]) {
                         return null; // This group is not available

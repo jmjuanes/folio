@@ -73,3 +73,8 @@ export const RESIZE_ORIENTATIONS = {
     RIGHT_TOP: "rt",
     RIGHT_BOTTOM: "rb",
 };
+
+export const GRID_STYLES = {
+    DOTS: "grid-dots",
+    LINES: "grid-lines",
+};

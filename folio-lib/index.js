@@ -8,6 +8,7 @@ import {
     ELEMENT_CHANGE_TYPES,
     RESIZE_TYPES,
     RESIZE_ORIENTATIONS,
+    GRID_STYLES,
 } from "./constants.js";
 
 // Inverse resize orientations
@@ -22,7 +23,11 @@ const inverseResizeOrientations = {
     [RESIZE_ORIENTATIONS.BOTTOM]: [RESIZE_ORIENTATIONS.TOP, RESIZE_ORIENTATIONS.BOTTOM, RESIZE_ORIENTATIONS.TOP],
 };
 
-const uid = () => Date.now() + "";
+// Generate an ID
+// Source: https://michalzalecki.com/generate-unique-id-in-the-browser-without-a-library/ 
+export const generateID = () => {
+    return (window.crypto.getRandomValues(new Uint32Array(1))[0]).toString(16);
+};
 
 // Color parser
 export const parseColor = (color, opacity) => {
@@ -572,7 +577,7 @@ export const createBoard = (parent, opt) => {
         gridWidth: 1, //Grid lines width
         gridOpacity: 0.8,
         gridSize: 10,
-        gridStyle: "lined",
+        gridStyle: GRID_STYLES.LINES,
         // Element selection
         elementSelectionColor: "rgb(0,0,0)",
         elementSelectionWidth: 0.5,
@@ -712,7 +717,7 @@ export const createBoard = (parent, opt) => {
     ctx.createElement = element => ({
         ...elements[element.type].init(ctx.options),
         ...element,
-        id: uid(),
+        id: generateID(),
         width: element.width || 0,
         height: element.height || 0,
         selected: false,
@@ -785,7 +790,7 @@ export const createBoard = (parent, opt) => {
 
     // Group managers
     ctx.groupSelection = () => {
-        const group = uid();
+        const group = generateID();
         ctx.registerSelectionUpdate(["group"], [group], false);
         ctx.selection.forEach(element => element.group = group);
         ctx.currentGroup = null;
@@ -1463,6 +1468,7 @@ export const createBoard = (parent, opt) => {
         updateOptions: newOptions => {
             Object.assign(ctx.options, newOptions);
             ctx.draw();
+            ctx.drawGrid();
         },
         forceUpdate: () => {},
         // load: null,
