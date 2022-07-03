@@ -24,3 +24,12 @@ export const hexToRgb = str => {
 export const isValidHexColor = str => {
     return str === "transparent" || str.length === 3 || str.length === 6;
 };
+
+// Color parser
+export const parseColor = (color, opacity) => {
+    if (color === "transparent") {
+        return color; // Nothing to do if color is transparent
+    }
+    // Get RGB values from color and return the RGBA color
+    return `rgba(${color.match(/\d+/g).slice(0, 3).join(",")},${opacity})`;
+};

@@ -1,6 +1,6 @@
 import React from "react";
-import kofi from "kofi";
-import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colorUtils.js";
+import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colors.js";
+import {classNames} from "../utils/classNames.js";
 
 // Option types
 const optionTypes = {
@@ -60,7 +60,7 @@ const optionTypes = {
     font: props => (
         <div className="">
             {(props.theme.fonts || []).map(mame => {
-                const classList = kofi.classNames("");
+                const classList = classNames([]);
                 const style = {
                     fontFamily: name,
                 };
@@ -148,11 +148,12 @@ const optionTypes = {
     selectIcon: props => (
         <div className="is-flex" style={{gap:"0.25rem"}}>
             {Object.keys(props.values).map(key => {
-                const classList = kofi.classNames({
-                    "has-p-1 has-size-2 has-radius-md is-clickable has-w-full has-text-center is-bordered": true,
-                    "has-bg-body-hover has-text-white-hover": key !== props.value, 
-                    "has-bg-body has-text-white": key === props.value,
-                });
+                const classList = classNames([
+                    "has-p-1 has-size-2 has-radius-md",
+                    "is-clickable has-w-full has-text-center is-bordered",
+                    key !== props.value && "has-bg-body-hover has-text-white-hover", 
+                    key === props.value && "has-bg-body has-text-white",
+                ]);
                 return (
                     <div key={key} className={classList} onClick={() => props.onChange(key)}>
                         {props.values[key]}
