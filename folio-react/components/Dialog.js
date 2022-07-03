@@ -1,14 +1,14 @@
 import React from "react";
-import kofi from "kofi";
+import {classNames} from "../utils/classNames.js";
 
-// Export dialog component
 export function Dialog (props) {
     if (!props.active) {
         return null; // Dialog is not active
     }
-    const classList = kofi.classNames(props.className, {
-        "is-absolute": true,
-    });
+    const classList = classNames([
+        props.className,
+        "is-absolute",
+    ]);
     return (
         <div className={classList} style={props.style}>
             <div
@@ -23,7 +23,6 @@ export function Dialog (props) {
     );
 }
 
-// Dialog props
 Dialog.defaultProps = {
     active: false,
     orientation: "left",

@@ -1,15 +1,14 @@
 import React from "react";
-import kofi from "kofi";
-
 import ICONS from "../icons.js";
+import {classNames} from "../utils/classNames.js";
 
 const HistoryButton = props => (
     <div
-        className={kofi.classNames({
-            "has-p-2 has-radius-md has-lh-none": true,
-            "has-text-white-hover has-bg-body-hover is-clickable": !props.disabled,
-            "has-opacity-25": props.disabled,
-        })}
+        className={classNames([
+            "has-p-2 has-radius-md has-lh-none",
+            !props.disabled && "has-text-white-hover has-bg-body-hover is-clickable",
+            props.disabled && "has-opacity-25",
+        ])}
         onClick={props.onClick}
     >
         {props.icon}

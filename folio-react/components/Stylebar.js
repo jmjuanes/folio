@@ -1,16 +1,18 @@
 import React from "react";
-import kofi from "kofi";
 
 import {
     LINE_CAPS,
     TEXT_ALIGNS,
-} from "@folio/lib/constants.js";
+    LIGHT_COLORS,
+    DARK_COLORS,
+} from "../constants.js";
 
+import {When} from "../commons/When.js";
 import {Dialog} from "./Dialog.js";
 import {Button} from "./Button.js";
 import {Option} from "./Option.js";
-import colors from "../colors.js";
 import ICONS from "../icons.js";
+import {classNames} from "../utils/classNames.js";
 
 const groups = {
     text: {
@@ -29,7 +31,7 @@ const groups = {
                 type: "color",
                 props: {
                     title: "Text Color",
-                    colors: colors.textColors,
+                    colors: DARK_COLORS,
                 },
             },
             textOpacity: {
@@ -61,7 +63,7 @@ const groups = {
                 type: "color",
                 props: {
                     title: "Fill Color",
-                    colors: colors.fillColors,
+                    colors: LIGHT_COLORS,
                 },
             },
             fillOpacity: {
@@ -90,7 +92,7 @@ const groups = {
                 type: "color",
                 props: {
                     title: "Stroke color",
-                    colors: colors.strokeColors,
+                    colors: DARK_COLORS,
                 },
             },
             strokeOpacity: {
@@ -182,10 +184,10 @@ export const Stylebar = props => {
         props.onChange(name, value);
         forceUpdate();
     };
-    const classList = kofi.classNames({
-        "is-absolute has-mr-4 has-mt-4 has-right-none has-top-none": true,
-        "is-hidden": props.selection.length === 0,
-    });
+    const classList = classNames([
+        "is-absolute has-mr-4 has-mt-4 has-right-none has-top-none",
+        props.selection.length === 0 && "is-hidden",
+    ]);
     return (
         <div className={classList} style={{zIndex:100}}>
             <div className="has-radius-md has-bg-white is-bordered has-p-2 has-shadow-lg">
@@ -219,11 +221,11 @@ export const Stylebar = props => {
                         </div>
                     );
                 })}
-                {kofi.when(hasGroupVisible, () => (
+                <When condition={hasGroupVisible} render={() => (
                     <div className="has-bg-body has-opacity-50 has-my-2" style={{height: "2px"}} />
-                ))}
+                )} />
                 {/* Order buttons */}
-                {kofi.when(false, () => (
+                <When condition={false} render={() => (
                     <React.Fragment>
                         <Button
                             className="has-mb-1"
@@ -236,23 +238,29 @@ export const Stylebar = props => {
                             onClick={props.onSendBackwardClick}
                         />
                     </React.Fragment>
-                ))}
+                )} />
                 {/* Group selection */}
-                {kofi.when(!hasActiveGroup && isGroupSelectionVisible(props.selection), () => (
-                    <Button
-                        className="has-mb-1"
-                        icon={ICONS.OBJECT_GROUP}
-                        onClick={props.onGroupSelectionClick}
-                    />
-                ))}
+                <When
+                    condition={!hasActiveGroup && isGroupSelectionVisible(props.selection)}
+                    render={() => (
+                        <Button
+                            className="has-mb-1"
+                            icon={ICONS.OBJECT_GROUP}
+                            onClick={props.onGroupSelectionClick}
+                        />
+                    )}
+                />
                 {/* Ungroup selection */}
-                {kofi.when(!hasActiveGroup && isUngroupSelectionVisible(props.selection), () => (
-                    <Button
-                        className="has-mb-1"
-                        icon={ICONS.OBJECT_UNGROUP}
-                        onClick={props.onUngroupSelectionClick}
-                    />
-                ))}
+                <When
+                    condition={!hasActiveGroup && isUngroupSelectionVisible(props.selection)}
+                    render={() => (
+                        <Button
+                            className="has-mb-1"
+                            icon={ICONS.OBJECT_UNGROUP}
+                            onClick={props.onUngroupSelectionClick}
+                        />
+                    )}
+                />
                 {/* Remove current selection */}
                 <Button
                     icon={ICONS.TRASH}
