@@ -1,3 +1,5 @@
+import {blobToDataUrl} from "./blob.js";
+
 // Get pasted items
 export const getDataFromClipboard = event => {
     return new Promise(resolve => {

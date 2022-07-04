@@ -26,3 +26,13 @@ export const blobToClipboard = blob => {
     ]);
 };
 
+// Convert Blob to DataURL
+export const blobToDataUrl = blob => {
+    return new Promise(resolve => {
+        const file = new FileReader();
+        file.onload = event => {
+            return resolve(event.target.result);
+        };
+        return file.readAsDataURL(blob);
+    });
+};
