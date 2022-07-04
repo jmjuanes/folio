@@ -14,19 +14,18 @@ module.exports = {
         publicPath: "/",
         filename: "[contenthash:9].js",
     },
-    resolve: {
-        modules: [
-            path.resolve(__dirname, "./node_modules"),
-        ],
-        alias: {},
-    },
+    // resolve: {
+    //     modules: [
+    //         path.resolve(__dirname, "./node_modules"),
+    //     ],
+    //     alias: {},
+    // },
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    path.join(__dirname, "folio-lib"),
-                    path.join(__dirname, "folio-client"),
+                    path.join(__dirname, "folio-react"),
                     path.join(__dirname, "folio-app"),
                 ],
                 exclude: /(node_modules|bower_components)/,
@@ -57,7 +56,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             title: "Folio App",
-            template: path.join(__dirname, "folio-app/template.html"),
+            template: path.join(__dirname, "folio-app/index.html"),
             meta: {
                 "viewport": "width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no",
             },

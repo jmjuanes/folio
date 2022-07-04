@@ -8,11 +8,10 @@
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
         "folio-app",
-        "folio-client",
-        "folio-lib"
+        "folio-react"
     ],
     "scripts": {
-        "build": "npm run build:css && npm run build:app",
+        "build": "yarn run build:css && yarn run build:app",
         "build:app": "webpack build --config ./webpack.config.js",
         "build:css": "siimple -c ./siimple.config.mjs -o styles.css",
         "clean": "rm -rf ./public",
