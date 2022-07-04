@@ -1,10 +1,11 @@
 import React from "react";
-import {GRID_STYLES} from "@folio/lib/constants.js";
+
+import {GRID_STYLES} from "../constants.js";
+import ICONS from "../icons.js";
 
 import {Button} from "./Button.js";
 import {Dialog} from "./Dialog.js";
 import {Option} from "./Option.js";
-import ICONS from "../icons.js";
 
 const settingsOptions = {
     gridStyle: {
