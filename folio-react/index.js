@@ -1,129 +1,165 @@
 import React from "react";
-import kofi from "kofi";
 
-import {ELEMENT_TYPES} from "@folio/lib/constants.js";
+import {
+    DEFAULT_GRID_COLOR,
+    DEFAULT_GRID_OPACITY,
+    DEFAULT_GRID_SIZE,
+    DEFAULT_GRID_STYLE,
+    ELEMENT_TYPES,
+} from "./constants.js";
 
-import {useBoard} from "./hooks/useBoard.js";
-import {useNotifications} from "./hooks/useNotifications.js";
-
+import {Board} from "./components/Board.js";
+import {Grid} from "./components/Grid.js";
 import {Menubar} from "./components/Menubar.js";
-import {Toasts} from "./components/Toasts.js";
 import {Stylebar} from "./components/Stylebar.js";
 import {Toolbar} from "./components/Toolbar.js";
 import {Historybar} from "./components/Historybar.js";
+import {When} from "./commons/When.js";
 
-import {blobToClipboard} from "./utils/blobUtils.js";
-
-export const FolioBoard = props => {
+export const Folio = props => {
     const parentRef = React.useRef(null);
-    const boardRef = useBoard(parentRef, {});
+    const boardApi = React.useRef(null);
 
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
-    const [ready, setReady] = React.useState(false);
-    const notifications = useNotifications();
+    const [state, setState] = React.useState({
+        ready: false,
+        width: 0,
+        height: 0,
+        selectedTool: ELEMENT_TYPES.SELECTION,
+        gridEnabled: !!props.gridEnabled,
+        gridColor: props.gridColor,
+        gridSize: props.gridSize,
+        gridStyle: props.gridStyle,
+        gridOpacity: props.gridOpacity,
+    });
 
     React.useEffect(() => {
-        // Register event listeners to the board
-        boardRef.current.on("update", () => forceUpdate());
-        boardRef.current.on("screenshot", region => {
-            kofi.delay(500, () => {
-                boardRef.current.screenshot(region).then(blob => {
-                    blobToClipboard(blob);
-                    notifications.success("Screenshot copied to clipboard");
-                });
-            });
-        });
+        const handleResize = () => {
+            setState(prevState => ({
+                ...prevState,
+                width: parentRef.current.offsetWidth,
+                height: parentRef.current.offsetHeight,
+            }));
+        };
+        window.addEventListener("resize", handleResize, false);
+        handleResize();
 
-        setReady(true);
         return () => {
-            boardRef.current.destroy();
+            window.removeEventListener("resize", handleResize, false);
         };
     }, []);
 
     return (
         <div className="is-relative has-w-full has-h-full" ref={parentRef}>
+            {state.gridEnabled && (
+                <Grid
+                    width={state.width}
+                    height={state.height}
+                    color={state.gridColor}
+                    size={state.gridSize}
+                    opacity={state.gridOpacity}
+                />
+            )}
+            <Board
+                ref={boardApi}
+                width={state.width}
+                height={state.height}
+                selectedTool={state.selectedTool}
+                gridEnabled={state.gridEnabled}
+                gridSize={state.gridSize}
+                onScreenshot={blob => {
+                    setState(prevState => ({
+                        ...prevState,
+                        selectedTool: ELEMENT_TYPES.SELECTION,
+                    }));
+                    typeof props.onScreenshot === "function" && props.onScreenshot(blob);
+                }}
+                onUpdate={() => forceUpdate()}
+            />
             <Menubar
-                options={boardRef?.current?.getOptions()}
-                gridEnabled={boardRef?.current?.isGridEnabled()}
-                cameraEnabled={boardRef?.current?.getType() === ELEMENT_TYPES.SCREENSHOT}
+                options={state}
+                gridEnabled={state.gridEnabled}
+                cameraEnabled={state.selectedTool === ELEMENT_TYPES.SCREENSHOT}
                 onGridClick={() => {
-                    boardRef.current.toggleGrid();
-                    forceUpdate();
+                    setState(prevState => ({
+                        ...prevState,
+                        gridEnabled: !state.gridEnabled,
+                    }));
                 }}
                 onCameraClick={() => {
-                    if (boardRef.current.getType() === ELEMENT_TYPES.SCREENSHOT) {
-                        boardRef.current.setType(ELEMENT_TYPES.SELECTION);
-                    }
-                    else {
-                        boardRef.current.setType(ELEMENT_TYPES.SCREENSHOT);
-                    }
-                    forceUpdate();
+                    const current = state.selectedTool;
+                    setState(prevState => ({
+                        ...prevState,
+                        selectedTool: current === ELEMENT_TYPES.SCREENSHOT ? ELEMENT_TYPES.SELECTION : ELEMENT_TYPES.SCREENSHOT,
+                    }));
                 }}
                 onOptionsChange={(name, value) => {
-                    const currentOptions = boardRef.current.getOptions();
-                    currentOptions[name] = value;
-                    boardRef.current.updateOptions(currentOptions);
+                    setState(prevState => ({...prevState, [name]: value}));
                 }}
             />
-            {kofi.when(ready && boardRef?.current?.getType() !== ELEMENT_TYPES.SCREENSHOT, () => (
-                <React.Fragment>
-                    <Toolbar
-                        currentType={boardRef.current.getType()}
-                        onTypeChange={type => {
-                            boardRef.current.setType(type);
-                            forceUpdate();
-                        }}
-                    />
-                    <Stylebar
-                        key={updateKey}
-                        selection={boardRef.current.getSelection()}
-                        selectionLocked={boardRef.current.isSelectionLocked()}
-                        activeGroup={boardRef.current.getActiveGroup()}
-                        onChange={(n, v) => {
-                            boardRef.current.updateSelection(n, v);
-                        }}
-                        onRemoveClick={() => {
-                            boardRef.current.removeSelection();
-                            forceUpdate();
-                        }}
-                        onBringForwardClick={() => {
-                            boardRef.current.bringSelectionForward();
-                        }}
-                        onSendBackwardClick={() => {
-                            boardRef.current.sendSelectionBackward();
-                        }}
-                        onGroupSelectionClick={() => {
-                            boardRef.current.groupSelection();
-                            forceUpdate();
-                        }}
-                        onUngroupSelectionClick={() => {
-                            boardRef.current.ungroupSelection();
-                            forceUpdate();
-                        }}
-                    />
-                    <Historybar
-                        undoDisabled={boardRef.current.isUndoDisabled()}
-                        redoDisabled={boardRef.current.isRedoDisabled()}
-                        onUndoClick={() => {
-                            boardRef.current.undo();
-                            forceUpdate();
-                        }}
-                        onRedoClick={() => {
-                            boardRef.current.redo();
-                            forceUpdate();
-                        }}
-                    />
-                </React.Fragment>
-            ))}
-            <Toasts
-                items={notifications.getAll()}
-                onDelete={id => notifications.remove(id)}
+            <When
+                condition={boardApi.current && state.selectedTool !== ELEMENT_TYPES.SCREENSHOT}
+                render={() => (
+                    <React.Fragment>
+                        <Toolbar
+                            currentType={state.selectedTool}
+                            onTypeChange={type => {
+                                setState(prevState => ({...prevState, selectedTool: type}));
+                            }}
+                        />
+                        <Stylebar
+                            key={state.selectedTool + updateKey}
+                            selection={boardApi.current.getSelection()}
+                            selectionLocked={boardApi.current.isSelectionLocked()}
+                            activeGroup={boardApi.current.getActiveGroup()}
+                            onChange={(n, v) => {
+                                boardApi.current.updateSelection(n, v);
+                            }}
+                            onRemoveClick={() => {
+                                boardApi.current.removeSelection();
+                                forceUpdate();
+                            }}
+                            onBringForwardClick={() => {
+                                boardApi.current.bringSelectionForward();
+                            }}
+                            onSendBackwardClick={() => {
+                                boardApi.current.sendSelectionBackward();
+                            }}
+                            onGroupSelectionClick={() => {
+                                boardApi.current.groupSelection();
+                                forceUpdate();
+                            }}
+                            onUngroupSelectionClick={() => {
+                                boardApi.current.ungroupSelection();
+                                forceUpdate();
+                            }}
+                        />
+                        <Historybar
+                            undoDisabled={boardApi.current.isUndoDisabled()}
+                            redoDisabled={boardApi.current.isRedoDisabled()}
+                            onUndoClick={() => {
+                                boardApi.current.undo();
+                                forceUpdate();
+                            }}
+                            onRedoClick={() => {
+                                boardApi.current.redo();
+                                forceUpdate();
+                            }}
+                        />
+                    </React.Fragment>
+                )}
             />
         </div>
     );
 };
 
-FolioBoard.defaultProps = {
-    client: null,
-    id: "",
+Folio.defaultProps = {
+    background: "#fff",
+    gridEnabled: false,
+    gridColor: DEFAULT_GRID_COLOR,
+    gridOpacity: DEFAULT_GRID_OPACITY,
+    gridSize: DEFAULT_GRID_SIZE,
+    gridStyle: DEFAULT_GRID_STYLE,
+    onChange: null,
+    onScreenshot: null,
 };
