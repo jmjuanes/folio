@@ -1,10 +1,20 @@
 import {
+    DEFAULT_FILL_COLOR,
+    DEFAULT_FONT,
+    DEFAULT_SCREENSHOT_COLOR,
+    DEFAULT_SCREENSHOT_OPACITY,
+    DEFAULT_SELECTION_COLOR,
+    DEFAULT_SELECTION_OPACITY,
+    DEFAULT_STROKE_COLOR,
+    DEFAULT_TEXT_COLOR,
     ELEMENT_TYPES,
     LINE_CAPS,
     RESIZE_TYPES,
     TEXT_ALIGNS,
-} from "../constants.js";
-import {parseColor} from "../utils/colors.js";
+} from "./constants.js";
+import {parseColor} from "./utils/colors.js";
+import {generateID, measureText} from "./utils/index.js";
+import {getAbsolutePositions} from "./utils/math.js";
 
 // Draw a simple rectangle
 const drawSimpleRectangle = (canvas, element) => {
@@ -88,37 +98,37 @@ const drawGlyph = (canvas, type, position, element, length) => {
 
 const elements = {
     [ELEMENT_TYPES.SELECTION]: {
-        init: options => ({
+        init: () => ({
             resize: RESIZE_TYPES.NONE,
-            color: options.selectionColor,
-            opacity: options.selectionOpacity,
+            color: DEFAULT_SELECTION_COLOR,
+            opacity: DEFAULT_SELECTION_OPACITY,
         }),
         draw: (canvas, element) => drawSimpleRectangle(canvas, element),
         update: () => null,
     },
     [ELEMENT_TYPES.SCREENSHOT]: {
-        init: options => ({
+        init: () => ({
             resize: RESIZE_TYPES.NONE,
-            color: options.screenshotColor,
-            opacity: options.screenshotOpacity,
+            color: DEFAULT_SCREENSHOT_COLOR,
+            opacity: DEFAULT_SCREENSHOT_OPACITY,
         }),
         draw: (canvas, element) => drawSimpleRectangle(canvas, element),
         update: () => null,
     },
     [ELEMENT_TYPES.SHAPE_RECTANGLE]: {
-        init: options => ({
+        init: () => ({
             resize: RESIZE_TYPES.ALL,
-            fillColor: options.fillColor,
+            fillColor: DEFAULT_FILL_COLOR,
             fillOpacity: 1.0,
-            strokeColor: options.strokeColor, // colors.black,
+            strokeColor: DEFAULT_STROKE_COLOR,
             strokeWidth: 1,
             strokeDash: false,
             strokeOpacity: 1.0,
             radius: 0,
             textAlign: "center",
             textVerticalAlign: "middle",
-            textColor: options.textColor, // colors.black,
-            textFont: options.fontFamily, // "sans-serif",
+            textColor: DEFAULT_TEXT_COLOR,
+            textFont: DEFAULT_FONT,
             textOpacity: 1.0,
             textSize: 16,
             textContent: "",
@@ -170,21 +180,21 @@ const elements = {
         update: () => null,
     },
     [ELEMENT_TYPES.SHAPE_ELLIPSE]: {
-        init: options => ({
+        init: () => ({
             resize: RESIZE_TYPES.ALL,
-            fillColor: options.fillColor,
+            fillColor: DEFAULT_FILL_COLOR,
             fillOpacity: 1.0,
-            strokeColor: options.strokeColor, // colors.black,
+            strokeColor: DEFAULT_STROKE_COLOR,
             strokeOpacity: 1.0,
             strokeWidth: 1,
             strokeDash: false,
             textAlign: "center",
             textVerticalAlign: "middle",
-            textColor: options.textColor, // colors.black,
-            textFont: options.fontFamily, // "sans-serif",
+            textColor: DEFAULT_TEXT_COLOR,
+            textFont: DEFAULT_FONT,
             textOpacity: 1.0,
             textSize: 16,
-            textContent: ""
+            textContent: "",
         }),
         draw: (canvas, element, shouldDrawInnerText) => {
             const rx = element.width / 2;
@@ -218,9 +228,9 @@ const elements = {
         update: () => null,
     },
     [ELEMENT_TYPES.SHAPE_LINE]: {
-        init: options => ({
+        init: () => ({
             resize: RESIZE_TYPES.MAIN_DIAGONAL,
-            strokeColor: options.strokeColor, // colors.black,
+            strokeColor: DEFAULT_STROKE_COLOR,
             strokeWidth: 1,
             strokeDash: false,
             strokeOpacity: 1.0,
@@ -259,12 +269,12 @@ const elements = {
         update: () => null,
     },
     [ELEMENT_TYPES.TEXT]: {
-        init: options => ({
+        init: () => ({
             resize: RESIZE_TYPES.NONE,
             textAlign: "left",
-            textColor: options.textColor,
+            textColor: DEFAULT_TEXT_COLOR,
             textSize: 16,
-            textFont: options.fontFamily,
+            textFont: DEFAULT_FONT,
             textOpacity: 1.0,
             textContent: "",
         }),
@@ -322,7 +332,7 @@ const elements = {
 };
 
 export const createElement = element => ({
-    ...elements[element.type].init(ctx.options),
+    ...elements[element.type].init(),
     ...element,
     id: generateID(),
     width: element.width || 0,
@@ -343,14 +353,4 @@ export const drawElement = (el, canvas, shouldDrawInnerText) => {
 export const removeElement = (ctx, el) => {
     ctx.elements = ctx.elements.filter(element => element.id !== el.id);
     ctx.selection = ctx.selection.filter(element => element.id !== el.id);
-};
-
-export const addElement = (ctx, el) => {
-    Object.assign(el, {
-        selected: true, // Set element as selected
-        x: ctx.getPosition((ctx.width - el.width) / 2),
-        y: ctx.getPosition((ctx.height - el.height) / 2), 
-    });
-    ctx.elements.unshift(el); // Save the new element
-    ctx.selection = ctx.elements.filter(e => e.selected); // update the selection
 };

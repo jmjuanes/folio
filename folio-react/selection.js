@@ -1,5 +1,5 @@
-import {ELEMENT_TYPES} from "../constants.js";
-import {getAbsolutePositions} from "../utils/math.js";
+import {ELEMENT_TYPES} from "./constants.js";
+import {getAbsolutePositions} from "./utils/math.js";
 
 export const removeSelection = ctx => {
     ctx.elements = ctx.elements.filter(element => !element.selected);

@@ -19,27 +19,30 @@ import {
     DEFAULT_GROUP_SELECTION_WIDTH,
 } from "../constants.js";
 
-import {createContext} from "../board/context.js";
 import {
     createElement,
     updateElement,
     drawElement,
-    addElement,
     removeElement,
-} from "../board/elements.js";
-import {getGroup, groupSelection, selectAllElementsInGroup, ungroupSelection} from "../board/groups.js";
+} from "../elements.js";
+import {
+    getGroup,
+    groupSelection,
+    selectAllElementsInGroup,
+    ungroupSelection,
+} from "../groups.js";
 import {
     addHistoryEntry,
     registerElementCreate,
     registerElementRemove,
     registerSelectionRemove,
     registerSelectionUpdate,
-} from "../board/history.js";
+} from "../history.js";
 import {
     fixResizeOrientation,
     getResizePoints,
     inResizePoint,
-} from "../board/resize.js";
+} from "../resize.js";
 import {
     clearSelection,
     getSelection,
@@ -47,7 +50,7 @@ import {
     removeSelection,
     setSelection,
     snapshotSelection,
-} from "../board/selection.js";
+} from "../selection.js";
 import {
     isInputTarget,
     forEachRev,
@@ -68,24 +71,18 @@ const isArrowKey = key => {
 export const Board = React.forwardRef((props, ref) => {
     const canvasRef = React.useRef(null);
     const inputRef = React.useRef(null);
-    const ctx = React.useRef(null);
+    const ctx = React.useRef({});
     const [inputVisible, setInputVisible] = React.useState(false);
-
-    // Trigger the update event
-    const triggerUpdate = () => {
-        return typeof props.onUpdate === "function" && props.onUpdate();
-    };
 
     // Calculate the position using the grid size
     const getPosition = v => {
-        return props.gridEnabled ? Math.round(v / props.gridSize) * props.gridSize : v;
+        return ctx.current.gridEnabled ? Math.round(v / ctx.current.gridSize) * ctx.current.gridSize : v;
     };
 
-    // Draw the canvas
     const draw = () => {
         const canvas = canvasRef.current.getContext("2d");
         const renderedGroups = new Set();
-        canvas.clearRect(0, 0, ctx.current.width, ctx.current.height);
+        canvas.clearRect(0, 0, canvasRef.current.offsetWidth, canvasRef.current.offsetHeight);
         forEachRev(ctx.current.elements, element => {
             const shouldDrawInnerText = ctx.current.mode !== INTERACTION_MODES.INPUT || ctx.current.currentElement?.id !== element.id;            
             drawElement(element, canvas, shouldDrawInnerText);
@@ -169,31 +166,34 @@ export const Board = React.forwardRef((props, ref) => {
     };
 
     React.useEffect(() => {
-        ctx.current = createContext(props);
+        ctx.current = {
+            mode: INTERACTION_MODES.NONE,
+            type: ELEMENT_TYPES.SELECTION,
+            typeLocked: false,
+            currentGroup: null,
+            currentElement: null,
+            currentElementSelected: false,
+            currentElementDragged: false,
+            resizeOrientation: null,
+            selection: [],
+            selectionLocked: false,
+            snapshot: [],
+            elements: [],
+            history: [],
+            historyIndex: 0,
+            // width: 0,
+            // height: 0,
+            gridEnabled: props.gridEnabled,
+            gridSize: props.gridSize,
+        };
         ref.current = {
-            resize: () => handleResize(),
-            clear: () => {
-                ctx.current.elements = [];
-                ctx.current.selection = [];
-                ctx.current.currentElement = null;
-                ctx.current.currentGroup = null;
-                return draw();
-            },
             load: () => null,
             export: () => ({
                 elements: ctx.current.elements.map(element => ({
                     ...element,
                     selected: false,
                 })),
-                width: ctx.current.width,
-                height: ctx.current.height,
             }),
-            setType: type => {
-                clearSelection(ctx.current);
-                ctx.current.type = type || ELEMENT_TYPES.SELECTION;
-                draw();
-            },
-            getType: () => ctx.current.type,
             updateSelection: (key, value) => {
                 registerSelectionUpdate(ctx.current, [key], [value], true);
                 ctx.current.selection.forEach(element => {
@@ -230,10 +230,6 @@ export const Board = React.forwardRef((props, ref) => {
                 registerSelectionUpdate(ctx.current, ["locked"], [false], false);
                 ctx.current.selectionLocked = false;
                 ctx.current.selection.forEach(element => element.locked = false);
-                draw();
-            },
-            clearSelection: () => {
-                clearSelection(ctx.current);
                 draw();
             },
             removeSelection: () => {
@@ -282,8 +278,8 @@ export const Board = React.forwardRef((props, ref) => {
                         });
                     }
                     ctx.current.historyIndex = ctx.current.historyIndex + 1;
-                    clearSelection(ctx.current);
                     ctx.current.currentGroup = null;
+                    clearSelection(ctx.current);
                     draw();
                 }
             },
@@ -301,17 +297,15 @@ export const Board = React.forwardRef((props, ref) => {
                             Object.assign(ctx.current.elements.find(el => el.id === element.id) || {}, element.newValues);
                         });
                     }
-                    clearSelection(ctx.current);
                     ctx.current.currentGroup = null;
+                    clearSelection(ctx.current);
                     draw();
                 }
             },
             isUndoDisabled: () => ctx.current.historyIndex >= ctx.current.history.length,
             isRedoDisabled: () => ctx.current.historyIndex === 0 || ctx.current.history.length < 1,
-            screenshot: region => screenshotCanvas(canvasRef.current, region),
         };
 
-        // Handle paste
         const handlePaste = event => {
             return !isInputTarget(event) && getDataFromClipboard(event).then(data => {
                 clearSelection(ctx.current);
@@ -323,11 +317,19 @@ export const Board = React.forwardRef((props, ref) => {
                             type: ELEMENT_TYPES.TEXT,
                             textContent: content,
                         });
-                        addElement(ctx.current, element);
+                        // TODO: this should be fixes when enabling moving
+                        Object.assign(element, {
+                            selected: true, // Set element as selected
+                            x: getPosition((canvasRef.current.offsetWidth - element.width) / 2),
+                            y: getPosition((canvasRef.current.offsetHeight - element.height) / 2), 
+                        });
+                        ctx.current.elements.unshift(element); // Save the new element
+                        ctx.current.selection = getSelection(ctx.current);
                         updateElement(element, ["x", "y", "textContent"]);
                         registerElementCreate(ctx.current, element);
                         draw();
-                        return triggerUpdate();
+                        props.onUpdate();
+                        return;
                     }
                     // Load as a new image
                     createImage(content).then(img => {
@@ -337,24 +339,30 @@ export const Board = React.forwardRef((props, ref) => {
                             height: img.height,
                             img: img,
                         });
-                        addElement(ctx.current, element);
+                        // TODO: this should be fixes when enabling moving
+                        Object.assign(element, {
+                            selected: true, // Set element as selected
+                            x: getPosition((canvasRef.current.offsetWidth - element.width) / 2),
+                            y: getPosition((canvasRef.current.offsetHeight - element.height) / 2), 
+                        });
+                        ctx.current.elements.unshift(element); // Save the new element
+                        ctx.current.selection = getSelection(ctx.current);
                         updateElement(element, ["img", "width", "height"]);
                         registerElementCreate(ctx.current, element);
                         draw();
-                        return triggerUpdate();
+                        props.onUpdate();
                     });
                 });
             });
         };
 
-        // Handle document key down
         const handleKeyDown = event => {
             if (ctx.current.mode === INTERACTION_MODES.INPUT || isInputTarget(event)) {
                 if (ctx.current.mode === INTERACTION_MODES.INPUT && event.key === KEYS.ESCAPE) {
                     event.preventDefault();
                     submitInput();
                     draw();
-                    triggerUpdate();
+                    props.onUpdate();
                 }
             }
             // Check ESCAPE key --> reset selection
@@ -363,20 +371,20 @@ export const Board = React.forwardRef((props, ref) => {
                 clearSelection(ctx.current);
                 ctx.current.currentGroup = null;
                 draw();
-                triggerUpdate();
+                props.onUpdate();
             }
             // Check for backspace key --> remove elements
             else if (event.key === KEYS.BACKSPACE) {
                 event.preventDefault();
-                registerSelectionRemove(ctx);
-                removeSelection(ctx);
+                registerSelectionRemove(ctx.current);
+                removeSelection(ctx.current);
                 draw();
-                triggerUpdate();
+                props.onUpdate();
             }
             // Check for arrow keys --> move elements
             else if (isArrowKey(event.key) === true) {
                 event.preventDefault();
-                const step = props.gridEnabled ? props.gridSize : (event.shiftKey ? 5 : 1);
+                const step = ctx.current.gridEnabled ? ctx.current.gridSize : (event.shiftKey ? 5 : 1);
                 const key = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
                 const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
 
@@ -395,11 +403,10 @@ export const Board = React.forwardRef((props, ref) => {
                     }),
                 });
                 draw();
-                triggerUpdate();
+                props.onUpdate();
             }
         };
 
-        // Handle pointer down event
         const handlePointerDown = event => {
             event.preventDefault();
 
@@ -413,7 +420,8 @@ export const Board = React.forwardRef((props, ref) => {
             if (ctx.current.mode === INTERACTION_MODES.INPUT) {
                 submitInput();
                 draw();
-                return triggerUpdate();
+                props.onUpdate();
+                return;
             }
 
             ctx.current.currentElement = null;
@@ -426,7 +434,7 @@ export const Board = React.forwardRef((props, ref) => {
             if (ctx.current.selection.length === 1) {
                 const radius = 2 * DEFAULT_ELEMENT_RESIZE_RADIUS;
                 const offset = DEFAULT_ELEMENT_SELECTION_OFFSET;
-                const point = inResizePoint(ctx.current.selection[0], ctx.lastX, ctx.lastY, radius, offset);
+                const point = inResizePoint(ctx.current.selection[0], ctx.current.lastX, ctx.current.lastY, radius, offset);
                 if (point) {
                     ctx.current.currentElement = ctx.current.selection[0]; // Save current element
                     ctx.current.resizeOrientation = fixResizeOrientation(ctx.current.currentElement, point.orientation);
@@ -487,7 +495,6 @@ export const Board = React.forwardRef((props, ref) => {
             }
         };
 
-        // Handle pointer move
         const handlePointerMove = event => {
             event.preventDefault();
             const x = event.offsetX; // event.clientX - event.target.offsetLeft;
@@ -548,9 +555,9 @@ export const Board = React.forwardRef((props, ref) => {
                 if (ctx.current.selectionLocked) {
                     return null; // Move is not allowed --> selection is locked
                 }
-                const incrementX = x - ctx.lastX;
-                const incrementY = y - ctx.lastY;
-                // Move all elements
+                const incrementX = x - ctx.current.lastX;
+                const incrementY = y - ctx.current.lastY;
+
                 ctx.current.selection.forEach((element, index) => {
                     if (!element.locked) {
                         element.x = getPosition(ctx.current.snapshot[index].x + incrementX);
@@ -562,7 +569,6 @@ export const Board = React.forwardRef((props, ref) => {
             else if (ctx.current.currentElement && ctx.current.currentElement.type !== ELEMENT_TYPES.TEXT) {
                 const element = ctx.current.currentElement;
                 const deltaX = getPosition(x - element.x);
-                //let deltaY = this.ctx.getPosition(y - element.y);
                 element.width = deltaX;
                 element.height = event.shiftKey ? deltaX : getPosition(y - element.y);
 
@@ -580,7 +586,6 @@ export const Board = React.forwardRef((props, ref) => {
             draw();
         };
 
-        // Handle pointer up
         const handlePointerUp = event => {
             event.preventDefault();
             // Check for no current element active
@@ -619,11 +624,15 @@ export const Board = React.forwardRef((props, ref) => {
             if (ctx.current.type === ELEMENT_TYPES.SCREENSHOT) {
                 const [xStart, xEnd] = getAbsolutePositions(ctx.current.currentElement.x, ctx.current.currentElement.width);
                 const [yStart, yEnd] = getAbsolutePositions(ctx.current.currentElement.y, ctx.current.currentElement.height);
-                props.onScreenshot && props.onScreenshot({
+                const region = {
                     x: xStart,
                     width: xEnd - xStart,
                     y: yStart,
                     height: yEnd - yStart,
+                };
+
+                screenshotCanvas(canvasRef.current, region).then(blob => {
+                    props.onScreenshot(blob);
                 });
             }
             else if (ctx.current.selection.length > 0 || ctx.current.currentElementDragged) {
@@ -654,12 +663,11 @@ export const Board = React.forwardRef((props, ref) => {
             // Reset selection
             ctx.current.selection = getSelection(ctx.current)
             ctx.current.selectionLocked = isSelectionLocked(ctx.current);
-            ctx.current.type = ELEMENT_TYPES.SELECTION;
+            // ctx.current.type = ELEMENT_TYPES.SELECTION;
             draw();
-            triggerUpdate();
+            props.onUpdate();
         };
 
-        // Handle double click
         const handleDoubleClick = event => {
             event.preventDefault();
             // Check if all selected elements are in a group
@@ -670,7 +678,8 @@ export const Board = React.forwardRef((props, ref) => {
                     clearSelection(ctx.current);
                     ctx.current.currentGroup = group;
                     draw();
-                    return triggerUpdate();
+                    props.onUpdate();
+                    return;
                 }
             }
             if (ctx.current.selection.length === 1 && typeof ctx.current.selection[0].textContent === "string") {
@@ -689,19 +698,7 @@ export const Board = React.forwardRef((props, ref) => {
             clearSelection(ctx.current);
             setInputVisible(true);
             draw();
-            triggerUpdate();
-        };
-
-        // Handle window resize
-        const handleResize = () => {
-            ctx.current.width = canvasRef.current.parent.offsetWidth;
-            ctx.current.height = canvasRef.current.parent.offsetHeight;
-            canvasRef.current.setAttribute("width", ctx.current.width + "px");
-            canvasRef.current.setAttribute("height", ctx.current.height + "px");
-            // ctx.canvasGrid.setAttribute("width", ctx.width + "px");
-            // ctx.canvasGrid.setAttribute("height", ctx.height + "px");
-            draw();
-            // ctx.drawGrid();
+            props.onUpdate();
         };
 
         // Register event listeners
@@ -713,18 +710,11 @@ export const Board = React.forwardRef((props, ref) => {
         // Register document event listeners
         document.addEventListener("keydown", handleKeyDown, false);
         document.addEventListener("paste", handlePaste, false);
-        window.addEventListener("resize", handleResize, false);
-
-        // Force a resize of the canvas
-        handleResize();
 
         // Remove all event listeners
         return () => {
             document.removeEventListener("keydown", handleKeyDown, false);
             document.removeEventListener("paste", handlePaste, false);
-            window.removeEventListener("resize", handleResize, false);
-            // Reset body styles
-            // document.querySelector("body").style.overflow = "";
         };
     }, []);
 
@@ -777,6 +767,23 @@ export const Board = React.forwardRef((props, ref) => {
         }
     }, [inputVisible]);
 
+    React.useEffect(() => {
+        canvasRef.current.setAttribute("width", props.width + "px");
+        canvasRef.current.setAttribute("height", props.height + "px");
+        draw();
+    }, [props.width, props.height]);
+
+    React.useEffect(() => {
+        clearSelection(ctx.current);
+        ctx.current.type = props.selectedTool || ELEMENT_TYPES.SELECTION;
+        draw();
+    }, [props.selectedTool]);
+
+    React.useEffect(() => {
+        ctx.current.gridEnabled = props.gridEnabled;
+        ctx.current.gridSize = props.gridSize;
+    }, [props.gridEnabled, props.gridSize]);
+
     return (
         <React.Fragment>
             <canvas
@@ -791,7 +798,7 @@ export const Board = React.forwardRef((props, ref) => {
                 }}
             />
             <When condition={inputVisible} render={() => (
-                <input
+                <textarea
                     ref={inputRef}
                     style={{
                         backgroundColor: "transparent",
@@ -819,6 +826,7 @@ export const Board = React.forwardRef((props, ref) => {
 Board.defaultProps = {
     width: 0,
     height: 0,
+    selectedTool: ELEMENT_TYPES.SELECTION,
     gridSize: 10,
     gridEnabled: false,
     onUpdate: null,

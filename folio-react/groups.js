@@ -1,15 +1,16 @@
-import {getAbsolutePositions} from "../utils/math.js";
-import {generateID} from "../utils/index.js";
+import {registerSelectionUpdate} from "./history.js";
+import {getAbsolutePositions} from "./utils/math.js";
+import {generateID} from "./utils/index.js";
 
 export const groupSelection = ctx => {
     const group = generateID();
-    ctx.registerSelectionUpdate(["group"], [group], false);
+    registerSelectionUpdate(ctx, ["group"], [group], false);
     ctx.selection.forEach(element => element.group = group);
     ctx.currentGroup = null;
 };
 
 export const ungroupSelection = ctx => {
-    ctx.registerSelectionUpdate(["group"], [null], false);
+    registerSelectionUpdate(ctx, ["group"], [null], false);
     ctx.selection.forEach(element => element.group = null);
     ctx.currentGroup = null;
 };

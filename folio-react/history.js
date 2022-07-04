@@ -1,4 +1,4 @@
-import {ELEMENT_CHANGE_TYPES} from "../constants.js";
+import {ELEMENT_CHANGE_TYPES} from "./constants.js";
 
 export const addHistoryEntry = (ctx, entry) => {
     if (ctx.historyIndex > 0) {

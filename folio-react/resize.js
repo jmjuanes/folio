@@ -1,5 +1,5 @@
-import {RESIZE_TYPES, RESIZE_ORIENTATIONS} from "../constants.js";
-import {getAbsolutePositions} from "../utils/math.js";
+import {RESIZE_TYPES, RESIZE_ORIENTATIONS} from "./constants.js";
+import {getAbsolutePositions} from "./utils/math.js";
 
 // Inverse resize orientations
 const inverseResizeOrientations = {
