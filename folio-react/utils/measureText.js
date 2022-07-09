@@ -1,9 +1,3 @@
-// Generate an ID
-// Source: https://michalzalecki.com/generate-unique-id-in-the-browser-without-a-library/ 
-export const generateID = () => {
-    return (window.crypto.getRandomValues(new Uint32Array(1))[0]).toString(16);
-};
-
 // Measure text size
 export const measureText = (text, textSize, textFont) => {
     const size = {width: 0, height: 0}; // To store the computed text size
@@ -28,27 +22,3 @@ export const measureText = (text, textSize, textFont) => {
     // Return the text size
     return size;
 };
-
-// For each reversed
-export const forEachRev = (list, callback) => {
-    for (let i = list.length - 1; i >= 0; i--) {
-        callback(list[i], i); // Call this element
-    }
-};
-
-// Create an image element
-// https://stackoverflow.com/a/4776378
-export const createImage = content => {
-    return new Promise(resolve => {
-        const image = new Image();
-        image.addEventListener("load", () => resolve(image));
-        image.src = content; // Set image source
-    });
-};
-
-// Check if the provided event.target is related to an input element
-export const isInputTarget = e => {
-    return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
-};
-
-
