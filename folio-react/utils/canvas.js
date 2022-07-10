@@ -6,6 +6,12 @@ export const createCanvas = (width, height) => {
     return canvas;
 };
 
+// Clear the canvas element
+export const clearCanvas = canvas => {
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+};
+
 // Generate a screenshot of the provided canvas and the specified region
 // https://stackoverflow.com/a/13074780
 export const screenshotCanvas = (originalCanvas, region) => {

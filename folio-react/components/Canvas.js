@@ -17,6 +17,7 @@ export const Canvas = React.forwardRef((props, ref) => {
                 touchAction: "none",
                 userSelect: "none",
                 zIndex: props.zIndex || 0,
+                ...props.style,
             }}
             onPointerDown={props.onPointerDown}
             onPointerMove={props.onPointerMove}
@@ -30,4 +31,5 @@ Canvas.defaultProps = {
     width: 0,
     height: 0,
     zIndex: 0,
+    style: {},
 };

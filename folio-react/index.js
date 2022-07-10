@@ -34,7 +34,7 @@ import {
     normalizeRegion,
 } from "./utils/math.js";
 import {parseClipboardBlob, getDataFromClipboard} from "./utils/clipboard.js";
-import {screenshotCanvas} from "./utils/canvas.js";
+import {screenshotCanvas, clearCanvas} from "./utils/canvas.js";
 import {createBoard} from "./board.js";
 import {drawBoard, drawGrid} from "./draw.js";
 
@@ -63,9 +63,10 @@ export const Folio = React.forwardRef((props, apiRef) => {
     const board = React.useRef(null);
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const [state, setState] = React.useState({
-        key: 0,
         mode: MODES.SELECTION,
         elementType: null,
+        x: 0,
+        y: 0,
         width: 0,
         height: 0,
         gridEnabled: !!props.gridEnabled,
@@ -78,6 +79,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
     // Internal variables
     let orientation = null;
     let lastX = 0, lastY = 0;
+    let boardX = state.x, boardY = state.y;
     let pointerMoveActive = false;
     let resize = false;
     let dragged = false;
@@ -95,8 +97,15 @@ export const Folio = React.forwardRef((props, apiRef) => {
         return state.gridEnabled ? Math.round(v / state.gridSize) * state.gridSize : v;
     };
 
+    // Get coordinates in the board
+    const getXCoordinate = x => x - state.x;
+    const getYCoordinate = y => y - state.y;
+
+    // Draw the board
     const draw = () => {
         drawBoard(boardRef.current, board.current.elements, board.current.selection, {
+            translateX: boardX,
+            translateY: boardY,
             mode: state.mode,
             drawActiveInnerText: state.mode !== MODES.INPUT,
             activeElement: board.current.activeElement,
@@ -136,9 +145,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
     };
 
     const handlePointerDown = ({nativeEvent}) => {
-        lastX = nativeEvent.offsetX; // event.clientX - event.target.offsetLeft;
-        lastY = nativeEvent.offsetY; // event.clientY - event.target.offsetTop;
-        // ctx.current.element = null;
+        lastX = getXCoordinate(nativeEvent.offsetX); // event.clientX - event.target.offsetLeft;
+        lastY = getYCoordinate(nativeEvent.offsetY); // event.clientY - event.target.offsetTop;
         // Remove current selection
         const currentSelection = document.getSelection();
         if (currentSelection?.anchorNode) {
@@ -147,6 +155,12 @@ export const Folio = React.forwardRef((props, apiRef) => {
         // Check for text input mode --> submit text
         if (state.mode === MODES.INPUT) {
             return submitInput();
+        }
+        else if (state.mode === MODES.MOVE) {
+            pointerMoveActive = true;
+            if (state.gridEnabled) {
+                clearCanvas(gridRef.current);
+            }
         }
         else if (state.mode === MODES.SELECTION) {
             const selection = board.current.getSelectedElements();
@@ -237,9 +251,14 @@ export const Folio = React.forwardRef((props, apiRef) => {
         nativeEvent.preventDefault();
         if (!pointerMoveActive) return;
         // const element = board.current.activeElement || null;
-        const x = nativeEvent.offsetX - lastX; // event.clientX - event.target.offsetLeft;
-        const y = nativeEvent.offsetY - lastY; // event.clientY - event.target.offsetTop;
-        if (state.mode === MODES.SELECTION) {
+        const x = getXCoordinate(nativeEvent.offsetX) - lastX; // event.clientX - event.target.offsetLeft;
+        const y = getYCoordinate(nativeEvent.offsetY) - lastY; // event.clientY - event.target.offsetTop;
+        if (state.mode === MODES.MOVE) {
+            boardX = state.x + x;
+            boardY = state.y + y;
+            draw();
+        }
+        else if (state.mode === MODES.SELECTION) {
             if (resize) {
                 if (orientation === RESIZE_ORIENTATIONS.RIGHT) {
                     element.width = getPosition(element.x + snapshot.width + x) - element.x;
@@ -302,8 +321,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 draw();
             }
             else {
-                element.x = getPosition(nativeEvent.offsetY);
-                element.y = getPosition(nativeEvent.offsetY);
+                element.x = getPosition(getXCoordinate(nativeEvent.offsetY));
+                element.y = getPosition(getYCoordinate(nativeEvent.offsetY));
             }
         }
     };
@@ -311,7 +330,14 @@ export const Folio = React.forwardRef((props, apiRef) => {
     const handlePointerUp = ({nativeEvent}) => {
         nativeEvent.preventDefault();
         pointerMoveActive = false; // Disable move listener
-        if (state.mode === MODES.SELECTION) {
+        if (state.mode === MODES.MOVE) {
+            setState(prevState => ({
+                ...prevState,
+                x: boardX,
+                y: boardY,
+            }));
+        }
+        else if (state.mode === MODES.SELECTION) {
             if (resize || dragged) {
                 const keys = dragged ? ["x", "y"] : ["x", "y", "width", "height"];
                 board.current.addHistoryEntry({
@@ -354,6 +380,10 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 props.onScreenshot && props.onScreenshot(blob);
             });
             board.current.clearSelection();
+            setState(prevState => ({
+                ...prevState,
+                mode: MODES.SELECTION,
+            }));
         }
         // Element creation mode
         else if (state.mode === MODES.NONE && element) {
@@ -372,6 +402,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
 
     const handleDoubleClick = ({nativeEvent}) => {
         nativeEvent.preventDefault();
+        if (state.mode === MODES.MOVE) return; // Disable double click on move
         const selection = board.current.getSelectedElements();
         // Check if all selected elements are in a group
         if (selection.length > 0 && !board.current.activeGroup) {
@@ -390,8 +421,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
         else {
             board.current.activeElement = createElement({
                 type: ELEMENT_TYPES.TEXT,
-                x: parseInt(nativeEvent.clientX),
-                y: parseInt(nativeEvent.clientY),
+                x: getPosition(getXCoordinate(nativeEvent.clientX)),
+                y: getPosition(getYCoordinate(nativeEvent.clientY)),
             });
             board.current.addElement(board.current.activeElement);
             board.current.registerElementCreate(board.current.activeElement);
@@ -418,8 +449,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                         // TODO: this should be fixes when enabling moving
                         Object.assign(element, {
                             selected: true, // Set element as selected
-                            x: getPosition((boardRef.current.offsetWidth - element.width) / 2),
-                            y: getPosition((boardRef.current.offsetHeight - element.height) / 2), 
+                            x: getPosition(getXCoordinate((boardRef.current.offsetWidth - element.width) / 2)),
+                            y: getPosition(getYCoordinate((boardRef.current.offsetHeight - element.height) / 2)), 
                         });
                         board.current.addElement(element);
                         board.current.registerElementCreate(element);
@@ -438,8 +469,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                         // TODO: this should be fixes when enabling moving
                         Object.assign(element, {
                             selected: true, // Set element as selected
-                            x: getPosition((boardRef.current.offsetWidth - element.width) / 2),
-                            y: getPosition((boardRef.current.offsetHeight - element.height) / 2), 
+                            x: getPosition(getXCoordinate((boardRef.current.offsetWidth - element.width) / 2)),
+                            y: getPosition(getYCoordinate((boardRef.current.offsetHeight - element.height) / 2)), 
                         });
                         board.current.addElement(element);
                         board.current.registerElementCreate(element);
@@ -463,13 +494,11 @@ export const Folio = React.forwardRef((props, apiRef) => {
         handleResize();
 
         // Register document event listeners
-        // document.addEventListener(EVENTS.KEY_DOWN, handleKeyDown, false);
         document.addEventListener(EVENTS.PASTE, handlePaste, false);
         window.addEventListener(EVENTS.RESIZE, handleResize, false);
 
         // Remove all event listeners
         return () => {
-            // document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown, false);
             document.removeEventListener(EVENTS.PASTE, handlePaste, false);
             window.removeEventListener(EVENTS.RESIZE, handleResize, false);
         };
@@ -567,8 +596,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
         };
 
         // Set input position and initial value
-        inputRef.current.style.top = el.y + "px";
-        inputRef.current.style.left = el.x + "px";
+        inputRef.current.style.top = (state.y + el.y) + "px";
+        inputRef.current.style.left = (state.x + el.x) + "px";
         inputRef.current.style.color = el.textColor;
         inputRef.current.style.fontSize = el.textSize + "px";
         inputRef.current.style.fontFamily = el.textFont;
@@ -586,6 +615,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
     React.useEffect(() => draw(), [state.mode, state.width, state.height]);
     React.useEffect(() => {
         state.gridEnabled && drawGrid(gridRef.current, {
+            translateX: state.x,
+            translateY: state.y,
             width: state.width,
             height: state.height,
             size: state.gridSize,
@@ -595,6 +626,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
     }, [
         state.gridEnabled, state.gridColor, state.gridOpacity, state.gridSize,
         state.width, state.height,
+        state.x, state.y,
     ]);
 
     // Add API
@@ -621,6 +653,9 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
                 onDoubleClick={handleDoubleClick}
+                style={{
+                    cursor: state.mode === MODES.MOVE ? "move": "",
+                }}
             />
             <Menubar
                 options={state}

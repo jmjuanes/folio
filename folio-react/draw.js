@@ -30,6 +30,7 @@ export const drawBoard = (canvas, elements, selection, options) => {
     const renderedGroups = new Set();
     const selectedElements = elements.filter(el => el.selected);
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    ctx.translate(options.translateX || 0, options.translateY || 0);
     forEachRev(elements, element => {
         const drawInnerText = options.drawActiveInnerText || options.activeElement?.id !== element.id;
         drawElement(element, ctx, {
@@ -89,26 +90,32 @@ export const drawBoard = (canvas, elements, selection, options) => {
         ctx.fill();
         ctx.globalAlpha = 1;
     }
-}
+    // Reset translate
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+};
 
-export const drawGrid = (canvas, props) => {
+export const drawGrid = (canvas, options) => {
+    const x = Math.ceil((options.translateX || 0) / options.size) * options.size;
+    const y = Math.ceil((options.translateY || 0) / options.size) * options.size;
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, props.width, props.height);
-    ctx.globalAlpha = props.opacity;
+    ctx.clearRect(0, 0, options.width, options.height);
+    ctx.translate(options.translateX || 0, options.translateY || 0);
+    ctx.globalAlpha = options.opacity;
     ctx.beginPath();
     ctx.setLineDash([]);
-    ctx.strokeStyle = props.color;
+    ctx.strokeStyle = options.color;
     ctx.lineWidth = DEFAULT_GRID_WIDTH;
     // Horizontal rules
-    for (let i = 0; i * props.size < props.height; i++) {
-        ctx.moveTo(0, i * props.size);
-        ctx.lineTo(props.width, i * props.size);
+    for (let i = 0; i * options.size < options.height; i++) {
+        ctx.moveTo(-x, i * options.size - y);
+        ctx.lineTo(options.width - x, i * options.size - y);
     }
     // Vertical rules
-    for (let i = 0; i * props.size < props.width; i++) {
-        ctx.moveTo(i * props.size, 0);
-        ctx.lineTo(i * props.size, props.height);
+    for (let i = 0; i * options.size < options.width; i++) {
+        ctx.moveTo(i * options.size - x, -y);
+        ctx.lineTo(i * options.size - x, options.height - y);
     }
     ctx.stroke();
     ctx.globalAlpha = 1;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
 };

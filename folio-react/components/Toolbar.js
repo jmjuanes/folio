@@ -20,23 +20,26 @@ export const Toolbar = props => (
             zIndex: 100,
         }}
     >
-        <div className="has-radius-md has-bg-white is-bordered has-p-2 is-flex has-shadow-lg">
+        <div
+            className="has-radius-md has-bg-white is-bordered has-p-2 is-flex has-shadow-lg"
+            style={{
+                gap: "0.5rem",
+            }}
+        >
             <Button
-                className="has-ml-1"
                 active={props.mode === MODES.MOVE}
-                icon={ICONS.SLIDERS}
+                icon={ICONS.ARROWS}
                 onClick={() => props.onModeChange(MODES.MOVE)}
             />
             <Button
-                className="has-ml-1"
                 active={props.mode === MODES.SELECTION}
                 icon={ICONS.POINTER}
                 onClick={() => props.onModeChange(MODES.SELECTION)}
             />
+            <div className="has-bg-body has-h-8" style={{width: "2px"}} />
             {availableTypes.map(item => (
                 <Button
                     key={item.name}
-                    className="has-ml-1"
                     active={props.type === item.name && props.mode === MODES.NONE}
                     icon={item.icon}
                     onClick={() => props.onTypeChange(item.name)}
