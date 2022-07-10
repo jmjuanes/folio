@@ -24,6 +24,17 @@ export const DARK_COLORS = Object.values({
     red: "rgb(232, 85, 62)",
 });
 
+export const EVENTS = {
+    POINTER_DOWN: "pointerdown",
+    POINTER_MOVE: "pointermove",
+    POINTER_UP: "pointerup",
+    DOUBLE_CLICK: "dblclick",
+    KEY_DOWN: "keydown",
+    KEY_UP: "keyup",
+    PASTE: "paste",
+    RESIZE: "resize",
+};
+
 export const KEYS = {
     ESCAPE: "Escape",
     BACKSPACE: "Backspace",
@@ -33,11 +44,14 @@ export const KEYS = {
     ARROW_UP: "ArrowUp",
 };
 
-export const INTERACTION_MODES = {
-    NONE: Symbol("mode:none"),
-    RESIZE: Symbol("mode:resize"),
-    DRAG: Symbol("mode:drag"),
-    INPUT: Symbol("mode:input"),
+export const MODES = {
+    NONE: "mode:none",
+    RESIZE: "mode:resize",
+    DRAG: "mode:drag",
+    INPUT: "mode:input",
+    SELECTION: "mode:selection",
+    SCREENSHOT: "mode:screenshot",
+    MOVE: "mode:move",
 };
 
 export const LINE_CAPS = {
@@ -60,8 +74,6 @@ export const TEXT_VERTICAL_ALIGNS = {
 };
 
 export const ELEMENT_TYPES = {
-    SELECTION: "selection",
-    SCREENSHOT: "screenshot",
     SHAPE_RECTANGLE: "rectangle",
     SHAPE_ELLIPSE: "ellipse",
     SHAPE_LINE: "line",
@@ -105,9 +117,6 @@ export const DEFAULT_FONT = "sans-serif";
 
 export const DEFAULT_SELECTION_COLOR = "rgb(78, 145, 228)";
 export const DEFAULT_SELECTION_OPACITY = 0.1;
-
-export const DEFAULT_SCREENSHOT_COLOR = "rgb(76, 205, 172)";
-export const DEFAULT_SCREENSHOT_OPACITY = 0.2;
 
 export const DEFAULT_GRID_COLOR = "rgb(238, 242, 247)";
 export const DEFAULT_GRID_WIDTH = 1;

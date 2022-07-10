@@ -1,10 +1,6 @@
 import {
     DEFAULT_FILL_COLOR,
     DEFAULT_FONT,
-    DEFAULT_SCREENSHOT_COLOR,
-    DEFAULT_SCREENSHOT_OPACITY,
-    DEFAULT_SELECTION_COLOR,
-    DEFAULT_SELECTION_OPACITY,
     DEFAULT_STROKE_COLOR,
     DEFAULT_TEXT_COLOR,
     ELEMENT_TYPES,
@@ -13,18 +9,9 @@ import {
     TEXT_ALIGNS,
 } from "./constants.js";
 import {parseColor} from "./utils/colors.js";
-import {generateID, measureText} from "./utils/index.js";
+import {generateID} from "./utils/generateId.js";
+import {measureText} from "./utils/measureText.js";
 import {getAbsolutePositions} from "./utils/math.js";
-
-// Draw a simple rectangle
-const drawSimpleRectangle = (canvas, element) => {
-    canvas.globalAlpha = element.opacity;
-    canvas.beginPath();
-    canvas.fillStyle = element.color;
-    canvas.rect(element.x, element.y, element.width, element.height);
-    canvas.fill();
-    canvas.globalAlpha = 1;
-};
 
 // Render element inner text
 const drawInnerText = (canvas, element) => {
@@ -97,24 +84,6 @@ const drawGlyph = (canvas, type, position, element, length) => {
 };
 
 const elements = {
-    [ELEMENT_TYPES.SELECTION]: {
-        init: () => ({
-            resize: RESIZE_TYPES.NONE,
-            color: DEFAULT_SELECTION_COLOR,
-            opacity: DEFAULT_SELECTION_OPACITY,
-        }),
-        draw: (canvas, element) => drawSimpleRectangle(canvas, element),
-        update: () => null,
-    },
-    [ELEMENT_TYPES.SCREENSHOT]: {
-        init: () => ({
-            resize: RESIZE_TYPES.NONE,
-            color: DEFAULT_SCREENSHOT_COLOR,
-            opacity: DEFAULT_SCREENSHOT_OPACITY,
-        }),
-        draw: (canvas, element) => drawSimpleRectangle(canvas, element),
-        update: () => null,
-    },
     [ELEMENT_TYPES.SHAPE_RECTANGLE]: {
         init: () => ({
             resize: RESIZE_TYPES.ALL,
@@ -133,7 +102,7 @@ const elements = {
             textSize: 16,
             textContent: "",
         }),
-        draw: (canvas, element, shouldDrawInnerText) => {
+        draw: (canvas, element, options) => {
             const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
             const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
             const halfWidth = Math.abs(element.width) / 2;
@@ -171,8 +140,7 @@ const elements = {
                 // Apply stroke
                 canvas.stroke();
             }
-
-            if (shouldDrawInnerText) {
+            if (options.drawInnerText) {
                 drawInnerText(canvas, element);
             }
             // context.globalAlpha = 1; // Reset opacity
@@ -196,7 +164,7 @@ const elements = {
             textSize: 16,
             textContent: "",
         }),
-        draw: (canvas, element, shouldDrawInnerText) => {
+        draw: (canvas, element, options) => {
             const rx = element.width / 2;
             const ry = element.height / 2;
 
@@ -221,7 +189,7 @@ const elements = {
                 canvas.stroke();
             }
 
-            if (shouldDrawInnerText) {
+            if (options.drawInnerText) {
                 drawInnerText(canvas, element);
             }
         },
@@ -278,8 +246,8 @@ const elements = {
             textOpacity: 1.0,
             textContent: "",
         }),
-        draw: (canvas, element, shouldDrawText) => {
-            if (shouldDrawText) {
+        draw: (canvas, element, options) => {
+            if (options.drawInnerText) {
                 canvas.save();
                 canvas.beginPath();
                 canvas.rect(element.x, element.y, element.width, element.height);
@@ -346,11 +314,6 @@ export const updateElement = (el, changed) => {
     return elements[el.type].update(el, new Set(changed || []));
 };
 
-export const drawElement = (el, canvas, shouldDrawInnerText) => {
-    return elements[el.type].draw(canvas, el, shouldDrawInnerText);
-};
-
-export const removeElement = (ctx, el) => {
-    ctx.elements = ctx.elements.filter(element => element.id !== el.id);
-    ctx.selection = ctx.selection.filter(element => element.id !== el.id);
+export const drawElement = (el, canvas, options) => {
+    return elements[el.type].draw(canvas, el, options);
 };

@@ -6,6 +6,18 @@ export const getAbsolutePositions = (position, size) => {
     ];
 };
 
+// Normalize the specified region
+export const normalizeRegion = region => {
+    const [xStart, xEnd] = getAbsolutePositions(region.x, region.width);
+    const [yStart, yEnd] = getAbsolutePositions(region.y, region.height);
+    return {
+        x: xStart,
+        width: xEnd - xStart,
+        y: yStart,
+        height: yEnd - yStart,
+    };
+};
+
 // Generate the outer rectangle that includes all items in the list
 export const getOuterRectangle = items => {
     let xStart = Infinity, yStart = Infinity, xEnd = 0, yEnd = 0;
