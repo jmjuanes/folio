@@ -14,12 +14,17 @@ export const clearCanvas = canvas => {
 
 // Generate a screenshot of the provided canvas and the specified region
 // https://stackoverflow.com/a/13074780
-export const screenshotCanvas = (originalCanvas, region) => {
+export const screenshotCanvas = (originalCanvas, options) => {
     return new Promise(resolve => {
-        if (!region) {
+        if (!options.region) {
             return originalCanvas.toBlob(blob => resolve(blob));
         }
         // Get screenshot
+        const region = {
+            ...options.region,
+            x: options.translateX ? options.region.x + options.translateX : options.region.x,
+            y: options.translateY ? options.region.y + options.translateY : options.region.y,
+        };
         const originalContext = originalCanvas.getContext("2d");
         const image = originalContext.getImageData(region.x || 0, region.y || 0, region.width, region.height);
     

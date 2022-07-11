@@ -375,12 +375,17 @@ export const Folio = React.forwardRef((props, apiRef) => {
         }
         // Screenshot mode (TODO)
         else if (state.mode === MODES.SCREENSHOT) {
-            const region = normalizeRegion(board.current.selection);
-            screenshotCanvas(boardRef.current, region).then(blob => {
+            const options = {
+                translateX: state.x,
+                translateY: state.y,
+                region: normalizeRegion(board.current.selection),
+            };
+            board.current.clearSelection();
+            draw(); // Prevent screenshot rectangle in captured image
+            screenshotCanvas(boardRef.current, options).then(blob => {
                 props.onScreenshot && props.onScreenshot(blob);
             });
-            board.current.clearSelection();
-            setState(prevState => ({
+            return setState(prevState => ({
                 ...prevState,
                 mode: MODES.SELECTION,
             }));
@@ -434,7 +439,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         }));
     };
 
-    // Init external listeners
+    // Init paste listener
     React.useEffect(() => {
         const handlePaste = event => {
             return !isInputTarget(event) && getDataFromClipboard(event).then(data => {
@@ -446,17 +451,19 @@ export const Folio = React.forwardRef((props, apiRef) => {
                             type: ELEMENT_TYPES.TEXT,
                             textContent: content,
                         });
-                        // TODO: this should be fixes when enabling moving
+                        updateElement(element, ["textContent"]);
                         Object.assign(element, {
                             selected: true, // Set element as selected
-                            x: getPosition(getXCoordinate((boardRef.current.offsetWidth - element.width) / 2)),
-                            y: getPosition(getYCoordinate((boardRef.current.offsetHeight - element.height) / 2)), 
+                            x: getPosition(getXCoordinate((state.width - element.width) / 2)),
+                            y: getPosition(getYCoordinate((state.height - element.height) / 2)), 
                         });
                         board.current.addElement(element);
                         board.current.registerElementCreate(element);
-                        updateElement(el, ["x", "y", "textContent"]);
                         draw();
-                        return forceUpdate();
+                        return setState(prevState => ({
+                            ...prevState,
+                            mode: MODES.SELECTION,
+                        }));
                     }
                     // Load as a new image
                     createImage(content).then(img => {
@@ -466,22 +473,31 @@ export const Folio = React.forwardRef((props, apiRef) => {
                             height: img.height,
                             img: img,
                         });
-                        // TODO: this should be fixes when enabling moving
+                        updateElement(element, ["img", "width", "height"]);
                         Object.assign(element, {
                             selected: true, // Set element as selected
-                            x: getPosition(getXCoordinate((boardRef.current.offsetWidth - element.width) / 2)),
-                            y: getPosition(getYCoordinate((boardRef.current.offsetHeight - element.height) / 2)), 
+                            x: getPosition(getXCoordinate((state.width - element.width) / 2)),
+                            y: getPosition(getYCoordinate((state.height - element.height) / 2)), 
                         });
                         board.current.addElement(element);
                         board.current.registerElementCreate(element);
-                        updateElement(el, ["img", "width", "height"]);
                         draw();
-                        return forceUpdate();
+                        return setState(prevState => ({
+                            ...prevState,
+                            mode: MODES.SELECTION,
+                        }));
                     });
                 });
             });
         };
+        document.addEventListener(EVENTS.PASTE, handlePaste, false);
+        return () => {
+            document.removeEventListener(EVENTS.PASTE, handlePaste, false);
+        };
+    }, [state.x, state.y, state.width, state.height]);
 
+    // Resize event listener
+    React.useEffect(() => {
         const handleResize = () => {
             return setState(prevState => ({
                 ...prevState,
@@ -489,17 +505,10 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 height: parentRef.current.offsetHeight,
             }));
         };
-
         // Resize the board for the first time
         handleResize();
-
-        // Register document event listeners
-        document.addEventListener(EVENTS.PASTE, handlePaste, false);
         window.addEventListener(EVENTS.RESIZE, handleResize, false);
-
-        // Remove all event listeners
         return () => {
-            document.removeEventListener(EVENTS.PASTE, handlePaste, false);
             window.removeEventListener(EVENTS.RESIZE, handleResize, false);
         };
     }, []);
