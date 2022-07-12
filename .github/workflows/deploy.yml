@@ -1,0 +1,28 @@
+name: Deploy Folio App
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: yarn install
+      - run: yarn run build
+      - name: Add firebase configuration
+        run: 'echo "$FIREBASE_CONFIG" > ./.firebaserc'
+        shell: bash
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: "${{ secrets.FIREBASE_PROJECT }}"
+          channelId: live
