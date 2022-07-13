@@ -8,7 +8,7 @@ export const useNotifications = () => {
             type: type,
             message: message,
         };
-        setNotifications([...notifications, newNotification].reverse());
+        setNotifications(prev => [...prev, newNotification].reverse());
     };
 
     return {
@@ -18,7 +18,7 @@ export const useNotifications = () => {
         success: message => addNotification("success", message),
         notice: message => addNotification("notice", message),
         remove: id => {
-            setNotifications(notifications.filter(item => item.id !== id));
+            setNotifications(prev => prev.filter(item => item.id !== id));
         },
     };
 };

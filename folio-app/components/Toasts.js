@@ -1,5 +1,5 @@
 import React from "react";
-import kofi from "kofi";
+import {classNames} from "../utils/classNames.js";
 
 // Toast child
 const Toast = props => {
@@ -9,13 +9,12 @@ const Toast = props => {
             timer.current = setTimeout(() => props.onDelete(), props.autoDeleteTime);
         }
     }, []);
-
-    const classList = kofi.classNames({
-        "alert is-flex has-mb-0 has-mt-2": true,
-        "has-bg-error": props.type === "error",
-        "has-bg-primary": props.type === "warning",
-        "has-bg-success": props.type === "success",
-    });
+    const classList = classNames([
+        "alert is-flex has-mb-0 has-mt-2",
+        props.type === "error" && "has-bg-error",
+        props.type === "warning" && "has-bg-primary",
+        props.type === "success" && "has-bg-success",
+    ]);
 
     return (
         <div className={classList}>
