@@ -1,5 +1,6 @@
 {
     "hosting": {
+        "target": "folio:website",
         "public": "public",
         "ignore": [
             "firebase.json",
