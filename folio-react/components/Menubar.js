@@ -8,16 +8,16 @@ import {Dialog} from "./Dialog.js";
 import {Option} from "./Option.js";
 
 const settingsOptions = {
-    gridStyle: {
-        type: "selectIcon",
-        props: {
-            title: "Grid style",
-            values: {
-                [GRID_STYLES.DOTS]: ICONS.GRID_DOTS,
-                [GRID_STYLES.LINES]: ICONS.GRID_LINES,
-            },
-        },
-    },
+    // gridStyle: {
+    //     type: "selectIcon",
+    //     props: {
+    //         title: "Grid style",
+    //         values: {
+    //             [GRID_STYLES.DOTS]: ICONS.GRID_DOTS,
+    //             [GRID_STYLES.LINES]: ICONS.GRID_LINES,
+    //         },
+    //     },
+    // },
     gridColor: {
         type: "color",
         props: {
@@ -55,13 +55,6 @@ export const Menubar = props => {
             }}
         >
             <div className="has-radius-md is-bordered has-p-2 is-flex has-items-center has-shadow-lg has-bg-white">
-                <Button
-                    icon={ICONS.CORNERS}
-                    active={false}
-                    onClick={() => {
-                        return null;
-                    }}
-                />
                 <div className="has-mx-4 has-size-2 has-maxw-48 has-minw-24">
                     <strong>{props.title}</strong>
                 </div>
