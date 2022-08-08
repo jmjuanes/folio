@@ -1,8 +1,35 @@
 import React from "react";
+
 import {Button} from "./Button.js";
 import ICONS from "../icons.js";
-
 import {MODES, ELEMENT_TYPES} from "../constants.js";
+import {css} from "../styles.js";
+
+const toolbarWrapperClass = css({
+    bottom: "0px",
+    left: "50%",
+    paddingBottom: "1rem",
+    position: "absolute",
+    transform: "translateX(-50%)",
+    zIndex: 100,
+});
+
+const toolbarClass = css({
+    apply: "mixins.dialog",
+    backgroundColor: "#fff",
+    borderRadius: "0.5rem",
+    display: "flex",
+    gap: "0.25rem",
+    padding: "0.5rem",
+});
+
+const separatorClass = css({
+    backgroundColor: "primary",
+    height: "2rem",
+    marginLeft: "0.5rem",
+    marginRight: "0.5rem",
+    width: "0.125rem",
+});
 
 // Available types
 const availableTypes = [
@@ -13,19 +40,8 @@ const availableTypes = [
 ];
 
 export const Toolbar = props => (
-    <div
-        className="is-absolute has-bottom-none has-left-half has-pb-4"
-        style={{
-            transform:"translateX(-50%)",
-            zIndex: 100,
-        }}
-    >
-        <div
-            className="has-radius-md has-bg-white is-bordered has-p-2 is-flex has-shadow-lg"
-            style={{
-                gap: "0.5rem",
-            }}
-        >
+    <div className={toolbarWrapperClass}>
+        <div className={toolbarClass}>
             <Button
                 active={props.mode === MODES.MOVE}
                 icon={ICONS.ARROWS}
@@ -36,7 +52,7 @@ export const Toolbar = props => (
                 icon={ICONS.POINTER}
                 onClick={() => props.onModeChange(MODES.SELECTION)}
             />
-            <div className="has-bg-body has-h-8" style={{width: "2px"}} />
+            <div className={separatorClass} />
             {availableTypes.map(item => (
                 <Button
                     key={item.name}

@@ -1,4 +1,5 @@
 import React from "react";
+import {classNames} from "@siimple/styled";
 
 import {
     LINE_CAPS,
@@ -12,7 +13,37 @@ import {Dialog} from "./Dialog.js";
 import {Button} from "./Button.js";
 import {Option} from "./Option.js";
 import ICONS from "../icons.js";
-import {classNames} from "../utils/classNames.js";
+import {css} from "../styles.js";
+
+const stylebarWrapperClass = css({
+    display: "none",
+    marginRight: "1rem",
+    marginTop: "1rem",
+    position: "absolute",
+    right: "0px",
+    top: "0px",
+    "&.is-visible": {
+        display: "block",
+    },
+});
+
+const stylebarClass = css({
+    apply: "mixins.dialog",
+    backgroundColor: "#fff",
+    borderRadius: "0.5rem",
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.25rem",
+    padding: "0.5rem",
+});
+
+const separatorClass = css({
+    backgroundColor: "primary",
+    height: "0.125rem",
+    marginTop: "0.125rem",
+    marginBottom: "0.125rem",
+    // width: "0.125rem",
+});
 
 const groups = {
     text: {
@@ -43,7 +74,7 @@ const groups = {
                 },
             },
             textAlign: {
-                type: "selectIcon",
+                type: "select",
                 props: {
                     title: "Text align",
                     values: {
@@ -116,7 +147,7 @@ const groups = {
         icon: ICONS.LINE_END_ARROW,
         options: {
             lineStart: {
-                type: "selectIcon",
+                type: "select",
                 props: {
                     title: "Line start",
                     values: {
@@ -128,7 +159,7 @@ const groups = {
                 },
             },
             lineEnd: {
-                type: "selectIcon",
+                type: "select",
                 props: {
                     title: "Line end",
                     values: {
@@ -184,13 +215,13 @@ export const Stylebar = props => {
         props.onChange(name, value);
         forceUpdate();
     };
-    const classList = classNames([
-        "is-absolute has-mr-4 has-mt-4 has-right-none has-top-none",
-        props.selection.length === 0 && "is-hidden",
-    ]);
+    const classList = classNames({
+        [stylebarWrapperClass]: true,
+        "is-visible": props.selection.length > 0,
+    });
     return (
         <div className={classList} style={{zIndex:100}}>
-            <div className="has-radius-md has-bg-white is-bordered has-p-2 has-shadow-lg">
+            <div className={stylebarClass}>
                 {Object.keys(groups).map(key => {
                     if (!visibleGroups[key]) {
                         return null; // This group is not available
@@ -202,12 +233,18 @@ export const Stylebar = props => {
                     return (
                         <div key={key}>
                             <Button
-                                className="has-mb-1"
                                 icon={groups[key].icon}
                                 active={isActive}
                                 onClick={() => handleOptionChange(key)}
                             />
-                            <Dialog active={isActive} className="has-top-none has-right-none has-mr-16">
+                            <Dialog
+                                active={isActive}
+                                style={{
+                                    top: "0px",
+                                    right: "100%",
+                                    marginRight: "0.25rem",
+                                }}
+                            >
                                 {availableOptions.map(name => (
                                     <Option
                                         {...groups[key].options[name].props}
@@ -221,19 +258,17 @@ export const Stylebar = props => {
                         </div>
                     );
                 })}
-                <When condition={hasGroupVisible} render={() => (
-                    <div className="has-bg-body has-opacity-50 has-my-2" style={{height: "2px"}} />
-                )} />
+                {hasGroupVisible && (
+                    <div className={separatorClass} />
+                )}
                 {/* Order buttons */}
                 <When condition={false} render={() => (
                     <React.Fragment>
                         <Button
-                            className="has-mb-1"
                             icon="bring-forward"
                             onClick={props.onBringForwardClick}
                         />
                         <Button
-                            className="has-mb-1"
                             icon="send-backward"
                             onClick={props.onSendBackwardClick}
                         />
@@ -244,7 +279,6 @@ export const Stylebar = props => {
                     condition={!hasActiveGroup && isGroupSelectionVisible(props.selection)}
                     render={() => (
                         <Button
-                            className="has-mb-1"
                             icon={ICONS.OBJECT_GROUP}
                             onClick={props.onGroupSelectionClick}
                         />
@@ -255,7 +289,6 @@ export const Stylebar = props => {
                     condition={!hasActiveGroup && isUngroupSelectionVisible(props.selection)}
                     render={() => (
                         <Button
-                            className="has-mb-1"
                             icon={ICONS.OBJECT_UNGROUP}
                             onClick={props.onUngroupSelectionClick}
                         />

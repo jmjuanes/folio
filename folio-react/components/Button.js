@@ -1,13 +1,25 @@
 import React from "react";
-import {classNames} from "../utils/classNames.js";
+import {classNames} from "@siimple/styled";
+import {css} from "../styles.js";
+
+const buttonClass = css({
+    borderRadius: "0.5rem",
+    color: "primary",
+    cursor: "pointer",
+    fontSize: "1.25rem",
+    lineHeight: "1",
+    padding: "0.5rem",
+    "&:hover, &.is-active": {
+        backgroundColor: "primary",
+        color: "#fff",
+    },
+});
 
 export const Button = props => {
-    const classList = classNames([
-        props.className || "",
-        "has-radius-md has-p-2 has-lh-none is-clickable has-size-2",
-        !props.active && "has-bg-body-hover has-text-white-hover",
-        props.active && "has-bg-body has-text-white",
-    ]);
+    const classList = classNames({
+        [buttonClass]: true,
+        "is-active": props.active,
+    });
     return (
         <div className={classList} onClick={props.onClick}>
             {props.icon}

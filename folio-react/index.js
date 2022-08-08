@@ -37,6 +37,7 @@ import {parseClipboardBlob, getDataFromClipboard} from "./utils/clipboard.js";
 import {screenshotCanvas, clearCanvas} from "./utils/canvas.js";
 import {createBoard} from "./board.js";
 import {drawBoard, drawGrid} from "./draw.js";
+import {css} from "./styles.js";
 
 import {Menubar} from "./components/Menubar.js";
 import {Stylebar} from "./components/Stylebar.js";
@@ -54,6 +55,14 @@ const isArrowKey = key => {
 const isInputTarget = e => {
     return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 };
+
+// Main container styles
+const rootClassName = css({
+    height: "100%",
+    position: "relative",
+    width: "100%",
+    apply: "mixins.root",
+});
 
 export const Folio = React.forwardRef((props, apiRef) => {
     const parentRef = React.useRef(null);
@@ -644,7 +653,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
     }, []);
 
     return (
-        <div className="is-relative has-w-full has-h-full" ref={parentRef}>
+        <div className={rootClassName} ref={parentRef}>
             {/* Grid canvas */}
             {state.gridEnabled && (
                 <Canvas

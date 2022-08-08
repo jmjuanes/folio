@@ -1,28 +1,160 @@
 import React from "react";
-import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colors.js";
-import {classNames} from "../utils/classNames.js";
+import {classNames} from "@siimple/styled";
 
-// Option types
+import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colors.js";
+import {css} from "../styles.js";
+
+const colorsListClass = css({
+    display: "grid",
+    gridGap: "0.125rem",
+    gridTemplateColumns: "repeat(5, auto)",
+    width: "100%",
+});
+const colorsItemClass = css({
+    apply: "mixins.bordered",
+    borderRadius: "0.5rem",
+    height: "2rem",
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
+    // width: "100%",
+});
+const colorsWrapperClass = css({
+    apply: "mixins.bordered",
+    alignItems: "center",
+    backgroundColor: "primary",
+    display: "flex",
+    height: "2rem",
+    overflow: "hidden",
+});
+const colorsValueClass = css({
+    alignItems: "center",
+    // backgroundColor: "primary",
+    color: "#fff",
+    display: "flex",
+    fontWeight: "bold",
+    height: "2rem",
+    // lineHeight: "1",
+    paddingBottom: "0.25rem",
+    paddingLeft: "0.5rem",
+    paddingRight: "0.5rem",
+    paddingTop: "0.25rem",
+});
+const colorsInputClass = css({
+    backgroundColor: "#fff",
+    border: "0px",
+    borderRadius: "0px",
+    fontSize: "0.875rem",
+    height: "2rem",
+    padding: "0.25rem 0.5rem",
+    width: "100%",
+    outline: "none",
+});
+
+const selectClass = css({
+    apply: "mixins.bordered",
+    borderRadius: "0.5rem",
+    cursor: "pointer",
+    fontSize: "1.25rem",
+    padding: "0.25rem",
+    textAlign: "center",
+    width: "100%",
+    "&:hover,&.is-active": {
+        backgroundColor: "primary",
+        color: "#fff",
+    },
+});
+
+const rangeElementClass = css({
+    appearance: "none",
+    backgroundColor: "muted",
+    borderRadius: "1rem",
+    color: "primary",
+    cursor: "pointer",
+    display: "block",
+    height: "0.25rem",
+    width: "100%",
+    "&:-webkit-slider-thumb,&:-moz-range-thumb": {
+        backgroundColor: "currentColor",
+        border: "none",
+        borderRadius: "999px",
+        boxSizing: "border-box",
+        height: "1rem",
+        width: "1rem",
+    },
+    "&:-webkit-slider-thumb": {
+        appearance: "none",
+    },
+});
+const rangeValueClass = css({
+    fontSize: "0.875rem",
+    minWidth: "2rem",
+    opacity: 0.75,
+    textAlign: "right",
+});
+
+const switchClass = css({
+    appearance: "none",
+    boxSizing: "border-box",
+    cursor: "pointer",
+    display: "inline-block",
+    height: "1.25rem",
+    margin: "0px",
+    position: "relative",
+    width: "2rem",
+    "&:after": {
+        backgroundColor: "white",
+        borderRadius: "100%",
+        content: "''",
+        display: "block",
+        height: "0.875rem",
+        left: "0.1875rem",
+        position: "absolute",
+        top: "0.1875rem",
+        transition: ["left", "0.3s", "ease"],
+        width: "0.875rem",
+        zIndex: "2",
+    },
+    "&:before": {
+        backgroundColor: "muted",
+        borderRadius: "2rem",
+        content: "''",
+        display: "block",
+        height: "100%",
+        left: "0px",
+        position: "absolute",
+        top: "0px",
+        transition: ["background-color", "0.3s", "ease"],
+        width: "100%",
+        zIndex: "1",
+    },
+    "&:checked:after": {
+        left: "1rem",
+    },
+    "&:checked:before": {
+        backgroundColor: "success",
+    },
+});
+
 const optionTypes = {
     color: props => {
         const colorRef = React.useRef(null);
         return (
-            <div className="has-mb-4">
-                <div className="is-flex has-items-center has-mb-2">
+            <div style={{marginBottom: "1rem"}}>
+                <div style={{display: "flex", alignItems: "center", marginBottom: "0.5rem", gap: "0.5rem"}}>
                     <div
-                        className="has-radius-md has-mr-2 has-w-full has-maxw-8 has-p-4 is-bordered"
+                        className={colorsItemClass}
                         style={{
                             backgroundColor: rgbToHex(props.value),
+                            flexGrow: "0",
+                            maxWidth: "2rem",
                         }}
                     />
-                    <div className="is-flex has-radius-md is-clipped has-bg-white is-bordered has-items-center">
-                        <div className="has-bg-muted has-px-2 has-py-1 has-lh-normal">
-                            <strong>#</strong>
-                        </div>
+                    <div className={colorsWrapperClass}>
+                        <div className={colorsValueClass}>#</div>
                         <input
                             ref={colorRef}
                             type="text"
-                            className="input has-bg-white is-radiusless has-size-0 has-px-2 has-py-1"
+                            className={colorsInputClass}
                             onChange={e => {
                                 if (isValidHexColor(e.target.value.replace("#", ""))) {
                                     return props.onChange(hexToRgb(e.target.value));
@@ -32,20 +164,14 @@ const optionTypes = {
                         />
                     </div>
                 </div>
-                <div
-                    className="has-w-full"
-                    style={{
-                        display: "grid",
-                        gridGap: "0.125rem",
-                        gridTemplateColumns: "repeat(5, auto)",
-                    }}
-                >
+                <div className={colorsListClass}>
                     {(props.colors || []).map(value => (
                         <div
                             key={value}
-                            className="has-radius-md has-py-4 is-clickable is-bordered"
+                            className={colorsItemClass}
                             style={{
                                 backgroundColor: rgbToHex(value),
+                                cursor: "pointer",
                             }}
                             onClick={() => {
                                 props.onChange(value);
@@ -119,41 +245,28 @@ const optionTypes = {
         </div>
     ),
     range: props => (
-        <div className="is-flex">
+        <div style={{display:"flex",alignItems:"center"}}>
             <input
                 type="range"
-                className="slider"
+                className={rangeElementClass}
                 onChange={e => props.onChange(Number(e.target.value))}
                 min={props.domain[0] || 0}
                 max={props.domain[1] || 1}
                 step={props.step || 0.1}
                 defaultValue={props.value}
             />
-            <div className="has-size-0 has-opacity-75 has-text-right has-minw-8">
+            <div className={rangeValueClass}>
                 {props.value}
             </div>
         </div>
     ),
     select: props => (
-        <select
-            className="select has-minh-auto has-p-2 has-size-0"
-            defaultValue={props.value}
-            onChange={e => props.onChange(e.target.value)}
-        >
-            {(props.values || []).map(value => (
-                <option key={value} value={value}>{value}</option>
-            ))}
-        </select>
-    ),
-    selectIcon: props => (
-        <div className="is-flex" style={{gap:"0.25rem"}}>
+        <div style={{display: "flex", gap:"0.25rem"}}>
             {Object.keys(props.values).map(key => {
-                const classList = classNames([
-                    "has-p-1 has-size-2 has-radius-md",
-                    "is-clickable has-w-full has-text-center is-bordered",
-                    key !== props.value && "has-bg-body-hover has-text-white-hover", 
-                    key === props.value && "has-bg-body has-text-white",
-                ]);
+                const classList = classNames({
+                    [selectClass]: true,
+                    "is-active": key === props.value,
+                });
                 return (
                     <div key={key} className={classList} onClick={() => props.onChange(key)}>
                         {props.values[key]}
@@ -163,35 +276,45 @@ const optionTypes = {
         </div>
     ),
     switch: props => (
-        <div className="is-flex">
-            <div className="has-size-0 has-text-gray-500 has-weight-bold">Off</div>
-            <div className="has-w-full" align="center">
-                <input
-                    type="checkbox"
-                    className="switch"
-                    onChange={e => props.onChange(e.target.checked)}
-                    defaultChecked={!!props.value}
-                />
-            </div>
-            <div className="has-size-0 has-text-gray-500 has-weight-bold">On</div>
-        </div>
-    ),
-    text: props => (
-        <textarea
-            className="textarea has-bg-white has-mb-0 has-size-0"
-            rows="3"
-            defaultValue={props.value}
-            onChange={e => props.onChange(e.target.value)}
+        <input
+            type="checkbox"
+            className={switchClass}
+            onChange={e => props.onChange(e.target.checked)}
+            defaultChecked={!!props.value}
         />
     ),
 };
 
+const optionTitleClass = css({
+    fontSize: "0.875rem",
+    fontWeight: "bold",
+    // marginBottom: "0.5rem",
+});
+// const optionContentClass = css({
+//     // marginBottom: "0.5rem",
+// });
+
 // Option wrapper
-export const Option = props => (
-    <div className="">
-        <div className="has-weight-bold has-size-0 has-mb-2">{props.title}</div>
-        <div className="has-mb-2">
-            {optionTypes[props.type](props)}
+export const Option = props => {
+    const isInline = props.type === "switch";
+    const wrapperStyle = {
+        alignItems: "center",
+        display: isInline ? "flex" : "block",
+        marginBottom: "0.5rem",
+    };
+    const titleStyle = {
+        marginBottom: isInline ? "0px" : "0.5rem",
+    };
+    const contentStyle = {
+        marginLeft: isInline ? "auto" : "0px",
+        // marginBottom: isInline ? "0px" : "0.5rem",
+    };
+    return (
+        <div style={wrapperStyle}>
+            <div className={optionTitleClass} style={titleStyle}>{props.title}</div>
+            <div style={contentStyle}>
+                {optionTypes[props.type](props)}
+            </div>
         </div>
-    </div>
-);
+    );
+};

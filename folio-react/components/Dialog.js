@@ -1,18 +1,21 @@
 import React from "react";
-import {classNames} from "../utils/classNames.js";
+import {css} from "../styles.js";
 
-export function Dialog (props) {
+const dialogClass = css({
+    apply: "mixins.dialog",
+    backgroundColor: "#fff",
+    borderRadius: "0.5rem",
+    padding: "1rem",
+});
+
+export const Dialog = props => {
     if (!props.active) {
         return null; // Dialog is not active
     }
-    const classList = classNames([
-        props.className,
-        "is-absolute",
-    ]);
     return (
-        <div className={classList} style={props.style}>
+        <div style={{position: "absolute", ...props.style}}>
             <div
-                className="has-radius-md has-p-4 has-bg-white is-bordered has-shadow-lg"
+                className={dialogClass}
                 style={{
                     width: props.width,
                 }}
@@ -21,10 +24,10 @@ export function Dialog (props) {
             </div>
         </div>
     );
-}
+};
 
 Dialog.defaultProps = {
     active: false,
-    orientation: "left",
     width: "15rem",
+    style: {},
 };

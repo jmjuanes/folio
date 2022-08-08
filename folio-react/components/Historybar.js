@@ -1,14 +1,46 @@
 import React from "react";
+import {classNames} from "@siimple/styled";
 import ICONS from "../icons.js";
-import {classNames} from "../utils/classNames.js";
+import {css} from "../styles.js";
+
+const historyButtonClass = css({
+    borderRadius: "0.5rem",
+    lineHeight: "1",
+    padding: "0.5rem",
+    "&.is-not-disabled:hover": {
+        backgroundColor: "primary",
+        color: "#fff",
+        cursor: "pointer",
+    },
+    "&.is-disabled": {
+        opacity: "0.25",
+    },
+});
+
+const historyWrapperClass = css({
+    bottom: "0px",
+    left: "0px",
+    paddingBottom: "1rem",
+    paddingLeft: "1rem",
+    position: "absolute",
+    zIndex: "100",
+});
+
+const historyClass = css({
+    apply: "mixins.dialog",
+    backgroundColor: "#fff",
+    borderRadius: "0.5rem",
+    display: "flex",
+    padding: "0.5rem",
+});
 
 const HistoryButton = props => (
     <div
-        className={classNames([
-            "has-p-2 has-radius-md has-lh-none",
-            !props.disabled && "has-text-white-hover has-bg-body-hover is-clickable",
-            props.disabled && "has-opacity-25",
-        ])}
+        className={classNames({
+            [historyButtonClass]: true,
+            "is-not-disabled": !props.disabled,
+            "is-disabled": props.disabled,
+        })}
         onClick={props.onClick}
     >
         {props.icon}
@@ -16,11 +48,8 @@ const HistoryButton = props => (
 );
 
 export const Historybar = props => (
-    <div
-        className="is-absolute has-pb-4 has-pl-4 has-bottom-none has-left-none"
-        style={{zIndex:100}}
-    >
-        <div className="has-radius-md has-p-2 has-bg-white is-bordered is-flex has-shadow-md">
+    <div className={historyWrapperClass}>
+        <div className={historyClass}>
             <HistoryButton
                 icon={ICONS.UNDO}
                 disabled={!!props.undoDisabled}

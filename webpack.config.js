@@ -1,8 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
-
+// const CopyPlugin = require("copy-webpack-plugin");
 const package = require("./package.json");
 
 module.exports = {
@@ -48,12 +47,11 @@ module.exports = {
             "process.env.VERSION": JSON.stringify(package.version),
             // "process.env.HOMEPAGE_URL": JSON.stringify(package.homepage),
         }),
-        new CopyPlugin({
-            patterns: [
-                // path.resolve(__dirname, "node_modules", "siimple", "siimple.css"),
-                path.join(__dirname, "styles.css"),
-            ],
-        }),
+        // new CopyPlugin({
+        //     patterns: [
+        //         path.join(__dirname, "styles.css"),
+        //     ],
+        // }),
         new HtmlWebpackPlugin({
             title: "Folio App",
             template: path.join(__dirname, "folio-app/index.html"),

@@ -1,15 +1,43 @@
 import React from "react";
 
-import {GRID_STYLES} from "../constants.js";
+// import {GRID_STYLES} from "../constants.js";
 import ICONS from "../icons.js";
+import {css} from "../styles.js";
 
 import {Button} from "./Button.js";
 import {Dialog} from "./Dialog.js";
 import {Option} from "./Option.js";
 
+const menubarWrapperClass = css({
+    left: "0px",
+    paddingLeft: "1rem",
+    paddingTop: "1rem",
+    position: "absolute",
+    top: "0px",
+    zIndex: "100",
+});
+
+const menubarClass = css({
+    apply: "mixins.dialog",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: "0.5rem",
+    display:  "flex",
+    gap: "0.125rem",
+    padding: "0.5rem",
+});
+
+// const separatorClass = css({
+//     backgroundColor: "primary",
+//     height: "2rem",
+//     marginLeft: "0.5rem",
+//     marginRight: "0.5rem",
+//     width: "0.125rem",
+// });
+
 const settingsOptions = {
     // gridStyle: {
-    //     type: "selectIcon",
+    //     type: "select",
     //     props: {
     //         title: "Grid style",
     //         values: {
@@ -48,19 +76,10 @@ export const Menubar = props => {
     const [settingsVisible, setSettingsVisible] = React.useState(false);
 
     return (
-        <div
-            className="is-absolute has-top-none has-left-none has-pt-4 has-pl-4"
-            style={{
-                zIndex: 100,
-            }}
-        >
-            <div className="has-radius-md is-bordered has-p-2 is-flex has-items-center has-shadow-lg has-bg-white">
-                <div className="has-mx-4 has-size-2 has-maxw-48 has-minw-24">
-                    <strong>{props.title}</strong>
-                </div>
-                <div className="has-bg-body has-mx-2 has-h-8" style={{width: "2px"}} />
+        <div className={menubarWrapperClass}>
+            <div className={menubarClass}>
+                {/* <div className={separatorClass} /> */}
                 <Button
-                    className="has-ml-1"
                     icon={ICONS.SLIDERS}
                     active={settingsVisible}
                     onClick={() => {
@@ -68,13 +87,11 @@ export const Menubar = props => {
                     }}
                 />
                 <Button
-                    className="has-ml-1"
                     icon={ICONS.GRID_LINES}
                     active={props.gridEnabled}
                     onClick={props.onGridClick}
                 />
                 <Button
-                    className="has-ml-1"
                     icon={ICONS.CAMERA}
                     active={props.cameraEnabled}
                     onClick={() => {
@@ -85,7 +102,7 @@ export const Menubar = props => {
                     }}
                 />
             </div>
-            <Dialog active={settingsVisible} className="has-mt-2">
+            <Dialog active={settingsVisible} style={{marginTop: "0.125rem"}}>
                 {Object.keys(settingsOptions).map(name => (
                     <Option
                         {...settingsOptions[name].props}
