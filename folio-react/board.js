@@ -134,7 +134,7 @@ export const createBoard = () => {
             });
         },
         registerElementRemove: element => {
-            return addHistoryEntry({
+            return ctx.addHistoryEntry({
                 type: ELEMENT_CHANGE_TYPES.REMOVE,
                 elements: [{
                     id: element.id,

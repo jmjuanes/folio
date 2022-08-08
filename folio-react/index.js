@@ -330,7 +330,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 draw();
             }
             else {
-                element.x = getPosition(getXCoordinate(nativeEvent.offsetY));
+                element.x = getPosition(getXCoordinate(nativeEvent.offsetX));
                 element.y = getPosition(getYCoordinate(nativeEvent.offsetY));
             }
         }
@@ -401,6 +401,13 @@ export const Folio = React.forwardRef((props, apiRef) => {
         }
         // Element creation mode
         else if (state.mode === MODES.NONE && element) {
+            if (element.type === ELEMENT_TYPES.TEXT) {
+                board.current.activeElement = element;
+                return setState(prevState => ({
+                    ...prevState,
+                    mode: MODES.INPUT,
+                }));
+            }
             element.selected = true; // Set element as selected
             updateElement(element, ["selected"]);
             // board.current.activeElement = element;
