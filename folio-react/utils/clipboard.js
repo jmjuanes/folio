@@ -26,3 +26,8 @@ export const parseClipboardBlob = (type, blob) => {
     // Convert blob to dataURL
     return blobToDataUrl(blob);
 };
+
+// Copy text to clipboard
+export const copyTextToClipboard = text => {
+    return navigator.clipboard.writeText(text);
+};

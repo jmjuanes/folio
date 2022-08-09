@@ -3,6 +3,7 @@ import {
     ELEMENT_CHANGE_TYPES,
 } from "./constants.js";
 import {getAbsolutePositions} from "./utils/math.js";
+import {generateID} from "./utils/generateId.js";
 
 export const createBoard = () => {
     const ctx = {
@@ -62,6 +63,38 @@ export const createBoard = () => {
             });
         },
         cloneSelectedElements: null,
+        copySelectedElements: () => ctx.getSelectedElements().reverse(),
+        pasteSelectedElements: elements => {
+            ctx.clearSelectedElements();
+            if (elements?.length > 0) {
+                const groupsMap = new Map();
+                elements.forEach(el => {
+                    if (elements.length > 1 && el.group && !groupsMap.has(el.group)) {
+                        groupsMap.set(el.group, generateID());
+                    }
+                    el.id = generateID(); // Reset element ID
+                    el.selected = true;
+                    el.group = ctx.activeGroup || groupsMap.get(el.group) || null;
+                    ctx.addElement(el);
+                });
+                ctx.addHistoryEntry({
+                    type: ELEMENT_CHANGE_TYPES.CREATE,
+                    elements: elements.map(el => ({
+                        id: el.id,
+                        prevValues: null,
+                        newValues: {...el},
+                    })),
+                });
+            }
+        },
+
+        // Board groups API
+        getElementsInGroup: group => {
+            return ctx.elements.filter(el => el.group && el.group === group);
+        },
+        getElementsInActiveGroup: () => {
+            return ctx.activeGroup ? ctx.getElementsInGroup(ctx.activeGroup) : [];
+        },
          
         // Board selection API
         selection: null,

@@ -1,3 +1,5 @@
+export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
+
 export const LIGHT_COLORS = Object.values({
     default: "rgb(255,255,255)",
     gray: "rgb(169, 176, 187)",
@@ -42,6 +44,9 @@ export const KEYS = {
     ARROW_LEFT: "ArrowLeft",
     ARROW_RIGHT: "ArrowRight",
     ARROW_UP: "ArrowUp",
+    C: "c",
+    P: "p",
+    X: "x",
 };
 
 export const MODES = {

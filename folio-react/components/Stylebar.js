@@ -228,7 +228,7 @@ export const Stylebar = props => {
                     }
                     const isActive = currentOption === key;
                     const availableOptions = Object.keys(groups[key].options).filter(name => {
-                        return typeof props.selection[0][name] !== "undefined";
+                        return typeof props.selection?.[0]?.[name] !== "undefined";
                     });
                     return (
                         <div key={key}>

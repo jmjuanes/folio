@@ -1,6 +1,7 @@
 import React from "react";
 
 import {
+    IS_DARWIN,
     KEYS,
     EVENTS,
     MODES,
@@ -33,7 +34,7 @@ import {
     getOuterRectangle,
     normalizeRegion,
 } from "./utils/math.js";
-import {parseClipboardBlob, getDataFromClipboard} from "./utils/clipboard.js";
+import {parseClipboardBlob, getDataFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
 import {screenshotCanvas, clearCanvas} from "./utils/canvas.js";
 import {createBoard} from "./board.js";
 import {drawBoard, drawGrid} from "./draw.js";
@@ -83,6 +84,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         gridSize: props.gridSize,
         gridStyle: props.gridStyle,
         gridOpacity: props.gridOpacity,
+        pasteIndex: 0,
     });
 
     // Internal variables
@@ -305,7 +307,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 }
             }
             else if (element) {
-                dragged = true; // Mark as dragged eleemnt
+                dragged = true; // Mark as dragged element
                 board.current.getSelectedElements().forEach((el, index) => {
                     el.x = getPosition(snapshot[index].x + x);
                     el.y = getPosition(snapshot[index].y + y);
@@ -460,25 +462,41 @@ export const Folio = React.forwardRef((props, apiRef) => {
         const handlePaste = event => {
             return !isInputTarget(event) && getDataFromClipboard(event).then(data => {
                 board.current.clearSelectedElements();
-                board.current.activeGroup = null;
+                // board.current.activeGroup = null;
                 parseClipboardBlob(data.type, data.blob).then(content => {
                     if (data.type !== "image") {
-                        const element = createElement({
-                            type: ELEMENT_TYPES.TEXT,
-                            textContent: content,
-                        });
-                        updateElement(element, ["textContent"]);
-                        Object.assign(element, {
-                            selected: true, // Set element as selected
-                            x: getPosition(getXCoordinate((state.width - element.width) / 2)),
-                            y: getPosition(getYCoordinate((state.height - element.height) / 2)), 
-                        });
-                        board.current.addElement(element);
-                        board.current.registerElementCreate(element);
+                        let index = state.pasteIndex;
+                        // Check for pasting folio elements
+                        if (content.startsWith("folio:::")) {
+                            index = index + 1; // Increment paste index
+                            const elements = JSON.parse(content.split("folio:::")[1].trim());
+                            elements.forEach(el => {
+                                el.x = el.x + index * (state.gridEnabled ? state.gridSize : 10);
+                                el.y = el.y + index * (state.gridEnabled ? state.gridSize : 10);
+                            });
+                            board.current.pasteSelectedElements(elements);
+                        }
+                        // Paste as a new text element
+                        else {
+                            const element = createElement({
+                                type: ELEMENT_TYPES.TEXT,
+                                textContent: content,
+                            });
+                            updateElement(element, ["textContent"]);
+                            Object.assign(element, {
+                                selected: true, // Set element as selected
+                                x: getPosition(getXCoordinate((state.width - element.width) / 2)),
+                                y: getPosition(getYCoordinate((state.height - element.height) / 2)), 
+                                group: board.current.activeGroup || null,
+                            });
+                            board.current.addElement(element);
+                            board.current.registerElementCreate(element);
+                        }
                         draw();
                         return setState(prevState => ({
                             ...prevState,
                             mode: MODES.SELECTION,
+                            pasteIndex: index,
                         }));
                     }
                     // Load as a new image
@@ -494,6 +512,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
                             selected: true, // Set element as selected
                             x: getPosition(getXCoordinate((state.width - element.width) / 2)),
                             y: getPosition(getYCoordinate((state.height - element.height) / 2)), 
+                            group: board.current.activeGroup || null,
                         });
                         board.current.addElement(element);
                         board.current.registerElementCreate(element);
@@ -510,7 +529,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         return () => {
             document.removeEventListener(EVENTS.PASTE, handlePaste, false);
         };
-    }, [state.x, state.y, state.width, state.height]);
+    }, [state.x, state.y, state.width, state.height, state.pasteIndex]);
 
     // Resize event listener
     React.useEffect(() => {
@@ -538,20 +557,37 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     submitInput();
                     draw();
                 }
+                return;
+            }
+            // Check for copy/cut/pase
+            const IS_COPY = event.key === KEYS.C && (event.ctrlKey || (IS_DARWIN && event.metaKey));
+            const IS_CUT = event.key === KEYS.X && (event.ctrlKey || (IS_DARWIN && event.metaKey));
+            if (event.key === KEYS.BACKSPACE || IS_COPY || IS_CUT) {
+                event.preventDefault();
+                if (IS_COPY || IS_CUT) {
+                    const elements = board.current.copySelectedElements();
+                    copyTextToClipboard(`folio:::${JSON.stringify(elements)}`);
+                }
+                // Check for backspace key or cut --> remove elements
+                if (event.key === KEYS.BACKSPACE || IS_CUT) {
+                    board.current.registerSelectionRemove();
+                    board.current.removeSelectedElements();
+                    // Reset active group if all elements of this group have been removed
+                    if (board.current.getElementsInActiveGroup().length < 1) {
+                        board.current.activeGroup = null;
+                    }
+                    draw();
+                }
+                setState(prevState => ({
+                    ...prevState,
+                    pasteIndex: 0,
+                }));
             }
             // Check ESCAPE key --> reset selection
             else if (event.key === KEYS.ESCAPE) {
                 event.preventDefault();
                 board.current.clearSelectedElements();
                 board.current.activeGroup = null;
-                draw();
-                forceUpdate();
-            }
-            // Check for backspace key --> remove elements
-            else if (event.key === KEYS.BACKSPACE) {
-                event.preventDefault();
-                board.current.registerSelectionRemove();
-                board.current.removeSelectedElements();
                 draw();
                 forceUpdate();
             }
