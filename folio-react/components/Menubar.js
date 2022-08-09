@@ -46,6 +46,12 @@ const settingsOptions = {
     //         },
     //     },
     // },
+    gridEnabled: {
+        type: "switch",
+        props: {
+            title: "Grid enabled",
+        },
+    },
     gridColor: {
         type: "color",
         props: {
@@ -87,11 +93,6 @@ export const Menubar = props => {
                     }}
                 />
                 <Button
-                    icon={ICONS.GRID_LINES}
-                    active={props.gridEnabled}
-                    onClick={props.onGridClick}
-                />
-                <Button
                     icon={ICONS.CAMERA}
                     active={props.cameraEnabled}
                     onClick={() => {
@@ -124,6 +125,6 @@ Menubar.defaultProps = {
     title: "Untitled",
     options: {},
     cameraEnabled: false,
-    gridEnabled: false,
+    // gridEnabled: false,
     onOptionsChange: null,
 };

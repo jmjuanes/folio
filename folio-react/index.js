@@ -57,6 +57,16 @@ const isInputTarget = e => {
     return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 };
 
+// Default options
+const defaultOptions = {
+    background: "#fff",
+    gridEnabled: false,
+    gridColor: DEFAULT_GRID_COLOR,
+    gridOpacity: DEFAULT_GRID_OPACITY,
+    gridSize: DEFAULT_GRID_SIZE,
+    gridStyle: DEFAULT_GRID_STYLE,
+};
+
 // Main container styles
 const rootClassName = css({
     height: "100%",
@@ -71,6 +81,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
     const boardRef = React.useRef(null);
     const gridRef = React.useRef(null);
     const board = React.useRef(null);
+    const options = React.useRef(null);
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const [state, setState] = React.useState({
         mode: MODES.SELECTION,
@@ -79,11 +90,6 @@ export const Folio = React.forwardRef((props, apiRef) => {
         y: 0,
         width: 0,
         height: 0,
-        gridEnabled: !!props.gridEnabled,
-        gridColor: props.gridColor,
-        gridSize: props.gridSize,
-        gridStyle: props.gridStyle,
-        gridOpacity: props.gridOpacity,
         pasteIndex: 0,
     });
 
@@ -98,6 +104,14 @@ export const Folio = React.forwardRef((props, apiRef) => {
     let snapshot = null;
     let element = null;
 
+    // Initialize options
+    if (!options.current) {
+        options.current = {
+            ...defaultOptions,
+            ...(props.initialOptions ||  {}),
+        };
+    }
+
     // Initialize board API reference
     if (!board.current) {
         board.current = createBoard();
@@ -105,7 +119,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
 
     // Calculate the position using the grid size
     const getPosition = v => {
-        return state.gridEnabled ? Math.round(v / state.gridSize) * state.gridSize : v;
+        return options.current.gridEnabled ? Math.round(v / options.current.gridSize) * options.current.gridSize : v;
     };
 
     // Get coordinates in the board
@@ -169,7 +183,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         }
         else if (state.mode === MODES.MOVE) {
             pointerMoveActive = true;
-            if (state.gridEnabled) {
+            if (options.current.gridEnabled) {
                 clearCanvas(gridRef.current);
             }
         }
@@ -471,8 +485,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                             index = index + 1; // Increment paste index
                             const elements = JSON.parse(content.split("folio:::")[1].trim());
                             elements.forEach(el => {
-                                el.x = el.x + index * (state.gridEnabled ? state.gridSize : 10);
-                                el.y = el.y + index * (state.gridEnabled ? state.gridSize : 10);
+                                el.x = el.x + index * (options.current.gridEnabled ? options.current.gridSize : 10);
+                                el.y = el.y + index * (options.current.gridEnabled ? options.current.gridSize : 10);
                             });
                             board.current.pasteSelectedElements(elements);
                         }
@@ -594,7 +608,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
             // Check for arrow keys --> move elements
             else if (isArrowKey(event.key)) {
                 event.preventDefault();
-                const step = state.gridEnabled ? state.gridSize : (event.shiftKey ? 5 : 1);
+                const step = options.current.gridEnabled ? options.current.gridSize : (event.shiftKey ? 5 : 1);
                 const direction = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
                 const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
                 const selectedElements = board.current.getSelectedElements();
@@ -621,7 +635,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         return () => {
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown, false);
         };
-    }, [state.mode, state.gridEnabled, state.gridSize]);
+    }, [state.mode, options.current.gridEnabled, options.current.gridSize]);
 
     // Listen to inputVisible changes
     React.useEffect(() => {
@@ -675,17 +689,18 @@ export const Folio = React.forwardRef((props, apiRef) => {
     // Drawing effects
     React.useEffect(() => draw(), [state.mode, state.width, state.height]);
     React.useEffect(() => {
-        state.gridEnabled && drawGrid(gridRef.current, {
+        options.current.gridEnabled && drawGrid(gridRef.current, {
             translateX: state.x,
             translateY: state.y,
             width: state.width,
             height: state.height,
-            size: state.gridSize,
-            color: state.gridColor,
-            opacity: state.gridOpacity,
+            size: options.current.gridSize,
+            color: options.current.gridColor,
+            opacity: options.current.gridOpacity,
         });
     }, [
-        state.gridEnabled, state.gridColor, state.gridOpacity, state.gridSize,
+        options.current.gridEnabled,
+        options.current.gridColor, options.current.gridOpacity, options.current.gridSize,
         state.width, state.height,
         state.x, state.y,
     ]);
@@ -698,7 +713,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
     return (
         <div className={rootClassName} ref={parentRef}>
             {/* Grid canvas */}
-            {state.gridEnabled && (
+            {options.current.gridEnabled && (
                 <Canvas
                     ref={gridRef}
                     width={state.width}
@@ -719,15 +734,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 }}
             />
             <Menubar
-                options={state}
-                gridEnabled={state.gridEnabled}
+                options={options.current}
                 cameraEnabled={state.mode === MODES.SCREENSHOT}
-                onGridClick={() => {
-                    setState(prevState => ({
-                        ...prevState,
-                        gridEnabled: !prevState.gridEnabled,
-                    }));
-                }}
                 onCameraClick={() => {
                     setState(prevState => ({
                         ...prevState,
@@ -735,7 +743,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     }));
                 }}
                 onOptionsChange={(name, value) => {
-                    setState(prevState => ({...prevState, [name]: value}));
+                    options.current[name] = value;
+                    forceUpdate();
                 }}
             />
             {state.mode !== MODES.SCREENSHOT && (
@@ -815,12 +824,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
 });
 
 Folio.defaultProps = {
-    background: "#fff",
-    gridEnabled: false,
-    gridColor: DEFAULT_GRID_COLOR,
-    gridOpacity: DEFAULT_GRID_OPACITY,
-    gridSize: DEFAULT_GRID_SIZE,
-    gridStyle: DEFAULT_GRID_STYLE,
+    // initialContent: [],
+    initialOptions: {},
     onChange: null,
     onScreenshot: null,
 };
