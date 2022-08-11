@@ -103,6 +103,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
     let isElementSelected = false;
     let snapshot = null;
     let element = null;
+    let scale = 1;
 
     // Initialize options
     if (!options.current) {
@@ -200,6 +201,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     snapshot = board.current.snapshotSelectedElements()[0];
                     resize = true;
                     pointerMoveActive = true;
+                    scale = Math.abs(snapshot.width / Math.max(snapshot.height, 1));
                     return;
                 }
                 // else {
@@ -284,40 +286,67 @@ export const Folio = React.forwardRef((props, apiRef) => {
             draw();
         }
         else if (state.mode === MODES.SELECTION) {
+            const hasShiftKey = nativeEvent.shiftKey;
             if (resize) {
-                if (orientation === RESIZE_ORIENTATIONS.RIGHT) {
-                    element.width = getPosition(element.x + snapshot.width + x) - element.x;
+                if (orientation === RESIZE_ORIENTATIONS.RIGHT || orientation === RESIZE_ORIENTATIONS.LEFT) {
+                    if (orientation === RESIZE_ORIENTATIONS.RIGHT) {
+                        element.width = getPosition(element.x + snapshot.width + x) - element.x;
+                    }
+                    else {
+                        element.x = getPosition(snapshot.x + x);
+                        element.width = snapshot.width + (snapshot.x - element.x);
+                    }
+                    if (hasShiftKey) {
+                        const delta = (element.width - snapshot.width) / scale;
+                        element.y = snapshot.y - delta / 2;
+                        element.height = snapshot.height + delta;
+                    }
                 }
-                else if (orientation === RESIZE_ORIENTATIONS.LEFT) {
-                    element.x = getPosition(snapshot.x + x);
-                    element.width = snapshot.width + (snapshot.x - element.x);
+                else if (orientation === RESIZE_ORIENTATIONS.BOTTOM || orientation === RESIZE_ORIENTATIONS.TOP) {
+                    if (orientation === RESIZE_ORIENTATIONS.BOTTOM) {
+                        element.height = getPosition(element.y + snapshot.height + y) - element.y;
+                    }
+                    else {
+                        element.y = getPosition(snapshot.y + y);
+                        element.height = snapshot.height + (snapshot.y - element.y);
+                    }
+                    if (hasShiftKey) {
+                        const delta = (element.height - snapshot.height) * scale;
+                        element.x = snapshot.x - delta / 2;
+                        element.width = snapshot.width + delta;
+                    }
                 }
-                else if (orientation === RESIZE_ORIENTATIONS.BOTTOM) {
-                    element.height = getPosition(element.y + snapshot.height + y) - element.y;
-                }
-                else if (orientation === RESIZE_ORIENTATIONS.TOP) {
-                    element.y = getPosition(snapshot.y + y);
+                else if (orientation === RESIZE_ORIENTATIONS.LEFT_TOP || orientation === RESIZE_ORIENTATIONS.RIGHT_TOP) {
+                    if (orientation === RESIZE_ORIENTATIONS.LEFT_TOP) {
+                        element.x = getPosition(snapshot.x + x);
+                        element.width = snapshot.width + (snapshot.x - element.x);
+                    }
+                    else {
+                        element.width = getPosition(element.x + snapshot.width + x) - element.x;
+                    }
+                    if (hasShiftKey) {
+                        const delta = (snapshot.width - element.width) / scale;
+                        element.y = snapshot.y + delta;
+                    }
+                    else {
+                        element.y = getPosition(snapshot.y + y);
+                    }
                     element.height = snapshot.height + (snapshot.y - element.y);
                 }
-                else if (orientation === RESIZE_ORIENTATIONS.LEFT_TOP) {
-                    element.x = getPosition(snapshot.x + x);
-                    element.y = getPosition(snapshot.y + y);
-                    element.width = snapshot.width + (snapshot.x - element.x);
-                    element.height = snapshot.height + (snapshot.y - element.y);
-                }
-                else if (orientation === RESIZE_ORIENTATIONS.RIGHT_TOP) {
-                    element.y = getPosition(snapshot.y + y);
-                    element.height = snapshot.height + (snapshot.y - element.y);
-                    element.width = getPosition(element.x + snapshot.width + x) - element.x;
-                }
-                else if (orientation === RESIZE_ORIENTATIONS.LEFT_BOTTOM) {
-                    element.x = getPosition(snapshot.x + x);
-                    element.width = snapshot.width + (snapshot.x - element.x);
-                    element.height = getPosition(element.y + snapshot.height + y) - element.y;
-                }
-                else if (orientation === RESIZE_ORIENTATIONS.RIGHT_BOTTOM) {
-                    element.width = getPosition(element.x + snapshot.width + x) - element.x;
-                    element.height = getPosition(element.y + snapshot.height + y) - element.y;
+                else if (orientation === RESIZE_ORIENTATIONS.RIGHT_BOTTOM || orientation === RESIZE_ORIENTATIONS.LEFT_BOTTOM) {
+                    if (orientation === RESIZE_ORIENTATIONS.RIGHT_BOTTOM) {
+                        element.width = getPosition(element.x + snapshot.width + x) - element.x;
+                    }
+                    else {
+                        element.x = getPosition(snapshot.x + x);
+                        element.width = snapshot.width + (snapshot.x - element.x);
+                    }
+                    if (hasShiftKey) {
+                        const delta = (element.width - snapshot.width) / scale;
+                        element.height = snapshot.height + delta;
+                    } else {
+                        element.height = getPosition(element.y + snapshot.height + y) - element.y;
+                    }
                 }
             }
             else if (element) {
