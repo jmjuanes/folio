@@ -21,6 +21,10 @@ export const {css, globalCss} = create({
         success: COLORS.SUCCESS,
         error: COLORS.ERROR,
     },
+    fonts: {
+        ...fonts,
+        heading: "'EB Garamond', sans-serif",
+    },
     // Mixins
     mixins: {
         root: {

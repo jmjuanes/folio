@@ -115,6 +115,8 @@ export const GRID_STYLES = {
     LINES: "grid-lines",
 };
 
+export const DEFAULT_APP_TITLE = "Folio";
+
 export const DEFAULT_FILL_COLOR = "rgb(255,255,255)";
 export const DEFAULT_STROKE_COLOR = "rgb(0,0,0)";
 export const DEFAULT_TEXT_COLOR = "rgb(0,0,0)";

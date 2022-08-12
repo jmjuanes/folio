@@ -1,12 +1,20 @@
 import React from "react";
 
-// import {GRID_STYLES} from "../constants.js";
+import {DEFAULT_APP_TITLE} from "../constants.js";
 import ICONS from "../icons.js";
 import {css} from "../styles.js";
 
 import {Button} from "./Button.js";
 import {Dialog} from "./Dialog.js";
 import {Option} from "./Option.js";
+
+const titleClass = css({
+    fontFamily: "heading",
+    fontSize: "2rem",
+    fontWeight: "800",
+    marginLeft: "0.5rem",
+    marginRight: "1rem",
+});
 
 const menubarWrapperClass = css({
     left: "0px",
@@ -36,16 +44,6 @@ const menubarClass = css({
 // });
 
 const settingsOptions = {
-    // gridStyle: {
-    //     type: "select",
-    //     props: {
-    //         title: "Grid style",
-    //         values: {
-    //             [GRID_STYLES.DOTS]: ICONS.GRID_DOTS,
-    //             [GRID_STYLES.LINES]: ICONS.GRID_LINES,
-    //         },
-    //     },
-    // },
     gridEnabled: {
         type: "switch",
         props: {
@@ -84,6 +82,9 @@ export const Menubar = props => {
     return (
         <div className={menubarWrapperClass}>
             <div className={menubarClass}>
+                <div className={titleClass}>
+                    <strong>{DEFAULT_APP_TITLE}</strong>
+                </div>
                 {/* <div className={separatorClass} /> */}
                 <Button
                     icon={ICONS.SLIDERS}
