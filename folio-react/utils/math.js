@@ -1,3 +1,8 @@
+// Get real sign of the provided number
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign 
+// Fixes sign(0) = +1 instead of Math.sign(0) = 0
+export const sign = n => n < 0 ? -1 : +1;
+
 // Get absolute positions
 export const getAbsolutePositions = (position, size) => {
     return [

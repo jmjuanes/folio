@@ -30,6 +30,7 @@ import {createImage} from "./utils/image.js";
 import {generateID} from "./utils/generateId.js";
 import {measureText} from "./utils/measureText.js";
 import {
+    sign,
     getAbsolutePositions,
     getOuterRectangle,
     normalizeRegion,
@@ -201,7 +202,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     snapshot = board.current.snapshotSelectedElements()[0];
                     resize = true;
                     pointerMoveActive = true;
-                    scale = Math.abs(snapshot.width / Math.max(snapshot.height, 1));
+                    scale = Math.abs(snapshot.width / (sign(snapshot.height) * Math.max(0.1, Math.abs(snapshot.height))));
                     return;
                 }
                 // else {
