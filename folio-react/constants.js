@@ -47,6 +47,8 @@ export const KEYS = {
     C: "c",
     P: "p",
     X: "x",
+    Z: "z",
+    Y: "y",
 };
 
 export const MODES = {

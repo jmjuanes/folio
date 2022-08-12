@@ -603,17 +603,15 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 }
                 return;
             }
-            // Check for copy/cut/pase
-            const IS_COPY = event.key === KEYS.C && (event.ctrlKey || (IS_DARWIN && event.metaKey));
-            const IS_CUT = event.key === KEYS.X && (event.ctrlKey || (IS_DARWIN && event.metaKey));
-            if (event.key === KEYS.BACKSPACE || IS_COPY || IS_CUT) {
+            const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
+            if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                 event.preventDefault();
-                if (IS_COPY || IS_CUT) {
+                if (event.key === KEYS.X || event.key === KEYS.C) {
                     const elements = board.current.copySelectedElements();
                     copyTextToClipboard(`folio:::${JSON.stringify(elements)}`);
                 }
                 // Check for backspace key or cut --> remove elements
-                if (event.key === KEYS.BACKSPACE || IS_CUT) {
+                if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
                     board.current.registerSelectionRemove();
                     board.current.removeSelectedElements();
                     // Reset active group if all elements of this group have been removed
@@ -626,6 +624,12 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     ...prevState,
                     pasteIndex: 0,
                 }));
+            }
+            // Undo or redo key
+            else if (isCtrlKey && (event.key === KEYS.Z || event.key === KEYS.Y)) {
+                event.key === KEYS.Z ? board.current.undo() : board.current.redo();
+                draw();
+                forceUpdate();
             }
             // Check ESCAPE key --> reset selection
             else if (event.key === KEYS.ESCAPE) {
