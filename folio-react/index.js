@@ -698,7 +698,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         const el = board.current.activeElement;
         const updateInput = () => {
             inputRef.current.style.height = "1em";
-            const size = measureText(inputRef.current.value || "", el.textSize, el.textFont);
+            const size = measureText(inputRef.current.value || "", el.textSize * state.zoom, el.textFont);
             const width = Math.max(size.width + 1, el.width);
             const height = inputRef.current.scrollHeight; // .max(ctx.input.scrollHeight, ctx.currentElement.height);
             inputRef.current.style.width = width;
@@ -708,17 +708,17 @@ export const Folio = React.forwardRef((props, apiRef) => {
             if (el.type !== ELEMENT_TYPES.TEXT) {
                 // Vertical align
                 if (el.textVerticalAlign === TEXT_VERTICAL_ALIGNS.MIDDLE) {
-                    inputRef.current.style.top = el.y + (el.height - height) / 2;
+                    inputRef.current.style.top = state.y + (el.y + (el.height - height / state.zoom) / 2) * state.zoom;
                 }
                 else if (el.textVerticalAlign === TEXT_VERTICAL_ALIGNS.BOTTOM) {
-                    inputRef.current.style.top = el.y + (el.height - height);
+                    inputRef.current.style.top = state.y + (el.y + (el.height - height / state.zoom)) * state.zoom;
                 }
                 // Horizontal align
                 if (el.textAlign === TEXT_ALIGNS.CENTER) {
-                    inputRef.current.style.left = el.x - (width - el.width) / 2;
+                    inputRef.current.style.left = state.x + (el.x - ((width / state.zoom) - el.width) / 2) * state.zoom;
                 }
                 else if (el.textAlign === TEXT_ALIGNS.RIGHT) {
-                    inputRef.current.style.left = el.x - (width - el.width);
+                    inputRef.current.style.left = state.x + (el.x - ((width / state.zoom) - el.width)) * state.zoom;
                 }
             }
         };
@@ -727,7 +727,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         inputRef.current.style.top = (state.y + el.y * state.zoom) + "px";
         inputRef.current.style.left = (state.x + el.x * state.zoom) + "px";
         inputRef.current.style.color = el.textColor;
-        inputRef.current.style.fontSize = el.textSize + "px";
+        inputRef.current.style.fontSize = (el.textSize * state.zoom) + "px";
         inputRef.current.style.fontFamily = el.textFont;
         inputRef.current.style.textAlign = el.textAlign;
         inputRef.current.value = el.textContent || ""; // Get text content
