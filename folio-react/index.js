@@ -51,6 +51,7 @@ import {Toolbar} from "./components/Toolbar.js";
 import {Historybar} from "./components/Historybar.js";
 import {TextInput} from "./components/TextInput.js";
 import {Canvas} from "./components/Canvas.js";
+import {Zoom} from "./components/Zoom.js";
 
 // Check for arrow keys
 const isArrowKey = key => {
@@ -75,6 +76,7 @@ const defaultOptions = {
 // Main container styles
 const rootClassName = css({
     height: "100%",
+    overflow: "hidden",
     position: "relative",
     width: "100%",
     apply: "mixins.root",
@@ -863,8 +865,6 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     <Historybar
                         undoDisabled={board.current.isUndoDisabled()}
                         redoDisabled={board.current.isRedoDisabled()}
-                        zoomInDisabled={state.zoom >= ZOOM_MAX}
-                        zoomOutDisabled={state.zoom <= ZOOM_MIN}
                         onUndoClick={() => {
                             board.current.undo();
                             draw();
@@ -875,6 +875,11 @@ export const Folio = React.forwardRef((props, apiRef) => {
                             draw();
                             forceUpdate();
                         }}
+                    />
+                    <Zoom
+                        zoom={state.zoom}
+                        zoomInDisabled={state.zoom >= ZOOM_MAX}
+                        zoomOutDisabled={state.zoom <= ZOOM_MIN}
                         onZoomInClick={() => handleZoomChange(ZOOM_STEP)}
                         onZoomOutClick={() => handleZoomChange(-ZOOM_STEP)}
                     />

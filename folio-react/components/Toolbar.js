@@ -6,6 +6,7 @@ import {MODES, ELEMENT_TYPES} from "../constants.js";
 import {css} from "../styles.js";
 
 const toolbarWrapperClass = css({
+    apply: "mixins.animations.bottom",
     bottom: "0px",
     left: "50%",
     paddingBottom: "1rem",

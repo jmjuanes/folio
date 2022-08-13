@@ -13,7 +13,7 @@ export const COLORS = {
     WHITE: "#fff",
 };
 
-export const {css, globalCss} = create({
+export const {css, globalCss, keyframes} = create({
     colors: {
         primary: COLORS.DARK,
         secondary: COLORS.SECONDARY,
@@ -27,6 +27,16 @@ export const {css, globalCss} = create({
     },
     // Mixins
     mixins: {
+        animations: {
+            base: {
+                animationDuration: "0.3s",
+                animationTimingFunction: "ease-out",
+            },
+            bottom: {
+                apply: "mixins.animations.base",
+                animationName: "folio-animation-bottom",
+            },
+        },
         root: {
             backgroundColor: COLORS.WHITE,
             color: COLORS.DARK,
@@ -56,6 +66,11 @@ globalCss({
         // backgroundColor: "#fff",
         margin: "0px",
         padding: "0px",
+    },
+    // Keyframes for animations
+    "@keyframes folio-animation-bottom": {
+        from: {bottom: "-6rem"},
+        to: {bottom: "0px"},
     },
 });
 

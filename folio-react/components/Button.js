@@ -5,20 +5,25 @@ import {css} from "../styles.js";
 const buttonClass = css({
     borderRadius: "0.5rem",
     color: "primary",
-    cursor: "pointer",
     fontSize: "1.25rem",
     lineHeight: "1",
     padding: "0.5rem",
-    "&:hover, &.is-active": {
+    "&.is-hoverable:hover, &.is-active": {
         backgroundColor: "primary",
         color: "#fff",
+        cursor: "pointer",
+    },
+    "&.is-disabled": {
+        opacity: "0.25",
     },
 });
 
 export const Button = props => {
     const classList = classNames({
         [buttonClass]: true,
-        "is-active": props.active,
+        "is-active": props.active && !props.disabled,
+        "is-hoverable": !props.disabled,
+        "is-disabled": props.disabled,
     });
     return (
         <div className={classList} onClick={props.onClick}>
@@ -29,5 +34,6 @@ export const Button = props => {
 
 Button.defaultProps = {
     active: false,
+    disabled: false,
     icon: null,
 };
