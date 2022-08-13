@@ -5,6 +5,7 @@ import {css} from "../styles.js";
 
 const historyButtonClass = css({
     borderRadius: "0.5rem",
+    fontSize: "1.25rem",
     lineHeight: "1",
     padding: "0.5rem",
     "&.is-not-disabled:hover": {
@@ -34,7 +35,7 @@ const historyClass = css({
     padding: "0.5rem",
 });
 
-const HistoryButton = props => (
+const Button = props => (
     <div
         className={classNames({
             [historyButtonClass]: true,
@@ -50,15 +51,25 @@ const HistoryButton = props => (
 export const Historybar = props => (
     <div className={historyWrapperClass}>
         <div className={historyClass}>
-            <HistoryButton
+            <Button
                 icon={ICONS.UNDO}
                 disabled={!!props.undoDisabled}
                 onClick={props.onUndoClick}
             />
-            <HistoryButton
+            <Button
                 icon={ICONS.REDO}
                 disabled={!!props.redoDisabled}
                 onClick={props.onRedoClick}
+            />
+            <Button
+                icon={ICONS.ZOOM_OUT}
+                disabled={!!props.zoomOutDisabled}
+                onClick={props.onZoomOutClick}
+            />
+            <Button
+                icon={ICONS.ZOOM_IN}
+                disabled={!!props.zoomInDisabled}
+                onClick={props.onZoomInClick}
             />
         </div>
     </div>

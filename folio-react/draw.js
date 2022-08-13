@@ -31,6 +31,7 @@ export const drawBoard = (canvas, elements, selection, options) => {
     const selectedElements = elements.filter(el => el.selected);
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
     ctx.translate(options.translateX || 0, options.translateY || 0);
+    ctx.scale(options.zoom, options.zoom);
     forEachRev(elements, element => {
         const drawInnerText = options.drawActiveInnerText || options.activeElement?.id !== element.id;
         drawElement(element, ctx, {
@@ -38,15 +39,15 @@ export const drawBoard = (canvas, elements, selection, options) => {
         });
         // Check if this element is selected --> draw selection area
         if (drawInnerText && element.selected) {
-            const radius = DEFAULT_ELEMENT_RESIZE_RADIUS;
-            const offset = DEFAULT_ELEMENT_SELECTION_OFFSET;
+            const radius = DEFAULT_ELEMENT_RESIZE_RADIUS / options.zoom;
+            const offset = DEFAULT_ELEMENT_SELECTION_OFFSET / options.zoom;
             const [xStart, xEnd] = getAbsolutePositions(element.x, element.width);
             const [yStart, yEnd] = getAbsolutePositions(element.y, element.height);
             ctx.globalAlpha = 1.0;
             ctx.beginPath();
-            ctx.setLineDash([8, 4]);
+            ctx.setLineDash([8 / options.zoom, 4 / options.zoom]);
             ctx.strokeStyle = DEFAULT_ELEMENT_SELECTION_COLOR;
-            ctx.lineWidth = DEFAULT_ELEMENT_SELECTION_WIDTH;
+            ctx.lineWidth = DEFAULT_ELEMENT_SELECTION_WIDTH / options.zoom;
             ctx.rect(xStart - offset, yStart - offset, xEnd - xStart + 2 * offset, yEnd - yStart + 2 * offset);
             ctx.stroke();
             ctx.setLineDash([]); // Reset line-dash
@@ -55,7 +56,7 @@ export const drawBoard = (canvas, elements, selection, options) => {
                 getResizePoints(element, offset).forEach(p => {
                     ctx.beginPath();
                     ctx.strokeStyle = DEFAULT_ELEMENT_RESIZE_COLOR;
-                    ctx.lineWidth = DEFAULT_ELEMENT_RESIZE_WIDTH;
+                    ctx.lineWidth = DEFAULT_ELEMENT_RESIZE_WIDTH / options.zoom;
                     ctx.fillStyle = "rgb(255,255,255)";
                     ctx.rect(p.x + p.xs * 2 * radius, p.y + p.ys * 2 * radius, 2 * radius, 2 * radius);
                     ctx.fill();
@@ -90,32 +91,36 @@ export const drawBoard = (canvas, elements, selection, options) => {
         ctx.fill();
         ctx.globalAlpha = 1;
     }
-    // Reset translate
+    ctx.scale(1, 1);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 };
 
 export const drawGrid = (canvas, options) => {
-    const x = Math.ceil((options.translateX || 0) / options.size) * options.size;
-    const y = Math.ceil((options.translateY || 0) / options.size) * options.size;
+    const x = (Math.ceil((options.translateX || 0) / options.size) * options.size) / options.zoom;
+    const y = (Math.ceil((options.translateY || 0) / options.size) * options.size) / options.zoom;
+    const width = options.width / options.zoom;
+    const height = options.height / options.zoom;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, options.width, options.height);
     ctx.translate(options.translateX || 0, options.translateY || 0);
+    ctx.scale(options.zoom, options.zoom);
     ctx.globalAlpha = options.opacity;
     ctx.beginPath();
     ctx.setLineDash([]);
     ctx.strokeStyle = options.color;
     ctx.lineWidth = DEFAULT_GRID_WIDTH;
     // Horizontal rules
-    for (let i = 0; i * options.size < options.height; i++) {
+    for (let i = 0; i * options.size < height; i++) {
         ctx.moveTo(-x, i * options.size - y);
-        ctx.lineTo(options.width - x, i * options.size - y);
+        ctx.lineTo(width - x, i * options.size - y);
     }
     // Vertical rules
-    for (let i = 0; i * options.size < options.width; i++) {
+    for (let i = 0; i * options.size < width; i++) {
         ctx.moveTo(i * options.size - x, -y);
-        ctx.lineTo(i * options.size - x, options.height - y);
+        ctx.lineTo(i * options.size - x, height - y);
     }
     ctx.stroke();
     ctx.globalAlpha = 1;
+    ctx.scale(1, 1);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 };

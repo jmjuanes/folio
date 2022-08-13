@@ -16,6 +16,10 @@ import {
     DEFAULT_GRID_OPACITY,
     DEFAULT_GRID_SIZE,
     DEFAULT_GRID_STYLE,
+    ZOOM_INITIAL,
+    ZOOM_MAX,
+    ZOOM_MIN,
+    ZOOM_STEP,
 } from "./constants.js";
 
 import {
@@ -92,6 +96,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         width: 0,
         height: 0,
         pasteIndex: 0,
+        zoom: ZOOM_INITIAL,
     });
 
     // Internal variables
@@ -125,8 +130,21 @@ export const Folio = React.forwardRef((props, apiRef) => {
     };
 
     // Get coordinates in the board
-    const getXCoordinate = x => x - state.x;
-    const getYCoordinate = y => y - state.y;
+    const getXCoordinate = x => (x - state.x) / state.zoom;
+    const getYCoordinate = y => (y - state.y) / state.zoom;
+
+    // Handle zoom change
+    const handleZoomChange = delta => {
+        return setState(prevState => {
+            const newZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, prevState.zoom + delta));
+            return {
+                ...prevState,
+                zoom: newZoom,
+                x: prevState.x + prevState.width * (prevState.zoom - newZoom) / 2,
+                y: prevState.y + prevState.height * (prevState.zoom - newZoom) / 2,
+            };
+        });
+    };
 
     // Draw the board
     const draw = () => {
@@ -138,6 +156,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
             activeElement: board.current.activeElement,
             activeGroup: board.current.activeGroup,
             pointerMoveActive: pointerMoveActive,
+            zoom: state.zoom,
         });
     };
 
@@ -193,8 +212,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
             const selection = board.current.getSelectedElements();
             // Check if we are in a resize point
             if (selection.length === 1) {
-                const radius = 2 * DEFAULT_ELEMENT_RESIZE_RADIUS;
-                const offset = DEFAULT_ELEMENT_SELECTION_OFFSET;
+                const radius = 2 * DEFAULT_ELEMENT_RESIZE_RADIUS / state.zoom;
+                const offset = DEFAULT_ELEMENT_SELECTION_OFFSET / state.zoom;
                 const point = inResizePoint(selection[0], lastX, lastY, radius, offset);
                 if (point && !selection[0].locked) {
                     element = selection[0]; // Save current element
@@ -282,8 +301,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
         const x = getXCoordinate(nativeEvent.offsetX) - lastX; // event.clientX - event.target.offsetLeft;
         const y = getYCoordinate(nativeEvent.offsetY) - lastY; // event.clientY - event.target.offsetTop;
         if (state.mode === MODES.MOVE) {
-            boardX = state.x + x;
-            boardY = state.y + y;
+            boardX = state.x + x * state.zoom;
+            boardY = state.y + y * state.zoom;
             draw();
         }
         else if (state.mode === MODES.SELECTION) {
@@ -488,8 +507,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
         else {
             board.current.activeElement = createElement({
                 type: ELEMENT_TYPES.TEXT,
-                x: getPosition(getXCoordinate(nativeEvent.clientX)),
-                y: getPosition(getYCoordinate(nativeEvent.clientY)),
+                x: getPosition(getXCoordinate(nativeEvent.offsetX)),
+                y: getPosition(getYCoordinate(nativeEvent.offsetY)),
             });
             board.current.addElement(board.current.activeElement);
             board.current.registerElementCreate(board.current.activeElement);
@@ -705,8 +724,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
         };
 
         // Set input position and initial value
-        inputRef.current.style.top = (state.y + el.y) + "px";
-        inputRef.current.style.left = (state.x + el.x) + "px";
+        inputRef.current.style.top = (state.y + el.y * state.zoom) + "px";
+        inputRef.current.style.left = (state.x + el.x * state.zoom) + "px";
         inputRef.current.style.color = el.textColor;
         inputRef.current.style.fontSize = el.textSize + "px";
         inputRef.current.style.fontFamily = el.textFont;
@@ -721,7 +740,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
     }, [state.mode]);
 
     // Drawing effects
-    React.useEffect(() => draw(), [state.mode, state.width, state.height]);
+    React.useEffect(() => draw(), [state.mode, state.width, state.height, state.zoom]);
     React.useEffect(() => {
         options.current.gridEnabled && drawGrid(gridRef.current, {
             translateX: state.x,
@@ -731,12 +750,14 @@ export const Folio = React.forwardRef((props, apiRef) => {
             size: options.current.gridSize,
             color: options.current.gridColor,
             opacity: options.current.gridOpacity,
+            zoom: state.zoom,
         });
     }, [
         options.current.gridEnabled,
         options.current.gridColor, options.current.gridOpacity, options.current.gridSize,
         state.width, state.height,
         state.x, state.y,
+        state.zoom,
     ]);
 
     // Add API
@@ -837,6 +858,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     <Historybar
                         undoDisabled={board.current.isUndoDisabled()}
                         redoDisabled={board.current.isRedoDisabled()}
+                        zoomInDisabled={state.zoom >= ZOOM_MAX}
+                        zoomOutDisabled={state.zoom <= ZOOM_MIN}
                         onUndoClick={() => {
                             board.current.undo();
                             draw();
@@ -847,6 +870,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                             draw();
                             forceUpdate();
                         }}
+                        onZoomInClick={() => handleZoomChange(ZOOM_STEP)}
+                        onZoomOutClick={() => handleZoomChange(-ZOOM_STEP)}
                     />
                 </React.Fragment>
             )}

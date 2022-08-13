@@ -11,6 +11,7 @@ export const Canvas = React.forwardRef((props, ref) => {
             ref={ref}
             style={{
                 bottom: "0px",
+                imageRendering: "pixelated",
                 left: "0px",
                 position: "absolute",
                 top: "0px",

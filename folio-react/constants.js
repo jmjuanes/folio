@@ -117,6 +117,11 @@ export const GRID_STYLES = {
     LINES: "grid-lines",
 };
 
+export const ZOOM_INITIAL = 1;
+export const ZOOM_STEP = 0.1;
+export const ZOOM_MAX = 5;
+export const ZOOM_MIN = 0.1;
+
 export const DEFAULT_APP_TITLE = "Folio";
 
 export const DEFAULT_FILL_COLOR = "rgb(255,255,255)";
