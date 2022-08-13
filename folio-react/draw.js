@@ -67,14 +67,14 @@ export const drawBoard = (canvas, elements, selection, options) => {
         // Render group selection
         if (!options.pointerMoveActive && mode !== MODES.SCREENSHOT && element.group) {
             if (!renderedGroups.has(element.group) && (element.selected || options.activeGroup === element.group)) {
-                const offset = DEFAULT_GROUP_SELECTION_OFFSET;
+                const offset = DEFAULT_GROUP_SELECTION_OFFSET / options.zoom;
                 const groupElements = elements.filter(el => el.group === element.group);
                 const group = getOuterRectangle(groupElements);
                 ctx.globalAlpha = 1.0;
                 ctx.beginPath();
-                ctx.setLineDash([4, 2]);
+                ctx.setLineDash([4 / options.zoom, 2 / options.zoom]);
                 ctx.strokeStyle = DEFAULT_GROUP_SELECTION_COLOR;
-                ctx.lineWidth = DEFAULT_GROUP_SELECTION_WIDTH;
+                ctx.lineWidth = DEFAULT_GROUP_SELECTION_WIDTH / options.zoom;
                 ctx.rect(group.x - offset, group.y - offset, group.width + 2 * offset, group.height + 2 * offset);
                 ctx.stroke();
                 ctx.setLineDash([]);
