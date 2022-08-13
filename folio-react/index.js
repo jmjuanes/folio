@@ -452,7 +452,12 @@ export const Folio = React.forwardRef((props, apiRef) => {
             const options = {
                 translateX: state.x,
                 translateY: state.y,
-                region: normalizeRegion(board.current.selection),
+                region: normalizeRegion({
+                    x: board.current.selection.x * state.zoom,
+                    y: board.current.selection.y * state.zoom,
+                    width: board.current.selection.width * state.zoom,
+                    height: board.current.selection.height * state.zoom,
+                }),
             };
             board.current.clearSelection();
             draw(); // Prevent screenshot rectangle in captured image
