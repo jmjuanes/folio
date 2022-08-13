@@ -13,14 +13,16 @@
     "scripts": {
         "build": "webpack build --config ./webpack.config.js",
         "clean": "rm -rf ./public",
-        "serve": "stattic --folder ./public --port 5000"
+        "serve": "stattic --folder ./public --port 5000",
+        "pack": "tar -C ./public -czf folio.tar.gz .",
+        "test": "jest"
     },
     "dependencies": {
         "@babel/core": "^7.18.0",
         "@babel/plugin-transform-react-jsx": "^7.17.12",
         "@babel/plugin-transform-runtime": "^7.18.0",
-        "@babel/preset-env": "^7.18.0",
-        "@babel/preset-react": "^7.17.12",
+        "@babel/preset-env": "^7.18.10",
+        "@babel/preset-react": "^7.18.6",
         "babel-loader": "^8.2.5",
         "copy-webpack-plugin": "^11.0.0",
         "html-webpack-plugin": "^5.5.0",
@@ -30,5 +32,18 @@
         "webpack": "^5.72.1",
         "webpack-cli": "^4.9.2"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "devDependencies": {
+        "@testing-library/react": "^13.3.0",
+        "babel-jest": "^28.1.3",
+        "jest": "^28.1.3",
+        "jest-environment-jsdom": "^28.1.3",
+        "react-test-renderer": "^18.2.0"
+    },
+    "jest": {
+        "testEnvironment": "jsdom",
+        "transformIgnorePatterns": [
+            "/node_modules/(?!(@siimple)/)"
+        ]
+    }
 }
