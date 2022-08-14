@@ -38,6 +38,7 @@ const availableTypes = [
     {name: ELEMENT_TYPES.SHAPE_ELLIPSE, icon: ICONS.CIRCLE},
     {name: ELEMENT_TYPES.SHAPE_LINE, icon: ICONS.LINE},
     {name: ELEMENT_TYPES.TEXT, icon: ICONS.TEXT},
+    {name: ELEMENT_TYPES.HAND_DRAW, icon: ICONS.PEN},
 ];
 
 export const Toolbar = props => (

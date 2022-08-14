@@ -29,7 +29,9 @@ export const drawBoard = (canvas, elements, selection, options) => {
     const mode = options.mode || MODES.NONE;
     const renderedGroups = new Set();
     const selectedElements = elements.filter(el => el.selected);
-    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    if (options.clear) {
+        ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    }
     ctx.translate(options.translateX || 0, options.translateY || 0);
     ctx.scale(options.zoom, options.zoom);
     forEachRev(elements, element => {

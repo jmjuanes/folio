@@ -86,7 +86,7 @@ export const ELEMENT_TYPES = {
     SHAPE_LINE: "line",
     IMAGE: "image",
     TEXT: "text",
-    // GROUP: "group",
+    HAND_DRAW: "hand_draw",
 };
 
 export const ELEMENT_CHANGE_TYPES = {

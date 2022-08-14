@@ -11,7 +11,12 @@ import {
 import {parseColor} from "./utils/colors.js";
 import {generateID} from "./utils/generateId.js";
 import {measureText} from "./utils/measureText.js";
-import {getAbsolutePositions} from "./utils/math.js";
+import {
+    getAbsolutePositions,
+    getOuterRectangle,
+    simplifyPath,
+    centerOfSegment,
+} from "./utils/math.js";
 
 // Render element inner text
 const drawInnerText = (canvas, element) => {
@@ -296,6 +301,55 @@ const elements = {
             }
         },
         update: () => null,
+    },
+    [ELEMENT_TYPES.HAND_DRAW]: {
+        init: () => ({
+            points: [],
+            drawing: true,
+            resize: RESIZE_TYPES.NONE,
+            strokeColor: DEFAULT_STROKE_COLOR,
+            strokeWidth: 5,
+            strokeOpacity: 1,
+        }),
+        draw: (canvas, element) => {
+            if (element.points.length >= 2) {
+                canvas.beginPath();
+                // canvas.globalAlpha = element.opacity;
+                canvas.strokeStyle = parseColor(element.strokeColor, element.strokeOpacity);
+                canvas.lineWidth = element.strokeWidth;
+                canvas.lineCap = "round"; // Default linecap
+                canvas.lineJoin = "round";
+                const points = element.drawing ? element.points.slice(-2) : element.points;
+                let prevPoint = points[0];
+                canvas.moveTo(element.x + prevPoint[0], element.y + prevPoint[1]);
+                for (let i = 1; i < points.length; i++) {
+                    const center = centerOfSegment(prevPoint, points[i]);
+                    canvas.quadraticCurveTo(element.x + prevPoint[0], element.y + prevPoint[1], element.x + center[0], element.y + center[1]);
+                    prevPoint = points[i];
+                }
+                canvas.lineTo(element.x + prevPoint[0], element.y + prevPoint[1]); // Draw last point
+                canvas.stroke();
+            }
+        },
+        update: (element, changedKeys) => {
+            if (changedKeys.has("points")) {
+                element.points = simplifyPath(element.points, 0.5);
+                const rectangle = getOuterRectangle(element.points.map(point => ({
+                    x: point[0] + element.x,
+                    y: point[1] + element.y,
+                    width: 0,
+                    height: 0,
+                })));
+                Object.assign(element, {
+                    ...rectangle,
+                    points: element.points.map(point => ([
+                        point[0] - rectangle.x + element.x,
+                        point[1] - rectangle.y + element.y,
+                    ])),
+                    drawing: false,
+                });
+            }
+        },
     },
 };
 

@@ -24,6 +24,7 @@ import {
 
 import {
     createElement,
+    drawElement,
     updateElement,
 } from "./elements.js";
 import {
@@ -151,6 +152,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
     // Draw the board
     const draw = () => {
         drawBoard(boardRef.current, board.current.elements, board.current.selection, {
+            clear: true,
             translateX: boardX,
             translateY: boardY,
             mode: state.mode,
@@ -291,6 +293,9 @@ export const Folio = React.forwardRef((props, apiRef) => {
             board.current.activeGroup = null; // Reset current group
             board.current.clearSelectedElements();
             pointerMoveActive = true;
+            if (state.elementType === ELEMENT_TYPES.HAND_DRAW) {
+                element.points.push([0, 0]);
+            }
         }
         // pointerMoveActive = true; // Enable move
         // draw();
@@ -391,7 +396,16 @@ export const Folio = React.forwardRef((props, apiRef) => {
         }
         // Create a new element mode
         else if (state.mode === MODES.NONE && element) {
-            if (element.type !== ELEMENT_TYPES.TEXT) {
+            if (element.type === ELEMENT_TYPES.HAND_DRAW) {
+                element.points.push([x, y]);
+                drawBoard(boardRef.current, [element], null, {
+                    clear: false,
+                    translateX: boardX,
+                    translateY: boardY,
+                    zoom: state.zoom,
+                });
+            }
+            else if (element.type !== ELEMENT_TYPES.TEXT) {
                 element.width = getPosition(x);
                 element.height = nativeEvent.shiftKey ? getPosition(x) : getPosition(y);
                 draw();
@@ -480,14 +494,25 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     mode: MODES.INPUT,
                 }));
             }
-            element.selected = true; // Set element as selected
-            updateElement(element, ["selected"]);
-            // board.current.activeElement = element;
-            board.current.registerElementCreate(element);
-            setState(prevState => ({
-                ...prevState,
-                mode: MODES.SELECTION,
-            }));
+            else if (element.type === ELEMENT_TYPES.HAND_DRAW) {
+                if (element.points.length < 2) {
+                    board.current.removeElement(element);
+                }
+                else {
+                    updateElement(element, ["points"]);
+                    board.current.registerElementCreate(element);
+                }
+                forceUpdate();
+            }
+            else {
+                element.selected = true; // Set element as selected
+                updateElement(element, ["selected"]);
+                board.current.registerElementCreate(element);
+                setState(prevState => ({
+                    ...prevState,
+                    mode: MODES.SELECTION,
+                }));
+            }
         }
         element = null; // Disabled selected element
         draw();
