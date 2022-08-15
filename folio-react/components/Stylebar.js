@@ -8,7 +8,6 @@ import {
     DARK_COLORS,
 } from "../constants.js";
 
-import {When} from "../commons/When.js";
 import {Dialog} from "./Dialog.js";
 import {Button} from "./Button.js";
 import {Option} from "./Option.js";
@@ -261,8 +260,8 @@ export const Stylebar = props => {
                 {hasGroupVisible && (
                     <div className={separatorClass} />
                 )}
-                {/* Order buttons */}
-                <When condition={false} render={() => (
+                {/* Order buttons
+                <{false && (
                     <React.Fragment>
                         <Button
                             icon="bring-forward"
@@ -273,27 +272,22 @@ export const Stylebar = props => {
                             onClick={props.onSendBackwardClick}
                         />
                     </React.Fragment>
-                )} />
+                )}
+                */}
                 {/* Group selection */}
-                <When
-                    condition={!hasActiveGroup && isGroupSelectionVisible(props.selection)}
-                    render={() => (
-                        <Button
-                            icon={ICONS.OBJECT_GROUP}
-                            onClick={props.onGroupSelectionClick}
-                        />
-                    )}
-                />
+                {!hasActiveGroup && isGroupSelectionVisible(props.selection) && (
+                    <Button
+                        icon={ICONS.OBJECT_GROUP}
+                        onClick={props.onGroupSelectionClick}
+                    />
+                )}
                 {/* Ungroup selection */}
-                <When
-                    condition={!hasActiveGroup && isUngroupSelectionVisible(props.selection)}
-                    render={() => (
-                        <Button
-                            icon={ICONS.OBJECT_UNGROUP}
-                            onClick={props.onUngroupSelectionClick}
-                        />
-                    )}
-                />
+                {!hasActiveGroup && isUngroupSelectionVisible(props.selection) && (
+                    <Button
+                        icon={ICONS.OBJECT_UNGROUP}
+                        onClick={props.onUngroupSelectionClick}
+                    />
+                )}
                 {/* Remove current selection */}
                 <Button
                     icon={ICONS.TRASH}

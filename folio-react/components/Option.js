@@ -2,7 +2,7 @@ import React from "react";
 import {classNames} from "@siimple/styled";
 
 import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colors.js";
-import {css} from "../styles.js";
+import {css, elements} from "../styles.js";
 
 const colorsListClass = css({
     display: "grid",
@@ -65,75 +65,11 @@ const selectClass = css({
     },
 });
 
-const rangeElementClass = css({
-    appearance: "none",
-    backgroundColor: "muted",
-    borderRadius: "1rem",
-    color: "primary",
-    cursor: "pointer",
-    display: "block",
-    height: "0.25rem",
-    width: "100%",
-    "&:-webkit-slider-thumb,&:-moz-range-thumb": {
-        backgroundColor: "currentColor",
-        border: "none",
-        borderRadius: "999px",
-        boxSizing: "border-box",
-        height: "1rem",
-        width: "1rem",
-    },
-    "&:-webkit-slider-thumb": {
-        appearance: "none",
-    },
-});
 const rangeValueClass = css({
     fontSize: "0.875rem",
     minWidth: "2rem",
     opacity: 0.75,
     textAlign: "right",
-});
-
-const switchClass = css({
-    appearance: "none",
-    boxSizing: "border-box",
-    cursor: "pointer",
-    display: "inline-block",
-    height: "1.25rem",
-    margin: "0px",
-    position: "relative",
-    width: "2rem",
-    "&:after": {
-        backgroundColor: "white",
-        borderRadius: "100%",
-        content: "''",
-        display: "block",
-        height: "0.875rem",
-        left: "0.1875rem",
-        position: "absolute",
-        top: "0.1875rem",
-        transition: ["left", "0.3s", "ease"],
-        width: "0.875rem",
-        zIndex: "2",
-    },
-    "&:before": {
-        backgroundColor: "muted",
-        borderRadius: "2rem",
-        content: "''",
-        display: "block",
-        height: "100%",
-        left: "0px",
-        position: "absolute",
-        top: "0px",
-        transition: ["background-color", "0.3s", "ease"],
-        width: "100%",
-        zIndex: "1",
-    },
-    "&:checked:after": {
-        left: "1rem",
-    },
-    "&:checked:before": {
-        backgroundColor: "success",
-    },
 });
 
 const optionTypes = {
@@ -249,7 +185,7 @@ const optionTypes = {
         <div style={{display:"flex",alignItems:"center"}}>
             <input
                 type="range"
-                className={rangeElementClass}
+                className={elements.slider}
                 onChange={e => props.onChange(Number(e.target.value))}
                 min={props.domain[0] || 0}
                 max={props.domain[1] || 1}
@@ -279,7 +215,7 @@ const optionTypes = {
     switch: props => (
         <input
             type="checkbox"
-            className={switchClass}
+            className={elements.switch}
             onChange={e => props.onChange(e.target.checked)}
             defaultChecked={!!props.value}
         />

@@ -1,5 +1,6 @@
 import {create} from "@siimple/styled";
 import {fonts} from "@siimple/preset-base";
+import {elementsBase} from "@siimple/modules/elements.js";
 
 // theme colors
 export const COLORS = {
@@ -74,3 +75,11 @@ globalCss({
     },
 });
 
+// Default elements
+export const elements = {
+    scrim: css(elementsBase.scrim),
+    slider: css({
+        ...elementsBase.slider,
+    }),
+    switch: css(elementsBase.switch),
+};
