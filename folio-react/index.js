@@ -24,7 +24,6 @@ import {
 
 import {
     createElement,
-    drawElement,
     updateElement,
 } from "./elements.js";
 import {
@@ -53,6 +52,7 @@ import {Historybar} from "./components/Historybar.js";
 import {TextInput} from "./components/TextInput.js";
 import {Canvas} from "./components/Canvas.js";
 import {Zoom} from "./components/Zoom.js";
+import {ScreenshotDialog} from "./components/ScreenshotDialog.js";
 
 // Check for arrow keys
 const isArrowKey = key => {
@@ -100,6 +100,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         height: 0,
         pasteIndex: 0,
         zoom: ZOOM_INITIAL,
+        showSreenshotDialog: false,
     });
 
     // Internal variables
@@ -826,8 +827,12 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 onCameraClick={() => {
                     setState(prevState => ({
                         ...prevState,
-                        mode: prevState.mode === MODES.SCREENSHOT ? MODES.SELECTION : MODES.SCREENSHOT,
+                        showSreenshotDialog: true,
                     }));
+                    // setState(prevState => ({
+                    //     ...prevState,
+                    //     mode: prevState.mode === MODES.SCREENSHOT ? MODES.SELECTION : MODES.SCREENSHOT,
+                    // }));
                 }}
                 onOptionsChange={(name, value) => {
                     options.current[name] = value;
@@ -912,6 +917,9 @@ export const Folio = React.forwardRef((props, apiRef) => {
             )}
             {state.mode === MODES.INPUT && (
                 <TextInput visible={true} ref={inputRef} />
+            )}
+            {state.showSreenshotDialog && (
+                <ScreenshotDialog />
             )}
         </div>
     );
