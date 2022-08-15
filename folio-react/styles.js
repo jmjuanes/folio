@@ -77,7 +77,7 @@ globalCss({
 
 // Default elements
 export const elements = {
-    scrim: css(elementsBase.scrim),
+    // scrim: css(elementsBase.scrim),
     slider: css({
         ...elementsBase.slider,
     }),
