@@ -24,7 +24,6 @@ import {
 
 import {
     createElement,
-    drawElement,
     updateElement,
 } from "./elements.js";
 import {
@@ -53,6 +52,7 @@ import {Historybar} from "./components/Historybar.js";
 import {TextInput} from "./components/TextInput.js";
 import {Canvas} from "./components/Canvas.js";
 import {Zoom} from "./components/Zoom.js";
+import {Screenshot} from "./components/Screenshot.js";
 
 // Check for arrow keys
 const isArrowKey = key => {
@@ -100,6 +100,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         height: 0,
         pasteIndex: 0,
         zoom: ZOOM_INITIAL,
+        showSreenshotDialog: false,
     });
 
     // Internal variables
@@ -192,6 +193,18 @@ export const Folio = React.forwardRef((props, apiRef) => {
             ...prevState,
             mode: MODES.SELECTION,
         }));
+    };
+
+    // Take screenshot
+    const takeScreenshot = region => {
+        const options = {
+            translateX: state.x,
+            translateY: state.y,
+            region: normalizeRegion(region),
+        };
+        screenshotCanvas(boardRef.current, options).then(blob => {
+            props.onScreenshot && props.onScreenshot(blob);
+        });
     };
 
     const handlePointerDown = ({nativeEvent}) => {
@@ -465,21 +478,15 @@ export const Folio = React.forwardRef((props, apiRef) => {
         }
         // Screenshot mode (TODO)
         else if (state.mode === MODES.SCREENSHOT) {
-            const options = {
-                translateX: state.x,
-                translateY: state.y,
-                region: normalizeRegion({
-                    x: board.current.selection.x * state.zoom,
-                    y: board.current.selection.y * state.zoom,
-                    width: board.current.selection.width * state.zoom,
-                    height: board.current.selection.height * state.zoom,
-                }),
+            const region = {
+                x: board.current.selection.x * state.zoom,
+                y: board.current.selection.y * state.zoom,
+                width: board.current.selection.width * state.zoom,
+                height: board.current.selection.height * state.zoom,
             };
             board.current.clearSelection();
             draw(); // Prevent screenshot rectangle in captured image
-            screenshotCanvas(boardRef.current, options).then(blob => {
-                props.onScreenshot && props.onScreenshot(blob);
-            });
+            takeScreenshot(region);
             return setState(prevState => ({
                 ...prevState,
                 mode: MODES.SELECTION,
@@ -824,9 +831,15 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 options={options.current}
                 cameraEnabled={state.mode === MODES.SCREENSHOT}
                 onCameraClick={() => {
-                    setState(prevState => ({
+                    if (state.mode === MODES.SCREENSHOT) {
+                        return setState(prevState => ({
+                            ...prevState,
+                            mode: MODES.SELECTION,
+                        }));
+                    }
+                    return setState(prevState => ({
                         ...prevState,
-                        mode: prevState.mode === MODES.SCREENSHOT ? MODES.SELECTION : MODES.SCREENSHOT,
+                        showSreenshotDialog: true,
                     }));
                 }}
                 onOptionsChange={(name, value) => {
@@ -912,6 +925,29 @@ export const Folio = React.forwardRef((props, apiRef) => {
             )}
             {state.mode === MODES.INPUT && (
                 <TextInput visible={true} ref={inputRef} />
+            )}
+            {state.showSreenshotDialog && (
+                <Screenshot
+                    onFullClick={() => {
+                        takeScreenshot({
+                            x: 0,
+                            y: 0,
+                            width: state.width * state.zoom,
+                            height: state.height * state.zoom,
+                        });
+                        setState(prevState => ({
+                            ...prevState,
+                            showSreenshotDialog: false,
+                        }));
+                    }}
+                    onRegionClick={() => {
+                        setState(prevState => ({
+                            ...prevState,
+                            mode: MODES.SCREENSHOT,
+                            showSreenshotDialog: false,
+                        }));
+                    }}
+                />
             )}
         </div>
     );
