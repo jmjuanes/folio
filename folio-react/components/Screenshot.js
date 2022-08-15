@@ -1,8 +1,12 @@
 import React from "react";
 import {elementsBase} from "@siimple/modules/elements.js";
-import {css, elements} from "../styles.js";
+import {css} from "../styles.js";
 import {Dialog} from "./Dialog.js";
 import ICONS from "../icons.js";
+
+const wrapperClass = css({
+    ...elementsBase.scrim,
+});
 
 const titleClass = css({
     ...elementsBase.title,
@@ -34,11 +38,11 @@ const buttonIconClass = css({
 const dialogContentClass = css({
     display: "flex",
     flexDirection: "column",
-    gap: "0.125rem",
+    gap: "0.25rem",
 });
 
-export const ScreenshotDialog = props => (
-    <div className={elements.scrim}>
+export const Screenshot = props => (
+    <div className={wrapperClass}>
         <Dialog active style={{position:"relative"}}>
             <div className={titleClass} align="center">
                 Screenshot
@@ -48,7 +52,7 @@ export const ScreenshotDialog = props => (
                     <span className={buttonIconClass}>{ICONS.FULLSCREEN}</span>
                     <span>Full capture</span> 
                 </div>
-                <div className={buttonClass} onClick={props.onCropClick}>
+                <div className={buttonClass} onClick={props.onRegionClick}>
                     <span className={buttonIconClass}>{ICONS.CROP}</span>
                     <span>Select region</span> 
                 </div>
