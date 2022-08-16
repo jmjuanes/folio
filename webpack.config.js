@@ -10,15 +10,9 @@ module.exports = {
     entry: path.join(__dirname, "folio-app", "app.js"),
     output: {
         path: path.join(__dirname, "public"),
-        publicPath: "/",
+        publicPath: "./",
         filename: "[contenthash:9].js",
     },
-    // resolve: {
-    //     modules: [
-    //         path.resolve(__dirname, "./node_modules"),
-    //     ],
-    //     alias: {},
-    // },
     module: {
         rules: [
             {
