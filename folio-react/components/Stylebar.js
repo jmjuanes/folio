@@ -27,7 +27,10 @@ const stylebarWrapperClass = css({
 });
 
 const stylebarClass = css({
-    apply: "mixins.dialog",
+    apply: [
+        "mixins.shadowed",
+        "mixins.bordered",
+    ],
     backgroundColor: "#fff",
     borderRadius: "0.5rem",
     display: "flex",

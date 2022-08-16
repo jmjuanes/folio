@@ -17,31 +17,19 @@ export const COLORS = {
 export const {css, globalCss, keyframes} = create({
     colors: {
         primary: COLORS.DARK,
-        secondary: COLORS.SECONDARY,
+        secondary: COLORS.WHITE,
         muted: COLORS.LIGHT,
-        success: COLORS.SUCCESS,
-        error: COLORS.ERROR,
     },
     fonts: {
-        ...fonts,
+        body: fonts.sans,
         heading: "'EB Garamond', sans-serif",
     },
     // Mixins
     mixins: {
-        animations: {
-            base: {
-                animationDuration: "0.3s",
-                animationTimingFunction: "ease-out",
-            },
-            bottom: {
-                apply: "mixins.animations.base",
-                animationName: "folio-animation-bottom",
-            },
-        },
         root: {
             backgroundColor: COLORS.WHITE,
-            color: COLORS.DARK,
-            fontFamily: fonts.sans,
+            color: "primary",
+            fontFamily: "body",
             fontSize: "16px",
             boxSizing: "border-box",
             "& *,& *:before,& *:after": {
@@ -54,9 +42,11 @@ export const {css, globalCss, keyframes} = create({
             borderStyle: "solid",
             borderWidth: "0.125rem",
         },
-        dialog: {
-            apply: "mixins.bordered",
-            boxShadow: "0rem 1rem 1rem -0.5rem rgba(54,63,79,0.25),0 0 0 1px rgba(54,63,79,0.02)",
+        shadowed: {
+            boxShadow: [
+                "0rem 1rem 1rem -0.5rem rgba(54,63,79,0.25)",
+                "0 0 0 1px rgba(54,63,79,0.02)",
+            ].join(","),
         },
     },
 });
@@ -68,18 +58,64 @@ globalCss({
         margin: "0px",
         padding: "0px",
     },
-    // Keyframes for animations
-    "@keyframes folio-animation-bottom": {
-        from: {bottom: "-6rem"},
-        to: {bottom: "0px"},
+});
+
+// Shared styles
+export const outlineButtonClass = css({
+    ...elementsBase.button,
+    alignItems: "center",
+    backgroundColor: "white",
+    color: "primary",
+    display: "flex",
+    justifyContent: "center",
+    width: "100%",
+    "&:hover": {
+        backgroundColor: "primary",
+        color: "white",
+    },
+    apply: "mixins.bordered",
+});
+export const buttonIconClass = css({
+    fontSize: "1.5rem",
+    paddingRight: "0.5rem",
+});
+
+export const scrimClass = css({
+    ...elementsBase.scrim,
+});
+
+export const sliderClass = css({
+    ...elementsBase.slider,
+});
+
+export const switchClass = css({
+    ...elementsBase.switch,
+});
+
+export const titleClass = css({
+    ...elementsBase.title,
+    // fontSize: "2rem",
+    fontFamily: "heading",
+    userSelect: "none",
+});
+
+// fade-in animation
+const fadeInAnimation = keyframes({
+    from: {
+        bottom: "-6rem",
+        opacity: "0",
+    },
+    to: {
+        bottom: "0px",
+        opacity: "1",
     },
 });
 
-// Default elements
-export const elements = {
-    // scrim: css(elementsBase.scrim),
-    slider: css({
-        ...elementsBase.slider,
-    }),
-    switch: css(elementsBase.switch),
-};
+export const fadeIn = css({
+    animationDuration: "0.3s",
+    animationName: fadeInAnimation, 
+    animationTimingFunction: "ease-out",
+    bottom: "0px",
+    position: "absolute",
+    opacity: "1",
+});

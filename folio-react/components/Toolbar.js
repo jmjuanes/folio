@@ -3,24 +3,25 @@ import React from "react";
 import {Button} from "./Button.js";
 import ICONS from "../icons.js";
 import {MODES, ELEMENT_TYPES} from "../constants.js";
-import {css} from "../styles.js";
+import {css, fadeIn} from "../styles.js";
 
 const toolbarWrapperClass = css({
-    apply: "mixins.animations.bottom",
-    bottom: "0px",
     left: "50%",
     paddingBottom: "1rem",
-    position: "absolute",
     transform: "translateX(-50%)",
     zIndex: 100,
 });
 
 const toolbarClass = css({
-    apply: "mixins.dialog",
+    apply: [
+        "mixins.shadowed",
+        "mixins.bordered",
+    ],
     backgroundColor: "#fff",
     borderRadius: "0.5rem",
     display: "flex",
     gap: "0.25rem",
+    opacity: "1",
     padding: "0.5rem",
 });
 
@@ -42,7 +43,7 @@ const availableTypes = [
 ];
 
 export const Toolbar = props => (
-    <div className={toolbarWrapperClass}>
+    <div className={[toolbarWrapperClass, fadeIn].join(" ")}>
         <div className={toolbarClass}>
             <Button
                 active={props.mode === MODES.MOVE}

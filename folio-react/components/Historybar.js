@@ -2,20 +2,20 @@ import React from "react";
 
 import {Button} from "./Button.js";
 import ICONS from "../icons.js";
-import {css} from "../styles.js";
+import {css, fadeIn} from "../styles.js";
 
 const historyWrapperClass = css({
-    apply: "mixins.animations.bottom",
-    bottom: "0px",
     left: "0px",
     paddingBottom: "1rem",
     paddingLeft: "1rem",
-    position: "absolute",
     zIndex: "100",
 });
 
 const historyClass = css({
-    apply: "mixins.dialog",
+    apply: [
+        "mixins.shadowed",
+        "mixins.bordered",
+    ],
     backgroundColor: "#fff",
     borderRadius: "0.5rem",
     display: "flex",
@@ -23,7 +23,7 @@ const historyClass = css({
 });
 
 export const Historybar = props => (
-    <div className={historyWrapperClass}>
+    <div className={[historyWrapperClass, fadeIn].join(" ")}>
         <div className={historyClass}>
             <Button
                 icon={ICONS.UNDO}

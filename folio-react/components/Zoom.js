@@ -2,20 +2,20 @@ import React from "react";
 
 import {Button} from "./Button.js";
 import ICONS from "../icons.js";
-import {css} from "../styles.js";
+import {css, fadeIn} from "../styles.js";
 
 const zoomWrapperClass = css({
-    apply: "mixins.animations.bottom",
-    bottom: "0px",
     right: "0px",
     paddingBottom: "1rem",
     paddingRight: "1rem",
-    position: "absolute",
     zIndex: "100",
 });
 
 const zoomClass = css({
-    apply: "mixins.dialog",
+    apply: [
+        "mixins.shadowed",
+        "mixins.bordered",
+    ],
     alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: "0.5rem",
@@ -36,7 +36,7 @@ const zoomValueClass = css({
 });
 
 export const Zoom = props => (
-    <div className={zoomWrapperClass}>
+    <div className={[fadeIn, zoomWrapperClass].join(" ")}>
         <div className={zoomClass}>
             <Button
                 icon={ICONS.ZOOM_OUT}

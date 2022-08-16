@@ -2,7 +2,10 @@ import React from "react";
 import {css} from "../styles.js";
 
 const dialogClass = css({
-    apply: "mixins.dialog",
+    apply: [
+        "mixins.shadowed",
+        "mixins.bordered",
+    ],
     backgroundColor: "#fff",
     borderRadius: "0.5rem",
     padding: "1rem",

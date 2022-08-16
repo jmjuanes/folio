@@ -3,7 +3,10 @@ import {render} from "@testing-library/react";
 import {Screenshot} from "./Screenshot.js";
 jest.mock("../styles.js", () => ({
     css: () => "",
-    elements: {},
+    outlineButtonClass: "button",
+    buttonIconClass: "icon",
+    scrimClass: "scrim",
+    titleClass: "title",
 }));
 
 it("should render", () => {

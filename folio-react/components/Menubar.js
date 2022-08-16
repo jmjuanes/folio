@@ -26,7 +26,10 @@ const menubarWrapperClass = css({
 });
 
 const menubarClass = css({
-    apply: "mixins.dialog",
+    apply: [
+        "mixins.shadowed",
+        "mixins.bordered",
+    ],
     alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: "0.5rem",
@@ -34,14 +37,6 @@ const menubarClass = css({
     gap: "0.125rem",
     padding: "0.5rem",
 });
-
-// const separatorClass = css({
-//     backgroundColor: "primary",
-//     height: "2rem",
-//     marginLeft: "0.5rem",
-//     marginRight: "0.5rem",
-//     width: "0.125rem",
-// });
 
 const settingsOptions = {
     gridEnabled: {

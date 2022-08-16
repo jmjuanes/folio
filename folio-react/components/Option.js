@@ -2,7 +2,11 @@ import React from "react";
 import {classNames} from "@siimple/styled";
 
 import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colors.js";
-import {css, elements} from "../styles.js";
+import {
+    css,
+    sliderClass,
+    switchClass,
+} from "../styles.js";
 
 const colorsListClass = css({
     display: "grid",
@@ -185,7 +189,7 @@ const optionTypes = {
         <div style={{display:"flex",alignItems:"center"}}>
             <input
                 type="range"
-                className={elements.slider}
+                className={sliderClass}
                 onChange={e => props.onChange(Number(e.target.value))}
                 min={props.domain[0] || 0}
                 max={props.domain[1] || 1}
@@ -215,7 +219,7 @@ const optionTypes = {
     switch: props => (
         <input
             type="checkbox"
-            className={elements.switch}
+            className={switchClass}
             onChange={e => props.onChange(e.target.checked)}
             defaultChecked={!!props.value}
         />
