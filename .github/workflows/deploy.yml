@@ -15,15 +15,9 @@ jobs:
           node-version: 16
       - run: yarn install
       - run: yarn run build
-      - name: Add firebase configuration
-        run: 'echo "$FIREBASE_CONFIG" > ./.firebaserc'
-        shell: bash
-        env:
-          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - run: yarn run pack
+      - uses: "google-github-actions/auth@v0"
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
-          projectId: "${{ secrets.FIREBASE_PROJECT }}"
-          channelId: live
-          target: "folio:website"
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+      - uses: "google-github-actions/setup-gcloud@v0"
+      - run: "gsutil cp folio.tar.gz gs://${{ secrets.GOOGLE_BUCKET }}/"
