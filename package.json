@@ -7,8 +7,8 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
-        "folio-app",
-        "folio-react"
+        "folio-react",
+        "app"
     ],
     "scripts": {
         "build": "webpack build --config ./webpack.config.js",

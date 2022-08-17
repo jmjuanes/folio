@@ -7,7 +7,9 @@ const package = require("./package.json");
 module.exports = {
     mode: "production",
     target: "web",
-    entry: path.join(__dirname, "folio-app", "app.js"),
+    entry: {
+        app: path.join(__dirname, "app", "index.js"),
+    },
     output: {
         path: path.join(__dirname, "public"),
         publicPath: "./",
@@ -19,7 +21,7 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 include: [
                     path.join(__dirname, "folio-react"),
-                    path.join(__dirname, "folio-app"),
+                    path.join(__dirname, "app"),
                 ],
                 exclude: /(node_modules|bower_components)/,
                 loader: "babel-loader",
@@ -47,8 +49,10 @@ module.exports = {
         //     ],
         // }),
         new HtmlWebpackPlugin({
-            title: "Folio App",
-            template: path.join(__dirname, "folio-app/index.html"),
+            inject: true,
+            chunks: ["app"],
+            // title: "Folio App",
+            template: path.join(__dirname, "app/index.html"),
             meta: {
                 "viewport": "width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no",
             },
