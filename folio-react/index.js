@@ -692,6 +692,20 @@ export const Folio = React.forwardRef((props, apiRef) => {
             // Check ESCAPE key --> reset selection
             else if (event.key === KEYS.ESCAPE) {
                 event.preventDefault();
+                // Check if screenshot dialog is visible
+                if (state.showSreenshotDialog) {
+                    return setState(prevState => ({
+                        ...prevState,
+                        showSreenshotDialog: false,
+                    }));
+                }
+                // Check if we are in the screenshot mode
+                else if (state.mode === MODES.SCREENSHOT) {
+                    return setState(prevState => ({
+                        ...prevState,
+                        mode: MODES.SELECTION,
+                    }));
+                }
                 board.current.clearSelectedElements();
                 board.current.activeGroup = null;
                 draw();
@@ -727,7 +741,10 @@ export const Folio = React.forwardRef((props, apiRef) => {
         return () => {
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown, false);
         };
-    }, [state.mode, options.current.gridEnabled, options.current.gridSize]);
+    }, [
+        state.mode, state.showSreenshotDialog,
+        options.current.gridEnabled, options.current.gridSize,
+    ]);
 
     // Listen to inputVisible changes
     React.useEffect(() => {
