@@ -1,6 +1,6 @@
 import React from "react";
 
-import {DEFAULT_APP_TITLE} from "../constants.js";
+import {DEFAULT_APP_TITLE, MODES} from "../constants.js";
 import ICONS from "../icons.js";
 import {css} from "../styles.js";
 
@@ -78,7 +78,7 @@ export const Menubar = props => {
         <div className={menubarWrapperClass}>
             <div className={menubarClass}>
                 <div className={titleClass}>
-                    <strong>{DEFAULT_APP_TITLE}</strong>
+                    <strong>{props.title}</strong>
                 </div>
                 {/* <div className={separatorClass} /> */}
                 <Button
@@ -90,12 +90,17 @@ export const Menubar = props => {
                 />
                 <Button
                     icon={ICONS.CAMERA}
-                    active={props.cameraEnabled}
+                    active={props.mode === MODES.SCREENSHOT}
                     onClick={() => {
                         setSettingsVisible(false);
-                        if (typeof props.onCameraClick === "function") {
-                            props.onCameraClick();
-                        }
+                        typeof props.onCameraClick === "function" && props.onCameraClick();
+                    }}
+                />
+                <Button
+                    icon={ICONS.DOWNLOAD}
+                    onClick={() => {
+                        setSettingsVisible(false);
+                        typeof props.onExportClick === "function" && props.onExportClick();
                     }}
                 />
             </div>
@@ -118,9 +123,10 @@ export const Menubar = props => {
 };
 
 Menubar.defaultProps = {
-    title: "Untitled",
+    title: DEFAULT_APP_TITLE,
     options: {},
-    cameraEnabled: false,
-    // gridEnabled: false,
+    mode: null,
     onOptionsChange: null,
+    onCameraClick: null,
+    onExportClick: null,
 };
