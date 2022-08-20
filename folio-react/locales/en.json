@@ -1,0 +1,7 @@
+{
+    "welcomeDialog": {
+        "description": "Folio is a digital whiteboard that you can use for sketching, annotating and prototyping.",
+        "createButton": "Start drawing",
+        "uploadButton": "Load from local"
+    }
+}
