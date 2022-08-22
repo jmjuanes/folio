@@ -1,12 +1,11 @@
 import React from "react";
 import {Toasts} from "../components/Toasts.js";
 
-export const useNotifications = () => {
+export const useNotification = () => {
     const [notifications, setNotifications] = React.useState([]);
-    const addNotification = (type, message) => {
+    const addNotification = (message, icon) => {
         const newNotification = {
             id: Date.now(),
-            type: type,
             message: message,
         };
         setNotifications(prev => [...prev, newNotification].reverse());
@@ -17,12 +16,6 @@ export const useNotifications = () => {
             onDelete={id => setNotifications(prev => prev.filter(item => item.id !== id))}
         />
     );
-    const notificationsApi = {
-        error: message => addNotification("error", message),
-        warning: message => addNotification("warning", message),
-        success: message => addNotification("success", message),
-        notice: message => addNotification("notice", message),
-    };
 
-    return [notificationsApi, renderNotifications];
+    return [addNotification, renderNotifications];
 };

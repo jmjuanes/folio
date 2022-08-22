@@ -1,4 +1,12 @@
 {
+    "alerts": {
+        "screenshotCopied": "Screenshot copied to clipboard."
+    },
+    "errors": {
+        "emptyExport": "Nothing to export.",
+        "exportImageError": "Error generating PNG export.",
+        "loadError": "Error loading drawing. Please try again later."
+    },
     "exportDialog": {
         "title": "Export drawing",
         "filenameTitle": "Export file name:",

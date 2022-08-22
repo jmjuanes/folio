@@ -61,6 +61,13 @@ globalCss({
 });
 
 // Shared styles
+export const alertClass = css({
+    ...elementsBase.alert,
+    display: "flex",
+    marginBottom: "0px",
+    marginTop: "0.5rem",
+});
+
 export const buttonClass = css({
     ...elementsBase.button,
     alignItems: "center",
@@ -102,7 +109,7 @@ export const modalClass = css({
 });
 export const closeClass = css({
     ...elementsBase.close,
-    color: "primary",
+    // color: "primary",
 });
 
 export const inputClass = css({

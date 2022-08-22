@@ -7,6 +7,6 @@ const getInObject = (obj, path) => {
 export const useTranslation = () => {
     //TODO: allow to change the default language
     return {
-        t: path => getInObject(defaultLanguage, path) || "",
+        t: path => getInObject(defaultLanguage, path) || path,
     };
 };

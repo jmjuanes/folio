@@ -58,6 +58,9 @@ import {serializeAsJson, parseFromJson, exportState} from "./data.js";
 import {exportToBlob} from "./export.js";
 import {css} from "./styles.js";
 
+import {useNotification} from "./hooks/useNotification.js";
+import {useTranslation} from "./hooks/useTranslation.js";
+
 import {Menubar} from "./components/Menubar.js";
 import {Stylebar} from "./components/Stylebar.js";
 import {Toolbar} from "./components/Toolbar.js";
@@ -113,6 +116,8 @@ export const Folio = props => {
         gridSize: DEFAULT_GRID_SIZE,
         backgroundColor: "#fff",
     });
+    const [notify, NotificationsWrapper] = useNotification();
+    const {t} = useTranslation();
 
     // Internal variables
     let orientation = null;
@@ -211,7 +216,7 @@ export const Folio = props => {
             }
             // Copy screenshot to clipboard
             blobToClipboard(blob);
-            // TODO: show notification
+            notify(t("alerts.screenshotCopied"));
         });
     };
 
@@ -221,6 +226,7 @@ export const Folio = props => {
             return props.onLoad();
         }
         // Load from local file
+        // TODO: check file size
         return readFile(".folio")
             .then(file => blobFromFile(file, MIME_TYPES.JSON))
             .then(blob => blob.text())
@@ -228,7 +234,7 @@ export const Folio = props => {
             .then(data => handleLoad(data))
             .catch(error => {
                 console.error(error);
-                // TODO: show notification
+                notify(t("errors.loadError"));
             });
     };
 
@@ -548,7 +554,6 @@ export const Folio = props => {
             }
             forceUpdate();
         }
-        // Screenshot mode (TODO)
         else if (state.mode === MODES.SCREENSHOT) {
             const region = {
                 x: board.current.selection.x * state.zoom,
@@ -1066,12 +1071,16 @@ export const Folio = props => {
                             elements: exportOptions.onlySelection ? board.current.exportSelectedElements() : board.current.exportElements(),
                             backgroundColor: exportOptions.includeBackground ? state.backgroundColor : null,
                         };
-                        // TODO: check for empty elements to export
+                        if (opt.elements.length < 1) {
+                            return notify(t("errors.emptyExport"));
+                        }
+                        // Generate export
                         exportToBlob(opt)
                             .then(blob => blobToFile(blob, filename, MIME_TYPES.PNG))
                             .then(file => downloadFile(file))
                             .catch(error => {
                                 console.error(error);
+                                notify(t("errors.exportImageError"));
                             });
 
                     }}
@@ -1080,6 +1089,7 @@ export const Folio = props => {
                     }}
                 />
             )}
+            <NotificationsWrapper />
         </div>
     );
 };
