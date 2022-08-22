@@ -152,3 +152,21 @@ export const DEFAULT_GROUP_SELECTION_COLOR = "rgb(0,0,0)";
 export const DEFAULT_GROUP_SELECTION_WIDTH = 0.5;
 export const DEFAULT_GROUP_SELECTION_OPACITY = 1;
 export const DEFAULT_GROUP_SELECTION_OFFSET = 8;
+
+export const DATA_TYPES = {
+    FOLIO_EXPORT: "folio/export_json",
+    FOLIO_CLIPBOARD: "folio/clipboard",
+};
+
+export const MIME_TYPES = {
+    FOLIO_EXPORT: "application/vnd.folio+json",
+    JSON: "application/json",
+    PNG: "image/png",
+    JPG: "image/jpeg",
+    SVG: "image/svg+xml",
+};
+
+export const VERSIONS = {
+    FOLIO: process.env.VERSION,
+    FOLIO_EXPORT: "1",
+};

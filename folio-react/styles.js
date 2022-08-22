@@ -33,7 +33,7 @@ export const {css, globalCss, keyframes} = create({
             fontSize: "16px",
             boxSizing: "border-box",
             "& *,& *:before,& *:after": {
-                boxSizing: "inherit",
+                boxSizing: "border-box",
             },
         },
         bordered: {
@@ -61,6 +61,13 @@ globalCss({
 });
 
 // Shared styles
+export const buttonClass = css({
+    ...elementsBase.button,
+    alignItems: "center",
+    display: "flex",
+    justifyContent: "center",
+    width: "100%",
+});
 export const outlineButtonClass = css({
     ...elementsBase.button,
     alignItems: "center",
@@ -77,13 +84,28 @@ export const outlineButtonClass = css({
 });
 export const buttonIconClass = css({
     fontSize: "1.5rem",
+    height: "1.5rem",
     paddingRight: "0.5rem",
 });
 
 export const scrimClass = css({
     ...elementsBase.scrim,
+    backdropFilter: "blur(2px)",
+});
+export const modalClass = css({
+    apply: "mixins.bordered",
+    backgroundColor: "#fff",
+    display: "block",
+    // maxWidth: "400px",
+    padding: "2.5rem",
+    width: "100%",
 });
 
+export const inputClass = css({
+    ...elementsBase.input,
+    backgroundColor: "white",
+    apply: "mixins.bordered",
+});
 export const sliderClass = css({
     ...elementsBase.slider,
 });

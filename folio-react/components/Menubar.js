@@ -89,6 +89,13 @@ export const Menubar = props => {
                     }}
                 />
                 <Button
+                    icon={ICONS.SAVE}
+                    onClick={() => {
+                        setSettingsVisible(false);
+                        typeof props.onSaveClick === "function" && props.onSaveClick();
+                    }}
+                />
+                <Button
                     icon={ICONS.CAMERA}
                     active={props.mode === MODES.SCREENSHOT}
                     onClick={() => {
@@ -129,4 +136,5 @@ Menubar.defaultProps = {
     onOptionsChange: null,
     onCameraClick: null,
     onExportClick: null,
+    onSaveClick: null,
 };

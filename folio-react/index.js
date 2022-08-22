@@ -15,11 +15,11 @@ import {
     DEFAULT_GRID_COLOR,
     DEFAULT_GRID_OPACITY,
     DEFAULT_GRID_SIZE,
-    DEFAULT_GRID_STYLE,
     ZOOM_INITIAL,
     ZOOM_MAX,
     ZOOM_MIN,
     ZOOM_STEP,
+    MIME_TYPES,
 } from "./constants.js";
 
 import {
@@ -39,10 +39,23 @@ import {
     getOuterRectangle,
     normalizeRegion,
 } from "./utils/math.js";
-import {parseClipboardBlob, getDataFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
+import {
+    parseClipboardBlob,
+    getDataFromClipboard,
+    copyTextToClipboard,
+} from "./utils/clipboard.js";
 import {screenshotCanvas, clearCanvas} from "./utils/canvas.js";
+import {downloadFile, readFile} from "./utils/file.js";
+import {
+    blobFromFile,
+    blobToClipboard,
+    blobToFile,
+    createBlob,
+} from "./utils/blob.js";
 import {createBoard} from "./board.js";
 import {drawBoard, drawGrid} from "./draw.js";
+import {serializeAsJson, parseFromJson, exportState} from "./data.js";
+import {exportToBlob} from "./export.js";
 import {css} from "./styles.js";
 
 import {Menubar} from "./components/Menubar.js";
@@ -53,6 +66,8 @@ import {TextInput} from "./components/TextInput.js";
 import {Canvas} from "./components/Canvas.js";
 import {Zoom} from "./components/Zoom.js";
 import {Screenshot} from "./components/Screenshot.js";
+import {WelcomeDialog} from "./components/Welcome.js";
+import {ExportDialog} from "./components/Export.js";
 
 // Check for arrow keys
 const isArrowKey = key => {
@@ -64,16 +79,6 @@ const isInputTarget = e => {
     return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 };
 
-// Default options
-const defaultOptions = {
-    background: "#fff",
-    gridEnabled: false,
-    gridColor: DEFAULT_GRID_COLOR,
-    gridOpacity: DEFAULT_GRID_OPACITY,
-    gridSize: DEFAULT_GRID_SIZE,
-    gridStyle: DEFAULT_GRID_STYLE,
-};
-
 // Main container styles
 const rootClassName = css({
     height: "100%",
@@ -83,13 +88,12 @@ const rootClassName = css({
     apply: "mixins.root",
 });
 
-export const Folio = React.forwardRef((props, apiRef) => {
+export const Folio = props => {
     const parentRef = React.useRef(null);
     const inputRef = React.useRef(null);
     const boardRef = React.useRef(null);
     const gridRef = React.useRef(null);
     const board = React.useRef(null);
-    const options = React.useRef(null);
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const [state, setState] = React.useState({
         mode: MODES.SELECTION,
@@ -101,6 +105,13 @@ export const Folio = React.forwardRef((props, apiRef) => {
         pasteIndex: 0,
         zoom: ZOOM_INITIAL,
         showSreenshotDialog: false,
+        showExportDialog: false,
+        showWelcomeDialog: props.showWelcome,
+        gridEnabled: false,
+        gridColor: DEFAULT_GRID_COLOR,
+        gridOpacity: DEFAULT_GRID_OPACITY,
+        gridSize: DEFAULT_GRID_SIZE,
+        backgroundColor: "#fff",
     });
 
     // Internal variables
@@ -115,14 +126,6 @@ export const Folio = React.forwardRef((props, apiRef) => {
     let element = null;
     let scale = 1;
 
-    // Initialize options
-    if (!options.current) {
-        options.current = {
-            ...defaultOptions,
-            ...(props.initialOptions ||  {}),
-        };
-    }
-
     // Initialize board API reference
     if (!board.current) {
         board.current = createBoard();
@@ -130,7 +133,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
 
     // Calculate the position using the grid size
     const getPosition = v => {
-        return options.current.gridEnabled ? Math.round(v / options.current.gridSize) * options.current.gridSize : v;
+        return state.gridEnabled ? Math.round(v / state.gridSize) * state.gridSize : v;
     };
 
     // Get coordinates in the board
@@ -203,8 +206,77 @@ export const Folio = React.forwardRef((props, apiRef) => {
             region: normalizeRegion(region),
         };
         screenshotCanvas(boardRef.current, options).then(blob => {
-            props.onScreenshot && props.onScreenshot(blob);
+            if (typeof props.onScreenshot === "function") {
+                return props.onScreenshot(blob, options);
+            }
+            // Copy screenshot to clipboard
+            blobToClipboard(blob);
+            // TODO: show notification
         });
+    };
+
+    // Handle load click
+    const handleLoadClick = () => {
+        if (typeof props.onLoad === "function") {
+            return props.onLoad();
+        }
+        // Load from local file
+        return readFile(".folio")
+            .then(file => blobFromFile(file, MIME_TYPES.JSON))
+            .then(blob => blob.text())
+            .then(str => parseFromJson(str))
+            .then(data => handleLoad(data))
+            .catch(error => {
+                console.error(error);
+                // TODO: show notification
+            });
+    };
+
+    const handleLoad = data => {
+        if (data?.elements && Array.isArray(data.elements)) {
+            board.current.loadElements(data.elements);
+        }
+        // TODO: get only specific keys from state
+        // TODO: set background image
+        setState(prevState => ({
+            ...prevState,
+            ...(data?.state || {}),
+            // backgroundColor: data.backgroundColor,
+            // backgroundImage: data.backgroundImage,
+            showWelcomeDialog: false,
+        }));
+        draw();
+    };
+
+    const handleSaveClick = () => {
+        if (typeof props.onSave === "function") {
+            return props.onSave(board.current.exportElements(), exportState(state));
+        }
+        // Prepare to save drawing
+        const opt = {
+            elements: board.current.exportElements(),
+            state: exportState(state),
+        };
+        serializeAsJson(opt)
+            .then(data => {
+                const blob = createBlob(data, MIME_TYPES.JSON);
+                return blobToFile(blob, "untitled.folio");
+            })
+            .then(file => downloadFile(file))
+            .catch(error => {
+                console.error(error);
+            });
+    };
+    
+    const handleExportClick = () => {
+        if (typeof props.onExport === "function") {
+            return props.onExport(board.current.exportElements(), exportState(state));
+        }
+        // Display the export dialog
+        return setState(prevState => ({
+            ...prevState,
+            showExportDialog: true,
+        }));
     };
 
     const handlePointerDown = ({nativeEvent}) => {
@@ -221,7 +293,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
         }
         else if (state.mode === MODES.MOVE) {
             pointerMoveActive = true;
-            if (options.current.gridEnabled) {
+            if (state.gridEnabled) {
                 clearCanvas(gridRef.current);
             }
         }
@@ -573,8 +645,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                             index = index + 1; // Increment paste index
                             const elements = JSON.parse(content.split("folio:::")[1].trim());
                             elements.forEach(el => {
-                                el.x = el.x + index * (options.current.gridEnabled ? options.current.gridSize : 10);
-                                el.y = el.y + index * (options.current.gridEnabled ? options.current.gridSize : 10);
+                                el.x = el.x + index * (state.gridEnabled ? state.gridSize : 10);
+                                el.y = el.y + index * (state.gridEnabled ? state.gridSize : 10);
                             });
                             board.current.pasteSelectedElements(elements);
                         }
@@ -689,15 +761,18 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 draw();
                 forceUpdate();
             }
-            // Check ESCAPE key --> reset selection
+            // Check ESCAPE key
             else if (event.key === KEYS.ESCAPE) {
                 event.preventDefault();
                 // Check if screenshot dialog is visible
                 if (state.showSreenshotDialog) {
-                    return setState(prevState => ({
-                        ...prevState,
-                        showSreenshotDialog: false,
-                    }));
+                    return setState(prevState => ({...prevState, showSreenshotDialog: false}));
+                }
+                else if (state.showWelcomeDialog) {
+                    return setState(prevState => ({...prevState, showWelcomeDialog: false}));
+                }
+                else if (state.showExportDialog) {
+                    return setState(prevState => ({...prevState, showExportDialog: false}));
                 }
                 // Check if we are in the screenshot mode
                 else if (state.mode === MODES.SCREENSHOT) {
@@ -714,7 +789,7 @@ export const Folio = React.forwardRef((props, apiRef) => {
             // Check for arrow keys --> move elements
             else if (isArrowKey(event.key)) {
                 event.preventDefault();
-                const step = options.current.gridEnabled ? options.current.gridSize : (event.shiftKey ? 5 : 1);
+                const step = state.gridEnabled ? state.gridSize : (event.shiftKey ? 5 : 1);
                 const direction = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
                 const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
                 const selectedElements = board.current.getSelectedElements();
@@ -742,8 +817,9 @@ export const Folio = React.forwardRef((props, apiRef) => {
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown, false);
         };
     }, [
-        state.mode, state.showSreenshotDialog,
-        options.current.gridEnabled, options.current.gridSize,
+        state.mode,
+        state.showSreenshotDialog, state.showWelcomeDialog, state.showExportDialog,
+        state.gridEnabled, state.gridSize,
     ]);
 
     // Listen to inputVisible changes
@@ -798,33 +874,35 @@ export const Folio = React.forwardRef((props, apiRef) => {
     // Drawing effects
     React.useEffect(() => draw(), [state.mode, state.width, state.height, state.zoom]);
     React.useEffect(() => {
-        options.current.gridEnabled && drawGrid(gridRef.current, {
+        state.gridEnabled && drawGrid(gridRef.current, {
             translateX: state.x,
             translateY: state.y,
             width: state.width,
             height: state.height,
-            size: options.current.gridSize,
-            color: options.current.gridColor,
-            opacity: options.current.gridOpacity,
+            size: state.gridSize,
+            color: state.gridColor,
+            opacity: state.gridOpacity,
             zoom: state.zoom,
         });
     }, [
-        options.current.gridEnabled,
-        options.current.gridColor, options.current.gridOpacity, options.current.gridSize,
+        state.gridEnabled,
+        state.gridColor, state.gridOpacity, state.gridSize,
         state.width, state.height,
         state.x, state.y,
         state.zoom,
     ]);
 
-    // Add API
-    React.useEffect(() => {
-        apiRef.current = {};
-    }, []);
+    // Initial data loader
+    // React.useEffect(() => {
+    //     if (props.initialData && typeof props.initialData === "object") {
+    //         handleLoad(props.initialData);
+    //     }
+    // }, []);
 
     return (
         <div className={rootClassName} ref={parentRef}>
             {/* Grid canvas */}
-            {options.current.gridEnabled && (
+            {state.gridEnabled && (
                 <Canvas
                     ref={gridRef}
                     width={state.width}
@@ -845,8 +923,8 @@ export const Folio = React.forwardRef((props, apiRef) => {
                 }}
             />
             <Menubar
-                options={options.current}
-                cameraEnabled={state.mode === MODES.SCREENSHOT}
+                mode={state.mode}
+                options={state}
                 onCameraClick={() => {
                     if (state.mode === MODES.SCREENSHOT) {
                         return setState(prevState => ({
@@ -859,9 +937,13 @@ export const Folio = React.forwardRef((props, apiRef) => {
                         showSreenshotDialog: true,
                     }));
                 }}
+                onExportClick={() => handleExportClick()}
+                onSaveClick={() => handleSaveClick()}
                 onOptionsChange={(name, value) => {
-                    options.current[name] = value;
-                    forceUpdate();
+                    setState(prevState => ({
+                        ...prevState,
+                        [name]: value,
+                    }));
                 }}
             />
             {state.mode !== MODES.SCREENSHOT && (
@@ -966,13 +1048,44 @@ export const Folio = React.forwardRef((props, apiRef) => {
                     }}
                 />
             )}
+            {state.showWelcomeDialog && (
+                <WelcomeDialog
+                    onDismissClick={() => {
+                        setState(prevState => ({...prevState, showWelcomeDialog: false}));
+                    }}
+                    onLoadClick={() => handleLoadClick()}
+                />
+            )}
+            {state.showExportDialog && (
+                <ExportDialog
+                    onExport={exportOptions => {
+                        setState(prevState => ({...prevState, showExportDialog: false}));
+                        const filename = exportOptions.filename || "untitled.png";
+                        const opt = {
+                            elements: exportOptions.onlySelection ? board.current.exportSelectedElements() : board.current.exportElements(),
+                            backgroundColor: exportOptions.includeBackground ? state.backgroundColor : null,
+                        };
+                        // TODO: check for empty elements to export
+                        exportToBlob(opt)
+                            .then(blob => blobToFile(blob, filename, MIME_TYPES.PNG))
+                            .then(file => downloadFile(file))
+                            .catch(error => {
+                                console.error(error);
+                            });
+
+                    }}
+                />
+            )}
         </div>
     );
-});
+};
 
 Folio.defaultProps = {
-    // initialContent: [],
-    initialOptions: {},
+    //initialData: null,
+    showWelcome: true,
     onChange: null,
     onScreenshot: null,
+    onExport: null,
+    onLoad: null,
+    onSave: null,
 };

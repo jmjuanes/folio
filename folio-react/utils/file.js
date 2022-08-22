@@ -4,7 +4,7 @@ export const readFile = type => {
         input.type = "file";
         input.accept = type || ".folio";
         input.addEventListener("change", event => {
-            if (event.target.files[0]) {
+            if (!event.target.files[0]) {
                 return reject(new Error("Invalid file"));
             }
             return resolve(event.target.files[0]);

@@ -10,12 +10,35 @@ export const createBoard = () => {
         activeElement: null,
         activeGroup: null,
         elements: [],
-        load: () => null,
-        export: () => null,
+        clear: () => {
+            ctx.elements = [];
+            ctx.activeElement = null;
+            ctx.activeGroup = null;
+            ctx.clearHistory();
+        },
+        loadElements: elements => {
+            ctx.clear();
+            ctx.elements = elements.map(element => ({
+                ...element,
+                selected: false,
+            }));
+        },
+        exportElements: () => {
+            return ctx.elements.map(el => ({
+                ...el,
+                selected: false,
+            }));
+        },
         addElement: el => ctx.elements.unshift(el),
         removeElement: el => ctx.elements = ctx.elements.filter(element => el.id !== element.id),
 
         getSelectedElements: () => ctx.elements.filter(el => el.selected),
+        exportSelectedElements: () => {
+            return ctx.getSelectedElements().map(el => ({
+                ...el,
+                selected: false,
+            }));
+        },
         setSelectedElements: region => {
             const [sxStart, sxEnd] = getAbsolutePositions(region.x, region.width);
             const [syStart, syEnd] = getAbsolutePositions(region.y, region.height);
@@ -112,6 +135,10 @@ export const createBoard = () => {
         // Board history API
         history: [],
         historyIndex: 0,
+        clearHistory: () => {
+            ctx.history = [];
+            ctx.historyIndex = 0;
+        },
         addHistoryEntry: entry => {
             if (ctx.historyIndex > 0) {
                 ctx.history = ctx.history.slice(ctx.historyIndex);

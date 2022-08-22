@@ -1,7 +1,16 @@
 {
+    "exportDialog": {
+        "title": "Export drawing",
+        "filenameTitle": "Export file name:",
+        "includeBackgroundTitle": "Include background?",
+        "onlySelectionTitle": "Only selected elements?",
+        "onlySelectionHelper": "Include only selected elements in the exported image.",
+        "exportButton": "Export"
+    },
     "welcomeDialog": {
         "description": "Folio is a digital whiteboard that you can use for sketching, annotating and prototyping.",
+        "version": "Version",
         "createButton": "Start drawing",
-        "uploadButton": "Load from local"
+        "uploadButton": "Load drawing"
     }
 }

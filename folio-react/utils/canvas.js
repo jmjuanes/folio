@@ -16,7 +16,7 @@ export const clearCanvas = canvas => {
 // https://stackoverflow.com/a/13074780
 export const screenshotCanvas = (originalCanvas, options) => {
     return new Promise(resolve => {
-        if (!options.region) {
+        if (!options?.region) {
             return originalCanvas.toBlob(blob => resolve(blob));
         }
         // Get screenshot

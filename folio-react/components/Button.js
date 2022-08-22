@@ -6,7 +6,8 @@ const buttonClass = css({
     borderRadius: "0.5rem",
     color: "primary",
     fontSize: "1.25rem",
-    lineHeight: "1",
+    height: "2.25rem",
+    // lineHeight: "1",
     padding: "0.5rem",
     "&.is-hoverable:hover, &.is-active": {
         backgroundColor: "primary",

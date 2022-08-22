@@ -6,7 +6,14 @@ import {
     css,
     sliderClass,
     switchClass,
+    inputClass,
 } from "../styles.js";
+
+const helperClass = css({
+    color: "muted",
+    fontSize: "0.75rem",
+    marginTop: "0rem",
+});
 
 const colorsListClass = css({
     display: "grid",
@@ -224,16 +231,24 @@ const optionTypes = {
             defaultChecked={!!props.value}
         />
     ),
+    input: props => (
+        <div style={{display:"flex", alignItems:"center", gap:"0.25rem"}}>
+            {props.prefix && (
+                <div>{props.prefix}</div>
+            )}
+            <input 
+                type="text"
+                className={inputClass}
+                placeholder={props.placeholder}
+                onChange={e => props.onChange(e.target.value || "")}
+                defaultValue={props.value}
+            />
+            {props.suffix && (
+                <div>{props.suffix}</div>
+            )}
+        </div>
+    ),
 };
-
-const optionTitleClass = css({
-    fontSize: "0.875rem",
-    fontWeight: "bold",
-    // marginBottom: "0.5rem",
-});
-// const optionContentClass = css({
-//     // marginBottom: "0.5rem",
-// });
 
 // Option wrapper
 export const Option = props => {
@@ -241,21 +256,26 @@ export const Option = props => {
     const wrapperStyle = {
         alignItems: "center",
         display: isInline ? "flex" : "block",
-        marginBottom: "0.5rem",
     };
     const titleStyle = {
+        fontSize: "0.875rem",
+        fontWeight: "bold",
         marginBottom: isInline ? "0px" : "0.5rem",
     };
     const contentStyle = {
         marginLeft: isInline ? "auto" : "0px",
-        // marginBottom: isInline ? "0px" : "0.5rem",
     };
     return (
-        <div style={wrapperStyle}>
-            <div className={optionTitleClass} style={titleStyle}>{props.title}</div>
-            <div style={contentStyle}>
-                {optionTypes[props.type](props)}
+        <div style={{marginBottom: "0.5rem"}}>
+            <div style={wrapperStyle}>
+                <div style={titleStyle}>{props.title}</div>
+                <div style={contentStyle}>
+                    {optionTypes[props.type](props)}
+                </div>
             </div>
+            {!!props.helper && (
+                <div className={helperClass}>{props.helper}</div>
+            )}
         </div>
     );
 };
