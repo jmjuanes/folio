@@ -50,12 +50,11 @@ module.exports = {
         // }),
         new HtmlWebpackPlugin({
             inject: true,
-            chunks: ["app"],
-            // title: "Folio App",
+            chunks: [
+                "app",
+            ],
             template: path.join(__dirname, "app/index.html"),
-            meta: {
-                "viewport": "width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no",
-            },
+            minify: true,
         }),
     ],
 };

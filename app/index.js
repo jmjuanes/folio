@@ -1,13 +1,11 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {Folio} from "folio-react";
-import {blobToClipboard} from "folio-react/utils/blob.js";
 import {css} from "folio-react/styles.js";
 
-// import {useNotifications} from "./hooks/useNotifications.js";
-// import {HomePage} from "./pages/Home.js";
-
 const rootClass = css({
+    apply: "mixins.root",
+    fontFamily: "body",
     height: "100%",
     left: "0px",
     position: "fixed",
@@ -16,16 +14,12 @@ const rootClass = css({
 });
 
 const App = props => {
-    // const ref = React.useRef(null);
-    // const notifications = useNotifications();
     return (
         <div className={rootClass}>
             <Folio
-                ref={ref}
-                onScreenshot={blob => {
-                    blobToClipboard(blob);
-                    // notifications.success("Screenshot copied to clipboard");
-                }}
+                showWelcome={true}
+                onScreenshot={null}
+                onLoad={null}
             />
         </div>
     );
