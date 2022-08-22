@@ -1,23 +1,41 @@
-name: Deploy Folio App
+# Deploy Folio to GitHub pages
+name: Deploy Folio
 
 on:
+  # Runs when a new tag is created (release)
   push:
-    tags:
-      - "*"
+    tags: ["*"]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "deploy"
+  cancel-in-progress: true
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2
         with:
           node-version: 16
+      - uses: actions/configure-pages@v1
       - run: yarn install
       - run: yarn run build
-      - run: yarn run pack
-      - uses: "google-github-actions/auth@v0"
+      # Folio app is available in ./public folder
+      - uses: actions/upload-pages-artifact@v1
         with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
-      - uses: "google-github-actions/setup-gcloud@v0"
-      - run: "gsutil cp folio.tar.gz gs://${{ secrets.GOOGLE_BUCKET }}/"
+          path: "public"
+      - uses: actions/deploy-pages@v1
+        id: deployment
