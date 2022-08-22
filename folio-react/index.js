@@ -939,6 +939,7 @@ export const Folio = props => {
                 }}
                 onExportClick={() => handleExportClick()}
                 onSaveClick={() => handleSaveClick()}
+                onLoadClick={() => handleLoadClick()}
                 onOptionsChange={(name, value) => {
                     setState(prevState => ({
                         ...prevState,

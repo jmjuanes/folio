@@ -88,6 +88,15 @@ export const Menubar = props => {
                         setSettingsVisible(!settingsVisible);
                     }}
                 />
+                {typeof props.onLoadClick === "function" && (
+                    <Button
+                        icon={ICONS.FOLDER}
+                        onClick={() => {
+                            setSettingsVisible(false);
+                            props.onLoadClick();
+                        }}
+                    />
+                )}
                 <Button
                     icon={ICONS.SAVE}
                     onClick={() => {
@@ -137,4 +146,5 @@ Menubar.defaultProps = {
     onCameraClick: null,
     onExportClick: null,
     onSaveClick: null,
+    onLoadClick: null,
 };
