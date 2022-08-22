@@ -1,18 +1,11 @@
 import React from "react";
 
-import {css, scrimClass, titleClass} from "../styles.js";
+import {css, titleClass} from "../styles.js";
 import ICONS from "../icons.js";
 import {DEFAULT_APP_TITLE} from "../constants.js";
 import {useTranslation} from "../hooks/useTranslation.js";
+import {Modal} from "./Modal.js";
 
-const welcomeClass = css({
-    apply: "mixins.bordered",
-    backgroundColor: "#fff",
-    display: "block",
-    maxWidth: "500px",
-    padding: "2.5rem",
-    width: "100%",
-});
 const welcomeTitleClass = css({
     fontSize: "5.5rem",
     marginBottom: "0.125rem",
@@ -55,28 +48,26 @@ const versionClass = css({
 export const WelcomeDialog = props => {
     const {t} = useTranslation();
     return (
-        <div className={scrimClass}>
-            <div className={welcomeClass}>
-                <div className={[titleClass, welcomeTitleClass].join(" ")}>
-                    {DEFAULT_APP_TITLE}
+        <Modal width="500px">
+            <div className={[titleClass, welcomeTitleClass].join(" ")}>
+                {DEFAULT_APP_TITLE}
+            </div>
+            <div style={{marginBottom:"1.5rem"}} align="center">
+                {t("welcomeDialog.description")}
+            </div>
+            <div className={buttonContainerClass}>
+                <div className={buttonClass} onClick={props.onDismissClick}>
+                    <div style={{fontSize: "3rem"}}>{ICONS.EDIT}</div>
+                    <div className={buttonTextClass}>{t("welcomeDialog.createButton")}</div>
                 </div>
-                <div style={{marginBottom:"1.5rem"}} align="center">
-                    {t("welcomeDialog.description")}
-                </div>
-                <div className={buttonContainerClass}>
-                    <div className={buttonClass} onClick={props.onDismissClick}>
-                        <div style={{fontSize: "3rem"}}>{ICONS.EDIT}</div>
-                        <div className={buttonTextClass}>{t("welcomeDialog.createButton")}</div>
-                    </div>
-                    <div className={buttonClass} onClick={props.onLoadClick}>
-                        <div style={{fontSize: "3rem"}}>{ICONS.UPLOAD}</div>
-                        <div className={buttonTextClass}>{t("welcomeDialog.uploadButton")}</div>
-                    </div>
-                </div>
-                <div className={versionClass}>
-                    {t("welcomeDialog.version")} <b>v{process.env.VERSION}</b>
+                <div className={buttonClass} onClick={props.onLoadClick}>
+                    <div style={{fontSize: "3rem"}}>{ICONS.FOLDER}</div>
+                    <div className={buttonTextClass}>{t("welcomeDialog.uploadButton")}</div>
                 </div>
             </div>
-        </div>
+            <div className={versionClass}>
+                {t("welcomeDialog.version")} <b>v{process.env.VERSION}</b>
+            </div>
+        </Modal>
     );
 };

@@ -1074,6 +1074,9 @@ export const Folio = props => {
                             });
 
                     }}
+                    onCancel={() => {
+                        setState(prevState => ({...prevState, showExportDialog: false}));
+                    }}
                 />
             )}
         </div>

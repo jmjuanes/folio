@@ -100,6 +100,10 @@ export const modalClass = css({
     padding: "2.5rem",
     width: "100%",
 });
+export const closeClass = css({
+    ...elementsBase.close,
+    color: "primary",
+});
 
 export const inputClass = css({
     ...elementsBase.input,
