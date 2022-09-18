@@ -10,10 +10,10 @@
     "main": "index.js",
     "license": "MIT",
     "dependencies": {
-        "@siimple/modules": "^0.2.3",
-        "@siimple/preset-base": "^0.2.3",
-        "@siimple/styled": "^0.2.3",
-        "react": "^18.1.0",
-        "react-dom": "^18.1.0"
+        "@siimple/components": "^0.3.0",
+        "@siimple/css": "^0.3.0",
+        "@siimple/preset-noir": "^0.3.0",
+        "@siimple/react": "^0.3.0",
+        "react": "^18.1.0"
     }
 }
