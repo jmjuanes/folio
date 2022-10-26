@@ -20,57 +20,55 @@ import {
     ZOOM_MIN,
     ZOOM_STEP,
     MIME_TYPES,
-} from "./constants.js";
+} from "../constants.js";
 
 import {
     createElement,
     updateElement,
-} from "./elements.js";
+} from "../elements.js";
 import {
     fixResizeOrientation,
     inResizePoint,
-} from "./resize.js";
-import {createImage} from "./utils/image.js";
-import {generateID} from "./utils/generateId.js";
-import {measureText} from "./utils/measureText.js";
+} from "../resize.js";
+import {createImage} from "../utils/image.js";
+import {generateID} from "../utils/generateId.js";
+import {measureText} from "../utils/measureText.js";
 import {
     sign,
     getAbsolutePositions,
     getOuterRectangle,
     normalizeRegion,
-} from "./utils/math.js";
+} from "../utils/math.js";
 import {
     parseClipboardBlob,
     getDataFromClipboard,
     copyTextToClipboard,
-} from "./utils/clipboard.js";
-import {screenshotCanvas, clearCanvas} from "./utils/canvas.js";
-import {downloadFile, readFile} from "./utils/file.js";
+} from "../utils/clipboard.js";
+import {screenshotCanvas, clearCanvas} from "../utils/canvas.js";
+import {downloadFile, readFile} from "../utils/file.js";
 import {
     blobFromFile,
     blobToClipboard,
     blobToFile,
     createBlob,
-} from "./utils/blob.js";
-import {createBoard} from "./board.js";
-import {drawBoard, drawGrid} from "./draw.js";
-import {serializeAsJson, parseFromJson, exportState} from "./data.js";
-import {exportToBlob} from "./export.js";
-import {css} from "./styles.js";
+} from "../utils/blob.js";
+import {createBoard} from "../board.js";
+import {drawBoard, drawGrid} from "../draw.js";
+import {serializeAsJson, parseFromJson, exportState} from "../data.js";
+import {exportToBlob} from "../export.js";
 
-import {useNotification} from "./hooks/useNotification.js";
-import {useTranslation} from "./hooks/useTranslation.js";
+// import {useNotification} from "../hooks/useNotification.js";
+import {useTranslation} from "../hooks/useTranslation.js";
 
-import {Menubar} from "./components/Menubar.js";
-import {Stylebar} from "./components/Stylebar.js";
-import {Toolbar} from "./components/Toolbar.js";
-import {Historybar} from "./components/Historybar.js";
-import {TextInput} from "./components/TextInput.js";
-import {Canvas} from "./components/Canvas.js";
-import {Zoom} from "./components/Zoom.js";
-import {Screenshot} from "./components/Screenshot.js";
-import {WelcomeDialog} from "./components/Welcome.js";
-import {ExportDialog} from "./components/Export.js";
+import {Menubar} from "./Menubar.js";
+import {Stylebar} from "./Stylebar.js";
+import {Toolbar} from "./Toolbar.js";
+import {Historybar} from "./Historybar.js";
+import {TextInput} from "./TextInput.js";
+import {Canvas} from "./Canvas.js";
+import {Zoom} from "./Zoom.js";
+import {Screenshot} from "./Screenshot.js";
+import {ExportDialog} from "./Export.js";
 
 // Check for arrow keys
 const isArrowKey = key => {
@@ -82,16 +80,7 @@ const isInputTarget = e => {
     return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 };
 
-// Main container styles
-const rootClassName = css({
-    height: "100%",
-    overflow: "hidden",
-    position: "relative",
-    width: "100%",
-    apply: "mixins.root",
-});
-
-export const Folio = props => {
+export const Board = props => {
     const parentRef = React.useRef(null);
     const inputRef = React.useRef(null);
     const boardRef = React.useRef(null);
@@ -109,14 +98,13 @@ export const Folio = props => {
         zoom: ZOOM_INITIAL,
         showSreenshotDialog: false,
         showExportDialog: false,
-        showWelcomeDialog: props.showWelcome,
         gridEnabled: false,
         gridColor: DEFAULT_GRID_COLOR,
         gridOpacity: DEFAULT_GRID_OPACITY,
         gridSize: DEFAULT_GRID_SIZE,
         backgroundColor: "#fff",
     });
-    const [notify, NotificationsWrapper] = useNotification();
+    // const [notify, NotificationsWrapper] = useNotification();
     const {t} = useTranslation();
 
     // Internal variables
@@ -216,7 +204,7 @@ export const Folio = props => {
             }
             // Copy screenshot to clipboard
             blobToClipboard(blob);
-            notify(t("alerts.screenshotCopied"));
+            // notify(t("alerts.screenshotCopied"));
         });
     };
 
@@ -234,7 +222,7 @@ export const Folio = props => {
             .then(data => handleLoad(data))
             .catch(error => {
                 console.error(error);
-                notify(t("errors.loadError"));
+                // notify(t("errors.loadError"));
             });
     };
 
@@ -249,7 +237,6 @@ export const Folio = props => {
             ...(data?.state || {}),
             // backgroundColor: data.backgroundColor,
             // backgroundImage: data.backgroundImage,
-            showWelcomeDialog: false,
         }));
         draw();
     };
@@ -773,9 +760,6 @@ export const Folio = props => {
                 if (state.showSreenshotDialog) {
                     return setState(prevState => ({...prevState, showSreenshotDialog: false}));
                 }
-                else if (state.showWelcomeDialog) {
-                    return setState(prevState => ({...prevState, showWelcomeDialog: false}));
-                }
                 else if (state.showExportDialog) {
                     return setState(prevState => ({...prevState, showExportDialog: false}));
                 }
@@ -823,7 +807,7 @@ export const Folio = props => {
         };
     }, [
         state.mode,
-        state.showSreenshotDialog, state.showWelcomeDialog, state.showExportDialog,
+        state.showSreenshotDialog, state.showExportDialog,
         state.gridEnabled, state.gridSize,
     ]);
 
@@ -905,7 +889,7 @@ export const Folio = props => {
     // }, []);
 
     return (
-        <div className={rootClassName} ref={parentRef}>
+        <div className="w-full h-full position-relative overflow-hidden" ref={parentRef}>
             {/* Grid canvas */}
             {state.gridEnabled && (
                 <Canvas
@@ -1054,14 +1038,6 @@ export const Folio = props => {
                     }}
                 />
             )}
-            {state.showWelcomeDialog && (
-                <WelcomeDialog
-                    onDismissClick={() => {
-                        setState(prevState => ({...prevState, showWelcomeDialog: false}));
-                    }}
-                    onLoadClick={() => handleLoadClick()}
-                />
-            )}
             {state.showExportDialog && (
                 <ExportDialog
                     onExport={exportOptions => {
@@ -1072,7 +1048,7 @@ export const Folio = props => {
                             backgroundColor: exportOptions.includeBackground ? state.backgroundColor : null,
                         };
                         if (opt.elements.length < 1) {
-                            return notify(t("errors.emptyExport"));
+                            return; // notify(t("errors.emptyExport"));
                         }
                         // Generate export
                         exportToBlob(opt)
@@ -1080,7 +1056,7 @@ export const Folio = props => {
                             .then(file => downloadFile(file))
                             .catch(error => {
                                 console.error(error);
-                                notify(t("errors.exportImageError"));
+                                // notify(t("errors.exportImageError"));
                             });
 
                     }}
@@ -1089,14 +1065,12 @@ export const Folio = props => {
                     }}
                 />
             )}
-            <NotificationsWrapper />
         </div>
     );
 };
 
-Folio.defaultProps = {
+Board.defaultProps = {
     //initialData: null,
-    showWelcome: true,
     onChange: null,
     onScreenshot: null,
     onExport: null,

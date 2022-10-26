@@ -3,35 +3,6 @@ import React from "react";
 import {Button} from "./Button.js";
 import ICONS from "../icons.js";
 import {MODES, ELEMENT_TYPES} from "../constants.js";
-import {css, fadeIn} from "../styles.js";
-
-const toolbarWrapperClass = css({
-    left: "50%",
-    paddingBottom: "1rem",
-    transform: "translateX(-50%)",
-    zIndex: 100,
-});
-
-const toolbarClass = css({
-    apply: [
-        "mixins.shadowed",
-        "mixins.bordered",
-    ],
-    backgroundColor: "#fff",
-    borderRadius: "0.5rem",
-    display: "flex",
-    gap: "0.25rem",
-    opacity: "1",
-    padding: "0.5rem",
-});
-
-const separatorClass = css({
-    backgroundColor: "primary",
-    height: "2rem",
-    marginLeft: "0.5rem",
-    marginRight: "0.5rem",
-    width: "0.125rem",
-});
 
 // Available types
 const availableTypes = [
@@ -43,8 +14,8 @@ const availableTypes = [
 ];
 
 export const Toolbar = props => (
-    <div className={[toolbarWrapperClass, fadeIn].join(" ")}>
-        <div className={toolbarClass}>
+    <div className="bottom-0 left-half pb-8 position-absolute z-10" style={{transform:"translateX(-50%)"}}>
+        <div className="shadow-md b-solid b-1 b-gray-900 bg-white d-flex gap-1 p-4">
             <Button
                 active={props.mode === MODES.MOVE}
                 icon={ICONS.ARROWS}
@@ -55,7 +26,7 @@ export const Toolbar = props => (
                 icon={ICONS.POINTER}
                 onClick={() => props.onModeChange(MODES.SELECTION)}
             />
-            <div className={separatorClass} />
+            <div className="bg-gray-500 h-16 ml-4 mr-4 w-1" />
             {availableTypes.map(item => (
                 <Button
                     key={item.name}

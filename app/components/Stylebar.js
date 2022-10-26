@@ -1,5 +1,5 @@
 import React from "react";
-import {classNames} from "@siimple/styled";
+import classNames from "classnames";
 
 import {
     LINE_CAPS,
@@ -12,40 +12,6 @@ import {Dialog} from "./Dialog.js";
 import {Button} from "./Button.js";
 import {Option} from "./Option.js";
 import ICONS from "../icons.js";
-import {css} from "../styles.js";
-
-const stylebarWrapperClass = css({
-    display: "none",
-    marginRight: "1rem",
-    marginTop: "1rem",
-    position: "absolute",
-    right: "0px",
-    top: "0px",
-    "&.is-visible": {
-        display: "block",
-    },
-});
-
-const stylebarClass = css({
-    apply: [
-        "mixins.shadowed",
-        "mixins.bordered",
-    ],
-    backgroundColor: "#fff",
-    borderRadius: "0.5rem",
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.25rem",
-    padding: "0.5rem",
-});
-
-const separatorClass = css({
-    backgroundColor: "primary",
-    height: "0.125rem",
-    marginTop: "0.125rem",
-    marginBottom: "0.125rem",
-    // width: "0.125rem",
-});
 
 const groups = {
     text: {
@@ -217,13 +183,14 @@ export const Stylebar = props => {
         props.onChange(name, value);
         forceUpdate();
     };
-    const classList = classNames({
-        [stylebarWrapperClass]: true,
-        "is-visible": props.selection.length > 0,
+    const wrapperClass = classNames({
+        "mr-8 mt-8 position-absolute right-0 top-0": true,
+        "z-10": true,
+        "d-none": !props.selection || props.selection?.length === 0,
     });
     return (
-        <div className={classList} style={{zIndex:100}}>
-            <div className={stylebarClass}>
+        <div className={wrapperClass}>
+            <div className="shadow-md b-solid b-1 b-gray-900 bg-white d-flex gap-1 p-4 flex-direction-col">
                 {Object.keys(groups).map(key => {
                     if (!visibleGroups[key]) {
                         return null; // This group is not available
@@ -261,7 +228,7 @@ export const Stylebar = props => {
                     );
                 })}
                 {hasGroupVisible && (
-                    <div className={separatorClass} />
+                    <div className="bg-gray-500 h-1 ml-4 mr-4 w-16" />
                 )}
                 {/* Order buttons
                 <{false && (

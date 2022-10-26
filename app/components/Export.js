@@ -1,9 +1,5 @@
 import React from "react";
 
-import {
-    buttonClass,
-    buttonIconClass,
-} from "../styles.js";
 import ICONS from "../icons.js";
 import {useTranslation} from "../hooks/useTranslation.js";
 import {Modal} from "./Modal.js";
@@ -16,9 +12,6 @@ export const ExportDialog = props => {
         filename: "untitled.png",
     });
     const {t} = useTranslation();
-    const handleExportClick = () => {
-        return props.onExport(state);
-    };
     return (
         <Modal title={t("exportDialog.title")} width="400px" onClose={props.onCancel}>
             <Form
@@ -49,10 +42,12 @@ export const ExportDialog = props => {
                     }));
                 }}
             />
-            <div className={buttonClass} onClick={handleExportClick}>
-                <div className={buttonIconClass}>{ICONS.DOWNLOAD}</div>
+            <button className="items-center d-flex justify-center w-full" onClick={() => props.onExport(state)}>
+                <div className="d-flex text-xl height-12 pr-4">
+                    {ICONS.DOWNLOAD}
+                </div>
                 <div>{t("exportDialog.exportButton")}</div>
-            </div>
+            </button>
         </Modal>
     );
 };

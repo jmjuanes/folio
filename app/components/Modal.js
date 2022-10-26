@@ -1,24 +1,16 @@
 import React from "react";
-import {
-    modalClass,
-    scrimClass,
-    closeClass,
-    titleClass,
-} from "../styles.js";
 
 export const Modal = props => (
-    <div className={scrimClass}>
-        <div className={modalClass} style={{maxWidth:props.width}}>
+    <div className="d-flex items-center justify-center">
+        <div className="radous-md p-2 bg-white" style={{maxWidth:props.width}}>
             {props.onClose && (
                 <div align="center" style={{marginBottom:"1rem"}}>
-                    <div className={closeClass} onClick={props.onClose} />
+                    <span onClick={props.onClose}>x</span>
                 </div>
             )}
             {props.title && (
                 <div align="center" style={{marginBottom:"2rem"}}>
-                    <div className={titleClass} style={{fontSize:"2.5rem"}}>
-                        <b>{props.title}</b>
-                    </div>
+                    <h1>{props.title}</h1>
                 </div>
             )}
             {props.children}

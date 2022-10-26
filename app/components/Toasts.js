@@ -1,7 +1,8 @@
 import React from "react";
-import {css, alertClass, closeClass} from "../styles.js";
+import {styled} from "@siimple/react";
+import {Elements} from "@siimple/components";
 
-const toastsClass = css({
+const ToastsWrapper = styled("div", {
     left: "50%",
     maxWidth: "500px",
     position: "absolute",
@@ -20,10 +21,9 @@ const Toast = props => {
         }
     }, []);
     return (
-        <div className={alertClass}>
+        <Elements.alert>
             <div style={{marginRight:"1rem"}}>{props.message}</div>
-            <div
-                className={closeClass}
+            <Elements.close
                 style={{
                     marginLeft: "auto",
                 }}
@@ -32,12 +32,12 @@ const Toast = props => {
                     props.onDelete();
                 }}
             />
-        </div>
+        </Elements.alert>
     );
 };
 
 export const Toasts = props => (
-    <div className={toastsClass}>
+    <ToastsWrapper>
         {props.items.map(item => (
             <Toast
                 key={item.id}
@@ -48,7 +48,7 @@ export const Toasts = props => (
                 onDelete={() => props.onDelete(item.id)}
             />
         ))}
-    </div>
+    </ToastsWrapper>
 );
 
 Toasts.defaultProps = {

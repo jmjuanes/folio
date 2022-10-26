@@ -2,41 +2,10 @@ import React from "react";
 
 import {DEFAULT_APP_TITLE, MODES} from "../constants.js";
 import ICONS from "../icons.js";
-import {css} from "../styles.js";
 
 import {Button} from "./Button.js";
 import {Dialog} from "./Dialog.js";
 import {Option} from "./Option.js";
-
-const titleClass = css({
-    fontFamily: "heading",
-    fontSize: "2rem",
-    fontWeight: "800",
-    marginLeft: "0.5rem",
-    marginRight: "1rem",
-});
-
-const menubarWrapperClass = css({
-    left: "0px",
-    paddingLeft: "1rem",
-    paddingTop: "1rem",
-    position: "absolute",
-    top: "0px",
-    zIndex: "100",
-});
-
-const menubarClass = css({
-    apply: [
-        "mixins.shadowed",
-        "mixins.bordered",
-    ],
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: "0.5rem",
-    display:  "flex",
-    gap: "0.125rem",
-    padding: "0.5rem",
-});
 
 const settingsOptions = {
     gridEnabled: {
@@ -75,12 +44,11 @@ export const Menubar = props => {
     const [settingsVisible, setSettingsVisible] = React.useState(false);
 
     return (
-        <div className={menubarWrapperClass}>
-            <div className={menubarClass}>
-                <div className={titleClass}>
-                    <strong>{props.title}</strong>
+        <div className="position-absolute left-0 top-0 pl-4 pt-4 z-10">
+            <div className="b-1 b-solid b-gray-900 r-md shadow-md items-center bg-white d-flex gap-1 p-2">
+                <div className="font-garamond text-2xl weight-extrabold ml-2 mr-4">
+                    {props.title}
                 </div>
-                {/* <div className={separatorClass} /> */}
                 <Button
                     icon={ICONS.SLIDERS}
                     active={settingsVisible}
