@@ -1,0 +1,22 @@
+import React from "react";
+
+import {Panel, PanelButton} from "./index.jsx";
+import {UndoIcon, RedoIcon} from "../Icons.jsx";
+
+export const HistoryPanel = props => (
+    <Panel position="bottom-left">
+        <PanelButton disabled={!!props.undoDisabled} onClick={props.onUndoClick}>
+            <UndoIcon />
+        </PanelButton>
+        <PanelButton disabled={!!props.redoDisabled} onClick={props.onRedoClick}>
+            <RedoIcon />
+        </PanelButton>
+    </Panel>
+);
+
+HistoryPanel.defaultProps = {
+    undoDisabled: true,
+    redoDisabled: true,
+    onUndoClick: null,
+    onRedoClick: null,
+};

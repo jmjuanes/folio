@@ -17,7 +17,7 @@ export const Panel = props => {
     };
     const panelContentClass = classNames({
         "b-1 b-solid b-gray-900 r-md": true,
-        "shadow-md items-center bg-white d-flex gap-1 p-2": true,
+        "shadow-md items-center bg-white d-flex gap-2 p-2": true,
         "flex-col": props.position === "top-left" || props.position === "top-right",
     });
     return (
@@ -32,14 +32,14 @@ export const Panel = props => {
 export const PanelButton = props => {
     // TODO: missing height: 2.25rem height!!
     const classList = classNames({
-        "items-center r-md text-gray-900 d-flex text-lg p-2": true,
+        "items-center r-md d-flex text-lg p-2": true,
+        "text-gray-900 hover:bg-gray-900 hover:text-white cursor-pointer": !props.active && !props.disabled,
         "is-active bg-gray-900 text-white cursor-pointer": props.active && !props.disabled,
-        "is-hoverable hover:bg-gray-900 hover:text-white cursor-pointer": !props.active && !props.disabled,
-        "is-disabled cursor-not-allowed o-60": props.disabled,
+        "is-disabled text-gray-900 cursor-not-allowed o-60": !props.active && props.disabled,
     });
     return (
         <div className={classList} onClick={props.onClick}>
-            {props.icon}
+            {props.children}
         </div>
     );
 };
@@ -47,6 +47,5 @@ export const PanelButton = props => {
 PanelButton.defaultProps = {
     active: false,
     disabled: false,
-    icon: null,
 };
 
