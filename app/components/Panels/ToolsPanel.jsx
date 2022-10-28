@@ -1,7 +1,7 @@
 import React from "react";
 
 import {MODES, ELEMENT_TYPES} from "../../constants.js";
-import {Panel, PanelButton} from "./index.jsx";
+import {Panel, PanelButton} from "./Panel.jsx";
 import {
     ArrowsIcon,
     PointerIcon,

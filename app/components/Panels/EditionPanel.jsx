@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Panel, PanelButton} from "./index.jsx";
+import {Panel, PanelButton} from "./Panel.jsx";
 import {
     EditIcon,
     ObjectGroupIcon,

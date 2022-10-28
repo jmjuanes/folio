@@ -1,7 +1,7 @@
 import React from "react";
 
 import {ZOOM_MIN, ZOOM_MAX} from "../../constants.js";
-import {Panel, PanelButton} from "./index.jsx";
+import {Panel, PanelButton} from "./Panel.jsx";
 import {ZoomInIcon, ZoomOutIcon} from "../Icons.jsx";
 
 export const ZoomPanel = props => (

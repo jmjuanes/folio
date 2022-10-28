@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Panel, PanelButton} from "./index.jsx";
+import {Panel, PanelButton} from "./Panel.jsx";
 import {UndoIcon, RedoIcon} from "../Icons.jsx";
 
 export const HistoryPanel = props => (

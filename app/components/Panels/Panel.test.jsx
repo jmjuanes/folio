@@ -1,6 +1,6 @@
 import {create} from "react-test-renderer";
 
-import {Panel, PanelButton} from "./index.jsx";
+import {Panel, PanelButton} from "./Panel.jsx";
 
 describe("Panel", () => {
     it("should render", () => {

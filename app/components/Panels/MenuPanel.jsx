@@ -1,7 +1,7 @@
 import React from "react";
 
 import {MODES} from "../../constants.js";
-import {Panel, PanelButton} from "./index.jsx";
+import {Panel, PanelButton} from "./Panel.jsx";
 import {
     SaveIcon,
     CameraIcon,
