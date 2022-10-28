@@ -1,48 +1,39 @@
 import React from "react";
 import classNames from "classnames";
 
-import {hexToRgb, rgbToHex, isValidHexColor} from "../utils/colors.js";
-
 const optionTypes = {
-    color: props => {
-        const colorRef = React.useRef(null);
-        return (
-            <div className="d-grid gap-1 grid-cols-5 w-full mb-8">
-                {(props.colors || []).map(value => (
-                    <div
-                        key={value}
-                        className="r-md h-16 py-8"
-                        style={{
-                            backgroundColor: rgbToHex(value),
-                            cursor: "pointer",
-                        }}
-                        onClick={() => {
-                            props.onChange(value);
-                            colorRef.current.value = rgbToHex(value).replace("#", "");
-                        }}
-                    />
-                ))}
-            </div>
-        );
-    },
+    color: props => (
+        <div className="d-grid gap-1 grid-cols-5 w-full mb-8">
+            {Object.keys(props.values || {}).map(key => (
+                <div
+                    key={value}
+                    className={classNames({
+                        "b-1 b-solid r-md h-16 py-8": true,
+                        "b-gray-900": key === props.value,
+                    })}
+                    style={{
+                        backgroundColor: props.values[key][0],
+                        cursor: "pointer",
+                    }}
+                    onClick={() => props.onChange(key)}
+                />
+            ))}
+        </div>
+    ),
     font: props => (
         <div className="">
-            {(props.theme.fonts || []).map(mame => {
-                const classList = classNames([]);
-                const style = {
-                    fontFamily: name,
-                };
-                return (
-                    <div
-                        key={name}
-                        className={classList}
-                        onClick={() => props.onChange(name)}
-                        style={style}
-                    >
-                        <strong>ab</strong>
-                    </div>
-                );
-            })}
+            {Object.keys(props.values || {}).map(key => (
+                <div
+                    key={key}
+                    className=""
+                    style={{
+                        fontFamily: props.values[key],
+                    }}
+                    onClick={() => props.onChange(key)}
+                >
+                    <strong>Aa</strong>
+                </div>
+            ))}
         </div>
     ),
     range: props => (
@@ -63,17 +54,19 @@ const optionTypes = {
     ),
     select: props => (
         <div className="d-flex gap-1">
-            {Object.keys(props.values).map(key => {
-                const itemClass = classNames({
-                    "items-center r-md cursor-pointer d-flex text-lg justify-center h-20 p-4 w-full": true,
-                    "bg-gray-900 text-white": key === props.value,
-                });
-                return (
-                    <div key={key} className={itemClass} onClick={() => props.onChange(key)}>
-                        {props.values[key]}
-                    </div>
-                );
-            })}
+            {Object.keys(props.values).map(key => (
+                <div
+                    key={key}
+                    className={classNames({
+                        "d-flex justify-center items-center": true,
+                        "r-md cursor-pointer text-lg h-20 p-4 w-full": true,
+                        "bg-gray-900 text-white": key === props.value,
+                    })}
+                    onClick={() => props.onChange(key)}
+                >
+                    {props.values[key]}
+                </div>
+            ))}
         </div>
     ),
     switch: props => (
@@ -102,7 +95,6 @@ const optionTypes = {
     ),
 };
 
-// Option wrapper
 export const Option = props => {
     const isInline = props.type === "switch";
     const wrapperStyle = {
