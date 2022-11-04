@@ -1,30 +1,30 @@
 import React from "react";
 
-const topHandler = (el, dx, dy, hasShiftKey) => {
-    const newValues = {};
-    newValues.y = Math.min(el.y + dy, el.y + el.height - 1);
-    newValues.height = el.height + (el.y - newValues.y);
-    // if (hasShiftKey) {
-    //     const delta = el.width / Math.max(el.height, 1);
-    //     newValues.width = newValues.height * delta;
-    //     newValues.x = el.x - (newValues.width - el.width) / 2;
-    // }
-    return newValues; 
-};
-
-const bottomHandler = (el, dx, dy) => ({
-    height: Math.max(el.height + dy, 1),
-});
-
-const leftHandler = (el, dx, dy) => {
-    const x = Math.min(el.x + dx, el.x + el.width - 1);
-    const width = el.width + (el.x - x);
-    return {x, width};
-};
-
-const rightHandler = (el, dx, dy) => ({
-    width: Math.max(el.width + dx, 1),
-});
+// const topHandler = (el, dx, dy, hasShiftKey) => {
+//     const newValues = {};
+//     newValues.y = Math.min(el.y + dy, el.y + el.height - 1);
+//     newValues.height = el.height + (el.y - newValues.y);
+//     // if (hasShiftKey) {
+//     //     const delta = el.width / Math.max(el.height, 1);
+//     //     newValues.width = newValues.height * delta;
+//     //     newValues.x = el.x - (newValues.width - el.width) / 2;
+//     // }
+//     return newValues; 
+// };
+// 
+// const bottomHandler = (el, dx, dy) => ({
+//     height: Math.max(el.height + dy, 1),
+// });
+// 
+// const leftHandler = (el, dx, dy) => {
+//     const x = Math.min(el.x + dx, el.x + el.width - 1);
+//     const width = el.width + (el.x - x);
+//     return {x, width};
+// };
+// 
+// const rightHandler = (el, dx, dy) => ({
+//     width: Math.max(el.width + dx, 1),
+// });
 
 export const EdgeHandlers = props => {
     const width = props.points[1][0] - props.points[0][0];
@@ -33,6 +33,8 @@ export const EdgeHandlers = props => {
     return (
         <g fill="transparent">
             <rect
+                data-type="handler"
+                data-value="top"
                 x={props.points[0][0]}
                 y={props.points[0][1] - 2 * props.padding}
                 width={width}
@@ -40,9 +42,10 @@ export const EdgeHandlers = props => {
                 style={{
                     cursor: "ns-resize",
                 }}
-                onPointerDown={e => props.onPointerDown(e, topHandler)}
             />
             <rect
+                data-type="handler"
+                data-value="bottom"
                 x={props.points[3][0]}
                 y={props.points[3][1]}
                 width={width}
@@ -50,9 +53,10 @@ export const EdgeHandlers = props => {
                 style={{
                     cursor: "ns-resize",
                 }}
-                onPointerDown={e => props.onPointerDown(e, bottomHandler)}
             />
             <rect
+                data-type="handler"
+                data-value="left"
                 x={props.points[0][0] - 2 * props.padding}
                 y={props.points[0][1]}
                 width={2 * props.padding}
@@ -60,9 +64,10 @@ export const EdgeHandlers = props => {
                 style={{
                     cursor: "ew-resize",
                 }}
-                onPointerDown={e => props.onPointerDown(e, leftHandler)}
             />
             <rect
+                data-type="handler"
+                data-value="right"
                 x={props.points[1][0]}
                 y={props.points[1][1]}
                 width={2 * props.padding}
@@ -70,7 +75,6 @@ export const EdgeHandlers = props => {
                 style={{
                     cursor: "ew-resize",
                 }}
-                onPointerDown={e => props.onPointerDown(e, rightHandler)}
             />
         </g>
     );
@@ -79,5 +83,4 @@ export const EdgeHandlers = props => {
 EdgeHandlers.defaultProps = {
     padding: 5,
     points: [],
-    onPointerDown: null,
 };
