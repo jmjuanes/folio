@@ -1,4 +1,5 @@
 import React from "react";
+import {HANDLERS} from "../../constants.js";
 
 // const topHandler = (el, dx, dy, hasShiftKey) => {
 //     const newValues = {};
@@ -34,7 +35,7 @@ export const EdgeHandlers = props => {
         <g fill="transparent">
             <rect
                 data-type="handler"
-                data-value="top"
+                data-value={HANDLERS.EDGE_TOP}
                 x={props.points[0][0]}
                 y={props.points[0][1] - 2 * props.padding}
                 width={width}
@@ -45,7 +46,7 @@ export const EdgeHandlers = props => {
             />
             <rect
                 data-type="handler"
-                data-value="bottom"
+                data-value={HANDLERS.EDGE_BOTTOM}
                 x={props.points[3][0]}
                 y={props.points[3][1]}
                 width={width}
@@ -56,7 +57,7 @@ export const EdgeHandlers = props => {
             />
             <rect
                 data-type="handler"
-                data-value="left"
+                data-value={HANDLERS.EDGE_LEFT}
                 x={props.points[0][0] - 2 * props.padding}
                 y={props.points[0][1]}
                 width={2 * props.padding}
@@ -67,7 +68,7 @@ export const EdgeHandlers = props => {
             />
             <rect
                 data-type="handler"
-                data-value="right"
+                data-value={HANDLERS.EDGE_RIGHT}
                 x={props.points[1][0]}
                 y={props.points[1][1]}
                 width={2 * props.padding}
