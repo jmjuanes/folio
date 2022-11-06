@@ -1,4 +1,5 @@
 import React from "react";
+import { POINT_SOURCES } from "../../constants.js";
 
 import {Handlers} from "../Handlers/index.jsx";
 import {Selection} from "../Selection/index.jsx";
@@ -7,7 +8,7 @@ export const Canvas = props => {
     const handlePointerDown = event => {
         event.preventDefault();
         event.stopPropagation();
-        const source = event.nativeEvent?.dataset?.type || null;
+        const source = event.nativeEvent?.target?.dataset?.type || null;
         const eventInfo = {
             originalX: event.nativeEvent.offsetX,
             originalY: event.nativeEvent.offsetY,
@@ -16,14 +17,14 @@ export const Canvas = props => {
         };
 
         // Handler pointer listener
-        if (source === "handlers") {
+        if (source === POINT_SOURCES.HANDLER) {
             props.onPointHandler?.({
                 ...eventInfo,
-                direction: event.nativeEvent.target.dataset.value,
+                handler: event.nativeEvent.target.dataset.value,
             });
         }
         // Element pointer listener
-        else if (source === "element") {
+        else if (source === POINT_SOURCES.ELEMENT) {
             props.onPointElement?.({
                 ...eventInfo,
                 element: event.nativeEvent.target.dataset.value,
@@ -71,30 +72,33 @@ export const Canvas = props => {
     };
 
     return (
-        <svg width={props.width} height={props.height} onPointerDown={handlePointerDown}>
-            <Selection
-                tools={props.tools}
-                elements={props.elements}
-                selectedElements={props.selectedElements}
-            >
-                {Object.keys(props.elements).map(id => {
-                    const element = props.elements[id];
-                    const {Component} = props.tools[element.type];
-    
-                    return React.createElement(Component, {
-                        key: id,
-                        ...element,
-                    });
-                })}
-            </Selection>
-            {props.selectedElements.length === 1 && (
+        <svg
+            width={props.width}
+            height={props.height}
+            style={props.style}
+            onPointerDown={handlePointerDown}
+        >
+            {props.elements.map(element => {
+                const {Component} = props.tools[element.type];
+
+                return React.createElement(Component, {
+                    key: element.id,
+                    ...element,
+                });
+            })}
+            {props.showSelection && (
+                <Selection
+                    tools={props.tools}
+                    elements={props.elements}
+                />
+            )}
+            {props.showHandlers && (
                 <Handlers
                     tools={props.tools}
                     elements={props.elements}
-                    selectedElements={props.selectedElements}
                 />
             )}
-            {props.brush && (
+            {props.showBrush && !!props.brush && (
                 <rect
                     x={Math.min(props.brush.x, props.brush.x + props.brush.width)}
                     y={Math.min(props.brush.y, props.brush.y + props.brush.height)}
@@ -115,8 +119,7 @@ Canvas.defaultProps = {
     width: "100%",
     height: "100%",
     tools: {},
-    elements: {},
-    selectedElements: [],
+    elements: [],
     brush: null,
     brushFillColor: "#4184f4",
     brushStrokeColor: "#4285f4",
@@ -126,4 +129,16 @@ Canvas.defaultProps = {
     onPointerDown: null,
     onPointerMove: null,
     onPointerUp: null,
+    showHandlers: false,
+    showSelection: false,
+    showBrush: true,
+    style: {
+        bottom: "0px",
+        imageRendering: "pixelated",
+        left: "0px",
+        position: "absolute",
+        top: "0px",
+        touchAction: "none",
+        userSelect: "none",
+    },
 };
