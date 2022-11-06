@@ -1,31 +1,5 @@
 import React from "react";
-import {HANDLERS} from "../../constants.js";
-
-// const topHandler = (el, dx, dy, hasShiftKey) => {
-//     const newValues = {};
-//     newValues.y = Math.min(el.y + dy, el.y + el.height - 1);
-//     newValues.height = el.height + (el.y - newValues.y);
-//     // if (hasShiftKey) {
-//     //     const delta = el.width / Math.max(el.height, 1);
-//     //     newValues.width = newValues.height * delta;
-//     //     newValues.x = el.x - (newValues.width - el.width) / 2;
-//     // }
-//     return newValues; 
-// };
-// 
-// const bottomHandler = (el, dx, dy) => ({
-//     height: Math.max(el.height + dy, 1),
-// });
-// 
-// const leftHandler = (el, dx, dy) => {
-//     const x = Math.min(el.x + dx, el.x + el.width - 1);
-//     const width = el.width + (el.x - x);
-//     return {x, width};
-// };
-// 
-// const rightHandler = (el, dx, dy) => ({
-//     width: Math.max(el.width + dx, 1),
-// });
+import {HANDLERS, POINT_SOURCES} from "../../constants.js";
 
 export const EdgeHandlers = props => {
     const width = props.points[1][0] - props.points[0][0];
@@ -34,7 +8,7 @@ export const EdgeHandlers = props => {
     return (
         <g fill="transparent">
             <rect
-                data-type="handler"
+                data-type={POINT_SOURCES.HANDLER}
                 data-value={HANDLERS.EDGE_TOP}
                 x={props.points[0][0]}
                 y={props.points[0][1] - 2 * props.padding}
@@ -45,7 +19,7 @@ export const EdgeHandlers = props => {
                 }}
             />
             <rect
-                data-type="handler"
+                data-type={POINT_SOURCES.HANDLER}
                 data-value={HANDLERS.EDGE_BOTTOM}
                 x={props.points[3][0]}
                 y={props.points[3][1]}
@@ -56,7 +30,7 @@ export const EdgeHandlers = props => {
                 }}
             />
             <rect
-                data-type="handler"
+                data-type={POINT_SOURCES.HANDLER}
                 data-value={HANDLERS.EDGE_LEFT}
                 x={props.points[0][0] - 2 * props.padding}
                 y={props.points[0][1]}
@@ -67,7 +41,7 @@ export const EdgeHandlers = props => {
                 }}
             />
             <rect
-                data-type="handler"
+                data-type={POINT_SOURCES.HANDLER}
                 data-value={HANDLERS.EDGE_RIGHT}
                 x={props.points[1][0]}
                 y={props.points[1][1]}
