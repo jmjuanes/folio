@@ -1,14 +1,17 @@
 import React from "react";
 
 import {HANDLERS_TYPES} from "../../constants.js";
-
 import {CornerHandlers} from "./CornerHandlers.jsx";
 import {EdgeHandlers} from "./EdgeHandlers.jsx";
 
 export const Handlers = props => {
-    const element = props.elements[props.selectedElements[0]];
+    const selectedElements = props.elements.filter(el => !!el.selected);
+    if (selectedElements.length !== 1) {
+        return null;
+    }
+    const element = selectedElements[0];
     const handlerType = props.tools[element.type].handlers || HANDLERS_TYPES.NONE;
-    const points = props.tools[element.type].getBoundaryPoints(element);
+    const points = props.tools[element.type].getHandlersPoints(element);
 
     return (
         <React.Fragment>
@@ -30,8 +33,7 @@ export const Handlers = props => {
 
 Handlers.defaultProps = {
     tools: {},
-    elements: {},
-    selectedElements: [],
+    elements: [],
     handlerColor: "#4285f4",
     handlerSize: 5,
 };
