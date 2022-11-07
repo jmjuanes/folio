@@ -1,8 +1,9 @@
 import React from "react";
-import { POINT_SOURCES } from "../../constants.js";
+import {POINT_SOURCES} from "../../constants.js";
 
 import {Handlers} from "../Handlers/index.jsx";
 import {Selection} from "../Selection/index.jsx";
+import {Elements} from "../Elements/index.jsx";
 
 export const Canvas = props => {
     const handlePointerDown = event => {
@@ -30,6 +31,10 @@ export const Canvas = props => {
                 element: event.nativeEvent.target.dataset.value,
             });
         }
+        // Selection pointer listener
+        // else if (source === POINT_SOURCES.SELECTION) {
+        //     props.onPointSelection?.({...eventInfo});
+        // }
         // Other listener
         else if (source === null) {
             props.onPointCanvas?.(eventInfo);
@@ -78,20 +83,16 @@ export const Canvas = props => {
             style={props.style}
             onPointerDown={handlePointerDown}
         >
-            {props.elements.map(element => {
-                const {Component} = props.tools[element.type];
-
-                return React.createElement(Component, {
-                    key: element.id,
-                    ...element,
-                });
-            })}
             {props.showSelection && (
                 <Selection
                     tools={props.tools}
                     elements={props.elements}
                 />
             )}
+            <Elements
+                tools={props.tools}
+                elements={props.elements}
+            />
             {props.showHandlers && (
                 <Handlers
                     tools={props.tools}
@@ -133,11 +134,6 @@ Canvas.defaultProps = {
     showSelection: false,
     showBrush: true,
     style: {
-        bottom: "0px",
-        imageRendering: "pixelated",
-        left: "0px",
-        position: "absolute",
-        top: "0px",
         touchAction: "none",
         userSelect: "none",
     },
