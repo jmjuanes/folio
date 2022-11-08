@@ -28,9 +28,3 @@ export const normalizeRectangle = rectangle => ({
 export const pointInRectangle = (p, r) => {
     return !(p[0] < r.x || r.x + r.width < p[0] || p[1] < r.y || r.y + r.height < p[1]);
 };
-
-// Generate an ID
-// Source: https://michalzalecki.com/generate-unique-id-in-the-browser-without-a-library/ 
-export const generateID = () => {
-    return (window.crypto.getRandomValues(new Uint32Array(1))[0]).toString(16);
-};
