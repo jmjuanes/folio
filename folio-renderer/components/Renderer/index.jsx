@@ -1,11 +1,10 @@
 import React from "react";
 import {POINT_SOURCES} from "../../constants.js";
-
 import {Handlers} from "../Handlers/index.jsx";
 import {Selection} from "../Selection/index.jsx";
 import {Elements} from "../Elements/index.jsx";
 
-export const Canvas = props => {
+export const Renderer = props => {
     const handlePointerDown = event => {
         event.preventDefault();
         event.stopPropagation();
@@ -116,7 +115,7 @@ export const Canvas = props => {
     );
 };
 
-Canvas.defaultProps = {
+Renderer.defaultProps = {
     width: "100%",
     height: "100%",
     tools: {},

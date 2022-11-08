@@ -11,7 +11,7 @@ export const Handlers = props => {
     }
     const element = selectedElements[0];
     const handlerType = props.tools[element.type].handlers || HANDLERS_TYPES.NONE;
-    const points = props.tools[element.type].getHandlersPoints(element);
+    const points = props.tools[element.type].getBoundaryPoints(element);
 
     return (
         <React.Fragment>
@@ -35,5 +35,5 @@ Handlers.defaultProps = {
     tools: {},
     elements: [],
     handlerColor: "#4285f4",
-    handlerSize: 5,
+    handlerSize: 8,
 };

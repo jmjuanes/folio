@@ -52,5 +52,5 @@ export const CornerHandlers = props => (
 
 CornerHandlers.defaultProps = {
     color: "",
-    size: 10,
+    size: 8,
 };
