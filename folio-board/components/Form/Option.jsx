@@ -6,9 +6,9 @@ const optionTypes = {
         <div className="d-grid gap-1 grid-cols-5 w-full mb-8">
             {Object.keys(props.values || {}).map(key => (
                 <div
-                    key={value}
+                    key={key}
                     className={classNames({
-                        "b-1 b-solid r-md h-16 py-8": true,
+                        "b-1 b-solid r-md p-4": true,
                         "b-gray-900": key === props.value,
                     })}
                     style={{

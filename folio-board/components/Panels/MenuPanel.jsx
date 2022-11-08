@@ -1,6 +1,6 @@
 import React from "react";
 
-import {MODES} from "../../constants.js";
+// import {MODES} from "../../constants.js";
 import {Panel, PanelButton} from "./Panel.jsx";
 import {
     SaveIcon,
@@ -15,7 +15,7 @@ export const MenuPanel = props => (
             <SaveIcon />
         </PanelButton>
         {/* Screenshot button */}
-        <PanelButton active={props.mode === MODES.SCREENSHOT} onClick={props.onCameraClick}>
+        <PanelButton active={false} onClick={props.onCameraClick}>
             <CameraIcon />
         </PanelButton>
         {/* Export button */}
