@@ -7,13 +7,14 @@ import {
     Renderer,
     HANDLERS,
     defaultTools,
-} from "folio-renderer";
+} from "folio-core";
 
 import {
     IS_DARWIN,
     ACTIONS,
     EVENTS,
     KEYS,
+    ELEMENT_CHANGE_TYPES,
     ZOOM_STEP,
 } from "./constants.js";
 import {useBoard} from "./hooks/useBoard.js";
@@ -24,7 +25,14 @@ import {
     ToolsPanel,
     ZoomPanel,
 } from "./components/Panels/index.jsx";
-import {generateID, isArrowKey, isInputTarget} from "./utils/index.js";
+import {
+    StyleDialog,
+} from "./components/Dialogs/index.jsx";
+import {
+    generateID,
+    isArrowKey,
+    isInputTarget,
+} from "./utils/index.js";
 
 export const Board = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
@@ -34,10 +42,14 @@ export const Board = props => {
         activeTool: null,
         activeElement: null,
         activeHandler: null,
+        isResized: false,
+        isDragged: false,
         selectionCount: 0,
         brush: null,
         snapshot: null,
         zoom: 1,
+        showStyleDialog: true,
+        showExportDialog: false,
     });
 
     // Handle canvas point --> reset current selection
@@ -92,6 +104,8 @@ export const Board = props => {
                 state.current.action = ACTIONS.DRAG_ELEMENT;
             }
             state.current.snapshot = board.current.snapshotSelectedElements();
+            state.current.isResized = false;
+            state.current.isDragged = false;
         }
         else if (!state.current.action) {
             state.current.action = ACTIONS.SELECTION;
@@ -114,6 +128,7 @@ export const Board = props => {
         }
         else if (state.current.action === ACTIONS.DRAG_ELEMENT) {
             const snapshot = state.current.snapshot;
+            state.current.isDragged = true;
             board.current.getSelectedElements().forEach((element, index) => {
                 Object.assign(element, props.tools[element.type]?.onDrag?.(snapshot[index], event) || {});
             });
@@ -121,6 +136,7 @@ export const Board = props => {
         else if (state.current.action === ACTIONS.RESIZE_ELEMENT) {
             const snapshot = state.current.snapshot[0];
             const element = board.current.getElementById(snapshot.id);
+            state.current.isResized = true;
             if (state.current.activeHandler === HANDLERS.CORNER_TOP_LEFT) {
                 element.x = Math.min(snapshot.x + event.dx, snapshot.x + snapshot.width - 1); // getPosition(snapshot.x + x);
                 element.width = snapshot.width + (snapshot.x - element.x);
@@ -166,8 +182,26 @@ export const Board = props => {
     const handlePointerUp = () => {
         if (state.current.action === ACTIONS.CREATE_ELEMENT) {
             state.current.activeElement.selected = true;
+            // updateElement(element, ["selected"]);
+            board.current.registerElementCreate(state.current.activeElement);
             state.current.activeElement = null;
             state.current.activeTool = null; // reset active tool
+        }
+        else if (state.current.action === ACTIONS.DRAG_ELEMENT || state.current.action === ACTIONS.RESIZE_ELEMENT) {
+            if (state.current.isDragged || state.current.isResized) {
+                const snapshot = state.current.snapshot;
+                const keys = state.current.isDragged ? ["x", "y"] : ["x", "y", "width", "height"];
+                board.current.addHistoryEntry({
+                    type: ELEMENT_CHANGE_TYPES.UPDATE,
+                    elements: board.current.getSelectedElements().map((el, index) => ({
+                        id: el.id,
+                        prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
+                        newValues: Object.fromEntries(keys.map(key => [key, el[key]])),
+                    })),
+                });
+            }
+            state.current.isDragged = false;
+            state.current.isResized = false;
         }
         else if (state.current.action === ACTIONS.SELECTION) {
             const rectangle = normalizeRectangle(state.current.brush);
@@ -189,6 +223,14 @@ export const Board = props => {
     React.useEffect(() => {
         const handleKeyDown = event => {
             // TODO: check text input
+            if (isInputTarget(event)) {
+                // if (state.mode === MODES.INPUT && event.key === KEYS.ESCAPE) {
+                //     event.preventDefault();
+                //     submitInput();
+                // }
+                return;
+            }
+
             const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
             if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                 event.preventDefault();
@@ -313,7 +355,7 @@ export const Board = props => {
                         onToolChange={tool => {
                             state.current.activeTool = tool;
                             board.current.clearSelectedElements();
-                            return forceUpdate();
+                            forceUpdate();
                             // setState(prevState => ({
                             //     ...prevState,
                             //     elementType: type,
@@ -364,7 +406,21 @@ export const Board = props => {
                             // board.current.updateSelectedElements("group", null);
                             // forceUpdate();
                         }}
+                        onStyleDialogToggle={() => {
+                            state.current.showStyleDialog = !state.current.showStyleDialog;
+                            forceUpdate();
+                        }}
                     />
+                    {state.current.showStyleDialog && (
+                        <StyleDialog
+                            selection={board.current.getSelectedElements()}
+                            onChange={(key, value) => {
+                                board.current.registerSelectionUpdate([key], [value], true);
+                                board.current.updateSelectedElements(key, value);
+                                forceUpdate();
+                            }}
+                        />
+                    )}
                 </React.Fragment>
             )}
         </div>
