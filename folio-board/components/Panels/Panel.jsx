@@ -16,7 +16,7 @@ export const Panel = props => {
         ...props.style,
     };
     const panelContentClass = classNames({
-        "b-1 b-solid b-gray-900 r-md": true,
+        "b-1 b-solid b-gray-900 r-lg": true,
         "shadow-md items-center bg-white d-flex gap-2 p-2": true,
         "flex-col": props.position === "top-left" || props.position === "top-right",
     });
