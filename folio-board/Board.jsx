@@ -18,6 +18,7 @@ import {
     ZOOM_STEP,
 } from "./constants.js";
 import {useBoard} from "./hooks/useBoard.js";
+import {useBoardState} from "./hooks/useBoardState.js";
 import {
     EditionPanel,
     HistoryPanel,
@@ -37,20 +38,7 @@ import {
 export const Board = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const board = useBoard([]);
-    const state = React.useRef({
-        action: null,
-        activeTool: null,
-        activeElement: null,
-        activeHandler: null,
-        isResized: false,
-        isDragged: false,
-        selectionCount: 0,
-        brush: null,
-        snapshot: null,
-        zoom: 1,
-        showStyleDialog: true,
-        showExportDialog: false,
-    });
+    const state = useBoardState();
 
     // Handle canvas point --> reset current selection
     const handlePointCanvas = () => {
@@ -86,7 +74,7 @@ export const Board = props => {
         if (state.current.activeTool) {
             state.current.action = ACTIONS.CREATE_ELEMENT;
             const element = {
-                ...props.tools[state.current.activeTool]?.onCreateStart?.({}, event, {}),
+                ...props.tools[state.current.activeTool]?.onCreateStart?.({}, event, state.current.defaults),
                 id: generateID(),
                 type: state.current.activeTool,
                 x: event.originalX,
@@ -413,10 +401,15 @@ export const Board = props => {
                     />
                     {state.current.showStyleDialog && (
                         <StyleDialog
-                            selection={board.current.getSelectedElements()}
+                            values={board.current.getSelectedElements()[0] || state.current.defaults}
                             onChange={(key, value) => {
-                                board.current.registerSelectionUpdate([key], [value], true);
-                                board.current.updateSelectedElements(key, value);
+                                // TODO: we should find another way to check if we have selected elements
+                                // to prevent filtering the elements list
+                                if (board.current.getSelectedElements().length > 0) {
+                                    board.current.registerSelectionUpdate([key].flat(), [value].flat(), true);
+                                    board.current.updateSelectedElements(key, value);
+                                }
+                                state.current.defaults[key] = value;
                                 forceUpdate();
                             }}
                         />

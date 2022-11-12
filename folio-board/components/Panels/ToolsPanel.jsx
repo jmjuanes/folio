@@ -1,5 +1,5 @@
 import React from "react";
-import {TOOLS} from "folio-renderer";
+import {TOOLS} from "folio-core";
 import {Panel, PanelButton} from "./Panel.jsx";
 import {
     ArrowsIcon,
@@ -19,24 +19,20 @@ const availableTools = [
     {name: TOOLS.HAND_DRAW, icon: PenIcon()},
 ];
 
-export const ToolsPanel = props => (
+export const ToolsPanel = ({activeTool, onToolChange}) => (
     <Panel position="bottom-center">
         <PanelButton active={false} onClick={() => null}>
             <ArrowsIcon />
         </PanelButton>
-        <PanelButton active={!props.activeTool} onClick={() => props.onToolChange(null)}>
+        <PanelButton active={!activeTool} onClick={() => onToolChange(null)}>
             <PointerIcon />
         </PanelButton>
         <div className="bg-gray-800 h-8" style={{width:"1px"}} />
-        {availableTools.map(item => {
-            const isActive = props.activeTool === item.name;;
-
-            return (
-                <PanelButton key={item.name} active={isActive} onClick={() => props.onToolChange(item.name)}>
-                    {item.icon}
-                </PanelButton>
-            );
-        })}
+        {availableTools.map(({name, icon}) => (
+            <PanelButton key={name} active={activeTool === name} onClick={() => onToolChange(name)}>
+                {icon}
+            </PanelButton>
+        ))}
     </Panel>
 );
 

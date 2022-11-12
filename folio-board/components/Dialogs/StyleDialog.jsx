@@ -17,9 +17,9 @@ import {
     RADIUS_SM,
     RADIUS_LG,
     RADIUS_XL,
-    STROKE_DASH_SOLID,
-    STROKE_DASH_DOTTED,
-    STROKE_DASH_DASHED,
+    STROKE_STYLE_SOLID,
+    STROKE_STYLE_DOTTED,
+    STROKE_STYLE_DASHED,
     FONT_SIZE_SM,
     FONT_SIZE_MD,
     FONT_SIZE_LG,
@@ -36,6 +36,9 @@ import {
     OpacitySemiTransparentIcon,
     OpacityTransparentIcon,
     BanIcon,
+    CircleSolidIcon,
+    CircleDashedIcon,
+    CircleDottedIcon,
 } from "../Icons.jsx";
 
 const tabs = {
@@ -81,13 +84,13 @@ const options = {
                 {value: STROKE_SIZE_XL, text: "XL"},
             ],
         },
-        strokeDash: {
+        strokeStyle: {
             type: "select",
-            title: "Stroke Dash",
+            title: "Stroke Style",
             values: [
-                {value: STROKE_DASH_SOLID, text: "S"},
-                {value: STROKE_DASH_DASHED, text: "DAS"},
-                {value: STROKE_DASH_DOTTED, text: "DOT"},
+                {value: STROKE_STYLE_SOLID, icon: CircleSolidIcon()},
+                {value: STROKE_STYLE_DASHED, icon: CircleDashedIcon()},
+                {value: STROKE_STYLE_DOTTED, icon: CircleDottedIcon()},
             ],
         },
         strokeOpacity: {
