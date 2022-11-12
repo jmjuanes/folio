@@ -1,5 +1,6 @@
 import React from "react";
 import {TOOLS} from "folio-core";
+import {ACTIONS} from "../../constants.js";
 import {Panel, PanelButton} from "./Panel.jsx";
 import {
     ArrowsIcon,
@@ -19,17 +20,23 @@ const availableTools = [
     {name: TOOLS.HAND_DRAW, icon: PenIcon()},
 ];
 
-export const ToolsPanel = ({activeTool, onToolChange}) => (
+export const ToolsPanel = props => (
     <Panel position="bottom-center">
-        <PanelButton active={false} onClick={() => null}>
+        <PanelButton
+            active={props.currentAction === ACTIONS.MOVE}
+            onClick={props.onMoveClick}
+        >
             <ArrowsIcon />
         </PanelButton>
-        <PanelButton active={!activeTool} onClick={() => onToolChange(null)}>
+        <PanelButton
+            active={!props.currentTool && props.currentAction !== ACTIONS.MOVE}
+            onClick={props.onSelectionClick}
+        >
             <PointerIcon />
         </PanelButton>
         <div className="bg-gray-800 h-8" style={{width:"1px"}} />
         {availableTools.map(({name, icon}) => (
-            <PanelButton key={name} active={activeTool === name} onClick={() => onToolChange(name)}>
+            <PanelButton key={name} active={props.currentTool === name} onClick={() => props.onToolClick(name)}>
                 {icon}
             </PanelButton>
         ))}
@@ -37,8 +44,9 @@ export const ToolsPanel = ({activeTool, onToolChange}) => (
 );
 
 ToolsPanel.defaultProps = {
-    activeAction: null,
-    activeTool: null,
-    onModeChange: null,
-    onToolChange: null,
+    currentAction: null,
+    currentTool: null,
+    onMoveClick: null,
+    onSelectionClick: null,
+    onToolClick: null,
 };

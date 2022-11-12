@@ -11,8 +11,8 @@ export const Renderer = props => {
         event.stopPropagation();
         const source = event.nativeEvent?.target?.dataset?.type || null;
         const eventInfo = {
-            originalX: event.nativeEvent.offsetX,
-            originalY: event.nativeEvent.offsetY,
+            originalX: event.nativeEvent.offsetX - props.translateX,
+            originalY: event.nativeEvent.offsetY - props.translateY,
             shiftKey: event.nativeEvent.shiftKey,
             nativeEvent: event.nativeEvent,
         };
@@ -49,10 +49,10 @@ export const Renderer = props => {
             props.onPointerMove?.({
                 ...eventInfo,
                 nativeEvent: event,
-                currentX: event.offsetX,
-                currentY: event.offsetY,
-                dx: event.offsetX - eventInfo.originalX,
-                dy: event.offsetY - eventInfo.originalY,
+                currentX: event.offsetX - props.translateX,
+                currentY: event.offsetY - props.translateY,
+                dx: event.offsetX - eventInfo.nativeEvent.offsetX,
+                dy: event.offsetY - eventInfo.nativeEvent.offsetY,
             });
         };
 
@@ -83,29 +83,31 @@ export const Renderer = props => {
             style={props.style}
             onPointerDown={handlePointerDown}
         >
-            {props.showSelection && (
-                <Selection
+            <g transform={`translate(${props.translateX} ${props.translateY})`}>
+                {props.showSelection && (
+                    <Selection
+                        tools={props.tools}
+                        elements={props.elements}
+                    />
+                )}
+                <Elements
                     tools={props.tools}
                     elements={props.elements}
                 />
-            )}
-            <Elements
-                tools={props.tools}
-                elements={props.elements}
-            />
-            {props.showHandlers && (
-                <Handlers
-                    tools={props.tools}
-                    elements={props.elements}
-                />
-            )}
-            {props.showBrush && !!props.brush && (
-                <Brush
-                    {...props.brush}
-                    fillColor={props.brushFillColor}
-                    strokeColor={props.brushStrokeColor}
-                />
-            )}
+                {props.showHandlers && (
+                    <Handlers
+                        tools={props.tools}
+                        elements={props.elements}
+                    />
+                )}
+                {props.showBrush && !!props.brush && (
+                    <Brush
+                        {...props.brush}
+                        fillColor={props.brushFillColor}
+                        strokeColor={props.brushStrokeColor}
+                    />
+                )}
+            </g>
         </svg>
     );
 };
@@ -116,6 +118,8 @@ Renderer.defaultProps = {
     tools: {},
     elements: [],
     brush: null,
+    translateX: 0,
+    translateY: 0,
     brushFillColor: "#4184f4",
     brushStrokeColor: "#4285f4",
     onPointCanvas: null,

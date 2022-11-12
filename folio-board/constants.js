@@ -86,7 +86,7 @@ export const ACTIONS = {
     INPUT: "mode:input",
     SELECTION: "action:selection",
     SCREENSHOT: "action:screenshot",
-    MOVE: "mode:move",
+    MOVE: "action:move",
 };
 
 export const LINE_CAPS = {

@@ -8,7 +8,7 @@ import {
 export const useBoardState = () => {
     return React.useRef({
         action: null,
-        activeTool: null,
+        tool: null,
         activeElement: null,
         activeHandler: null,
         isResized: false,
@@ -17,6 +17,12 @@ export const useBoardState = () => {
         brush: null,
         snapshot: null,
         zoom: 1,
+        translate: {
+            x: 0,
+            y: 0,
+            lastX: 0,
+            lastY: 0,
+        },
         showStyleDialog: true,
         showExportDialog: false,
         defaults: {

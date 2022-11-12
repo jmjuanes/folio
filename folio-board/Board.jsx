@@ -42,7 +42,7 @@ export const Board = props => {
 
     // Handle canvas point --> reset current selection
     const handlePointCanvas = () => {
-        if (!state.current.activeTool) {
+        if (!state.current.tool) {
             board.current.clearSelectedElements();
             forceUpdate();
         }
@@ -50,7 +50,7 @@ export const Board = props => {
 
     // Handle point element
     const handlePointElement = event => {
-        if (!state.current.activeTool) {
+        if (!state.current.tool && !state.current.action) {
             const element = board.current.getElementById(event.element);
             if (!event.shiftKey) {
                 board.current.clearSelectedElements();
@@ -71,12 +71,12 @@ export const Board = props => {
     };
 
     const handlePointerDown = event => {
-        if (state.current.activeTool) {
+        if (state.current.tool) {
             state.current.action = ACTIONS.CREATE_ELEMENT;
             const element = {
-                ...props.tools[state.current.activeTool]?.onCreateStart?.({}, event, state.current.defaults),
+                ...props.tools[state.current.tool]?.onCreateStart?.({}, event, state.current.defaults),
                 id: generateID(),
-                type: state.current.activeTool,
+                type: state.current.tool,
                 x: event.originalX,
                 y: event.originalY,
                 selected: false,
@@ -108,10 +108,14 @@ export const Board = props => {
     };
 
     const handlePointerMove = event => {
-        if (state.current.action === ACTIONS.CREATE_ELEMENT) {
+        if (state.current.action === ACTIONS.MOVE) {
+            state.current.translate.x = state.current.translate.lastX + event.dx;
+            state.current.translate.y = state.current.translate.lastY + event.dy;
+        }
+        else if (state.current.action === ACTIONS.CREATE_ELEMENT) {
             Object.assign(
                 state.current.activeElement,
-                props.tools[state.current.activeTool]?.onCreateMove?.(state.current.activeElement, event),
+                props.tools[state.current.tool]?.onCreateMove?.(state.current.activeElement, event),
             );
         }
         else if (state.current.action === ACTIONS.DRAG_ELEMENT) {
@@ -168,12 +172,18 @@ export const Board = props => {
     };
 
     const handlePointerUp = () => {
-        if (state.current.action === ACTIONS.CREATE_ELEMENT) {
+        if (state.current.action === ACTIONS.MOVE) {
+            // Save the last translation point
+            state.current.translate.lastX = state.current.translate.x;
+            state.current.translate.lastY = state.current.translate.y;
+        }
+        else if (state.current.action === ACTIONS.CREATE_ELEMENT) {
             state.current.activeElement.selected = true;
             // updateElement(element, ["selected"]);
             board.current.registerElementCreate(state.current.activeElement);
             state.current.activeElement = null;
-            state.current.activeTool = null; // reset active tool
+            state.current.tool = null; // reset active tool
+            state.current.action = null;
         }
         else if (state.current.action === ACTIONS.DRAG_ELEMENT || state.current.action === ACTIONS.RESIZE_ELEMENT) {
             if (state.current.isDragged || state.current.isResized) {
@@ -190,6 +200,7 @@ export const Board = props => {
             }
             state.current.isDragged = false;
             state.current.isResized = false;
+            state.current.action = null;
         }
         else if (state.current.action === ACTIONS.SELECTION) {
             const rectangle = normalizeRectangle(state.current.brush);
@@ -200,9 +211,10 @@ export const Board = props => {
                     return pointInRectangle(point, rectangle);
                 });
             });
+            state.current.action = null;
         }
         // Reset current state
-        state.current.action = null;
+        // state.current.action = null;
         state.current.brush = null;
         forceUpdate();
     };
@@ -301,13 +313,15 @@ export const Board = props => {
         return null;
     };
 
-    const {action, activeTool} = state.current;
+    const {action, tool} = state.current;
 
     return (
         <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
             <Renderer
                 tools={props.tools}
                 elements={board.current.elements}
+                translateX={state.current.translate.x}
+                translateY={state.current.translate.y}
                 brush={state.current.brush}
                 onPointCanvas={handlePointCanvas}
                 onPointElement={handlePointElement}
@@ -315,9 +329,9 @@ export const Board = props => {
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
-                showHandlers={!action && !activeTool}
+                showHandlers={!action && !tool}
                 showBrush={action === ACTIONS.SELECTION || action === ACTIONS.SCREENSHOT}
-                showSelection={!action && !activeTool}
+                showSelection={!action && !tool}
             />
             <MenuPanel
                 onCameraClick={() => {
@@ -338,17 +352,24 @@ export const Board = props => {
             {state.current.action !== ACTIONS.SCREENSHOT && (
                 <React.Fragment>
                     <ToolsPanel
-                        activeAction={state.current.action}
-                        activeTool={state.current.activeTool}
-                        onToolChange={tool => {
-                            state.current.activeTool = tool;
+                        currentAction={state.current.action}
+                        currentTool={state.current.tool}
+                        onMoveClick={() => {
+                            state.current.tool = null;
+                            state.current.action = ACTIONS.MOVE;
                             board.current.clearSelectedElements();
                             forceUpdate();
-                            // setState(prevState => ({
-                            //     ...prevState,
-                            //     elementType: type,
-                            //     mode: MODES.NONE,
-                            // }));
+                        }}
+                        onSelectionClick={() => {
+                            state.current.tool = null;
+                            state.current.action = null;
+                            forceUpdate();
+                        }}
+                        onToolClick={tool => {
+                            state.current.tool = tool;
+                            state.current.action = null;
+                            board.current.clearSelectedElements();
+                            forceUpdate();
                         }}
                     />
                     <HistoryPanel
