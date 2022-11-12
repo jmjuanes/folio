@@ -5,14 +5,14 @@ import {Selection} from "../Selection/index.jsx";
 import {Elements} from "../Elements/index.jsx";
 import {Brush} from "../Brush/index.jsx";
 
-export const Renderer = props => {
+export const Renderer = React.forwardRef((props, ref) => {
     const handlePointerDown = event => {
         event.preventDefault();
         event.stopPropagation();
         const source = event.nativeEvent?.target?.dataset?.type || null;
         const eventInfo = {
-            originalX: event.nativeEvent.offsetX - props.translateX,
-            originalY: event.nativeEvent.offsetY - props.translateY,
+            originalX: (event.nativeEvent.offsetX - props.translateX) / props.zoom,
+            originalY: (event.nativeEvent.offsetY - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             nativeEvent: event.nativeEvent,
         };
@@ -49,10 +49,10 @@ export const Renderer = props => {
             props.onPointerMove?.({
                 ...eventInfo,
                 nativeEvent: event,
-                currentX: event.offsetX - props.translateX,
-                currentY: event.offsetY - props.translateY,
-                dx: event.offsetX - eventInfo.nativeEvent.offsetX,
-                dy: event.offsetY - eventInfo.nativeEvent.offsetY,
+                currentX: (event.offsetX - props.translateX) / props.zoom,
+                currentY: (event.offsetY - props.translateY) / props.zoom,
+                dx: (event.offsetX - eventInfo.nativeEvent.offsetX) / props.zoom,
+                dy: (event.offsetY - eventInfo.nativeEvent.offsetY) / props.zoom,
             });
         };
 
@@ -76,14 +76,15 @@ export const Renderer = props => {
         document.addEventListener("pointerleave", handlePointerUp);
     };
 
+    // Generate transform attribute
+    const transform = [
+        `translate(${props.translateX} ${props.translateY})`,
+        `scale(${props.zoom} ${props.zoom})`,
+    ];
+
     return (
-        <svg
-            width={props.width}
-            height={props.height}
-            style={props.style}
-            onPointerDown={handlePointerDown}
-        >
-            <g transform={`translate(${props.translateX} ${props.translateY})`}>
+        <svg width="100%" height="100%" style={props.style} onPointerDown={handlePointerDown} ref={ref}>
+            <g transform={transform.join(" ")}>
                 {props.showSelection && (
                     <Selection
                         tools={props.tools}
@@ -110,7 +111,7 @@ export const Renderer = props => {
             </g>
         </svg>
     );
-};
+});
 
 Renderer.defaultProps = {
     width: "100%",
@@ -120,6 +121,7 @@ Renderer.defaultProps = {
     brush: null,
     translateX: 0,
     translateY: 0,
+    zoom: 1,
     brushFillColor: "#4184f4",
     brushStrokeColor: "#4285f4",
     onPointCanvas: null,

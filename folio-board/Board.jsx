@@ -16,6 +16,8 @@ import {
     KEYS,
     ELEMENT_CHANGE_TYPES,
     ZOOM_STEP,
+    ZOOM_MIN,
+    ZOOM_MAX,
 } from "./constants.js";
 import {useBoard} from "./hooks/useBoard.js";
 import {useBoardState} from "./hooks/useBoardState.js";
@@ -37,6 +39,7 @@ import {
 
 export const Board = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
+    const ref = React.useRef(null);
     const board = useBoard([]);
     const state = useBoardState();
 
@@ -305,6 +308,18 @@ export const Board = props => {
         };
     }, []);
 
+    const handleZoomChange = delta => {
+        const size = ref.current.getBoundingClientRect();
+        console.log(size);
+        const prevZoom = state.current.zoom;
+        const nextZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, state.current.zoom + delta));
+        const translate = state.current.translate;
+        state.current.zoom = nextZoom;
+        state.current.translate.x = translate.x + size.width * (prevZoom - nextZoom) / 2;
+        state.current.translate.y = translate.y + size.height * (prevZoom - nextZoom) / 2;
+        forceUpdate();
+    };
+
     const handleExportClick = () => {
         return null;
     };
@@ -318,11 +333,13 @@ export const Board = props => {
     return (
         <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
             <Renderer
+                ref={ref}
                 tools={props.tools}
                 elements={board.current.elements}
                 translateX={state.current.translate.x}
                 translateY={state.current.translate.y}
                 brush={state.current.brush}
+                zoom={state.current.zoom}
                 onPointCanvas={handlePointCanvas}
                 onPointElement={handlePointElement}
                 onPointHandler={handlePointHandler}
