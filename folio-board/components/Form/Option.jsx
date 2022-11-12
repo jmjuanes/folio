@@ -8,8 +8,9 @@ const optionTypes = {
                 <div
                     key={color}
                     className={classNames({
-                        "b-1 b-solid r-md p-4": true,
+                        "b-2 b-solid r-md p-4": true,
                         "b-gray-900": color === props.value,
+                        "b-white": color !== props.value,
                     })}
                     style={{
                         backgroundColor: color,
