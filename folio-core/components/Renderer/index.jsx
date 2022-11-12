@@ -3,6 +3,7 @@ import {POINT_SOURCES} from "../../constants.js";
 import {Handlers} from "../Handlers/index.jsx";
 import {Selection} from "../Selection/index.jsx";
 import {Elements} from "../Elements/index.jsx";
+import {Brush} from "../Brush/index.jsx";
 
 export const Renderer = props => {
     const handlePointerDown = event => {
@@ -99,16 +100,10 @@ export const Renderer = props => {
                 />
             )}
             {props.showBrush && !!props.brush && (
-                <rect
-                    x={Math.min(props.brush.x, props.brush.x + props.brush.width)}
-                    y={Math.min(props.brush.y, props.brush.y + props.brush.height)}
-                    width={Math.abs(props.brush.width)}
-                    height={Math.abs(props.brush.height)}
-                    fill={props.brushFillColor}
-                    fillOpacity="0.1"
-                    stroke={props.brushStrokeColor}
-                    strokeWidth="2px"
-                    strokeDasharray="5,5"
+                <Brush
+                    {...props.brush}
+                    fillColor={props.brushFillColor}
+                    strokeColor={props.brushStrokeColor}
                 />
             )}
         </svg>

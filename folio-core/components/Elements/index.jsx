@@ -1,4 +1,5 @@
 import React from "react";
+import {POINT_SOURCES} from "../../constants.js";
 
 export const Elements = props => (
     <React.Fragment>
@@ -7,6 +8,10 @@ export const Elements = props => (
 
             return React.createElement(Component, {
                 key: element.id,
+                elementAttributes: {
+                    "data-type": POINT_SOURCES.ELEMENT,
+                    "data-value": element.id,
+                },
                 ...element,
             });
         })}
