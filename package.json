@@ -14,7 +14,7 @@
         "pack": "tar -C ./public -czf folio.tar.gz .",
         "test": "jest"
     },
-    "dependencies": {
+    "devDependencies": {
         "@babel/core": "^7.18.0",
         "@babel/plugin-transform-react-jsx": "^7.17.12",
         "@babel/plugin-transform-runtime": "^7.18.0",
@@ -22,9 +22,10 @@
         "@babel/preset-react": "^7.18.6",
         "babel-jest": "^28.1.3",
         "babel-loader": "^8.2.5",
+        "classnames": "^2.3.2",
         "copy-webpack-plugin": "^11.0.0",
         "html-webpack-plugin": "^5.5.0",
-        "lowcss": "^0.1.0",
+        "lowcss": "^0.2.1",
         "jest": "^28.1.3",
         "jest-environment-jsdom": "^28.1.3",
         "react": "^18.2.0",
@@ -36,9 +37,6 @@
     },
     "license": "MIT",
     "jest": {
-        "testEnvironment": "jsdom",
-        "transformIgnorePatterns": [
-            "/node_modules/(?!(@siimple)/)"
-        ]
+        "testEnvironment": "jsdom"
     }
 }
