@@ -19,8 +19,9 @@ Brush.defaultProps = {
     y: 0,
     width: 0,
     height: 0,
-    fillColor: "#fff",
+    fillColor: "#0d6efd",
     fillOpacity: "0.1",
+    strokeColor: "#0d6efd",
     strokeWidth: "2px",
     strokeDash: "5 5",
 };

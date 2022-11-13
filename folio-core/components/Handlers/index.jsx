@@ -18,11 +18,11 @@ export const Handlers = props => {
             {handlerType === HANDLERS_TYPES.RECTANGLE && (
                 <React.Fragment>
                     <EdgeHandlers
-                        color={props.handlerColor}
+                        zoom={props.zoom}
                         points={points}
                     />
                     <CornerHandlers
-                        color={props.handlerColor}
+                        zoom={props.zoom}
                         points={points}
                     />
                 </React.Fragment>
@@ -34,6 +34,5 @@ export const Handlers = props => {
 Handlers.defaultProps = {
     tools: {},
     elements: [],
-    handlerColor: "#4285f4",
-    handlerSize: 8,
+    zoom: 1,
 };

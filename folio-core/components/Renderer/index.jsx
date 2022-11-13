@@ -89,6 +89,7 @@ export const Renderer = React.forwardRef((props, ref) => {
                     <Selection
                         tools={props.tools}
                         elements={props.elements}
+                        zoom={props.zoom}
                     />
                 )}
                 <Elements
@@ -99,6 +100,7 @@ export const Renderer = React.forwardRef((props, ref) => {
                     <Handlers
                         tools={props.tools}
                         elements={props.elements}
+                        zoom={props.zoom}
                     />
                 )}
                 {props.showBrush && !!props.brush && (
