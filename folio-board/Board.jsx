@@ -31,17 +31,39 @@ import {
 import {
     StyleDialog,
 } from "./components/Dialogs/index.jsx";
+import {TextInput} from "./components/TextInput.jsx";
 import {
     generateID,
     isArrowKey,
     isInputTarget,
+    measureText,
 } from "./utils/index.js";
 
 export const Board = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const ref = React.useRef(null);
+    const inputRef = React.useRef(null);
     const board = useBoard([]);
     const state = useBoardState();
+
+    // Tiny utility to call the onUpdated method of the element
+    const updateElement = (element, changed) => {
+        props.tools[element.type]?.onUpdated?.(element, new Set(changed || []));
+    };
+
+    // Handle submit input
+    const submitInput = () => {
+        const value = inputRef.current.value || "";
+        const element = state.current.activeElement;
+        element.selected = true;
+        element.text = value;
+        updateElement(element, ["text"]);
+        board.current.registerSelectionUpdate(["text"], [value], false);
+        state.current.activeElement = null;
+        state.current.action = null;
+        inputRef.current.blur();
+        // forceUpdate();
+    };
 
     // Handle canvas point --> reset current selection
     const handlePointCanvas = () => {
@@ -74,6 +96,9 @@ export const Board = props => {
     };
 
     const handlePointerDown = event => {
+        if (state.current.action === ACTIONS.INPUT_ELEMENT) {
+            submitInput();
+        }
         if (state.current.tool) {
             state.current.action = ACTIONS.CREATE_ELEMENT;
             const element = {
@@ -222,20 +247,63 @@ export const Board = props => {
         forceUpdate();
     };
 
+    // Handle double click
+    const handleDoubleClick = () => {
+        if (!state.current.action && !state.current.tool) {
+            const selection = board.current.getSelectedElements();
+            if (selection.length === 1 && typeof selection[0].text === "string") {
+                state.current.action = ACTIONS.INPUT_ELEMENT;
+                state.current.activeElement = selection[0];
+
+                return forceUpdate();
+            }
+        }
+        // nativeEvent.preventDefault();
+        // if (state.mode === MODES.MOVE) return; // Disable double click on move
+        // // Check if all selected elements are in a group
+        // if (selection.length > 0 && !board.current.activeGroup) {
+        //     const group = selection[0].group;
+        //     const sameGroup = selection.every(el => el.group === group);
+        //     if (group && sameGroup) {
+        //         board.current.clearSelectedElements();
+        //         board.current.activeGroup = group;
+        //         draw();
+        //         return forceUpdate();
+        //     }
+        // }
+        // if (selection.length === 1 && typeof selection[0].textContent === "string") {
+        //     board.current.activeElement = selection[0];
+        // }
+        // else {
+        //     board.current.activeElement = createElement({
+        //         type: ELEMENT_TYPES.TEXT,
+        //         x: getPosition(getXCoordinate(nativeEvent.offsetX)),
+        //         y: getPosition(getYCoordinate(nativeEvent.offsetY)),
+        //     });
+        //     board.current.addElement(board.current.activeElement);
+        //     board.current.registerElementCreate(board.current.activeElement);
+        // }
+        // board.current.clearSelectedElements();
+        // setState(prevState => ({
+        //     ...prevState,
+        //     mode: MODES.INPUT,
+        // }));
+    };
+
+
     // Key down listener
     React.useEffect(() => {
         const handleKeyDown = event => {
-            // TODO: check text input
-            if (isInputTarget(event)) {
-                // if (state.mode === MODES.INPUT && event.key === KEYS.ESCAPE) {
-                //     event.preventDefault();
-                //     submitInput();
-                // }
-                return;
-            }
-
             const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
-            if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
+            // Check if we are in an input target and input element is active
+            if (isInputTarget(event)) {
+                if (state.current.action === ACTIONS.INPUT_ELEMENT && event.key === KEYS.ESCAPE) {
+                    event.preventDefault();
+                    submitInput();
+                    forceUpdate();
+                }
+            }
+            else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                 event.preventDefault();
                 if (event.key === KEYS.X || event.key === KEYS.C) {
                     const elements = board.current.copySelectedElements();
@@ -308,9 +376,61 @@ export const Board = props => {
         };
     }, []);
 
+    // Listen to current action
+    React.useEffect(() => {
+        if (state.current.action !== ACTIONS.INPUT_ELEMENT || !inputRef.current) {
+            return;
+        }
+        const element = state.current.activeElement;
+        const updateInput = () => {
+            inputRef.current.style.height = "1em";
+            const size = measureText(
+                inputRef.current.value || "",
+                element.textSize * state.current.zoom,
+                element.textFont,
+            );
+            const width = Math.max(size.width + 1, element.width);
+            const height = inputRef.current.scrollHeight; // .max(ctx.input.scrollHeight, ctx.currentElement.height);
+            inputRef.current.style.width = width;
+            inputRef.current.style.height = height;
+
+            // Move text input to the correct position
+            // if (el.type !== ELEMENT_TYPES.TEXT) {
+            //     // Vertical align
+            //     if (el.textVerticalAlign === TEXT_VERTICAL_ALIGNS.MIDDLE) {
+            //         inputRef.current.style.top = state.y + (el.y + (el.height - height / state.zoom) / 2) * state.zoom;
+            //     }
+            //     else if (el.textVerticalAlign === TEXT_VERTICAL_ALIGNS.BOTTOM) {
+            //         inputRef.current.style.top = state.y + (el.y + (el.height - height / state.zoom)) * state.zoom;
+            //     }
+            //     // Horizontal align
+            //     if (el.textAlign === TEXT_ALIGNS.CENTER) {
+            //         inputRef.current.style.left = state.x + (el.x - ((width / state.zoom) - el.width) / 2) * state.zoom;
+            //     }
+            //     else if (el.textAlign === TEXT_ALIGNS.RIGHT) {
+            //         inputRef.current.style.left = state.x + (el.x - ((width / state.zoom) - el.width)) * state.zoom;
+            //     }
+            // }
+        };
+
+        // Set input position and initial value
+        inputRef.current.style.top = (state.current.translate.y + element.y * state.current.zoom) + "px";
+        inputRef.current.style.left = (state.current.translate.x + element.x * state.current.zoom) + "px";
+        inputRef.current.style.color = element.textColor;
+        inputRef.current.style.fontSize = (element.textSize * state.current.zoom) + "px";
+        inputRef.current.style.fontFamily = element.textFont;
+        // inputRef.current.style.textAlign = el.textAlign;
+        inputRef.current.value = element.text || ""; // Get text content
+        inputRef.current.focus(); // focus in the new input
+        updateInput();
+
+        inputRef.current.addEventListener("input", () => updateInput());
+        inputRef.current.addEventListener("mousedown", e => e.stopPropagation());
+        inputRef.current.addEventListener("mouseup", e => e.stopPropagation());
+    }, [state.current.action]);
+
     const handleZoomChange = delta => {
         const size = ref.current.getBoundingClientRect();
-        console.log(size);
         const prevZoom = state.current.zoom;
         const nextZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, state.current.zoom + delta));
         const translate = state.current.translate;
@@ -346,6 +466,7 @@ export const Board = props => {
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
+                onDoubleClick={handleDoubleClick}
                 showHandlers={!action && !tool}
                 showBrush={action === ACTIONS.SELECTION || action === ACTIONS.SCREENSHOT}
                 showSelection={!action && !tool}
@@ -453,6 +574,9 @@ export const Board = props => {
                         />
                     )}
                 </React.Fragment>
+            )}
+            {state.current.action === ACTIONS.INPUT_ELEMENT && (
+                <TextInput ref={inputRef} />
             )}
         </div>
     );

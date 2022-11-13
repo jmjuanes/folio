@@ -76,6 +76,18 @@ export const Renderer = React.forwardRef((props, ref) => {
         document.addEventListener("pointerleave", handlePointerUp);
     };
 
+    // Handle double click
+    const handleDoubleClick = event => {
+        event.preventDefault();
+        event.stopPropagation();
+        props?.onDoubleClick?.({
+            originalX: (event.nativeEvent.offsetX - props.translateX) / props.zoom,
+            originalY: (event.nativeEvent.offsetY - props.translateY) / props.zoom,
+            shiftKey: event.nativeEvent.shiftKey,
+            nativeEvent: event.nativeEvent,
+        });
+    };
+
     // Generate transform attribute
     const transform = [
         `translate(${props.translateX} ${props.translateY})`,
@@ -83,7 +95,14 @@ export const Renderer = React.forwardRef((props, ref) => {
     ];
 
     return (
-        <svg width="100%" height="100%" style={props.style} onPointerDown={handlePointerDown} ref={ref}>
+        <svg
+            ref={ref}
+            width={props.width}
+            height={props.height}
+            style={props.style}
+            onPointerDown={handlePointerDown}
+            onDoubleClick={handleDoubleClick}
+        >
             <g transform={transform.join(" ")}>
                 {props.showSelection && (
                     <Selection
@@ -132,6 +151,7 @@ Renderer.defaultProps = {
     onPointerDown: null,
     onPointerMove: null,
     onPointerUp: null,
+    onDoubleClick: null,
     showHandlers: false,
     showSelection: false,
     showBrush: true,

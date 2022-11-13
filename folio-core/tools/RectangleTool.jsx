@@ -61,7 +61,7 @@ export const RectangleTool = {
         radius: props?.radius ?? "0px",
         textColor: props?.textColor || "#000",
         textFont: props?.textFont || "",
-        textSize: props?.textSize || "0px",
+        textSize: props?.textSize || 16,
         textAlign: props?.textAlign || "center",
     }),
 

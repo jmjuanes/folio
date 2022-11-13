@@ -23,12 +23,13 @@ export const FONTS = [
     "Noto Sans Mono, monospace",
 ];
 
-export const FONT_SIZE_SM = "12px";
-export const FONT_SIZE_MD = "16px";
-export const FONT_SIZE_LG = "24px";
-export const FONT_SIZE_XL = "32px";
+export const FONT_SIZE_SM = 12;
+export const FONT_SIZE_MD = 16;
+export const FONT_SIZE_LG = 24;
+export const FONT_SIZE_XL = 32;
 
 export const DEFAULT_FONT_FAMILY = FONTS[0];
+export const DEFAULT_FONT_SIZE = FONT_SIZE_MD;
 export const DEFAULT_FONT_WEIGHT = "500";
 
 export const OPACITY_NONE = "1";
@@ -80,10 +81,7 @@ export const ACTIONS = {
     CREATE_ELEMENT: "action:element:create",
     DRAG_ELEMENT: "action:element:drag",
     RESIZE_ELEMENT: "action:element:resize",
-    NONE: "mode:none",
-    RESIZE: "mode:resize",
-    DRAG: "mode:drag",
-    INPUT: "mode:input",
+    INPUT_ELEMENT: "action:element:input",
     SELECTION: "action:selection",
     SCREENSHOT: "action:screenshot",
     MOVE: "action:move",
