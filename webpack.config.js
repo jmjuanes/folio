@@ -1,11 +1,11 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-// const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 const package = require("./package.json");
 
 module.exports = {
-    mode: "production",
+    mode: "development", // "production",
     target: "web",
     entry: {
         app: path.join(__dirname, "app", "index.js"),
@@ -15,13 +15,21 @@ module.exports = {
         publicPath: "./",
         filename: "[contenthash:9].js",
     },
+    resolve: {
+        alias: {
+            "folio-core": path.join(__dirname, "folio-core"),
+            "folio-board": path.join(__dirname, "folio-board"),
+            "folio-math": path.join(__dirname, "folio-math"),
+        },
+    },
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    path.join(__dirname, "folio-react"),
                     path.join(__dirname, "app"),
+                    path.join(__dirname, "folio-board"),
+                    path.join(__dirname, "folio-core"),
                 ],
                 exclude: /(node_modules|bower_components)/,
                 loader: "babel-loader",
@@ -43,17 +51,17 @@ module.exports = {
             "process.env.VERSION": JSON.stringify(package.version),
             // "process.env.HOMEPAGE_URL": JSON.stringify(package.homepage),
         }),
-        // new CopyPlugin({
-        //     patterns: [
-        //         path.join(__dirname, "styles.css"),
-        //     ],
-        // }),
+        new CopyPlugin({
+            patterns: [
+                path.join(__dirname, "node_modules", "lowcss", "dist", "low.css"),
+            ],
+        }),
         new HtmlWebpackPlugin({
             inject: true,
             chunks: [
                 "app",
             ],
-            template: path.join(__dirname, "app/index.html"),
+            template: path.join(__dirname, "app", "index.html"),
             minify: true,
         }),
     ],
