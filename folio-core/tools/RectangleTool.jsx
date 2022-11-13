@@ -22,23 +22,41 @@ const RectangleRenderer = props => {
         [props.strokeStyle, props.width, props.height, props.strokeWidth],
     );
 
-    return React.createElement("rect", {
-        ...props.elementAttributes,
-        x: props.x,
-        y: props.y,
-        width: props.width,
-        height: props.height,
-        rx: props.radius,
-        fill: props.fillColor,
-        fillOpacity: props.fillOpacity,
-        stroke: props.strokeColor,
-        strokeWidth: props.strokeWidth,
-        strokeOpacity: props.strokeOpacity,
-        strokeDasharray: strokeDasharray,
-        strokeDashoffset: strokeDashoffset,
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-    });
+    return (
+        <React.Fragment>
+            <rect
+                {...props.elementAttributes}
+                x={props.x}
+                y={props.y}
+                width={props.width}
+                height={props.height}
+                rx={props.radius}
+                fill={props.fillColor}
+                fillOpacity={props.fillOpacity}
+                stroke={props.strokeColor}
+                strokeWidth={props.strokeWidth}
+                strokeOpacity={props.strokeOpacity}
+                strokeDasharray={strokeDasharray}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            {!!props.text && (
+                <text
+                    {...props.elementAttributes}
+                    x={props.x + props.width / 2}
+                    y={props.y + props.height / 2}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill={props.textColor}
+                    fontFamily={props.textFont}
+                    fontSize={props.textSize}
+                >
+                    {props.text}
+                </text>
+            )}
+        </React.Fragment>
+    );
 };
 
 export const RectangleTool = {
