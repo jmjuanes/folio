@@ -1,5 +1,5 @@
 import React from "react";
-import {getBalancedDash} from "../utils/index.js";
+import {getBalancedDash, measureText} from "../utils/index.js";
 import {HANDLERS_TYPES} from "../constants.js";
 
 const RectangleRenderer = props => {
@@ -21,6 +21,31 @@ const RectangleRenderer = props => {
         [props.strokeStyle, props.width, props.height, props.strokeWidth],
     );
 
+    const textContent = React.useMemo(
+        () => {
+            const lines = props.text.split("\n");
+            const lineHeight = props.textHeight / lines.length;
+            return lines.map((line, index) => {
+                return (
+                    <text
+                        {...props.elementAttributes}
+                        key={index}
+                        x={props.width / 2}
+                        y={(props.height / 2) - (props.textHeight / 2) + index * lineHeight}
+                        textAnchor="middle"
+                        dominantBaseline="hanging"
+                        fill={props.textColor}
+                        fontFamily={props.textFont}
+                        fontSize={props.textSize}
+                    >
+                        {line}
+                    </text>
+                );
+            });
+        },
+        [props.text, props.textSize, props.textFont, props.width, props.height],
+    );
+
     return (
         <React.Fragment>
             <rect
@@ -40,19 +65,10 @@ const RectangleRenderer = props => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
             />
-            {!!props.text && (
-                <text
-                    {...props.elementAttributes}
-                    x={props.x + props.width / 2}
-                    y={props.y + props.height / 2}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill={props.textColor}
-                    fontFamily={props.textFont}
-                    fontSize={props.textSize}
-                >
-                    {props.text}
-                </text>
+            {!!props.text && !props.editing && (
+                <g transform={`translate(${props.x} ${props.y})`}>
+                    {textContent}
+                </g>
             )}
         </React.Fragment>
     );
@@ -80,6 +96,8 @@ export const RectangleTool = {
         textFont: props?.textFont || "",
         textSize: props?.textSize || 16,
         textAlign: props?.textAlign || "center",
+        textWidth: 0,
+        textHeight: 0,
     }),
 
     // Update element while user is creating it
@@ -103,4 +121,13 @@ export const RectangleTool = {
         [el.x + el.width, el.y + el.height],
         [el.x, el.y + el.height],
     ]),
+
+    // Updated element
+    onUpdated: (el, changedProps) => {
+        if (changedProps.has("text")) {
+            const [width, height] = measureText(el.text, el.textSize, el.textFont);
+            el.textWidth = width;
+            el.textHeight = height;
+        }
+    },
 };

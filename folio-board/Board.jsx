@@ -5,6 +5,7 @@ import {
     defaultTools,
     normalizeRectangle,
     pointInRectangle,
+    measureText,
 } from "folio-core";
 
 import {
@@ -34,7 +35,6 @@ import {
     generateID,
     isArrowKey,
     isInputTarget,
-    measureText,
 } from "./utils/index.js";
 
 export const Board = props => {
@@ -54,6 +54,7 @@ export const Board = props => {
         const value = inputRef.current.value || "";
         const element = state.current.activeElement;
         element.selected = true;
+        element.editing = false;
         element.text = value;
         updateElement(element, ["text"]);
         board.current.registerSelectionUpdate(["text"], [value], false);
@@ -107,6 +108,7 @@ export const Board = props => {
                 y: event.originalY,
                 selected: false,
                 locked: false,
+                editing: false,
             };
             state.current.activeElement = element; // Save element reference
             board.current.addElement(element);
@@ -252,6 +254,7 @@ export const Board = props => {
             if (selection.length === 1 && typeof selection[0].text === "string") {
                 state.current.action = ACTIONS.INPUT_ELEMENT;
                 state.current.activeElement = selection[0];
+                state.current.activeElement.editing = true;
 
                 return forceUpdate();
             }
@@ -382,15 +385,15 @@ export const Board = props => {
         const element = state.current.activeElement;
         const updateInput = () => {
             inputRef.current.style.height = "1em";
-            const size = measureText(
+            const [width, height] = measureText(
                 inputRef.current.value || "",
                 element.textSize * state.current.zoom,
                 element.textFont,
             );
-            const width = Math.max(size.width + 1, element.width);
-            const height = inputRef.current.scrollHeight; // .max(ctx.input.scrollHeight, ctx.currentElement.height);
-            inputRef.current.style.width = width;
-            inputRef.current.style.height = height;
+            // const width = Math.max(size.width + 1, element.width);
+            // const height = size.height; // inputRef.current.scrollHeight; // .max(ctx.input.scrollHeight, ctx.currentElement.height);
+            inputRef.current.style.width = width + "px";
+            inputRef.current.style.height = height + "px";
 
             // Move text input to the correct position
             // if (el.type !== ELEMENT_TYPES.TEXT) {
@@ -412,8 +415,8 @@ export const Board = props => {
         };
 
         // Set input position and initial value
-        inputRef.current.style.top = (state.current.translate.y + element.y * state.current.zoom) + "px";
-        inputRef.current.style.left = (state.current.translate.x + element.x * state.current.zoom) + "px";
+        inputRef.current.style.top = (state.current.translate.y + (element.y  + element.height / 2)* state.current.zoom) + "px";
+        inputRef.current.style.left = (state.current.translate.x + (element.x + element.width / 2)* state.current.zoom) + "px";
         inputRef.current.style.color = element.textColor;
         inputRef.current.style.fontSize = (element.textSize * state.current.zoom) + "px";
         inputRef.current.style.fontFamily = element.textFont;

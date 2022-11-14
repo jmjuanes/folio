@@ -43,3 +43,30 @@ export const getBalancedDash = (length = 0, strokeWidth = 0, style = "dashed") =
     };
 };
 
+// Measure text size
+export const measureText = (text, textSize, textFont) => {
+    let width = 0, height = 0;
+    if (text.length > 0) {
+        if (!measureText.container) {
+            measureText.container = document.createElement("pre");
+            measureText.container.style.position = "absolute";
+            measureText.container.style.visibility = "hidden";
+            measureText.container.style.top = "-9999px";
+            measureText.container.style.left = "-9999px";
+            measureText.container.style.lineHeight = "normal"; // Set line-height as normal
+            measureText.container.style.whiteSpace = "pre";
+            measureText.container.style.minHeight = "1em";
+            document.body.appendChild(measureText.container);
+        }
+        // .replace(/\r\n?/g, "\n"); // .split("\n").join("<br>");
+        measureText.container.innerHTML = text.charAt(text.length - 1) === "\n" ? text + " " : text;
+        measureText.container.style.fontFamily = textFont;
+        measureText.container.style.fontSize = textSize + "px";
+        width = measureText.container.offsetWidth; // Set computed width
+        height = measureText.container.offsetHeight; // Set computed height
+        // document.body.removeChild(div); // Remove div from DOM
+    }
+    // Return the text size
+    return [width, height];
+};
+
