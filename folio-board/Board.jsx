@@ -1,12 +1,10 @@
 import React from "react";
 import {
-    normalizeRectangle,
-    pointInRectangle,
-} from "folio-math";
-import {
     Renderer,
     HANDLERS,
     defaultTools,
+    normalizeRectangle,
+    pointInRectangle,
 } from "folio-core";
 
 import {

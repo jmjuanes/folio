@@ -4,7 +4,6 @@
     "private": true,
     "description": "Core renderer for Folio",
     "dependencies": {
-        "folio-math": "0.1.0-dev",
         "react": "^18.2.0"
     }
 }

@@ -1,6 +1,5 @@
 import React from "react";
-import {getBalancedDash} from "folio-math";
-
+import {getBalancedDash} from "../utils/index.js";
 import {HANDLERS_TYPES} from "../constants.js";
 
 const RectangleRenderer = props => {

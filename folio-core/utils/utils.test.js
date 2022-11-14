@@ -3,7 +3,7 @@ import {
     pointInRectangle,
 } from "./index.js";
 
-describe("utils.boundaryPoints", () => {
+describe("boundaryPoints", () => {
     it("should generate the boundary rectangle", () => {
         const points = [[1, 2], [0, 3], [4, 2]];
         const rectanglePoints = boundaryPoints(points);
@@ -16,7 +16,7 @@ describe("utils.boundaryPoints", () => {
     });
 });
 
-describe("utils.pointInRectangle", () => {
+describe("pointInRectangle", () => {
     const rectangle = {x: 0, y: 0, width: 100, height: 100};
 
     it("should return 'true' if point is inside the rectangle", () => {

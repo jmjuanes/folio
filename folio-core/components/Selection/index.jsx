@@ -1,5 +1,5 @@
 import React from "react";
-import {boundaryPoints} from "folio-math";
+import {boundaryPoints} from "../../utils/index.js";
 import {POINT_SOURCES} from "../../constants.js";
 
 export const Selection = props => {
