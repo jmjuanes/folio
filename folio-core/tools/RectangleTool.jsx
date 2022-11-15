@@ -1,5 +1,6 @@
 import React from "react";
-import {getBalancedDash, measureText} from "../utils/index.js";
+import {InnerText} from "../components/Commons/InnerText.jsx";
+import {getBalancedDash} from "../utils/index.js";
 import {HANDLERS_TYPES} from "../constants.js";
 
 const RectangleRenderer = props => {
@@ -20,32 +21,6 @@ const RectangleRenderer = props => {
         },
         [props.strokeStyle, props.width, props.height, props.strokeWidth],
     );
-
-    const textContent = React.useMemo(
-        () => {
-            const lines = props.text.split("\n");
-            const lineHeight = props.textHeight / lines.length;
-            return lines.map((line, index) => {
-                return (
-                    <text
-                        {...props.elementAttributes}
-                        key={index}
-                        x={props.width / 2}
-                        y={(props.height / 2) - (props.textHeight / 2) + index * lineHeight}
-                        textAnchor="middle"
-                        dominantBaseline="hanging"
-                        fill={props.textColor}
-                        fontFamily={props.textFont}
-                        fontSize={props.textSize}
-                    >
-                        {line}
-                    </text>
-                );
-            });
-        },
-        [props.text, props.textSize, props.textFont, props.width, props.height],
-    );
-
     return (
         <React.Fragment>
             <rect
@@ -65,10 +40,8 @@ const RectangleRenderer = props => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
             />
-            {!!props.text && !props.editing && (
-                <g transform={`translate(${props.x} ${props.y})`}>
-                    {textContent}
-                </g>
+            {props.text && !props.editing && (
+                <InnerText {...props} />
             )}
         </React.Fragment>
     );
@@ -123,11 +96,5 @@ export const RectangleTool = {
     ]),
 
     // Updated element
-    onUpdated: (el, changedProps) => {
-        if (changedProps.has("text")) {
-            const [width, height] = measureText(el.text, el.textSize, el.textFont);
-            el.textWidth = width;
-            el.textHeight = height;
-        }
-    },
+    // onUpdated: (el, changedProps) => null,
 };
