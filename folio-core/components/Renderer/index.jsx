@@ -11,8 +11,8 @@ export const Renderer = React.forwardRef((props, ref) => {
         event.stopPropagation();
         const source = event.nativeEvent?.target?.dataset?.type || null;
         const eventInfo = {
-            originalX: (event.nativeEvent.offsetX - props.translateX) / props.zoom,
-            originalY: (event.nativeEvent.offsetY - props.translateY) / props.zoom,
+            originalX: (event.nativeEvent.clientX - props.translateX) / props.zoom,
+            originalY: (event.nativeEvent.clientY - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             nativeEvent: event.nativeEvent,
         };
@@ -49,10 +49,10 @@ export const Renderer = React.forwardRef((props, ref) => {
             props.onPointerMove?.({
                 ...eventInfo,
                 nativeEvent: event,
-                currentX: (event.offsetX - props.translateX) / props.zoom,
-                currentY: (event.offsetY - props.translateY) / props.zoom,
-                dx: (event.offsetX - eventInfo.nativeEvent.offsetX) / props.zoom,
-                dy: (event.offsetY - eventInfo.nativeEvent.offsetY) / props.zoom,
+                currentX: (event.clientX - props.translateX) / props.zoom,
+                currentY: (event.clientY - props.translateY) / props.zoom,
+                dx: (event.clientX - eventInfo.nativeEvent.clientX) / props.zoom,
+                dy: (event.clientY - eventInfo.nativeEvent.clientY) / props.zoom,
             });
         };
 
@@ -81,8 +81,8 @@ export const Renderer = React.forwardRef((props, ref) => {
         event.preventDefault();
         event.stopPropagation();
         props?.onDoubleClick?.({
-            originalX: (event.nativeEvent.offsetX - props.translateX) / props.zoom,
-            originalY: (event.nativeEvent.offsetY - props.translateY) / props.zoom,
+            originalX: (event.nativeEvent.clientX - props.translateX) / props.zoom,
+            originalY: (event.nativeEvent.clientY - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             nativeEvent: event.nativeEvent,
         });
