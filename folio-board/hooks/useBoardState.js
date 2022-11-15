@@ -25,7 +25,7 @@ export const useBoardState = () => {
             lastX: 0,
             lastY: 0,
         },
-        showStyleDialog: true,
+        showStyleDialog: false,
         showExportDialog: false,
         defaults: {
             fillOpacity: OPACITY_NONE,

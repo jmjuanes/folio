@@ -81,7 +81,7 @@ export const ACTIONS = {
     CREATE_ELEMENT: "action:element:create",
     DRAG_ELEMENT: "action:element:drag",
     RESIZE_ELEMENT: "action:element:resize",
-    INPUT_ELEMENT: "action:element:input",
+    EDIT_ELEMENT: "action:element:edit",
     SELECTION: "action:selection",
     SCREENSHOT: "action:screenshot",
     MOVE: "action:move",

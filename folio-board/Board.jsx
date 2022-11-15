@@ -44,24 +44,31 @@ export const Board = props => {
     const board = useBoard([]);
     const state = useBoardState();
 
-    // Tiny utility to call the onUpdated method of the element
-    const updateElement = (element, changed) => {
-        props.tools[element.type]?.onUpdated?.(element, new Set(changed || []));
+    const submitInput = () => {
+        if (state.current.action === ACTIONS.EDIT_ELEMENT && state.current.activeElement) {
+            const value = inputRef.current.value || "";
+            const element = state.current.activeElement;
+            element.selected = true;
+            element.editing = false;
+            if (element.text !== value) {
+                board.current.registerSelectionUpdate(["text"], [value], false);
+                element.text = value;
+            }
+            state.current.activeElement = null;
+            state.current.action = null;
+            inputRef.current.blur();
+        }
+        // forceUpdate();
     };
 
-    // Handle submit input
-    const submitInput = () => {
-        const value = inputRef.current.value || "";
-        const element = state.current.activeElement;
-        element.selected = true;
-        element.editing = false;
-        element.text = value;
-        updateElement(element, ["text"]);
-        board.current.registerSelectionUpdate(["text"], [value], false);
-        state.current.activeElement = null;
-        state.current.action = null;
-        inputRef.current.blur();
-        // forceUpdate();
+    const cancelInput = () => {
+        if (state.current.action === ACTIONS.EDIT_ELEMENT && state.current.activeElement) {
+            state.current.activeElement.selected = true;
+            state.current.activeElement.editing = false;
+            state.current.activeElement = null;
+            state.current.action = null;
+            inputRef.current.blur();
+        }
     };
 
     // Handle canvas point --> reset current selection
@@ -95,7 +102,7 @@ export const Board = props => {
     };
 
     const handlePointerDown = event => {
-        if (state.current.action === ACTIONS.INPUT_ELEMENT) {
+        if (state.current.action === ACTIONS.EDIT_ELEMENT) {
             submitInput();
         }
         if (state.current.tool) {
@@ -252,45 +259,14 @@ export const Board = props => {
         if (!state.current.action && !state.current.tool) {
             const selection = board.current.getSelectedElements();
             if (selection.length === 1 && typeof selection[0].text === "string") {
-                state.current.action = ACTIONS.INPUT_ELEMENT;
+                state.current.action = ACTIONS.EDIT_ELEMENT;
                 state.current.activeElement = selection[0];
                 state.current.activeElement.editing = true;
 
                 return forceUpdate();
             }
         }
-        // nativeEvent.preventDefault();
-        // if (state.mode === MODES.MOVE) return; // Disable double click on move
-        // // Check if all selected elements are in a group
-        // if (selection.length > 0 && !board.current.activeGroup) {
-        //     const group = selection[0].group;
-        //     const sameGroup = selection.every(el => el.group === group);
-        //     if (group && sameGroup) {
-        //         board.current.clearSelectedElements();
-        //         board.current.activeGroup = group;
-        //         draw();
-        //         return forceUpdate();
-        //     }
-        // }
-        // if (selection.length === 1 && typeof selection[0].textContent === "string") {
-        //     board.current.activeElement = selection[0];
-        // }
-        // else {
-        //     board.current.activeElement = createElement({
-        //         type: ELEMENT_TYPES.TEXT,
-        //         x: getPosition(getXCoordinate(nativeEvent.offsetX)),
-        //         y: getPosition(getYCoordinate(nativeEvent.offsetY)),
-        //     });
-        //     board.current.addElement(board.current.activeElement);
-        //     board.current.registerElementCreate(board.current.activeElement);
-        // }
-        // board.current.clearSelectedElements();
-        // setState(prevState => ({
-        //     ...prevState,
-        //     mode: MODES.INPUT,
-        // }));
     };
-
 
     // Key down listener
     React.useEffect(() => {
@@ -298,7 +274,7 @@ export const Board = props => {
             const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
             // Check if we are in an input target and input element is active
             if (isInputTarget(event)) {
-                if (state.current.action === ACTIONS.INPUT_ELEMENT && event.key === KEYS.ESCAPE) {
+                if (state.current.action === ACTIONS.EDIT_ELEMENT && event.key === KEYS.ESCAPE) {
                     event.preventDefault();
                     submitInput();
                     forceUpdate();
@@ -379,7 +355,7 @@ export const Board = props => {
 
     // Listen to current action
     React.useEffect(() => {
-        if (state.current.action !== ACTIONS.INPUT_ELEMENT || !inputRef.current) {
+        if (state.current.action !== ACTIONS.EDIT_ELEMENT || !inputRef.current) {
             return;
         }
         const element = state.current.activeElement;
@@ -431,6 +407,7 @@ export const Board = props => {
     }, [state.current.action]);
 
     const handleZoomChange = delta => {
+        submitInput();
         const size = ref.current.getBoundingClientRect();
         const prevZoom = state.current.zoom;
         const nextZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, state.current.zoom + delta));
@@ -494,17 +471,20 @@ export const Board = props => {
                         currentAction={state.current.action}
                         currentTool={state.current.tool}
                         onMoveClick={() => {
+                            submitInput();
                             state.current.tool = null;
                             state.current.action = ACTIONS.MOVE;
                             board.current.clearSelectedElements();
                             forceUpdate();
                         }}
                         onSelectionClick={() => {
+                            submitInput();
                             state.current.tool = null;
                             state.current.action = null;
                             forceUpdate();
                         }}
                         onToolClick={tool => {
+                            submitInput();
                             state.current.tool = tool;
                             state.current.action = null;
                             board.current.clearSelectedElements();
@@ -515,10 +495,12 @@ export const Board = props => {
                         undoDisabled={board.current.isUndoDisabled()}
                         redoDisabled={board.current.isRedoDisabled()}
                         onUndoClick={() => {
+                            cancelInput();
                             board.current.undo();
                             forceUpdate();
                         }}
                         onRedoClick={() => {
+                            cancelInput();
                             board.current.redo();
                             forceUpdate();
                         }}
@@ -533,8 +515,11 @@ export const Board = props => {
                         selection={board.current.getSelectedElements()}
                         styleDialogActive={!!state.current.showStyleDialog}
                         onRemoveClick={() => {
-                            board.current.registerSelectionRemove();
-                            board.current.removeSelectedElements();
+                            submitInput();
+                            if (board.current.getSelectedElements().length > 0) {
+                                board.current.registerSelectionRemove();
+                                board.current.removeSelectedElements();
+                            }
                             forceUpdate();
                         }}
                         onBringForwardClick={() => {
@@ -563,6 +548,7 @@ export const Board = props => {
                         <StyleDialog
                             values={board.current.getSelectedElements()[0] || state.current.defaults}
                             onChange={(key, value) => {
+                                submitInput();
                                 // TODO: we should find another way to check if we have selected elements
                                 // to prevent filtering the elements list
                                 if (board.current.getSelectedElements().length > 0) {
@@ -576,7 +562,7 @@ export const Board = props => {
                     )}
                 </React.Fragment>
             )}
-            {state.current.action === ACTIONS.INPUT_ELEMENT && (
+            {state.current.action === ACTIONS.EDIT_ELEMENT && (
                 <TextInput ref={inputRef} />
             )}
         </div>
