@@ -315,17 +315,6 @@ export const Board = props => {
             // Check ESCAPE key
             else if (event.key === KEYS.ESCAPE) {
                 event.preventDefault();
-                // Check if screenshot dialog is visible
-                // if (state.showExportDialog) {
-                //     return setState(prevState => ({...prevState, showExportDialog: false}));
-                // }
-                // // Check if we are in the screenshot mode
-                // else if (state.mode === MODES.SCREENSHOT) {
-                //     return setState(prevState => ({
-                //         ...prevState,
-                //         mode: MODES.SELECTION,
-                //     }));
-                // }
                 board.current.clearSelectedElements();
                 // board.current.activeGroup = null;
                 forceUpdate();
@@ -333,24 +322,24 @@ export const Board = props => {
             // Check for arrow keys --> move elements
             else if (isArrowKey(event.key)) {
                 event.preventDefault();
-                // const step = state.gridEnabled ? state.gridSize : (event.shiftKey ? 5 : 1);
-                // const direction = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
-                // const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
-                // const selectedElements = board.current.getSelectedElements();
-                // board.current.addHistoryEntry({
-                //     type: ELEMENT_CHANGE_TYPES.UPDATE,
-                //     ids: selectedElements.map(el => el.id).join(","),
-                //     keys: direction,
-                //     elements: selectedElements.map(el => {
-                //         const prevValue = el[direction];
-                //         el[direction] = prevValue + step * sign;
-                //         return {
-                //             id: el.id,
-                //             prevValues: {[direction]: prevValue},
-                //             newValues: {[direction]: el[direction]},
-                //         };
-                //     }),
-                // });
+                // const step = event.shiftKey ? (props.gridSize || 10) : 1;
+                const direction = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
+                const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
+                const selectedElements = board.current.getSelectedElements();
+                board.current.addHistoryEntry({
+                    type: ELEMENT_CHANGE_TYPES.UPDATE,
+                    ids: selectedElements.map(el => el.id).join(","),
+                    keys: direction,
+                    elements: selectedElements.map(el => {
+                        const prevValue = el[direction];
+                        el[direction] = event.shiftKey ? getPosition(prevValue + sign * (props.gridSize || 10)) : prevValue + sign;
+                        return {
+                            id: el.id,
+                            prevValues: {[direction]: prevValue},
+                            newValues: {[direction]: el[direction]},
+                        };
+                    }),
+                });
                 forceUpdate();
             }
         };
