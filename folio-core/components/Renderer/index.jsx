@@ -100,11 +100,23 @@ export const Renderer = React.forwardRef((props, ref) => {
             ref={ref}
             width="100%"
             height="100%"
-            style={props.style}
+            style={{
+                backgroundColor: "#eaeaea",
+                touchAction: "none",
+                userSelect: "none",
+            }}
             onPointerDown={handlePointerDown}
             onDoubleClick={handleDoubleClick}
         >
             <g transform={transform.join(" ")}>
+                <rect
+                    x="0"
+                    y="0"
+                    width={props.width}
+                    height={props.height}
+                    fill={props.backgroundColor}
+                    stroke="none"
+                />
                 {props.showGrid && (
                     <Grid
                         zoom={props.zoom}
@@ -145,6 +157,7 @@ export const Renderer = React.forwardRef((props, ref) => {
 Renderer.defaultProps = {
     width: 0,
     height: 0,
+    backgroundColor: "#fff",
     tools: {},
     elements: [],
     brush: null,
@@ -164,8 +177,4 @@ Renderer.defaultProps = {
     showSelection: false,
     showBrush: true,
     showGrid: true,
-    style: {
-        touchAction: "none",
-        userSelect: "none",
-    },
 };

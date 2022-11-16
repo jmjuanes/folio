@@ -1,7 +1,7 @@
 import React from "react";
 
 export const Grid = props => (
-    <g transform={`translate(${-props.size / 2} ${-props.size / 2})`}>
+    <g transform={`translate(${- props.size / 2} ${- props.size / 2})`}>
         <defs>
             <pattern
                 id="grid"
@@ -21,8 +21,8 @@ export const Grid = props => (
         <rect
             x="0"
             y="0"
-            width={props.width}
-            height={props.height}
+            width={props.width + props.size / 2}
+            height={props.height + props.size / 2}
             fill="url(#grid)"
         />
     </g>
