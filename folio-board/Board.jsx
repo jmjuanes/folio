@@ -44,6 +44,11 @@ export const Board = props => {
     const board = useBoard([]);
     const state = useBoardState();
 
+    // Calculate the position using the grid size
+    const getPosition = v => {
+        return props.grid ? Math.round(v / props.gridSize) * props.gridSize : v;
+    };
+
     const submitInput = () => {
         if (state.current.action === ACTIONS.EDIT_ELEMENT && state.current.activeElement) {
             const value = inputRef.current.value || "";
@@ -111,8 +116,8 @@ export const Board = props => {
                 ...props.tools[state.current.tool]?.onCreateStart?.({}, event, state.current.defaults),
                 id: generateID(),
                 type: state.current.tool,
-                x: event.originalX,
-                y: event.originalY,
+                x: getPosition(event.originalX),
+                y: getPosition(event.originalY),
                 selected: false,
                 locked: false,
                 editing: false,
@@ -130,6 +135,11 @@ export const Board = props => {
             state.current.isResized = false;
             state.current.isDragged = false;
         }
+        else if (state.current.action === ACTIONS.MOVE) {
+            // We need to update the last translated point before start moving the board
+            state.current.translate.lastX = state.current.translate.x;
+            state.current.translate.lastY = state.current.translate.y;
+        }
         else if (!state.current.action) {
             state.current.action = ACTIONS.SELECTION;
             state.current.brush = {
@@ -144,20 +154,20 @@ export const Board = props => {
 
     const handlePointerMove = event => {
         if (state.current.action === ACTIONS.MOVE) {
-            state.current.translate.x = state.current.translate.lastX + event.dx;
-            state.current.translate.y = state.current.translate.lastY + event.dy;
+            state.current.translate.x = Math.floor(state.current.translate.lastX + event.dx * state.current.zoom);
+            state.current.translate.y = Math.floor(state.current.translate.lastY + event.dy * state.current.zoom);
         }
         else if (state.current.action === ACTIONS.CREATE_ELEMENT) {
             Object.assign(
                 state.current.activeElement,
-                props.tools[state.current.tool]?.onCreateMove?.(state.current.activeElement, event),
+                props.tools[state.current.tool]?.onCreateMove?.(state.current.activeElement, event, getPosition),
             );
         }
         else if (state.current.action === ACTIONS.DRAG_ELEMENT) {
             const snapshot = state.current.snapshot;
             state.current.isDragged = true;
             board.current.getSelectedElements().forEach((element, index) => {
-                Object.assign(element, props.tools[element.type]?.onDrag?.(snapshot[index], event) || {});
+                Object.assign(element, props.tools[element.type]?.onDrag?.(snapshot[index], event, getPosition) || {});
             });
         }
         else if (state.current.action === ACTIONS.RESIZE_ELEMENT) {
@@ -165,38 +175,38 @@ export const Board = props => {
             const element = board.current.getElementById(snapshot.id);
             state.current.isResized = true;
             if (state.current.activeHandler === HANDLERS.CORNER_TOP_LEFT) {
-                element.x = Math.min(snapshot.x + event.dx, snapshot.x + snapshot.width - 1); // getPosition(snapshot.x + x);
+                element.x = Math.min(getPosition(snapshot.x + event.dx), snapshot.x + snapshot.width - 1);
                 element.width = snapshot.width + (snapshot.x - element.x);
-                element.y = Math.min(snapshot.y + event.dy, snapshot.y + snapshot.height - 1); // getPosition(snapshot.y + y);
+                element.y = Math.min(getPosition(snapshot.y + event.dy), snapshot.y + snapshot.height - 1);
                 element.height = snapshot.height + (snapshot.y - element.y);
             }
             else if (state.current.activeHandler === HANDLERS.CORNER_TOP_RIGHT) {
-                element.width = Math.max(snapshot.width + event.dx, 1) // getPosition(element.x + snapshot.width + x) - element.x;
-                element.y = Math.min(snapshot.y + event.dy, snapshot.y + snapshot.height - 1); // getPosition(snapshot.y + y);
+                element.width = Math.max(getPosition(snapshot.width + event.dx), 1);
+                element.y = Math.min(getPosition(snapshot.y + event.dy), snapshot.y + snapshot.height - 1);
                 element.height = snapshot.height + (snapshot.y - element.y);
             }
             else if (state.current.activeHandler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                element.x = Math.min(snapshot.x + event.dx, snapshot.x + snapshot.width - 1); // getPosition(snapshot.x + x);
+                element.x = Math.min(getPosition(snapshot.x + event.dx), snapshot.x + snapshot.width - 1);
                 element.width = snapshot.width + (snapshot.x - element.x);
-                element.height = Math.max(snapshot.height + event.dy, 1);
+                element.height = Math.max(getPosition(snapshot.height + event.dy), 1);
             }
             else if (state.current.activeHandler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                element.width = Math.max(snapshot.width + event.dx, 1); // getPosition(element.x + snapshot.width + x) - element.x;
-                element.height = Math.max(snapshot.height + event.dy, 1);
+                element.width = Math.max(getPosition(snapshot.width + event.dx), 1);
+                element.height = Math.max(getPosition(snapshot.height + event.dy), 1);
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_TOP) {
-                element.y = Math.min(snapshot.y + event.dy, snapshot.y + snapshot.height - 1);
+                element.y = Math.min(getPosition(snapshot.y + event.dy), snapshot.y + snapshot.height - 1);
                 element.height = snapshot.height + (snapshot.y - element.y);
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_BOTTOM) {
-                element.height = Math.max(snapshot.height + event.dy, 1);
+                element.height = Math.max(getPosition(snapshot.height + event.dy), 1);
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_LEFT) {
-                element.x = Math.min(snapshot.x + event.dx, snapshot.x + snapshot.width - 1);
+                element.x = Math.min(getPosition(snapshot.x + event.dx), snapshot.x + snapshot.width - 1);
                 element.width = snapshot.width + (snapshot.x - element.x);
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_RIGHT) {
-                element.width = Math.max(snapshot.width + event.dx, 1);
+                element.width = Math.max(getPosition(snapshot.width + event.dx), 1);
             }
         }
         else if (state.current.action === ACTIONS.SELECTION || state.current.action === ACTIONS.SCREENSHOT) {
@@ -413,8 +423,8 @@ export const Board = props => {
         const nextZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, state.current.zoom + delta));
         const translate = state.current.translate;
         state.current.zoom = nextZoom;
-        state.current.translate.x = translate.x + size.width * (prevZoom - nextZoom) / 2;
-        state.current.translate.y = translate.y + size.height * (prevZoom - nextZoom) / 2;
+        state.current.translate.x = Math.floor(translate.x + size.width * (prevZoom - nextZoom) / 2);
+        state.current.translate.y = Math.floor(translate.y + size.height * (prevZoom - nextZoom) / 2);
         forceUpdate();
     };
 
@@ -426,12 +436,25 @@ export const Board = props => {
         return null;
     };
 
+    // Center board in screen
+    const centerInScreen = () => {
+        const size = ref.current.getBoundingClientRect();
+        state.current.translate.x = Math.floor((size.width - props.width) / 2);
+        state.current.translate.y = Math.floor((size.height - props.height) / 2);
+        forceUpdate();
+    };
+
+    // Center the board for the first time
+    React.useEffect(() => centerInScreen(), []);
+
     const {action, tool} = state.current;
 
     return (
         <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
             <Renderer
                 ref={ref}
+                width={props.width}
+                height={props.height}
                 tools={props.tools}
                 elements={board.current.elements}
                 translateX={state.current.translate.x}
@@ -448,6 +471,7 @@ export const Board = props => {
                 showHandlers={!action && !tool}
                 showBrush={action === ACTIONS.SELECTION || action === ACTIONS.SCREENSHOT}
                 showSelection={!action && !tool}
+                showGrid={true}
             />
             <MenuPanel
                 onCameraClick={() => {
@@ -570,6 +594,10 @@ export const Board = props => {
 };
 
 Board.defaultProps = {
+    width: 3000,
+    height: 1500,
     tools: defaultTools,
+    grid: true,
+    gridSize: 20,
     onScreenshot: null,
 };

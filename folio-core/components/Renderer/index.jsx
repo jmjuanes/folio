@@ -4,6 +4,7 @@ import {Handlers} from "../Handlers/index.jsx";
 import {Selection} from "../Selection/index.jsx";
 import {Elements} from "../Elements/index.jsx";
 import {Brush} from "../Brush/index.jsx";
+import {Grid} from "../Grid/index.jsx";
 
 export const Renderer = React.forwardRef((props, ref) => {
     const handlePointerDown = event => {
@@ -97,13 +98,20 @@ export const Renderer = React.forwardRef((props, ref) => {
     return (
         <svg
             ref={ref}
-            width={props.width}
-            height={props.height}
+            width="100%"
+            height="100%"
             style={props.style}
             onPointerDown={handlePointerDown}
             onDoubleClick={handleDoubleClick}
         >
             <g transform={transform.join(" ")}>
+                {props.showGrid && (
+                    <Grid
+                        zoom={props.zoom}
+                        width={props.width}
+                        height={props.height}
+                    />
+                )}
                 {props.showSelection && (
                     <Selection
                         tools={props.tools}
@@ -135,8 +143,8 @@ export const Renderer = React.forwardRef((props, ref) => {
 });
 
 Renderer.defaultProps = {
-    width: "100%",
-    height: "100%",
+    width: 0,
+    height: 0,
     tools: {},
     elements: [],
     brush: null,
@@ -155,6 +163,7 @@ Renderer.defaultProps = {
     showHandlers: false,
     showSelection: false,
     showBrush: true,
+    showGrid: true,
     style: {
         touchAction: "none",
         userSelect: "none",

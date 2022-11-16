@@ -74,17 +74,17 @@ export const RectangleTool = {
     }),
 
     // Update element while user is creating it
-    onCreateMove: (element, info) => ({
-        x: Math.min(info.originalX, info.originalX + info.dx),
-        y: Math.min(info.originalY, info.originalY + info.dy),
-        width: Math.abs(info.dx),
-        height: Math.abs(info.dy),
+    onCreateMove: (element, info, parse) => ({
+        // x: Math.min(info.originalX, info.originalX + info.dx),
+        // y: Math.min(info.originalY, info.originalY + info.dy),
+        width: Math.max(1, parse(info.dx)),
+        height: Math.max(1, parse(info.dy)),
     }),
 
     // onCreateEnd: (element, info) => {},
-    onDrag: (element, info) => ({
-        x: element.x + info.dx,
-        y: element.y + info.dy,
+    onDrag: (element, info, parse) => ({
+        x: parse(element.x + info.dx),
+        y: parse(element.y + info.dy),
     }),
 
     // Get boundary points
