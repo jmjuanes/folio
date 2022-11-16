@@ -181,32 +181,32 @@ export const Board = props => {
                 element.height = snapshot.height + (snapshot.y - element.y);
             }
             else if (state.current.activeHandler === HANDLERS.CORNER_TOP_RIGHT) {
-                element.width = Math.max(getPosition(snapshot.width + event.dx), 1);
+                element.width = Math.max(getPosition(snapshot.x + snapshot.width + event.dx) - snapshot.x, 1);
                 element.y = Math.min(getPosition(snapshot.y + event.dy), snapshot.y + snapshot.height - 1);
                 element.height = snapshot.height + (snapshot.y - element.y);
             }
             else if (state.current.activeHandler === HANDLERS.CORNER_BOTTOM_LEFT) {
                 element.x = Math.min(getPosition(snapshot.x + event.dx), snapshot.x + snapshot.width - 1);
                 element.width = snapshot.width + (snapshot.x - element.x);
-                element.height = Math.max(getPosition(snapshot.height + event.dy), 1);
+                element.height = Math.max(getPosition(snapshot.y + snapshot.height + event.dy) - snapshot.y, 1);
             }
             else if (state.current.activeHandler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                element.width = Math.max(getPosition(snapshot.width + event.dx), 1);
-                element.height = Math.max(getPosition(snapshot.height + event.dy), 1);
+                element.width = Math.max(getPosition(snapshot.x + snapshot.width + event.dx) - snapshot.x, 1);
+                element.height = Math.max(getPosition(snapshot.y + snapshot.height + event.dy) - snapshot.y, 1);
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_TOP) {
                 element.y = Math.min(getPosition(snapshot.y + event.dy), snapshot.y + snapshot.height - 1);
                 element.height = snapshot.height + (snapshot.y - element.y);
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_BOTTOM) {
-                element.height = Math.max(getPosition(snapshot.height + event.dy), 1);
+                element.height = Math.max(getPosition(snapshot.y + snapshot.height + event.dy) - snapshot.y, 1);
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_LEFT) {
                 element.x = Math.min(getPosition(snapshot.x + event.dx), snapshot.x + snapshot.width - 1);
                 element.width = snapshot.width + (snapshot.x - element.x);
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_RIGHT) {
-                element.width = Math.max(getPosition(snapshot.width + event.dx), 1);
+                element.width = Math.max(getPosition(snapshot.x + snapshot.width + event.dx) - snapshot.x, 1);
             }
         }
         else if (state.current.action === ACTIONS.SELECTION || state.current.action === ACTIONS.SCREENSHOT) {
