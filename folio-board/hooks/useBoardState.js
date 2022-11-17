@@ -16,7 +16,10 @@ export const useBoardState = () => {
         isResized: false,
         isDragged: false,
         selectionCount: 0,
-        brush: null,
+        brush: {
+            width: 0,
+            height: 0,
+        },
         snapshot: null,
         zoom: 1,
         translate: {

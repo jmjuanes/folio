@@ -121,46 +121,16 @@ export const ELEMENT_CHANGE_TYPES = {
     REMOVE: "element:remove",
 };
 
-export const GRID_STYLES = {
-    DOTS: "grid-dots",
-    LINES: "grid-lines",
-};
-
 export const ZOOM_INITIAL = 1;
 export const ZOOM_STEP = 0.1;
 export const ZOOM_MAX = 5;
 export const ZOOM_MIN = 0.1;
 
-export const DEFAULT_APP_TITLE = "Folio";
+export const SELECTION_FILL_COLOR = "#0d6efd";
+export const SELECTION_STROKE_COLOR = "#0d6efd";
 
-export const DEFAULT_FILL_COLOR = "rgb(255,255,255)";
-export const DEFAULT_STROKE_COLOR = "rgb(0,0,0)";
-export const DEFAULT_TEXT_COLOR = "rgb(0,0,0)";
-export const DEFAULT_FONT = "sans-serif";
-
-export const DEFAULT_SELECTION_COLOR = "rgb(78, 145, 228)";
-export const DEFAULT_SELECTION_OPACITY = 0.1;
-
-export const DEFAULT_GRID_COLOR = "rgb(238, 242, 247)";
-export const DEFAULT_GRID_WIDTH = 1;
-export const DEFAULT_GRID_OPACITY = 0.8;
-export const DEFAULT_GRID_SIZE = 10;
-export const DEFAULT_GRID_STYLE = GRID_STYLES.LINES;
-
-export const DEFAULT_ELEMENT_SELECTION_COLOR = "rgb(0,0,0)";
-export const DEFAULT_ELEMENT_SELECTION_WIDTH = 0.5;
-export const DEFAULT_ELEMENT_SELECTION_OPACITY = 1.0;
-export const DEFAULT_ELEMENT_SELECTION_OFFSET = 4;
-
-export const DEFAULT_ELEMENT_RESIZE_COLOR = "rgb(0,0,0)";
-export const DEFAULT_ELEMENT_RESIZE_WIDTH = 0.5;
-export const DEFAULT_ELEMENT_RESIZE_OPACITY = 1.0;
-export const DEFAULT_ELEMENT_RESIZE_RADIUS = 5;
-
-export const DEFAULT_GROUP_SELECTION_COLOR = "rgb(0,0,0)";
-export const DEFAULT_GROUP_SELECTION_WIDTH = 0.5;
-export const DEFAULT_GROUP_SELECTION_OPACITY = 1;
-export const DEFAULT_GROUP_SELECTION_OFFSET = 8;
+export const SCREENSHOT_FILL_COLOR = "#20c997";
+export const SCREENSHOT_STROKE_COLOR = "#20c997";
 
 export const DATA_TYPES = {
     FOLIO_EXPORT: "folio/export_json",
@@ -173,9 +143,4 @@ export const MIME_TYPES = {
     PNG: "image/png",
     JPG: "image/jpeg",
     SVG: "image/svg+xml",
-};
-
-export const VERSIONS = {
-    FOLIO: process.env.VERSION,
-    FOLIO_EXPORT: "1",
 };

@@ -6,6 +6,7 @@ import {
     normalizeRectangle,
     pointInRectangle,
     measureText,
+    toImagePNG,
 } from "folio-core";
 
 import {
@@ -17,6 +18,10 @@ import {
     ZOOM_STEP,
     ZOOM_MIN,
     ZOOM_MAX,
+    SCREENSHOT_FILL_COLOR,
+    SCREENSHOT_STROKE_COLOR,
+    SELECTION_FILL_COLOR,
+    SELECTION_STROKE_COLOR,
 } from "./constants.js";
 import {useBoard} from "./hooks/useBoard.js";
 import {useBoardState} from "./hooks/useBoardState.js";
@@ -140,14 +145,10 @@ export const Board = props => {
             state.current.translate.lastX = state.current.translate.x;
             state.current.translate.lastY = state.current.translate.y;
         }
-        else if (!state.current.action) {
-            state.current.action = ACTIONS.SELECTION;
-            state.current.brush = {
-                x: event.originalX,
-                y: event.originalY,
-                width: 0,
-                height: 0,
-            };
+        else if (!state.current.action || state.current.action === ACTIONS.SCREENSHOT) {
+            state.current.action = state.current.action || ACTIONS.SELECTION;
+            state.current.brush.x = event.originalX;
+            state.current.brush.y = event.originalY;
         }
         forceUpdate();
     };
@@ -258,9 +259,25 @@ export const Board = props => {
             });
             state.current.action = null;
         }
+        else if (state.current.action === ACTIONS.SCREENSHOT) {
+            const screenshotOptions = {
+                includeBackground: false,
+                region: state.current.brush,
+            };
+            toImagePNG(ref.current, props.width, props.height, screenshotOptions).then(image => {
+                props.onScreenshot?.(image);
+                // navigator.clipboard.write([
+                //     new ClipboardItem({
+                //         [image.type]: image,
+                //     }),
+                // ]);
+            });
+            state.current.action = null;
+        }
         // Reset current state
         // state.current.action = null;
-        state.current.brush = null;
+        state.current.brush.width = 0;
+        state.current.brush.height = 0;
         forceUpdate();
     };
 
@@ -316,6 +333,9 @@ export const Board = props => {
             else if (event.key === KEYS.ESCAPE) {
                 event.preventDefault();
                 board.current.clearSelectedElements();
+                if (state.current.action === ACTIONS.SCREENSHOT) {
+                    state.current.action = null;
+                }
                 // board.current.activeGroup = null;
                 forceUpdate();
             }
@@ -448,8 +468,13 @@ export const Board = props => {
                 elements={board.current.elements}
                 translateX={state.current.translate.x}
                 translateY={state.current.translate.y}
-                brush={state.current.brush}
                 zoom={state.current.zoom}
+                brushX={state.current.brush?.x || 0}
+                brushY={state.current.brush?.y || 0}
+                brushWidth={state.current.brush?.width || 0}
+                brushHeight={state.current.brush?.height || 0}
+                brushFillColor={action === ACTIONS.SCREENSHOT ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
+                brushStrokeColor={action === ACTIONS.SCREENSHOT ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
                 onPointCanvas={handlePointCanvas}
                 onPointElement={handlePointElement}
                 onPointHandler={handlePointHandler}
@@ -462,24 +487,19 @@ export const Board = props => {
                 showSelection={!action && !tool}
                 showGrid={true}
             />
-            <MenuPanel
-                onCameraClick={() => {
-                    // if (state.mode === MODES.SCREENSHOT) {
-                    //     return setState(prevState => ({
-                    //         ...prevState,
-                    //         mode: MODES.SELECTION,
-                    //     }));
-                    // }
-                    // return setState(prevState => ({
-                    //     ...prevState,
-                    //     showSreenshotDialog: true,
-                    // }));
-                }}
-                onExportClick={() => handleExportClick()}
-                onSaveClick={() => handleSaveClick()}
-            />
             {state.current.action !== ACTIONS.SCREENSHOT && (
                 <React.Fragment>
+                    <MenuPanel
+                        onCameraClick={() => {
+                            cancelInput();
+                            state.current.tool = null;
+                            state.current.action = ACTIONS.SCREENSHOT;
+                            board.current.clearSelectedElements();
+                            forceUpdate();
+                        }}
+                        onExportClick={() => handleExportClick()}
+                        onSaveClick={() => handleSaveClick()}
+                    />
                     <ToolsPanel
                         currentAction={state.current.action}
                         currentTool={state.current.tool}
