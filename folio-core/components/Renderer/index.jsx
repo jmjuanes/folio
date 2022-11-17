@@ -104,19 +104,22 @@ export const Renderer = React.forwardRef((props, ref) => {
                 backgroundColor: "#eaeaea",
                 touchAction: "none",
                 userSelect: "none",
+                ...props.style,
             }}
             onPointerDown={handlePointerDown}
             onDoubleClick={handleDoubleClick}
         >
             <g transform={transform.join(" ")}>
-                <rect
-                    x="0"
-                    y="0"
-                    width={props.width}
-                    height={props.height}
-                    fill={props.backgroundColor}
-                    stroke="none"
-                />
+                {props.showBackground && (
+                    <rect
+                        x="0"
+                        y="0"
+                        width={props.width}
+                        height={props.height}
+                        fill={props.backgroundFillColor}
+                        stroke="none"
+                    />
+                )}
                 {props.showGrid && (
                     <Grid
                         zoom={props.zoom}
@@ -142,9 +145,12 @@ export const Renderer = React.forwardRef((props, ref) => {
                         zoom={props.zoom}
                     />
                 )}
-                {props.showBrush && !!props.brush && (
+                {props.showBrush && (
                     <Brush
-                        {...props.brush}
+                        x={props.brushX}
+                        y={props.brushY}
+                        width={props.brushWidth}
+                        height={props.brushHeight}
                         fillColor={props.brushFillColor}
                         strokeColor={props.brushStrokeColor}
                     />
@@ -157,13 +163,16 @@ export const Renderer = React.forwardRef((props, ref) => {
 Renderer.defaultProps = {
     width: 0,
     height: 0,
-    backgroundColor: "#fff",
+    backgroundFillColor: "#fff",
     tools: {},
     elements: [],
-    brush: null,
     translateX: 0,
     translateY: 0,
     zoom: 1,
+    brushX: 0,
+    brushY: 0,
+    brushWidth: 0,
+    brushHeight: 0,
     brushFillColor: "#4184f4",
     brushStrokeColor: "#4285f4",
     onPointCanvas: null,
@@ -177,4 +186,6 @@ Renderer.defaultProps = {
     showSelection: false,
     showBrush: true,
     showGrid: true,
+    showBackground: true,
+    style: {},
 };

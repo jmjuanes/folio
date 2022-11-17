@@ -5,15 +5,19 @@ export const Elements = props => (
     <React.Fragment>
         {props.elements.map(element => {
             const {Component} = props.tools[element.type];
+            const attributes = {
+                "data-type": POINT_SOURCES.ELEMENT,
+                "data-value": element.id,
+            };
 
-            return React.createElement(Component, {
-                key: element.id,
-                elementAttributes: {
-                    "data-type": POINT_SOURCES.ELEMENT,
-                    "data-value": element.id,
-                },
-                ...element,
-            });
+            return (
+                <g key={element.id} data-element-id={element.id}>
+                    <Component
+                        elementAttributes={attributes}
+                        {...element}
+                    />
+                </g>
+            );
         })}
     </React.Fragment>
 );
