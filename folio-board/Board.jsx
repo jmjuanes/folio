@@ -2,7 +2,6 @@ import React from "react";
 import {
     Renderer,
     HANDLERS,
-    defaultTools,
     normalizeRectangle,
     pointInRectangle,
     measureText,
@@ -605,7 +604,7 @@ export const Board = props => {
 Board.defaultProps = {
     width: 3000,
     height: 1500,
-    tools: defaultTools,
+    tools: {},
     grid: true,
     gridSize: 20,
     onScreenshot: null,

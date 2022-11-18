@@ -1,7 +1,7 @@
 import React from "react";
 import {InnerText} from "../components/Commons/InnerText.jsx";
 import {getBalancedDash} from "../utils/index.js";
-import {HANDLERS_TYPES} from "../constants.js";
+import {HANDLERS_TYPES, TOOLS_TYPES} from "../constants.js";
 
 const RectangleRenderer = props => {
     const {strokeDasharray, strokeDashoffset} = React.useMemo(
@@ -48,10 +48,12 @@ const RectangleRenderer = props => {
 };
 
 export const RectangleTool = {
-    Component: RectangleRenderer,
-
-    // Rectangle options
+    id: "rectangle",
+    title: "Rectangle",
+    type: TOOLS_TYPES.SHAPE,
     handlers: HANDLERS_TYPES.RECTANGLE,
+
+    Component: RectangleRenderer,
 
     // Create a new rectangle
     onCreateStart: (element, info, props) => ({

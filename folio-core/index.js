@@ -7,8 +7,7 @@ export * from "./utils/index.js";
 // Export hooks
 // export * from "./hooks/useBoard.js";
 
-// Export tools configuration
-export * from "./tools/index.js";
+// Export tools
 export * from "./tools/RectangleTool.jsx";
 
 // Export constants

@@ -23,10 +23,10 @@ export const HANDLERS_TYPES = {
     LINE: "line",
 };
 
-export const TOOLS = {
-    RECTANGLE: "rectangle",
-    ELLIPSE: "ellipse",
-    LINE: "line",
-    TEXT: "text",
-    HAND_DRAW: "hand_draw",
+export const TOOLS_TYPES = {
+    SHAPE: "tool:shape",
+    ARROW: "tool:arrow",
+    LINE: "tool:line",
+    HAND_DRAW: "tool:hand-draw",
+    TEXT: "tool:text",
 };
