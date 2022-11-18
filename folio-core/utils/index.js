@@ -1,3 +1,10 @@
+// Calculate the distance between two points
+export const getPointsDistance = (start, end) => {
+    const x = end[0] - start[0];
+    const y = end[1] - start[1];
+    return Math.sqrt(x * x + y * y);
+};
+
 // Generate the minumun rectangle points that contains all points in the provided list
 export const boundaryPoints = points => {
     const x = points.map(point => point[0]);

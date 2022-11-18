@@ -23,7 +23,7 @@ export const CircleToolIcon = () => (
 
 export const LineToolIcon = () => (
     <SvgIcon title="Line">
-        <p d="M5 18L19 6" />
+        <path d="M5 18L19 6" />
     </SvgIcon>
 );
 

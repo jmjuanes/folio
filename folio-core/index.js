@@ -9,6 +9,7 @@ export * from "./utils/index.js";
 
 // Export tools
 export * from "./tools/RectangleTool.jsx";
+export * from "./tools/LineTool.jsx";
 
 // Export constants
 export * from "./constants.js";

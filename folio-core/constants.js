@@ -21,6 +21,7 @@ export const HANDLERS_TYPES = {
     NONE: "none",
     RECTANGLE: "rectangle",
     LINE: "line",
+    POINTS: "points",
 };
 
 export const TOOLS_TYPES = {
