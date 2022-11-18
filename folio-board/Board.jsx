@@ -500,6 +500,7 @@ export const Board = props => {
                         onSaveClick={() => handleSaveClick()}
                     />
                     <ToolsPanel
+                        tools={props.tools}
                         currentAction={state.current.action}
                         currentTool={state.current.tool}
                         onMoveClick={() => {

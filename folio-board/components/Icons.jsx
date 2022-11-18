@@ -84,3 +84,6 @@ export const CameraIcon = () => {
 export const DownloadIcon = () => createPathIcon("M4 15L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 15M12 4L12 15M9 13L12 16L15 13");
 export const UploadIcon = () => createPathIcon("M4 15L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 15M12 16L12 5M9 7L12 4L15 7");
 
+export const ChevronUpIcon = () => createPathIcon("M6 15L12 9L18 15");
+export const ChevronDownIcon = () => createPathIcon("M6 9L12 15L18 9");
+

@@ -1,5 +1,6 @@
 import React from "react";
-import {InnerText} from "../components/Commons/InnerText.jsx";
+import {InnerText} from "../components/common/InnerText.jsx";
+import {RectangleToolIcon} from "../components/icons/index.jsx";
 import {getBalancedDash} from "../utils/index.js";
 import {HANDLERS_TYPES, TOOLS_TYPES} from "../constants.js";
 
@@ -54,6 +55,7 @@ export const RectangleTool = {
     handlers: HANDLERS_TYPES.RECTANGLE,
 
     Component: RectangleRenderer,
+    Icon: RectangleToolIcon,
 
     // Create a new rectangle
     onCreateStart: (element, info, props) => ({

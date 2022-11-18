@@ -1,24 +1,10 @@
 import React from "react";
-import {TOOLS} from "folio-core";
 import {ACTIONS} from "../../constants.js";
 import {Panel, PanelButton} from "./Panel.jsx";
 import {
     ArrowsIcon,
     PointerIcon,
-    SquareIcon,
-    CircleIcon,
-    LineIcon,
-    PenIcon,
-    TextIcon,
 } from "../Icons.jsx";
-
-const availableTools = [
-    {name: TOOLS.RECTANGLE, icon: SquareIcon()},
-    {name: TOOLS.ELLIPSE, icon: CircleIcon()},
-    {name: TOOLS.LINE, icon: LineIcon()},
-    {name: TOOLS.TEXT, icon: TextIcon()},
-    {name: TOOLS.HAND_DRAW, icon: PenIcon()},
-];
 
 export const ToolsPanel = props => (
     <Panel position="bottom-center">
@@ -34,16 +20,25 @@ export const ToolsPanel = props => (
         >
             <PointerIcon />
         </PanelButton>
-        <div className="bg-gray-800 h-8" style={{width:"1px"}} />
-        {availableTools.map(({name, icon}) => (
-            <PanelButton key={name} active={props.currentTool === name} onClick={() => props.onToolClick(name)}>
-                {icon}
-            </PanelButton>
-        ))}
+        <div
+            className="bg-gray-800 h-8"
+            style={{
+                width: "1px",
+            }}
+        />
+        {Object.keys(props.tools).map(key => {
+            const tool = props.tools[key];
+            return (
+                <PanelButton key={key} active={props.currentTool === key} onClick={() => props.onToolClick(key)}>
+                    <tool.Icon />
+                </PanelButton>
+            );
+        })}
     </Panel>
 );
 
 ToolsPanel.defaultProps = {
+    tools: {},
     currentAction: null,
     currentTool: null,
     onMoveClick: null,

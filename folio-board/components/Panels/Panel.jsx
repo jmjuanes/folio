@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import {ChevronUpIcon} from "../Icons.jsx";
 
 export const Panel = props => {
     const panelWrapperClass = classNames({
@@ -49,3 +50,28 @@ PanelButton.defaultProps = {
     disabled: false,
 };
 
+export const PanelDropButton = props => {
+    // TODO: missing height: 2.25rem height!!
+    const classList = classNames({
+        "d-flex r-md": true,
+        "text-gray-900 hover:bg-gray-900 hover:text-white cursor-pointer": !props.active && !props.disabled,
+        "is-active bg-gray-900 text-white cursor-pointer": props.active && !props.disabled,
+        "is-disabled text-gray-900 cursor-not-allowed o-60": !props.active && props.disabled,
+    });
+    return (
+        <div className={classList}>
+            <div className="d-flex items-center text-lg p-2" onClick={props.onClick}>
+                {props.children}
+            </div>
+            <div className="d-flex items-center text-sm py-2 pr-1" onClick={props.onDropClick}>
+                <ChevronUpIcon />
+            </div>
+        </div>
+    );
+};
+
+PanelDropButton.defaultProps = {
+    active: false,
+    onClick: null,
+    onDropClick: null,
+};
