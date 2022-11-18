@@ -6,7 +6,7 @@ import {
     SaveIcon,
     CameraIcon,
     DownloadIcon,
-} from "../Icons.jsx";
+} from "../icons/index.jsx";
 
 export const MenuPanel = props => (
     <Panel position="top-left">

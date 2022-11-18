@@ -1,10 +1,7 @@
 import React from "react";
 import {ACTIONS} from "../../constants.js";
 import {Panel, PanelButton} from "./Panel.jsx";
-import {
-    ArrowsIcon,
-    PointerIcon,
-} from "../Icons.jsx";
+import {ArrowsIcon, PointerIcon} from "../icons/index.jsx";
 
 export const ToolsPanel = props => (
     <Panel position="bottom-center">

@@ -3,10 +3,8 @@ import React from "react";
 import {Panel, PanelButton} from "./Panel.jsx";
 import {
     EditIcon,
-    ObjectGroupIcon,
-    ObjectUngroupIcon,
     TrashIcon,
-} from "../Icons.jsx";
+} from "../icons/index.jsx";
 
 // const isGroupSelectionVisible = selection => {
 //     const selectedGroups = new Set(selection.map(el => el.group));

@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {ChevronUpIcon} from "../Icons.jsx";
+import {ChevronUpIcon} from "../icons/index.jsx";
 
 export const Panel = props => {
     const panelWrapperClass = classNames({

@@ -31,6 +31,7 @@ import {Form} from "../Form/index.jsx";
 import {
     TextIcon,
     FillIcon,
+    StrokeIcon,
     CornersIcon,
     OpacityNoneIcon,
     OpacitySemiTransparentIcon,
@@ -39,11 +40,11 @@ import {
     CircleSolidIcon,
     CircleDashedIcon,
     CircleDottedIcon,
-} from "../Icons.jsx";
+} from "../icons/index.jsx";
 
 const tabs = {
     fill: FillIcon(),
-    stroke: CornersIcon(),
+    stroke: StrokeIcon(),
     radius: CornersIcon(),
     text: TextIcon(),
 };

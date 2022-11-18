@@ -1,7 +1,7 @@
 import React from "react";
 
 import {Panel, PanelButton} from "./Panel.jsx";
-import {UndoIcon, RedoIcon} from "../Icons.jsx";
+import {UndoIcon, RedoIcon} from "../icons/index.jsx";
 
 export const HistoryPanel = props => (
     <Panel position="bottom-left">
