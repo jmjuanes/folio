@@ -117,7 +117,6 @@ export const Board = props => {
         if (state.current.tool) {
             state.current.action = ACTIONS.CREATE_ELEMENT;
             const element = {
-                ...props.tools[state.current.tool]?.onCreateStart?.({}, event, state.current.defaults),
                 id: generateID(),
                 type: state.current.tool,
                 x: getPosition(event.originalX),
@@ -126,6 +125,7 @@ export const Board = props => {
                 locked: false,
                 editing: false,
             };
+            Object.assign(element, props.tools[state.current.tool]?.onCreateStart?.(element, event, state.current.defaults, getPosition));
             state.current.activeElement = element; // Save element reference
             board.current.addElement(element);
             // board.current.activeGroup = null; // Reset current group
@@ -207,6 +207,14 @@ export const Board = props => {
             }
             else if (state.current.activeHandler === HANDLERS.EDGE_RIGHT) {
                 element.width = Math.max(getPosition(snapshot.x + snapshot.width + event.dx) - snapshot.x, 1);
+            }
+            else if (state.current.activeHandler === HANDLERS.POINT_START) {
+                element.x = getPosition(snapshot.x + event.dx);
+                element.y = getPosition(snapshot.y + event.dy);
+            }
+            else if (state.current.activeHandler === HANDLERS.POINT_END) {
+                element.x2 = getPosition(snapshot.x2 + event.dx);
+                element.y2 = getPosition(snapshot.y2 + event.dy);
             }
         }
         else if (state.current.action === ACTIONS.SELECTION || state.current.action === ACTIONS.SCREENSHOT) {

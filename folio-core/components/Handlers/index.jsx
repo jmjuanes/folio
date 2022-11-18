@@ -3,6 +3,7 @@ import React from "react";
 import {HANDLERS_TYPES} from "../../constants.js";
 import {CornerHandlers} from "./CornerHandlers.jsx";
 import {EdgeHandlers} from "./EdgeHandlers.jsx";
+import {PointHandlers} from "./PointHandlers.jsx";
 
 export const Handlers = props => {
     const selectedElements = props.elements.filter(el => !!el.selected);
@@ -26,6 +27,12 @@ export const Handlers = props => {
                         points={points}
                     />
                 </React.Fragment>
+            )}
+            {handlerType === HANDLERS_TYPES.POINTS && (
+                <PointHandlers
+                    zoom={props.zoom}
+                    points={points}
+                />
             )}
         </React.Fragment>
     );
