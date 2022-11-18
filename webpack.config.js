@@ -19,7 +19,6 @@ module.exports = {
         alias: {
             "folio-core": path.join(__dirname, "folio-core"),
             "folio-board": path.join(__dirname, "folio-board"),
-            "folio-math": path.join(__dirname, "folio-math"),
         },
     },
     module: {
