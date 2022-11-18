@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Panel should render 1`] = `[Function]`;
+
+exports[`PanelButton should render 1`] = `[Function]`;
