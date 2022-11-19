@@ -42,13 +42,6 @@ import {
     CircleDottedIcon,
 } from "../icons/index.jsx";
 
-const tabs = {
-    fill: FillIcon(),
-    stroke: StrokeIcon(),
-    radius: CornersIcon(),
-    text: TextIcon(),
-};
-
 const opacityValues = [
     {value: OPACITY_NONE, icon: OpacityNoneIcon()},
     {value: OPACITY_SEMITRANSPARENT, icon: OpacitySemiTransparentIcon()},
@@ -57,82 +50,98 @@ const opacityValues = [
 
 const options = {
     fill: {
-        fillColor: {
-            type: "color",
-            title: "Fill Color",
-            values: COLORS,
-        },
-        fillOpacity: {
-            type: "select",
-            title: "Fill Opacity",
-            values: opacityValues,
+        icon: FillIcon(),
+        test: "fillColor",
+        fields: {
+            fillColor: {
+                type: "color",
+                title: "Fill Color",
+                values: COLORS,
+            },
+            fillOpacity: {
+                type: "select",
+                title: "Fill Opacity",
+                values: opacityValues,
+            },
         },
     },
     stroke: {
-        strokeColor: {
-            type: "color",
-            title: "Stroke color",
-            values: COLORS,
-        },
-        strokeWidth: {
-            type: "select",
-            title: "Stroke Width",
-            values: [
-                {value: STROKE_SIZE_NONE, icon: BanIcon()},
-                {value: STROKE_SIZE_SM, text: "S"},
-                {value: STROKE_SIZE_MD, text: "M"},
-                {value: STROKE_SIZE_LG, text: "L"},
-                {value: STROKE_SIZE_XL, text: "XL"},
-            ],
-        },
-        strokeStyle: {
-            type: "select",
-            title: "Stroke Style",
-            values: [
-                {value: STROKE_STYLE_SOLID, icon: CircleSolidIcon()},
-                {value: STROKE_STYLE_DASHED, icon: CircleDashedIcon()},
-                {value: STROKE_STYLE_DOTTED, icon: CircleDottedIcon()},
-            ],
-        },
-        strokeOpacity: {
-            type: "select",
-            title: "Stroke Opacity",
-            values: opacityValues,
+        icon: StrokeIcon(),
+        test: "strokeColor",
+        fields: {
+            strokeColor: {
+                type: "color",
+                title: "Stroke color",
+                values: COLORS,
+            },
+            strokeWidth: {
+                type: "select",
+                title: "Stroke Width",
+                values: [
+                    {value: STROKE_SIZE_NONE, icon: BanIcon()},
+                    {value: STROKE_SIZE_SM, text: "S"},
+                    {value: STROKE_SIZE_MD, text: "M"},
+                    {value: STROKE_SIZE_LG, text: "L"},
+                    {value: STROKE_SIZE_XL, text: "XL"},
+                ],
+            },
+            strokeStyle: {
+                type: "select",
+                title: "Stroke Style",
+                values: [
+                    {value: STROKE_STYLE_SOLID, icon: CircleSolidIcon()},
+                    {value: STROKE_STYLE_DASHED, icon: CircleDashedIcon()},
+                    {value: STROKE_STYLE_DOTTED, icon: CircleDottedIcon()},
+                ],
+            },
+            strokeOpacity: {
+                type: "select",
+                title: "Stroke Opacity",
+                values: opacityValues,
+            },
         },
     },
     radius: {
-        radius: {
-            type: "select",
-            title: "Corners",
-            values: [
-                {value: RADIUS_NONE, icon: BanIcon()},
-                {value: RADIUS_SM, text: "S"},
-                {value: RADIUS_MD, text: "M"},
-                {value: RADIUS_LG, text: "L"},
-                {value: RADIUS_XL, text: "XL"},
-            ],
+        icon: CornersIcon(),
+        test: "radius",
+        fields: {
+            radius: {
+                type: "select",
+                title: "Corners",
+                values: [
+                    {value: RADIUS_NONE, icon: BanIcon()},
+                    {value: RADIUS_SM, text: "S"},
+                    {value: RADIUS_MD, text: "M"},
+                    {value: RADIUS_LG, text: "L"},
+                    {value: RADIUS_XL, text: "XL"},
+                ],
+            },
         },
     },
     text: {
-        textColor: {
-            type: "color",
-            title: "Text Color",
-            values: COLORS,
-        },
-        textFont: {
-            type: "font",
-            title: "Text Font",
-            values: FONTS,
-        },
-        textSize: {
-            type: "select",
-            title: "Text Size",
-            values: [
-                {value: FONT_SIZE_SM, text: "S"},
-                {value: FONT_SIZE_MD, text: "M"},
-                {value: FONT_SIZE_LG, text: "L"},
-                {value: FONT_SIZE_XL, text: "XL"},
-            ],
+        icon: TextIcon(),
+        test: "text",
+        fields: {
+            textColor: {
+                type: "color",
+                title: "Text Color",
+                values: COLORS,
+            },
+            textFont: {
+                type: "font",
+                title: "Text Font",
+                values: FONTS,
+            },
+            textSize: {
+                type: "select",
+                title: "Text Size",
+                values: [
+                    {value: FONT_SIZE_SM, text: "S"},
+                    {value: FONT_SIZE_MD, text: "M"},
+                    {value: FONT_SIZE_LG, text: "L"},
+                    {value: FONT_SIZE_XL, text: "XL"},
+                ],
+            },
         },
     // textAlign: {
     //     type: "select",
@@ -180,27 +189,50 @@ const options = {
     // },
 };
 
+const getActiveTab = (values, currentTab) => {
+    if (typeof values[options[currentTab].test] !== "undefined") {
+        return currentTab;
+    }
+    // Find the first tab with valid values
+    return Object.keys(options).find(tab => {
+        return typeof values[options[tab].test] !== "undefined";
+    });
+};
+
 export const StyleDialog = props => {
+    const values = props.values || {};
     const [currentTab, setCurrentTab] = React.useState("fill");
+    const activeTab = React.useMemo(
+        () => getActiveTab(values, currentTab),
+        [values, currentTab],
+    );
     return (
         <Dialog className="pt-4 right-0 top-0 pr-24" style={{paddingRight:"5rem"}}>
             <div className="d-flex gap-1 mb-4 b-solid b-1 b-gray-900 p-1 r-lg">
-                {Object.keys(tabs).map(tab => {
+                {Object.keys(options).map(tab => {
+                    const isDisabled = typeof values[options[tab].test] === "undefined";
+                    const isActive = tab === activeTab;
                     const tabClass = classNames({
                         "d-flex items-center justify-center w-full r-md p-2 text-lg": true,
-                        "bg-gray-900 text-white": tab === currentTab,
-                        "cursor-pointer text-gray-900 hover:bg-gray-900 hover:text-white": tab !== currentTab,
+                        "bg-gray-900 text-white": isActive && !isDisabled,
+                        "cursor-pointer text-gray-900 hover:bg-gray-900 hover:text-white": !isActive && !isDisabled,
+                        "cursor-not-allowed text-gray-600": isDisabled,
                     });
+                    const handleTabClick = () => {
+                        if (!isDisabled && !isActive) {
+                            setCurrentTab(tab);
+                        }
+                    };
                     return (
-                        <div key={tab} className={tabClass} onClick={() => setCurrentTab(tab)}>
-                            {tabs[tab]}
+                        <div key={tab} className={tabClass} onClick={handleTabClick}>
+                            {options[tab].icon}
                         </div>
                     );
                 })}
             </div>
             <Form
                 data={props.values || {}}
-                items={options[currentTab]}
+                items={options[activeTab].fields}
                 onChange={props.onChange}
             />
         </Dialog>
