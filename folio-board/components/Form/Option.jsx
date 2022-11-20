@@ -1,23 +1,29 @@
 import React from "react";
 import classNames from "classnames";
+import {BanIcon} from "../icons/index.jsx";
 
 const optionTypes = {
     color: props => (
-        <div className="d-grid gap-1 grid-cols-5 w-full">
+        <div className="d-grid gap-1 grid-cols-4 w-full">
             {(props.values || []).map(color => (
                 <div
                     key={color}
                     className={classNames({
-                        "b-2 b-solid r-md p-4": true,
+                        "w-full h-full text-lg text-red-500": color === "transparent",
+                        "p-4": color !== "transparent",
+                        "d-flex items-center justify-center b-2 b-solid r-md text-gray-900": true,
                         "b-gray-900": color === props.value,
-                        "b-white": color !== props.value,
+                        // "b-white": color !== props.value,
+                        "b-gray-200": color !== props.value,
                     })}
                     style={{
                         backgroundColor: color,
                         cursor: "pointer",
                     }}
                     onClick={() => props.onChange(color)}
-                />
+                >
+                    {color === "transparent" && BanIcon()}
+                </div>
             ))}
         </div>
     ),

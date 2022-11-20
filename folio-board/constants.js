@@ -1,6 +1,8 @@
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
 export const COLORS = [
+    "transparent",
+    "white", // White
     "rgb(0,0,0)", // black , "rgb(255,255,255)"],
     "rgb(66,72,82)", // gray "rgb(169, 176, 187)"],
     "rgb(74,136,218)", // blue "rgb(115, 176, 244)"],
@@ -15,6 +17,7 @@ export const COLORS = [
 
 export const DEFAULT_COLOR_STROKE = "rgb(0,0,0)";
 export const DEFAULT_COLOR_FILL = "transparent";
+export const DEFAULT_COLOR_TEXT = "rgb(0,0,0)";
 
 export const FONTS = [
     "Noto Sans, sans-serif",

@@ -1,5 +1,8 @@
 import React from "react";
 import {
+    DEFAULT_COLOR_FILL,
+    DEFAULT_COLOR_STROKE,
+    DEFAULT_COLOR_TEXT,
     DEFAULT_FONT_FAMILY,
     DEFAULT_FONT_SIZE,
     OPACITY_NONE,
@@ -31,9 +34,12 @@ export const useBoardState = () => {
         showStyleDialog: false,
         showExportDialog: false,
         defaults: {
+            fillColor: DEFAULT_COLOR_FILL,
             fillOpacity: OPACITY_NONE,
             radius: RADIUS_NONE,
+            strokeColor: DEFAULT_COLOR_STROKE,
             strokeStyle: STROKE_STYLE_SOLID,
+            textColor: DEFAULT_COLOR_TEXT,
             textSize: DEFAULT_FONT_SIZE,
             textFont: DEFAULT_FONT_FAMILY,
         },

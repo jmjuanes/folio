@@ -120,7 +120,7 @@ const options = {
     },
     text: {
         icon: TextIcon(),
-        test: "text",
+        test: "textColor",
         fields: {
             textColor: {
                 type: "color",
