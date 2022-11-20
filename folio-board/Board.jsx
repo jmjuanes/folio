@@ -464,6 +464,7 @@ export const Board = props => {
     React.useEffect(() => centerInScreen(), []);
 
     const {action, tool} = state.current;
+    const selectedElements = board.current.getSelectedElements();
 
     return (
         <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
@@ -553,11 +554,11 @@ export const Board = props => {
                     />
                     <EditionPanel
                         key={updateKey}
-                        selection={board.current.getSelectedElements()}
-                        styleDialogActive={!!state.current.showStyleDialog}
+                        selection={selectedElements}
+                        styleDialogActive={!!state.current.showStyleDialog && selectedElements.length < 2}
                         onRemoveClick={() => {
                             submitInput();
-                            if (board.current.getSelectedElements().length > 0) {
+                            if (selectedElements.length > 0) {
                                 board.current.registerSelectionRemove();
                                 board.current.removeSelectedElements();
                             }
@@ -585,14 +586,12 @@ export const Board = props => {
                             forceUpdate();
                         }}
                     />
-                    {state.current.showStyleDialog && (
+                    {state.current.showStyleDialog && (selectedElements.length < 2) && (
                         <StyleDialog
-                            values={board.current.getSelectedElements()[0] || state.current.defaults}
+                            values={selectedElements[0] || state.current.defaults}
                             onChange={(key, value) => {
                                 submitInput();
-                                // TODO: we should find another way to check if we have selected elements
-                                // to prevent filtering the elements list
-                                if (board.current.getSelectedElements().length > 0) {
+                                if (selectedElements.length > 0) {
                                     board.current.registerSelectionUpdate([key].flat(), [value].flat(), true);
                                     board.current.updateSelectedElements(key, value);
                                 }

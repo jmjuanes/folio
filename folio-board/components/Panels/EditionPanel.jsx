@@ -18,7 +18,7 @@ import {
 export const EditionPanel = props => (
     <Panel position="top-right">
         {/* Style button */}
-        <PanelButton active={!!props.styleDialogActive} onClick={props.onStyleDialogToggle}>
+        <PanelButton active={!!props.styleDialogActive} disabled={props.selection.length >= 2} onClick={props.onStyleDialogToggle}>
             <EditIcon />
         </PanelButton>
         {/* Order buttons */}
