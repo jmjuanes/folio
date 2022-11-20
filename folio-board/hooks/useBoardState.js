@@ -7,6 +7,7 @@ import {
     DEFAULT_FONT_SIZE,
     OPACITY_NONE,
     RADIUS_NONE,
+    STROKE_SIZE_MD,
     STROKE_STYLE_SOLID,
 } from "../constants.js";
 
@@ -39,6 +40,8 @@ export const useBoardState = () => {
             radius: RADIUS_NONE,
             strokeColor: DEFAULT_COLOR_STROKE,
             strokeStyle: STROKE_STYLE_SOLID,
+            strokeWidth: STROKE_SIZE_MD,
+            strokeOpacity: OPACITY_NONE,
             textColor: DEFAULT_COLOR_TEXT,
             textSize: DEFAULT_FONT_SIZE,
             textFont: DEFAULT_FONT_FAMILY,
