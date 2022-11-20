@@ -317,8 +317,7 @@ export const Board = props => {
             else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                 event.preventDefault();
                 if (event.key === KEYS.X || event.key === KEYS.C) {
-                    const elements = board.current.copySelectedElements();
-                    // copyTextToClipboard(`folio:::${JSON.stringify(elements)}`);
+                    board.current.copy();
                 }
                 // Check for backspace key or cut --> remove elements
                 if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
@@ -376,6 +375,19 @@ export const Board = props => {
         // When the board is unmounted, remove keydown event listener
         return () => {
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown);
+        };
+    }, []);
+
+    React.useEffect(() => {
+        const handlePaste = event => {
+            if (!isInputTarget(event)) {
+                event.preventDefault();
+                board.current.paste(event);
+            }
+        };
+        document.addEventListener(EVENTS.PASTE, handlePaste, false);
+        return () => {
+            document.removeEventListener(EVENTS.PASTE, handlePaste, false);
         };
     }, []);
 
