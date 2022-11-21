@@ -80,15 +80,4 @@ export const RectangleTool = {
         x: parse(element.x + info.dx),
         y: parse(element.y + info.dy),
     }),
-
-    // Get boundary points
-    getBoundaryPoints: el => ([
-        [el.x, el.y],
-        [el.x + el.width, el.y],
-        [el.x + el.width, el.y + el.height],
-        [el.x, el.y + el.height],
-    ]),
-
-    // Updated element
-    // onUpdated: (el, changedProps) => null,
 };

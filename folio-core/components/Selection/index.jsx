@@ -1,4 +1,5 @@
 import React from "react";
+import {useBoundaryPoints} from "../../hooks/useBoundaryPoints.js";
 import {boundaryPoints} from "../../utils/index.js";
 import {POINT_SOURCES} from "../../constants.js";
 
@@ -9,7 +10,7 @@ export const Selection = props => {
     let path = null;
     if (selectedElements.length > 1) {
         points = selectedElements
-            .map(el => props.tools[el.type].getBoundaryPoints(el))
+            .map(element => useBoundaryPoints(element))
             .flat(1);
         
         // Check if selection is not a single line, so we will need to generate

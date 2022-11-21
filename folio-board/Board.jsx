@@ -1,6 +1,7 @@
 import React from "react";
 import {
     Renderer,
+    useBoundaryPoints,
     HANDLERS,
     normalizeRectangle,
     pointInRectangle,
@@ -259,7 +260,7 @@ export const Board = props => {
             const rectangle = normalizeRectangle(state.current.brush);
             // Select all elements that are in the selected rectangle
             board.current.getElements().forEach(element => {
-                const points = props.tools[element.type]?.getBoundaryPoints(element) || [];
+                const points = useBoundaryPoints(element);
                 element.selected = points.some(point => {
                     return pointInRectangle(point, rectangle);
                 });

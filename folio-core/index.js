@@ -5,7 +5,7 @@ export * from "./components/Renderer/index.jsx";
 export * from "./utils/index.js";
 
 // Export hooks
-// export * from "./hooks/useBoard.js";
+export * from "./hooks/useBoundaryPoints.js";
 
 // Export tools
 export * from "./tools/EllipseTool.jsx";

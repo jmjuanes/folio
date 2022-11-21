@@ -68,9 +68,4 @@ export const LineTool = {
         x2: parse(element.x2 + info.dx),
         y2: parse(element.y2 + info.dy),
     }),
-
-    getBoundaryPoints: el => ([
-        [el.x, el.y],
-        [el.x2, el.y2],
-    ]),
 };

@@ -1,6 +1,8 @@
 import React from "react";
 
 import {HANDLERS_TYPES} from "../../constants.js";
+import {useBoundaryPoints} from "../../hooks/useBoundaryPoints.js";
+
 import {CornerHandlers} from "./CornerHandlers.jsx";
 import {EdgeHandlers} from "./EdgeHandlers.jsx";
 import {PointHandlers} from "./PointHandlers.jsx";
@@ -12,7 +14,7 @@ export const Handlers = props => {
     }
     const element = selectedElements[0];
     const handlerType = props.tools[element.type].handlers || HANDLERS_TYPES.NONE;
-    const points = props.tools[element.type].getBoundaryPoints(element);
+    const points = useBoundaryPoints(element);
 
     return (
         <React.Fragment>
