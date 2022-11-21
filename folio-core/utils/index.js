@@ -5,6 +5,27 @@ export const getPointsDistance = (start, end) => {
     return Math.sqrt(x * x + y * y);
 };
 
+// Calculate the perimeter of an ellipse using Ramanujan approximation
+export const getEllipsePerimeter = (rx, ry) => {
+    const lambda = Math.pow((rx - ry) / (rx + ry), 2);
+    return Math.PI * (rx + ry) * (1 + (3 * lambda) / (10 + Math.sqrt(4 - 3 * lambda)));
+};
+
+// Calculate the perimeter of a circle
+export const getCirclePerimeter = radius => {
+    return 2 * Math.PI * radius;
+};
+
+// Calculate the perimeter of a rectangle
+export const getRectanglePerimeter = (width, height) => {
+    return 2 * (width + height);
+};
+
+// Calculate the perimeter of a rounded rectangle
+export const getRoundedRectanglePerimeter = (width, height, radius = 0) => {
+    return getRectanglePerimeter(width, height) - (2 * radius) + getCirclePerimeter(radius);
+};
+
 // Generate the minumun rectangle points that contains all points in the provided list
 export const boundaryPoints = points => {
     const x = points.map(point => point[0]);
