@@ -35,25 +35,25 @@ export const DEFAULT_FONT_FAMILY = FONTS[0];
 export const DEFAULT_FONT_SIZE = FONT_SIZE_MD;
 export const DEFAULT_FONT_WEIGHT = "500";
 
-export const OPACITY_NONE = "1";
-export const OPACITY_SEMITRANSPARENT = "0.5";
-export const OPACITY_TRANSPARENT = "0";
+export const OPACITY_NONE = 1;
+export const OPACITY_SEMITRANSPARENT = 0.5;
+export const OPACITY_TRANSPARENT = 0;
 
-export const STROKE_SIZE_NONE = "0px";
-export const STROKE_SIZE_SM = "2px";
-export const STROKE_SIZE_MD = "4px";
-export const STROKE_SIZE_LG = "8px";
-export const STROKE_SIZE_XL = "16px";
+export const STROKE_SIZE_NONE = 0;
+export const STROKE_SIZE_SM = 2;
+export const STROKE_SIZE_MD = 4;
+export const STROKE_SIZE_LG = 8;
+export const STROKE_SIZE_XL = 16;
 
 export const STROKE_STYLE_SOLID = "solid";
 export const STROKE_STYLE_DASHED = "dashed";
 export const STROKE_STYLE_DOTTED = "dotted";
 
-export const RADIUS_NONE = "0px";
-export const RADIUS_SM = "4px";
-export const RADIUS_MD = "8px";
-export const RADIUS_LG = "16px";
-export const RADIUS_XL = "32px";
+export const RADIUS_NONE = 0;
+export const RADIUS_SM = 4;
+export const RADIUS_MD = 8;
+export const RADIUS_LG = 16;
+export const RADIUS_XL = 32;
 
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
