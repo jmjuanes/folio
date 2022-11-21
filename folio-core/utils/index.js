@@ -60,15 +60,20 @@ export const pointInRectangle = (p, r) => {
 // Generate a balanced dash line
 // Adapted from https://gist.github.com/steveruizok/7b30a30f915362f219d0516073f92d69 
 export const getBalancedDash = (length = 0, strokeWidth = 0, style = "dashed") => {
-    const ratio = style === "dotted" ? 100 : 1;
-    const dashLength = style === "dotted" ? strokeWidth / 100 : strokeWidth * 2;
-    const dashes = Math.floor(length / dashLength / (2 * ratio));
-    const gapLength = Math.max(dashLength, (length - dashes * dashLength) / dashes);
+    let strokeDasharray = "none";
+    let strokeDashoffset = "none";
+    if (strokeWidth > 0 && length > 0) {
+        if (style === "dotted" || style === "dashed") {
+            const ratio = style === "dotted" ? 100 : 1;
+            const dashLength = style === "dotted" ? strokeWidth / 100 : strokeWidth * 2;
+            const dashes = Math.floor(length / dashLength / (2 * ratio));
+            const gapLength = Math.max(dashLength, (length - dashes * dashLength) / dashes);
 
-    return {
-        strokeDasharray: [dashLength, gapLength].join(" "),
-        strokeDashoffset: style === "dotted" ? "0" : dashLength / 2,
-    };
+            strokeDasharray = [dashLength, gapLength].join(" ");
+            strokeDashoffset = style === "dotted" ? 0 : dashLength / 2;
+        }
+    }
+    return [strokeDasharray, strokeDashoffset];
 };
 
 // Measure text size

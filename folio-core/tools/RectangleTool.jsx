@@ -1,26 +1,16 @@
 import React from "react";
 import {InnerText} from "../components/common/InnerText.jsx";
 import {RectangleToolIcon} from "../components/icons/index.jsx";
-import {getBalancedDash} from "../utils/index.js";
+import {getBalancedDash, getRoundedRectanglePerimeter} from "../utils/index.js";
 import {HANDLERS_TYPES, TOOLS_TYPES} from "../constants.js";
 
 const RectangleRenderer = props => {
-    const {strokeDasharray, strokeDashoffset} = React.useMemo(
+    const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
-            const strokeWidth = parseInt(props.strokeWidth.replace("px", ""));
-            const length = 2 * (Math.abs(props.width) + Math.abs(props.height));
-            if (!isNaN(strokeWidth) && strokeWidth > 0) {
-                if (props.strokeStyle === "dashed" || props.strokeStyle === "dotted") {
-                    return getBalancedDash(length, strokeWidth, props.strokeStyle);
-                }
-            }
-            // Default stroke dash
-            return {
-                strokeDasharray: "none",
-                strokeDashoffset: "none",
-            };
+            const length = getRoundedRectanglePerimeter(props.width, props.height, props.radius);
+            return getBalancedDash(length, props.strokeWidth, props.strokeStyle);
         },
-        [props.strokeStyle, props.width, props.height, props.strokeWidth],
+        [props.width, props.height, props.radius, props.strokeWidth, props.strokeStyle],
     );
     return (
         <React.Fragment>
@@ -63,12 +53,12 @@ export const RectangleTool = {
         height: 0,
         text: "",
         fillColor: props?.fillColor || "transparent",
-        fillOpacity: props?.fillOpacity ?? "1",
+        fillOpacity: props?.fillOpacity ?? 1,
         strokeColor: props?.strokeColor || "#000",
-        strokeWidth: props?.strokeWidth ?? "4px",
-        strokeOpacity: props?.strokeOpacity ?? "1",
+        strokeWidth: props?.strokeWidth ?? 4,
+        strokeOpacity: props?.strokeOpacity ?? 1,
         strokeStyle: props?.strokeStyle || "solid",
-        radius: props?.radius ?? "0px",
+        radius: props?.radius ?? 0,
         textColor: props?.textColor || "#000",
         textFont: props?.textFont || "",
         textSize: props?.textSize || 16,
