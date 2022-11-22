@@ -3,7 +3,7 @@ import {useBoundaryPoints} from "../../hooks/useBoundaryPoints.js";
 import {boundaryPoints} from "../../utils/index.js";
 import {POINT_SOURCES} from "../../constants.js";
 
-export const Selection = props => {
+export const Boundary = props => {
     const offset = props.offset / props.zoom;
     const selectedElements = props.elements.filter(el => !!el.selected);
     let points = [];
@@ -39,7 +39,7 @@ export const Selection = props => {
     );
 };
 
-Selection.defaultProps = {
+Boundary.defaultProps = {
     tools: {},
     elements: [],
     offset: 4,

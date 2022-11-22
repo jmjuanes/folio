@@ -1,12 +1,11 @@
 import React from "react";
 import {POINT_SOURCES} from "../../constants.js";
-import {Handlers} from "../Handlers/index.jsx";
-import {Selection} from "../Selection/index.jsx";
-import {Elements} from "../Elements/index.jsx";
-import {Brush} from "../Brush/index.jsx";
-import {Grid} from "../Grid/index.jsx";
+import {Handlers} from "../Handlers.jsx";
+import {Boundary} from "../Boundary.jsx";
+import {Brush} from "../Brush.jsx";
+import {Grid} from "../Grid.jsx";
 
-export const Renderer = React.forwardRef((props, ref) => {
+export const Canvas = React.forwardRef((props, ref) => {
     const handlePointerDown = event => {
         event.preventDefault();
         event.stopPropagation();
@@ -127,17 +126,31 @@ export const Renderer = React.forwardRef((props, ref) => {
                         height={props.height}
                     />
                 )}
-                {props.showSelection && (
-                    <Selection
+                {props.showBoundary && (
+                    <Boundary
                         tools={props.tools}
                         elements={props.elements}
                         zoom={props.zoom}
                     />
                 )}
-                <Elements
-                    tools={props.tools}
-                    elements={props.elements}
-                />
+                <React.Fragment>
+                    {props.elements.map(element => {
+                        const {Component} = props.tools[element.type];
+                        const attributes = {
+                            "data-type": POINT_SOURCES.ELEMENT,
+                            "data-value": element.id,
+                        };
+
+                        return (
+                            <g key={element.id} data-element-id={element.id}>
+                                <Component
+                                    elementAttributes={attributes}
+                                    {...element}
+                                />
+                            </g>
+                        );
+                    })}
+                </React.Fragment>
                 {props.showHandlers && (
                     <Handlers
                         tools={props.tools}
@@ -160,7 +173,7 @@ export const Renderer = React.forwardRef((props, ref) => {
     );
 });
 
-Renderer.defaultProps = {
+Canvas.defaultProps = {
     width: 0,
     height: 0,
     backgroundFillColor: "#fff",
@@ -183,7 +196,7 @@ Renderer.defaultProps = {
     onPointerUp: null,
     onDoubleClick: null,
     showHandlers: false,
-    showSelection: false,
+    showBoundary: false,
     showBrush: true,
     showGrid: true,
     showBackground: true,
