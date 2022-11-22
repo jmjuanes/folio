@@ -1,19 +1,10 @@
 import React from "react";
 import {
-    Renderer,
-    useBoundaryPoints,
-    HANDLERS,
-    normalizeRectangle,
-    pointInRectangle,
-    measureText,
-    toImagePNG,
-} from "folio-core";
-
-import {
     IS_DARWIN,
     ACTIONS,
     EVENTS,
     KEYS,
+    HANDLERS,
     ELEMENT_CHANGE_TYPES,
     ZOOM_STEP,
     ZOOM_MIN,
@@ -22,25 +13,32 @@ import {
     SCREENSHOT_STROKE_COLOR,
     SELECTION_FILL_COLOR,
     SELECTION_STROKE_COLOR,
-} from "./constants.js";
-import {useBoard} from "./hooks/useBoard.js";
-import {useBoardState} from "./hooks/useBoardState.js";
+} from "../../constants.js";
+import {useBoard} from "../../hooks/useBoard.js";
+import {useBoardState} from "../../hooks/useBoardState.js";
+import {useBoundaryPoints} from "../../hooks/useBoundaryPoints.js";
 import {
     EditionPanel,
     HistoryPanel,
     MenuPanel,
     ToolsPanel,
     ZoomPanel,
-} from "./components/Panels/index.jsx";
+} from "../Panels/index.jsx";
 import {
     StyleDialog,
-} from "./components/Dialogs/index.jsx";
-import {TextInput} from "./components/TextInput.jsx";
+} from "../Dialogs/index.jsx";
+import {Canvas} from "../Canvas/index.jsx";
+import {TextInput} from "./TextInput.jsx";
 import {
     generateID,
     isArrowKey,
     isInputTarget,
-} from "./utils/index.js";
+    normalizeRectangle,
+    pointInRectangle,
+    measureText,
+} from "../../utils/index.js";
+import {toImagePNG} from "../../export.js";
+
 
 export const Board = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
@@ -481,7 +479,7 @@ export const Board = props => {
 
     return (
         <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
-            <Renderer
+            <Canvas
                 ref={ref}
                 width={props.width}
                 height={props.height}
@@ -505,7 +503,7 @@ export const Board = props => {
                 onDoubleClick={handleDoubleClick}
                 showHandlers={!action && !tool}
                 showBrush={action === ACTIONS.SELECTION || action === ACTIONS.SCREENSHOT}
-                showSelection={!action && !tool}
+                showBoundary={!action && !tool}
                 showGrid={true}
             />
             {state.current.action !== ACTIONS.SCREENSHOT && (
