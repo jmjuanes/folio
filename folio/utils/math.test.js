@@ -1,7 +1,7 @@
 import {
     boundaryPoints,
     pointInRectangle,
-} from "./index.js";
+} from "./math.js";
 
 describe("boundaryPoints", () => {
     it("should generate the boundary rectangle", () => {

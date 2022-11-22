@@ -1,5 +1,7 @@
 import {KEYS} from "../constants.js";
 
+export * from "./math.js";
+
 // Generate an ID
 // Source: https://michalzalecki.com/generate-unique-id-in-the-browser-without-a-library/ 
 export const generateID = () => {
