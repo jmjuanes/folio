@@ -22,25 +22,25 @@ import {
     SCREENSHOT_STROKE_COLOR,
     SELECTION_FILL_COLOR,
     SELECTION_STROKE_COLOR,
-} from "./constants.js";
-import {useBoard} from "./hooks/useBoard.js";
-import {useBoardState} from "./hooks/useBoardState.js";
+} from "../../constants.js";
+import {useBoard} from "../../hooks/useBoard.js";
+import {useBoardState} from "../../hooks/useBoardState.js";
 import {
     EditionPanel,
     HistoryPanel,
     MenuPanel,
     ToolsPanel,
     ZoomPanel,
-} from "./components/Panels/index.jsx";
+} from "../Panels/index.jsx";
 import {
     StyleDialog,
-} from "./components/Dialogs/index.jsx";
-import {TextInput} from "./components/TextInput.jsx";
+} from "../Dialogs/index.jsx";
+import {TextInput} from "./TextInput.jsx";
 import {
     generateID,
     isArrowKey,
     isInputTarget,
-} from "./utils/index.js";
+} from "../../utils/index.js";
 
 export const Board = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
