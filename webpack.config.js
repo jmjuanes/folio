@@ -17,8 +17,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-            "folio": path.join(__dirname, "folio"),
-            "folio-board": path.join(__dirname, "folio"),
+            "folio": path.join(__dirname, "folio", "index.jsx"),
+            "folio-board": path.join(__dirname, "folio", "index.jsx"),
         },
     },
     module: {
