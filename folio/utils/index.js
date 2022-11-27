@@ -1,5 +1,7 @@
 import {KEYS} from "../constants.js";
 
+export * from "./blob.js";
+export * from "./clipboard.js";
 export * from "./math.js";
 
 // Generate an ID
@@ -17,4 +19,3 @@ export const isArrowKey = key => {
 export const isInputTarget = e => {
     return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 };
-
