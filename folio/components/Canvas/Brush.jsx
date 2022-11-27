@@ -2,10 +2,10 @@ import React from "react";
 
 export const Brush = props => (
     <rect
-        x={Math.min(props.x, props.x + props.width)}
-        y={Math.min(props.y, props.y + props.height)}
-        width={Math.abs(props.width)}
-        height={Math.abs(props.height)}
+        x={Math.min(props.points[0][0], props.points[1][0])}
+        y={Math.min(props.points[0][1], props.points[1][1])}
+        width={Math.abs(props.points[0][0] - props.points[1][0])}
+        height={Math.abs(props.points[0][1] - props.points[1][1])}
         fill={props.fillColor}
         fillOpacity={props.fillOpacity}
         stroke={props.strokeColor}
@@ -15,10 +15,7 @@ export const Brush = props => (
 );
 
 Brush.defaultProps = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
+    points: [],
     fillColor: "#0d6efd",
     fillOpacity: "0.1",
     strokeColor: "#0d6efd",

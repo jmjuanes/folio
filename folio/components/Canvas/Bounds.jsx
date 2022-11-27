@@ -1,31 +1,21 @@
 import React from "react";
-import {useBoundaryPoints} from "../../hooks/useBoundaryPoints.js";
 import {boundaryPoints} from "../../utils/index.js";
-import {POINT_SOURCES} from "../../constants.js";
 
-export const Boundary = props => {
+export const Bounds = props => {
     const offset = props.offset / props.zoom;
-    const selectedElements = props.elements.filter(el => !!el.selected);
+    // const selectedElements = props.elements.filter(el => !!el.selected);
     let points = [];
-    let path = null;
-    if (selectedElements.length > 1) {
-        points = selectedElements
-            .map(element => useBoundaryPoints(element))
-            .flat(1);
-        
-        // Check if selection is not a single line, so we will need to generate
-        // the boundary rectangle
-        if (points.length > 2) {
-            points = boundaryPoints(points);
-            // path = "M" + points.map(p => "L" + p.join(",")).join("").slice(1) + "Z";
-        }
+    // let path = null;
+    if (props.elements.length > 1) {
+        const allPoints = props.elements.map(el => el.points);
+        points = boundaryPoints(allPoints.flat(1));
+        // path = "M" + points.map(p => "L" + p.join(",")).join("").slice(1) + "Z";
     }
 
     return (
         <React.Fragment>
             {points.length > 2 && (
                 <rect
-                    data-type={POINT_SOURCES.SELECTION}
                     x={points[0][0] - offset}
                     y={points[0][1] - offset}
                     width={Math.abs(points[3][0] - points[0][0]) + 2 * offset}
@@ -33,14 +23,14 @@ export const Boundary = props => {
                     fill={props.fillColor}
                     stroke={props.strokeColor}
                     strokeWidth={props.strokeWidth / props.zoom}
+                    onPointerDown={props.onPointerDown}
                 />
             )}
         </React.Fragment>
     );
 };
 
-Boundary.defaultProps = {
-    tools: {},
+Bounds.defaultProps = {
     elements: [],
     offset: 4,
     fillColor: "transparent",
@@ -48,4 +38,5 @@ Boundary.defaultProps = {
     strokeColor: "#0d6efd",
     strokeWidth: 2,
     zoom: 1,
+    onPointerDown: null,
 };

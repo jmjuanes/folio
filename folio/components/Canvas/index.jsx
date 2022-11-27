@@ -1,15 +1,29 @@
 import React from "react";
-import {POINT_SOURCES} from "../../constants.js";
-import {Handlers} from "../Handlers.jsx";
-import {Boundary} from "../Boundary.jsx";
-import {Brush} from "../Brush.jsx";
-import {Grid} from "../Grid.jsx";
+import {ResizeHandlers} from "./ResizeHandlers.jsx";
+import {NodeHandlers} from "./NodeHandlers.jsx";
+import {Bounds} from "./Bounds.jsx";
+import {Brush} from "./Brush.jsx";
+import {Grid} from "./Grid.jsx";
+import {
+    getElementConfig,
+    hasNodeHandlersEnabled,
+    hasResizeHandlersEnabled,
+} from "../../elements/index.jsx";
+
+const useSelectedElements = props => {
+    if (props.showResizeHandlers || props.showNodeHandlers || props.showBounds) {
+        return (props.elements || []).filter(el => !!el.selected);
+    }
+    return [];
+};
 
 export const Canvas = React.forwardRef((props, ref) => {
-    const handlePointerDown = event => {
+    const selectedElements = useSelectedElements(props);
+
+    const handlePointerDown = (event, source, pointListener) => {
         event.preventDefault();
         event.stopPropagation();
-        const source = event.nativeEvent?.target?.dataset?.type || null;
+        // const source = event.nativeEvent?.target?.dataset?.type || null;
         const eventInfo = {
             originalX: (event.nativeEvent.clientX - props.translateX) / props.zoom,
             originalY: (event.nativeEvent.clientY - props.translateY) / props.zoom,
@@ -17,27 +31,13 @@ export const Canvas = React.forwardRef((props, ref) => {
             nativeEvent: event.nativeEvent,
         };
 
-        // Handler pointer listener
-        if (source === POINT_SOURCES.HANDLER) {
-            props.onPointHandler?.({
-                ...eventInfo,
-                handler: event.nativeEvent.target.dataset.value,
-            });
+        if (source && event.nativeEvent.target?.dataset?.[source]) {
+            eventInfo[source] = event.nativeEvent.target.dataset[source];
         }
-        // Element pointer listener
-        else if (source === POINT_SOURCES.ELEMENT) {
-            props.onPointElement?.({
-                ...eventInfo,
-                element: event.nativeEvent.target.dataset.value,
-            });
-        }
-        // Selection pointer listener
-        // else if (source === POINT_SOURCES.SELECTION) {
-        //     props.onPointSelection?.({...eventInfo});
-        // }
-        // Other listener
-        else if (source === null) {
-            props.onPointCanvas?.(eventInfo);
+
+        // Call the listener provided as an argument
+        if (typeof pointListener === "function") {
+            pointListener(eventInfo);
         }
 
         // Emit pointer down event
@@ -46,14 +46,13 @@ export const Canvas = React.forwardRef((props, ref) => {
         // Handle pointer move
         const handlePointerMove = event => {
             event.preventDefault();
-            props.onPointerMove?.({
-                ...eventInfo,
+            props.onPointerMove?.(Object.assign(eventInfo, {
                 nativeEvent: event,
                 currentX: (event.clientX - props.translateX) / props.zoom,
                 currentY: (event.clientY - props.translateY) / props.zoom,
                 dx: (event.clientX - eventInfo.nativeEvent.clientX) / props.zoom,
                 dy: (event.clientY - eventInfo.nativeEvent.clientY) / props.zoom,
-            });
+            }));
         };
 
         // Handle pointer up
@@ -105,7 +104,7 @@ export const Canvas = React.forwardRef((props, ref) => {
                 userSelect: "none",
                 ...props.style,
             }}
-            onPointerDown={handlePointerDown}
+            onPointerDown={e => handlePointerDown(e, null, props.onPointCanvas)}
             onDoubleClick={handleDoubleClick}
         >
             <g transform={transform.join(" ")}>
@@ -115,7 +114,7 @@ export const Canvas = React.forwardRef((props, ref) => {
                         y="0"
                         width={props.width}
                         height={props.height}
-                        fill={props.backgroundFillColor}
+                        fill={props.background}
                         stroke="none"
                     />
                 )}
@@ -126,44 +125,43 @@ export const Canvas = React.forwardRef((props, ref) => {
                         height={props.height}
                     />
                 )}
-                {props.showBoundary && (
-                    <Boundary
-                        tools={props.tools}
-                        elements={props.elements}
+                {false && props.showBounds && selectedElements.length > 1 && (
+                    <Bounds
+                        elements={selectedElements}
                         zoom={props.zoom}
+                        onPointerDown={e => handlePointerDown(e, null, null)}
                     />
                 )}
                 <React.Fragment>
                     {props.elements.map(element => {
-                        const {Component} = props.tools[element.type];
-                        const attributes = {
-                            "data-type": POINT_SOURCES.ELEMENT,
-                            "data-value": element.id,
-                        };
-
+                        const {Component} = getElementConfig(element);
+                        // const handleElementDown = e => {
+                        //     // TODO: find element
+                        // };
                         return (
-                            <g key={element.id} data-element-id={element.id}>
-                                <Component
-                                    elementAttributes={attributes}
-                                    {...element}
-                                />
+                            <g key={element.id} data-element={element.id}>
+                                <Component {...element} />
                             </g>
                         );
                     })}
                 </React.Fragment>
-                {props.showHandlers && (
-                    <Handlers
-                        tools={props.tools}
-                        elements={props.elements}
+                {false && props.showResizeHandlers && hasResizeHandlersEnabled(selectedElements?.[0]) && (
+                    <ResizeHandlers
+                        elements={selectedElements}
                         zoom={props.zoom}
+                        onPointerDown={e => handlePointerDown(e, "handler", props.onPointResizeHandler)}
                     />
                 )}
-                {props.showBrush && (
+                {false && props.showNodeHandlers && hasNodeHandlersEnabled(selectedElements?.[0]) && (
+                    <NodeHandlers
+                        elements={selectedElements}
+                        zoom={props.zoom}
+                        onPointerDown={e => handlePointerDown(e, "handler", props.onPointNodeHandler)}
+                    />
+                )}
+                {false && props.showBrush && props.brushPoints?.length === 2 && (
                     <Brush
-                        x={props.brushX}
-                        y={props.brushY}
-                        width={props.brushWidth}
-                        height={props.brushHeight}
+                        points={props.brushPoints}
                         fillColor={props.brushFillColor}
                         strokeColor={props.brushStrokeColor}
                     />
@@ -176,27 +174,25 @@ export const Canvas = React.forwardRef((props, ref) => {
 Canvas.defaultProps = {
     width: 0,
     height: 0,
-    backgroundFillColor: "#fff",
-    tools: {},
+    background: "#fff",
     elements: [],
     translateX: 0,
     translateY: 0,
     zoom: 1,
-    brushX: 0,
-    brushY: 0,
-    brushWidth: 0,
-    brushHeight: 0,
+    brush: null,
     brushFillColor: "#4184f4",
     brushStrokeColor: "#4285f4",
     onPointCanvas: null,
-    onPointHandler: null,
     onPointElement: null,
+    onPointNodeHandler: null,
+    onPointResizeHandler: null,
     onPointerDown: null,
     onPointerMove: null,
     onPointerUp: null,
     onDoubleClick: null,
-    showHandlers: false,
-    showBoundary: false,
+    showNodeHandlers: false,
+    showResizeHandlers: false,
+    showBounds: false,
     showBrush: true,
     showGrid: true,
     showBackground: true,
