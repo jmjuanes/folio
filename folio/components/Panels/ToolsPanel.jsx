@@ -1,7 +1,14 @@
 import React from "react";
-import {ACTIONS} from "../../constants.js";
+import {ACTIONS, ELEMENTS} from "../../constants.js";
 import {Panel, PanelButton} from "./Panel.jsx";
-import {ArrowsIcon, PointerIcon} from "../icons/index.jsx";
+import {ArrowsIcon, PointerIcon, RectangleToolIcon} from "../icons/index.jsx";
+
+const availableTools = [
+    {
+        element: ELEMENTS.RECTANGLE,
+        Icon: RectangleToolIcon,
+    }
+];
 
 export const ToolsPanel = props => (
     <Panel position="bottom-center">
@@ -23,19 +30,16 @@ export const ToolsPanel = props => (
                 width: "1px",
             }}
         />
-        {Object.keys(props.tools).map(key => {
-            const tool = props.tools[key];
-            return (
-                <PanelButton key={key} active={props.currentTool === key} onClick={() => props.onToolClick(key)}>
-                    <tool.Icon />
-                </PanelButton>
-            );
-        })}
+        {props.tools.map(tool => (
+            <PanelButton key={tool.element} active={props.currentTool === tool.element} onClick={() => props.onToolClick(tool.element)}>
+                <tool.Icon />
+            </PanelButton>
+        ))}
     </Panel>
 );
 
 ToolsPanel.defaultProps = {
-    tools: {},
+    tools: availableTools,
     currentAction: null,
     currentTool: null,
     onMoveClick: null,
