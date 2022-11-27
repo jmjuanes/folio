@@ -90,35 +90,17 @@ export const ACTIONS = {
     MOVE: "action:move",
 };
 
-export const LINE_CAPS = {
-    NONE: "none",
+export const ELEMENTS = {
+    RECTANGLE: "rectangle",
+    ELLIPSE: "ellipse",
+    LINE: "line",
     ARROW: "arrow",
-    SQUARE: "square",
-    CIRCLE: "circle",
-};
-
-export const TEXT_ALIGNS = {
-    LEFT: "left",
-    CENTER: "center",
-    RIGHT: "right",
-};
-
-export const TEXT_VERTICAL_ALIGNS = {
-    TOP: "top",
-    MIDDLE: "middle",
-    BOTTOM: "bottom",
-};
-
-export const ELEMENT_TYPES = {
-    SHAPE_RECTANGLE: "rectangle",
-    SHAPE_ELLIPSE: "ellipse",
-    SHAPE_LINE: "line",
     IMAGE: "image",
     TEXT: "text",
-    HAND_DRAW: "hand_draw",
+    DRAW: "draw",
 };
 
-export const ELEMENT_CHANGE_TYPES = {
+export const ELEMENT_CHANGES = {
     CREATE: "element:create",
     UPDATE: "element:update",
     REMOVE: "element:remove",
@@ -154,7 +136,18 @@ export const POINT_SOURCES = {
     SELECTION: "selection",
 };
 
-export const HANDLERS = {
+export const RESIZE_HANDLERS = {
+    EDGE_TOP: "edge-top",
+    EDGE_BOTTOM: "edge-bottom",
+    EDGE_LEFT: "edge-left",
+    EDGE_RIGHT: "edge-right",
+    CORNER_TOP_LEFT: "corner-top-left",
+    CORNER_TOP_RIGHT: "corner-top-right",
+    CORNER_BOTTOM_LEFT: "corner-bottom-left",
+    CORNER_BOTTOM_RIGHT: "corner-bottom-right",
+};
+
+export const NODE_HANDLERS = {
     EDGE_TOP: "edge-top",
     EDGE_BOTTOM: "edge-bottom",
     EDGE_LEFT: "edge-left",
@@ -174,10 +167,47 @@ export const HANDLERS_TYPES = {
     POINTS: "points",
 };
 
+// DEPRECATED
 export const TOOLS_TYPES = {
     SHAPE: "tool:shape",
     ARROW: "tool:arrow",
     LINE: "tool:line",
     HAND_DRAW: "tool:hand-draw",
     TEXT: "tool:text",
+};
+
+export const SHAPES_TYPES = {
+    RECTANGLE: "rectangle",
+    ELLIPSE: "ellipse",
+    LINE: "line",
+    TEXT: "text",
+    IMAGE: "image",
+};
+
+// Styles keys
+
+export const COLOR_KEYS = {
+    // WHITE: "white",
+    LIGHT_GRAY: "light-gray",
+    DARK_GRAY: "dark-gray",
+    BLACK: "black",
+};
+
+export const FONT_KEYS = {
+    SANS: "sans",
+    SERIF: "serif",
+    MONO: "monospace"
+};
+
+export const SIZE_KEYS = {
+    SMALL: "sm",
+    MEDIUM: "md",
+    LARGE: "lg",
+    EXTRA_LARGE: "xl",
+};
+
+export const DASH_KEYS = {
+    SOLID: "solid",
+    DASHED: "dashed",
+    DOTTED: "dotted",
 };
