@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {ChevronUpIcon} from "../icons/index.jsx";
+// import {ChevronUpIcon} from "../icons/index.jsx";
 
 export const Panel = props => {
     const panelWrapperClass = classNames({
@@ -64,7 +64,7 @@ export const PanelDropButton = props => {
                 {props.children}
             </div>
             <div className="d-flex items-center text-sm py-2 pr-1" onClick={props.onDropClick}>
-                <ChevronUpIcon />
+                {/* <ChevronUpIcon /> */}
             </div>
         </div>
     );
