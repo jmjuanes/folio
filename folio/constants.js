@@ -106,6 +106,8 @@ export const ELEMENT_CHANGES = {
     REMOVE: "element:remove",
 };
 
+export const GRID_SIZE = 20;
+
 export const ZOOM_INITIAL = 1;
 export const ZOOM_STEP = 0.1;
 export const ZOOM_MAX = 5;

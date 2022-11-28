@@ -1,18 +1,51 @@
-import {ELEMENT_CHANGES} from "./constants.js";
+import {
+    ACTIONS,
+    ELEMENTS,
+    ELEMENT_CHANGES,
+    GRID_SIZE,
+    ZOOM_INITIAL,
+    ZOOM_MAX,
+    ZOOM_MIN,
+    ZOOM_STEP,
+} from "./constants.js";
 import {getElementSvg} from "./elements/index.jsx";
 import {generateID} from "./utils/index.js";
 
-export const createApp = () => {
+export const createApp = (width, height, callbacks) => {
+    const snapshot = null;
+    const lastTranslate = {};
     const app = {
+        target: null,
         readOnly: false,
-        activeElement: null,
-        activeGroup: null,
+        width: width,
+        height: height,
         elements: [],
         style: {},
+        state: {
+            activeTool: null,
+            activeAction: null,
+            activeElement: null,
+            activeGroup: null,
+            zoom: ZOOM_INITIAL,
+            translateX: 0,
+            translateY: 0,
+        },
+        settings: {
+            showGrid: true,
+        },
+        util: {
+            getPosition: pos => {
+                return app.settings.showGrid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
+            },
+        },
+        update: () => {
+            // Trigger an update from the callbacks
+            return callbacks?.onUpdate?.();
+        },
         clear: () => {
             app.elements = [];
-            app.activeElement = null;
-            app.activeGroup = null;
+            app.state.activeElement = null;
+            app.state.activeGroup = null;
             app.clearHistory();
         },
         load: elements => {
@@ -95,18 +128,19 @@ export const createApp = () => {
             }
         },
 
-        // Board groups API
+        //
+        // Groups API
+        //
         getElementsInGroup: group => {
             return app.elements.filter(el => el.group && el.group === group);
         },
         getElementsInActiveGroup: () => {
-            return app.activeGroup ? app.getElementsInGroup(app.activeGroup) : [];
+            return app.state.activeGroup ? app.getElementsInGroup(app.state.activeGroup) : [];
         },
          
         //
         // History API
         //
-
         history: [],
         historyIndex: 0,
         clearHistory: () => {
@@ -191,8 +225,9 @@ export const createApp = () => {
                     });
                 }
                 app.historyIndex = app.historyIndex + 1;
-                app.activeGroup = null;
+                app.state.activeGroup = null;
                 app.elements.forEach(el => el.selected = false);
+                callbacks?.onUpdate?.();
             }
         },
         redo: () => {
@@ -209,8 +244,9 @@ export const createApp = () => {
                         Object.assign(app.elements.find(el => el.id === element.id) || {}, element.newValues);
                     });
                 }
-                app.activeGroup = null;
+                app.state.activeGroup = null;
                 app.elements.forEach(el => el.selected = false);
+                callbacks?.onUpdate?.();
             }
         },
         isUndoDisabled: () => app.historyIndex >= app.history.length,
@@ -257,7 +293,6 @@ export const createApp = () => {
         //
         // Export API
         //
-
         export: () => {
             return app.elements.map(el => ({
                 ...el,
@@ -269,6 +304,261 @@ export const createApp = () => {
         },
         exportJson: () => {
             return app.export();
+        },
+
+        // 
+        // Canvas events
+        // 
+        events: {
+            onPointCanvas: event => {
+                if (!app.state.activeTool) {
+                    app.clearSelectedElements();
+                    callbacks?.onUpdate?.();
+                }
+            },
+            onPointElement: event => {
+                if (!app.state.activeTool && !app.state.activeAction) {
+                    const element = app.getElement(event.element);
+                    if (!event.shiftKey) {
+                        app.clearSelectedElements();
+                        element.selected = true;
+                    }
+                    else {
+                        // Toggle element selection
+                        element.selected = !element.selected;
+                    }
+                    callbacks?.onUpdate?.();
+                }
+            },
+            onPointResizeHandler: event => {
+                app.state.activeAction = ACTIONS.RESIZE_ELEMENT;
+                // app.state.activeHandler = event.handler;
+            },
+            onPointerDown: event => {
+                if (app.state.activeAction === ACTIONS.EDIT_ELEMENT) {
+                    // submitInput();
+                    // TODO
+                }
+                if (app.state.activeTool) {
+                    app.state.activeAction = ACTIONS.CREATE_ELEMENT;
+                    const element = app.createElement(app.state.activeTool);
+                    const elementConfig = getElementConfig(element);
+                    // Override element attributes
+                    Object.assign(element, {
+                        ...(elementConfig.initialize?.() || {}),
+                        x1: app.util.getPosition(event.originalX),
+                        y1: app.util.getPosition(event.originalY),
+                    });
+                    elementConfig.onCreateStart?.(element, event, app),
+                    app.state.activeElement = element; // Save element reference
+                    // app.state.activeGroup = null; // Reset current group
+                    app.clearSelectedElements();
+                }
+                else if (app.getSelectedElements().length > 0) {
+                    if (!app.state.activeAction) {
+                        app.state.activeAction = ACTIONS.DRAG_ELEMENT;
+                    }
+                    // Save a snapshot of the current selection for calculating the correct element position
+                    snapshot = app.snapshotSelectedElements();
+                }
+                else if (app.state.activeAction === ACTIONS.MOVE) {
+                    // We need to update the last translated point before start moving the board
+                    lastTranslate.x = app.state.translateX;
+                    lastTranslate.y = app.state.translateY;
+                }
+                else if (!app.state.activeAction || app.state.activeAction === ACTIONS.SCREENSHOT) {
+                    // state.current.action = state.current.action || ACTIONS.SELECTION;
+                    // state.current.brush.x1 = event.originalX;
+                    // state.current.brush.y1 = event.originalY;
+                    // state.current.brush.x2 = event.originalX;
+                    // state.current.brush.y2 = event.originalY;
+                }
+                callbacks?.onUpdate?.();
+                // forceUpdate();
+            },
+            onPointerMove: event => {
+                if (app.state.activeAction === ACTIONS.MOVE) {
+                    app.state.translateX = Math.floor(lastTranslate.x + event.dx * app.state.zoom);
+                    app.state.translateY = Math.floor(lastTranslate.y + event.dy * app.state.zoom);
+                }
+                else if (app.state.activeAction === ACTIONS.CREATE_ELEMENT) {
+                    const element = app.state.activeElement;
+                    // First, update the second point of the element
+                    element.x2 = app.util.getPosition(event.currentX);
+                    element.y2 = app.util.getPosition(event.currentY);
+                    // Second, call the onCreateMove listener of the element
+                    getElementConfig(element)?.onCreateMove?.(element, event, app);
+                }
+                else if (app.state.activeAction === ACTIONS.DRAG_ELEMENT) {
+                    // state.current.isDragged = true;
+                    app.getSelectedElements().forEach((element, index) => {
+                        element.x1 = app.util.getPosition(element.x1 + info.dx),
+                        element.x2 = app.util.getPosition(element.x2 + info.dx),
+                        element.y1 = app.util.getPosition(element.y1 + info.dy),
+                        element.y2 = app.util.getPosition(element.y2 + info.dy),
+                        getElementConfig(element)?.onDrag?.(snapshot[index], event, app);
+                    });
+                }
+                else if (app.state.activeAction === ACTIONS.RESIZE_ELEMENT) {
+                    const element = app.getElement(snapshot[0].id);
+                    // state.current.isResized = true;
+                    if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
+                        element.x1 = Math.min(app.util.getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
+                        element.y1 = Math.min(app.util.getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                    }
+                    else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
+                        element.x2 = Math.max(app.util.getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
+                        element.y1 = Math.min(app.util.getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                    }
+                    else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                        element.x1 = Math.min(app.util.getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
+                        element.y2 = Math.max(app.util.getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                    }
+                    else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                        element.x2 = Math.max(app.util.getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
+                        element.y2 = Math.max(app.util.getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                    }
+                    else if (event.handler === HANDLERS.EDGE_TOP) {
+                        element.y1 = Math.min(app.util.getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                    }
+                    else if (event.handler === HANDLERS.EDGE_BOTTOM) {
+                        element.y2 = Math.max(app.util.getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                    }
+                    else if (event.handler === HANDLERS.EDGE_LEFT) {
+                        element.x1 = Math.min(app.util.getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
+                    }
+                    else if (event.handler === HANDLERS.EDGE_RIGHT) {
+                        element.x2 = Math.max(app.util.getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
+                    }
+                    else if (event.handler === HANDLERS.POINT_START) {
+                        element.x1 = app.util.getPosition(snapshot[0].x1 + event.dx);
+                        element.y1 = app.util.getPosition(snapshot[0].y1 + event.dy);
+                    }
+                    else if (event.handler === HANDLERS.POINT_END) {
+                        element.x2 = app.util.getPosition(snapshot[0].x2 + event.dx);
+                        element.y2 = app.util.getPosition(snapshot[0].y2 + event.dy);
+                    }
+                }
+                else if (app.state.activeAction === ACTIONS.SELECTION || app.state.activeAction === ACTIONS.SCREENSHOT) {
+                    // state.current.brush.x2 = event.currentX;
+                    // state.current.brush.y2 = event.currentY;
+                }
+                callbacks?.onUpdate?.();
+                // forceUpdate();
+            },
+            onPointerUp: event => {
+                if (app.state.activeAction === ACTIONS.MOVE) {
+                    lastTranslate.x = app.state.translateX;
+                    lastTranslate.y = app.state.translateY;
+                }
+                else if (app.state.activeAction === ACTIONS.CREATE_ELEMENT) {
+                    const element = app.state.activeElement;
+                    element.selected = true; // By default select this element
+                    getElementConfig(activelement)?.onCreateEnd?.(element, event, app);
+                    app.registerElementCreate(element);
+                    app.state.activeElement = null;
+                    app.state.activeTool = null; // reset active tool
+                    app.state.activeAction = null;
+                }
+                else if (app.state.activeAction === ACTIONS.DRAG_ELEMENT || app.state.activeAction === ACTIONS.RESIZE_ELEMENT) {
+                    if (state.current.isDragged || state.current.isResized) {
+                        // const snapshot = state.current.snapshot;
+                        // const keys = state.current.isDragged ? ["x", "y"] : ["x", "y", "width", "height"];
+                        // app.current.addHistoryEntry({
+                        //     type: ELEMENT_CHANGE_TYPES.UPDATE,
+                        //     elements: app.current.getSelectedElements().map((el, index) => ({
+                        //         id: el.id,
+                        //         prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
+                        //         newValues: Object.fromEntries(keys.map(key => [key, el[key]])),
+                        //     })),
+                        // });
+                    }
+                    // state.current.isDragged = false;
+                    // state.current.isResized = false;
+                    app.state.activeAction = null;
+                }
+                else if (app.state.activeAction === ACTIONS.SELECTION) {
+                    // const rectangle = normalizeRectangle(state.current.brush);
+                    // // Select all elements that are in the selected rectangle
+                    // app.current.getElements().forEach(element => {
+                    //     const points = useBoundaryPoints(element);
+                    //     element.selected = points.some(point => {
+                    //         return pointInRectangle(point, rectangle);
+                    //     });
+                    // });
+                    app.state.activeAction = null;
+                }
+                else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
+                    // const screenshotOptions = {
+                    //     includeBackground: false,
+                    //     region: state.current.brush,
+                    // };
+                    // toImagePNG(ref.current, props.width, props.height, screenshotOptions).then(image => {
+                    //     props.onScreenshot?.(image);
+                    //     // navigator.clipboard.write([
+                    //     //     new ClipboardItem({
+                    //     //         [image.type]: image,
+                    //     //     }),
+                    //     // ]);
+                    // });
+                    app.state.activeAction = null;
+                }
+                // Reset current state
+                // state.current.action = null;
+                callbacks?.onUpdate?.();
+                // forceUpdate();
+            },
+            onDoubleClick: event => {
+                if (!app.state.activeAction && !app.state.activeTool) {
+                    const selection = app.getSelectedElements();
+                    // if (selection.length === 1 && typeof selection[0].text === "string") {
+                    if (selection.length === 1 && selection[0].type === ELEMENTS.TEXT) {
+                        app.state.action = ACTIONS.EDIT_ELEMENT;
+                        app.state.activeElement = selection[0];
+                        app.state.activeElement.editing = true;
+                        // return forceUpdate();
+                        callbacks?.onUpdate?.();
+                    }
+                }
+            },
+        },
+
+        // 
+        // Zoom api
+        //
+        changeZoom: delta => {
+            // TODO: check for previous action or editing action
+            // submitInput();
+            const prevZoom = app.state.zoom;
+            app.state.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, prevZoom + delta));
+            if (app.target) {
+                const size = app.target.getBoundingClientRect();
+                app.state.translateX = Math.floor(app.state.translateX + size.width * (prevZoom - app.state.zoom) / 2);
+                app.state.translateY = Math.floor(app.state.translateY + size.height * (prevZoom - app.state.zoom) / 2);
+            }
+            // forceUpdate();
+            callbacks?.onUpdate?.();
+        },
+        zoomIn: () => app.changeZoom(ZOOM_STEP),
+        zoomOut: () => app.changeZoom(-ZOOM_STEP),
+
+        //
+        // Setters API
+        // 
+        setTool: newTool => {
+            const selectedElements = app.getSelectedElements();
+            if (selectedElements.length > 0) {
+                if (selectedElements.length === 1 && selectedElements[0].editing) {
+                    selectedElements[0].editing = false;
+                }
+                app.clearSelectedElements();
+            }
+            app.state.activeTool = newTool;
+            app.state.activeAction = null;
+            callbacks?.onUpdate?.();
+        },
+        setSettings: newSettings => {
+            return null;
         },
     };
     return app;
