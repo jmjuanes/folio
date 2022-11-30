@@ -1,20 +1,19 @@
 import React from "react";
-import {ResizeHandlers} from "./ResizeHandlers.jsx";
-import {NodeHandlers} from "./NodeHandlers.jsx";
+import {EVENTS} from "../../constants.js";
+import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
-import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
-import {
-    getElementConfig,
-    hasNodeHandlersEnabled,
-    hasResizeHandlersEnabled,
-} from "../../elements/index.jsx";
+import {getElementConfig} from "../../elements/index.jsx";
 
 const useSelectedElements = props => {
-    if (props.showResizeHandlers || props.showNodeHandlers || props.showBounds) {
+    if (props.showHandlers || props.showBounds) {
         return (props.elements || []).filter(el => !!el.selected);
     }
     return [];
+};
+
+const hasHandlersEnabled = element => {
+    return el.edgeHandlers || el.cornerHandlers || el.nodeHandlers;
 };
 
 export const Canvas = React.forwardRef((props, ref) => {
@@ -76,16 +75,38 @@ export const Canvas = React.forwardRef((props, ref) => {
     };
 
     // Handle double click
-    const handleDoubleClick = event => {
+    const handleDoubleClick = (event, source, listener) => {
         event.preventDefault();
         event.stopPropagation();
-        props?.onDoubleClick?.({
+        const eventInfo = {
             originalX: (event.nativeEvent.clientX - props.translateX) / props.zoom,
             originalY: (event.nativeEvent.clientY - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             nativeEvent: event.nativeEvent,
-        });
+        };
+
+        // Get source item
+        if (source && event.nativeEvent.target?.dataset?.[source]) {
+            eventInfo[source] = event.nativeEvent.target.dataset[source];
+        }
+
+        // Call the provider listener and the global listener
+        listener?.(eventInfo);
+        props?.onDoubleClick?.(eventInfo);
     };
+
+    // Register keydown events
+    React.useEffect(() => {
+        const handleKeyDown = event => props?.onKeyDown?.(event);
+        const handleKeyUp = event => props?.onKeyUp?.(event);
+        // Add events listeners
+        document.addEventListener(EVENTS.KEY_DOWN, handleKeyDown);
+        document.addEventListener(EVENTS.KEY_UP, handleKeyUp);
+        return () => {
+            document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown);
+            document.removeEventListener(EVENTS.KEY_UP, handleKeyUp);
+        };
+    }, [props.onKeyDown, props.onKeyUp]);
 
     // Generate transform attribute
     const transform = [
@@ -96,6 +117,9 @@ export const Canvas = React.forwardRef((props, ref) => {
     return (
         <svg
             ref={ref}
+            data-id={props.id}
+            data-width={props.width}
+            data-height={props.height}
             width="100%"
             height="100%"
             style={{
@@ -105,7 +129,7 @@ export const Canvas = React.forwardRef((props, ref) => {
                 ...props.style,
             }}
             onPointerDown={e => handlePointerDown(e, null, props.onPointCanvas)}
-            onDoubleClick={handleDoubleClick}
+            onDoubleClick={e => handleDoubleClick(e, null, props.onDoubleClickCanvas)}
         >
             <g transform={transform.join(" ")}>
                 {props.showBackground && (
@@ -135,35 +159,22 @@ export const Canvas = React.forwardRef((props, ref) => {
                 <React.Fragment>
                     {props.elements.map(element => {
                         const {Component} = getElementConfig(element);
-                        // const handleElementDown = e => {
-                        //     // TODO: find element
-                        // };
                         return (
-                            <g key={element.id} data-element={element.id}>
-                                <Component {...element} />
-                            </g>
+                            <Component
+                                key={element.id}
+                                {...element}
+                                onChange={(k, v) => props?.onElementChange(element.id, k, v)}
+                                onPointerDown={e => handlePointerDown(e, "element", props.onPointElement)}
+                                onDoubleClick={e => handleDoubleClick(e, "element", props.onDoubleClickElement)}
+                            />
                         );
                     })}
                 </React.Fragment>
-                {false && props.showResizeHandlers && hasResizeHandlersEnabled(selectedElements?.[0]) && (
-                    <ResizeHandlers
+                {false && props.showHandlers && hasHandlersEnabled(selectedElements?.[0]) && (
+                    <Handlers
                         elements={selectedElements}
                         zoom={props.zoom}
-                        onPointerDown={e => handlePointerDown(e, "handler", props.onPointResizeHandler)}
-                    />
-                )}
-                {false && props.showNodeHandlers && hasNodeHandlersEnabled(selectedElements?.[0]) && (
-                    <NodeHandlers
-                        elements={selectedElements}
-                        zoom={props.zoom}
-                        onPointerDown={e => handlePointerDown(e, "handler", props.onPointNodeHandler)}
-                    />
-                )}
-                {false && props.showBrush && props.brushPoints?.length === 2 && (
-                    <Brush
-                        points={props.brushPoints}
-                        fillColor={props.brushFillColor}
-                        strokeColor={props.brushStrokeColor}
+                        onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
                     />
                 )}
             </g>
@@ -172,6 +183,7 @@ export const Canvas = React.forwardRef((props, ref) => {
 });
 
 Canvas.defaultProps = {
+    id: "",
     width: 0,
     height: 0,
     background: "#fff",
@@ -183,17 +195,19 @@ Canvas.defaultProps = {
     brushFillColor: "#4184f4",
     brushStrokeColor: "#4285f4",
     onPointCanvas: null,
+    onDoubleClickCanvas: null,
     onPointElement: null,
-    onPointNodeHandler: null,
-    onPointResizeHandler: null,
+    onDoubleClickElement: null,
+    onElementChange: null,
+    onPointHandler: null,
     onPointerDown: null,
     onPointerMove: null,
     onPointerUp: null,
     onDoubleClick: null,
-    showNodeHandlers: false,
-    showResizeHandlers: false,
+    onKeyDown: null,
+    onKeyUp: null,
+    showHandlers: false,
     showBounds: false,
-    showBrush: true,
     showGrid: true,
     showBackground: true,
     style: {},
