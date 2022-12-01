@@ -1,7 +1,7 @@
 {
-    "name": "folio",
+    "name": "folio-board",
     "version": "0.1.0-dev",
-    "description": "Folio core package",
+    "description": "A minimalistic whiteboard for sketching and prototyping",
     "private": true,
     "dependencies": {
         "classnames": "^2.3.2",

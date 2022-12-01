@@ -17,8 +17,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-            "folio": path.join(__dirname, "folio", "index.jsx"),
-            "folio-board": path.join(__dirname, "folio", "index.jsx"),
+            "folio": path.join(__dirname, "folio-board", "index.jsx"),
+            "folio-board": path.join(__dirname, "folio-board", "index.jsx"),
         },
     },
     module: {
@@ -27,7 +27,7 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 include: [
                     path.join(__dirname, "app"),
-                    path.join(__dirname, "folio"),
+                    path.join(__dirname, "folio-board"),
                 ],
                 exclude: /(node_modules|bower_components)/,
                 loader: "babel-loader",
