@@ -1,61 +1,71 @@
 import {
-    ACTIONS,
     ELEMENTS,
+    ELEMENT_ACTIONS,
     ELEMENT_CHANGES,
     GRID_SIZE,
+    IS_DARWIN,
+    KEYS,
     ZOOM_INITIAL,
     ZOOM_MAX,
     ZOOM_MIN,
     ZOOM_STEP,
 } from "./constants.js";
 import {getElementSvg} from "./elements/index.jsx";
-import {generateID} from "./utils/index.js";
+import {
+    generateID,
+    isInputTarget,
+    isArrowKey,
+    getDataFromClipboard,
+} from "./utils/index.js";
 
 export const createApp = (width, height, callbacks) => {
-    const snapshot = null;
-    const lastTranslate = {};
-    const app = {
-        target: null,
-        readOnly: false,
-        width: width,
-        height: height,
+    const state = {
         elements: [],
+        snapshot: null,
+        history: [],
+        historyIndex: 0,
         style: {},
-        state: {
-            activeTool: null,
-            activeAction: null,
-            activeElement: null,
-            activeGroup: null,
-            zoom: ZOOM_INITIAL,
-            translateX: 0,
-            translateY: 0,
-        },
-        settings: {
-            showGrid: true,
-        },
+        activeTool: null,
+        activeAction: null,
+        activeElement: null,
+        activeGroup: null,
+        zoom: ZOOM_INITIAL,
+        translateX: 0,
+        translateY: 0,
+        lastTranslateX: 0,
+        lastTranslateY: 0,
+    };
+    const app = {
+        id: generateID(),
+        elements: [],
+        state: state,
         util: {
             getPosition: pos => {
-                return app.settings.showGrid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
+                // return app.settings.showGrid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
+                return Math.round(pos / GRID_SIZE) * GRID_SIZE;
             },
         },
+
+        //
+        // Global API
+        //
         update: () => {
             // Trigger an update from the callbacks
             return callbacks?.onUpdate?.();
         },
         clear: () => {
-            app.elements = [];
-            app.state.activeElement = null;
-            app.state.activeGroup = null;
+            state.elements = [];
+            state.activeElement = null;
+            state.activeGroup = null;
+            state.activeTool = null;
             app.clearHistory();
         },
-        load: elements => {
-            app.clear();
-            app.elements = elements.map(element => ({
-                ...element,
-                selected: false,
-            }));
-        },
-        addElement: el => app.elements.push(el),
+
+        //
+        // Elements API
+        //
+        getElement: id => state.elements.find(el => el.id === id),
+        // addElement: el => state.elements.push(el),
         createElement: type => {
             const newElement = {
                 type: type,
@@ -68,93 +78,141 @@ export const createApp = (width, height, callbacks) => {
                 editing: false,
                 locked: false,
                 group: null,
-                resizeHandlers: false,
+                edgeHandlers: false,
+                cornerHandlers: false,
                 nodeHandlers: false,
-                ...app.style,
+                ...state.style,
             };
-            app.addElement(newElement);
+            state.elements.push(newElement);
             return newElement;
         },
-        removeElement: el => app.elements = app.elements.filter(element => el.id !== element.id),
-        getElements: () => app.elements,
-        getElement: id => app.elements.find(el => el.id === id),
-
-        // Selection API
-        getSelectedElements: () => app.elements.filter(el => !!el.selected),
-        clearSelectedElements: () => app.elements.forEach(el => el.selected = false),
-        removeSelectedElements: () => app.elements = app.elements.filter(el => !el.selected),
-        exportSelectedElements: () => {
-            return app.getSelectedElements().map(el => ({
-                ...el,
+        removeElement: el => {
+            state.elements = state.elements.filter(element => el.id !== element.id);
+        },
+        getElements: () => state.elements,
+        setElements: newElements => {
+            state.elements = newElements.map(element => ({
+                ...element,
                 selected: false,
             }));
         },
-        setSelectedElements: region => {
-            // TODO
+        pasteElements: elements => {
+            app.clearSelectedElements();
+            // 1. Process new elements
+            const groups = new Map();
+            const newElements = elements.map(element => {
+                if (elements.length > 1 && !!element.group && !groups.has(element.group)) {
+                    groups.set(element.group, generateID());
+                }
+                return {
+                    ...element,
+                    id: generateID(),
+                    selected: true,
+                    group: state.activeGroup || groups.get(element.group) || null,
+                };
+            });
+            // 2. insert new elements
+            newElements.forEach(element => state.elements.push(element));
+            // 3. register history change
+            app.addHistoryEntry({
+                type: ELEMENT_CHANGES.CREATE,
+                elements: newElements.map(element => ({
+                    id: element.id,
+                    prevValues: null,
+                    newValues: {
+                        ...element,
+                        selected: false,
+                    },
+                })),
+            });
         },
-        snapshotSelectedElements: () => app.getSelectedElements().map(el => ({...el})),
+
+        //
+        // Elements selection API
+        //
+        getSelectedElements: () => state.elements.filter(el => !!el.selected),
+        clearSelectedElements: () => state.elements.forEach(el => el.selected = false),
+        removeSelectedElements: () => {
+            app.registerSelectionRemove();
+            state.elements = state.elements.filter(el => !el.selected);
+        },
+        setSelectedElements: region => {
+            state.elements.forEach(element => {
+                element.selected = false;
+                if (region.x1 < element.x2 && element.x1 < region.x2) {
+                    if (region.y1 < element.y2 && element.y1 < region.y2) {
+                        element.selected = true;
+                    }
+                }
+            });
+        },
+        snapshotSelectedElements: () => {
+            return app.getSelectedElements().map(el => ({...el}));
+        },
         updateSelectedElements: (key, value) => {
+            app.registerSelectionUpdate([key], [value], true);
             app.getSelectedElements().forEach(element => {
                 element[key] = value;
             });
         },
-        cloneSelectedElements: null,
-        cutSelectedElements: () => null,
-        copySelectedElements: () => app.getSelectedElements().reverse(),
-
-        pasteElements: elements => {
-            app.clearSelectedElements();
-            if (elements?.length > 0) {
-                // const groupsMap = new Map();
-                elements.forEach(element => {
-                    // if (elements.length > 1 && el.group && !groupsMap.has(el.group)) {
-                    //     groupsMap.set(el.group, generateID());
-                    // }
-                    app.addElement({
-                        ...element,
-                        id: generateID(),
-                        selected: true,
-                        //group: app.activeGroup || groupsMap.get(el.group) || null,
-                    });
-                });
-                app.addHistoryEntry({
-                    type: ELEMENT_CHANGES.CREATE,
-                    elements: elements.map(el => ({
-                        id: el.id,
-                        prevValues: null,
-                        newValues: {...el},
-                    })),
-                });
-            }
+        cloneSelectedElements: () => {
+            app.pasteElements(app.snapshotSelectedElements());
         },
+        cutSelectedElements: () => {
+            const removedElements = app.getSelectedElements();
+            app.removeSelectedElements();
+            return removedElements;
+        },
+        copySelectedElements: () => {
+            return app.getSelectedElements();
+        },
+
+        //
+        // Elements input
+        //
+        // submitElementInput: () => {
+        //     const snapshot = internal.snapshot;
+        //     if (snapshot?.[0]?.editing && app.state.activeElement?.id === snapshot?.[0]?.id) {
+        //         app.state.activeElement.text = snapshot[0].text || "";
+        //         app.state.activeElement.editing = false; // Reset edit
+        //         app.state.activeElement = null;                
+        //         internal.snapshot = null; // We need to reset the snapshot
+        //     }
+        // },
+        // cancelElementInput: () => {
+        //     const snapshot = internal.snapshot;
+        //     if (snapshot?.[0]?.editing && app.state.activeElement?.id === snapshot?.[0]?.id) {
+        //         app.state.activeElement.editing = false;
+        //         app.state.activeElement = null;
+        //         internal.snapshot = null;
+        //     }
+        // },
 
         //
         // Groups API
         //
         getElementsInGroup: group => {
-            return app.elements.filter(el => el.group && el.group === group);
+            return state.elements.filter(el => el.group && el.group === group);
         },
         getElementsInActiveGroup: () => {
-            return app.state.activeGroup ? app.getElementsInGroup(app.state.activeGroup) : [];
+            return state.activeGroup ? app.getElementsInGroup(state.activeGroup) : [];
         },
          
         //
         // History API
         //
-        history: [],
-        historyIndex: 0,
         clearHistory: () => {
-            app.history = [];
-            app.historyIndex = 0;
+            state.history = [];
+            state.historyIndex = 0;
         },
         addHistoryEntry: entry => {
-            if (app.historyIndex > 0) {
-                app.history = app.history.slice(app.historyIndex);
-                app.historyIndex = 0;
+            if (state.historyIndex > 0) {
+                state.history = state.history.slice(state.historyIndex);
+                state.historyIndex = 0;
             }
             // Check for updating the same elements and the same keys
-            if (entry.keys && entry.ids && app.history.length > 0) {
-                const last = app.history[0];
+            if (entry.keys && entry.ids && state.history.length > 0) {
+                const last = state.history[0];
                 if (last.ids === entry.ids && last.keys === entry.keys) {
                     const keys = entry.keys.split(",");
                     last.elements.forEach((element, index) => {
@@ -166,7 +224,7 @@ export const createApp = (width, height, callbacks) => {
                 }
             }
             // Register the new history entry
-            app.history.unshift(entry);
+            state.history.unshift(entry);
         },
         registerSelectionUpdate: (keys, values, groupChanges) => {
             const selectedElements = app.getSelectedElements();
@@ -212,45 +270,47 @@ export const createApp = (width, height, callbacks) => {
             });
         },
         undo: () => {
-            if (app.historyIndex < app.history.length) {
-                const entry = app.history[app.historyIndex];
+            if (state.historyIndex < state.history.length) {
+                const entry = state.history[state.historyIndex];
                 if (entry.type === ELEMENT_CHANGES.CREATE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
-                    app.elements = app.elements.filter(el => !removeElements.has(el.id));
+                    app.elements = state.elements.filter(el => !removeElements.has(el.id));
                 } else if (entry.type === ELEMENT_CHANGES.REMOVE) {
-                    entry.elements.forEach(el => app.elements.unshift({...el.prevValues}));
+                    entry.elements.forEach(el => state.elements.unshift({...el.prevValues}));
                 } else if (entry.type === ELEMENT_CHANGES.UPDATE) {
                     entry.elements.forEach(element => {
-                        Object.assign(app.elements.find(el => el.id === element.id), element.prevValues);
+                        Object.assign(state.elements.find(el => el.id === element.id), element.prevValues);
                     });
                 }
-                app.historyIndex = app.historyIndex + 1;
-                app.state.activeGroup = null;
-                app.elements.forEach(el => el.selected = false);
+                state.historyIndex = state.historyIndex + 1;
+                app.cancelAction();
+                state.activeGroup = null;
+                state.elements.forEach(el => el.selected = false);
                 callbacks?.onUpdate?.();
             }
         },
         redo: () => {
-            if (app.historyIndex > 0 && app.history.length > 0) {
-                app.historyIndex = app.historyIndex - 1;
-                const entry = app.history[app.historyIndex];
+            if (state.historyIndex > 0 && state.history.length > 0) {
+                state.historyIndex = state.historyIndex - 1;
+                const entry = state.history[state.historyIndex];
                 if (entry.type === ELEMENT_CHANGES.CREATE) {
-                    entry.elements.forEach(el => app.elements.unshift({...el.newValues}));
+                    entry.elements.forEach(el => state.elements.unshift({...el.newValues}));
                 } else if (entry.type === ELEMENT_CHANGES.REMOVE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
-                    app.elements = app.elements.filter(el => !removeElements.has(el.id));
+                    state.elements = state.elements.filter(el => !removeElements.has(el.id));
                 } else if (entry.type === ELEMENT_CHANGES.UPDATE) {
                     entry.elements.forEach(element => {
-                        Object.assign(app.elements.find(el => el.id === element.id) || {}, element.newValues);
+                        Object.assign(state.elements.find(el => el.id === element.id) || {}, element.newValues);
                     });
                 }
-                app.state.activeGroup = null;
-                app.elements.forEach(el => el.selected = false);
+                app.cancelAction();
+                state.activeGroup = null;
+                state.elements.forEach(el => el.selected = false);
                 callbacks?.onUpdate?.();
             }
         },
-        isUndoDisabled: () => app.historyIndex >= app.history.length,
-        isRedoDisabled: () => app.historyIndex === 0 || app.history.length < 1,
+        isUndoDisabled: () => state.historyIndex >= state.history.length,
+        isRedoDisabled: () => state.historyIndex === 0 || state.history.length < 1,
 
         // Cut / Copy / Paste actions
         // cut: () => {
@@ -272,29 +332,13 @@ export const createApp = (width, height, callbacks) => {
         //     return Promise.reject(new Error("Clipboard not available"));
         // },
         // paste: event => {
-        //     if (app.isReadOnly) {
-        //         return Promise.reject(new Error("Board is read-only"));
-        //     }
-        //     app.clearSelectedElements();
-        //     // app.activeGroup = null;
-        //     return getDataFromClipboard(event).then(data => {
-        //         if (data?.type === "text" && data?.content?.startsWith("folio:::")) {
-        //             const elements = JSON.parse(data.content.split("folio:::")[1].trim());
-        //             // elements.forEach(el => {
-        //             //     el.x = el.x + index * (state.gridEnabled ? state.gridSize : 10);
-        //             //     el.y = el.y + index * (state.gridEnabled ? state.gridSize : 10);
-        //             // });
-        //             app.pasteElements(elements || []);
-        //             return true;
-        //         }
-        //     });
         // },
 
         //
         // Export API
         //
         export: () => {
-            return app.elements.map(el => ({
+            return state.elements.map(el => ({
                 ...el,
                 selected: false,
             }));
@@ -311,6 +355,7 @@ export const createApp = (width, height, callbacks) => {
         // 
         events: {
             onPointCanvas: event => {
+                app.cancelAction();
                 if (!app.state.activeTool) {
                     app.clearSelectedElements();
                     callbacks?.onUpdate?.();
@@ -330,17 +375,20 @@ export const createApp = (width, height, callbacks) => {
                     callbacks?.onUpdate?.();
                 }
             },
-            onPointResizeHandler: event => {
-                app.state.activeAction = ACTIONS.RESIZE_ELEMENT;
+            onPointHandler: event => {
+                app.state.activeAction = ELEMENT_ACTIONS.RESIZE;
                 // app.state.activeHandler = event.handler;
             },
             onPointerDown: event => {
-                if (app.state.activeAction === ACTIONS.EDIT_ELEMENT) {
-                    // submitInput();
-                    // TODO
+                // First we need to check if we are in a edit action
+                if (app.state.activeAction === ELEMENT_ACTIONS.EDIT) {
+                    if (app.state.activeElement?.editing) {
+                        app.state.activeElement.editing = false;
+                    }
+                    app.state.activeAction = null;
                 }
                 if (app.state.activeTool) {
-                    app.state.activeAction = ACTIONS.CREATE_ELEMENT;
+                    app.state.activeAction = ELEMENT_ACTIONS.CREATE;
                     const element = app.createElement(app.state.activeTool);
                     const elementConfig = getElementConfig(element);
                     // Override element attributes
@@ -356,32 +404,25 @@ export const createApp = (width, height, callbacks) => {
                 }
                 else if (app.getSelectedElements().length > 0) {
                     if (!app.state.activeAction) {
-                        app.state.activeAction = ACTIONS.DRAG_ELEMENT;
+                        app.state.activeAction = ELEMENT_ACTIONS.DRAG;
                     }
                     // Save a snapshot of the current selection for calculating the correct element position
-                    snapshot = app.snapshotSelectedElements();
+                    internal.snapshot = app.snapshotSelectedElements();
                 }
-                else if (app.state.activeAction === ACTIONS.MOVE) {
-                    // We need to update the last translated point before start moving the board
-                    lastTranslate.x = app.state.translateX;
-                    lastTranslate.y = app.state.translateY;
-                }
-                else if (!app.state.activeAction || app.state.activeAction === ACTIONS.SCREENSHOT) {
-                    // state.current.action = state.current.action || ACTIONS.SELECTION;
-                    // state.current.brush.x1 = event.originalX;
-                    // state.current.brush.y1 = event.originalY;
-                    // state.current.brush.x2 = event.originalX;
-                    // state.current.brush.y2 = event.originalY;
-                }
+                // else if (app.state.activeAction === ACTIONS.MOVE) {
+                //     // We need to update the last translated point before start moving the board
+                //     internal.lastTranslateX = app.state.translateX;
+                //     internal.lastTranslateY = app.state.translateY;
+                // }
                 callbacks?.onUpdate?.();
-                // forceUpdate();
             },
             onPointerMove: event => {
-                if (app.state.activeAction === ACTIONS.MOVE) {
-                    app.state.translateX = Math.floor(lastTranslate.x + event.dx * app.state.zoom);
-                    app.state.translateY = Math.floor(lastTranslate.y + event.dy * app.state.zoom);
-                }
-                else if (app.state.activeAction === ACTIONS.CREATE_ELEMENT) {
+                const snapshot = internal.snapshot;
+                // if (app.state.activeAction === ACTIONS.MOVE) {
+                //     app.state.translateX = Math.floor(internal.lastTranslateX + event.dx * app.state.zoom);
+                //     app.state.translateY = Math.floor(internal.lastTranslateY + event.dy * app.state.zoom);
+                // }
+                if (app.state.activeAction === ELEMENT_ACTIONS.CREATE) {
                     const element = app.state.activeElement;
                     // First, update the second point of the element
                     element.x2 = app.util.getPosition(event.currentX);
@@ -389,7 +430,7 @@ export const createApp = (width, height, callbacks) => {
                     // Second, call the onCreateMove listener of the element
                     getElementConfig(element)?.onCreateMove?.(element, event, app);
                 }
-                else if (app.state.activeAction === ACTIONS.DRAG_ELEMENT) {
+                else if (app.state.activeAction === ELEMENT_ACTIONS.DRAG) {
                     // state.current.isDragged = true;
                     app.getSelectedElements().forEach((element, index) => {
                         element.x1 = app.util.getPosition(element.x1 + info.dx),
@@ -399,7 +440,7 @@ export const createApp = (width, height, callbacks) => {
                         getElementConfig(element)?.onDrag?.(snapshot[index], event, app);
                     });
                 }
-                else if (app.state.activeAction === ACTIONS.RESIZE_ELEMENT) {
+                else if (app.state.activeAction === ELEMENT_ACTIONS.RESIZE) {
                     const element = app.getElement(snapshot[0].id);
                     // state.current.isResized = true;
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
@@ -430,38 +471,35 @@ export const createApp = (width, height, callbacks) => {
                     else if (event.handler === HANDLERS.EDGE_RIGHT) {
                         element.x2 = Math.max(app.util.getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
                     }
-                    else if (event.handler === HANDLERS.POINT_START) {
+                    else if (event.handler === HANDLERS.NODE_START) {
                         element.x1 = app.util.getPosition(snapshot[0].x1 + event.dx);
                         element.y1 = app.util.getPosition(snapshot[0].y1 + event.dy);
                     }
-                    else if (event.handler === HANDLERS.POINT_END) {
+                    else if (event.handler === HANDLERS.NODE_END) {
                         element.x2 = app.util.getPosition(snapshot[0].x2 + event.dx);
                         element.y2 = app.util.getPosition(snapshot[0].y2 + event.dy);
                     }
-                }
-                else if (app.state.activeAction === ACTIONS.SELECTION || app.state.activeAction === ACTIONS.SCREENSHOT) {
-                    // state.current.brush.x2 = event.currentX;
-                    // state.current.brush.y2 = event.currentY;
                 }
                 callbacks?.onUpdate?.();
                 // forceUpdate();
             },
             onPointerUp: event => {
-                if (app.state.activeAction === ACTIONS.MOVE) {
-                    lastTranslate.x = app.state.translateX;
-                    lastTranslate.y = app.state.translateY;
-                }
-                else if (app.state.activeAction === ACTIONS.CREATE_ELEMENT) {
-                    const element = app.state.activeElement;
+                // if (app.state.activeAction === ACTIONS.MOVE) {
+                //     internal.lastTranslateX = app.state.translateX;
+                //     internal.lastTranslateY = app.state.translateY;
+                // }
+                if (state.activeAction === ELEMENT_ACTIONS.CREATE) {
+                    const element = state.activeElement;
                     element.selected = true; // By default select this element
                     getElementConfig(activelement)?.onCreateEnd?.(element, event, app);
                     app.registerElementCreate(element);
-                    app.state.activeElement = null;
-                    app.state.activeTool = null; // reset active tool
-                    app.state.activeAction = null;
+                    state.activeElement = null;
+                    state.activeTool = null; // reset active tool
+                    // TODO: selection or screenshot elements must be removed and applied the effect
+                    callbacks?.onElementCreated?.(element);
                 }
-                else if (app.state.activeAction === ACTIONS.DRAG_ELEMENT || app.state.activeAction === ACTIONS.RESIZE_ELEMENT) {
-                    if (state.current.isDragged || state.current.isResized) {
+                else if (state.activeAction === ELEMENT_ACTIONS.DRAG || state.activeAction === ELEMENT_ACTIONS.RESIZE) {
+                    if (state.isDragged || state.isResized) {
                         // const snapshot = state.current.snapshot;
                         // const keys = state.current.isDragged ? ["x", "y"] : ["x", "y", "width", "height"];
                         // app.current.addHistoryEntry({
@@ -475,90 +513,213 @@ export const createApp = (width, height, callbacks) => {
                     }
                     // state.current.isDragged = false;
                     // state.current.isResized = false;
-                    app.state.activeAction = null;
                 }
-                else if (app.state.activeAction === ACTIONS.SELECTION) {
-                    // const rectangle = normalizeRectangle(state.current.brush);
-                    // // Select all elements that are in the selected rectangle
-                    // app.current.getElements().forEach(element => {
-                    //     const points = useBoundaryPoints(element);
-                    //     element.selected = points.some(point => {
-                    //         return pointInRectangle(point, rectangle);
-                    //     });
-                    // });
-                    app.state.activeAction = null;
-                }
-                else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
-                    // const screenshotOptions = {
-                    //     includeBackground: false,
-                    //     region: state.current.brush,
-                    // };
-                    // toImagePNG(ref.current, props.width, props.height, screenshotOptions).then(image => {
-                    //     props.onScreenshot?.(image);
-                    //     // navigator.clipboard.write([
-                    //     //     new ClipboardItem({
-                    //     //         [image.type]: image,
-                    //     //     }),
-                    //     // ]);
-                    // });
-                    app.state.activeAction = null;
-                }
-                // Reset current state
-                // state.current.action = null;
-                callbacks?.onUpdate?.();
-                // forceUpdate();
+                // else if (app.state.activeAction === ACTIONS.SELECTION) {
+                //     // const rectangle = normalizeRectangle(state.current.brush);
+                //     // // Select all elements that are in the selected rectangle
+                //     // app.current.getElements().forEach(element => {
+                //     //     const points = useBoundaryPoints(element);
+                //     //     element.selected = points.some(point => {
+                //     //         return pointInRectangle(point, rectangle);
+                //     //     });
+                //     // });
+                //     app.state.activeAction = null;
+                // }
+                // else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
+                //     // const screenshotOptions = {
+                //     //     includeBackground: false,
+                //     //     region: state.current.brush,
+                //     // };
+                //     // toImagePNG(ref.current, props.width, props.height, screenshotOptions).then(image => {
+                //     //     props.onScreenshot?.(image);
+                //     //     // navigator.clipboard.write([
+                //     //     //     new ClipboardItem({
+                //     //     //         [image.type]: image,
+                //     //     //     }),
+                //     //     // ]);
+                //     // });
+                //     app.state.activeAction = null;
+                // }
+                state.activeAction = null;
+                app.update();
             },
             onDoubleClick: event => {
-                if (!app.state.activeAction && !app.state.activeTool) {
+                if (!state.activeAction && !state.activeTool) {
                     const selection = app.getSelectedElements();
-                    // if (selection.length === 1 && typeof selection[0].text === "string") {
-                    if (selection.length === 1 && selection[0].type === ELEMENTS.TEXT) {
-                        app.state.action = ACTIONS.EDIT_ELEMENT;
-                        app.state.activeElement = selection[0];
-                        app.state.activeElement.editing = true;
-                        // return forceUpdate();
-                        callbacks?.onUpdate?.();
+                    if (selection.length === 1 && typeof selection[0].text === "string") {
+                        state.activeAction = ELEMENT_ACTIONS.EDIT;
+                        state.activeElement = selection[0];
+                        state.activeElement.editing = true;
+                        app.update();
                     }
                 }
             },
-        },
-
-        // 
-        // Zoom api
-        //
-        changeZoom: delta => {
-            // TODO: check for previous action or editing action
-            // submitInput();
-            const prevZoom = app.state.zoom;
-            app.state.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, prevZoom + delta));
-            if (app.target) {
-                const size = app.target.getBoundingClientRect();
-                app.state.translateX = Math.floor(app.state.translateX + size.width * (prevZoom - app.state.zoom) / 2);
-                app.state.translateY = Math.floor(app.state.translateY + size.height * (prevZoom - app.state.zoom) / 2);
-            }
-            // forceUpdate();
-            callbacks?.onUpdate?.();
-        },
-        zoomIn: () => app.changeZoom(ZOOM_STEP),
-        zoomOut: () => app.changeZoom(-ZOOM_STEP),
-
-        //
-        // Setters API
-        // 
-        setTool: newTool => {
-            const selectedElements = app.getSelectedElements();
-            if (selectedElements.length > 0) {
-                if (selectedElements.length === 1 && selectedElements[0].editing) {
-                    selectedElements[0].editing = false;
+            onKeyDown: event => {
+                const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
+                // Check if we are in an input target and input element is active
+                if (isInputTarget(event)) {
+                    if (state.activeAction === ELEMENT_ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
+                        event.preventDefault();
+                        app.cancelAction();
+                        app.update();
+                    }
+                }
+                else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
+                    event.preventDefault();
+                    if (event.key === KEYS.X || event.key === KEYS.C) {
+                        const elements = app.getSelectedElements();
+                        const data = `folio:::${JSON.stringify(elements)}`;
+                        if (window?.navigator?.clipboard) {
+                            return navigator.clipboard.writeText(data);
+                        }
+                        // If clipboard is not available
+                        // return Promise.reject(new Error("Clipboard not available"));
+                    }
+                    // Check for backspace key or cut --> remove elements
+                    if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
+                        // app.registerSelectionRemove();
+                        app.removeSelectedElements();
+                        // Reset active group if all elements of this group have been removed
+                        // if (app.current.getElementsInActiveGroup().length < 1) {
+                        //     app.current.activeGroup = null;
+                        // }
+                    }
+                    app.update();
+                }
+                // Undo or redo key
+                else if (isCtrlKey && (event.key === KEYS.Z || event.key === KEYS.Y)) {
+                    event.key === KEYS.Z ? app.undo() : app.redo();
+                }
+                // Check ESCAPE key
+                else if (event.key === KEYS.ESCAPE) {
+                    event.preventDefault();
+                    app.clearSelectedElements();
+                    state.activeGroup = null;
+                    app.update();
+                }
+                // Check for arrow keys --> move elements
+                else if (isArrowKey(event.key)) {
+                    event.preventDefault();
+                    // const step = event.shiftKey ? (props.gridSize || 10) : 1;
+                    const dir = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
+                    const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
+                    const selectedElements = app.getSelectedElements();
+                    app.addHistoryEntry({
+                        type: ELEMENT_CHANGES.UPDATE,
+                        ids: selectedElements.map(el => el.id).join(","),
+                        keys: `${dir}1,${dir}2`,
+                        elements: selectedElements.map(el => {
+                            const prev1 = el[`${dir}1`];
+                            const prev2 = el[`${dir}2`];
+                            el[`${dir}1`] = event.shiftKey ? app.util.getPosition(prev1 + sign * GRID_SIZE) : prev1 + sign;
+                            el[`${dir}2`] = event.shiftKey ? app.util.getPosition(prev2 + sign * GRID_SIZE) : prev2 + sign;
+                            return {
+                                id: el.id,
+                                prevValues: {
+                                    [`${dir}1`]: prev1,
+                                    [`${dir}2`]: prev2,
+                                },
+                                newValues: {
+                                    [`${dir}1`]: el[`${dir}1`],
+                                    [`${dir}2`]: el[`${dir}2`],
+                                },
+                            };
+                        }),
+                    });
+                    // forceUpdate();
+                    app.update();
+                }
+            },
+            // onKeyUp: event => {},
+            onPaste: event => {
+                if (!isInputTarget(event) || !!app.readOnly) {
+                    return null;
                 }
                 app.clearSelectedElements();
+                // state.activeGroup = null;
+                return getDataFromClipboard(event).then(data => {
+                    if (data?.type === "text" && data?.content?.startsWith("folio:::")) {
+                        const elements = JSON.parse(data.content.split("folio:::")[1].trim());
+                        // elements.forEach(el => {
+                        //     el.x = el.x + index * (state.gridEnabled ? state.gridSize : 10);
+                        //     el.y = el.y + index * (state.gridEnabled ? state.gridSize : 10);
+                        // });
+                        app.pasteElements(elements || []);
+                        return true;
+                    }
+                });
+            },
+            // onCopy: event => null,
+            // onCut: event => null,
+            onElementChange: (id, key, value) => {
+                if (state.activeElement?.id === id && state.activeElement?.editing) {
+                    state.activeElement[key] = value;
+                }
+            },
+        },
+
+        //
+        // Canvas API
+        //
+        getCanvas: () => document.querySelector(`svg[data-id="${app.id}"]`),
+        centerCanvas: () => {
+            // const target = document.getElementById(app.id);
+            const target = app.getCanvas();
+            if (target) {
+                const size = target.getBoundingClientRect();
+                const width = parseInt(target.dataset.width) || 0;
+                const height = parseInt(target.dataset.height) || 0;
+                state.translateX = Math.floor((size.width - width) / 2);
+                state.translateY = Math.floor((size.height - height) / 2);
+                // TODO: force an update?
             }
-            app.state.activeTool = newTool;
-            app.state.activeAction = null;
+        },
+
+        // 
+        // Zoom API
+        //
+        getZoom: () => app.state.zoom,
+        setZoom: value => {
+            // TODO: check for previous action or editing action
+            // app.cancelAction();
+            const prevZoom = state.zoom;
+            state.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, value));
+            // const target = document.getElementById(app.id);
+            const target = app.getCanvas();
+            if (target) {
+                const size = target.getBoundingClientRect();
+                state.translateX = Math.floor(state.translateX + size.width * (prevZoom - state.zoom) / 2);
+                state.translateY = Math.floor(state.translateY + size.height * (prevZoom - state.zoom) / 2);
+            }
             callbacks?.onUpdate?.();
         },
-        setSettings: newSettings => {
-            return null;
+        zoomIn: () => app.setZoom(state.zoom + ZOOM_STEP),
+        zoomOut: () => app.setZoom(state.zoom - ZOOM_STEP),
+
+        //
+        // Tool API
+        // 
+        getTool: () => app.state.activeTool,
+        setTool: newTool => {
+            app.cancelAction();
+            app.clearSelectedElements();
+            state.activeTool = newTool;
+            app.update();
+        },
+
+        //
+        // Actions API
+        //
+        setAction: () => null,
+        cancelAction: () => {
+            if (state.activeAction === ELEMENT_ACTIONS.EDIT && state.activeElement?.editing) {
+                state.activeElement.editing = false;
+            }
+            else if (state.activeAction === ELEMENT_ACTIONS.CREATE && state.activeElement) {
+                // TODO: remove element
+            }
+            state.activeElement = null;
+            state.activeAction = null;
         },
     };
     return app;

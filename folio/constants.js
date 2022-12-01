@@ -80,16 +80,6 @@ export const KEYS = {
     Y: "y",
 };
 
-export const ACTIONS = {
-    CREATE_ELEMENT: "action:element:create",
-    DRAG_ELEMENT: "action:element:drag",
-    RESIZE_ELEMENT: "action:element:resize",
-    EDIT_ELEMENT: "action:element:edit",
-    SELECTION: "action:selection",
-    SCREENSHOT: "action:screenshot",
-    MOVE: "action:move",
-};
-
 export const ELEMENTS = {
     RECTANGLE: "rectangle",
     ELLIPSE: "ellipse",
@@ -100,10 +90,17 @@ export const ELEMENTS = {
     DRAW: "draw",
 };
 
+export const ELEMENT_ACTIONS = {
+    CREATE: "element:action:create",
+    DRAG: "element:action:drag",
+    RESIZE: "element:actionresize",
+    EDIT: "element:action:edit",
+};
+
 export const ELEMENT_CHANGES = {
-    CREATE: "element:create",
-    UPDATE: "element:update",
-    REMOVE: "element:remove",
+    CREATE: "element:change:create",
+    UPDATE: "element:change:update",
+    REMOVE: "element:change:remove",
 };
 
 export const GRID_SIZE = 20;
@@ -132,13 +129,7 @@ export const MIME_TYPES = {
     SVG: "image/svg+xml",
 };
 
-export const POINT_SOURCES = {
-    ELEMENT: "element",
-    HANDLER: "handler",
-    SELECTION: "selection",
-};
-
-export const RESIZE_HANDLERS = {
+export const HANDLERS = {
     EDGE_TOP: "edge-top",
     EDGE_BOTTOM: "edge-bottom",
     EDGE_LEFT: "edge-left",
@@ -147,43 +138,8 @@ export const RESIZE_HANDLERS = {
     CORNER_TOP_RIGHT: "corner-top-right",
     CORNER_BOTTOM_LEFT: "corner-bottom-left",
     CORNER_BOTTOM_RIGHT: "corner-bottom-right",
-};
-
-export const NODE_HANDLERS = {
-    EDGE_TOP: "edge-top",
-    EDGE_BOTTOM: "edge-bottom",
-    EDGE_LEFT: "edge-left",
-    EDGE_RIGHT: "edge-right",
-    CORNER_TOP_LEFT: "corner-top-left",
-    CORNER_TOP_RIGHT: "corner-top-right",
-    CORNER_BOTTOM_LEFT: "corner-bottom-left",
-    CORNER_BOTTOM_RIGHT: "corner-bottom-right",
-    POINT_START: "point-start",
-    POINT_END: "point-end",
-};
-
-export const HANDLERS_TYPES = {
-    NONE: "none",
-    RECTANGLE: "rectangle",
-    LINE: "line",
-    POINTS: "points",
-};
-
-// DEPRECATED
-export const TOOLS_TYPES = {
-    SHAPE: "tool:shape",
-    ARROW: "tool:arrow",
-    LINE: "tool:line",
-    HAND_DRAW: "tool:hand-draw",
-    TEXT: "tool:text",
-};
-
-export const SHAPES_TYPES = {
-    RECTANGLE: "rectangle",
-    ELLIPSE: "ellipse",
-    LINE: "line",
-    TEXT: "text",
-    IMAGE: "image",
+    NODE_START: "point-start",
+    NODE_END: "point-end",
 };
 
 // Styles keys
