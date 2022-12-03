@@ -12,14 +12,17 @@ import {
 } from "./constants.js";
 import {getElementSvg} from "./elements/index.jsx";
 import {
+    createBlob,
     generateID,
     isInputTarget,
     isArrowKey,
     getDataFromClipboard,
+    copyBlobToClipboard,
+    copyTextToClipboard,
     normalizeBounds,
 } from "./utils/index.js";
 
-export const createApp = (width, height, callbacks) => {
+export const createApp = (callbacks) => {
     const state = {
         elements: [],
         snapshot: null,
@@ -41,7 +44,6 @@ export const createApp = (width, height, callbacks) => {
     };
     const app = {
         id: generateID(),
-        elements: [],
         state: state,
         util: {
             getPosition: pos => {
@@ -279,42 +281,57 @@ export const createApp = (width, height, callbacks) => {
         isUndoDisabled: () => state.historyIndex >= state.history.length,
         isRedoDisabled: () => state.historyIndex === 0 || state.history.length < 1,
 
-        // Cut / Copy / Paste actions
-        // cut: () => {
-        //     // First copy all items and then remove selection
-        //     return app.copy().then(() => {
-        //         if (!app.isReadOnly) {
-        //             app.removeSelectedElements();
-        //             app.registerSelectionRemove();
-        //         }
-        //     });
-        // },
-        // copy: () => {
-        //     const elements = board.current.copySelectedElements();
-        //     const data = `folio:::${JSON.stringify(elements)}`;
-        //     if (window?.navigator?.clipboard) {
-        //         return navigator.clipboard.writeText(data);
-        //     }
-        //     // If clipboard is not available
-        //     return Promise.reject(new Error("Clipboard not available"));
-        // },
-        // paste: event => {
-        // },
-
         //
         // Export API
         //
-        export: () => {
-            return state.elements.map(el => ({
-                ...el,
-                selected: false,
-            }));
+        exportSvg: options => {
+            // 1. Create a new SVG element
+            const originalSvg = app.getCanvas();
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            // 2. Set new svg attributes
+            svg.setAttribute("style", ""); // Reset style
+            svg.setAttribute("width", originalSvg.dataset.width + "px");
+            svg.setAttribute("height", originalSvg.dataset.height + "px");
+            // 3. Set svg style
+            svg.style.backgroundColor = options?.background || "#fff";
+            // 4. Set svg fonts
+            // TODO
+            // 5. Append elements into new SVG
+            state.elements.forEach(element => {
+                const nodeElement = originalSvg.querySelector(`g[data-element-id="${element.id}"]`);
+                if (nodeElement) {
+                    svg.appendChild(nodeElement.cloneNode(true));
+                }
+            });
+            // 6. return SVG in string format
+            return (new XMLSerializer()).serializeToString(svg);
         },
-        exportImage: () => {
-            return null;
-        },
-        exportJson: () => {
-            return app.export();
+        exportImage: options => {
+            const DOMURL = window?.URL || window?.webkitURL || window;
+            return new Promise((resolve, reject) => {
+                const originalSvg = app.getCanvas();
+                const svgString = app.exportSvg(options);
+                const svgBlob = createBlob(svgString, "image/svg+xml;charset=utf-8");
+                // Initialize canvas to render SVG image
+                const canvas = document.createElement("canvas");
+                canvas.width = options?.cropWidth || parseInt(originalSvg.dataset.width);
+                canvas.height = options?.cropHeight || parseInt(originalSvg.dataset.height);
+                // Initialize image
+                const img = new Image();
+                img.addEventListener("load", () => {
+                    const x = (-1) * (options?.cropX || 0);
+                    const y = (-1) * (options?.cropY || 0);
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, x, y);
+                    // return resolve(canvas.toDataURL("image/png"));
+                    canvas.toBlob(resolve);
+                });
+                img.addEventListener("error", event => {
+                    return reject(event);
+                });
+                // Load image
+                img.src = DOMURL.createObjectURL(svgBlob);
+            });
         },
 
         // 
@@ -508,25 +525,27 @@ export const createApp = (width, height, callbacks) => {
                 else if (app.state.activeAction === ACTIONS.SELECT) {
                     const selection = normalizeBounds(state.selection);
                     app.setSelectedElements(selection);
-                    state.selection = null;
-                    // state.activeAction = null;
                 }
-                // else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
-                //     // const screenshotOptions = {
-                //     //     includeBackground: false,
-                //     //     region: state.current.brush,
-                //     // };
-                //     // toImagePNG(ref.current, props.width, props.height, screenshotOptions).then(image => {
-                //     //     props.onScreenshot?.(image);
-                //     //     // navigator.clipboard.write([
-                //     //     //     new ClipboardItem({
-                //     //     //         [image.type]: image,
-                //     //     //     }),
-                //     //     // ]);
-                //     // });
-                //     app.state.activeAction = null;
-                // }
+                else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
+                    const selection = normalizeBounds(state.selection);
+                    const options = {
+                        cropX: selection.x1,
+                        cropY: selection.y1,
+                        cropWidth: Math.abs(selection.x2 - selection.x1),
+                        cropHeight: Math.abs(selection.y2 - selection.y1),
+                        background: "transparent",
+                    };
+                    app.exportImage(options)
+                        .then(image => {
+                            callbacks?.onScreenshot?.(image, options);
+                            // copyBlobToClipboard(image);
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
                 state.activeAction = null;
+                state.selection = null;
                 app.update();
             },
             onDoubleClick: event => {
@@ -555,9 +574,9 @@ export const createApp = (width, height, callbacks) => {
                     const elements = app.getSelectedElements();
                     if (event.key === KEYS.X || event.key === KEYS.C) {
                         const data = `folio:::${JSON.stringify(elements)}`;
-                        if (window?.navigator?.clipboard) {
-                            return navigator.clipboard.writeText(data);
-                        }
+                        copyTextToClipboard(data).then(() => {
+                            // console.log("Copied to clipboard");
+                        });
                         // If clipboard is not available
                         // return Promise.reject(new Error("Clipboard not available"));
                     }
@@ -626,6 +645,7 @@ export const createApp = (width, height, callbacks) => {
                         const elements = JSON.parse(data.content.split("folio:::")[1].trim());
                         return app.pasteElements(elements || []);
                     }
+                    // TODO: copy image
                 });
             },
             // onCopy: event => null,
@@ -690,7 +710,10 @@ export const createApp = (width, height, callbacks) => {
         // Actions API
         //
         getAction: () => state.activeAction,
-        setAction: () => null,
+        setAction: newAction => {
+            app.cancelAction();
+            state.activeAction = newAction;
+        },
         cancelAction: () => {
             if (state.activeAction === ACTIONS.EDIT && state.activeElement?.editing) {
                 state.activeElement.editing = false;
