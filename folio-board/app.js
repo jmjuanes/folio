@@ -1,7 +1,7 @@
 import {
     ELEMENTS,
-    ELEMENT_ACTIONS,
-    ELEMENT_CHANGES,
+    ACTIONS,
+    CHANGES,
     GRID_SIZE,
     IS_DARWIN,
     KEYS,
@@ -16,6 +16,7 @@ import {
     isInputTarget,
     isArrowKey,
     getDataFromClipboard,
+    normalizeBounds,
 } from "./utils/index.js";
 
 export const createApp = (width, height, callbacks) => {
@@ -25,6 +26,7 @@ export const createApp = (width, height, callbacks) => {
         history: [],
         historyIndex: 0,
         style: {},
+        selection: null,
         activeTool: null,
         activeAction: null,
         activeElement: null,
@@ -34,6 +36,8 @@ export const createApp = (width, height, callbacks) => {
         translateY: 0,
         lastTranslateX: 0,
         lastTranslateY: 0,
+        isDragged: false,
+        isResized: false,
     };
     const app = {
         id: generateID(),
@@ -65,36 +69,76 @@ export const createApp = (width, height, callbacks) => {
         // Elements API
         //
         getElement: id => state.elements.find(el => el.id === id),
-        // addElement: el => state.elements.push(el),
-        createElement: type => {
-            const newElement = {
-                type: type,
-                id: generateID(),
-                x1: 0,
-                y1: 0,
-                x2: 0,
-                y2: 0,
-                selected: false,
-                editing: false,
-                locked: false,
-                group: null,
-                edgeHandlers: false,
-                cornerHandlers: false,
-                nodeHandlers: false,
-                ...state.style,
-            };
-            state.elements.push(newElement);
-            return newElement;
-        },
-        removeElement: el => {
-            state.elements = state.elements.filter(element => el.id !== element.id);
-        },
+        createElement: type => ({
+            type: type,
+            id: generateID(),
+            x1: 0,
+            y1: 0,
+            x2: 0,
+            y2: 0,
+            selected: false,
+            editing: false,
+            locked: false,
+            group: null,
+            edgeHandlers: false,
+            cornerHandlers: false,
+            nodeHandlers: false,
+            ...state.style,
+        }),
+
+        //
+        // Elements management API
+        // 
         getElements: () => state.elements,
-        setElements: newElements => {
-            state.elements = newElements.map(element => ({
-                ...element,
-                selected: false,
-            }));
+        addElements: elements => {
+            // 1. Register element create in the history
+            app.addHistory({
+                type: CHANGES.CREATE,
+                elements: elements.map(element => ({
+                    id: element.id,
+                    prevValues: null,
+                    newValues: {
+                        ...element,
+                        selected: false,
+                    },
+                })),
+            });
+            // 2. Add new elements
+            elements.forEach(element => state.elements.push(element));
+        },
+        removeElements: elements => {
+            // 1. Register element remove in the history
+            app.addHistory({
+                type: CHANGES.REMOVE,
+                elements: elements.map(element => ({
+                    id: element.id,
+                    prevValues: {
+                        ...element,
+                        selected: false,
+                    },
+                    newValues: null,
+                })),
+            });
+            // 2. Remove the elements for state.elements
+            const elementsToRemove = new Set(elements.map(element => element.id));
+            state.elements = state.elements.filter(element => !elementsToRemove.has(element.id));
+        },
+        updateElements: (elements, keys, values, groupChanges = true) => {
+            // 1. Register element update in the history
+            app.addHistory({
+                type: CHANGES.UPDATE,
+                ids: groupChanges && elements.map(element => element.id).join(","),
+                keys: groupChanges && keys.join(","),
+                elements: elements.map(element => ({
+                    id: element.id,
+                    prevValues: Object.fromEntries(keys.map(key => [key, element[key]])),
+                    newValues: Object.fromEntries(keys.map((key, index) => [key, values[index]])),
+                })),
+            });
+            // 2. Update the elements
+            elements.forEach(element => {
+                keys.forEach((key, index) => element[key] = values[index]);
+            });
         },
         pasteElements: elements => {
             app.clearSelectedElements();
@@ -114,8 +158,8 @@ export const createApp = (width, height, callbacks) => {
             // 2. insert new elements
             newElements.forEach(element => state.elements.push(element));
             // 3. register history change
-            app.addHistoryEntry({
-                type: ELEMENT_CHANGES.CREATE,
+            app.addHistory({
+                type: CHANGES.CREATE,
                 elements: newElements.map(element => ({
                     id: element.id,
                     prevValues: null,
@@ -132,61 +176,28 @@ export const createApp = (width, height, callbacks) => {
         //
         getSelectedElements: () => state.elements.filter(el => !!el.selected),
         clearSelectedElements: () => state.elements.forEach(el => el.selected = false),
-        removeSelectedElements: () => {
-            app.registerSelectionRemove();
-            state.elements = state.elements.filter(el => !el.selected);
-        },
-        setSelectedElements: region => {
+        setSelectedElements: selection => {
             state.elements.forEach(element => {
                 element.selected = false;
-                if (region.x1 < element.x2 && element.x1 < region.x2) {
-                    if (region.y1 < element.y2 && element.y1 < region.y2) {
+                if (element.x1 < selection.x2 && selection.x1 < element.x2) {
+                    if (element.y1 < selection.y2 && selection.y1 < element.y2) {
                         element.selected = true;
                     }
                 }
             });
         },
+        removeSelectedElements: () => {
+            return app.removeElements(app.getSelectedElements());
+        },
         snapshotSelectedElements: () => {
             return app.getSelectedElements().map(el => ({...el}));
         },
         updateSelectedElements: (key, value) => {
-            app.registerSelectionUpdate([key], [value], true);
-            app.getSelectedElements().forEach(element => {
-                element[key] = value;
-            });
+            return app.updateElements(app.getSelectedElements(), [key], [value], false);
         },
         cloneSelectedElements: () => {
-            app.pasteElements(app.snapshotSelectedElements());
+            return app.pasteElements(app.snapshotSelectedElements());
         },
-        cutSelectedElements: () => {
-            const removedElements = app.getSelectedElements();
-            app.removeSelectedElements();
-            return removedElements;
-        },
-        copySelectedElements: () => {
-            return app.getSelectedElements();
-        },
-
-        //
-        // Elements input
-        //
-        // submitElementInput: () => {
-        //     const snapshot = internal.snapshot;
-        //     if (snapshot?.[0]?.editing && app.state.activeElement?.id === snapshot?.[0]?.id) {
-        //         app.state.activeElement.text = snapshot[0].text || "";
-        //         app.state.activeElement.editing = false; // Reset edit
-        //         app.state.activeElement = null;                
-        //         internal.snapshot = null; // We need to reset the snapshot
-        //     }
-        // },
-        // cancelElementInput: () => {
-        //     const snapshot = internal.snapshot;
-        //     if (snapshot?.[0]?.editing && app.state.activeElement?.id === snapshot?.[0]?.id) {
-        //         app.state.activeElement.editing = false;
-        //         app.state.activeElement = null;
-        //         internal.snapshot = null;
-        //     }
-        // },
 
         //
         // Groups API
@@ -205,7 +216,7 @@ export const createApp = (width, height, callbacks) => {
             state.history = [];
             state.historyIndex = 0;
         },
-        addHistoryEntry: entry => {
+        addHistory: entry => {
             if (state.historyIndex > 0) {
                 state.history = state.history.slice(state.historyIndex);
                 state.historyIndex = 0;
@@ -215,69 +226,25 @@ export const createApp = (width, height, callbacks) => {
                 const last = state.history[0];
                 if (last.ids === entry.ids && last.keys === entry.keys) {
                     const keys = entry.keys.split(",");
-                    last.elements.forEach((element, index) => {
+                    return last.elements.forEach((element, index) => {
                         element.newValues = Object.fromEntries(keys.map(key => {
                             return [key, entry.elements[index].newValues[key]];
                         }));
                     });
-                    return;
                 }
             }
             // Register the new history entry
             state.history.unshift(entry);
         },
-        registerSelectionUpdate: (keys, values, groupChanges) => {
-            const selectedElements = app.getSelectedElements();
-            app.addHistoryEntry({
-                type: ELEMENT_CHANGES.UPDATE,
-                ids: groupChanges && selectedElements.map(el => el.id).join(","),
-                keys: groupChanges && keys.join(","),
-                elements: selectedElements.map(element => ({
-                    id: element.id,
-                    prevValues: Object.fromEntries(keys.map(key => [key, element[key]])),
-                    newValues: Object.fromEntries(keys.map((key, index) => [key, values[index]])),
-                })),
-            });
-        },
-        registerSelectionRemove: () => {
-            return app.addHistoryEntry({
-                type: ELEMENT_CHANGES.REMOVE,
-                elements: app.getSelectedElements().map(element => ({
-                    id: element.id,
-                    prevValues: {...element},
-                    newValues: null,
-                })),
-            });
-        },
-        registerElementCreate: element => {
-            return app.addHistoryEntry({
-                type: ELEMENT_CHANGES.CREATE,
-                elements: [{
-                    id: element.id,
-                    prevValues: null,
-                    newValues: {...element},
-                }],
-            });
-        },
-        registerElementRemove: element => {
-            return app.addHistoryEntry({
-                type: ELEMENT_CHANGES.REMOVE,
-                elements: [{
-                    id: element.id,
-                    prevValues: {...element},
-                    newValues: null,
-                }],
-            });
-        },
         undo: () => {
             if (state.historyIndex < state.history.length) {
                 const entry = state.history[state.historyIndex];
-                if (entry.type === ELEMENT_CHANGES.CREATE) {
+                if (entry.type === CHANGES.CREATE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
                     app.elements = state.elements.filter(el => !removeElements.has(el.id));
-                } else if (entry.type === ELEMENT_CHANGES.REMOVE) {
+                } else if (entry.type === CHANGES.REMOVE) {
                     entry.elements.forEach(el => state.elements.unshift({...el.prevValues}));
-                } else if (entry.type === ELEMENT_CHANGES.UPDATE) {
+                } else if (entry.type === CHANGES.UPDATE) {
                     entry.elements.forEach(element => {
                         Object.assign(state.elements.find(el => el.id === element.id), element.prevValues);
                     });
@@ -286,19 +253,19 @@ export const createApp = (width, height, callbacks) => {
                 app.cancelAction();
                 state.activeGroup = null;
                 state.elements.forEach(el => el.selected = false);
-                callbacks?.onUpdate?.();
+                app.update();
             }
         },
         redo: () => {
             if (state.historyIndex > 0 && state.history.length > 0) {
                 state.historyIndex = state.historyIndex - 1;
                 const entry = state.history[state.historyIndex];
-                if (entry.type === ELEMENT_CHANGES.CREATE) {
+                if (entry.type === CHANGES.CREATE) {
                     entry.elements.forEach(el => state.elements.unshift({...el.newValues}));
-                } else if (entry.type === ELEMENT_CHANGES.REMOVE) {
+                } else if (entry.type === CHANGES.REMOVE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
                     state.elements = state.elements.filter(el => !removeElements.has(el.id));
-                } else if (entry.type === ELEMENT_CHANGES.UPDATE) {
+                } else if (entry.type === CHANGES.UPDATE) {
                     entry.elements.forEach(element => {
                         Object.assign(state.elements.find(el => el.id === element.id) || {}, element.newValues);
                     });
@@ -306,7 +273,7 @@ export const createApp = (width, height, callbacks) => {
                 app.cancelAction();
                 state.activeGroup = null;
                 state.elements.forEach(el => el.selected = false);
-                callbacks?.onUpdate?.();
+                app.update();
             }
         },
         isUndoDisabled: () => state.historyIndex >= state.history.length,
@@ -356,13 +323,13 @@ export const createApp = (width, height, callbacks) => {
         events: {
             onPointCanvas: event => {
                 app.cancelAction();
-                if (!app.state.activeTool) {
+                if (!state.activeTool) {
                     app.clearSelectedElements();
-                    callbacks?.onUpdate?.();
+                    app.update();
                 }
             },
             onPointElement: event => {
-                if (!app.state.activeTool && !app.state.activeAction) {
+                if (!state.activeTool && !state.activeAction) {
                     const element = app.getElement(event.element);
                     if (!event.shiftKey) {
                         app.clearSelectedElements();
@@ -372,24 +339,27 @@ export const createApp = (width, height, callbacks) => {
                         // Toggle element selection
                         element.selected = !element.selected;
                     }
-                    callbacks?.onUpdate?.();
+                    app.update();
                 }
             },
             onPointHandler: event => {
-                app.state.activeAction = ELEMENT_ACTIONS.RESIZE;
-                // app.state.activeHandler = event.handler;
+                state.activeAction = ACTIONS.RESIZE;
+                // state.activeHandler = event.handler;
             },
             onPointerDown: event => {
+                state.isDragged = false;
+                state.isResized = false;
                 // First we need to check if we are in a edit action
-                if (app.state.activeAction === ELEMENT_ACTIONS.EDIT) {
-                    if (app.state.activeElement?.editing) {
-                        app.state.activeElement.editing = false;
+                if (state.activeAction === ACTIONS.EDIT) {
+                    if (state.activeElement?.editing) {
+                        state.activeElement.editing = false;
+                        state.activeElement = null;
                     }
-                    app.state.activeAction = null;
+                    state.activeAction = null;
                 }
-                if (app.state.activeTool) {
-                    app.state.activeAction = ELEMENT_ACTIONS.CREATE;
-                    const element = app.createElement(app.state.activeTool);
+                if (state.activeTool) {
+                    state.activeAction = ACTIONS.CREATE;
+                    const element = app.createElement(state.activeTool);
                     const elementConfig = getElementConfig(element);
                     // Override element attributes
                     Object.assign(element, {
@@ -398,40 +368,51 @@ export const createApp = (width, height, callbacks) => {
                         y1: app.util.getPosition(event.originalY),
                     });
                     elementConfig.onCreateStart?.(element, event, app),
-                    app.state.activeElement = element; // Save element reference
-                    // app.state.activeGroup = null; // Reset current group
+                    state.activeElement = element; // Save element reference
+                    state.activeGroup = null; // Reset current group
                     app.clearSelectedElements();
+                    app.addElements([element]);
                 }
                 else if (app.getSelectedElements().length > 0) {
-                    if (!app.state.activeAction) {
-                        app.state.activeAction = ELEMENT_ACTIONS.DRAG;
+                    if (!state.activeAction) {
+                        state.activeAction = ACTIONS.DRAG;
                     }
                     // Save a snapshot of the current selection for calculating the correct element position
-                    internal.snapshot = app.snapshotSelectedElements();
+                    state.snapshot = app.snapshotSelectedElements();
                 }
-                // else if (app.state.activeAction === ACTIONS.MOVE) {
-                //     // We need to update the last translated point before start moving the board
-                //     internal.lastTranslateX = app.state.translateX;
-                //     internal.lastTranslateY = app.state.translateY;
-                // }
-                callbacks?.onUpdate?.();
+                else if (!state.activeAction || state.activeAction === ACTIONS.SELECT || state.activeAction === ACTIONS.SCREENSHOT) {
+                    state.activeAction = state.activeAction || ACTIONS.SELECT;
+                    state.selection = {
+                        x1: event.originalX,
+                        y1: event.originalY,
+                        x2: event.originalX,
+                        y2: event.originalY,
+                    };
+                    app.clearSelectedElements();
+                }
+                else if (state.activeAction === ACTIONS.MOVE) {
+                    // We need to update the last translated point before start moving the board
+                    state.lastTranslateX = state.translateX;
+                    state.lastTranslateY = state.translateY;
+                }
+                app.update();
             },
             onPointerMove: event => {
-                const snapshot = internal.snapshot;
-                // if (app.state.activeAction === ACTIONS.MOVE) {
-                //     app.state.translateX = Math.floor(internal.lastTranslateX + event.dx * app.state.zoom);
-                //     app.state.translateY = Math.floor(internal.lastTranslateY + event.dy * app.state.zoom);
-                // }
-                if (app.state.activeAction === ELEMENT_ACTIONS.CREATE) {
-                    const element = app.state.activeElement;
+                const snapshot = state.snapshot;
+                if (state.activeAction === ACTIONS.MOVE) {
+                    state.translateX = Math.floor(state.lastTranslateX + event.dx * state.zoom);
+                    state.translateY = Math.floor(state.lastTranslateY + event.dy * state.zoom);
+                }
+                else if (state.activeAction === ACTIONS.CREATE) {
+                    const element = state.activeElement;
                     // First, update the second point of the element
                     element.x2 = app.util.getPosition(event.currentX);
                     element.y2 = app.util.getPosition(event.currentY);
                     // Second, call the onCreateMove listener of the element
                     getElementConfig(element)?.onCreateMove?.(element, event, app);
                 }
-                else if (app.state.activeAction === ELEMENT_ACTIONS.DRAG) {
-                    // state.current.isDragged = true;
+                else if (state.activeAction === ACTIONS.DRAG) {
+                    state.isDragged = true;
                     app.getSelectedElements().forEach((element, index) => {
                         element.x1 = app.util.getPosition(element.x1 + info.dx),
                         element.x2 = app.util.getPosition(element.x2 + info.dx),
@@ -440,9 +421,9 @@ export const createApp = (width, height, callbacks) => {
                         getElementConfig(element)?.onDrag?.(snapshot[index], event, app);
                     });
                 }
-                else if (app.state.activeAction === ELEMENT_ACTIONS.RESIZE) {
+                else if (state.activeAction === ACTIONS.RESIZE) {
+                    state.isResized = true;
                     const element = app.getElement(snapshot[0].id);
-                    // state.current.isResized = true;
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
                         element.x1 = Math.min(app.util.getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
                         element.y1 = Math.min(app.util.getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
@@ -480,51 +461,56 @@ export const createApp = (width, height, callbacks) => {
                         element.y2 = app.util.getPosition(snapshot[0].y2 + event.dy);
                     }
                 }
-                callbacks?.onUpdate?.();
-                // forceUpdate();
+                else if (state.activeAction === ACTIONS.SELECT || state.activeAction === ACTIONS.SCREENSHOT) {
+                    state.selection.x2 = event.currentX;
+                    state.selection.y2 = event.currentY;
+                }
+                app.update();
             },
             onPointerUp: event => {
-                // if (app.state.activeAction === ACTIONS.MOVE) {
-                //     internal.lastTranslateX = app.state.translateX;
-                //     internal.lastTranslateY = app.state.translateY;
-                // }
-                if (state.activeAction === ELEMENT_ACTIONS.CREATE) {
+                if (state.activeAction === ACTIONS.MOVE) {
+                    state.lastTranslateX = state.translateX;
+                    state.lastTranslateY = state.translateY;
+                }
+                else if (state.activeAction === ACTIONS.CREATE && state.activeElement) {
                     const element = state.activeElement;
                     element.selected = true; // By default select this element
                     getElementConfig(activelement)?.onCreateEnd?.(element, event, app);
-                    app.registerElementCreate(element);
+                    // We need to patch the history to save the new element values
+                    const last = state.history[0] || {};
+                    if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
+                        last.elements[0].newValues = {
+                            ...element,
+                            selected: false,
+                        };
+                    }
+                    // Call the element created listener
+                    callbacks?.onElementCreated?.(element);
                     state.activeElement = null;
                     state.activeTool = null; // reset active tool
-                    // TODO: selection or screenshot elements must be removed and applied the effect
-                    callbacks?.onElementCreated?.(element);
                 }
-                else if (state.activeAction === ELEMENT_ACTIONS.DRAG || state.activeAction === ELEMENT_ACTIONS.RESIZE) {
+                else if (state.activeAction === ACTIONS.DRAG || state.activeAction === ACTIONS.RESIZE) {
                     if (state.isDragged || state.isResized) {
-                        // const snapshot = state.current.snapshot;
-                        // const keys = state.current.isDragged ? ["x", "y"] : ["x", "y", "width", "height"];
-                        // app.current.addHistoryEntry({
-                        //     type: ELEMENT_CHANGE_TYPES.UPDATE,
-                        //     elements: app.current.getSelectedElements().map((el, index) => ({
-                        //         id: el.id,
-                        //         prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
-                        //         newValues: Object.fromEntries(keys.map(key => [key, el[key]])),
-                        //     })),
-                        // });
+                        const snapshot = state.snapshot;
+                        const keys = ["x1", "x2", "y1", "y2"];
+                        app.addHistoryEntry({
+                            type: CHANGES.UPDATE,
+                            elements: app.getSelectedElements().map((element, index) => ({
+                                id: element.id,
+                                prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
+                                newValues: Object.fromEntries(keys.map(key => [key, el[key]])),
+                            })),
+                        });
                     }
-                    // state.current.isDragged = false;
-                    // state.current.isResized = false;
+                    state.current.isDragged = false;
+                    state.current.isResized = false;
                 }
-                // else if (app.state.activeAction === ACTIONS.SELECTION) {
-                //     // const rectangle = normalizeRectangle(state.current.brush);
-                //     // // Select all elements that are in the selected rectangle
-                //     // app.current.getElements().forEach(element => {
-                //     //     const points = useBoundaryPoints(element);
-                //     //     element.selected = points.some(point => {
-                //     //         return pointInRectangle(point, rectangle);
-                //     //     });
-                //     // });
-                //     app.state.activeAction = null;
-                // }
+                else if (app.state.activeAction === ACTIONS.SELECT) {
+                    const selection = normalizeBounds(state.selection);
+                    app.setSelectedElements(selection);
+                    state.selection = null;
+                    // state.activeAction = null;
+                }
                 // else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
                 //     // const screenshotOptions = {
                 //     //     includeBackground: false,
@@ -547,7 +533,7 @@ export const createApp = (width, height, callbacks) => {
                 if (!state.activeAction && !state.activeTool) {
                     const selection = app.getSelectedElements();
                     if (selection.length === 1 && typeof selection[0].text === "string") {
-                        state.activeAction = ELEMENT_ACTIONS.EDIT;
+                        state.activeAction = ACTIONS.EDIT;
                         state.activeElement = selection[0];
                         state.activeElement.editing = true;
                         app.update();
@@ -558,7 +544,7 @@ export const createApp = (width, height, callbacks) => {
                 const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
                 // Check if we are in an input target and input element is active
                 if (isInputTarget(event)) {
-                    if (state.activeAction === ELEMENT_ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
+                    if (state.activeAction === ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
                         event.preventDefault();
                         app.cancelAction();
                         app.update();
@@ -566,8 +552,8 @@ export const createApp = (width, height, callbacks) => {
                 }
                 else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                     event.preventDefault();
+                    const elements = app.getSelectedElements();
                     if (event.key === KEYS.X || event.key === KEYS.C) {
-                        const elements = app.getSelectedElements();
                         const data = `folio:::${JSON.stringify(elements)}`;
                         if (window?.navigator?.clipboard) {
                             return navigator.clipboard.writeText(data);
@@ -577,12 +563,11 @@ export const createApp = (width, height, callbacks) => {
                     }
                     // Check for backspace key or cut --> remove elements
                     if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
-                        // app.registerSelectionRemove();
-                        app.removeSelectedElements();
-                        // Reset active group if all elements of this group have been removed
-                        // if (app.current.getElementsInActiveGroup().length < 1) {
-                        //     app.current.activeGroup = null;
-                        // }
+                        app.removeElements(elements);
+                        if (app.getElementsInActiveGroup().length === 0) {
+                            // Reset active group if all elements of this group have been removed
+                            state.activeGroup = null;
+                        }
                     }
                     app.update();
                 }
@@ -604,8 +589,8 @@ export const createApp = (width, height, callbacks) => {
                     const dir = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
                     const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
                     const selectedElements = app.getSelectedElements();
-                    app.addHistoryEntry({
-                        type: ELEMENT_CHANGES.UPDATE,
+                    app.addHistory({
+                        type: CHANGES.UPDATE,
                         ids: selectedElements.map(el => el.id).join(","),
                         keys: `${dir}1,${dir}2`,
                         elements: selectedElements.map(el => {
@@ -626,26 +611,20 @@ export const createApp = (width, height, callbacks) => {
                             };
                         }),
                     });
-                    // forceUpdate();
                     app.update();
                 }
             },
             // onKeyUp: event => {},
             onPaste: event => {
-                if (!isInputTarget(event) || !!app.readOnly) {
+                if (!isInputTarget(event)) {
                     return null;
                 }
                 app.clearSelectedElements();
-                // state.activeGroup = null;
+                state.activeGroup = null;
                 return getDataFromClipboard(event).then(data => {
                     if (data?.type === "text" && data?.content?.startsWith("folio:::")) {
                         const elements = JSON.parse(data.content.split("folio:::")[1].trim());
-                        // elements.forEach(el => {
-                        //     el.x = el.x + index * (state.gridEnabled ? state.gridSize : 10);
-                        //     el.y = el.y + index * (state.gridEnabled ? state.gridSize : 10);
-                        // });
-                        app.pasteElements(elements || []);
-                        return true;
+                        return app.pasteElements(elements || []);
                     }
                 });
             },
@@ -653,7 +632,7 @@ export const createApp = (width, height, callbacks) => {
             // onCut: event => null,
             onElementChange: (id, key, value) => {
                 if (state.activeElement?.id === id && state.activeElement?.editing) {
-                    state.activeElement[key] = value;
+                    app.updateElements([state.activeElement], [key], [value], true);
                 }
             },
         },
@@ -699,7 +678,7 @@ export const createApp = (width, height, callbacks) => {
         //
         // Tool API
         // 
-        getTool: () => app.state.activeTool,
+        getTool: () => state.activeTool,
         setTool: newTool => {
             app.cancelAction();
             app.clearSelectedElements();
@@ -710,12 +689,13 @@ export const createApp = (width, height, callbacks) => {
         //
         // Actions API
         //
+        getAction: () => state.activeAction,
         setAction: () => null,
         cancelAction: () => {
-            if (state.activeAction === ELEMENT_ACTIONS.EDIT && state.activeElement?.editing) {
+            if (state.activeAction === ACTIONS.EDIT && state.activeElement?.editing) {
                 state.activeElement.editing = false;
             }
-            else if (state.activeAction === ELEMENT_ACTIONS.CREATE && state.activeElement) {
+            else if (state.activeAction === ACTIONS.CREATE && state.activeElement) {
                 // TODO: remove element
             }
             state.activeElement = null;
