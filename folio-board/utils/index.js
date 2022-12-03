@@ -2,6 +2,7 @@ import {KEYS} from "../constants.js";
 
 export * from "./blob.js";
 export * from "./clipboard.js";
+export * from "./events.js";
 export * from "./math.js";
 
 // Generate an ID
@@ -13,9 +14,4 @@ export const generateID = () => {
 // Check for arrow keys
 export const isArrowKey = key => {
     return key === KEYS.ARROW_DOWN || key === KEYS.ARROW_LEFT || key === KEYS.ARROW_RIGHT || key === KEYS.ARROW_UP;
-};
-
-// Check if the provided event.target is related to an input element
-export const isInputTarget = e => {
-    return e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 };
