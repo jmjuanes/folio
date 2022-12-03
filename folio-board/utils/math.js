@@ -27,35 +27,21 @@ export const getRoundedRectanglePerimeter = (width, height, radius = 0) => {
 };
 
 // Generate the minumun rectangle points that contains all points in the provided list
-export const boundaryPoints = points => {
-    const x = points.map(point => point[0]);
-    const y = points.map(point => point[1]);
-    const minX = Math.min.apply(null, x);
-    const minY = Math.min.apply(null, y);
-    const maxX = Math.max.apply(null, x);
-    const maxY = Math.max.apply(null, y);
-    return [
-        [minX, minY],
-        [minX, maxY],
-        [maxX, maxY],
-        [maxX, minY],
-    ];
-};
-
-// Normalize a rectangle
-// @param rectangle: rectangle object
-export const normalizeRectangle = rectangle => ({
-    x: Math.min(rectangle.x, rectangle.x + rectangle.width),
-    y: Math.min(rectangle.y, rectangle.y + rectangle.height),
-    width: Math.abs(rectangle.width),
-    height: Math.abs(rectangle.height),
+export const getRectangleBounds = bounds => ({
+    x1: Math.min.apply(null, bounds.map(b => Math.min(b.x1, b.x2))),
+    x2: Math.max.apply(null, bounds.map(b => Math.max(b.x1, b.x2))),
+    y1: Math.min.apply(null, bounds.map(b => Math.min(b.y1, b.y2))),
+    y2: Math.max.apply(null, bounds.map(b => Math.max(b.y1, b.y2))),
 });
 
-// Check if a point is inside a rectangle
-// NOTE: rectangle must be normalized!
-export const pointInRectangle = (p, r) => {
-    return !(p[0] < r.x || r.x + r.width < p[0] || p[1] < r.y || r.y + r.height < p[1]);
-};
+// Normalize bounds
+// @param bounds: a bounds object containing the coordinates x1,y1 and x2,y2
+export const normalizeBounds = bounds => ({
+    x1: Math.min(bounds.x1, bounds.x2),
+    x2: Math.max(bounds.x1, bounds.x2),
+    y1: Math.min(bounds.y1, bounds.y2),
+    y2: Math.max(bounds.y1, bounds.y2),
+});
 
 // Generate a balanced dash line
 // Adapted from https://gist.github.com/steveruizok/7b30a30f915362f219d0516073f92d69 

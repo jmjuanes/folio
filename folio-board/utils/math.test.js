@@ -1,29 +1,31 @@
 import {
-    boundaryPoints,
-    pointInRectangle,
+    normalizeBounds,
+    getRectangleBounds,
 } from "./math.js";
 
-describe("boundaryPoints", () => {
-    it("should generate the boundary rectangle", () => {
-        const points = [[1, 2], [0, 3], [4, 2]];
-        const rectanglePoints = boundaryPoints(points);
+describe("normalizeBounds", () => {
+    it("should return normalized bounds", () => {
+        const originalBound = {x1: 10, x2: 0, y1: 0, y2: 10};
+        const newBounds = normalizeBounds(originalBound);
 
-        expect(rectanglePoints).toHaveLength(4);
-        expect(rectanglePoints[0][0]).toEqual(0);
-        expect(rectanglePoints[0][1]).toEqual(2);
-        expect(rectanglePoints[2][0]).toEqual(4);
-        expect(rectanglePoints[2][1]).toEqual(3);
+        expect(newBounds.x1).toEqual(originalBound.x2);
+        expect(newBounds.x2).toEqual(originalBound.x1);
+        expect(newBounds.y1).toEqual(originalBound.y1);
+        expect(newBounds.y2).toEqual(originalBound.y2);
     });
 });
 
-describe("pointInRectangle", () => {
-    const rectangle = {x: 0, y: 0, width: 100, height: 100};
+describe("getRectangleBounds", () => {
+    it("should generate the bounds", () => {
+        const originalBounds = [
+            {x1: 10, y1: 10, x2: 15, y2: 15},
+            {x1: 12, y1: 5, x2: 5, y2: 20},
+        ];
+        const newBounds = getRectangleBounds(originalBounds);
 
-    it("should return 'true' if point is inside the rectangle", () => {
-        expect(pointInRectangle([50, 50], rectangle)).toBeTruthy();
-    });
-
-    it("should return 'false' if point is outside the rectangle", () => {
-        expect(pointInRectangle([50, 200], rectangle)).toBeFalsy();
+        expect(newBounds.x1).toEqual(5);
+        expect(newBounds.x2).toEqual(15);
+        expect(newBounds.y1).toEqual(5);
+        expect(newBounds.y2).toEqual(20);
     });
 });
