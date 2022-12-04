@@ -2,6 +2,7 @@ import React from "react";
 import {EVENTS} from "../../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
+import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
 import {getElementConfig} from "../../elements/index.jsx";
 
@@ -16,7 +17,7 @@ const hasHandlersEnabled = element => {
     return el.edgeHandlers || el.cornerHandlers || el.nodeHandlers;
 };
 
-export const Canvas = React.forwardRef((props, ref) => {
+export const Canvas = props => {
     const selectedElements = useSelectedElements(props);
 
     const handlePointerDown = (event, source, pointListener) => {
@@ -116,7 +117,6 @@ export const Canvas = React.forwardRef((props, ref) => {
 
     return (
         <svg
-            ref={ref}
             data-id={props.id}
             data-width={props.width}
             data-height={props.height}
@@ -160,16 +160,27 @@ export const Canvas = React.forwardRef((props, ref) => {
                     {props.elements.map(element => {
                         const {Component} = getElementConfig(element);
                         return (
-                            <Component
-                                key={element.id}
-                                {...element}
-                                onChange={(k, v) => props?.onElementChange(element.id, k, v)}
-                                onPointerDown={e => handlePointerDown(e, "element", props.onPointElement)}
-                                onDoubleClick={e => handleDoubleClick(e, "element", props.onDoubleClickElement)}
-                            />
+                            <g key={element.id} data-element-id={element.id}>
+                                <Component
+                                    {...element}
+                                    onChange={(k, v) => props?.onElementChange(element.id, k, v)}
+                                    onPointerDown={e => handlePointerDown(e, "element", props.onPointElement)}
+                                    onDoubleClick={e => handleDoubleClick(e, "element", props.onDoubleClickElement)}
+                                />
+                            </g>
                         );
                     })}
                 </React.Fragment>
+                {props.showBrush && !!props.brush && (
+                    <Brush
+                        x1={props.brush?.x1}
+                        x2={props.brush?.x2}
+                        y1={props.brush?.y1}
+                        y2={props.brush?.y2}
+                        fillColor={props.brushFillColor}
+                        strokeColor={props.brushStrokeColor}
+                    />
+                )}
                 {false && props.showHandlers && hasHandlersEnabled(selectedElements?.[0]) && (
                     <Handlers
                         elements={selectedElements}
@@ -180,7 +191,7 @@ export const Canvas = React.forwardRef((props, ref) => {
             </g>
         </svg>
     );
-});
+};
 
 Canvas.defaultProps = {
     id: "",
@@ -208,6 +219,7 @@ Canvas.defaultProps = {
     onKeyUp: null,
     showHandlers: false,
     showBounds: false,
+    showBrush: false,
     showGrid: true,
     showBackground: true,
     style: {},
