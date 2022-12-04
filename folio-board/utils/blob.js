@@ -19,9 +19,19 @@ export const blobFromFile = (file, type) => {
 };
 
 // Convert a blob to file
-export const blobToFile = (blob, name, type) => {
+// export const blobToFile = (blob, name, type) => {
+export const blobToFile = (blob, filename) => {
+    // return new Promise(resolve => {
+    //     return resolve(new File([blob], name, {type: type || blob.type}));
+    // });
     return new Promise(resolve => {
-        return resolve(new File([blob], name, {type: type || blob.type}));
+        const linkElement = document.createElement("a");
+        const url = window.URL.createObjectURL(blob);
+        linkElement.href = url;
+        linkElement.download = filename;
+        linkElement.click();
+        window.URL.revokeObjectURL(url);
+        return resolve(true);
     });
 };
 
