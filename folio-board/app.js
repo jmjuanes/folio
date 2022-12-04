@@ -17,14 +17,18 @@ import {
     isInputTarget,
     isArrowKey,
     getDataFromClipboard,
-    copyBlobToClipboard,
+    blobToClipboard,
+    blobToFile,
     copyTextToClipboard,
     normalizeBounds,
 } from "./utils/index.js";
 
 export const createApp = (callbacks) => {
     const state = {
+        width: 100,
+        height: 100,
         elements: [],
+        settings: {},
         snapshot: null,
         history: [],
         historyIndex: 0,
@@ -42,15 +46,13 @@ export const createApp = (callbacks) => {
         isDragged: false,
         isResized: false,
     };
+    const getPosition = pos => {
+        // return state.settings.showGrid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
+        return Math.round(pos / GRID_SIZE) * GRID_SIZE;
+    };
     const app = {
         id: generateID(),
         state: state,
-        util: {
-            getPosition: pos => {
-                // return app.settings.showGrid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
-                return Math.round(pos / GRID_SIZE) * GRID_SIZE;
-            },
-        },
 
         //
         // Global API
@@ -59,12 +61,44 @@ export const createApp = (callbacks) => {
             // Trigger an update from the callbacks
             return callbacks?.onUpdate?.();
         },
-        clear: () => {
+        reset: () => {
             state.elements = [];
             state.activeElement = null;
             state.activeGroup = null;
             state.activeTool = null;
-            app.clearHistory();
+            state.history = [];
+            state.historyIndex = 0;
+        },
+        
+        //
+        // Board API
+        //
+        loadBoard: board => {
+            app.reset();
+            state.width = board?.width || 0;
+            state.height = board?.height || 0;
+            state.settings = board?.settings || {};
+            // TODO: we would need to migrate the board elements to the new version
+            if (board?.elements) {
+                state.elements = (board.elements || []).map(element => ({
+                    ...element,
+                    selected: false,
+                }));
+            }
+        },
+        getBoard: () => {
+            return Promise.resolve({
+                version: "1",
+                width: state.width,
+                height: state.height,
+                elements: state.elements.map(element => ({
+                    ...elements,
+                    selected: false,
+                })),
+                settings: {
+                    ...state.settings,
+                },
+            });
         },
 
         //
@@ -179,7 +213,7 @@ export const createApp = (callbacks) => {
         getSelectedElements: () => state.elements.filter(el => !!el.selected),
         clearSelectedElements: () => state.elements.forEach(el => el.selected = false),
         setSelectedElements: selection => {
-            state.elements.forEach(element => {
+            return state.elements.forEach(element => {
                 element.selected = false;
                 if (element.x1 < selection.x2 && selection.x1 < element.x2) {
                     if (element.y1 < selection.y2 && selection.y1 < element.y2) {
@@ -282,40 +316,54 @@ export const createApp = (callbacks) => {
         isRedoDisabled: () => state.historyIndex === 0 || state.history.length < 1,
 
         //
-        // Export API
+        // SVG API
         //
-        exportSvg: options => {
-            // 1. Create a new SVG element
-            const originalSvg = app.getCanvas();
-            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            // 2. Set new svg attributes
-            svg.setAttribute("style", ""); // Reset style
-            svg.setAttribute("width", originalSvg.dataset.width + "px");
-            svg.setAttribute("height", originalSvg.dataset.height + "px");
-            // 3. Set svg style
-            svg.style.backgroundColor = options?.background || "#fff";
-            // 4. Set svg fonts
-            // TODO
-            // 5. Append elements into new SVG
-            state.elements.forEach(element => {
-                const nodeElement = originalSvg.querySelector(`g[data-element-id="${element.id}"]`);
-                if (nodeElement) {
-                    svg.appendChild(nodeElement.cloneNode(true));
-                }
-            });
-            // 6. return SVG in string format
-            return (new XMLSerializer()).serializeToString(svg);
-        },
-        exportImage: options => {
-            const DOMURL = window?.URL || window?.webkitURL || window;
-            return new Promise((resolve, reject) => {
+        getSvg: options => {
+            return new Promise(resolve => {
+                // 1. Create a new SVG element
                 const originalSvg = app.getCanvas();
-                const svgString = app.exportSvg(options);
+                const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                // 2. Set new svg attributes
+                svg.setAttribute("style", ""); // Reset style
+                svg.setAttribute("width", state.width);
+                svg.setAttribute("height", state.height);
+                // 3. Set svg style
+                svg.style.backgroundColor = options?.background || "#fff";
+                // 4. Set svg fonts
+                // TODO
+                // 5. Append elements into new SVG
+                state.elements.forEach(element => {
+                    const nodeElement = originalSvg.querySelector(`g[data-element-id="${element.id}"]`);
+                    if (nodeElement) {
+                        svg.appendChild(nodeElement.cloneNode(true));
+                    }
+                });
+                // 6. return SVG
+                const svgString = (new XMLSerializer()).serializeToString(svg);
                 const svgBlob = createBlob(svgString, "image/svg+xml;charset=utf-8");
+                return resolve(svgBlob);
+            });
+        },
+        copySvg: options => {
+            return app.getSvg(options).then(svgBlob => {
+                return blobToClipboard(svgBlob);
+            });
+        },
+        exportSvg: (name, options) => {
+            return app.getSvg(options).then(svgBlob => {
+                return blobToFile(svgBlob, `${name || "export"}.svg`);
+            });
+        },
+
+        // 
+        // Image API
+        //
+        getImage: options => {
+            return new Promise((resolve, reject) => {
                 // Initialize canvas to render SVG image
                 const canvas = document.createElement("canvas");
-                canvas.width = options?.cropWidth || parseInt(originalSvg.dataset.width);
-                canvas.height = options?.cropHeight || parseInt(originalSvg.dataset.height);
+                canvas.width = options?.cropWidth || state.width;
+                canvas.height = options?.cropHeight || state.height;
                 // Initialize image
                 const img = new Image();
                 img.addEventListener("load", () => {
@@ -330,7 +378,19 @@ export const createApp = (callbacks) => {
                     return reject(event);
                 });
                 // Load image
-                img.src = DOMURL.createObjectURL(svgBlob);
+                app.getSvg(options).then(svgBlob => {
+                    img.src = window.URL.createObjectURL(svgBlob);
+                });
+            });
+        },
+        copyImage: options => {
+            return app.getImage(options).then(imageBlob => {
+                return blobToClipboard(imageBlob);
+            });
+        },
+        exportImage: (name, options) => {
+            return app.getImage(options).then(imageBlob => {
+                return blobToFile(imageBlob, `${name || "export"}.png`);
             });
         },
 
@@ -381,10 +441,10 @@ export const createApp = (callbacks) => {
                     // Override element attributes
                     Object.assign(element, {
                         ...(elementConfig.initialize?.() || {}),
-                        x1: app.util.getPosition(event.originalX),
-                        y1: app.util.getPosition(event.originalY),
+                        x1: getPosition(event.originalX),
+                        y1: getPosition(event.originalY),
                     });
-                    elementConfig.onCreateStart?.(element, event, app),
+                    elementConfig.onCreateStart?.(element, event),
                     state.activeElement = element; // Save element reference
                     state.activeGroup = null; // Reset current group
                     app.clearSelectedElements();
@@ -423,59 +483,59 @@ export const createApp = (callbacks) => {
                 else if (state.activeAction === ACTIONS.CREATE) {
                     const element = state.activeElement;
                     // First, update the second point of the element
-                    element.x2 = app.util.getPosition(event.currentX);
-                    element.y2 = app.util.getPosition(event.currentY);
+                    element.x2 = getPosition(event.currentX);
+                    element.y2 = getPosition(event.currentY);
                     // Second, call the onCreateMove listener of the element
-                    getElementConfig(element)?.onCreateMove?.(element, event, app);
+                    getElementConfig(element)?.onCreateMove?.(element, event);
                 }
                 else if (state.activeAction === ACTIONS.DRAG) {
                     state.isDragged = true;
                     app.getSelectedElements().forEach((element, index) => {
-                        element.x1 = app.util.getPosition(element.x1 + info.dx),
-                        element.x2 = app.util.getPosition(element.x2 + info.dx),
-                        element.y1 = app.util.getPosition(element.y1 + info.dy),
-                        element.y2 = app.util.getPosition(element.y2 + info.dy),
-                        getElementConfig(element)?.onDrag?.(snapshot[index], event, app);
+                        element.x1 = getPosition(element.x1 + info.dx),
+                        element.x2 = getPosition(element.x2 + info.dx),
+                        element.y1 = getPosition(element.y1 + info.dy),
+                        element.y2 = getPosition(element.y2 + info.dy),
+                        getElementConfig(element)?.onDrag?.(snapshot[index], event);
                     });
                 }
                 else if (state.activeAction === ACTIONS.RESIZE) {
                     state.isResized = true;
                     const element = app.getElement(snapshot[0].id);
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                        element.x1 = Math.min(app.util.getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
-                        element.y1 = Math.min(app.util.getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
                     }
                     else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                        element.x2 = Math.max(app.util.getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
-                        element.y1 = Math.min(app.util.getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                        element.x1 = Math.min(app.util.getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
-                        element.y2 = Math.max(app.util.getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                        element.x2 = Math.max(app.util.getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
-                        element.y2 = Math.max(app.util.getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
                     }
                     else if (event.handler === HANDLERS.EDGE_TOP) {
-                        element.y1 = Math.min(app.util.getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
                     }
                     else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-                        element.y2 = Math.max(app.util.getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
                     }
                     else if (event.handler === HANDLERS.EDGE_LEFT) {
-                        element.x1 = Math.min(app.util.getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
                     }
                     else if (event.handler === HANDLERS.EDGE_RIGHT) {
-                        element.x2 = Math.max(app.util.getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
                     }
                     else if (event.handler === HANDLERS.NODE_START) {
-                        element.x1 = app.util.getPosition(snapshot[0].x1 + event.dx);
-                        element.y1 = app.util.getPosition(snapshot[0].y1 + event.dy);
+                        element.x1 = getPosition(snapshot[0].x1 + event.dx);
+                        element.y1 = getPosition(snapshot[0].y1 + event.dy);
                     }
                     else if (event.handler === HANDLERS.NODE_END) {
-                        element.x2 = app.util.getPosition(snapshot[0].x2 + event.dx);
-                        element.y2 = app.util.getPosition(snapshot[0].y2 + event.dy);
+                        element.x2 = getPosition(snapshot[0].x2 + event.dx);
+                        element.y2 = getPosition(snapshot[0].y2 + event.dy);
                     }
                 }
                 else if (state.activeAction === ACTIONS.SELECT || state.activeAction === ACTIONS.SCREENSHOT) {
@@ -492,7 +552,7 @@ export const createApp = (callbacks) => {
                 else if (state.activeAction === ACTIONS.CREATE && state.activeElement) {
                     const element = state.activeElement;
                     element.selected = true; // By default select this element
-                    getElementConfig(activelement)?.onCreateEnd?.(element, event, app);
+                    getElementConfig(activelement)?.onCreateEnd?.(element, event);
                     // We need to patch the history to save the new element values
                     const last = state.history[0] || {};
                     if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
@@ -528,21 +588,13 @@ export const createApp = (callbacks) => {
                 }
                 else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
                     const selection = normalizeBounds(state.selection);
-                    const options = {
-                        cropX: selection.x1,
-                        cropY: selection.y1,
-                        cropWidth: Math.abs(selection.x2 - selection.x1),
-                        cropHeight: Math.abs(selection.y2 - selection.y1),
-                        background: "transparent",
+                    const screenshotRegion = {
+                        x: selection.x1,
+                        y: selection.y1,
+                        width: Math.abs(selection.x2 - selection.x1),
+                        height: Math.abs(selection.y2 - selection.y1),
                     };
-                    app.exportImage(options)
-                        .then(image => {
-                            callbacks?.onScreenshot?.(image, options);
-                            // copyBlobToClipboard(image);
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
+                    callbacks?.onScreenshot?.(app, screenshotRegion);
                 }
                 state.activeAction = null;
                 state.selection = null;
@@ -615,8 +667,8 @@ export const createApp = (callbacks) => {
                         elements: selectedElements.map(el => {
                             const prev1 = el[`${dir}1`];
                             const prev2 = el[`${dir}2`];
-                            el[`${dir}1`] = event.shiftKey ? app.util.getPosition(prev1 + sign * GRID_SIZE) : prev1 + sign;
-                            el[`${dir}2`] = event.shiftKey ? app.util.getPosition(prev2 + sign * GRID_SIZE) : prev2 + sign;
+                            el[`${dir}1`] = event.shiftKey ? getPosition(prev1 + sign * GRID_SIZE) : prev1 + sign;
+                            el[`${dir}2`] = event.shiftKey ? getPosition(prev2 + sign * GRID_SIZE) : prev2 + sign;
                             return {
                                 id: el.id,
                                 prevValues: {
@@ -666,10 +718,8 @@ export const createApp = (callbacks) => {
             const target = app.getCanvas();
             if (target) {
                 const size = target.getBoundingClientRect();
-                const width = parseInt(target.dataset.width) || 0;
-                const height = parseInt(target.dataset.height) || 0;
-                state.translateX = Math.floor((size.width - width) / 2);
-                state.translateY = Math.floor((size.height - height) / 2);
+                state.translateX = Math.floor((size.width - state.width) / 2);
+                state.translateY = Math.floor((size.height - state.height) / 2);
                 // TODO: force an update?
             }
         },
@@ -713,6 +763,7 @@ export const createApp = (callbacks) => {
         setAction: newAction => {
             app.cancelAction();
             state.activeAction = newAction;
+            app.update();
         },
         cancelAction: () => {
             if (state.activeAction === ACTIONS.EDIT && state.activeElement?.editing) {
@@ -723,6 +774,7 @@ export const createApp = (callbacks) => {
             }
             state.activeElement = null;
             state.activeAction = null;
+            // state.activeTool = null;
         },
     };
     return app;
