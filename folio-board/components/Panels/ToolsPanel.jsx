@@ -1,25 +1,39 @@
 import React from "react";
 import {ACTIONS, ELEMENTS} from "../../constants.js";
 import {Panel, PanelButton} from "./Panel.jsx";
-import {ArrowsIcon, PointerIcon, RectangleToolIcon} from "../icons/index.jsx";
+import {
+    ArrowsIcon,
+    PointerIcon,
+    RectangleToolIcon,
+    CircleToolIcon,
+    LineToolIcon,
+} from "../icons/index.jsx";
 
 const availableTools = [
     {
         element: ELEMENTS.RECTANGLE,
         Icon: RectangleToolIcon,
-    }
+    },
+    {
+        element: ELEMENTS.ELLIPSE,
+        Icon: CircleToolIcon,
+    },
+    {
+        element: ELEMENTS.LINE,
+        Icon: LineToolIcon,
+    },
 ];
 
 export const ToolsPanel = props => (
     <Panel position="bottom-center">
         <PanelButton
-            active={props.currentAction === ACTIONS.MOVE}
+            active={props.action === ACTIONS.MOVE}
             onClick={props.onMoveClick}
         >
             <ArrowsIcon />
         </PanelButton>
         <PanelButton
-            active={!props.currentTool && props.currentAction !== ACTIONS.MOVE}
+            active={!props.tool && props.action !== ACTIONS.MOVE}
             onClick={props.onSelectionClick}
         >
             <PointerIcon />
@@ -30,8 +44,12 @@ export const ToolsPanel = props => (
                 width: "1px",
             }}
         />
-        {props.tools.map(tool => (
-            <PanelButton key={tool.element} active={props.currentTool === tool.element} onClick={() => props.onToolClick(tool.element)}>
+        {availableTools.map(tool => (
+            <PanelButton
+                key={tool.element}
+                active={props.tool === tool.element}
+                onClick={() => props.onToolClick(tool.element)}
+            >
                 <tool.Icon />
             </PanelButton>
         ))}
@@ -39,9 +57,8 @@ export const ToolsPanel = props => (
 );
 
 ToolsPanel.defaultProps = {
-    tools: availableTools,
-    currentAction: null,
-    currentTool: null,
+    action: null,
+    tool: null,
     onMoveClick: null,
     onSelectionClick: null,
     onToolClick: null,
