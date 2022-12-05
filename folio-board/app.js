@@ -10,7 +10,7 @@ import {
     ZOOM_MIN,
     ZOOM_STEP,
 } from "./constants.js";
-import {getElementSvg} from "./elements/index.jsx";
+import {getElementConfig} from "./elements.jsx";
 import {
     createBlob,
     generateID,
