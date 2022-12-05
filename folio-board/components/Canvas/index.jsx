@@ -4,7 +4,7 @@ import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
-import {getElementConfig} from "../../elements/index.jsx";
+import {getElementConfig} from "../../elements.jsx";
 
 const useSelectedElements = props => {
     if (props.showHandlers || props.showBounds) {
@@ -158,17 +158,12 @@ export const Canvas = props => {
                 )}
                 <React.Fragment>
                     {props.elements.map(element => {
-                        const {Component} = getElementConfig(element);
-                        return (
-                            <g key={element.id} data-element-id={element.id}>
-                                <Component
-                                    {...element}
-                                    onChange={(k, v) => props?.onElementChange(element.id, k, v)}
-                                    onPointerDown={e => handlePointerDown(e, "element", props.onPointElement)}
-                                    onDoubleClick={e => handleDoubleClick(e, "element", props.onDoubleClickElement)}
-                                />
-                            </g>
-                        );
+                        return getElementConfig(element).render({
+                            ...element,
+                            onChange: (k, v) => props?.onElementChange(element.id, k, v),
+                            onPointerDown: e => handlePointerDown(e, "element", props.onPointElement),
+                            onDoubleClick: e => handleDoubleClick(e, "element", props.onDoubleClickElement),
+                        });
                     })}
                 </React.Fragment>
                 {props.showBrush && !!props.brush && (
