@@ -11,6 +11,7 @@ import {
     ZOOM_STEP,
 } from "./constants.js";
 import {getElementConfig} from "./elements.jsx";
+import {defaultStyles} from "./styles.js";
 import {
     createBlob,
     generateID,
@@ -32,7 +33,9 @@ export const createApp = (callbacks) => {
         snapshot: null,
         history: [],
         historyIndex: 0,
-        style: {},
+        style: {
+            ...defaultStyles,
+        },
         selection: null,
         activeTool: null,
         activeAction: null,
@@ -127,53 +130,71 @@ export const createApp = (callbacks) => {
         // 
         getElements: () => state.elements,
         addElements: elements => {
-            // 1. Register element create in the history
-            app.addHistory({
-                type: CHANGES.CREATE,
-                elements: elements.map(element => ({
-                    id: element.id,
-                    prevValues: null,
-                    newValues: {
-                        ...element,
-                        selected: false,
-                    },
-                })),
-            });
-            // 2. Add new elements
-            elements.forEach(element => state.elements.push(element));
+            if (elements && elements.length > 0) {
+                // 1. Register element create in the history
+                app.addHistory({
+                    type: CHANGES.CREATE,
+                    elements: elements.map(element => ({
+                        id: element.id,
+                        prevValues: null,
+                        newValues: {
+                            ...element,
+                            selected: false,
+                        },
+                    })),
+                });
+                // 2. Add new elements
+                elements.forEach(element => state.elements.push(element));
+            }
         },
         removeElements: elements => {
-            // 1. Register element remove in the history
-            app.addHistory({
-                type: CHANGES.REMOVE,
-                elements: elements.map(element => ({
-                    id: element.id,
-                    prevValues: {
-                        ...element,
-                        selected: false,
-                    },
-                    newValues: null,
-                })),
-            });
-            // 2. Remove the elements for state.elements
-            const elementsToRemove = new Set(elements.map(element => element.id));
-            state.elements = state.elements.filter(element => !elementsToRemove.has(element.id));
+            if (elements && elements.length > 0) {
+                // 1. Register element remove in the history
+                app.addHistory({
+                    type: CHANGES.REMOVE,
+                    elements: elements.map(element => ({
+                        id: element.id,
+                        prevValues: {
+                            ...element,
+                            selected: false,
+                        },
+                        newValues: null,
+                    })),
+                });
+                // 2. Remove the elements for state.elements
+                const elementsToRemove = new Set(elements.map(element => element.id));
+                state.elements = state.elements.filter(element => {
+                    return !elementsToRemove.has(element.id);
+                });
+            }
         },
         updateElements: (elements, keys, values, groupChanges = true) => {
-            // 1. Register element update in the history
-            app.addHistory({
-                type: CHANGES.UPDATE,
-                ids: groupChanges && elements.map(element => element.id).join(","),
-                keys: groupChanges && keys.join(","),
-                elements: elements.map(element => ({
-                    id: element.id,
-                    prevValues: Object.fromEntries(keys.map(key => [key, element[key]])),
-                    newValues: Object.fromEntries(keys.map((key, index) => [key, values[index]])),
-                })),
-            });
-            // 2. Update the elements
-            elements.forEach(element => {
-                keys.forEach((key, index) => element[key] = values[index]);
+            if (elements && elements.length > 0) {
+                // 1. Register element update in the history
+                app.addHistory({
+                    type: CHANGES.UPDATE,
+                    ids: groupChanges && elements.map(element => element.id).join(","),
+                    keys: groupChanges && keys.join(","),
+                    elements: elements.map(element => ({
+                        id: element.id,
+                        prevValues: Object.fromEntries(keys.map(key => {
+                            return [key, element[key]];
+                        })),
+                        newValues: Object.fromEntries(keys.map((key, index) => {
+                            return [key, values[index]];
+                        })),
+                    })),
+                });
+                // 2. Update the elements
+                elements.forEach(element => {
+                    keys.forEach((key, index) => element[key] = values[index]);
+                });
+            }
+            // 3. Update default styles
+            keys.forEach((key, index) => {
+                if (typeof state.styles[key] !== "undefined") {
+                    state.styles[key] = values[index];
+                }
             });
         },
         pasteElements: elements => {
