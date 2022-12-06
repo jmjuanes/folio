@@ -10,7 +10,7 @@ import {simplifyPath} from "./utils/index.js";
 export const elementsConfig = {
     [ELEMENTS.RECTANGLE]: {
         render: props => (
-            <g key={props.id} data-element-id={props.id}>
+            <g key={props.id} data-element={props.id}>
                 <RectangleElement {...props} />
             </g>
         ),
@@ -39,7 +39,7 @@ export const elementsConfig = {
     },
     [ELEMENTS.ELLIPSE]: {
         render: props => (
-            <g key={props.id} data-element-id={props.id}>
+            <g key={props.id} data-element={props.id}>
                 <EllipseElement {...props} />
             </g>
         ),
@@ -68,7 +68,7 @@ export const elementsConfig = {
     },
     [ELEMENTS.LINE]: {
         render: props => (
-            <g key={props.id} data-element-id={props.id}>
+            <g key={props.id} data-element={props.id}>
                 <LineElement {...props} />
             </g>
         ),
@@ -82,7 +82,7 @@ export const elementsConfig = {
     },
     [ELEMENTS.TEXT]: {
         render: props => (
-            <g key={props.id} data-element-id={props.id}>
+            <g key={props.id} data-element={props.id}>
                 <TextElement {...props} />
             </g>
         ),
@@ -103,7 +103,7 @@ export const elementsConfig = {
     },
     [ELEMENTS.DRAW]: {
         render: props => (
-            <g key={props.id} data-element-id={props.id}>
+            <g key={props.id} data-element={props.id}>
                 <DrawElement {...props} />
             </g>
         ),

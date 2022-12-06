@@ -353,7 +353,7 @@ export const createApp = (callbacks) => {
                 // TODO
                 // 5. Append elements into new SVG
                 state.elements.forEach(element => {
-                    const nodeElement = originalSvg.querySelector(`g[data-element-id="${element.id}"]`);
+                    const nodeElement = originalSvg.querySelector(`g[data-element="${element.id}"]`);
                     if (nodeElement) {
                         svg.appendChild(nodeElement.cloneNode(true));
                     }
@@ -620,15 +620,15 @@ export const createApp = (callbacks) => {
                 state.selection = null;
                 app.update();
             },
-            onDoubleClick: event => {
+            onDoubleClickElement: event => {
                 if (!state.activeAction && !state.activeTool) {
-                    const selection = app.getSelectedElements();
-                    if (selection.length === 1 && typeof selection[0].text === "string") {
-                        state.activeAction = ACTIONS.EDIT;
-                        state.activeElement = selection[0];
-                        state.activeElement.editing = true;
-                        app.update();
-                    }
+                    app.clearSelectedElements();
+                    const element = app.getElement(event.element);
+                    // TODO: we need to check if this element is editable
+                    state.activeElement = element;
+                    state.activeElement.editing = true;
+                    state.activeAction = ACTIONS.EDIT;
+                    app.update();
                 }
             },
             onKeyDown: event => {
