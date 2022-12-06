@@ -1,60 +1,5 @@
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
-export const COLORS = [
-    "transparent",
-    "white", // White
-    "rgb(0,0,0)", // black , "rgb(255,255,255)"],
-    "rgb(66,72,82)", // gray "rgb(169, 176, 187)"],
-    "rgb(74,136,218)", // blue "rgb(115, 176, 244)"],
-    "rgb(61, 173, 217)", // aqua "rgb(102, 212, 241)"],
-    "rgb(59, 186, 154)", // mint "rgb(97, 221, 189)"],
-    "rgb(137, 192, 84)", // green "rgb(180, 223, 128)"],
-    "rgb(149, 121, 218)", // purple "rgb(179, 164, 238)"],
-    "rgb(213, 111, 172)", // pink "rgb(241, 153, 206)"],
-    "rgb(245, 185, 69)", // yellow "rgb(250, 210, 119)"],
-    "rgb(232, 85, 62)", // red "rgb(246, 131, 111)"],
-];
-
-export const DEFAULT_COLOR_STROKE = "rgb(0,0,0)";
-export const DEFAULT_COLOR_FILL = "transparent";
-export const DEFAULT_COLOR_TEXT = "rgb(0,0,0)";
-
-export const FONTS = [
-    "Noto Sans, sans-serif",
-    "Noto Serif, serif",
-    "Caveat Brush, cursive;",
-    "Noto Sans Mono, monospace",
-];
-
-export const FONT_SIZE_SM = 12;
-export const FONT_SIZE_MD = 16;
-export const FONT_SIZE_LG = 24;
-export const FONT_SIZE_XL = 32;
-
-export const DEFAULT_FONT_FAMILY = FONTS[0];
-export const DEFAULT_FONT_SIZE = FONT_SIZE_MD;
-export const DEFAULT_FONT_WEIGHT = "500";
-
-export const OPACITY_NONE = 1;
-export const OPACITY_SEMITRANSPARENT = 0.5;
-export const OPACITY_TRANSPARENT = 0;
-
-export const STROKE_SIZE_NONE = 0;
-export const STROKE_SIZE_SM = 2;
-export const STROKE_SIZE_MD = 4;
-export const STROKE_SIZE_LG = 8;
-export const STROKE_SIZE_XL = 16;
-
-export const STROKE_STYLE_SOLID = "solid";
-export const STROKE_STYLE_DASHED = "dashed";
-export const STROKE_STYLE_DOTTED = "dotted";
-
-export const RADIUS_NONE = 0;
-export const RADIUS_SM = 4;
-export const RADIUS_MD = 8;
-export const RADIUS_LG = 16;
-export const RADIUS_XL = 32;
-
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
     POINTER_MOVE: "pointermove",
@@ -81,26 +26,29 @@ export const KEYS = {
 };
 
 export const ELEMENTS = {
-    RECTANGLE: "rectangle",
-    ELLIPSE: "ellipse",
-    LINE: "line",
-    ARROW: "arrow",
-    IMAGE: "image",
-    TEXT: "text",
-    DRAW: "draw",
+    RECTANGLE: "element:rectangle",
+    ELLIPSE: "element:ellipse",
+    LINE: "element:line",
+    ARROW: "element:arrow",
+    IMAGE: "element:image",
+    TEXT: "element:text",
+    DRAW: "element:draw",
 };
 
-export const ELEMENT_ACTIONS = {
-    CREATE: "element:action:create",
-    DRAG: "element:action:drag",
-    RESIZE: "element:actionresize",
-    EDIT: "element:action:edit",
+export const ACTIONS = {
+    MOVE: "action:move",
+    SELECT: "action:select",
+    SCREENSHOT: "action:screenshot",
+    CREATE: "action:create",
+    DRAG: "action:drag",
+    RESIZE: "actionresize",
+    EDIT: "action:edit",
 };
 
-export const ELEMENT_CHANGES = {
-    CREATE: "element:change:create",
-    UPDATE: "element:change:update",
-    REMOVE: "element:change:remove",
+export const CHANGES = {
+    CREATE: "change:create",
+    UPDATE: "change:update",
+    REMOVE: "change:remove",
 };
 
 export const GRID_SIZE = 20;
@@ -142,13 +90,21 @@ export const HANDLERS = {
     NODE_END: "point-end",
 };
 
+//
 // Styles keys
+//
 
 export const COLOR_KEYS = {
-    // WHITE: "white",
-    LIGHT_GRAY: "light-gray",
-    DARK_GRAY: "dark-gray",
+    NONE: "none",
+    WHITE: "white",
+    GRAY: "gray",
     BLACK: "black",
+    BLUE: "blue",
+    GREEN: "green",
+    PURPLE: "purple",
+    PINK: "pink",
+    YELLOW: "yellow",
+    RED: "red",
 };
 
 export const FONT_KEYS = {
@@ -158,14 +114,21 @@ export const FONT_KEYS = {
 };
 
 export const SIZE_KEYS = {
+    NONE: "none",
     SMALL: "sm",
     MEDIUM: "md",
     LARGE: "lg",
-    EXTRA_LARGE: "xl",
+    XLARGE: "xl",
 };
 
 export const DASH_KEYS = {
     SOLID: "solid",
     DASHED: "dashed",
     DOTTED: "dotted",
+};
+
+export const OPACITY_KEYS = {
+    NONE: 1,
+    SEMI_TRANSPARENT: 0.5,
+    TRANSPARENT: 0,
 };
