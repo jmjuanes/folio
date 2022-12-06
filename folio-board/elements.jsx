@@ -4,6 +4,7 @@ import {RectangleElement} from "./components/Elements/RectangleElement.jsx";
 import {EllipseElement} from "./components/Elements/EllipseElement.jsx";
 import {LineElement} from "./components/Elements/LineElement.jsx";
 import {DrawElement} from "./components/Elements/DrawElement.jsx";
+import {TextElement} from "./components/Elements/TextElement.jsx";
 import {simplifyPath} from "./utils/index.js";
 
 export const elementsConfig = {
@@ -61,6 +62,19 @@ export const elementsConfig = {
             strokeWidth: styles.strokeWidth,
             strokeStyle: styles.strokeStyle,
             strokeOpacity: styles.strokeOpacity,
+        }),
+    },
+    [ELEMENTS.TEXT]: {
+        render: props => (
+            <g key={props.id} data-element-id={props.id}>
+                <TextElement {...props} />
+            </g>
+        ),
+        initialize: styles => ({
+            text: "",
+            textColor: styles.textColor,
+            textFont: styles.textFont,
+            textSize: styles.textSize,
         }),
     },
     [ELEMENTS.DRAW]: {
