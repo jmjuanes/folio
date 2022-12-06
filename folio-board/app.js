@@ -122,7 +122,6 @@ export const createApp = (callbacks) => {
             edgeHandlers: false,
             cornerHandlers: false,
             nodeHandlers: false,
-            ...state.style,
         }),
 
         //
@@ -461,7 +460,7 @@ export const createApp = (callbacks) => {
                     const elementConfig = getElementConfig(element);
                     // Override element attributes
                     Object.assign(element, {
-                        ...(elementConfig.initialize?.() || {}),
+                        ...(elementConfig.initialize?.(state.style) || {}),
                         x1: getPosition(event.originalX),
                         y1: getPosition(event.originalY),
                     });

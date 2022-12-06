@@ -11,10 +11,19 @@ export const elementsConfig = {
                 <RectangleElement {...props} />
             </g>
         ),
-        initialize: () => ({
+        initialize: styles => ({
             edgeHandlers: true,
             cornerHandlers: true,
+            fillColor: styles.fillColor,
+            fillOpacity: styles.fillOpacity,
+            strokeColor: styles.strokeColor,
+            strokeWidth: styles.strokeWidth,
+            strokeStyle: styles.strokeStyle,
+            strokeOpacity: styles.strokeOpacity,
             text: "",
+            textColor: styles.textColor,
+            textFont: styles.textFont,
+            textSize: styles.textSize,
         }),
     },
     [ELEMENTS.ELLIPSE]: {
@@ -23,10 +32,19 @@ export const elementsConfig = {
                 <EllipseElement {...props} />
             </g>
         ),
-        initialize: () => ({
+        initialize: styles => ({
             edgeHandlers: true,
             cornerHandlers: true,
+            fillColor: styles.fillColor,
+            fillOpacity: styles.fillOpacity,
+            strokeColor: styles.strokeColor,
+            strokeWidth: styles.strokeWidth,
+            strokeStyle: styles.strokeStyle,
+            strokeOpacity: styles.strokeOpacity,
             text: "",
+            textColor: styles.textColor,
+            textFont: styles.textFont,
+            textSize: styles.textSize,
         }),
     },
     [ELEMENTS.LINE]: {
@@ -37,6 +55,10 @@ export const elementsConfig = {
         ),
         initialize: () => ({
             nodeHandlers: true,
+            strokeColor: styles.strokeColor,
+            strokeWidth: styles.strokeWidth,
+            strokeStyle: styles.strokeStyle,
+            strokeOpacity: styles.strokeOpacity,
         }),
     },
 };
