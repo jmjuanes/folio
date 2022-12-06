@@ -21,9 +21,7 @@ import {
     ToolsPanel,
     ZoomPanel,
 } from "./components/Panels/index.jsx";
-// import {
-//     StyleDialog,
-// } from "./components/Dialogs/index.jsx";
+import {StyleDialog} from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
 
 export const FolioBoard = props => {
@@ -117,11 +115,9 @@ export const FolioBoard = props => {
                     elements={selectedElements}
                     styleDialogActive={!!state.current.showStyleDialog}
                     onRemoveClick={() => {
-                        if (selectedElements.length > 0) {
-                            app.cancelInput();
-                            app.removeSelectedElements();
-                            app.update();
-                        }
+                        app.cancelAction();
+                        app.removeElements(selectedElements);
+                        app.update();
                     }}
                     onBringForwardClick={() => {
                         // boardApi.current.bringSelectionForward();
@@ -145,22 +141,16 @@ export const FolioBoard = props => {
                     }}
                 />
             )}
-            {/*
-            {state.current.showStyleDialog && (selectedElements.length < 2) && (
+            {!action && styleDialogVisible && selectedElements.length < 2 && (
                 <StyleDialog
-                    values={selectedElements[0] || state.current.defaults}
+                    elements={selectedElements}
+                    values={app.state.style}
                     onChange={(key, value) => {
-                        submitInput();
-                        if (selectedElements.length > 0) {
-                            app.current.registerSelectionUpdate([key].flat(), [value].flat(), true);
-                            app.current.updateSelectedElements(key, value);
-                        }
-                        state.current.defaults[key] = value;
-                        forceUpdate();
+                        app.updateElements(selectedElements, [key], [value], true);
+                        app.update();
                     }}
                 />
             )}
-            */}
         </div>
     );
 };
