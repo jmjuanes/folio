@@ -1,20 +1,20 @@
 import React from "react";
+import {DASH_KEYS} from "../../constants.js";
 import {getBalancedDash, getPointsDistance} from "../../utils/index.js";
+import {strokeColors, strokeWidths} from "../../styles.js";
 
 const LineRenderer = props => {
+    const strokeWidth = strokeWidths[props.strokeWidth];
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
-            // const strokeWidth = parseInt(props.strokeWidth.replace("px", ""));
-            // const length = getPointsDistance([props.x, props.y], [props.x2, props.y2]);
-            // if (!isNaN(strokeWidth) && strokeWidth > 0) {
-            //     if (props.strokeStyle === "dashed" || props.strokeStyle === "dotted") {
-            //         return getBalancedDash(length, strokeWidth, props.strokeStyle);
-            //     }
-            // }
+            const length = getPointsDistance([props.x, props.y], [props.x2, props.y2]);
+            const strokeStyle = props.strokeStyle;
+            if (strokeStyle === DASH_KEYS.DASHED || strokeStyle === DASH_KEYS.DOTTED) {
+                return getBalancedDash(length, strokeWidth, strokeStyle);
+            }
             return ["none", "none"];
         },
-        // [props.strokeStyle, props.strokeWidth, props.x, props.y, props.x2, props.y2],
-        [],
+        [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
     );
     return (
         <line
@@ -23,8 +23,9 @@ const LineRenderer = props => {
             x2={props.x2}
             y2={props.y2}
             fill="none"
-            stroke="#000"
-            strokeWidth="2px"
+            stroke={strokeColors[props.strokeColor]}
+            strokeWidth={strokeWidth}
+            strokeOpacity={props.strokeOpacity}
             strokeDasharray={strokeDasharray}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
