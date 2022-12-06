@@ -28,6 +28,14 @@ export const elementsConfig = {
             textFont: styles.textFont,
             textSize: styles.textSize,
         }),
+        onCreateEnd: element => {
+            Object.assign(element, {
+                x1: Math.min(element.x1, element.x2),
+                y1: Math.min(element.y1, element.y2),
+                x2: Math.max(element.x1, element.x2),
+                y2: Math.max(element.y1, element.y2),
+            });
+        },
     },
     [ELEMENTS.ELLIPSE]: {
         render: props => (
@@ -49,6 +57,14 @@ export const elementsConfig = {
             textFont: styles.textFont,
             textSize: styles.textSize,
         }),
+        onCreateEnd: element => {
+            Object.assign(element, {
+                x1: Math.min(element.x1, element.x2),
+                y1: Math.min(element.y1, element.y2),
+                x2: Math.max(element.x1, element.x2),
+                y2: Math.max(element.y1, element.y2),
+            });
+        },
     },
     [ELEMENTS.LINE]: {
         render: props => (
@@ -76,6 +92,14 @@ export const elementsConfig = {
             textFont: styles.textFont,
             textSize: styles.textSize,
         }),
+        onCreateEnd: element => {
+            Object.assign(element, {
+                x1: Math.min(element.x1, element.x2),
+                y1: Math.min(element.y1, element.y2),
+                x2: Math.max(element.x1, element.x2),
+                y2: Math.max(element.y1, element.y2),
+            });
+        },
     },
     [ELEMENTS.DRAW]: {
         render: props => (
