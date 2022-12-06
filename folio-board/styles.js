@@ -58,7 +58,7 @@ export const defaultStyles = {
     strokeColor: COLOR_KEYS.BLACK,
     strokeWidth: SIZE_KEYS.MEDIUM,
     strokeOpacity: OPACITY_KEYS.NONE,
-    strokeDash: DASH_KEYS.SOLID,
+    strokeStyle: DASH_KEYS.SOLID,
     textFont: FONT_KEYS.SANS,
     textSize: SIZE_KEYS.MEDIUM,
     textColor: COLOR_KEYS.BLACK,
