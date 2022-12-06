@@ -41,6 +41,7 @@ export const DrawElement = props => {
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                onPointerDown={props.onPointerDown}
             />
         </g>
     );

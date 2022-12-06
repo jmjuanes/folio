@@ -28,6 +28,8 @@ export const EllipseElement = props => {
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             strokeLinejoin="round"
+            onPointerDown={props.onPointerDown}
+            onDoubleClick={props.onDoubleClick}
         />
     );
 };

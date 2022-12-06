@@ -30,6 +30,7 @@ const LineRenderer = props => {
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             strokeLinejoin="round"
+            onPointerDown={props.onPointerDown}
         />
     );
 };
