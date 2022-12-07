@@ -1,5 +1,6 @@
 import {
     ELEMENTS,
+    HANDLERS,
     ACTIONS,
     CHANGES,
     GRID_SIZE,
@@ -26,8 +27,8 @@ import {
 
 export const createApp = (callbacks) => {
     const state = {
-        width: 100,
-        height: 100,
+        width: 3000,
+        height: 1000,
         elements: [],
         settings: {},
         snapshot: null,
@@ -463,6 +464,8 @@ export const createApp = (callbacks) => {
                         ...(elementConfig.initialize?.(state.style) || {}),
                         x1: getPosition(event.originalX),
                         y1: getPosition(event.originalY),
+                        x2: getPosition(event.originalX),
+                        y2: getPosition(event.originalY),
                     });
                     elementConfig.onCreateStart?.(element, event),
                     state.activeElement = element; // Save element reference
@@ -511,11 +514,11 @@ export const createApp = (callbacks) => {
                 else if (state.activeAction === ACTIONS.DRAG) {
                     state.isDragged = true;
                     app.getSelectedElements().forEach((element, index) => {
-                        element.x1 = getPosition(element.x1 + info.dx),
-                        element.x2 = getPosition(element.x2 + info.dx),
-                        element.y1 = getPosition(element.y1 + info.dy),
-                        element.y2 = getPosition(element.y2 + info.dy),
-                        getElementConfig(element)?.onDrag?.(snapshot[index], event);
+                        element.x1 = getPosition(snapshot[index].x1 + event.dx);
+                        element.x2 = getPosition(snapshot[index].x2 + event.dx);
+                        element.y1 = getPosition(snapshot[index].y1 + event.dy);
+                        element.y2 = getPosition(snapshot[index].y2 + event.dy);
+                        // getElementConfig(element)?.onDrag?.(snapshot[index], event);
                     });
                 }
                 else if (state.activeAction === ACTIONS.RESIZE) {
@@ -572,7 +575,7 @@ export const createApp = (callbacks) => {
                 else if (state.activeAction === ACTIONS.CREATE && state.activeElement) {
                     const element = state.activeElement;
                     element.selected = true; // By default select this element
-                    getElementConfig(activelement)?.onCreateEnd?.(element, event);
+                    getElementConfig(element)?.onCreateEnd?.(element, event);
                     // We need to patch the history to save the new element values
                     const last = state.history[0] || {};
                     if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
@@ -590,17 +593,17 @@ export const createApp = (callbacks) => {
                     if (state.isDragged || state.isResized) {
                         const snapshot = state.snapshot;
                         const keys = ["x1", "x2", "y1", "y2"];
-                        app.addHistoryEntry({
+                        app.addHistory({
                             type: CHANGES.UPDATE,
                             elements: app.getSelectedElements().map((element, index) => ({
                                 id: element.id,
                                 prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
-                                newValues: Object.fromEntries(keys.map(key => [key, el[key]])),
+                                newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
                             })),
                         });
                     }
-                    state.current.isDragged = false;
-                    state.current.isResized = false;
+                    state.isDragged = false;
+                    state.isResized = false;
                 }
                 else if (app.state.activeAction === ACTIONS.SELECT) {
                     const selection = normalizeBounds(state.selection);
