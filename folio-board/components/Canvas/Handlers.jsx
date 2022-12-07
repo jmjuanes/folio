@@ -22,6 +22,7 @@ export const NodeHandlers = props => {
                 style={{
                     cursor: "grab",
                 }}
+                onPointerDown={props.onPointerDown}
             />
             <circle
                 data-handler={HANDLERS.NODE_END}
@@ -32,6 +33,7 @@ export const NodeHandlers = props => {
                 style={{
                     cursor: "grab",
                 }}
+                onPointerDown={props.onPointerDown}
             />
         </g>
     );
