@@ -176,7 +176,7 @@ export const Canvas = props => {
                         strokeColor={props.brushStrokeColor}
                     />
                 )}
-                {false && props.showHandlers && hasHandlersEnabled(selectedElements?.[0]) && (
+                {props.showHandlers && (
                     <Handlers
                         elements={selectedElements}
                         zoom={props.zoom}
