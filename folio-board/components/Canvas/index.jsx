@@ -13,10 +13,6 @@ const useSelectedElements = props => {
     return [];
 };
 
-const hasHandlersEnabled = element => {
-    return el.edgeHandlers || el.cornerHandlers || el.nodeHandlers;
-};
-
 export const Canvas = props => {
     const selectedElements = useSelectedElements(props);
 
@@ -47,7 +43,7 @@ export const Canvas = props => {
         const handlePointerMove = event => {
             event.preventDefault();
             props.onPointerMove?.(Object.assign(eventInfo, {
-                nativeEvent: event,
+                // nativeEvent: event,
                 currentX: (event.clientX - props.translateX) / props.zoom,
                 currentY: (event.clientY - props.translateY) / props.zoom,
                 dx: (event.clientX - eventInfo.nativeEvent.clientX) / props.zoom,
@@ -58,10 +54,7 @@ export const Canvas = props => {
         // Handle pointer up
         const handlePointerUp = event => {
             event.preventDefault();
-            props.onPointerUp?.({
-                ...eventInfo,
-                nativeEvent: event,
-            });
+            props.onPointerUp?.(eventInfo);
 
             // Remove events listeners
             document.removeEventListener("pointermove", handlePointerMove);
@@ -160,7 +153,7 @@ export const Canvas = props => {
                     {props.elements.map(element => {
                         return getElementConfig(element).render({
                             ...element,
-                            onChange: (k, v) => props?.onElementChange(element.id, k, v),
+                            onChange: (k, v) => props?.onElementChange?.(element.id, k, v),
                             onPointerDown: e => handlePointerDown(e, "element", props.onPointElement),
                             onDoubleClick: e => handleDoubleClick(e, "element", props.onDoubleClickElement),
                         });
