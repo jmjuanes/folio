@@ -32,6 +32,7 @@ export const DrawElement = props => {
     return (
         <g transform={`translate(${props.x1},${props.y1})`}>
             <path
+                data-element={props.id}
                 d={path}
                 fill="none"
                 stroke={strokeColors[props.strokeColor]}

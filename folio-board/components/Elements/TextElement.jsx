@@ -76,6 +76,7 @@ export const TextElement = props => {
                             width: textWidth,
                             wordBreak: "pre",
                         }}
+                        onPointerDown={stopEventPropagation}
                         onMouseDown={stopEventPropagation}
                         onMouseUp={stopEventPropagation}
                         onInput={event => {
@@ -84,8 +85,9 @@ export const TextElement = props => {
                     />
                 )}
             </foreignObject>
-            {props.text && !props.editing && (
+            {!props.editing && (
                 <rect
+                    data-element={props.id}
                     x={-1 * textWidth / 2}
                     y={-1 * textHeight / 2}
                     width={textWidth}

@@ -1,4 +1,5 @@
 import React from "react";
+import {DASH_KEYS} from "../../constants.js";
 import {getBalancedDash, getEllipsePerimeter} from "../../utils/index.js";
 import {fillColors, strokeColors, strokeWidths} from "../../styles.js";
 
@@ -9,12 +10,17 @@ export const EllipseElement = props => {
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
             const length = getEllipsePerimeter(rx, ry);
-            return getBalancedDash(length, strokeWidth, props.strokeStyle);
+            const strokeStyle = props.strokeStyle;
+            if (strokeStyle === DASH_KEYS.DASHED || strokeStyle === DASH_KEYS.DOTTED) {
+                return getBalancedDash(length, strokeWidth, strokeStyle);
+            }
+            return ["none", "none"];
         },
         [rx, ry, strokeWidth, props.strokeStyle],
     );
     return (
         <ellipse
+            data-element={props.id}
             cx={Math.min(props.x1, props.x2) + rx}
             cy={Math.min(props.y1, props.y2) + ry}
             rx={rx}

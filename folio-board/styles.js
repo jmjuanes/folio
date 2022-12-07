@@ -7,9 +7,10 @@ import {
 } from "./constants.js";
 
 export const strokeColors = {
-    [COLOR_KEYS.NONE]: "none",
+    [COLOR_KEYS.NONE]: "transparent",
     [COLOR_KEYS.WHITE]: "rgb(255,255,255)",
     [COLOR_KEYS.GRAY]: "rgb(66,72,82)", 
+    [COLOR_KEYS.BLACK]: "rgb(0,0,0)",
     [COLOR_KEYS.BLUE]: "rgb(74,136,218)",
     [COLOR_KEYS.GREEN]: "rgb(137, 192, 84)",
     [COLOR_KEYS.PURPLE]: "rgb(149, 121, 218)",
@@ -19,10 +20,10 @@ export const strokeColors = {
 };
 
 export const fillColors = {
-    [COLOR_KEYS.NONE]: "none",
+    [COLOR_KEYS.NONE]: "transparent",
     [COLOR_KEYS.WHITE]: "rgb(255,255,255)",
     [COLOR_KEYS.GRAY]: "rgb(169, 176, 187)",
-    [COLOR_KEYS.BLACK]: "rgb(255,255,255)",
+    [COLOR_KEYS.BLACK]: "rgb(0,0,0)",
     [COLOR_KEYS.BLUE]: "rgb(115, 176, 244)",
     [COLOR_KEYS.GREEN]: "rgb(180, 223, 128)",
     [COLOR_KEYS.PURPLE]: "rgb(179, 164, 238)",
