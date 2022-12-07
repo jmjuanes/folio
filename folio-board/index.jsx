@@ -1,13 +1,6 @@
 import React from "react";
 import {
     ACTIONS,
-    EVENTS,
-    KEYS,
-    HANDLERS,
-    ELEMENT_CHANGES,
-    ZOOM_STEP,
-    ZOOM_MIN,
-    ZOOM_MAX,
     SCREENSHOT_FILL_COLOR,
     SCREENSHOT_STROKE_COLOR,
     SELECTION_FILL_COLOR,
@@ -43,6 +36,9 @@ export const FolioBoard = props => {
 
     // After mounting board component
     const handleBoardMount = () => {
+        if (props.board) {
+            app.loadBoard(props.board);
+        }
         props?.onMount?.(app);
     };
 
@@ -67,7 +63,7 @@ export const FolioBoard = props => {
                 brushFillColor={action === ACTIONS.SCREENSHOT ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
                 brushStrokeColor={action === ACTIONS.SCREENSHOT ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
                 showHandlers={!app.state.activeAction && !app.state.activeTool}
-                showBrush={action === ACTIONS.SELECTION || action === ACTIONS.SCREENSHOT}
+                showBrush={action === ACTIONS.SELECT || action === ACTIONS.SCREENSHOT}
                 showBounds={!app.state.activeAction && !app.state.activeTool}
                 showGrid={true}
                 {...app.events}
@@ -104,7 +100,7 @@ export const FolioBoard = props => {
             )}
             {props.showZoom && (
                 <ZoomPanel
-                    zoom={state.current.zoom}
+                    zoom={app.state.zoom}
                     onZoomInClick={() => app.zoomIn()}
                     onZoomOutClick={() => app.zoomOut()}
                 />
@@ -113,7 +109,7 @@ export const FolioBoard = props => {
                 <EditionPanel
                     key={updateKey}
                     elements={selectedElements}
-                    styleDialogActive={!!state.current.showStyleDialog}
+                    styleDialogActive={!!styleDialogVisible}
                     onRemoveClick={() => {
                         app.cancelAction();
                         app.removeElements(selectedElements);
@@ -156,6 +152,7 @@ export const FolioBoard = props => {
 };
 
 FolioBoard.defaultProps = {
+    board: null,
     width: 0,
     height: 0,
     showMenu: true,
