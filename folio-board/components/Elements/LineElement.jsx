@@ -3,7 +3,7 @@ import {DASH_KEYS} from "../../constants.js";
 import {getBalancedDash, getPointsDistance} from "../../utils/index.js";
 import {strokeColors, strokeWidths} from "../../styles.js";
 
-const LineRenderer = props => {
+export const LineElement = props => {
     const strokeWidth = strokeWidths[props.strokeWidth];
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
