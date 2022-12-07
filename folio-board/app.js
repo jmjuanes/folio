@@ -49,6 +49,7 @@ export const createApp = (callbacks) => {
         lastTranslateY: 0,
         isDragged: false,
         isResized: false,
+        isPrevSelected: false,
     };
     const getPosition = pos => {
         // return state.settings.showGrid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
@@ -429,14 +430,8 @@ export const createApp = (callbacks) => {
             onPointElement: event => {
                 if (!state.activeTool && !state.activeAction) {
                     const element = app.getElement(event.element);
-                    if (!event.shiftKey) {
-                        app.clearSelectedElements();
-                        element.selected = true;
-                    }
-                    else {
-                        // Toggle element selection
-                        element.selected = !element.selected;
-                    }
+                    state.isPrevSelected = element.selected;
+                    element.selected = true;
                     app.update();
                 }
             },
@@ -601,6 +596,17 @@ export const createApp = (callbacks) => {
                                 newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
                             })),
                         });
+                    }
+                    else if (event.element) {
+                        const element = app.getElement(event.element);
+                        if (!event.shiftKey) {
+                            app.clearSelectedElements();
+                            element.selected = true;
+                        }
+                        else {
+                            // Toggle element selection
+                            element.selected = !state.isPrevSelected;
+                        }
                     }
                     state.isDragged = false;
                     state.isResized = false;
