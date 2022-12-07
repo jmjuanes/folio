@@ -421,7 +421,9 @@ export const createApp = (callbacks) => {
         // 
         events: {
             onPointCanvas: event => {
-                app.cancelAction();
+                if (state.activeAction === ACTIONS.EDIT) {
+                    app.cancelAction();
+                }
                 if (!state.activeTool) {
                     app.clearSelectedElements();
                     app.update();
@@ -431,6 +433,10 @@ export const createApp = (callbacks) => {
                 if (!state.activeTool && !state.activeAction) {
                     const element = app.getElement(event.element);
                     state.isPrevSelected = element.selected;
+                    const inCurrentSelection = app.getSelectedElements().some(el => el.id === element.id);
+                    if (!inCurrentSelection && !event.shiftKey) {
+                        app.clearSelectedElements();
+                    }
                     element.selected = true;
                     app.update();
                 }
@@ -566,6 +572,8 @@ export const createApp = (callbacks) => {
                 if (state.activeAction === ACTIONS.MOVE) {
                     state.lastTranslateX = state.translateX;
                     state.lastTranslateY = state.translateY;
+                    // Prevent reset of activeAction
+                    return app.update();
                 }
                 else if (state.activeAction === ACTIONS.CREATE && state.activeElement) {
                     const element = state.activeElement;
