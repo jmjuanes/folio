@@ -97,7 +97,7 @@ export const createApp = (callbacks) => {
                 width: state.width,
                 height: state.height,
                 elements: state.elements.map(element => ({
-                    ...elements,
+                    ...element,
                     selected: false,
                 })),
                 settings: {
@@ -193,8 +193,8 @@ export const createApp = (callbacks) => {
             }
             // 3. Update default styles
             keys.forEach((key, index) => {
-                if (typeof state.styles[key] !== "undefined") {
-                    state.styles[key] = values[index];
+                if (typeof state.style[key] !== "undefined") {
+                    state.style[key] = values[index];
                 }
             });
         },

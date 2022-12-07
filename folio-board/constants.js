@@ -86,8 +86,8 @@ export const HANDLERS = {
     CORNER_TOP_RIGHT: "corner-top-right",
     CORNER_BOTTOM_LEFT: "corner-bottom-left",
     CORNER_BOTTOM_RIGHT: "corner-bottom-right",
-    NODE_START: "point-start",
-    NODE_END: "point-end",
+    NODE_START: "node-start",
+    NODE_END: "node-end",
 };
 
 //
