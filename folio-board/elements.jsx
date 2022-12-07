@@ -117,8 +117,8 @@ export const elementsConfig = {
         onCreateStart: element => {
             element.points.push([0, 0]);
         },
-        onCreateMove: (element, info) => {
-            element.push([event.dx, event.dy]);
+        onCreateMove: (element, event) => {
+            element.points.push([event.dx, event.dy]);
         },
         onCreateEnd: element => {
             // Calculate the min and max points increment

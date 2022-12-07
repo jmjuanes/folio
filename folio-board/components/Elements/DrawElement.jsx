@@ -9,8 +9,9 @@ const getPath = points => {
     ];
     for (let i = 1; i < points.length; i++) {
         const point = points[i];
-        const center = getPointsCenter(lastPoint, point);
-        commands.push(`Q${lastPoint[0]},${lastPoint[1]} ${center[0]},${center[1]}`);
+        // const center = getPointsCenter(lastPoint, point);
+        // commands.push(`Q${lastPoint[0]},${lastPoint[1]} ${center[0]},${center[1]}`);
+        commands.push(`L${point[0]},${point[1]}`);
         lastPoint = point;
     }
     commands.push(`L${lastPoint[0]},${lastPoint[1]}`);
@@ -42,6 +43,16 @@ export const DrawElement = props => {
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                onPointerDown={props.onPointerDown}
+            />
+            <rect
+                data-element={props.id}
+                x="0"
+                y="0"
+                width={Math.abs(props.x2 - props.x1)}
+                height={Math.abs(props.y2 - props.y1)}
+                fill="transparent"
+                stroke="none"
                 onPointerDown={props.onPointerDown}
             />
         </g>
