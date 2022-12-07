@@ -7,22 +7,8 @@ import {
     RectangleToolIcon,
     CircleToolIcon,
     LineToolIcon,
+    PenToolIcon,
 } from "../icons/index.jsx";
-
-const availableTools = [
-    {
-        element: ELEMENTS.RECTANGLE,
-        Icon: RectangleToolIcon,
-    },
-    {
-        element: ELEMENTS.ELLIPSE,
-        Icon: CircleToolIcon,
-    },
-    {
-        element: ELEMENTS.LINE,
-        Icon: LineToolIcon,
-    },
-];
 
 export const ToolsPanel = props => (
     <Panel position="bottom-center">
@@ -44,15 +30,19 @@ export const ToolsPanel = props => (
                 width: "1px",
             }}
         />
-        {availableTools.map(tool => (
-            <PanelButton
-                key={tool.element}
-                active={props.tool === tool.element}
-                onClick={() => props.onToolClick(tool.element)}
-            >
-                <tool.Icon />
-            </PanelButton>
-        ))}
+        {/* Available tools */}
+        <PanelButton active={props.tool === ELEMENTS.RECTANGLE} onClick={() => props.onToolClick(ELEMENTS.RECTANGLE)}>
+            <RectangleToolIcon />
+        </PanelButton>
+        <PanelButton active={props.tool === ELEMENTS.ELLIPSE} onClick={() => props.onToolClick(ELEMENTS.ELLIPSE)}>
+            <CircleToolIcon />
+        </PanelButton>
+        <PanelButton active={props.tool === ELEMENTS.LINE} onClick={() => props.onToolClick(ELEMENTS.LINE)}>
+            <LineToolIcon />
+        </PanelButton>
+        <PanelButton active={props.tool === ELEMENTS.DRAW} onClick={() => props.onToolClick(ELEMENTS.DRAW)}>
+            <PenToolIcon />
+        </PanelButton>
     </Panel>
 );
 
