@@ -5,45 +5,47 @@ import {BanIcon} from "../icons/index.jsx";
 const optionTypes = {
     color: props => (
         <div className="d-grid gap-1 grid-cols-4 w-full">
-            {(props.values || []).map(color => (
+            {(props.values || []).map(item => (
                 <div
-                    key={color}
+                    key={item.value}
                     className={classNames({
-                        "w-full h-full text-lg text-red-500": color === "transparent",
-                        "p-4": color !== "transparent",
+                        "w-full h-full text-lg text-red-500": item.color === "transparent",
+                        "p-4": item.color !== "transparent",
                         "d-flex items-center justify-center b-2 b-solid r-md text-gray-900": true,
-                        "b-gray-900": color === props.value,
+                        "b-gray-900": item.value === props.value,
                         // "b-white": color !== props.value,
-                        "b-gray-200": color !== props.value,
+                        "b-gray-200": item.value !== props.value,
                     })}
+                    data-color={item.value}
                     style={{
-                        backgroundColor: color,
+                        backgroundColor: item.color,
                         cursor: "pointer",
                     }}
-                    onClick={() => props.onChange(color)}
+                    onClick={() => props.onChange(item.value)}
                 >
-                    {color === "transparent" && BanIcon()}
+                    {item.color === "transparent" && BanIcon()}
                 </div>
             ))}
         </div>
     ),
     font: props => (
         <div className="d-flex gap-1 w-full">
-            {(props.values || []).map(value => {
-                const itemClass = classNames({
-                    "d-flex justify-center items-center": true,
-                    "r-md cursor-pointer p-2 w-full text-lg": true,
-                    "bg-gray-900 text-white": value === props.value,
-                });
-                const itemStyle = {
-                    fontFamily: value,
-                };
-                return (
-                    <div key={value} className={itemClass} style={itemStyle} onClick={() => props.onChange(value)}>
-                        <strong>Aa</strong>
-                    </div>
-                );
-            })}
+            {(props.values || []).map(item => (
+                <div
+                    key={item.value}
+                    className={classNames({
+                        "d-flex justify-center items-center": true,
+                        "r-md cursor-pointer p-2 w-full text-lg": true,
+                        "bg-gray-900 text-white": item.value === props.value,
+                    })}
+                    style={{
+                        fontFamily: item.font,
+                    }}
+                    onClick={() => props.onChange(item.value)}
+                >
+                    <strong>Aa</strong>
+                </div>
+            ))}
         </div>
     ),
     select: props => (

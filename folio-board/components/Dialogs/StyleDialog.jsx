@@ -11,9 +11,7 @@ import {
 import {
     fillColors,
     strokeColors,
-    strokeWidths,
     fontFaces,
-    fontSizes,
 } from "../../styles.js";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
@@ -37,7 +35,7 @@ const options = {
             fillColor: {
                 type: "color",
                 title: "Fill Color",
-                values: Object.keys(COLOR_KEYS).map(key => ({
+                values: Object.values(COLOR_KEYS).map(key => ({
                     value: key,
                     color: fillColors[key],
                 })),
@@ -47,7 +45,7 @@ const options = {
                 title: "Fill Opacity",
                 values: [
                     {value: OPACITY_KEYS.NONE, icon: OpacityNoneIcon()},
-                    {value: OPACITY_KEYS.SEMITRANSPARENT, icon: OpacitySemiTransparentIcon()},
+                    {value: OPACITY_KEYS.SEMI_TRANSPARENT, icon: OpacitySemiTransparentIcon()},
                     {value: OPACITY_KEYS.TRANSPARENT, icon: OpacityTransparentIcon()},
                 ],
             },
@@ -60,7 +58,7 @@ const options = {
             strokeColor: {
                 type: "color",
                 title: "Stroke color",
-                values: Object.keys(COLOR_KEYS).map(key => ({
+                values: Object.values(COLOR_KEYS).map(key => ({
                     value: key,
                     color: strokeColors[key],
                 })),
@@ -89,7 +87,7 @@ const options = {
                 title: "Stroke Opacity",
                 values: [
                     {value: OPACITY_KEYS.NONE, icon: OpacityNoneIcon()},
-                    {value: OPACITY_KEYS.SEMITRANSPARENT, icon: OpacitySemiTransparentIcon()},
+                    {value: OPACITY_KEYS.SEMI_TRANSPARENT, icon: OpacitySemiTransparentIcon()},
                     {value: OPACITY_KEYS.TRANSPARENT, icon: OpacityTransparentIcon()},
                 ],
             },
@@ -102,7 +100,7 @@ const options = {
             textColor: {
                 type: "color",
                 title: "Text Color",
-                values: Object.keys(COLOR_KEYS).map(key => ({
+                values: Object.values(COLOR_KEYS).map(key => ({
                     value: key,
                     // color: textColors[key],
                     color: strokeColors[key],
@@ -153,7 +151,6 @@ const useValues = props => {
 export const StyleDialog = props => {
     const values = useValues(props);
     const [currentTab, setCurrentTab] = React.useState("fill");
-    const hasTextOption = checkHasTextOption(props);
     const activeTab = getActiveTab(values, currentTab);
 
     return (
