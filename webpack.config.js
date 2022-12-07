@@ -15,6 +15,15 @@ module.exports = {
         publicPath: "./",
         filename: "[contenthash:9].js",
     },
+    devServer: {
+        hot: false,
+        static: {
+            directory: path.join(__dirname, "public"),
+        },
+        devMiddleware: {
+            writeToDisk: true,
+        },
+    },
     resolve: {
         alias: {
             "folio": path.join(__dirname, "folio-board", "index.jsx"),

@@ -9,6 +9,7 @@
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "scripts": {
         "build": "webpack build --config ./webpack.config.js",
+        "dev": "webpack serve",
         "clean": "rm -rf ./public",
         "serve": "stattic --folder ./public --port 5000",
         "pack": "tar -C ./public -czf folio.tar.gz .",
@@ -25,15 +26,16 @@
         "classnames": "^2.3.2",
         "copy-webpack-plugin": "^11.0.0",
         "html-webpack-plugin": "^5.5.0",
-        "lowcss": "^0.2.1",
         "jest": "^28.1.3",
         "jest-environment-jsdom": "^28.1.3",
+        "lowcss": "^0.2.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-test-renderer": "^18.2.0",
         "stattic": "^0.4.0",
         "webpack": "^5.72.1",
-        "webpack-cli": "^4.9.2"
+        "webpack-cli": "^4.9.2",
+        "webpack-dev-server": "^4.11.1"
     },
     "license": "MIT",
     "jest": {
