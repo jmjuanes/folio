@@ -61,6 +61,7 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 path.join(__dirname, "node_modules", "lowcss", "dist", "low.css"),
+                path.join(__dirname, "folio-board", "assets", "fonts.css"),
             ],
         }),
         new HtmlWebpackPlugin({
