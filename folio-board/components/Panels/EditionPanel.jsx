@@ -2,6 +2,9 @@ import React from "react";
 
 import {Panel, PanelButton} from "./Panel.jsx";
 import {
+    FillIcon,
+    StrokeIcon,
+    TextIcon,
     EditIcon,
     TrashIcon,
 } from "../icons/index.jsx";
@@ -15,11 +18,34 @@ import {
 //     return selection.length > 0 && selection.some(el => !!el.group);
 // };
 
+const getButtonProps = (props, type, test) => {
+    const elements = props.elements || [];
+    let isDisabled = true;
+    if (elements.length === 0 || (elements.length === 1 && typeof elements[0]?.[test] !== "undefined")) {
+        isDisabled = false;
+    }
+    return {
+        active: props.dialog === type,
+        disabled: isDisabled,
+        onClick: () => {
+            if (!isDisabled) {
+                return props.onDialogClick?.(id === props.dialog ? null : id);
+            }
+        },
+    };
+};
+
 export const EditionPanel = props => (
     <Panel position="top-right">
-        {/* Style button */}
-        <PanelButton active={!!props.styleDialogActive} disabled={props.selection.length >= 2} onClick={props.onStyleDialogToggle}>
-            <EditIcon />
+        {/* Style buttons */}
+        <PanelButton {...getButtonProps(props, "fill", "fillColor")}>
+            <FillIcon />
+        </PanelButton>
+        <PanelButton {...getButtonProps(props, "stroke", "strokeColor")}>
+            <StrokeIcon />
+        </PanelButton>
+        <PanelButton {...getButtonProps(props, "text", "textColor")}>
+            <TextIcon />
         </PanelButton>
         {/* Order buttons */}
         {/*
@@ -46,18 +72,18 @@ export const EditionPanel = props => (
         </PanelButton>
         */}
         {/* Remove current selection */}
-        <PanelButton disabled={!props.selection || props.selection.length === 0} onClick={props.onRemoveClick}>
+        <PanelButton disabled={(props.elements || []).length === 0} onClick={props.onRemoveClick}>
             <TrashIcon />
         </PanelButton>
     </Panel>
 );
 
 EditionPanel.defaultProps = {
-    selection: [],
+    elements: [],
+    dialog: null,
     // activeGroup: null,
-    styleDialogActive: false,
     // onGroupSelectionClick: null,
     // onUngroupSelectionClick: null,
     onRemoveClick: null,
-    onStyleDialogToggle: null,
+    onDialogClick: null,
 };

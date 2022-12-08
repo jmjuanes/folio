@@ -1,1 +1,3 @@
-export * from "./StyleDialog.jsx";
+export * from "./FillDialog.jsx";
+export * from "./StrokeDialog.jsx";
+export * from "./TextDialog.jsx";

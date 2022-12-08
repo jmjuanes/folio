@@ -14,12 +14,17 @@ import {
     ToolsPanel,
     ZoomPanel,
 } from "./components/Panels/index.jsx";
-import {StyleDialog} from "./components/Dialogs/index.jsx";
+import {
+    FillDialog,
+    StrokeDialog,
+    TextDialog,
+} from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
 
 export const FolioBoard = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const [styleDialogVisible, setStyleDialogVisible] = React.useState(false);
+    const activeDialog = React.useRef(null);
     // const ref = React.useRef(null);
     const app = useApp({
         onUpdate: forceUpdate,
@@ -33,6 +38,12 @@ export const FolioBoard = props => {
     //     state.current.translateY = Math.floor((size.height - props.height) / 2);
     //     forceUpdate();
     // };
+
+    // Register element change
+    const handleElementChange = (key, value) => {
+        app.updateElements(selectedElements, [key], [value], true);
+        return app.update();
+    };
 
     // After mounting board component
     const handleBoardMount = () => {
@@ -48,6 +59,11 @@ export const FolioBoard = props => {
     // const {action, tool} = app.state;
     const action = app.state.activeAction;
     const selectedElements = app.getSelectedElements();
+
+    // Force to reset the active dialog if there is an action or a tool active
+    if (app.state.activeAction || app.state.activeTool) {
+        activeDialog.current = null;
+    }
 
     return (
         <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
@@ -109,7 +125,7 @@ export const FolioBoard = props => {
                 <EditionPanel
                     key={updateKey}
                     elements={selectedElements}
-                    styleDialogActive={!!styleDialogVisible}
+                    dialog={activeDialog.current}
                     onRemoveClick={() => {
                         app.cancelAction();
                         app.removeElements(selectedElements);
@@ -132,20 +148,39 @@ export const FolioBoard = props => {
                         // app.current.updateSelectedElements("group", null);
                         // forceUpdate();
                     }}
-                    onStyleDialogToggle={() => {
-                        return setStyleDialogVisible(!styleDialogVisible);
+                    onDialogClick={id => {
+                        activeDialog.current = id;
+                        forceUpdate();
                     }}
                 />
             )}
-            {!action && styleDialogVisible && selectedElements.length < 2 && (
-                <StyleDialog
-                    elements={selectedElements}
-                    values={app.state.style}
-                    onChange={(key, value) => {
-                        app.updateElements(selectedElements, [key], [value], true);
-                        app.update();
-                    }}
-                />
+            {!action && !!activeDialog.current && selectedElements.length < 2 && (
+                <React.Fragment>
+                    {activeDialog.current === "fill" && (
+                        <FillDialog
+                            key={updateKey}
+                            defaultValues={app.state.style}
+                            elements={selectedElements}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                    {activeDialog.current === "stroke" && (
+                        <StrokeDialog
+                            key={updateKey}
+                            defaultValues={app.state.style}
+                            elements={selectedElements}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                    {activeDialog.current === "text" && (
+                        <TextDialog
+                            key={updateKey}
+                            defaultValues={app.state.style}
+                            elements={selectedElements}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                </React.Fragment>
             )}
         </div>
     );
