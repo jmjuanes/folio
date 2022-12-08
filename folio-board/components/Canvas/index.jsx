@@ -142,7 +142,7 @@ export const Canvas = props => {
                         height={props.height}
                     />
                 )}
-                {props.showBounds && selectedElements.length > 1 && (
+                {props.showBounds && selectedElements.length > 0 && (
                     <Bounds
                         elements={selectedElements}
                         zoom={props.zoom}
