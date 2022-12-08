@@ -9,9 +9,8 @@ const getPath = points => {
     ];
     for (let i = 1; i < points.length; i++) {
         const point = points[i];
-        // const center = getPointsCenter(lastPoint, point);
-        // commands.push(`Q${lastPoint[0]},${lastPoint[1]} ${center[0]},${center[1]}`);
-        commands.push(`L${point[0]},${point[1]}`);
+        const center = getPointsCenter(lastPoint, point);
+        commands.push(`Q${lastPoint[0]},${lastPoint[1]} ${center[0]},${center[1]}`);
         lastPoint = point;
     }
     commands.push(`L${lastPoint[0]},${lastPoint[1]}`);

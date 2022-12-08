@@ -121,19 +121,24 @@ export const elementsConfig = {
             element.points.push([event.dx, event.dy]);
         },
         onCreateEnd: element => {
+            const initialX = element.x1;
+            const initialY = element.y1;
             // Calculate the min and max points increment
             const minX = Math.min.apply(null, element.points.map(point => point[0]));
             const maxX = Math.max.apply(null, element.points.map(point => point[0]));
             const minY = Math.min.apply(null, element.points.map(point => point[1]));
             const maxY = Math.max.apply(null, element.points.map(point => point[1]));
             // Update element position
-            element.x1 = Math.floor((element.x1 - minX) / GRID_SIZE) * GRID_SIZE;
-            element.y1 = Math.floor((element.y1 - minY) / GRID_SIZE) * GRID_SIZE;
-            element.x2 = Math.ceil((element.x1 + maxX) / GRID_SIZE) * GRID_SIZE;
-            element.y2 = Math.ceil((element.y1 + maxY) / GRID_SIZE) * GRID_SIZE;
+            element.x1 = Math.floor((initialX - minX) / GRID_SIZE) * GRID_SIZE;
+            element.y1 = Math.floor((initialY - minY) / GRID_SIZE) * GRID_SIZE;
+            element.x2 = Math.ceil((initialX + maxX) / GRID_SIZE) * GRID_SIZE;
+            element.y2 = Math.ceil((initialY + maxY) / GRID_SIZE) * GRID_SIZE;
             // Simplify path and translate to (x1,y1)
             element.points = simplifyPath(element.points, 0.5).map(point => {
-                return [point[0] + minX, point[1] + minY];
+                return [
+                    point[0] - element.x1 + initialX,
+                    point[1] - element.y1 + initialY,
+                ];
             });
         },
     },
