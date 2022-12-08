@@ -108,6 +108,7 @@ export const COLOR_KEYS = {
 };
 
 export const FONT_KEYS = {
+    DRAW: "draw",
     SANS: "sans",
     SERIF: "serif",
     MONO: "monospace"

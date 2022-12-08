@@ -49,8 +49,8 @@ export const fontSizes = {
 export const fontFaces = {
     [FONT_KEYS.SANS]: "Noto Sans, sans-serif",
     [FONT_KEYS.SERIF]: "Noto Serif, serif",
-    // [FONT_KEYS.DRAW]: "Caveat Brush, cursive;",
-    [FONT_KEYS.MONO]: "Noto Sans Mono, monospace",
+    [FONT_KEYS.DRAW]: "Caveat Brush, cursive;",
+    [FONT_KEYS.MONO]: "monospace",
 };
 
 export const defaultStyles = {
