@@ -129,8 +129,8 @@ export const elementsConfig = {
             const minY = Math.min.apply(null, element.points.map(point => point[1]));
             const maxY = Math.max.apply(null, element.points.map(point => point[1]));
             // Update element position
-            element.x1 = Math.floor((initialX - minX) / GRID_SIZE) * GRID_SIZE;
-            element.y1 = Math.floor((initialY - minY) / GRID_SIZE) * GRID_SIZE;
+            element.x1 = Math.floor((initialX + minX) / GRID_SIZE) * GRID_SIZE;
+            element.y1 = Math.floor((initialY + minY) / GRID_SIZE) * GRID_SIZE;
             element.x2 = Math.ceil((initialX + maxX) / GRID_SIZE) * GRID_SIZE;
             element.y2 = Math.ceil((initialY + maxY) / GRID_SIZE) * GRID_SIZE;
             // Simplify path and translate to (x1,y1)
