@@ -29,7 +29,7 @@ const getButtonProps = (props, type, test) => {
         disabled: isDisabled,
         onClick: () => {
             if (!isDisabled) {
-                return props.onDialogClick?.(id === props.dialog ? null : id);
+                return props.onDialogClick?.(type === props.dialog ? null : type);
             }
         },
     };
