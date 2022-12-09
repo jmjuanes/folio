@@ -6,7 +6,7 @@ import {
     StrokeIcon,
     TextIcon,
     ShapesIcon,
-    ArrowIcon,
+    ArrowheadArrowIcon,
     TrashIcon,
 } from "../icons/index.jsx";
 
@@ -49,7 +49,7 @@ export const EditionPanel = props => (
             <TextIcon />
         </PanelButton>
         <PanelButton {...getButtonProps(props, DIALOGS.ARROWHEAD, "startArrowhead")}>
-            <ArrowIcon />
+            <ArrowheadArrowIcon />
         </PanelButton>
         <PanelButton {...getButtonProps(props, DIALOGS.SHAPE, "shape")}>
             <ShapesIcon />

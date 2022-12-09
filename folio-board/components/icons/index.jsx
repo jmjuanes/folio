@@ -145,3 +145,39 @@ export const ArrowIcon = () => (
         <path d="M6 18L18 6M18 15L18 6L9 6" />
     </SvgIcon>
 );
+
+export const ArrowheadNoneIcon = () => (
+    <SvgIcon title="None">
+        <path d="M3 12L21 12" />
+    </SvgIcon>
+);
+
+export const ArrowheadArrowIcon = () => (
+    <SvgIcon title="Arrow">
+        <path d="M3 12L21 12M13 4L21 12L13 20" />
+    </SvgIcon>
+);
+
+export const ArrowheadTriangleIcon = () => (
+    <SvgIcon title="Triangle">
+        <path d="M3 12L12 12M21 12L12 5L12 19L21 12Z" />
+    </SvgIcon>
+);
+
+export const ArrowheadSquareIcon = () => (
+    <SvgIcon title="Square">
+        <path d="M3 12L8 12M8 5L8 19L21 19L21 5L8 5Z" />
+    </SvgIcon>
+);
+
+export const ArrowheadCircleIcon = () => (
+    <SvgIcon title="Circle">
+        <path d="M3 12L7 12M7 12C7 8.13401 10.134 5 14 5C17.866 5 21 8.13401 21 12C21 15.866 17.866 19 14 19C10.134 19 7 15.866 7 12Z" />
+    </SvgIcon>
+);
+
+export const ArrowheadSegmentIcon = () => (
+    <SvgIcon title="Segment">
+        <path d="M3 12L21 12M21 5L21 19" />
+    </SvgIcon>
+);

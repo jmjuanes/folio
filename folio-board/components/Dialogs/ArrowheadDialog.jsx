@@ -2,24 +2,34 @@ import React from "react";
 import {ARROWHEADS} from "../../constants.js";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
-// import {} from "../icons/index.jsx";
+import {
+    ArrowheadNoneIcon,
+    ArrowheadArrowIcon,
+    ArrowheadTriangleIcon,
+    ArrowheadSquareIcon,
+    ArrowheadCircleIcon,
+    ArrowheadSegmentIcon,
+} from "../icons/index.jsx";
+
+const arrowheadValues = [
+    {value: ARROWHEADS.NONE, icon: ArrowheadNoneIcon()},
+    {value: ARROWHEADS.ARROW, icon: ArrowheadArrowIcon()},
+    {value: ARROWHEADS.TRIANGLE, icon: ArrowheadTriangleIcon()},
+    {value: ARROWHEADS.SQUARE, icon: ArrowheadSquareIcon()},
+    {value: ARROWHEADS.CIRCLE, icon: ArrowheadCircleIcon()},
+    {value: ARROWHEADS.SEGMENT, icon: ArrowheadSegmentIcon()},
+];
 
 const options = {
     startArrowhead: {
         type: "select",
         title: "Start Arrowhead",
-        values: Object.values(ARROWHEADS).map(key => ({
-            value: key,
-            text: key,
-        })),
+        values: arrowheadValues,
     },
     endArrowhead: {
         type: "select",
         title: "End Arrowhead",
-        values: Object.values(ARROWHEADS).map(key => ({
-            value: key,
-            text: key,
-        })),
+        values: arrowheadValues,
     },
 };
 
