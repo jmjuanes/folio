@@ -1,61 +1,32 @@
 import React from "react";
-import {ELEMENTS, GRID_SIZE} from "./constants";
-import {RectangleElement} from "./components/Elements/RectangleElement.jsx";
-import {EllipseElement} from "./components/Elements/EllipseElement.jsx";
+import {ELEMENTS, GRID_SIZE, SHAPES} from "./constants";
 import {LineElement} from "./components/Elements/LineElement.jsx";
 import {DrawElement} from "./components/Elements/DrawElement.jsx";
 import {TextElement} from "./components/Elements/TextElement.jsx";
+import {ShapeElement} from "./components/Elements/ShapeElement.jsx";
 import {simplifyPath} from "./utils/index.js";
 
 export const elementsConfig = {
-    [ELEMENTS.RECTANGLE]: {
+    [ELEMENTS.SHAPE]: {
         render: props => (
             <g key={props.id} data-element={props.id}>
-                <RectangleElement {...props} />
+                <ShapeElement {...props} />
             </g>
         ),
-        initialize: styles => ({
+        initialize: values => ({
+            shape: values.shape || SHAPES.RECTANGLE,
             edgeHandlers: true,
             cornerHandlers: true,
-            fillColor: styles.fillColor,
-            fillOpacity: styles.fillOpacity,
-            strokeColor: styles.strokeColor,
-            strokeWidth: styles.strokeWidth,
-            strokeStyle: styles.strokeStyle,
-            strokeOpacity: styles.strokeOpacity,
+            fillColor: values.fillColor,
+            fillOpacity: values.fillOpacity,
+            strokeColor: values.strokeColor,
+            strokeWidth: values.strokeWidth,
+            strokeStyle: values.strokeStyle,
+            strokeOpacity: values.strokeOpacity,
             text: "",
-            textColor: styles.textColor,
-            textFont: styles.textFont,
-            textSize: styles.textSize,
-        }),
-        onCreateEnd: element => {
-            Object.assign(element, {
-                x1: Math.min(element.x1, element.x2),
-                y1: Math.min(element.y1, element.y2),
-                x2: Math.max(element.x1, element.x2),
-                y2: Math.max(element.y1, element.y2),
-            });
-        },
-    },
-    [ELEMENTS.ELLIPSE]: {
-        render: props => (
-            <g key={props.id} data-element={props.id}>
-                <EllipseElement {...props} />
-            </g>
-        ),
-        initialize: styles => ({
-            edgeHandlers: true,
-            cornerHandlers: true,
-            fillColor: styles.fillColor,
-            fillOpacity: styles.fillOpacity,
-            strokeColor: styles.strokeColor,
-            strokeWidth: styles.strokeWidth,
-            strokeStyle: styles.strokeStyle,
-            strokeOpacity: styles.strokeOpacity,
-            text: "",
-            textColor: styles.textColor,
-            textFont: styles.textFont,
-            textSize: styles.textSize,
+            textColor: values.textColor,
+            textFont: values.textFont,
+            textSize: values.textSize,
         }),
         onCreateEnd: element => {
             Object.assign(element, {

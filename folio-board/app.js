@@ -1,5 +1,6 @@
 import {
     ELEMENTS,
+    SHAPES,
     HANDLERS,
     ACTIONS,
     CHANGES,
@@ -36,6 +37,7 @@ export const createApp = (callbacks) => {
         historyIndex: 0,
         style: {
             ...defaultStyles,
+            shape: SHAPES.RECTANGLE,
         },
         selection: null,
         activeTool: null,

@@ -26,13 +26,19 @@ export const KEYS = {
 };
 
 export const ELEMENTS = {
-    RECTANGLE: "element:rectangle",
-    ELLIPSE: "element:ellipse",
-    LINE: "element:line",
-    ARROW: "element:arrow",
-    IMAGE: "element:image",
-    TEXT: "element:text",
-    DRAW: "element:draw",
+    SHAPE: "shape",
+    LINE: "line",
+    ARROW: "arrow",
+    IMAGE: "image",
+    TEXT: "text",
+    DRAW: "draw",
+};
+
+export const SHAPES = {
+    RECTANGLE: "rectangle",
+    ELLIPSE: "ellipse",
+    DIAMOND: "diamond",
+    TRIANGLE: "triangle",
 };
 
 export const ACTIONS = {
