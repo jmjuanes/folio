@@ -1,11 +1,12 @@
 import React from "react";
-
+import {DIALOGS} from "../../constants.js";
 import {Panel, PanelButton} from "./Panel.jsx";
 import {
     FillIcon,
     StrokeIcon,
     TextIcon,
     ShapesIcon,
+    ArrowIcon,
     TrashIcon,
 } from "../icons/index.jsx";
 
@@ -38,16 +39,19 @@ const getButtonProps = (props, type, test) => {
 export const EditionPanel = props => (
     <Panel position="top-right">
         {/* Style buttons */}
-        <PanelButton {...getButtonProps(props, "fill", "fillColor")}>
+        <PanelButton {...getButtonProps(props, DIALOGS.FILL, "fillColor")}>
             <FillIcon />
         </PanelButton>
-        <PanelButton {...getButtonProps(props, "stroke", "strokeColor")}>
+        <PanelButton {...getButtonProps(props, DIALOGS.STROKE, "strokeColor")}>
             <StrokeIcon />
         </PanelButton>
-        <PanelButton {...getButtonProps(props, "text", "textColor")}>
+        <PanelButton {...getButtonProps(props, DIALOGS.TEXT, "textColor")}>
             <TextIcon />
         </PanelButton>
-        <PanelButton {...getButtonProps(props, "shape", "shape")}>
+        <PanelButton {...getButtonProps(props, DIALOGS.ARROWHEAD, "startArrowhead")}>
+            <ArrowIcon />
+        </PanelButton>
+        <PanelButton {...getButtonProps(props, DIALOGS.SHAPE, "shape")}>
             <ShapesIcon />
         </PanelButton>
         {/* Order buttons */}

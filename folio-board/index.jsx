@@ -1,6 +1,7 @@
 import React from "react";
 import {
     ACTIONS,
+    DIALOGS,
     SCREENSHOT_FILL_COLOR,
     SCREENSHOT_STROKE_COLOR,
     SELECTION_FILL_COLOR,
@@ -19,6 +20,7 @@ import {
     StrokeDialog,
     TextDialog,
     ShapeDialog,
+    ArrowheadDialog,
 } from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
 
@@ -164,29 +166,36 @@ export const FolioBoard = props => {
             )}
             {!action && !!activeDialog.current && selectedElements.length < 2 && (
                 <React.Fragment>
-                    {activeDialog.current === "fill" && (
+                    {activeDialog.current === DIALOGS.FILL && (
                         <FillDialog
                             key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
-                    {activeDialog.current === "stroke" && (
+                    {activeDialog.current === DIALOGS.STROKE && (
                         <StrokeDialog
                             key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
-                    {activeDialog.current === "text" && (
+                    {activeDialog.current === DIALOGS.TEXT && (
                         <TextDialog
                             key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
-                    {activeDialog.current === "shape" && (
+                    {activeDialog.current === DIALOGS.SHAPE && (
                         <ShapeDialog
+                            key={updateKey}
+                            values={selectionValues}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                    {activeDialog.current === DIALOGS.ARROWHEAD && (
+                        <ArrowheadDialog
                             key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}

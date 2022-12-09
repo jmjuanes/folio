@@ -25,6 +25,14 @@ export const KEYS = {
     Y: "y",
 };
 
+export const DIALOGS = {
+    FILL: "fill",
+    STROKE: "stroke",
+    TEXT: "text",
+    SHAPE: "shape",
+    ARROWHEAD: "arrowhead",
+};
+
 export const ELEMENTS = {
     SHAPE: "shape",
     LINE: "line",
