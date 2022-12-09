@@ -55,6 +55,7 @@ export const ARROWHEADS = {
     TRIANGLE: "triangle",
     SQUARE: "square",
     CIRCLE: "circle",
+    SEGMENT: "segment",
 };
 
 export const ACTIONS = {
