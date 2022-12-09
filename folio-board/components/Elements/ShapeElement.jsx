@@ -226,45 +226,45 @@ export const ShapeElement = props => {
         <g transform={`translate(${x},${y})`}>
             {props.shape === SHAPES.RECTANGLE && (
                 <RectangleShape
-                    width={props.width}
-                    height={props.height}
-                    fillColor={props.fillColor}
+                    width={width}
+                    height={height}
+                    fillColor={fillColor}
                     fillOpacity={props.fillOpacity}
-                    strokeWidth={props.strokeWidth}
-                    strokeColor={props.strokeColor}
+                    strokeWidth={strokeWidth}
+                    strokeColor={strokeColor}
                     strokeStyle={props.strokeStyle}
                 />
             )}
             {props.shape === SHAPES.ELLIPSE && (
                 <EllipseShape
-                    width={props.width}
-                    height={props.height}
-                    fillColor={props.fillColor}
+                    width={width}
+                    height={height}
+                    fillColor={fillColor}
                     fillOpacity={props.fillOpacity}
-                    strokeWidth={props.strokeWidth}
-                    strokeColor={props.strokeColor}
+                    strokeWidth={strokeWidth}
+                    strokeColor={strokeColor}
                     strokeStyle={props.strokeStyle}
                 />
             )}
             {props.shape === SHAPES.TRIANGLE && (
                 <TriangleShape
-                    width={props.width}
-                    height={props.height}
-                    fillColor={props.fillColor}
+                    width={width}
+                    height={height}
+                    fillColor={fillColor}
                     fillOpacity={props.fillOpacity}
-                    strokeWidth={props.strokeWidth}
-                    strokeColor={props.strokeColor}
+                    strokeWidth={strokeWidth}
+                    strokeColor={strokeColor}
                     strokeStyle={props.strokeStyle}
                 />
             )}
             {props.shape === SHAPES.DIAMOND && (
                 <DiamondShape
-                    width={props.width}
-                    height={props.height}
-                    fillColor={props.fillColor}
+                    width={width}
+                    height={height}
+                    fillColor={fillColor}
                     fillOpacity={props.fillOpacity}
-                    strokeWidth={props.strokeWidth}
-                    strokeColor={props.strokeColor}
+                    strokeWidth={strokeWidth}
+                    strokeColor={strokeColor}
                     strokeStyle={props.strokeStyle}
                 />
             )}
