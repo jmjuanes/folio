@@ -73,7 +73,6 @@ export const CornersIcon = () => createPathIcon("M10 4L7 4C4 4 4 7 4 7L4 10M14 4
 export const ObjectGroupIcon = () => createPathIcon("M3 7L3 6C3 6 3 4 5 4L6 4M3 17L3 18C3 18 3 20 5 20L6 20M21 7L21 6C21 6 21 4 19 4L18 4M21 17L21 18C21 18 21 20 19 20L18 20M7 12C7 12 7 13 8 13L13 13C14 13 14 12 14 12L14 9C14 9 14 8 13 8L8 8C7 8 7 9 7 9L7 12ZM10 13L10 15C10 15 10 16 11 16L16 16C17 16 17 15 17 15L17 12C17 12 17 11 16 11L14 11");
 export const ObjectUngroupIcon = () => createPathIcon("M5 6C4 6 4 7 4 7L4 10C4 10 4 11 5 11L10 11C11 11 11 10 11 10L11 7C11 7 11 6 10 6L5 6ZM14 14C13 14 13 15 13 15L13 18C13 18 13 19 14 19L19 19C20 19 20 18 20 18L20 15C20 15 20 14 19 14L14 14Z");
 export const CropIcon = () => createPathIcon("M7 4L7 15C7 15 7 17 9 17L20 17M17 20L17 9C17 9 17 7 15 7L4 7");
-export const TextIcon = () => createPathIcon("M9 20L15 20M12 20L12 4M5 7L5 6C5 6 5 4 7 4L17 4C19 4 19 6 19 6L19 7");
 export const StrokeIcon = () => {
     return createIcon(<path fill="currentColor" stroke="none" d="M 2,2 H 22 V 4 H 2 Z m 0,7 h 20 v 3 H 2 Z m 20,8 H 2 v 5 h 20 z" />);
 };
