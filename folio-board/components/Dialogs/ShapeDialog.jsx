@@ -5,13 +5,15 @@ import {Dialog} from "./Dialog.jsx";
 import {
     RectangleIcon,
     CircleIcon,
+    TriangleIcon,
+    DiamondIcon,
 } from "../icons/index.jsx";
 
 const shapeIcons = {
     [SHAPES.RECTANGLE]: RectangleIcon(),
     [SHAPES.ELLIPSE]: CircleIcon(),
-    [SHAPES.DIAMOND]: RectangleIcon(),
-    [SHAPES.TRIANGLE]: RectangleIcon(),
+    [SHAPES.DIAMOND]: DiamondIcon(),
+    [SHAPES.TRIANGLE]: TriangleIcon(),
 };
 
 const ShapeButton = props => {

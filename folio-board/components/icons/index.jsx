@@ -127,3 +127,15 @@ export const ShapesIcon = () => (
         <path d="M3 14L3 21L10 21L10 14L3 14ZM14 17.5C14 15.567 15.567 14 17.5 14C19.433 14 21 15.567 21 17.5C21 19.433 19.433 21 17.5 21C15.567 21 14 19.433 14 17.5ZM12 3L8.5 10L15.5 10L12 3Z" />
     </SvgIcon>
 );
+
+export const TriangleIcon = () => (
+    <SvgIcon title="Triangle">
+        <path d="M3 20L12 3L21 20L3 20Z" />
+    </SvgIcon>
+);
+
+export const DiamondIcon = () => (
+    <SvgIcon title="Diamond">
+        <path d="M12 21L3 12L12 3L21 12L12 21Z" />
+    </SvgIcon>
+);
