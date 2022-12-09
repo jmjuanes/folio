@@ -5,7 +5,7 @@ import {
     FillIcon,
     StrokeIcon,
     TextIcon,
-    EditIcon,
+    ShapesIcon,
     TrashIcon,
 } from "../icons/index.jsx";
 
@@ -46,6 +46,9 @@ export const EditionPanel = props => (
         </PanelButton>
         <PanelButton {...getButtonProps(props, "text", "textColor")}>
             <TextIcon />
+        </PanelButton>
+        <PanelButton {...getButtonProps(props, "shape", "shape")}>
+            <ShapesIcon />
         </PanelButton>
         {/* Order buttons */}
         {/*

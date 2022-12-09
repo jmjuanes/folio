@@ -4,8 +4,7 @@ import {Panel, PanelButton} from "./Panel.jsx";
 import {
     ArrowsIcon,
     PointerIcon,
-    RectangleIcon,
-    CircleIcon,
+    ShapesIcon,
     LineIcon,
     PenIcon,
 } from "../icons/index.jsx";
@@ -31,11 +30,8 @@ export const ToolsPanel = props => (
             }}
         />
         {/* Available tools */}
-        <PanelButton active={props.tool === ELEMENTS.RECTANGLE} onClick={() => props.onToolClick(ELEMENTS.RECTANGLE)}>
-            <RectangleIcon />
-        </PanelButton>
-        <PanelButton active={props.tool === ELEMENTS.ELLIPSE} onClick={() => props.onToolClick(ELEMENTS.ELLIPSE)}>
-            <CircleIcon />
+        <PanelButton active={props.tool === ELEMENTS.SHAPE} onClick={() => props.onToolClick(ELEMENTS.SHAPE)}>
+            <ShapesIcon />
         </PanelButton>
         <PanelButton active={props.tool === ELEMENTS.LINE} onClick={() => props.onToolClick(ELEMENTS.LINE)}>
             <LineIcon />

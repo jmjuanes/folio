@@ -122,3 +122,9 @@ export const PenIcon = () => (
         <path d="M5 15L4 20L9 19L20 8C21 7 20 6 20 6L18 4C18 4 17 3 16 4L5 15ZM15 5L13 3L8 8M19 5L20 4" />
     </SvgIcon>
 );
+
+export const ShapesIcon = () => (
+    <SvgIcon title="Shapes">
+        <path d="M3 14L3 21L10 21L10 14L3 14ZM14 17.5C14 15.567 15.567 14 17.5 14C19.433 14 21 15.567 21 17.5C21 19.433 19.433 21 17.5 21C15.567 21 14 19.433 14 17.5ZM12 3L8.5 10L15.5 10L12 3Z" />
+    </SvgIcon>
+);
