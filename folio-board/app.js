@@ -304,7 +304,7 @@ export const createApp = (callbacks) => {
                 const entry = state.history[state.historyIndex];
                 if (entry.type === CHANGES.CREATE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
-                    app.elements = state.elements.filter(el => !removeElements.has(el.id));
+                    state.elements = state.elements.filter(el => !removeElements.has(el.id));
                 } else if (entry.type === CHANGES.REMOVE) {
                     entry.elements.forEach(el => state.elements.unshift({...el.prevValues}));
                 } else if (entry.type === CHANGES.UPDATE) {
