@@ -4,7 +4,7 @@ import {BanIcon} from "../icons/index.jsx";
 
 const optionTypes = {
     color: props => (
-        <div className="d-grid gap-1 grid-cols-4 w-full">
+        <div className="d-grid gap-1 grid-cols-5 w-full">
             {(props.values || []).map(item => (
                 <div
                     key={item.value}
