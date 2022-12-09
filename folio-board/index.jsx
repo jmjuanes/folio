@@ -18,6 +18,7 @@ import {
     FillDialog,
     StrokeDialog,
     TextDialog,
+    ShapeDialog,
 } from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
 
@@ -174,6 +175,14 @@ export const FolioBoard = props => {
                     )}
                     {activeDialog.current === "text" && (
                         <TextDialog
+                            key={updateKey}
+                            defaultValues={app.state.style}
+                            elements={selectedElements}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                    {activeDialog.current === "shape" && (
+                        <ShapeDialog
                             key={updateKey}
                             defaultValues={app.state.style}
                             elements={selectedElements}
