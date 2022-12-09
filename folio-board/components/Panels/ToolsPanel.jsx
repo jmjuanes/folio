@@ -6,6 +6,7 @@ import {
     PointerIcon,
     RectangleIcon,
     ArrowIcon,
+    TextIcon,
     PenIcon,
 } from "../icons/index.jsx";
 
@@ -36,6 +37,9 @@ export const ToolsPanel = props => (
         <PanelButton active={props.tool === ELEMENTS.ARROW} onClick={() => props.onToolClick(ELEMENTS.ARROW)}>
             <ArrowIcon />
         </PanelButton>
+        <PanelButton active={props.tool === ELEMENTS.TEXT} onClick={() => props.onToolClick(ELEMENTS.TEXT)}>
+            <TextIcon />
+        </PanelButton>
         <PanelButton active={props.tool === ELEMENTS.DRAW} onClick={() => props.onToolClick(ELEMENTS.DRAW)}>
             <PenIcon />
         </PanelButton>
@@ -45,7 +49,7 @@ export const ToolsPanel = props => (
 ToolsPanel.defaultProps = {
     action: null,
     tool: null,
-    shape: null,
+    // shape: null,
     onMoveClick: null,
     onSelectionClick: null,
     onToolClick: null,
