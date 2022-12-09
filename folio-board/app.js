@@ -1,6 +1,7 @@
 import {
     ELEMENTS,
     SHAPES,
+    ARROWHEADS,
     HANDLERS,
     ACTIONS,
     CHANGES,
@@ -38,6 +39,8 @@ export const createApp = (callbacks) => {
         style: {
             ...defaultStyles,
             shape: SHAPES.RECTANGLE,
+            startArrowhead: ARROWHEADS.NONE,
+            endArrowhead: ARROWHEADS.NONE,
         },
         selection: null,
         activeTool: null,

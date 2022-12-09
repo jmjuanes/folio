@@ -41,6 +41,14 @@ export const SHAPES = {
     TRIANGLE: "triangle",
 };
 
+export const ARROWHEADS = {
+    NONE: "none",
+    ARROW: "arrow",
+    TRIANGLE: "triangle",
+    SQUARE: "square",
+    CIRCLE: "circle",
+};
+
 export const ACTIONS = {
     MOVE: "action:move",
     SELECT: "action:select",

@@ -50,6 +50,8 @@ export const elementsConfig = {
         ),
         initialize: values => ({
             nodeHandlers: true,
+            startArrowhead: values.startArrowhead || ARROWHEADS.NONE,
+            endArrowhead: values.endArrowhead || ARROWHEADS.NONE,
             strokeColor: values.strokeColor,
             strokeWidth: values.strokeWidth,
             strokeStyle: values.strokeStyle,
