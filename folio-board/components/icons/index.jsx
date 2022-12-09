@@ -139,3 +139,9 @@ export const DiamondIcon = () => (
         <path d="M12 21L3 12L12 3L21 12L12 21Z" />
     </SvgIcon>
 );
+
+export const ArrowIcon = () => (
+    <SvgIcon title="Arrow">
+        <path d="M6 18L18 6M18 15L18 6L9 6" />
+    </SvgIcon>
+);

@@ -1,6 +1,11 @@
 import React from "react";
-import {ELEMENTS, GRID_SIZE, SHAPES} from "./constants";
-import {LineElement} from "./components/Elements/LineElement.jsx";
+import {
+    ELEMENTS,
+    GRID_SIZE,
+    SHAPES,
+    ARROWHEADS,
+} from "./constants";
+import {ArrowElement} from "./components/Elements/ArrowElement.jsx";
 import {DrawElement} from "./components/Elements/DrawElement.jsx";
 import {TextElement} from "./components/Elements/TextElement.jsx";
 import {ShapeElement} from "./components/Elements/ShapeElement.jsx";
@@ -37,18 +42,18 @@ export const elementsConfig = {
             });
         },
     },
-    [ELEMENTS.LINE]: {
+    [ELEMENTS.ARROW]: {
         render: props => (
             <g key={props.id} data-element={props.id}>
-                <LineElement {...props} />
+                <ArrowElement {...props} />
             </g>
         ),
-        initialize: styles => ({
+        initialize: values => ({
             nodeHandlers: true,
-            strokeColor: styles.strokeColor,
-            strokeWidth: styles.strokeWidth,
-            strokeStyle: styles.strokeStyle,
-            strokeOpacity: styles.strokeOpacity,
+            strokeColor: values.strokeColor,
+            strokeWidth: values.strokeWidth,
+            strokeStyle: values.strokeStyle,
+            strokeOpacity: values.strokeOpacity,
         }),
     },
     [ELEMENTS.TEXT]: {
