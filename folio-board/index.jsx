@@ -24,9 +24,7 @@ import {Canvas} from "./components/Canvas/index.jsx";
 
 export const FolioBoard = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
-    const [styleDialogVisible, setStyleDialogVisible] = React.useState(false);
     const activeDialog = React.useRef(null);
-    // const ref = React.useRef(null);
     const app = useApp({
         onUpdate: forceUpdate,
         onScreenshot: props.onScreenshot,
@@ -64,6 +62,15 @@ export const FolioBoard = props => {
     // Force to reset the active dialog if there is an action or a tool active
     if (app.state.activeAction || app.state.activeTool) {
         activeDialog.current = null;
+    }
+
+    // Compute common values for selected elements to be used in dialogs
+    let selectionValues = app.state.style || {};
+    if (activeDialog.current && selectedElements.length > 0) {
+        // TODO: we need to compute common values if length > 1
+        if (selectedElements.length === 1) {
+            selectionValues = selectedElements[0];
+        }
     }
 
     return (
@@ -160,32 +167,28 @@ export const FolioBoard = props => {
                     {activeDialog.current === "fill" && (
                         <FillDialog
                             key={updateKey}
-                            defaultValues={app.state.style}
-                            elements={selectedElements}
+                            values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
                     {activeDialog.current === "stroke" && (
                         <StrokeDialog
                             key={updateKey}
-                            defaultValues={app.state.style}
-                            elements={selectedElements}
+                            values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
                     {activeDialog.current === "text" && (
                         <TextDialog
                             key={updateKey}
-                            defaultValues={app.state.style}
-                            elements={selectedElements}
+                            values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
                     {activeDialog.current === "shape" && (
                         <ShapeDialog
                             key={updateKey}
-                            defaultValues={app.state.style}
-                            elements={selectedElements}
+                            values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}

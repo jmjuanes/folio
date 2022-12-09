@@ -1,11 +1,8 @@
 import React from "react";
-import classNames from "classnames";
-
 import {COLOR_KEYS, FONT_KEYS, SIZE_KEYS} from "../../constants.js";
 import {strokeColors, fontFaces} from "../../styles.js";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
-import {useStyleValues} from "../../hooks/useStyleValues.js";
 
 const options = {
     textColor: {
@@ -39,21 +36,17 @@ const options = {
     },
 };
 
-export const TextDialog = props => {
-    const values = useStyleValues(props.elements, props.defaultValues);
-    return (
-        <Dialog className="pt-4 right-0 top-0 pr-24" style={{paddingRight:"5rem"}}>
-            <Form
-                data={props.values || {}}
-                items={options}
-                onChange={props.onChange}
-            />
-        </Dialog>
-    );
-};
+export const TextDialog = props => (
+    <Dialog className="pt-4 right-0 top-0 pr-24" style={{paddingRight:"5rem"}}>
+        <Form
+            data={props.values || {}}
+            items={options}
+            onChange={props.onChange}
+        />
+    </Dialog>
+);
 
 TextDialog.defaultProps = {
-    defaultValues: {},
-    elements: [],
+    values: {},
     onChange: null,
 };

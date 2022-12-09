@@ -1,6 +1,4 @@
 import React from "react";
-import classNames from "classnames";
-
 import {
     COLOR_KEYS,
     OPACITY_KEYS,
@@ -18,7 +16,6 @@ import {
     CircleDashedIcon,
     CircleDottedIcon,
 } from "../icons/index.jsx";
-import {useStyleValues} from "../../hooks/useStyleValues.js";
 
 const options = {
     strokeColor: {
@@ -59,21 +56,17 @@ const options = {
     },
 };
 
-export const StrokeDialog = props => {
-    const values = useStyleValues(props.elements, props.defaultValues);
-    return (
-        <Dialog className="pt-4 right-0 top-0 pr-24" style={{paddingRight:"5rem"}}>
-            <Form
-                data={props.values || {}}
-                items={options}
-                onChange={props.onChange}
-            />
-        </Dialog>
-    );
-};
+export const StrokeDialog = props => (
+    <Dialog className="pt-4 right-0 top-0 pr-24" style={{paddingRight:"5rem"}}>
+        <Form
+            data={props.values || {}}
+            items={options}
+            onChange={props.onChange}
+        />
+    </Dialog>
+);
 
 StrokeDialog.defaultProps = {
-    defaultValues: {},
-    elements: [],
+    values: {},
     onChange: null,
 };
