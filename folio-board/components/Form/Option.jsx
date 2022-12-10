@@ -49,7 +49,7 @@ const optionTypes = {
         </div>
     ),
     select: props => (
-        <div className="d-flex gap-1">
+        <div className={`d-grid grid-cols-${props.grid || "4"} gap-1 w-full`}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
                     "d-flex justify-center items-center": true,
@@ -107,7 +107,7 @@ export const Option = props => {
         marginLeft: isInline ? "auto" : "0px",
     };
     return (
-        <div className="mt-4">
+        <div className="mt-0">
             <div style={wrapperStyle}>
                 <div style={titleStyle}>{props.title}</div>
                 <div style={contentStyle}>

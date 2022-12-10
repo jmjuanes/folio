@@ -4,7 +4,7 @@ import {Option} from "./Option.jsx";
 
 export const Form = props => (
     <div className={props.className} style={props.style}>
-        {Object.keys(props.items || {}).map(key => {
+        {Object.keys(props.items || {}).map((key, index) => {
             const item = props.items[key];
             const value = props.data?.[key] || null;
             if (typeof item.visible !== "undefined") {
@@ -16,7 +16,7 @@ export const Form = props => (
                 }
             }
             return (
-                <div className="mb-0" key={key}>
+                <div className={index === 0 ? "mt-0" : "mt-4"} key={key}>
                     <Option
                         {...item}
                         value={value}
