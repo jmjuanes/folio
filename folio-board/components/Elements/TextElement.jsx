@@ -6,15 +6,13 @@ export const TextElement = props => {
     const inputRef = React.useRef(null);
     const x = (props.x1 + props.x2) / 2;
     const y = (props.y1 + props.y2) / 2;
+    const width = Math.abs(props.x2 - props.x1);
+    const height = Math.abs(props.y2 - props.y1);
     const textSize = fontSizes[props.textSize];
     const textColor = strokeColors[props.textColor];
     const textFont = fontFaces[props.textFont];
     const [textWidth, textHeight] = React.useMemo(() => {
-        if (props.text) {
-            return measureText(props.text, textSize, textFont);
-        }
-        // If no text or editing, cancel measure text
-        return [0, 0];
+        return measureText(props.text || " ", textSize, textFont);
     }, [props.editing, props.text, props.textFont, props.textSize]);
 
     // First time editing --> focus on input
@@ -28,7 +26,7 @@ export const TextElement = props => {
     const previewStyles = {
         width: textWidth,
         height: textHeight,
-        whiteSpace: "pre-wrap",
+        whiteSpace: "pre", // "pre-wrap",
         color: textColor,
         fontFamily: textFont,
         fontSize: textSize,
@@ -41,8 +39,8 @@ export const TextElement = props => {
             <foreignObject
                 x={(-1) * textWidth / 2}
                 y={(-1) * textHeight / 2}
-                width={textWidth}
-                height={textHeight}
+                width={textWidth || "1rem"}
+                height={textHeight || "1rem"}
             >
                 {props.text && !props.editing && (
                     <div style={previewStyles}>
@@ -79,8 +77,8 @@ export const TextElement = props => {
                         onPointerDown={stopEventPropagation}
                         onMouseDown={stopEventPropagation}
                         onMouseUp={stopEventPropagation}
-                        onInput={event => {
-                            return props.onChange?.("text", inputRef.current.value || "");
+                        onChange={event => {
+                            return props.onChange?.("text", event.target.value || "");
                         }}
                     />
                 )}
@@ -88,10 +86,10 @@ export const TextElement = props => {
             {!props.editing && (
                 <rect
                     data-element={props.id}
-                    x={-1 * textWidth / 2}
-                    y={-1 * textHeight / 2}
-                    width={textWidth}
-                    height={textHeight}
+                    x={(-1) * Math.max(textWidth, width) / 2}
+                    y={(-1) * Math.max(textHeight, height) / 2}
+                    width={Math.max(textWidth, width)}
+                    height={Math.max(textHeight, height)}
                     fill="transparent"
                     stroke="none"
                     onPointerDown={props.onPointerDown}

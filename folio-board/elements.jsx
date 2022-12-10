@@ -65,6 +65,8 @@ export const elementsConfig = {
             </g>
         ),
         initialize: styles => ({
+            edgeHandlers: true,
+            cornerHandlers: true,
             text: "",
             textColor: styles.textColor,
             textFont: styles.textFont,

@@ -596,6 +596,13 @@ export const createApp = (callbacks) => {
                     callbacks?.onElementCreated?.(element);
                     state.activeElement = null;
                     state.activeTool = null; // reset active tool
+                    // Terrible hack to enable editing in a text element
+                    if (element.type === ELEMENTS.TEXT) {
+                        state.activeElement = element;
+                        element.editing = true;
+                        state.activeAction = ACTIONS.EDIT;
+                        return app.update();
+                    }
                 }
                 else if (state.activeAction === ACTIONS.DRAG || state.activeAction === ACTIONS.RESIZE) {
                     if (state.isDragged || state.isResized) {
@@ -747,6 +754,7 @@ export const createApp = (callbacks) => {
             onElementChange: (id, key, value) => {
                 if (state.activeElement?.id === id && state.activeElement?.editing) {
                     app.updateElements([state.activeElement], [key], [value], true);
+                    app.update();
                 }
             },
         },
