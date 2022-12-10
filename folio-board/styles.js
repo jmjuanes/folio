@@ -42,14 +42,14 @@ export const strokeWidths = {
 export const fontSizes = {
     [SIZE_KEYS.SMALL]: 12,
     [SIZE_KEYS.MEDIUM]: 16,
-    [SIZE_KEYS.LARGE]: 24,
-    [SIZE_KEYS.XLARGE]: 32,
+    [SIZE_KEYS.LARGE]: 32,
+    [SIZE_KEYS.XLARGE]: 64,
 };
 
 export const fontFaces = {
     [FONT_KEYS.SANS]: "Noto Sans, sans-serif",
     [FONT_KEYS.SERIF]: "Noto Serif, serif",
-    [FONT_KEYS.DRAW]: "Caveat Brush, cursive;",
+    [FONT_KEYS.DRAW]: "Caveat Brush, cursive",
     [FONT_KEYS.MONO]: "monospace",
 };
 

@@ -20,7 +20,7 @@ const options = {
         values: [
             {value: FONT_KEYS.SANS, font: fontFaces[FONT_KEYS.SANS]},
             {value: FONT_KEYS.SERIF, font: fontFaces[FONT_KEYS.SERIF]},
-            // {value: FONT_KEYS.SANS, font: fontFaces[FONT_KEYS.SANS]},
+            {value: FONT_KEYS.DRAW, font: fontFaces[FONT_KEYS.DRAW]},
             {value: FONT_KEYS.MONO, font: fontFaces[FONT_KEYS.MONO]},
         ],
     },
