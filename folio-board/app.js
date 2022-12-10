@@ -736,7 +736,7 @@ export const createApp = (callbacks) => {
             },
             // onKeyUp: event => {},
             onPaste: event => {
-                if (!isInputTarget(event)) {
+                if (isInputTarget(event)) {
                     return null;
                 }
                 app.clearSelectedElements();
@@ -744,7 +744,8 @@ export const createApp = (callbacks) => {
                 return getDataFromClipboard(event).then(data => {
                     if (data?.type === "text" && data?.content?.startsWith("folio:::")) {
                         const elements = JSON.parse(data.content.split("folio:::")[1].trim());
-                        return app.pasteElements(elements || []);
+                        app.pasteElements(elements || []);
+                        app.update();
                     }
                     // TODO: copy image
                 });

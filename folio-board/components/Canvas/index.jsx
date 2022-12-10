@@ -89,18 +89,21 @@ export const Canvas = props => {
         props?.onDoubleClick?.(eventInfo);
     };
 
-    // Register keydown events
+    // Register additional events
     React.useEffect(() => {
         const handleKeyDown = event => props?.onKeyDown?.(event);
         const handleKeyUp = event => props?.onKeyUp?.(event);
+        const handlePaste = event => props?.onPaste?.(event);
         // Add events listeners
         document.addEventListener(EVENTS.KEY_DOWN, handleKeyDown);
         document.addEventListener(EVENTS.KEY_UP, handleKeyUp);
+        document.addEventListener(EVENTS.PASTE, handlePaste);
         return () => {
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown);
             document.removeEventListener(EVENTS.KEY_UP, handleKeyUp);
+            document.removeEventListener(EVENTS.PASTE, handlePaste);
         };
-    }, [props.onKeyDown, props.onKeyUp]);
+    }, [props.onKeyDown, props.onKeyUp, props.onPaste]);
 
     // Generate transform attribute
     const transform = [
@@ -205,6 +208,7 @@ Canvas.defaultProps = {
     onDoubleClick: null,
     onKeyDown: null,
     onKeyUp: null,
+    onPaste: null,
     showHandlers: false,
     showBounds: false,
     showBrush: false,
