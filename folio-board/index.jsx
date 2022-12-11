@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    ELEMENTS,
     ACTIONS,
     DIALOGS,
     SCREENSHOT_FILL_COLOR,
@@ -23,22 +24,16 @@ import {
     ArrowheadDialog,
 } from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
+import {blobToDataUrl} from "./utils/index.js";
 
 export const FolioBoard = props => {
+    const imageInputRef = React.useRef();
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const activeDialog = React.useRef(null);
     const app = useApp({
         onUpdate: forceUpdate,
         onScreenshot: props.onScreenshot,
     });
-
-    // Center board in screen
-    // const centerInScreen = () => {
-    //     const size = svgRef.current.getBoundingClientRect();
-    //     state.current.translateX = Math.floor((size.width - props.width) / 2);
-    //     state.current.translateY = Math.floor((size.height - props.height) / 2);
-    //     forceUpdate();
-    // };
 
     // Register element change
     const handleElementChange = (key, value) => {
@@ -52,6 +47,20 @@ export const FolioBoard = props => {
             app.loadBoard(props.board);
         }
         props?.onMount?.(app);
+    };
+
+    // Image input change listener
+    const handleImageInputChange = event => {
+        const file = event.target.files?.[0];
+        if (file) {
+            return blobToDataUrl(file).then(data => {
+                return app.addImage(data);
+            })
+            .then(() => {
+                event.target.value = "";
+                app.update();
+            });
+        }
     };
 
     // Register effects
@@ -113,7 +122,13 @@ export const FolioBoard = props => {
                         app.setAction(ACTIONS.MOVE);
                     }}
                     onSelectionClick={() => app.setTool(null)}
-                    onToolClick={tool => app.setTool(tool)}
+                    onToolClick={tool => {
+                        // Special action if the image tool is activated
+                        if (tool === ELEMENTS.IMAGE) {
+                            return imageInputRef.current.click();
+                        }
+                        app.setTool(tool);
+                    }}
                 />
             )}
             {props.showHistory && (
@@ -203,6 +218,13 @@ export const FolioBoard = props => {
                     )}
                 </React.Fragment>
             )}
+            {/* Image input reference */}
+            <input
+                ref={imageInputRef}    
+                type="file"
+                accept="image/*"
+                onChange={handleImageInputChange}
+            />
         </div>
     );
 };

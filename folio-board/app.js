@@ -14,7 +14,7 @@ import {
     ZOOM_STEP,
 } from "./constants.js";
 import {getElementConfig} from "./elements.jsx";
-import {defaultStyles} from "./styles.js";
+import {defaultStyles, fontSizes, fontFaces} from "./styles.js";
 import {
     createBlob,
     generateID,
@@ -25,6 +25,8 @@ import {
     blobToFile,
     copyTextToClipboard,
     normalizeBounds,
+    measureText,
+    loadImage,
 } from "./utils/index.js";
 
 export const createApp = (callbacks) => {
@@ -231,6 +233,56 @@ export const createApp = (callbacks) => {
                         selected: false,
                     },
                 })),
+            });
+        },
+
+        //
+        // Miscellanea elements API
+        //
+        addText: text => {
+            app.clearSelectedElements();
+            const size = app.getCanvasSize();
+            const x = state.translateX + size.width / 2;
+            const y = state.translateY + size.height / 2;
+            const element = app.createElement(ELEMENTS.TEXT);
+            const elementConfig = getElementConfig(element);
+            const textSize = fontSizes[state.style.textSize];
+            const textFont = fontFaces[state.style.textFont];
+            const [textWidth, textHeight] = measureText(text || " ", textSize, textFont);
+            // Override element attributes
+            Object.assign(element, {
+                ...(elementConfig.initialize?.(state.style) || {}),
+                text: text,
+                x1: Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE,
+                y1: Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE,
+                x2: Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE,
+                y2: Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE,
+                selected: true,
+            });
+            app.addElements([element]);
+            return Promise.resolve(element);
+        },
+        addImage: image => {
+            app.clearSelectedElements();
+            return loadImage(data.content).then(img => {
+                const size = app.getCanvasSize();
+                const x = state.translateX + size.width / 2;
+                const y = state.translateY + size.height / 2;
+                const element = app.createElement(ELEMENTS.IMAGE);
+                const elementConfig = getElementConfig(element);
+                Object.assign(element, {
+                    ...(elementConfig.initialize?.(state.style) || {}),
+                    image: image,
+                    imageWidth: img.width,
+                    imageHeight: img.height,
+                    x1: Math.floor((x - img.width / 2) / GRID_SIZE) * GRID_SIZE,
+                    y1: Math.floor((y - img.height / 2) / GRID_SIZE) * GRID_SIZE,
+                    x2: Math.ceil((x + img.width / 2) / GRID_SIZE) * GRID_SIZE,
+                    y2: Math.ceil((y + img.height / 2) / GRID_SIZE) * GRID_SIZE,
+                    selected: true,
+                });
+                app.addElements([element]);
+                return element;
             });
         },
 
@@ -742,12 +794,24 @@ export const createApp = (callbacks) => {
                 app.clearSelectedElements();
                 state.activeGroup = null;
                 return getDataFromClipboard(event).then(data => {
+                    // Paste elements
                     if (data?.type === "text" && data?.content?.startsWith("folio:::")) {
                         const elements = JSON.parse(data.content.split("folio:::")[1].trim());
                         app.pasteElements(elements || []);
                         app.update();
                     }
-                    // TODO: copy image
+                    // Create a new text element
+                    else if (data?.type === "text") {
+                        app.addText(data.content).then(() => {
+                            return app.update();
+                        });
+                    }
+                    // Create a new image element
+                    else if (data?.type === "image") {
+                        app.addImage(data.content).then(() => {
+                            return app.update();
+                        });
+                    }
                 });
             },
             // onCopy: event => null,
@@ -764,6 +828,7 @@ export const createApp = (callbacks) => {
         // Canvas API
         //
         getCanvas: () => document.querySelector(`svg[data-id="${app.id}"]`),
+        getCanvasSize: () => app.getCanvas()?.getBoundingClientRect(),
         centerCanvas: () => {
             // const target = document.getElementById(app.id);
             const target = app.getCanvas();
