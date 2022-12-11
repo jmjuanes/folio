@@ -9,6 +9,7 @@ import {ArrowElement} from "./components/Elements/ArrowElement.jsx";
 import {DrawElement} from "./components/Elements/DrawElement.jsx";
 import {TextElement} from "./components/Elements/TextElement.jsx";
 import {ShapeElement} from "./components/Elements/ShapeElement.jsx";
+import {ImageElement} from "./components/Elements/ImageElement.jsx";
 import {simplifyPath} from "./utils/index.js";
 
 export const elementsConfig = {
@@ -121,6 +122,18 @@ export const elementsConfig = {
                 ];
             });
         },
+    },
+    [ELEMENTS.IMAGE]: {
+        render: props => (
+            <g key={props.id} data-element={props.id}>
+                <ImageElement {...props} />
+            </g>
+        ),
+        initialize: () => ({
+            image: "",
+            imageWidth: 0,
+            imageHeight: 0,
+        }),
     },
 };
 

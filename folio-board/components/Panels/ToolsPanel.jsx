@@ -8,6 +8,7 @@ import {
     ArrowIcon,
     TextIcon,
     PenIcon,
+    ImageIcon,
 } from "../icons/index.jsx";
 
 export const ToolsPanel = props => (
@@ -39,6 +40,9 @@ export const ToolsPanel = props => (
         </PanelButton>
         <PanelButton active={props.tool === ELEMENTS.TEXT} onClick={() => props.onToolClick(ELEMENTS.TEXT)}>
             <TextIcon />
+        </PanelButton>
+        <PanelButton active={props.tool === ELEMENTS.IMAGE} onClick={() => props.onToolClick(ELEMENTS.IMAGE)}>
+            <ImageIcon />
         </PanelButton>
         <PanelButton active={props.tool === ELEMENTS.DRAW} onClick={() => props.onToolClick(ELEMENTS.DRAW)}>
             <PenIcon />

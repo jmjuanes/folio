@@ -181,3 +181,9 @@ export const ArrowheadSegmentIcon = () => (
         <path d="M3 12L21 12M21 5L21 19" />
     </SvgIcon>
 );
+
+export const ImageIcon = () => (
+    <SvgIcon title="Image">
+        <path d="M7 4C4 4 4 7 4 7L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 7C20 7 20 4 17 4L7 4ZM4 17L8 14L11 16L16 12L20 15M8 9C8 8.44772 8.44772 8 9 8C9.55228 8 10 8.44772 10 9C10 9.55228 9.55228 10 9 10C8.44772 10 8 9.55228 8 9Z" />
+    </SvgIcon>
+);
