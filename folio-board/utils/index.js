@@ -3,6 +3,7 @@ import {KEYS} from "../constants.js";
 export * from "./blob.js";
 export * from "./clipboard.js";
 export * from "./events.js";
+export * from "./image.js";
 export * from "./math.js";
 
 // Generate an ID
