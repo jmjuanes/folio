@@ -264,7 +264,7 @@ export const createApp = (callbacks) => {
         },
         addImage: image => {
             app.clearSelectedElements();
-            return loadImage(data.content).then(img => {
+            return loadImage(image).then(img => {
                 const size = app.getCanvasSize();
                 const x = state.translateX + size.width / 2;
                 const y = state.translateY + size.height / 2;
