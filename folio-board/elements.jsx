@@ -17,6 +17,7 @@ export const elementsConfig = {
         render: props => (
             <g key={props.id} data-element={props.id}>
                 <ShapeElement {...props} />
+                <TextElement {...props} />
             </g>
         ),
         initialize: values => ({
@@ -130,6 +131,8 @@ export const elementsConfig = {
             </g>
         ),
         initialize: () => ({
+            edgeHandlers: true,
+            cornerHandlers: true,
             image: "",
             imageWidth: 0,
             imageHeight: 0,
