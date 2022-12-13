@@ -224,7 +224,6 @@ export const FolioBoard = props => {
                 type="file"
                 accept="image/*"
                 onChange={handleImageInputChange}
-                disabled={true}
                 style={{
                     display: "none",
                     visibility: "hidden",
