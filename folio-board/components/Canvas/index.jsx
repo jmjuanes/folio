@@ -14,7 +14,9 @@ const useSelectedElements = props => {
 };
 
 export const Canvas = props => {
+    const canvasRef = React.useRef(null);
     const selectedElements = useSelectedElements(props);
+    const [canvasSize, setCanvasSize] = React.useState([100, 100]);
 
     const handlePointerDown = (event, source, pointListener) => {
         event.preventDefault();
@@ -94,14 +96,26 @@ export const Canvas = props => {
         const handleKeyDown = event => props?.onKeyDown?.(event);
         const handleKeyUp = event => props?.onKeyUp?.(event);
         const handlePaste = event => props?.onPaste?.(event);
+        const handleResize = event => {
+            if (canvasRef.current) {
+                const size = canvasRef.current.getBoundingClientRect();
+                setCanvasSize([size.width, size.height]);
+            }
+            props?.onResize?.(event);
+        };
         // Add events listeners
         document.addEventListener(EVENTS.KEY_DOWN, handleKeyDown);
         document.addEventListener(EVENTS.KEY_UP, handleKeyUp);
         document.addEventListener(EVENTS.PASTE, handlePaste);
+        window.addEventListener(EVENTS.RESIZE, handleResize);
+
+        // We need to call the resize for the first time
+        handleResize(null);
         return () => {
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown);
             document.removeEventListener(EVENTS.KEY_UP, handleKeyUp);
             document.removeEventListener(EVENTS.PASTE, handlePaste);
+            window.removeEventListener(EVENTS.RESIZE, handleResize);
         };
     }, [props.onKeyDown, props.onKeyUp, props.onPaste]);
 
@@ -113,13 +127,14 @@ export const Canvas = props => {
 
     return (
         <svg
+            ref={canvasRef}
             data-id={props.id}
             data-width={props.width}
             data-height={props.height}
             width="100%"
             height="100%"
             style={{
-                backgroundColor: "#eaeaea",
+                // backgroundColor: "#eaeaea",
                 touchAction: "none",
                 userSelect: "none",
                 ...props.style,
@@ -140,9 +155,11 @@ export const Canvas = props => {
                 )}
                 {props.showGrid && (
                     <Grid
+                        translateX={props.translateX}
+                        translateY={props.translateY}
                         zoom={props.zoom}
-                        width={props.width}
-                        height={props.height}
+                        width={canvasSize[0]}
+                        height={canvasSize[1]}
                     />
                 )}
                 {props.showBounds && selectedElements.length > 0 && (
@@ -209,6 +226,7 @@ Canvas.defaultProps = {
     onKeyDown: null,
     onKeyUp: null,
     onPaste: null,
+    onResize: null,
     showHandlers: false,
     showBounds: false,
     showBrush: false,
