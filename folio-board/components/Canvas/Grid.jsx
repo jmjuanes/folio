@@ -2,14 +2,12 @@ import React from "react";
 import {GRID_SIZE} from "../../constants.js";
 
 export const Grid = props => {
-    const x = (props.translateX - (props.translateX % props.size)) / props.zoom;
-    const y = (props.translateY - (props.translateY % props.size)) / props.zoom;
-    const transform = [
-        // `scale(${1 / props.zoom},${1 / props.zoom})`,
-        `translate(${- props.size / 2} ${- props.size / 2})`
-    ];
+    const translateX = props.translateX / props.zoom;
+    const translateY = props.translateY / props.zoom;
+    const x = (translateX % props.size) - translateX - props.size / 2;
+    const y = (translateY % props.size) - translateY - props.size / 2;
     return (
-        <g transform={`translate(${-x} ${-y})`}>
+        <g transform={`translate(${x} ${y})`}>
             <defs>
                 <pattern
                     id="grid"
