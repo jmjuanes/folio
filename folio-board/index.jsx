@@ -88,8 +88,6 @@ export const FolioBoard = props => {
         <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
             <Canvas
                 id={app.id}
-                width={app.state.width || props.width}
-                height={app.state.height || props.height}
                 elements={app.state.elements}
                 translateX={app.state.translateX}
                 translateY={app.state.translateY}

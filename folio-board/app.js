@@ -25,14 +25,13 @@ import {
     blobToFile,
     copyTextToClipboard,
     normalizeBounds,
+    getRectangleBounds,
     measureText,
     loadImage,
 } from "./utils/index.js";
 
 export const createApp = (callbacks) => {
     const state = {
-        width: 3000,
-        height: 1000,
         elements: [],
         settings: {},
         snapshot: null,
@@ -241,7 +240,7 @@ export const createApp = (callbacks) => {
         //
         addText: text => {
             app.clearSelectedElements();
-            const size = app.getCanvasSize();
+            const size = app.getCanvas()?.getBoundingClientRect();
             const x = state.translateX + size.width / 2;
             const y = state.translateY + size.height / 2;
             const element = app.createElement(ELEMENTS.TEXT);
@@ -265,7 +264,7 @@ export const createApp = (callbacks) => {
         addImage: image => {
             app.clearSelectedElements();
             return loadImage(image).then(img => {
-                const size = app.getCanvasSize();
+                const size = app.getCanvas()?.getBoundingClientRect();
                 const x = state.translateX + size.width / 2;
                 const y = state.translateY + size.height / 2;
                 const element = app.createElement(ELEMENTS.IMAGE);
@@ -399,22 +398,26 @@ export const createApp = (callbacks) => {
         //
         getSvg: options => {
             return new Promise(resolve => {
+                const bounds = getRectangleBounds(state.elements);
                 // 1. Create a new SVG element
-                const originalSvg = app.getCanvas();
                 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 // 2. Set new svg attributes
                 svg.setAttribute("style", ""); // Reset style
-                svg.setAttribute("width", state.width);
-                svg.setAttribute("height", state.height);
+                svg.setAttribute("width", Math.abs(bounds.x2 - bounds.x1));
+                svg.setAttribute("height", Math.abs(bounds.y2 - bounds.y1));
                 // 3. Set svg style
                 svg.style.backgroundColor = options?.background || "#fff";
                 // 4. Set svg fonts
                 // TODO
-                // 5. Append elements into new SVG
+                // 5. Set group attributes
+                group.setAttribute("transform", `translate(${bounds.x1} ${bounds.y1})`);
+                svg.appendChild(group);
+                // 6. Append elements into new SVG
                 state.elements.forEach(element => {
-                    const nodeElement = originalSvg.querySelector(`g[data-element="${element.id}"]`);
+                    const nodeElement = document.querySelector(`g[data-element="${element.id}"]`);
                     if (nodeElement) {
-                        svg.appendChild(nodeElement.cloneNode(true));
+                        group.appendChild(nodeElement.cloneNode(true));
                     }
                 });
                 // 6. return SVG
@@ -441,8 +444,6 @@ export const createApp = (callbacks) => {
             return new Promise((resolve, reject) => {
                 // Initialize canvas to render SVG image
                 const canvas = document.createElement("canvas");
-                canvas.width = options?.cropWidth || state.width;
-                canvas.height = options?.cropHeight || state.height;
                 // Initialize image
                 const img = new Image();
                 img.addEventListener("load", () => {
@@ -458,6 +459,8 @@ export const createApp = (callbacks) => {
                 });
                 // Load image
                 app.getSvg(options).then(svgBlob => {
+                    canvas.width = options?.cropWidth || img.width;
+                    canvas.height = options?.cropHeight || img.height;
                     img.src = window.URL.createObjectURL(svgBlob);
                 });
             });
@@ -828,17 +831,6 @@ export const createApp = (callbacks) => {
         // Canvas API
         //
         getCanvas: () => document.querySelector(`svg[data-id="${app.id}"]`),
-        getCanvasSize: () => app.getCanvas()?.getBoundingClientRect(),
-        centerCanvas: () => {
-            // const target = document.getElementById(app.id);
-            const target = app.getCanvas();
-            if (target) {
-                const size = target.getBoundingClientRect();
-                state.translateX = Math.floor((size.width - state.width) / 2);
-                state.translateY = Math.floor((size.height - state.height) / 2);
-                // TODO: force an update?
-            }
-        },
 
         // 
         // Zoom API
