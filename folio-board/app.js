@@ -1,22 +1,19 @@
 import {
     ELEMENTS,
-    SHAPES,
-    ARROWHEADS,
     HANDLERS,
     ACTIONS,
     CHANGES,
     GRID_SIZE,
     IS_DARWIN,
     KEYS,
-    ZOOM_INITIAL,
     ZOOM_MAX,
     ZOOM_MIN,
     ZOOM_STEP,
 } from "./constants.js";
 import {getElementConfig} from "./elements.jsx";
-import {defaultStyles, fontSizes, fontFaces} from "./styles.js";
+import {getDefaultState} from "./state.js";
+import {fontSizes, fontFaces} from "./styles.js";
 import {
-    createBlob,
     generateID,
     isInputTarget,
     isArrowKey,
@@ -27,33 +24,8 @@ import {
     loadImage,
 } from "./utils/index.js";
 
-export const createApp = (callbacks) => {
-    const state = {
-        elements: [],
-        settings: {},
-        snapshot: null,
-        history: [],
-        historyIndex: 0,
-        style: {
-            ...defaultStyles,
-            shape: SHAPES.RECTANGLE,
-            startArrowhead: ARROWHEADS.NONE,
-            endArrowhead: ARROWHEADS.NONE,
-        },
-        selection: null,
-        activeTool: null,
-        activeAction: null,
-        activeElement: null,
-        activeGroup: null,
-        zoom: ZOOM_INITIAL,
-        translateX: 0,
-        translateY: 0,
-        lastTranslateX: 0,
-        lastTranslateY: 0,
-        isDragged: false,
-        isResized: false,
-        isPrevSelected: false,
-    };
+export const createApp = callbacks => {
+    const state = getDefaultState();
     const getPosition = pos => {
         // return state.settings.showGrid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
         return Math.round(pos / GRID_SIZE) * GRID_SIZE;
@@ -61,7 +33,10 @@ export const createApp = (callbacks) => {
     const app = {
         id: generateID(),
         state: state,
-
+        elements: [],
+        assets: {},
+        history: [],
+        historyIndex: 0,
         //
         // Global API
         //
@@ -70,49 +45,36 @@ export const createApp = (callbacks) => {
             return callbacks?.onUpdate?.();
         },
         reset: () => {
-            state.elements = [];
             state.activeElement = null;
             state.activeGroup = null;
             state.activeTool = null;
-            state.history = [];
-            state.historyIndex = 0;
+            app.elements = [];
+            app.assets = {};
+            app.history = [];
+            app.historyIndex = 0;
         },
-        
+
+        // 
+        // State API
+        // 
+        getState: () => ({...app.state}),
+        setState: newState => {
+            Object.assign(app.state, newState || {});
+        },
+
         //
-        // Board API
+        // Assets API
         //
-        loadBoard: board => {
-            app.reset();
-            state.width = board?.width || 0;
-            state.height = board?.height || 0;
-            state.settings = board?.settings || {};
-            // TODO: we would need to migrate the board elements to the new version
-            if (board?.elements) {
-                state.elements = (board.elements || []).map(element => ({
-                    ...element,
-                    selected: false,
-                }));
-            }
+        getAssets: () => ({...app.assets}),
+        setAssets: newAssets => {
+            app.assets = {...newAssets};
         },
-        getBoard: () => {
-            return Promise.resolve({
-                version: "1",
-                width: state.width,
-                height: state.height,
-                elements: state.elements.map(element => ({
-                    ...element,
-                    selected: false,
-                })),
-                settings: {
-                    ...state.settings,
-                },
-            });
-        },
+        clearAssets: () => app.setAssets({}),
 
         //
         // Elements API
         //
-        getElement: id => state.elements.find(el => el.id === id),
+        getElement: id => app.elements.find(el => el.id === id),
         createElement: type => ({
             type: type,
             id: generateID(),
@@ -132,7 +94,15 @@ export const createApp = (callbacks) => {
         //
         // Elements management API
         // 
-        getElements: () => state.elements,
+        getElements: () => app.elements,
+        setElements: newElements => {
+            app.elements = (newElements || []).map(element => ({
+                ...element,
+                selected: false,
+            }));
+            app.clearHistory();
+        },
+        clearElements: () => app.setElements([]),
         addElements: elements => {
             if (elements && elements.length > 0) {
                 // 1. Register element create in the history
@@ -148,7 +118,7 @@ export const createApp = (callbacks) => {
                     })),
                 });
                 // 2. Add new elements
-                elements.forEach(element => state.elements.push(element));
+                elements.forEach(element => app.elements.push(element));
             }
         },
         removeElements: elements => {
@@ -165,9 +135,9 @@ export const createApp = (callbacks) => {
                         newValues: null,
                     })),
                 });
-                // 2. Remove the elements for state.elements
+                // 2. Remove the elements for app.elements
                 const elementsToRemove = new Set(elements.map(element => element.id));
-                state.elements = state.elements.filter(element => {
+                app.elements = app.elements.filter(element => {
                     return !elementsToRemove.has(element.id);
                 });
             }
@@ -217,7 +187,7 @@ export const createApp = (callbacks) => {
                 };
             });
             // 2. insert new elements
-            newElements.forEach(element => state.elements.push(element));
+            newElements.forEach(element => app.elements.push(element));
             // 3. register history change
             app.addHistory({
                 type: CHANGES.CREATE,
@@ -285,10 +255,10 @@ export const createApp = (callbacks) => {
         //
         // Elements selection API
         //
-        getSelectedElements: () => state.elements.filter(el => !!el.selected),
-        clearSelectedElements: () => state.elements.forEach(el => el.selected = false),
+        getSelectedElements: () => app.elements.filter(el => !!el.selected),
+        clearSelectedElements: () => app.elements.forEach(el => el.selected = false),
         setSelectedElements: selection => {
-            return state.elements.forEach(element => {
+            return app.elements.forEach(element => {
                 element.selected = false;
                 if (element.x1 < selection.x2 && selection.x1 < element.x2) {
                     if (element.y1 < selection.y2 && selection.y1 < element.y2) {
@@ -314,7 +284,7 @@ export const createApp = (callbacks) => {
         // Groups API
         //
         getElementsInGroup: group => {
-            return state.elements.filter(el => el.group && el.group === group);
+            return app.elements.filter(el => el.group && el.group === group);
         },
         getElementsInActiveGroup: () => {
             return state.activeGroup ? app.getElementsInGroup(state.activeGroup) : [];
@@ -323,18 +293,20 @@ export const createApp = (callbacks) => {
         //
         // History API
         //
-        clearHistory: () => {
-            state.history = [];
-            state.historyIndex = 0;
+        getHistory: () => ([...app.history]),
+        setHistory: newHistory => {
+            app.history = newHistory || [];
+            app.historyIndex = 0;
         },
+        clearHistory: () => app.setHistory([]),
         addHistory: entry => {
-            if (state.historyIndex > 0) {
-                state.history = state.history.slice(state.historyIndex);
-                state.historyIndex = 0;
+            if (app.historyIndex > 0) {
+                app.history = app.history.slice(app.historyIndex);
+                app.historyIndex = 0;
             }
             // Check for updating the same elements and the same keys
-            if (entry.keys && entry.ids && state.history.length > 0) {
-                const last = state.history[0];
+            if (entry.keys && entry.ids && app.history.length > 0) {
+                const last = app.history[0];
                 if (last.ids === entry.ids && last.keys === entry.keys) {
                     const keys = entry.keys.split(",");
                     return last.elements.forEach((element, index) => {
@@ -345,50 +317,50 @@ export const createApp = (callbacks) => {
                 }
             }
             // Register the new history entry
-            state.history.unshift(entry);
+            app.history.unshift(entry);
         },
         undo: () => {
-            if (state.historyIndex < state.history.length) {
-                const entry = state.history[state.historyIndex];
+            if (app.historyIndex < app.history.length) {
+                const entry = app.history[app.historyIndex];
                 if (entry.type === CHANGES.CREATE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
-                    state.elements = state.elements.filter(el => !removeElements.has(el.id));
+                    app.elements = app.elements.filter(el => !removeElements.has(el.id));
                 } else if (entry.type === CHANGES.REMOVE) {
-                    entry.elements.forEach(el => state.elements.unshift({...el.prevValues}));
+                    entry.elements.forEach(el => app.elements.unshift({...el.prevValues}));
                 } else if (entry.type === CHANGES.UPDATE) {
                     entry.elements.forEach(element => {
-                        Object.assign(state.elements.find(el => el.id === element.id), element.prevValues);
+                        Object.assign(app.elements.find(el => el.id === element.id), element.prevValues);
                     });
                 }
-                state.historyIndex = state.historyIndex + 1;
+                app.historyIndex = app.historyIndex + 1;
                 app.cancelAction();
                 state.activeGroup = null;
-                state.elements.forEach(el => el.selected = false);
+                app.elements.forEach(el => el.selected = false);
                 app.update();
             }
         },
         redo: () => {
-            if (state.historyIndex > 0 && state.history.length > 0) {
-                state.historyIndex = state.historyIndex - 1;
-                const entry = state.history[state.historyIndex];
+            if (app.historyIndex > 0 && app.history.length > 0) {
+                app.historyIndex = app.historyIndex - 1;
+                const entry = app.history[app.historyIndex];
                 if (entry.type === CHANGES.CREATE) {
-                    entry.elements.forEach(el => state.elements.unshift({...el.newValues}));
+                    entry.elements.forEach(el => app.elements.unshift({...el.newValues}));
                 } else if (entry.type === CHANGES.REMOVE) {
                     const removeElements = new Set(entry.elements.map(el => el.id));
-                    state.elements = state.elements.filter(el => !removeElements.has(el.id));
+                    app.elements = app.elements.filter(el => !removeElements.has(el.id));
                 } else if (entry.type === CHANGES.UPDATE) {
                     entry.elements.forEach(element => {
-                        Object.assign(state.elements.find(el => el.id === element.id) || {}, element.newValues);
+                        Object.assign(app.elements.find(el => el.id === element.id) || {}, element.newValues);
                     });
                 }
                 app.cancelAction();
                 state.activeGroup = null;
-                state.elements.forEach(el => el.selected = false);
+                app.elements.forEach(el => el.selected = false);
                 app.update();
             }
         },
-        isUndoDisabled: () => state.historyIndex >= state.history.length,
-        isRedoDisabled: () => state.historyIndex === 0 || state.history.length < 1,
+        isUndoDisabled: () => app.historyIndex >= app.history.length,
+        isRedoDisabled: () => app.historyIndex === 0 || app.history.length < 1,
 
         // 
         // Canvas events
@@ -554,7 +526,7 @@ export const createApp = (callbacks) => {
                     element.selected = true; // By default select this element
                     getElementConfig(element)?.onCreateEnd?.(element, event);
                     // We need to patch the history to save the new element values
-                    const last = state.history[0] || {};
+                    const last = app.history[0] || {};
                     if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
                         last.elements[0].newValues = {
                             ...element,
