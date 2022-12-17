@@ -25,8 +25,13 @@ import {
 } from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
 import {blobToDataUrl} from "./utils/index.js";
+import {
+    exportToBlob,
+    exportToClipboard,
+    exportToFile,
+} from "./export.js";
 
-export const FolioBoard = props => {
+const Board = React.forwardRef((props, ref) => {
     const imageInputRef = React.useRef();
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const activeDialog = React.useRef(null);
@@ -43,10 +48,15 @@ export const FolioBoard = props => {
 
     // After mounting board component
     const handleBoardMount = () => {
-        if (props.board) {
-            app.loadBoard(props.board);
+        // Check for loading initial data from props
+        if (props?.initialData) {
+            app.setElements(props.initialData?.elements || []);
+            app.setAssets(props.initialData?.assets || {});
+            app.setHistory(props.initialData?.history || []);
+            app.setState(props.initialData?.state || {});
+            app.update();
         }
-        props?.onMount?.(app);
+        props?.onMount?.();
     };
 
     // Image input change listener
@@ -61,6 +71,15 @@ export const FolioBoard = props => {
                 app.update();
             });
         }
+    };
+
+    // Handle export click --> call props.onExport function
+    const handleExportClick = () => {
+        return props.onExport?.();
+    };
+
+    const handleSaveClick = () => {
+        return props.onSave?.();
     };
 
     // Register effects
@@ -88,7 +107,8 @@ export const FolioBoard = props => {
         <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
             <Canvas
                 id={app.id}
-                elements={app.state.elements}
+                elements={app.elements}
+                assets={app.assets}
                 translateX={app.state.translateX}
                 translateY={app.state.translateY}
                 zoom={app.state.zoom}
@@ -229,10 +249,10 @@ export const FolioBoard = props => {
             />
         </div>
     );
-};
+});
 
-FolioBoard.defaultProps = {
-    board: null,
+Board.defaultProps = {
+    initialData: null,
     width: 0,
     height: 0,
     showMenu: true,
@@ -245,4 +265,13 @@ FolioBoard.defaultProps = {
     onExport: null,
     onSave: null,
     onMount: null
+};
+
+// Folio export
+export default {
+    Board,
+    Canvas,
+    exportToBlob,
+    exportToClipboard,
+    exportToFile,
 };
