@@ -17,8 +17,8 @@ export const Panel = props => {
         ...props.style,
     };
     const panelContentClass = classNames({
-        "b-1 b-solid b-gray-900 r-lg": true,
-        "shadow-md items-center bg-white d-flex gap-2 p-2": true,
+        // "b-1 b-solid b-gray-900": true,
+        "r-lg shadow-md items-center bg-white d-flex gap-2 p-2": true,
         "flex-col": props.position === "top-left" || props.position === "top-right",
     });
     return (
@@ -34,9 +34,9 @@ export const PanelButton = props => {
     // TODO: missing height: 2.25rem height!!
     const classList = classNames({
         "items-center r-md d-flex text-lg p-2": true,
-        "text-gray-900 hover:bg-gray-900 hover:text-white cursor-pointer": !props.active && !props.disabled,
-        "is-active bg-gray-900 text-white cursor-pointer": props.active && !props.disabled,
-        "is-disabled text-gray-900 cursor-not-allowed o-60": !props.active && props.disabled,
+        "text-dark-700 hover:bg-dark-800 hover:text-white cursor-pointer": !props.active && !props.disabled,
+        "is-active bg-dark-800 text-white cursor-pointer": props.active && !props.disabled,
+        "is-disabled text-dark-100 cursor-not-allowed o-60": !props.active && props.disabled,
     });
     return (
         <div className={classList} onClick={props.onClick}>
@@ -46,6 +46,31 @@ export const PanelButton = props => {
 };
 
 PanelButton.defaultProps = {
+    active: false,
+    disabled: false,
+};
+
+export const PanelTextButton = props => {
+    // TODO: missing height: 2.25rem height!!
+    const classList = classNames({
+        "d-flex flex-col w-16": true,
+        "items-center r-md d-flex text-lg p-3": true,
+        "text-dark-700 hover:bg-dark-800 hover:text-white cursor-pointer": !props.active && !props.disabled,
+        "is-active bg-dark-800 text-white cursor-pointer": props.active && !props.disabled,
+        "is-disabled text-dark-100 cursor-not-allowed o-60": !props.active && props.disabled,
+    });
+    return (
+        <div className={classList} onClick={props.onClick}>
+            {props.children}
+            <div className="mt-1" style={{fontSize:"0.635rem"}}>
+                <strong>{props.text}</strong>
+            </div>
+        </div>
+    );
+};
+
+PanelTextButton.defaultProps = {
+    text: "",
     active: false,
     disabled: false,
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import {ACTIONS, ELEMENTS} from "../../constants.js";
-import {Panel, PanelButton} from "./Panel.jsx";
+import {Panel, PanelButton, PanelTextButton} from "./Panel.jsx";
 import {
     ArrowsIcon,
     PointerIcon,
@@ -12,41 +12,43 @@ import {
 } from "../icons/index.jsx";
 
 export const ToolsPanel = props => (
-    <Panel position="bottom-center">
-        <PanelButton
+    <Panel position="top-left">
+        <PanelTextButton
+            text="Drag"
             active={props.action === ACTIONS.MOVE}
             onClick={props.onMoveClick}
         >
             <ArrowsIcon />
-        </PanelButton>
-        <PanelButton
+        </PanelTextButton>
+        <PanelTextButton
+            text="Select"
             active={!props.tool && props.action !== ACTIONS.MOVE}
             onClick={props.onSelectionClick}
         >
             <PointerIcon />
-        </PanelButton>
+        </PanelTextButton>
         <div
-            className="bg-gray-800 h-8"
+            className="bg-light-900 w-12"
             style={{
-                width: "1px",
+                height: "1px",
             }}
         />
         {/* Available tools */}
-        <PanelButton active={props.tool === ELEMENTS.SHAPE} onClick={() => props.onToolClick(ELEMENTS.SHAPE)}>
+        <PanelTextButton text="Shape" active={props.tool === ELEMENTS.SHAPE} onClick={() => props.onToolClick(ELEMENTS.SHAPE)}>
             <RectangleIcon />
-        </PanelButton>
-        <PanelButton active={props.tool === ELEMENTS.ARROW} onClick={() => props.onToolClick(ELEMENTS.ARROW)}>
+        </PanelTextButton>
+        <PanelTextButton text="Arrow" active={props.tool === ELEMENTS.ARROW} onClick={() => props.onToolClick(ELEMENTS.ARROW)}>
             <ArrowIcon />
-        </PanelButton>
-        <PanelButton active={props.tool === ELEMENTS.TEXT} onClick={() => props.onToolClick(ELEMENTS.TEXT)}>
+        </PanelTextButton>
+        <PanelTextButton text="Text" active={props.tool === ELEMENTS.TEXT} onClick={() => props.onToolClick(ELEMENTS.TEXT)}>
             <TextIcon />
-        </PanelButton>
-        <PanelButton active={props.tool === ELEMENTS.IMAGE} onClick={() => props.onToolClick(ELEMENTS.IMAGE)}>
+        </PanelTextButton>
+        <PanelTextButton text="Image" active={props.tool === ELEMENTS.IMAGE} onClick={() => props.onToolClick(ELEMENTS.IMAGE)}>
             <ImageIcon />
-        </PanelButton>
-        <PanelButton active={props.tool === ELEMENTS.DRAW} onClick={() => props.onToolClick(ELEMENTS.DRAW)}>
+        </PanelTextButton>
+        <PanelTextButton text="Draw" active={props.tool === ELEMENTS.DRAW} onClick={() => props.onToolClick(ELEMENTS.DRAW)}>
             <PenIcon />
-        </PanelButton>
+        </PanelTextButton>
     </Panel>
 );
 

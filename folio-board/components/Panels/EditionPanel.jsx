@@ -1,6 +1,6 @@
 import React from "react";
 import {DIALOGS} from "../../constants.js";
-import {Panel, PanelButton} from "./Panel.jsx";
+import {Panel, PanelButton, PanelTextButton} from "./Panel.jsx";
 import {
     FillIcon,
     StrokeIcon,
@@ -39,21 +39,21 @@ const getButtonProps = (props, type, test) => {
 export const EditionPanel = props => (
     <Panel position="top-right">
         {/* Style buttons */}
-        <PanelButton {...getButtonProps(props, DIALOGS.FILL, "fillColor")}>
+        <PanelTextButton text="Fill" {...getButtonProps(props, DIALOGS.FILL, "fillColor")}>
             <FillIcon />
-        </PanelButton>
-        <PanelButton {...getButtonProps(props, DIALOGS.STROKE, "strokeColor")}>
+        </PanelTextButton>
+        <PanelTextButton text="Stroke" {...getButtonProps(props, DIALOGS.STROKE, "strokeColor")}>
             <StrokeIcon />
-        </PanelButton>
-        <PanelButton {...getButtonProps(props, DIALOGS.TEXT, "textColor")}>
+        </PanelTextButton>
+        <PanelTextButton text="Text" {...getButtonProps(props, DIALOGS.TEXT, "textColor")}>
             <TextIcon />
-        </PanelButton>
-        <PanelButton {...getButtonProps(props, DIALOGS.ARROWHEAD, "startArrowhead")}>
+        </PanelTextButton>
+        <PanelTextButton text="Arrow" {...getButtonProps(props, DIALOGS.ARROWHEAD, "startArrowhead")}>
             <ArrowheadArrowIcon />
-        </PanelButton>
-        <PanelButton {...getButtonProps(props, DIALOGS.SHAPE, "shape")}>
+        </PanelTextButton>
+        <PanelTextButton text="Shape" {...getButtonProps(props, DIALOGS.SHAPE, "shape")}>
             <ShapesIcon />
-        </PanelButton>
+        </PanelTextButton>
         {/* Order buttons */}
         {/*
         <{false && (
@@ -79,9 +79,9 @@ export const EditionPanel = props => (
         </PanelButton>
         */}
         {/* Remove current selection */}
-        <PanelButton disabled={(props.elements || []).length === 0} onClick={props.onRemoveClick}>
+        <PanelTextButton text="Remove" disabled={(props.elements || []).length === 0} onClick={props.onRemoveClick}>
             <TrashIcon />
-        </PanelButton>
+        </PanelTextButton>
     </Panel>
 );
 
