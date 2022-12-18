@@ -40,10 +40,10 @@ Pull requests are always welcomen. For new features or major changes, please ope
 ## Product Roadmap
 
 - [X] Reimplement Folio in SVG.
-- [] Folio app with local storage.
-- [] Folio website.
-- [] Folio extension.
-- [] Publish NPM package for embedding Folio with React.
+- [ ] Folio app with local storage.
+- [ ] Folio website.
+- [ ] Folio extension.
+- [ ] Publish NPM package for embedding Folio with React.
 
 ## License
 
