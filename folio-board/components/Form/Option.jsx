@@ -11,10 +11,10 @@ const optionTypes = {
                     className={classNames({
                         "w-full h-full text-lg text-red-500": item.color === "transparent",
                         "p-4": item.color !== "transparent",
-                        "d-flex items-center justify-center b-2 b-solid r-md text-gray-900": true,
-                        "b-gray-900": item.value === props.value,
+                        "d-flex items-center justify-center b-1 b-solid r-md": true,
+                        "b-dark-100": item.value === props.value,
                         // "b-white": color !== props.value,
-                        "b-gray-200": item.value !== props.value,
+                        "b-light-200": item.value !== props.value,
                     })}
                     data-color={item.value}
                     style={{
@@ -36,7 +36,7 @@ const optionTypes = {
                     className={classNames({
                         "d-flex justify-center items-center": true,
                         "r-md cursor-pointer p-2 w-full text-lg": true,
-                        "bg-gray-900 text-white": item.value === props.value,
+                        "bg-dark-700 text-white": item.value === props.value,
                     })}
                     style={{
                         fontFamily: item.font,
@@ -56,7 +56,7 @@ const optionTypes = {
                     "r-md cursor-pointer p-2 w-full": true,
                     "text-lg": !!item.icon,
                     "font-bold": !!item.text,
-                    "bg-gray-900 text-white": item.value === props.value,
+                    "bg-dark-700 text-white": item.value === props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -107,7 +107,7 @@ export const Option = props => {
         marginLeft: isInline ? "auto" : "0px",
     };
     return (
-        <div className="mt-0">
+        <div className="mt-0 text-dark-700">
             <div style={wrapperStyle}>
                 <div style={titleStyle}>{props.title}</div>
                 <div style={contentStyle}>
@@ -115,7 +115,7 @@ export const Option = props => {
                 </div>
             </div>
             {!!props.helper && (
-                <div className="text-gray-700 text-xs mt-0">
+                <div className="text-light-900 text-xs mt-0">
                     {props.helper}
                 </div>
             )}
