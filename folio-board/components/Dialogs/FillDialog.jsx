@@ -30,7 +30,7 @@ const options = {
 };
 
 export const FillDialog = props => (
-    <Dialog className="pt-4 right-0 top-0 pr-24" style={{paddingRight:"5rem"}}>
+    <Dialog className="pt-4 right-0 top-0 pr-28">
         <Form
             data={props.values || {}}
             items={options}
