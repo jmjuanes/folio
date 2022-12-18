@@ -255,7 +255,7 @@ Board.defaultProps = {
     initialData: null,
     width: 0,
     height: 0,
-    showMenu: true,
+    showMenu: false,
     showZoom: true,
     showHistory: true,
     showTools: true,
