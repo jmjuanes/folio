@@ -134,7 +134,7 @@ export const Canvas = props => {
             width="100%"
             height="100%"
             style={{
-                // backgroundColor: "#eaeaea",
+                backgroundColor: props.backgroundColor,
                 touchAction: "none",
                 userSelect: "none",
                 ...props.style,
@@ -143,16 +143,6 @@ export const Canvas = props => {
             onDoubleClick={e => handleDoubleClick(e, null, props.onDoubleClickCanvas)}
         >
             <g transform={transform.join(" ")}>
-                {props.showBackground && (
-                    <rect
-                        x="0"
-                        y="0"
-                        width={props.width}
-                        height={props.height}
-                        fill={props.background}
-                        stroke="none"
-                    />
-                )}
                 {props.showGrid && (
                     <Grid
                         translateX={props.translateX}
@@ -205,7 +195,7 @@ Canvas.defaultProps = {
     id: "",
     width: 0,
     height: 0,
-    background: "#fff",
+    backgroundColor: "#fafafa",
     elements: [],
     translateX: 0,
     translateY: 0,
@@ -231,6 +221,5 @@ Canvas.defaultProps = {
     showBounds: false,
     showBrush: false,
     showGrid: true,
-    showBackground: true,
     style: {},
 };
