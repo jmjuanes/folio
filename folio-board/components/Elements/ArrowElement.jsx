@@ -64,7 +64,7 @@ export const ArrowElement = props => {
     const strokeWidth = strokeWidths[props.strokeWidth];
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
-            const length = getPointsDistance([props.x, props.y], [props.x2, props.y2]);
+            const length = getPointsDistance([props.x1, props.y1], [props.x2, props.y2]);
             const strokeStyle = props.strokeStyle;
             if (strokeStyle === DASH_KEYS.DASHED || strokeStyle === DASH_KEYS.DOTTED) {
                 return getBalancedDash(length, strokeWidth, strokeStyle);
