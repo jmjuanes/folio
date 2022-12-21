@@ -15,10 +15,10 @@ import {simplifyPath} from "./utils/index.js";
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
         render: props => (
-            <g key={props.id} data-element={props.id}>
+            <React.Fragment>
                 <ShapeElement {...props} />
                 <TextElement {...props} />
-            </g>
+            </React.Fragment>
         ),
         initialize: values => ({
             shape: values.shape || SHAPES.RECTANGLE,
@@ -45,11 +45,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.ARROW]: {
-        render: props => (
-            <g key={props.id} data-element={props.id}>
-                <ArrowElement {...props} />
-            </g>
-        ),
+        render: props => <ArrowElement {...props} />,
         initialize: values => ({
             nodeHandlers: true,
             startArrowhead: values.startArrowhead || ARROWHEADS.NONE,
@@ -61,11 +57,7 @@ export const elementsConfig = {
         }),
     },
     [ELEMENTS.TEXT]: {
-        render: props => (
-            <g key={props.id} data-element={props.id}>
-                <TextElement {...props} />
-            </g>
-        ),
+        render: props => <TextElement {...props} />,
         initialize: styles => ({
             edgeHandlers: true,
             cornerHandlers: true,
@@ -84,11 +76,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.DRAW]: {
-        render: props => (
-            <g key={props.id} data-element={props.id}>
-                <DrawElement {...props} />
-            </g>
-        ),
+        render: props => <DrawElement {...props} />,
         initialize: styles => ({
             points: [],
             strokeColor: styles.strokeColor,
@@ -125,11 +113,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.IMAGE]: {
-        render: props => (
-            <g key={props.id} data-element={props.id}>
-                <ImageElement {...props} />
-            </g>
-        ),
+        render: props => <ImageElement {...props} />,
         initialize: () => ({
             edgeHandlers: true,
             cornerHandlers: true,

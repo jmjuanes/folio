@@ -161,12 +161,17 @@ export const Canvas = props => {
                 )}
                 <React.Fragment>
                     {props.elements.map(element => {
-                        return getElementConfig(element).render({
+                        const content = getElementConfig(element).render({
                             ...element,
                             onChange: (k, v) => props?.onElementChange?.(element.id, k, v),
                             onPointerDown: e => handlePointerDown(e, "element", props.onPointElement),
                             onDoubleClick: e => handleDoubleClick(e, "element", props.onDoubleClickElement),
                         });
+                        return (
+                            <g key={props.id} data-element={props.id} style={{cursor: "move"}}>
+                                {content}
+                            </g>
+                        );
                     })}
                 </React.Fragment>
                 {props.showBrush && !!props.brush && (
