@@ -1,6 +1,7 @@
 import React from "react";
 import {strokeColors, fontSizes, fontFaces} from "../../styles.js";
 import {measureText, stopEventPropagation} from "../../utils/index.js";
+// import {GRID_SIZE} from "../../constants.js";
 
 export const TextElement = props => {
     const inputRef = React.useRef(null);
@@ -12,6 +13,9 @@ export const TextElement = props => {
     const textColor = strokeColors[props.textColor];
     const textFont = fontFaces[props.textFont];
     const [textWidth, textHeight] = React.useMemo(() => {
+        // return measureText(props.text || " ", textSize, textFont).map(size => {
+        //     return Math.ceil(size / GRID_SIZE) * GRID_SIZE;
+        // });
         return measureText(props.text || " ", textSize, textFont);
     }, [props.editing, props.text, props.textFont, props.textSize]);
 
@@ -36,6 +40,18 @@ export const TextElement = props => {
 
     return (
         <g transform={`translate(${x} ${y})`}>
+            {(!!props.creating || props.editing) && (
+                <rect
+                    x={(-1) * Math.max(textWidth, width) / 2}
+                    y={(-1) * Math.max(textHeight, height) / 2}
+                    width={Math.max(textWidth, width)}
+                    height={Math.max(textHeight, height)}
+                    fill="transparent"
+                    stroke="#0d6efd"
+                    strokeWidth="2"
+                    strokeDasharray="5 5"
+                />
+            )}
             <foreignObject
                 x={(-1) * textWidth / 2}
                 y={(-1) * textHeight / 2}

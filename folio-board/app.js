@@ -83,6 +83,7 @@ export const createApp = callbacks => {
             x2: 0,
             y2: 0,
             selected: false,
+            creating: false,
             editing: false,
             locked: false,
             group: null,
@@ -413,6 +414,7 @@ export const createApp = callbacks => {
                         y1: getPosition(event.originalY),
                         x2: getPosition(event.originalX),
                         y2: getPosition(event.originalY),
+                        creating: true,
                     });
                     elementConfig.onCreateStart?.(element, event),
                     state.activeElement = element; // Save element reference
@@ -523,6 +525,7 @@ export const createApp = callbacks => {
                 }
                 else if (state.activeAction === ACTIONS.CREATE && state.activeElement) {
                     const element = state.activeElement;
+                    element.creating = false;
                     element.selected = true; // By default select this element
                     getElementConfig(element)?.onCreateEnd?.(element, event);
                     // We need to patch the history to save the new element values
