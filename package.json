@@ -28,7 +28,7 @@
         "html-webpack-plugin": "^5.5.0",
         "jest": "^28.1.3",
         "jest-environment-jsdom": "^28.1.3",
-        "lowcss": "^0.3.0",
+        "lowcss": "^0.4.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-test-renderer": "^18.2.0",
