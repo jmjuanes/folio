@@ -1,6 +1,6 @@
 import React from "react";
 import {ACTIONS, ELEMENTS} from "../../constants.js";
-import {Panel, PanelButton, PanelTextButton} from "./Panel.jsx";
+import {Panel, PanelTextButton} from "./Panel.jsx";
 import {
     ArrowsIcon,
     PointerIcon,
@@ -27,12 +27,7 @@ export const ToolsPanel = props => (
         >
             <PointerIcon />
         </PanelTextButton>
-        <div
-            className="bg-light-900 w-12"
-            style={{
-                height: "1px",
-            }}
-        />
+        <div className="bg:light-900 w:12 h:px" />
         {/* Available tools */}
         <PanelTextButton text="Shape" active={props.tool === ELEMENTS.SHAPE} onClick={() => props.onToolClick(ELEMENTS.SHAPE)}>
             <RectangleIcon />

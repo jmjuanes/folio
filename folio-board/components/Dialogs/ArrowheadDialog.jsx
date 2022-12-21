@@ -36,7 +36,7 @@ const options = {
 };
 
 export const ArrowheadDialog = props => (
-    <Dialog className="pt-4 right-0 top-0 pr-28" width="11rem">
+    <Dialog className="pt:4 right:0 top:0 pr:28" width="11rem">
         <Form
             data={props.values || {}}
             items={options}

@@ -1,5 +1,4 @@
 import React from "react";
-
 import {Option} from "./Option.jsx";
 
 export const Form = props => (
@@ -16,7 +15,7 @@ export const Form = props => (
                 }
             }
             return (
-                <div className={index === 0 ? "mt-0" : "mt-4"} key={key}>
+                <div className={index === 0 ? "mt:0" : "mt:4"} key={key}>
                     <Option
                         {...item}
                         value={value}

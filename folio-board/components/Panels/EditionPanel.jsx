@@ -1,6 +1,6 @@
 import React from "react";
 import {DIALOGS} from "../../constants.js";
-import {Panel, PanelButton, PanelTextButton} from "./Panel.jsx";
+import {Panel, PanelTextButton} from "./Panel.jsx";
 import {
     FillIcon,
     StrokeIcon,

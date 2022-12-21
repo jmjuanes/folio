@@ -4,22 +4,22 @@ import {BanIcon} from "../icons/index.jsx";
 
 const optionTypes = {
     color: props => (
-        <div className="d-grid gap-1 grid-cols-5 w-full">
+        <div className="d:grid gap:1 cols:5 w:full">
             {(props.values || []).map(item => (
                 <div
                     key={item.value}
                     className={classNames({
-                        "w-full h-full text-lg text-red-500": item.color === "transparent",
-                        "p-4": item.color !== "transparent",
-                        "d-flex items-center justify-center b-1 b-solid r-md": true,
-                        "b-dark-100": item.value === props.value,
-                        // "b-white": color !== props.value,
-                        "b-light-200": item.value !== props.value,
+                        "w:full h:full text:lg text:red-500": item.color === "transparent",
+                        "p:4": item.color !== "transparent",
+                        "d:flex items:center justify:center b:1 b:solid r:md cursor:pointer": true,
+                        "b:dark-100": item.value === props.value,
+                        // "b:white": color !== props.value,
+                        "b:light-200": item.value !== props.value,
                     })}
                     data-color={item.value}
                     style={{
                         backgroundColor: item.color,
-                        cursor: "pointer",
+                        // cursor: "pointer",
                     }}
                     onClick={() => props.onChange(item.value)}
                 >
@@ -29,14 +29,14 @@ const optionTypes = {
         </div>
     ),
     font: props => (
-        <div className="d-flex gap-1 w-full">
+        <div className="d:flex gap:1 w:full">
             {(props.values || []).map(item => (
                 <div
                     key={item.value}
                     className={classNames({
-                        "d-flex justify-center items-center": true,
-                        "r-md cursor-pointer p-2 w-full text-lg": true,
-                        "bg-dark-700 text-white": item.value === props.value,
+                        "d:flex justify:center items:center": true,
+                        "r:md cursor:pointer p:2 w:full text:lg": true,
+                        "bg:dark-700 text:white": item.value === props.value,
                     })}
                     style={{
                         fontFamily: item.font,
@@ -49,14 +49,14 @@ const optionTypes = {
         </div>
     ),
     select: props => (
-        <div className={`d-grid grid-cols-${props.grid || "4"} gap-1 w-full`}>
+        <div className={`d:grid cols:${props.grid || "4"} gap:1 w:full`}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
-                    "d-flex justify-center items-center": true,
-                    "r-md cursor-pointer p-2 w-full": true,
-                    "text-lg": !!item.icon,
-                    "font-bold": !!item.text,
-                    "bg-dark-700 text-white": item.value === props.value,
+                    "d:flex justify:center items:center": true,
+                    "r:md cursor:pointer p:2 w:full": true,
+                    "text:lg": !!item.icon,
+                    "font:bold": !!item.text,
+                    "bg:dark-700 text:white": item.value === props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -74,13 +74,13 @@ const optionTypes = {
         />
     ),
     input: props => (
-        <div className="d-flex items-center gap-1">
+        <div className="d:flex items:center gap:1">
             {props.prefix && (
                 <div>{props.prefix}</div>
             )}
             <input
                 type="text"
-                className="w-full"
+                className="w:full"
                 placeholder={props.placeholder}
                 onChange={e => props.onChange(e.target.value || "")}
                 defaultValue={props.value}
@@ -107,7 +107,7 @@ export const Option = props => {
         marginLeft: isInline ? "auto" : "0px",
     };
     return (
-        <div className="mt-0 text-dark-700">
+        <div className="mt:0 text:dark-700">
             <div style={wrapperStyle}>
                 <div style={titleStyle}>{props.title}</div>
                 <div style={contentStyle}>
@@ -115,7 +115,7 @@ export const Option = props => {
                 </div>
             </div>
             {!!props.helper && (
-                <div className="text-light-900 text-xs mt-0">
+                <div className="text:light-900 text:xs mt:0">
                     {props.helper}
                 </div>
             )}

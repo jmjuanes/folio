@@ -104,7 +104,7 @@ const Board = React.forwardRef((props, ref) => {
     }
 
     return (
-        <div className="position-fixed overflow-hidden top-0 left-0 h-full w-full">
+        <div className="position:fixed overflow:hidden top:0 left:0 h:full w:full">
             <Canvas
                 id={app.id}
                 elements={app.elements}

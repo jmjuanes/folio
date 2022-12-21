@@ -57,7 +57,7 @@ const options = {
 };
 
 export const StrokeDialog = props => (
-    <Dialog className="pt-4 right-0 top-0 pr-28">
+    <Dialog className="pt:4 right:0 top:0 pr:28">
         <Form
             data={props.values || {}}
             items={options}

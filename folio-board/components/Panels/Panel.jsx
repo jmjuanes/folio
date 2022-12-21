@@ -4,12 +4,12 @@ import classNames from "classnames";
 
 export const Panel = props => {
     const panelWrapperClass = classNames({
-        "position-absolute z-10": true,
-        "top-0 left-0 pl-4 pt-4": props.position === "top-left",
-        "top-0 right-0 pr-4 pt-4": props.position === "top-right",
-        "bottom-0 left-0 pb-4 pl-4": props.position === "bottom-left",
-        "bottom-0 right-0 pb-4 pr-4": props.position === "bottom-right",
-        "bottom-0 left-half pb-4": props.position === "bottom-center",
+        "position:absolute z:10": true,
+        "top:0 left:0 pl:4 pt:4": props.position === "top-left",
+        "top:0 right:0 pr:4 pt:4": props.position === "top-right",
+        "bottom:0 left:0 pb:4 pl:4": props.position === "bottom-left",
+        "bottom:0 right:0 pb:4 pr:4": props.position === "bottom-right",
+        "bottom:0 left:half pb:4": props.position === "bottom-center",
     });
     // TODO: we should move this to a classname
     const panelWrapperStyle = {
@@ -18,8 +18,8 @@ export const Panel = props => {
     };
     const panelContentClass = classNames({
         // "b-1 b-solid b-gray-900": true,
-        "r-lg shadow-md items-center bg-white d-flex gap-2 p-2": true,
-        "flex-col": props.position === "top-left" || props.position === "top-right",
+        "r:lg shadow:md items:center bg:white d:flex gap:2 p:2": true,
+        "flex:col": props.position === "top-left" || props.position === "top-right",
     });
     return (
         <div className={panelWrapperClass} style={panelWrapperStyle}>
@@ -33,10 +33,10 @@ export const Panel = props => {
 export const PanelButton = props => {
     // TODO: missing height: 2.25rem height!!
     const classList = classNames({
-        "items-center r-md d-flex text-lg p-2": true,
-        "text-dark-700 hover:bg-dark-800 hover:text-white cursor-pointer": !props.active && !props.disabled,
-        "is-active bg-dark-800 text-white cursor-pointer": props.active && !props.disabled,
-        "is-disabled text-dark-100 cursor-not-allowed o-60": !props.active && props.disabled,
+        "items:center r:md d:flex text:lg p:2": true,
+        "text:dark-700 bg:dark-800:hover text:white:hover cursor:pointer": !props.active && !props.disabled,
+        "is-active bg:dark-800 text:white cursor:pointer": props.active && !props.disabled,
+        "is-disabled text:dark-100 cursor:not-allowed o:60": !props.active && props.disabled,
     });
     return (
         <div className={classList} onClick={props.onClick}>
@@ -53,16 +53,16 @@ PanelButton.defaultProps = {
 export const PanelTextButton = props => {
     // TODO: missing height: 2.25rem height!!
     const classList = classNames({
-        "d-flex flex-col w-16": true,
-        "items-center r-md d-flex text-lg p-3": true,
-        "text-dark-700 hover:bg-dark-800 hover:text-white cursor-pointer": !props.active && !props.disabled,
-        "is-active bg-dark-800 text-white cursor-pointer": props.active && !props.disabled,
-        "is-disabled text-dark-100 cursor-not-allowed o-60": !props.active && props.disabled,
+        "d:flex flex:col w:16": true,
+        "items:center r:md d:flex text:lg p:3": true,
+        "text:dark-700 bg:dark-800:hover text:white:hover cursor:pointer": !props.active && !props.disabled,
+        "is-active bg:dark-800 text:white cursor:pointer": props.active && !props.disabled,
+        "is-disabled text:dark-100 cursor:not-allowed o:60": !props.active && props.disabled,
     });
     return (
         <div className={classList} onClick={props.onClick}>
             {props.children}
-            <div className="mt-1" style={{fontSize:"0.635rem"}}>
+            <div className="mt:1 text:2xs">
                 <strong>{props.text}</strong>
             </div>
         </div>
@@ -73,30 +73,4 @@ PanelTextButton.defaultProps = {
     text: "",
     active: false,
     disabled: false,
-};
-
-export const PanelDropButton = props => {
-    // TODO: missing height: 2.25rem height!!
-    const classList = classNames({
-        "d-flex r-md": true,
-        "text-gray-900 hover:bg-gray-900 hover:text-white cursor-pointer": !props.active && !props.disabled,
-        "is-active bg-gray-900 text-white cursor-pointer": props.active && !props.disabled,
-        "is-disabled text-gray-900 cursor-not-allowed o-60": !props.active && props.disabled,
-    });
-    return (
-        <div className={classList}>
-            <div className="d-flex items-center text-lg p-2" onClick={props.onClick}>
-                {props.children}
-            </div>
-            <div className="d-flex items-center text-sm py-2 pr-1" onClick={props.onDropClick}>
-                {/* <ChevronUpIcon /> */}
-            </div>
-        </div>
-    );
-};
-
-PanelDropButton.defaultProps = {
-    active: false,
-    onClick: null,
-    onDropClick: null,
 };
