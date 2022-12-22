@@ -70,6 +70,19 @@ export const createApp = callbacks => {
             app.assets = {...newAssets};
         },
         clearAssets: () => app.setAssets({}),
+        getAsset: assetId => app.assets[assetId] || "",
+        addAsset: data => {
+            // First we need to check if this asset is already registered
+            let assetId = Object.keys(app.assets).find(assetId => {
+                return app.assets[assetId] === data;
+            });
+            if (!assetId) {
+                // Register this asset using a new identifier
+                assetId = generateID();
+                app.assets[assetId] = data;
+            }
+            return assetId;
+        },
 
         //
         // Elements API
@@ -239,7 +252,8 @@ export const createApp = callbacks => {
                 const elementConfig = getElementConfig(element);
                 Object.assign(element, {
                     ...(elementConfig.initialize?.(state.style) || {}),
-                    image: image,
+                    assetId: app.addAsset(image),
+                    // image: image,
                     imageWidth: img.width,
                     imageHeight: img.height,
                     x1: Math.floor((x - img.width / 2) / GRID_SIZE) * GRID_SIZE,

@@ -117,7 +117,8 @@ export const elementsConfig = {
         initialize: () => ({
             edgeHandlers: true,
             cornerHandlers: true,
-            image: "",
+            assetId: "",
+            // image: "",
             imageWidth: 0,
             imageHeight: 0,
         }),

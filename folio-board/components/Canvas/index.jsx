@@ -5,6 +5,7 @@ import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
 import {getElementConfig} from "../../elements.jsx";
+import {AssetsProvider} from "../../contexts/AssetsProvider.jsx";
 
 const useSelectedElements = props => {
     if (props.showHandlers || props.showBounds) {
@@ -159,7 +160,7 @@ export const Canvas = props => {
                         onPointerDown={e => handlePointerDown(e, null, null)}
                     />
                 )}
-                <React.Fragment>
+                <AssetsProvider value={props.assets || {}}>
                     {props.elements.map(element => {
                         const content = getElementConfig(element).render({
                             ...element,
@@ -173,7 +174,7 @@ export const Canvas = props => {
                             </g>
                         );
                     })}
-                </React.Fragment>
+                </AssetsProvider>
                 {props.showBrush && !!props.brush && (
                     <Brush
                         x1={props.brush?.x1}
@@ -202,6 +203,7 @@ Canvas.defaultProps = {
     height: 0,
     backgroundColor: "#fafafa",
     elements: [],
+    assets: {},
     translateX: 0,
     translateY: 0,
     zoom: 1,
