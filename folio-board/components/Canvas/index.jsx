@@ -168,7 +168,7 @@ export const Canvas = props => {
                             onDoubleClick: e => handleDoubleClick(e, "element", props.onDoubleClickElement),
                         });
                         return (
-                            <g key={props.id} data-element={props.id} style={{cursor: "move"}}>
+                            <g key={element.id} data-element={element.id} style={{cursor: "move"}}>
                                 {content}
                             </g>
                         );
