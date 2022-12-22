@@ -94,7 +94,7 @@ export const TextElement = props => {
                         onMouseDown={stopEventPropagation}
                         onMouseUp={stopEventPropagation}
                         onChange={event => {
-                            return props.onChange?.("text", event.target.value || "");
+                            return props.onChange?.(["text"], [event.target.value || ""]);
                         }}
                     />
                 )}

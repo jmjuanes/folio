@@ -750,9 +750,9 @@ export const createApp = callbacks => {
             },
             // onCopy: event => null,
             // onCut: event => null,
-            onElementChange: (id, key, value) => {
+            onElementChange: (id, keys, values) => {
                 if (state.activeElement?.id === id && state.activeElement?.editing) {
-                    app.updateElements([state.activeElement], [key], [value], true);
+                    app.updateElements([state.activeElement], keys, values, true);
                     app.update();
                 }
             },
