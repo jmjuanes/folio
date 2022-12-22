@@ -73,6 +73,13 @@ export const elementsConfig = {
                 x2: Math.max(element.x1, element.x2),
                 y2: Math.max(element.y1, element.y2),
             });
+            // Fix text initial position
+            if (Math.abs(element.x2 - element.x1) < GRID_SIZE) {
+                element.x2 = element.x1 + GRID_SIZE;
+            }
+            if (Math.abs(element.y2 - element.y1) < GRID_SIZE) {
+                element.y2 = element.y1 + GRID_SIZE;
+            }
         },
     },
     [ELEMENTS.DRAW]: {
