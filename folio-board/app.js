@@ -53,6 +53,35 @@ export const createApp = callbacks => {
             app.history = [];
             app.historyIndex = 0;
         },
+        copy: () => {
+            const elements = app.getSelectedElements();
+            return {
+                elements: elements,
+                assets: elements.reduce((assets, element) => {
+                    // Copy only assets in the current selection
+                    if (element.assetId && app.assets[element.assetId]) {
+                        assets[element.assetId] = app.assets[element.assetId];
+                    }
+                    return assets;
+                }, {}),
+            };   
+        },
+        paste: data => {
+            // We need to register the provided assets in the new assets object
+            // To prevent different assets ids, we will use a map to convert provided assets Ids to new assets ids
+            const assetMap = {};
+            Object.keys(data?.assets || {}).forEach(assetId => {
+                assetMap[assetId] = app.addAsset(data.assets[assetId]);
+            });
+            // Paste provided elements
+            app.pasteElements((data?.elements || []).map(originalElement => {
+                const element = {...originalElement};
+                if (!!element.assetId && !!assetMap[element.assetId]) {
+                    element.assetId = assetMap[element.assetId];
+                }
+                return element;
+            }));
+        },
 
         // 
         // State API
@@ -630,9 +659,8 @@ export const createApp = callbacks => {
                 }
                 else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                     event.preventDefault();
-                    const elements = app.getSelectedElements();
                     if (event.key === KEYS.X || event.key === KEYS.C) {
-                        const data = `folio:::${JSON.stringify(elements)}`;
+                        const data = `folio:::${JSON.stringify(app.copy())}`;
                         copyTextToClipboard(data).then(() => {
                             // console.log("Copied to clipboard");
                         });
@@ -641,7 +669,7 @@ export const createApp = callbacks => {
                     }
                     // Check for backspace key or cut --> remove elements
                     if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
-                        app.removeElements(elements);
+                        app.removeSelectedElements();
                         if (app.getElementsInActiveGroup().length === 0) {
                             // Reset active group if all elements of this group have been removed
                             state.activeGroup = null;
@@ -702,8 +730,8 @@ export const createApp = callbacks => {
                 return getDataFromClipboard(event).then(data => {
                     // Paste elements
                     if (data?.type === "text" && data?.content?.startsWith("folio:::")) {
-                        const elements = JSON.parse(data.content.split("folio:::")[1].trim());
-                        app.pasteElements(elements || []);
+                        const newData = JSON.parse(data.content.split("folio:::")[1].trim());
+                        app.paste(newData || {});
                         app.update();
                     }
                     // Create a new text element
