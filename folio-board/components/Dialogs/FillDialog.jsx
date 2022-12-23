@@ -1,13 +1,8 @@
 import React from "react";
-import {COLOR_KEYS, OPACITY_KEYS} from "../../constants.js";
+import {COLOR_KEYS, OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../../constants.js";
 import {fillColors} from "../../styles.js";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
-import {
-    OpacityNoneIcon,
-    OpacitySemiTransparentIcon,
-    OpacityTransparentIcon,
-} from "../icons/index.jsx";
 
 const options = {
     fillColor: {
@@ -19,13 +14,11 @@ const options = {
         })),
     },
     fillOpacity: {
-        type: "select",
+        type: "range",
         title: "Fill Opacity",
-        values: [
-            {value: OPACITY_KEYS.NONE, icon: OpacityNoneIcon()},
-            {value: OPACITY_KEYS.SEMI_TRANSPARENT, icon: OpacitySemiTransparentIcon()},
-            {value: OPACITY_KEYS.TRANSPARENT, icon: OpacityTransparentIcon()},
-        ],
+        minValue: OPACITY_MIN,
+        maxValue: OPACITY_MAX,
+        step: OPACITY_STEP,
     },
 };
 

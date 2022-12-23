@@ -81,11 +81,18 @@ export const ZOOM_STEP = 0.1;
 export const ZOOM_MAX = 5;
 export const ZOOM_MIN = 0.1;
 
+export const OPACITY_INITIAL = 1;
+export const OPACITY_STEP = 0.1;
+export const OPACITY_MIN = 0;
+export const OPACITY_MAX = 1;
+
 export const SELECTION_FILL_COLOR = "#0d6efd";
 export const SELECTION_STROKE_COLOR = "#0d6efd";
 
 export const SCREENSHOT_FILL_COLOR = "#20c997";
 export const SCREENSHOT_STROKE_COLOR = "#20c997";
+
+
 
 export const DATA_TYPES = {
     FOLIO_EXPORT: "folio/export_json",
@@ -149,10 +156,4 @@ export const DASH_KEYS = {
     SOLID: "solid",
     DASHED: "dashed",
     DOTTED: "dotted",
-};
-
-export const OPACITY_KEYS = {
-    NONE: 1,
-    SEMI_TRANSPARENT: 0.5,
-    TRANSPARENT: 0,
 };

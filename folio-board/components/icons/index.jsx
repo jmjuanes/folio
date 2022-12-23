@@ -47,16 +47,6 @@ export const ZoomOutIcon = () => createPathIcon(
 // TEXT_RIGHT: svg("M4 6L20 6M12 10L20 10M4 14L20 14M12 18L20 18"),
 // TEXT_CENTER: svg("M4 6L20 6M8 10L16 10M4 14L20 14M8 18L16 18"),
 
-export const OpacityNoneIcon = () => {
-    return createPathIcon("M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12ZM12 3L3 12M21 12L12 21M16 5L5 16M19 8L8 19");
-};
-export const OpacitySemiTransparentIcon = () => {
-    return createPathIcon("M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12ZM12 3L12 21M12 3L3 12M12 9L5 16M12 15L8 19");
-};
-export const OpacityTransparentIcon = () => {
-    return createPathIcon("M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z");
-};
-
 export const CircleSolidIcon = () => {
     return createIcon(<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" />);
 };

@@ -201,35 +201,30 @@ const Board = React.forwardRef((props, ref) => {
                 <React.Fragment>
                     {activeDialog.current === DIALOGS.FILL && (
                         <FillDialog
-                            key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
                     {activeDialog.current === DIALOGS.STROKE && (
                         <StrokeDialog
-                            key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
                     {activeDialog.current === DIALOGS.TEXT && (
                         <TextDialog
-                            key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
                     {activeDialog.current === DIALOGS.SHAPE && (
                         <ShapeDialog
-                            key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
                     {activeDialog.current === DIALOGS.ARROWHEAD && (
                         <ArrowheadDialog
-                            key={updateKey}
                             values={selectionValues}
                             onChange={handleElementChange}
                         />

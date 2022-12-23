@@ -3,7 +3,7 @@ import {
     SIZE_KEYS,
     FONT_KEYS,
     DASH_KEYS,
-    OPACITY_KEYS,
+    OPACITY_INITIAL,
 } from "./constants.js";
 
 export const strokeColors = {
@@ -55,10 +55,10 @@ export const fontFaces = {
 
 export const defaultStyles = {
     fillColor: COLOR_KEYS.NONE,
-    fillOpacity: OPACITY_KEYS.NONE,
+    fillOpacity: OPACITY_INITIAL,
     strokeColor: COLOR_KEYS.BLACK,
     strokeWidth: SIZE_KEYS.MEDIUM,
-    strokeOpacity: OPACITY_KEYS.NONE,
+    strokeOpacity: OPACITY_INITIAL,
     strokeStyle: DASH_KEYS.SOLID,
     textFont: FONT_KEYS.SANS,
     textSize: SIZE_KEYS.MEDIUM,

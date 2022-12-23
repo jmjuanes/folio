@@ -1,7 +1,9 @@
 import React from "react";
 import {
     COLOR_KEYS,
-    OPACITY_KEYS,
+    OPACITY_STEP,
+    OPACITY_MIN,
+    OPACITY_MAX,
     SIZE_KEYS,
     DASH_KEYS,
 } from "../../constants.js";
@@ -9,9 +11,6 @@ import {strokeColors} from "../../styles.js";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
 import {
-    OpacityNoneIcon,
-    OpacitySemiTransparentIcon,
-    OpacityTransparentIcon,
     CircleSolidIcon,
     CircleDashedIcon,
     CircleDottedIcon,
@@ -46,13 +45,11 @@ const options = {
         ],
     },
     strokeOpacity: {
-        type: "select",
+        type: "range",
         title: "Stroke Opacity",
-        values: [
-            {value: OPACITY_KEYS.NONE, icon: OpacityNoneIcon()},
-            {value: OPACITY_KEYS.SEMI_TRANSPARENT, icon: OpacitySemiTransparentIcon()},
-            {value: OPACITY_KEYS.TRANSPARENT, icon: OpacityTransparentIcon()},
-        ],
+        minValue: OPACITY_MIN,
+        maxValue: OPACITY_MAX,
+        step: OPACITY_STEP,
     },
 };
 

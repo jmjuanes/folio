@@ -90,6 +90,19 @@ const optionTypes = {
             )}
         </div>
     ),
+    range: props => (
+        <div className="">
+            <input
+                type="range"
+                className="m:0 w:full"
+                onChange={e => props.onChange(e.target.value || 0)}
+                defaultValue={props.value}
+                min={props.minValue}
+                max={props.maxValue}
+                step={props.step}
+            />
+        </div>
+    ),
 };
 
 export const Option = props => {
