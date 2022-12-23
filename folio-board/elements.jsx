@@ -17,7 +17,7 @@ export const elementsConfig = {
         render: props => (
             <React.Fragment>
                 <ShapeElement {...props} />
-                <TextElement {...props} />
+                <TextElement embedded={true} {...props} />
             </React.Fragment>
         ),
         initialize: values => ({
@@ -34,6 +34,9 @@ export const elementsConfig = {
             textColor: values.textColor,
             textFont: values.textFont,
             textSize: values.textSize,
+            textAlign: "",
+            textWidth: 0,
+            textHeight: 0,
         }),
         onCreateEnd: element => {
             Object.assign(element, {
@@ -65,6 +68,9 @@ export const elementsConfig = {
             textColor: styles.textColor,
             textFont: styles.textFont,
             textSize: styles.textSize,
+            textAlign: "",
+            textWidth: 0,
+            textHeight: 0,
         }),
         onCreateEnd: element => {
             Object.assign(element, {
