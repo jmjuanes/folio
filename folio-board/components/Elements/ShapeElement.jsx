@@ -1,5 +1,5 @@
 import React from "react";
-import {DASH_KEYS, SHAPES} from "../../constants.js";
+import {STROKES, SHAPES} from "../../constants.js";
 import {
     getBalancedDash,
     // getRectanglePerimeter,
@@ -21,7 +21,7 @@ const SimpleLine = props => {
                 [props.x1, props.y1],
                 [props.x2, props.y2],
             );
-            if (strokeStyle === DASH_KEYS.DASHED || strokeStyle === DASH_KEYS.DOTTED) {
+            if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
                 return getBalancedDash(length, props.strokeWidth, strokeStyle);
             }
             return ["none", "none"];
@@ -103,7 +103,7 @@ const EllipseShape = props => {
         () => {
             const length = getEllipsePerimeter(rx, ry);
             const strokeStyle = props.strokeStyle;
-            if (strokeStyle === DASH_KEYS.DASHED || strokeStyle === DASH_KEYS.DOTTED) {
+            if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
                 return getBalancedDash(length, props.strokeWidth, strokeStyle);
             }
             return ["none", "none"];

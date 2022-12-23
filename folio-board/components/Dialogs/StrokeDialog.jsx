@@ -1,11 +1,11 @@
 import React from "react";
 import {
     COLOR_KEYS,
+    SIZE_KEYS,
     OPACITY_STEP,
     OPACITY_MIN,
     OPACITY_MAX,
-    SIZE_KEYS,
-    DASH_KEYS,
+    STROKES,
 } from "../../constants.js";
 import {strokeColors} from "../../styles.js";
 import {Dialog} from "./Dialog.jsx";
@@ -39,9 +39,9 @@ const options = {
         type: "select",
         title: "Stroke Style",
         values: [
-            {value: DASH_KEYS.SOLID, icon: CircleSolidIcon()},
-            {value: DASH_KEYS.DASHED, icon: CircleDashedIcon()},
-            {value: DASH_KEYS.DOTTED, icon: CircleDottedIcon()},
+            {value: STROKES.SOLID, icon: CircleSolidIcon()},
+            {value: STROKES.DASHED, icon: CircleDashedIcon()},
+            {value: STROKES.DOTTED, icon: CircleDottedIcon()},
         ],
     },
     strokeOpacity: {

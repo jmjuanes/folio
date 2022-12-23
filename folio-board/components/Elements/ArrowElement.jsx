@@ -1,5 +1,5 @@
 import React from "react";
-import {DASH_KEYS, ARROWHEADS} from "../../constants.js";
+import {STROKES, ARROWHEADS} from "../../constants.js";
 import {getBalancedDash, getPointsDistance} from "../../utils/index.js";
 import {strokeColors, strokeWidths} from "../../styles.js";
 
@@ -66,7 +66,7 @@ export const ArrowElement = props => {
         () => {
             const length = getPointsDistance([props.x1, props.y1], [props.x2, props.y2]);
             const strokeStyle = props.strokeStyle;
-            if (strokeStyle === DASH_KEYS.DASHED || strokeStyle === DASH_KEYS.DOTTED) {
+            if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
                 return getBalancedDash(length, strokeWidth, strokeStyle);
             }
             return ["none", "none"];

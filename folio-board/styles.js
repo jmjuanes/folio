@@ -2,8 +2,8 @@ import {
     COLOR_KEYS,
     SIZE_KEYS,
     FONT_KEYS,
-    DASH_KEYS,
     OPACITY_INITIAL,
+    STROKES,
 } from "./constants.js";
 
 export const strokeColors = {
@@ -59,7 +59,7 @@ export const defaultStyles = {
     strokeColor: COLOR_KEYS.BLACK,
     strokeWidth: SIZE_KEYS.MEDIUM,
     strokeOpacity: OPACITY_INITIAL,
-    strokeStyle: DASH_KEYS.SOLID,
+    strokeStyle: STROKES.SOLID,
     textFont: FONT_KEYS.SANS,
     textSize: SIZE_KEYS.MEDIUM,
     textColor: COLOR_KEYS.BLACK,

@@ -58,6 +58,12 @@ export const ARROWHEADS = {
     SEGMENT: "segment",
 };
 
+export const STROKES = {
+    SOLID: "solid",
+    DASHED: "dashed",
+    DOTTED: "dotted",
+};
+
 export const ACTIONS = {
     MOVE: "action:move",
     SELECT: "action:select",
@@ -91,8 +97,6 @@ export const SELECTION_STROKE_COLOR = "#0d6efd";
 
 export const SCREENSHOT_FILL_COLOR = "#20c997";
 export const SCREENSHOT_STROKE_COLOR = "#20c997";
-
-
 
 export const DATA_TYPES = {
     FOLIO_EXPORT: "folio/export_json",
@@ -150,10 +154,4 @@ export const SIZE_KEYS = {
     MEDIUM: "md",
     LARGE: "lg",
     XLARGE: "xl",
-};
-
-export const DASH_KEYS = {
-    SOLID: "solid",
-    DASHED: "dashed",
-    DOTTED: "dotted",
 };
