@@ -23,9 +23,11 @@ export const Canvas = props => {
         event.preventDefault();
         event.stopPropagation();
         // const source = event.nativeEvent?.target?.dataset?.type || null;
+        const {top, left} = canvasRef.current.getBoundingClientRect();
+
         const eventInfo = {
-            originalX: (event.nativeEvent.clientX - props.translateX) / props.zoom,
-            originalY: (event.nativeEvent.clientY - props.translateY) / props.zoom,
+            originalX: (event.nativeEvent.clientX - left - props.translateX) / props.zoom,
+            originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             nativeEvent: event.nativeEvent,
         };
@@ -47,8 +49,8 @@ export const Canvas = props => {
             event.preventDefault();
             props.onPointerMove?.(Object.assign(eventInfo, {
                 // nativeEvent: event,
-                currentX: (event.clientX - props.translateX) / props.zoom,
-                currentY: (event.clientY - props.translateY) / props.zoom,
+                currentX: (event.clientX - left - props.translateX) / props.zoom,
+                currentY: (event.clientY - top - props.translateY) / props.zoom,
                 dx: (event.clientX - eventInfo.nativeEvent.clientX) / props.zoom,
                 dy: (event.clientY - eventInfo.nativeEvent.clientY) / props.zoom,
             }));
@@ -75,9 +77,10 @@ export const Canvas = props => {
     const handleDoubleClick = (event, source, listener) => {
         event.preventDefault();
         event.stopPropagation();
+        const {top, left} = canvasRef.current.getBoundingClientRect();
         const eventInfo = {
-            originalX: (event.nativeEvent.clientX - props.translateX) / props.zoom,
-            originalY: (event.nativeEvent.clientY - props.translateY) / props.zoom,
+            originalX: (event.nativeEvent.clientX - left - props.translateX) / props.zoom,
+            originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             nativeEvent: event.nativeEvent,
         };
