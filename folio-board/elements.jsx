@@ -35,8 +35,8 @@ export const elementsConfig = {
             textFont: values.textFont,
             textSize: values.textSize,
             textAlign: "",
-            textWidth: 0,
-            textHeight: 0,
+            textWidth: GRID_SIZE,
+            textHeight: GRID_SIZE,
         }),
         onCreateEnd: element => {
             Object.assign(element, {
@@ -69,8 +69,10 @@ export const elementsConfig = {
             textFont: styles.textFont,
             textSize: styles.textSize,
             textAlign: "",
-            textWidth: 0,
-            textHeight: 0,
+            textWidth: GRID_SIZE,
+            textHeight: GRID_SIZE,
+            minWidth: GRID_SIZE,
+            minHeight: GRID_SIZE,
         }),
         onCreateEnd: element => {
             Object.assign(element, {

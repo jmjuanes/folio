@@ -124,6 +124,8 @@ export const createApp = callbacks => {
             y1: 0,
             x2: 0,
             y2: 0,
+            minWidth: 1,
+            minHeight: 1,
             selected: false,
             creating: false,
             editing: false,
@@ -266,6 +268,10 @@ export const createApp = callbacks => {
                 y1: Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE,
                 x2: Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE,
                 y2: Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE,
+                textWidth: textWidth,
+                textHeight: textHeight,
+                minWidth: Math.ceil(textWidth / GRID_SIZE) * GRID_SIZE,
+                minHeight: Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE,
                 selected: true,
             });
             app.addElements([element]);
@@ -517,32 +523,32 @@ export const createApp = callbacks => {
                     state.isResized = true;
                     const element = app.getElement(snapshot[0].id);
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - element.minWidth);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - element.minHeight);
                     }
                     else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + element.minWidth);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - element.minHeight);
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - element.minWidth);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + element.minHeight);
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + element.minWidth);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + element.minHeight);
                     }
                     else if (event.handler === HANDLERS.EDGE_TOP) {
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - 1);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - element.minHeight);
                     }
                     else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + 1);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + element.minHeight);
                     }
                     else if (event.handler === HANDLERS.EDGE_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - 1);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - element.minWidth);
                     }
                     else if (event.handler === HANDLERS.EDGE_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + 1);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + element.minWidth);
                     }
                     else if (event.handler === HANDLERS.NODE_START) {
                         element.x1 = getPosition(snapshot[0].x1 + event.dx);

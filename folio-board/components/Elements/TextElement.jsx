@@ -12,12 +12,6 @@ export const TextElement = props => {
     const textSize = fontSizes[props.textSize];
     const textColor = strokeColors[props.textColor];
     const textFont = fontFaces[props.textFont];
-    // const [textWidth, textHeight] = React.useMemo(() => {
-    //     // return measureText(props.text || " ", textSize, textFont).map(size => {
-    //     //     return Math.ceil(size / GRID_SIZE) * GRID_SIZE;
-    //     // });
-    //     return measureText(props.text || " ", textSize, textFont);
-    // }, [props.editing, props.text, props.textFont, props.textSize]);
 
     // First time editing --> focus on input
     React.useEffect(() => {
@@ -100,12 +94,14 @@ export const TextElement = props => {
                                 const keys = ["text", "textWidth", "textHeight"];
                                 const values = [text, textWidth, textHeight];
                                 if (!props.embedded) {
-                                    keys.push("x1", "x2", "y1", "y2");
+                                    keys.push("x1", "x2", "y1", "y2", "minWidth", "minHeight");
                                     values.push(
                                         Math.min(props.x1, Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE),
                                         Math.max(props.x2, Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE),
                                         Math.min(props.y1, Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE),
                                         Math.max(props.y2, Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE),
+                                        Math.ceil(textWidth / GRID_SIZE) * GRID_SIZE,
+                                        Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE,
                                     );
                                 }
                                 return props.onChange?.(keys, values);
