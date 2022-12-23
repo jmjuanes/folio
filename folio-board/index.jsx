@@ -12,7 +12,6 @@ import {useApp} from "./hooks/useApp.js";
 import {
     EditionPanel,
     HistoryPanel,
-    MenuPanel,
     ToolsPanel,
     ZoomPanel,
 } from "./components/Panels/index.jsx";
@@ -24,6 +23,7 @@ import {
     ArrowheadDialog,
 } from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
+import {HeaderBar} from "./components/HeaderBar/index.jsx";
 import {blobToDataUrl} from "./utils/index.js";
 import {
     exportToBlob,
@@ -73,15 +73,6 @@ const Board = React.forwardRef((props, ref) => {
         }
     };
 
-    // Handle export click --> call props.onExport function
-    const handleExportClick = () => {
-        return props.onExport?.();
-    };
-
-    const handleSaveClick = () => {
-        return props.onSave?.();
-    };
-
     // Register effects
     React.useEffect(() => handleBoardMount(), []);
 
@@ -104,133 +95,130 @@ const Board = React.forwardRef((props, ref) => {
     }
 
     return (
-        <div className="position:fixed overflow:hidden top:0 left:0 h:full w:full">
-            <Canvas
-                id={app.id}
-                elements={app.elements}
-                assets={app.assets}
-                translateX={app.state.translateX}
-                translateY={app.state.translateY}
-                zoom={app.state.zoom}
-                brush={app.state.selection}
-                brushFillColor={action === ACTIONS.SCREENSHOT ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
-                brushStrokeColor={action === ACTIONS.SCREENSHOT ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
-                showHandlers={!app.state.activeAction && !app.state.activeTool}
-                showBrush={action === ACTIONS.SELECT || action === ACTIONS.SCREENSHOT}
-                showBounds={!app.state.activeAction && !app.state.activeTool}
-                showGrid={true}
-                {...app.events}
-            />
-            {props.showMenu && (
-                <MenuPanel
-                    onCameraClick={() => {
-                        app.state.activeTool = null;
-                        app.setAction(ACTIONS.SCREENSHOT);
-                    }}
-                    onExportClick={() => handleExportClick()}
-                    onSaveClick={() => handleSaveClick()}
+        <div className="d:flex flex:col w:full h:full">
+            {props.showHeaderBar && (
+                <HeaderBar
+                    onExport={props.onExport}
                 />
             )}
-            {props.showTools && (
-                <ToolsPanel
-                    action={app.state.activeAction}
-                    tool={app.state.activeTool}
-                    onMoveClick={() => {
-                        app.state.activeTool = null;
-                        app.setAction(ACTIONS.MOVE);
-                    }}
-                    onSelectionClick={() => app.setTool(null)}
-                    onToolClick={tool => {
-                        // Special action if the image tool is activated
-                        if (tool === ELEMENTS.IMAGE) {
-                            return imageInputRef.current.click();
-                        }
-                        app.setTool(tool);
-                    }}
-                />
-            )}
-            {props.showHistory && (
-                <HistoryPanel
-                    undoDisabled={app.isUndoDisabled()}
-                    redoDisabled={app.isRedoDisabled()}
-                    onUndoClick={() => app.undo()}
-                    onRedoClick={() => app.redo()}
-                />
-            )}
-            {props.showZoom && (
-                <ZoomPanel
+            <div className="position:relative overflow:hidden h:full w:full">
+                <Canvas
+                    id={app.id}
+                    elements={app.elements}
+                    assets={app.assets}
+                    translateX={app.state.translateX}
+                    translateY={app.state.translateY}
                     zoom={app.state.zoom}
-                    onZoomInClick={() => app.zoomIn()}
-                    onZoomOutClick={() => app.zoomOut()}
+                    brush={app.state.selection}
+                    brushFillColor={action === ACTIONS.SCREENSHOT ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
+                    brushStrokeColor={action === ACTIONS.SCREENSHOT ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
+                    showHandlers={!app.state.activeAction && !app.state.activeTool}
+                    showBrush={action === ACTIONS.SELECT || action === ACTIONS.SCREENSHOT}
+                    showBounds={!app.state.activeAction && !app.state.activeTool}
+                    showGrid={true}
+                    {...app.events}
                 />
-            )}
-            {props.showEdition && (
-                <EditionPanel
-                    key={updateKey}
-                    elements={selectedElements}
-                    dialog={activeDialog.current}
-                    onRemoveClick={() => {
-                        app.cancelAction();
-                        app.removeElements(selectedElements);
-                        app.update();
-                    }}
-                    onBringForwardClick={() => {
-                        // boardApi.current.bringSelectionForward();
-                    }}
-                    onSendBackwardClick={() => {
-                        // boardApi.current.sendSelectionBackward();
-                    }}
-                    onGroupSelectionClick={() => {
-                        // const group = Folio.generateID();
-                        // app.current.registerSelectionUpdate(["group"], [group], false);
-                        // app.current.updateSelectedElements("group", group);
-                        // forceUpdate();
-                    }}
-                    onUngroupSelectionClick={() => {
-                        // app.current.registerSelectionUpdate(["group"], [null], false);
-                        // app.current.updateSelectedElements("group", null);
-                        // forceUpdate();
-                    }}
-                    onDialogClick={id => {
-                        activeDialog.current = id;
-                        forceUpdate();
-                    }}
-                />
-            )}
-            {!action && !!activeDialog.current && selectedElements.length < 2 && (
-                <React.Fragment>
-                    {activeDialog.current === DIALOGS.FILL && (
-                        <FillDialog
-                            values={selectionValues}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                    {activeDialog.current === DIALOGS.STROKE && (
-                        <StrokeDialog
-                            values={selectionValues}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                    {activeDialog.current === DIALOGS.TEXT && (
-                        <TextDialog
-                            values={selectionValues}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                    {activeDialog.current === DIALOGS.SHAPE && (
-                        <ShapeDialog
-                            values={selectionValues}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                    {activeDialog.current === DIALOGS.ARROWHEAD && (
-                        <ArrowheadDialog
-                            values={selectionValues}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                </React.Fragment>
-            )}
+                {props.showTools && (
+                    <ToolsPanel
+                        action={app.state.activeAction}
+                        tool={app.state.activeTool}
+                        onMoveClick={() => {
+                            app.state.activeTool = null;
+                            app.setAction(ACTIONS.MOVE);
+                        }}
+                        onSelectionClick={() => app.setTool(null)}
+                        onToolClick={tool => {
+                            // Special action if the image tool is activated
+                            if (tool === ELEMENTS.IMAGE) {
+                                return imageInputRef.current.click();
+                            }
+                            app.setTool(tool);
+                        }}
+                    />
+                )}
+                {props.showHistory && (
+                    <HistoryPanel
+                        undoDisabled={app.isUndoDisabled()}
+                        redoDisabled={app.isRedoDisabled()}
+                        onUndoClick={() => app.undo()}
+                        onRedoClick={() => app.redo()}
+                    />
+                )}
+                {props.showZoom && (
+                    <ZoomPanel
+                        zoom={app.state.zoom}
+                        onZoomInClick={() => app.zoomIn()}
+                        onZoomOutClick={() => app.zoomOut()}
+                    />
+                )}
+                {props.showEdition && (
+                    <EditionPanel
+                        key={updateKey}
+                        elements={selectedElements}
+                        dialog={activeDialog.current}
+                        onRemoveClick={() => {
+                            app.cancelAction();
+                            app.removeElements(selectedElements);
+                            app.update();
+                        }}
+                        onBringForwardClick={() => {
+                            // boardApi.current.bringSelectionForward();
+                        }}
+                        onSendBackwardClick={() => {
+                            // boardApi.current.sendSelectionBackward();
+                        }}
+                        onGroupSelectionClick={() => {
+                            // const group = Folio.generateID();
+                            // app.current.registerSelectionUpdate(["group"], [group], false);
+                            // app.current.updateSelectedElements("group", group);
+                            // forceUpdate();
+                        }}
+                        onUngroupSelectionClick={() => {
+                            // app.current.registerSelectionUpdate(["group"], [null], false);
+                            // app.current.updateSelectedElements("group", null);
+                            // forceUpdate();
+                        }}
+                        onDialogClick={id => {
+                            activeDialog.current = id;
+                            forceUpdate();
+                        }}
+                    />
+                )}
+                {!action && !!activeDialog.current && selectedElements.length < 2 && (
+                    <React.Fragment>
+                        {activeDialog.current === DIALOGS.FILL && (
+                            <FillDialog
+                                values={selectionValues}
+                                onChange={handleElementChange}
+                            />
+                        )}
+                        {activeDialog.current === DIALOGS.STROKE && (
+                            <StrokeDialog
+                                values={selectionValues}
+                                onChange={handleElementChange}
+                            />
+                        )}
+                        {activeDialog.current === DIALOGS.TEXT && (
+                            <TextDialog
+                                values={selectionValues}
+                                onChange={handleElementChange}
+                            />
+                        )}
+                        {activeDialog.current === DIALOGS.SHAPE && (
+                            <ShapeDialog
+                                values={selectionValues}
+                                onChange={handleElementChange}
+                            />
+                        )}
+                        {activeDialog.current === DIALOGS.ARROWHEAD && (
+                            <ArrowheadDialog
+                                values={selectionValues}
+                                onChange={handleElementChange}
+                            />
+                        )}
+                    </React.Fragment>
+                )}
+            </div>
             {/* Image input reference */}
             <input
                 ref={imageInputRef}    
@@ -250,11 +238,11 @@ Board.defaultProps = {
     initialData: null,
     width: 0,
     height: 0,
-    showMenu: false,
     showZoom: true,
     showHistory: true,
     showTools: true,
     showEdition: true,
+    showHeaderBar: true,
     onChange: null,
     onScreenshot: null,
     onExport: null,
