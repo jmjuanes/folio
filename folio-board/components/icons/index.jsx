@@ -76,11 +76,16 @@ export const CameraIcon = () => {
 // SLIDERS: svg("M14 5C14 3.89543 14.8954 3 16 3C17.1046 3 18 3.89543 18 5C18 6.10457 17.1046 7 16 7C14.8954 7 14 6.10457 14 5ZM6 12C6 10.8954 6.89543 10 8 10C9.10457 10 10 10.8954 10 12C10 13.1046 9.10457 14 8 14C6.89543 14 6 13.1046 6 12ZM14 19C14 17.8954 14.8954 17 16 17C17.1046 17 18 17.8954 18 19C18 20.1046 17.1046 21 16 21C14.8954 21 14 20.1046 14 19ZM3 5L14 5M10 12L21 12M3 19L14 19M18 5L21 5M18 19L21 19M3 12L6 12"),
 // SHARE: svg("M20 4L13 21L10 14L3 11L20 4ZM10 14L19 5"),
 // FOLDER: svg("M6 5C3 5 3 8 3 8L3 16C3 16 3 19 6 19L18 19C21 19 21 16 21 16L21 10C21 10 21 8 19 8L13 8L10 5L6 5Z"),
-export const DownloadIcon = () => createPathIcon("M4 15L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 15M12 4L12 15M9 13L12 16L15 13");
-export const UploadIcon = () => createPathIcon("M4 15L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 15M12 16L12 5M9 7L12 4L15 7");
-
-// export const ChevronUpIcon = () => createPathIcon("M6 15L12 9L18 15");
-// export const ChevronDownIcon = () => createPathIcon("M6 9L12 15L18 9");
+export const DownloadIcon = () => (
+    <SvgIcon title="Download">
+        <path d="M4 15L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 15M12 4L12 15M9 13L12 16L15 13" />
+    </SvgIcon>
+);
+export const UploadIcon = () => (
+    <SvgIcon title="Upload">
+        <path d="M4 15L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 15M12 16L12 5M9 7L12 4L15 7" />
+    </SvgIcon>
+);
 
 export const RectangleIcon = () => (
     <SvgIcon title="Rectangle">

@@ -98,6 +98,7 @@ const Board = React.forwardRef((props, ref) => {
         <div className="d:flex flex:col w:full h:full">
             {props.showHeaderBar && (
                 <HeaderBar
+                    title={props.title}
                     onExport={props.onExport}
                 />
             )}
@@ -236,6 +237,7 @@ const Board = React.forwardRef((props, ref) => {
 
 Board.defaultProps = {
     initialData: null,
+    title: "Untitled",
     width: 0,
     height: 0,
     showZoom: true,
