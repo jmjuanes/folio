@@ -94,7 +94,7 @@ const optionTypes = {
         <div className="">
             <input
                 type="range"
-                className="m:0 w:full"
+                className="m:0 w:full bg:light-900 h:1 mt:3 mb:2"
                 onChange={e => props.onChange(e.target.value || 0)}
                 defaultValue={props.value}
                 min={props.minValue}
