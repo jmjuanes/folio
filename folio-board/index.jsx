@@ -99,6 +99,7 @@ const Board = React.forwardRef((props, ref) => {
             {props.showHeaderBar && (
                 <HeaderBar
                     title={props.title}
+                    logo={props.logo}
                     onExport={props.onExport}
                 />
             )}
@@ -237,6 +238,7 @@ const Board = React.forwardRef((props, ref) => {
 
 Board.defaultProps = {
     initialData: null,
+    logo: "",
     title: "Untitled",
     width: 0,
     height: 0,
