@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {BanIcon} from "../icons/index.jsx";
+import backgroundImg from "./background.svg";
 
 const optionTypes = {
     color: props => (
@@ -11,20 +11,22 @@ const optionTypes = {
                     className={classNames({
                         "w:full h:full text:lg text:red-500": item.color === "transparent",
                         "p:4": item.color !== "transparent",
-                        "d:flex items:center justify:center b:1 b:solid r:md cursor:pointer": true,
+                        "d:flex items:center justify:center": true,
+                        "b:1 b:solid r:md cursor:pointer": true,
                         "b:dark-100": item.value === props.value,
                         // "b:white": color !== props.value,
                         "b:light-200": item.value !== props.value,
                     })}
                     data-color={item.value}
                     style={{
-                        backgroundColor: item.color,
+                        backgroundColor: item.color !== "transparent" ? item.color : null,
+                        backgroundImage: item.color === "transparent" ? `url('${backgroundImg}')` : null,
+                        backgroundSize: "16px 16px",
+                        backgroundRepeat: "repeat",
                         // cursor: "pointer",
                     }}
                     onClick={() => props.onChange(item.value)}
-                >
-                    {item.color === "transparent" && BanIcon()}
-                </div>
+                />
             ))}
         </div>
     ),
