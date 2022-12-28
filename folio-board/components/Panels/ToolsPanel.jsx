@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import {ACTIONS, ELEMENTS} from "../../constants.js";
 import {Panel, PanelTextButton} from "./Panel.jsx";
 import {
@@ -12,7 +13,7 @@ import {
 } from "../icons/index.jsx";
 
 export const ToolsPanel = props => (
-    <Panel position="top-left">
+    <Panel direction="col" className={classNames("top:0 left:0 pt:4 pl:4", props.className)}>
         <PanelTextButton
             text="Drag"
             active={props.action === ACTIONS.MOVE}
@@ -48,6 +49,7 @@ export const ToolsPanel = props => (
 );
 
 ToolsPanel.defaultProps = {
+    className: "",
     action: null,
     tool: null,
     // shape: null,

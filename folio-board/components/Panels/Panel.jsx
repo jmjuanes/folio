@@ -3,23 +3,24 @@ import classNames from "classnames";
 // import {ChevronUpIcon} from "../icons/index.jsx";
 
 export const Panel = props => {
-    const panelWrapperClass = classNames({
+    const panelWrapperClass = classNames(props.className, {
         "position:absolute z:10": true,
-        "top:0 left:0 pl:4 pt:4": props.position === "top-left",
-        "top:0 right:0 pr:4 pt:4": props.position === "top-right",
-        "bottom:0 left:0 pb:4 pl:4": props.position === "bottom-left",
-        "bottom:0 right:0 pb:4 pr:4": props.position === "bottom-right",
-        "bottom:0 left:half pb:4": props.position === "bottom-center",
+        // "top:0 left:0 pl:4 pt:4": props.position === "top-left",
+        // "top:0 right:0 pr:4 pt:4": props.position === "top-right",
+        // "bottom:0 left:0 pb:4 pl:4": props.position === "bottom-left",
+        // "bottom:0 right:0 pb:4 pr:4": props.position === "bottom-right",
+        // "bottom:0 left:half pb:4": props.position === "bottom-center",
     });
     // TODO: we should move this to a classname
     const panelWrapperStyle = {
-        transform: props.position === "bottom-center" ? "translateX(-50%)" : null,
+        // transform: props.position === "bottom-center" ? "translateX(-50%)" : null,
         ...props.style,
     };
     const panelContentClass = classNames({
         // "b-1 b-solid b-gray-900": true,
         "r:lg shadow:md items:center bg:white d:flex gap:2 p:2": true,
-        "flex:col": props.position === "top-left" || props.position === "top-right",
+        // "flex:col": props.position === "top-left" || props.position === "top-right",
+        "flex:col": props.direction === "col",
     });
     return (
         <div className={panelWrapperClass} style={panelWrapperStyle}>
@@ -28,6 +29,11 @@ export const Panel = props => {
             </div>
         </div>
     );
+};
+
+Panel.defaultProps = {
+    className: "",
+    direction: "row",
 };
 
 export const PanelButton = props => {
