@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import {COLOR_KEYS, FONT_KEYS, SIZE_KEYS} from "../../constants.js";
 import {strokeColors, fontFaces} from "../../styles.js";
 import {Dialog} from "./Dialog.jsx";
@@ -37,7 +38,7 @@ const options = {
 };
 
 export const TextDialog = props => (
-    <Dialog className="pt:4 right:0 top:0 pr:28">
+    <Dialog className={classNames("pt:4 right:0 top:0 pr:28", props.className)}>
         <Form
             data={props.values || {}}
             items={options}
@@ -47,6 +48,7 @@ export const TextDialog = props => (
 );
 
 TextDialog.defaultProps = {
+    className: "",
     values: {},
     onChange: null,
 };

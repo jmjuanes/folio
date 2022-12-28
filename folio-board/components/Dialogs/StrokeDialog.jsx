@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import {
     COLOR_KEYS,
     SIZE_KEYS,
@@ -54,7 +55,7 @@ const options = {
 };
 
 export const StrokeDialog = props => (
-    <Dialog className="pt:4 right:0 top:0 pr:28">
+    <Dialog className={classNames("pt:4 right:0 top:0 pr:28", props.className)}>
         <Form
             data={props.values || {}}
             items={options}
@@ -64,6 +65,7 @@ export const StrokeDialog = props => (
 );
 
 StrokeDialog.defaultProps = {
+    className: "",
     values: {},
     onChange: null,
 };

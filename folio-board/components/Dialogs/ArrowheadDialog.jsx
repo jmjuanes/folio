@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import {ARROWHEADS} from "../../constants.js";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
@@ -36,7 +37,7 @@ const options = {
 };
 
 export const ArrowheadDialog = props => (
-    <Dialog className="pt:4 right:0 top:0 pr:28" width="11rem">
+    <Dialog className={classNames("right:0 top:0 pt:4 pr:28", props.classNames)} width="11rem">
         <Form
             data={props.values || {}}
             items={options}
@@ -46,6 +47,7 @@ export const ArrowheadDialog = props => (
 );
 
 ArrowheadDialog.defaultProps = {
+    className: "",
     values: {},
     onChange: null,
 };
