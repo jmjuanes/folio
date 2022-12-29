@@ -3,7 +3,8 @@ import classNames from "classnames";
 import {ACTIONS, ELEMENTS} from "../../constants.js";
 import {Panel, PanelTextButton} from "./Panel.jsx";
 import {
-    ArrowsIcon,
+    // ArrowsIcon,
+    HandGrabIcon,
     PointerIcon,
     RectangleIcon,
     ArrowIcon,
@@ -19,7 +20,7 @@ export const ToolsPanel = props => (
             active={props.action === ACTIONS.MOVE}
             onClick={props.onMoveClick}
         >
-            <ArrowsIcon />
+            <HandGrabIcon />
         </PanelTextButton>
         <PanelTextButton
             text="Select"

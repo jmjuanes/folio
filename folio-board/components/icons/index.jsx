@@ -2,7 +2,7 @@ import React from "react";
 
 const SvgIcon = props => (
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-        <title>{props.title}</title>
+        {/* <title>{props.title}</title> */}
         <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
             {props.children}
         </g>
@@ -84,6 +84,12 @@ export const DownloadIcon = () => (
 export const UploadIcon = () => (
     <SvgIcon title="Upload">
         <path d="M4 15L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 15M12 16L12 5M9 7L12 4L15 7" />
+    </SvgIcon>
+);
+
+export const ToolIcon = () => (
+    <SvgIcon title="Tool">
+        <path d="M10 10L10 7L7 4C7 4 10 2 13 5C16 8 14 11 14 11L20 17C22 19 19 22 17 20L11 14C11 14 8 16 5 13C2 10 4 7 4 7L7 10L10 10Z" />
     </SvgIcon>
 );
 
@@ -189,3 +195,8 @@ export const MenuIcon = () => (
     </SvgIcon>
 );
 
+export const HandGrabIcon = () => (
+    <SvgIcon title="Hand Grab">
+        <path d="M6 16C2 11 4 10 4 10C5.1767 9.21554 6 10 6 10L8 12L8 7C8 5 11 5 11 7L11 11L11 6C11 4 14 4 14 6L14 11L14 7C14 5 17 5 17 7L17 11L17 10C17 8 20 8 20 10L20 15C20 15 20 20 15 20L12 20C9 20 7.7669 18.2086 6 16Z" />
+    </SvgIcon>
+);

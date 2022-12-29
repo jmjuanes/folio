@@ -25,7 +25,7 @@ import {
 } from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
 import {DefaultButton, SimpleButton} from "./components/Buttons/index.jsx";
-import {DownloadIcon, CameraIcon} from "./components/icons/index.jsx";
+import {DownloadIcon, CameraIcon, ToolIcon} from "./components/icons/index.jsx";
 import {blobToDataUrl} from "./utils/index.js";
 import {
     exportToBlob,
@@ -103,7 +103,7 @@ const Board = React.forwardRef((props, ref) => {
     }
 
     // Display actions buttons
-    const showActions = props.showExportButton || props.showScreenshotButton;
+    const showActions = props.showExportButton || props.showScreenshotButton || props.showSettingsButton;
     const isScreenshot = action === ACTIONS.SCREENSHOT;
 
     return (
@@ -125,27 +125,6 @@ const Board = React.forwardRef((props, ref) => {
                     showGrid={true}
                     {...app.events}
                 />
-                {!isScreenshot && props.showMenu && (
-                    <MenuPanel
-                        title={props.title}
-                    />
-                )}
-                {!isScreenshot && showActions && (
-                    <div className="position:absolute top:0 right:0 pt:4 pr:4">
-                        <div className="d:flex gap:3 pt:1 pb:1">
-                            {props.showScreenshotButton && (
-                                <SimpleButton onClick={handleScreenshotClick}>
-                                    <CameraIcon />
-                                </SimpleButton>
-                            )}
-                            {props.showExportButton && (
-                                <DefaultButton text="Export">
-                                    <DownloadIcon />
-                                </DefaultButton>
-                            )}
-                        </div>
-                    </div>
-                )}
                 {!isScreenshot && props.showTools && (
                     <ToolsPanel
                         className={props.showMenu ? "pt:20" : ""}
@@ -253,6 +232,32 @@ const Board = React.forwardRef((props, ref) => {
                         )}
                     </React.Fragment>
                 )}
+                {!isScreenshot && props.showMenu && (
+                    <MenuPanel
+                        title={props.title}
+                    />
+                )}
+                {!isScreenshot && showActions && (
+                    <div className="position:absolute top:0 right:0 pt:4 pr:4 z:10">
+                        <div className="d:flex gap:3 pt:1 pb:1">
+                            {props.showScreenshotButton && (
+                                <SimpleButton onClick={handleScreenshotClick}>
+                                    <CameraIcon />
+                                </SimpleButton>
+                            )}
+                            {props.showSettingsButton && (
+                                <SimpleButton>
+                                    <ToolIcon />
+                                </SimpleButton>
+                            )}
+                            {props.showExportButton && (
+                                <DefaultButton text="Export">
+                                    <DownloadIcon />
+                                </DefaultButton>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
             {/* Image input reference */}
             <input
@@ -282,6 +287,7 @@ Board.defaultProps = {
     showMenu: true,
     showExportButton: true,
     showScreenshotButton: true,
+    showSettingsButton: true,
     onChange: null,
     onScreenshot: null,
     onExport: null,
