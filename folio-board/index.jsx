@@ -81,6 +81,11 @@ const Board = React.forwardRef((props, ref) => {
         app.setAction(ACTIONS.SCREENSHOT);
     };
 
+    // Handle settings click
+    const handleSettingsClick = () => {
+        app.cancelAction();
+    };
+
     // Register effects
     React.useEffect(() => handleBoardMount(), []);
 
@@ -104,6 +109,7 @@ const Board = React.forwardRef((props, ref) => {
 
     // Display actions buttons
     const showActions = props.showExportButton || props.showScreenshotButton || props.showSettingsButton;
+    const showMenu = (props.showLogo && !!props.logo) || (props.showTitle && !!props.title);
     const isScreenshot = action === ACTIONS.SCREENSHOT;
 
     return (
@@ -127,7 +133,7 @@ const Board = React.forwardRef((props, ref) => {
                 />
                 {!isScreenshot && props.showTools && (
                     <ToolsPanel
-                        className={props.showMenu ? "pt:20" : ""}
+                        className={showMenu ? "pt:20" : ""}
                         action={app.state.activeAction}
                         tool={app.state.activeTool}
                         onMoveClick={() => {
@@ -232,9 +238,11 @@ const Board = React.forwardRef((props, ref) => {
                         )}
                     </React.Fragment>
                 )}
-                {!isScreenshot && props.showMenu && (
+                {!isScreenshot && showMenu && (
                     <MenuPanel
                         title={props.title}
+                        logo={props.logo}
+                        onLogoClick={props.onLogoClick}
                     />
                 )}
                 {!isScreenshot && showActions && (
@@ -246,12 +254,12 @@ const Board = React.forwardRef((props, ref) => {
                                 </SimpleButton>
                             )}
                             {props.showSettingsButton && (
-                                <SimpleButton>
+                                <SimpleButton onClick={handleSettingsClick}>
                                     <ToolIcon />
                                 </SimpleButton>
                             )}
                             {props.showExportButton && (
-                                <DefaultButton text="Export">
+                                <DefaultButton text="Export" onClick={props.onExport}>
                                     <DownloadIcon />
                                 </DefaultButton>
                             )}
@@ -284,15 +292,18 @@ Board.defaultProps = {
     showHistory: true,
     showTools: true,
     showEdition: true,
-    showMenu: true,
+    showMenuButton: true,
     showExportButton: true,
     showScreenshotButton: true,
     showSettingsButton: true,
+    showTitle: true,
+    showLogo: true,
     onChange: null,
     onScreenshot: null,
     onExport: null,
     onSave: null,
-    onMount: null
+    onMount: null,
+    onLogoClick: null,
 };
 
 // Folio export
