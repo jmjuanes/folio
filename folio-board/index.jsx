@@ -14,6 +14,7 @@ import {
     HistoryPanel,
     ToolsPanel,
     ZoomPanel,
+    MenuPanel,
 } from "./components/Panels/index.jsx";
 import {
     FillDialog,
@@ -23,7 +24,8 @@ import {
     ArrowheadDialog,
 } from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
-import {HeaderBar} from "./components/HeaderBar/index.jsx";
+import {DefaultButton, SimpleButton} from "./components/Buttons/index.jsx";
+import {DownloadIcon, CameraIcon} from "./components/icons/index.jsx";
 import {blobToDataUrl} from "./utils/index.js";
 import {
     exportToBlob,
@@ -73,6 +75,12 @@ const Board = React.forwardRef((props, ref) => {
         }
     };
 
+    // Handle screenshot button click
+    const handleScreenshotClick = () => {
+        // app.cancelAction();
+        app.setAction(ACTIONS.SCREENSHOT);
+    };
+
     // Register effects
     React.useEffect(() => handleBoardMount(), []);
 
@@ -94,15 +102,12 @@ const Board = React.forwardRef((props, ref) => {
         }
     }
 
+    // Display actions buttons
+    const showActions = props.showExportButton || props.showScreenshotButton;
+    const isScreenshot = action === ACTIONS.SCREENSHOT;
+
     return (
-        <div className="d:flex flex:col w:full h:full">
-            {props.showHeaderBar && (
-                <HeaderBar
-                    title={props.title}
-                    logo={props.logo}
-                    onExport={props.onExport}
-                />
-            )}
+        <div className="d:flex flex:row w:full h:full">
             <div className="position:relative overflow:hidden h:full w:full">
                 <Canvas
                     id={app.id}
@@ -120,8 +125,30 @@ const Board = React.forwardRef((props, ref) => {
                     showGrid={true}
                     {...app.events}
                 />
-                {props.showTools && (
+                {!isScreenshot && props.showMenu && (
+                    <MenuPanel
+                        title={props.title}
+                    />
+                )}
+                {!isScreenshot && showActions && (
+                    <div className="position:absolute top:0 right:0 pt:4 pr:4">
+                        <div className="d:flex gap:3 pt:1 pb:1">
+                            {props.showScreenshotButton && (
+                                <SimpleButton onClick={handleScreenshotClick}>
+                                    <CameraIcon />
+                                </SimpleButton>
+                            )}
+                            {props.showExportButton && (
+                                <DefaultButton text="Export">
+                                    <DownloadIcon />
+                                </DefaultButton>
+                            )}
+                        </div>
+                    </div>
+                )}
+                {!isScreenshot && props.showTools && (
                     <ToolsPanel
+                        className={props.showMenu ? "pt:20" : ""}
                         action={app.state.activeAction}
                         tool={app.state.activeTool}
                         onMoveClick={() => {
@@ -138,7 +165,7 @@ const Board = React.forwardRef((props, ref) => {
                         }}
                     />
                 )}
-                {props.showHistory && (
+                {!isScreenshot && props.showHistory && (
                     <HistoryPanel
                         undoDisabled={app.isUndoDisabled()}
                         redoDisabled={app.isRedoDisabled()}
@@ -146,16 +173,17 @@ const Board = React.forwardRef((props, ref) => {
                         onRedoClick={() => app.redo()}
                     />
                 )}
-                {props.showZoom && (
+                {!isScreenshot && props.showZoom && (
                     <ZoomPanel
                         zoom={app.state.zoom}
                         onZoomInClick={() => app.zoomIn()}
                         onZoomOutClick={() => app.zoomOut()}
                     />
                 )}
-                {props.showEdition && (
+                {!isScreenshot && props.showEdition && (
                     <EditionPanel
                         key={updateKey}
+                        className={showActions ? "pt:20" : ""}
                         elements={selectedElements}
                         dialog={activeDialog.current}
                         onRemoveClick={() => {
@@ -190,30 +218,35 @@ const Board = React.forwardRef((props, ref) => {
                     <React.Fragment>
                         {activeDialog.current === DIALOGS.FILL && (
                             <FillDialog
+                                className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
                         {activeDialog.current === DIALOGS.STROKE && (
                             <StrokeDialog
+                                className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
                         {activeDialog.current === DIALOGS.TEXT && (
                             <TextDialog
+                                className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
                         {activeDialog.current === DIALOGS.SHAPE && (
                             <ShapeDialog
+                                className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
                         {activeDialog.current === DIALOGS.ARROWHEAD && (
                             <ArrowheadDialog
+                                className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
@@ -246,7 +279,9 @@ Board.defaultProps = {
     showHistory: true,
     showTools: true,
     showEdition: true,
-    showHeaderBar: true,
+    showMenu: true,
+    showExportButton: true,
+    showScreenshotButton: true,
     onChange: null,
     onScreenshot: null,
     onExport: null,
