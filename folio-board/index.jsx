@@ -25,6 +25,7 @@ import {
 } from "./components/Dialogs/index.jsx";
 import {Canvas} from "./components/Canvas/index.jsx";
 import {DefaultButton, SimpleButton} from "./components/Buttons/index.jsx";
+import {ExportPanel, SettingsPanel} from "./components/SidePanels/index.jsx";
 import {DownloadIcon, CameraIcon, ToolIcon} from "./components/icons/index.jsx";
 import {blobToDataUrl} from "./utils/index.js";
 import {
@@ -36,7 +37,7 @@ import {
 const Board = React.forwardRef((props, ref) => {
     const imageInputRef = React.useRef();
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
-    const activeDialog = React.useRef(null);
+    const [exportValues, setExportValues] = React.useState({});
     const app = useApp({
         onUpdate: forceUpdate,
         onScreenshot: props.onScreenshot,
@@ -75,15 +76,33 @@ const Board = React.forwardRef((props, ref) => {
         }
     };
 
+    // Handle export button click
+    const handleExportClick = () => {
+        if (typeof props.onExportClick === "function") {
+            return props.onExportClick();
+        }
+        app.cancelAction();
+        app.state.showExport = !app.state.showExport;
+        app.state.showSettings = false;
+        app.update();
+    };
+
     // Handle screenshot button click
     const handleScreenshotClick = () => {
-        // app.cancelAction();
+        app.state.showSettings = false;
+        app.state.showExport = false;
         app.setAction(ACTIONS.SCREENSHOT);
     };
 
     // Handle settings click
     const handleSettingsClick = () => {
+        if (typeof props.onSettingsClick === "function") {
+            return props.onSettingsClick();
+        }
         app.cancelAction();
+        app.state.showSettings = !app.state.showSettings;
+        app.state.showExport = false;
+        app.update();
     };
 
     // Register effects
@@ -95,12 +114,12 @@ const Board = React.forwardRef((props, ref) => {
 
     // Force to reset the active dialog if there is an action or a tool active
     if (app.state.activeAction || app.state.activeTool) {
-        activeDialog.current = null;
+        app.state.activeDialog = null;
     }
 
     // Compute common values for selected elements to be used in dialogs
     let selectionValues = app.state.style || {};
-    if (activeDialog.current && selectedElements.length > 0) {
+    if (app.state.activeDialog && selectedElements.length > 0) {
         // TODO: we need to compute common values if length > 1
         if (selectedElements.length === 1) {
             selectionValues = selectedElements[0];
@@ -119,6 +138,7 @@ const Board = React.forwardRef((props, ref) => {
                     id={app.id}
                     elements={app.elements}
                     assets={app.assets}
+                    backgroundColor={app.state.background}
                     translateX={app.state.translateX}
                     translateY={app.state.translateY}
                     zoom={app.state.zoom}
@@ -128,7 +148,7 @@ const Board = React.forwardRef((props, ref) => {
                     showHandlers={!app.state.activeAction && !app.state.activeTool}
                     showBrush={action === ACTIONS.SELECT || action === ACTIONS.SCREENSHOT}
                     showBounds={!app.state.activeAction && !app.state.activeTool}
-                    showGrid={true}
+                    showGrid={!!app.state.grid}
                     {...app.events}
                 />
                 {!isScreenshot && props.showTools && (
@@ -170,7 +190,7 @@ const Board = React.forwardRef((props, ref) => {
                         key={updateKey}
                         className={showActions ? "pt:20" : ""}
                         elements={selectedElements}
-                        dialog={activeDialog.current}
+                        dialog={app.state.activeDialog}
                         onRemoveClick={() => {
                             app.cancelAction();
                             app.removeElements(selectedElements);
@@ -194,42 +214,42 @@ const Board = React.forwardRef((props, ref) => {
                             // forceUpdate();
                         }}
                         onDialogClick={id => {
-                            activeDialog.current = id;
+                            app.state.activeDialog = id;
                             forceUpdate();
                         }}
                     />
                 )}
-                {!action && !!activeDialog.current && selectedElements.length < 2 && (
+                {!action && !!app.state.activeDialog && selectedElements.length < 2 && (
                     <React.Fragment>
-                        {activeDialog.current === DIALOGS.FILL && (
+                        {app.state.activeDialog === DIALOGS.FILL && (
                             <FillDialog
                                 className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
-                        {activeDialog.current === DIALOGS.STROKE && (
+                        {app.state.activeDialog === DIALOGS.STROKE && (
                             <StrokeDialog
                                 className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
-                        {activeDialog.current === DIALOGS.TEXT && (
+                        {app.state.activeDialog === DIALOGS.TEXT && (
                             <TextDialog
                                 className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
-                        {activeDialog.current === DIALOGS.SHAPE && (
+                        {app.state.activeDialog === DIALOGS.SHAPE && (
                             <ShapeDialog
                                 className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
-                        {activeDialog.current === DIALOGS.ARROWHEAD && (
+                        {app.state.activeDialog === DIALOGS.ARROWHEAD && (
                             <ArrowheadDialog
                                 className={showActions ? "pt:20" : ""}
                                 values={selectionValues}
@@ -259,7 +279,7 @@ const Board = React.forwardRef((props, ref) => {
                                 </SimpleButton>
                             )}
                             {props.showExportButton && (
-                                <DefaultButton text="Export" onClick={props.onExport}>
+                                <DefaultButton text="Export" onClick={handleExportClick}>
                                     <DownloadIcon />
                                 </DefaultButton>
                             )}
@@ -267,6 +287,43 @@ const Board = React.forwardRef((props, ref) => {
                     </div>
                 )}
             </div>
+            {app.state.showSettings && (
+                <SettingsPanel
+                    values={app.getState()}
+                    onClose={() => {
+                        app.state.showSettings = false;
+                        app.update();
+                    }}
+                    onChange={(key, value) => {
+                        app.updateState(key, value);
+                        app.update();
+                    }}
+                />
+            )}
+            {app.state.showExport && (
+                <ExportPanel
+                    values={exportValues}
+                    onClose={() => {
+                        app.state.showExport = false;
+                        // setExportValues({});
+                        app.update();
+                    }}
+                    onChange={(key, value) => {
+                        setExportValues(prevExportValues => ({
+                            ...prevExportValues,
+                            [key]: value,
+                        }))
+                    }}
+                    onSubmit={() => {
+                        if (typeof props.onExport === "function") {
+                            props.onExport({...exportValues});
+                        }
+                        app.state.showExport = false;
+                        // setExportValues({});
+                        app.update();
+                    }}
+                />
+            )}
             {/* Image input reference */}
             <input
                 ref={imageInputRef}    
@@ -304,6 +361,8 @@ Board.defaultProps = {
     onSave: null,
     onMount: null,
     onLogoClick: null,
+    onSettingsClick: null,
+    onExportClick: null,
 };
 
 // Folio export

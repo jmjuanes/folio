@@ -27,8 +27,7 @@ import {
 export const createApp = callbacks => {
     const state = getDefaultState();
     const getPosition = pos => {
-        // return state.settings.showGrid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
-        return Math.round(pos / GRID_SIZE) * GRID_SIZE;
+        return state.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
     };
     const app = {
         id: generateID(),
@@ -86,9 +85,15 @@ export const createApp = callbacks => {
         // 
         // State API
         // 
-        getState: () => ({...app.state}),
+        getState: () => ({
+            background: app.state.background,
+            grid: !!app.state.grid,
+        }),
         setState: newState => {
             Object.assign(app.state, newState || {});
+        },
+        updateState: (key, value) => {
+            app.state[key] = value;
         },
 
         //
@@ -689,6 +694,13 @@ export const createApp = callbacks => {
                 }
                 // Check ESCAPE key
                 else if (event.key === KEYS.ESCAPE) {
+                    if (app.state.activeAction === ACTIONS.SCREENSHOT) {
+                        app.cancelAction();
+                    }
+                    else if (app.state.showExport || app.state.showSettings) {
+                        app.state.showExport = false;
+                        app.state.showSettings = false;
+                    }
                     event.preventDefault();
                     app.clearSelectedElements();
                     state.activeGroup = null;

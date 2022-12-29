@@ -18,6 +18,7 @@ export const getDefaultState = () => ({
     activeAction: null,
     activeElement: null,
     activeGroup: null,
+    activeDialog: null,
     zoom: ZOOM_INITIAL,
     translateX: 0,
     translateY: 0,
@@ -26,6 +27,10 @@ export const getDefaultState = () => ({
     isDragged: false,
     isResized: false,
     isPrevSelected: false,
+    showSettings: false,
+    showExport: false,
+    grid: true,
+    background: "#fafafa",
 });
 
 export const cleanStateForExport = state => ({});

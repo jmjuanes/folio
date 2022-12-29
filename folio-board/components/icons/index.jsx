@@ -200,3 +200,9 @@ export const HandGrabIcon = () => (
         <path d="M6 16C2 11 4 10 4 10C5.1767 9.21554 6 10 6 10L8 12L8 7C8 5 11 5 11 7L11 11L11 6C11 4 14 4 14 6L14 11L14 7C14 5 17 5 17 7L17 11L17 10C17 8 20 8 20 10L20 15C20 15 20 20 15 20L12 20C9 20 7.7669 18.2086 6 16Z" />
     </SvgIcon>
 );
+
+export const CloseIcon = () => (
+    <SvgIcon title="Close">
+        <path d="M7 16.9L17 7M7 7L17 16.9" />
+    </SvgIcon>
+);
