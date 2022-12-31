@@ -5,7 +5,7 @@ import {Form} from "../Form/index.jsx";
 const options = {
     grid: {
         title: "Grid",
-        type: "switch",
+        type: "checkbox",
     },
 };
 
