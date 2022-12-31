@@ -8,6 +8,7 @@ import {
     SELECTION_FILL_COLOR,
     SELECTION_STROKE_COLOR,
     EXPORT_FORMATS,
+    FILE_EXTENSIONS,
 } from "./constants.js";
 import {useApp} from "./hooks/useApp.js";
 import {
@@ -313,7 +314,6 @@ const Board = React.forwardRef((props, ref) => {
                     values={exportValues}
                     onClose={() => {
                         app.state.showExport = false;
-                        // setExportValues({});
                         app.update();
                     }}
                     onChange={(key, value) => {
@@ -324,10 +324,15 @@ const Board = React.forwardRef((props, ref) => {
                     }}
                     onSubmit={() => {
                         if (typeof props.onExport === "function") {
-                            props.onExport({...exportValues});
+                            const extension = FILE_EXTENSIONS[exportValues.format];
+                            props.onExport({
+                                filename: `${exportValues.filename}${extension}`,
+                                background: false,
+                                format: exportValues.format,
+                                scale: exportValues.scale || 1,
+                            });
                         }
                         app.state.showExport = false;
-                        // setExportValues({});
                         app.update();
                     }}
                 />
