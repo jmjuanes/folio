@@ -25,7 +25,7 @@ const options = {
 };
 
 export const ShapeDialog = props => (
-    <Dialog className={classNames("pt:4 right:0 top:0 pr:28", props.className)} width="8rem">
+    <Dialog className={classNames("pt:4 right:0 top:0 pr:28", props.className)} width="10rem">
         <Form
             data={props.values || {}}
             items={options}
