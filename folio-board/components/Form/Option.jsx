@@ -12,7 +12,7 @@ const optionTypes = {
                         "w:full h:full text:lg text:red-500": item.color === "transparent",
                         "p:4": item.color !== "transparent",
                         "d:flex items:center justify:center": true,
-                        "b:1 b:solid r:md cursor:pointer": true,
+                        "b:2 b:solid r:md cursor:pointer": true,
                         "b:dark-100": item.value === props.value,
                         // "b:white": color !== props.value,
                         "b:light-200": item.value !== props.value,
@@ -54,23 +54,33 @@ const optionTypes = {
         <div className={`d:grid cols:${props.grid || "4"} gap:1 w:full`}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
-                    "d:flex justify:center items:center": true,
+                    "d:flex flex:col justify:center items:center": true,
                     "r:md cursor:pointer p:2 w:full": true,
-                    "text:lg": !!item.icon,
-                    "font:bold": !!item.text,
+                    // "text:lg": !!item.icon,
+                    // "font:bold": !!item.text,
                     "bg:dark-700 text:white": item.value === props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
-                        {item.icon || item.text}
+                        {!!item.icon && (
+                            <div className="d:flex items:center text:xl">
+                                {item.icon}
+                            </div>
+                        )}
+                        {!!item.text && (
+                            <div className="d:flex items:center h:8">
+                                <span className="font:bold">{item.text}</span>
+                            </div>
+                        )}
                     </div>
                 );
             })}
         </div>
     ),
-    switch: props => (
+    checkbox: props => (
         <input
             type="checkbox"
+            className="r:sm b:dark-700 b:solid b:2"
             onChange={e => props.onChange(e.target.checked)}
             defaultChecked={!!props.value}
         />
@@ -82,7 +92,7 @@ const optionTypes = {
             )}
             <input
                 type="text"
-                className="w:full"
+                className="w:full px:4 bg:light-500 b:0"
                 placeholder={props.placeholder}
                 onChange={e => props.onChange(e.target.value || "")}
                 defaultValue={props.value}
@@ -108,7 +118,7 @@ const optionTypes = {
 };
 
 export const Option = props => {
-    const isInline = props.type === "switch";
+    const isInline = props.type === "checkbox";
     const wrapperStyle = {
         alignItems: "center",
         display: isInline ? "flex" : "block",
