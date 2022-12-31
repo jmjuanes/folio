@@ -111,6 +111,16 @@ export const MIME_TYPES = {
     SVG: "image/svg+xml",
 };
 
+export const EXPORT_FORMATS = {
+    PNG: "PNG",
+    SVG: "SVG",
+};
+
+export const FILE_EXTENSIONS = {
+    [EXPORT_FORMATS.PNG]: ".png",
+    [EXPORT_FORMATS.SVG]: ".svg",
+};
+
 export const HANDLERS = {
     EDGE_TOP: "edge-top",
     EDGE_BOTTOM: "edge-bottom",

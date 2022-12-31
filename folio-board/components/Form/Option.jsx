@@ -63,12 +63,12 @@ const optionTypes = {
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
                         {!!item.icon && (
-                            <div className="d:flex items:center text:xl">
+                            <div className={classNames("d:flex items:center h:8 text:xl", item.iconClass)}>
                                 {item.icon}
                             </div>
                         )}
                         {!!item.text && (
-                            <div className="d:flex items:center h:8">
+                            <div className={classNames("d:flex items:center h:8", item.textClass)}>
                                 <span className="font:bold">{item.text}</span>
                             </div>
                         )}

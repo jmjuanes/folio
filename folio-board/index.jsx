@@ -7,6 +7,7 @@ import {
     SCREENSHOT_STROKE_COLOR,
     SELECTION_FILL_COLOR,
     SELECTION_STROKE_COLOR,
+    EXPORT_FORMATS,
 } from "./constants.js";
 import {useApp} from "./hooks/useApp.js";
 import {
@@ -27,7 +28,7 @@ import {Canvas} from "./components/Canvas/index.jsx";
 import {DefaultButton, SimpleButton} from "./components/Buttons/index.jsx";
 import {ExportPanel, SettingsPanel} from "./components/SidePanels/index.jsx";
 import {DownloadIcon, CameraIcon, ToolIcon} from "./components/icons/index.jsx";
-import {blobToDataUrl} from "./utils/index.js";
+import {blobToDataUrl, formatDate} from "./utils/index.js";
 import {
     exportToBlob,
     exportToClipboard,
@@ -84,7 +85,13 @@ const Board = React.forwardRef((props, ref) => {
         app.cancelAction();
         app.state.showExport = !app.state.showExport;
         app.state.showSettings = false;
-        app.update();
+        // app.update();
+        setExportValues({
+            filename: `untitled-${formatDate()}`,
+            background: false,
+            format: EXPORT_FORMATS.PNG,
+            scale: 1,
+        });
     };
 
     // Handle screenshot button click
@@ -135,6 +142,7 @@ const Board = React.forwardRef((props, ref) => {
         <div className="d:flex flex:row w:full h:full">
             <div className="position:relative overflow:hidden h:full w:full">
                 <Canvas
+                    key={app.state.showExport || app.state.showSettings}
                     id={app.id}
                     elements={app.elements}
                     assets={app.assets}

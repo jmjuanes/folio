@@ -1,7 +1,8 @@
 import React from "react";
+import {EXPORT_FORMATS} from "../../constants.js";
 import {SidePanel} from "./SidePanel.jsx";
 import {Form} from "../Form/index.jsx";
-import {ImageIcon} from "../icons/index.jsx";
+import {ImageIcon, CodeIcon} from "../icons/index.jsx";
 
 const options = {
     filename: {
@@ -17,10 +18,30 @@ const options = {
         type: "select",
         title: "Export format",
         values: [
-            {value: "png", text: "PNG", icon: ImageIcon()},
-            {value: "svg", text: "SVG", icon: ImageIcon()},
+            {
+                value: EXPORT_FORMATS.PNG,
+                text: "PNG",
+                icon: ImageIcon(),
+                iconClass: "text:2xl pt:2",
+            },
+            {
+                value: EXPORT_FORMATS.SVG,
+                text: "SVG",
+                icon: CodeIcon(),
+                iconClass: "text:2xl pt:2",
+            },
         ],
         grid: "2",
+    },
+    scale: {
+        type: "select",
+        title: "Scale",
+        values: [
+            {value: 1, text: "1x"},
+            {value: 2, text: "2x"},
+            {value: 3, text: "3x"},
+        ],
+        grid: "3",
     },
 };
 

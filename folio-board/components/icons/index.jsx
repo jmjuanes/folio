@@ -206,3 +206,9 @@ export const CloseIcon = () => (
         <path d="M7 16.9L17 7M7 7L17 16.9" />
     </SvgIcon>
 );
+
+export const CodeIcon = () => (
+    <SvgIcon title="Code">
+        <path d="M14 5L10 19M7 8L3 12L7 16M17 8L21 12L17 16" />
+    </SvgIcon>
+);
