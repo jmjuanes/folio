@@ -226,9 +226,3 @@ export const CodeIcon = () => (
         <path d="M14 5L10 19M7 8L3 12L7 16M17 8L21 12L17 16" />
     </SvgIcon>
 );
-
-export const EraseIcon = () => (
-    <SvgIcon title="Erase">
-        <path d="M20 20L8 20L5 17C4 16 3 14 5 12L12 5C14 3 16 4 17 5L19 7C20 8 21 10 19 12L11 20M9 9L15 15" />
-    </SvgIcon>
-);

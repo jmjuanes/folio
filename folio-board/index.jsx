@@ -32,8 +32,7 @@ import {
     DownloadIcon,
     CameraIcon,
     ToolIcon,
-    EraseIcon,
-    SaveIcon,
+    TrashIcon,
 } from "./components/icons/index.jsx";
 import {blobToDataUrl, formatDate} from "./utils/index.js";
 import {
@@ -320,7 +319,7 @@ const Board = React.forwardRef((props, ref) => {
                         <div className="d:flex gap:3 pt:1 pb:1">
                             {props.showClearButton && (
                                 <SimpleButton onClick={handleClearClick}>
-                                    <EraseIcon />
+                                    <TrashIcon />
                                 </SimpleButton>
                             )}
                             {props.showScreenshotButton && (
