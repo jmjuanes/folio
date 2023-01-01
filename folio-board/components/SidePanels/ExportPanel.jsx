@@ -14,6 +14,16 @@ const options = {
         type: "checkbox",
         title: "Backgorund",
     },
+    scale: {
+        type: "select",
+        title: "Scale",
+        values: [
+            {value: 1, text: "1x"},
+            {value: 2, text: "2x"},
+            {value: 3, text: "3x"},
+        ],
+        grid: "3",
+    },
     format: {
         type: "select",
         title: "Export format",
@@ -32,16 +42,6 @@ const options = {
             },
         ],
         grid: "2",
-    },
-    scale: {
-        type: "select",
-        title: "Scale",
-        values: [
-            {value: 1, text: "1x"},
-            {value: 2, text: "2x"},
-            {value: 3, text: "3x"},
-        ],
-        grid: "3",
     },
 };
 

@@ -320,7 +320,7 @@ const Board = React.forwardRef((props, ref) => {
                         <div className="d:flex gap:3 pt:1 pb:1">
                             {props.showClearButton && (
                                 <SimpleButton onClick={handleClearClick}>
-                                    <ClearIcon />
+                                    <EraseIcon />
                                 </SimpleButton>
                             )}
                             {props.showScreenshotButton && (
