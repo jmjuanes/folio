@@ -28,7 +28,13 @@ import {
 import {Canvas} from "./components/Canvas/index.jsx";
 import {DefaultButton, SimpleButton} from "./components/Buttons/index.jsx";
 import {ExportPanel, SettingsPanel} from "./components/SidePanels/index.jsx";
-import {DownloadIcon, CameraIcon, ToolIcon} from "./components/icons/index.jsx";
+import {
+    DownloadIcon,
+    CameraIcon,
+    ToolIcon,
+    EraseIcon,
+    SaveIcon,
+} from "./components/icons/index.jsx";
 import {blobToDataUrl, formatDate} from "./utils/index.js";
 import {
     exportToBlob,
@@ -113,6 +119,15 @@ const Board = React.forwardRef((props, ref) => {
         app.update();
     };
 
+    const handleClearClick = () => {
+        if (typeof props.onClearClick === "function") {
+            return props.onClearClick();
+        }
+        // TODO: we need to display a confirmation message
+        app.reset();
+        app.update();
+    };
+
     // Register effects
     React.useEffect(() => handleBoardMount(), []);
 
@@ -135,7 +150,12 @@ const Board = React.forwardRef((props, ref) => {
     }
 
     // Display actions buttons
-    const showActions = props.showExportButton || props.showScreenshotButton || props.showSettingsButton;
+    const showActions = (
+        props.showExportButton || 
+        props.showScreenshotButton || 
+        props.showSettingsButton ||
+        props.showClearButton
+    );
     const showMenu = (props.showLogo && !!props.logo) || (props.showTitle && !!props.title);
     const isScreenshot = action === ACTIONS.SCREENSHOT;
 
@@ -277,6 +297,11 @@ const Board = React.forwardRef((props, ref) => {
                 {!isScreenshot && showActions && (
                     <div className="position:absolute top:0 right:0 pt:4 pr:4 z:10">
                         <div className="d:flex gap:3 pt:1 pb:1">
+                            {props.showClearButton && (
+                                <SimpleButton onClick={handleClearClick}>
+                                    <ClearIcon />
+                                </SimpleButton>
+                            )}
                             {props.showScreenshotButton && (
                                 <SimpleButton onClick={handleScreenshotClick}>
                                     <CameraIcon />
@@ -366,16 +391,17 @@ Board.defaultProps = {
     showExportButton: true,
     showScreenshotButton: true,
     showSettingsButton: true,
+    showClearButton: true,
     showTitle: true,
     showLogo: true,
     onChange: null,
     onScreenshot: null,
     onExport: null,
-    onSave: null,
     onMount: null,
     onLogoClick: null,
     onSettingsClick: null,
     onExportClick: null,
+    onClearClick: null,
 };
 
 // Folio export

@@ -57,18 +57,32 @@ export const CircleDottedIcon = () => {
     return createIcon(<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2.5" strokeDasharray="1.25 5" strokeLinecap="round" />);
 };
 
-export const EditIcon = () => createPathIcon("M13 20L20 20M5 16L4 20L8 19L19 8C19 8 20.4025 6.42587 19 5C17.5975 3.57413 16 5 16 5L5 16ZM14 7L17 10");
-export const FillIcon = () => createPathIcon("M13 5L5 13C4 14 4 16 5 17L8 20C9 21 11 21 12 20L20 12L13 5ZM13 5L12 4C12 4 10 2 8 4C6 6 8 8 8 8L9 9M5 14L18 14M20 17L20 19C20 18 20 17 20 17Z");
-export const CornersIcon = () => createPathIcon("M10 4L7 4C4 4 4 7 4 7L4 10M14 4L17 4C20 4 20 7 20 7L20 10M14 20L17 20C20 20 20 17 20 17L20 14M10 20L7 20C4 20 4 17 4 17L4 14");
-export const ObjectGroupIcon = () => createPathIcon("M3 7L3 6C3 6 3 4 5 4L6 4M3 17L3 18C3 18 3 20 5 20L6 20M21 7L21 6C21 6 21 4 19 4L18 4M21 17L21 18C21 18 21 20 19 20L18 20M7 12C7 12 7 13 8 13L13 13C14 13 14 12 14 12L14 9C14 9 14 8 13 8L8 8C7 8 7 9 7 9L7 12ZM10 13L10 15C10 15 10 16 11 16L16 16C17 16 17 15 17 15L17 12C17 12 17 11 16 11L14 11");
-export const ObjectUngroupIcon = () => createPathIcon("M5 6C4 6 4 7 4 7L4 10C4 10 4 11 5 11L10 11C11 11 11 10 11 10L11 7C11 7 11 6 10 6L5 6ZM14 14C13 14 13 15 13 15L13 18C13 18 13 19 14 19L19 19C20 19 20 18 20 18L20 15C20 15 20 14 19 14L14 14Z");
-export const CropIcon = () => createPathIcon("M7 4L7 15C7 15 7 17 9 17L20 17M17 20L17 9C17 9 17 7 15 7L4 7");
-export const StrokeIcon = () => {
-    return createIcon(<path fill="currentColor" stroke="none" d="M 2,2 H 22 V 4 H 2 Z m 0,7 h 20 v 3 H 2 Z m 20,8 H 2 v 5 h 20 z" />);
-};
+// export const ObjectGroupIcon = () => createPathIcon("M3 7L3 6C3 6 3 4 5 4L6 4M3 17L3 18C3 18 3 20 5 20L6 20M21 7L21 6C21 6 21 4 19 4L18 4M21 17L21 18C21 18 21 20 19 20L18 20M7 12C7 12 7 13 8 13L13 13C14 13 14 12 14 12L14 9C14 9 14 8 13 8L8 8C7 8 7 9 7 9L7 12ZM10 13L10 15C10 15 10 16 11 16L16 16C17 16 17 15 17 15L17 12C17 12 17 11 16 11L14 11");
+// export const ObjectUngroupIcon = () => createPathIcon("M5 6C4 6 4 7 4 7L4 10C4 10 4 11 5 11L10 11C11 11 11 10 11 10L11 7C11 7 11 6 10 6L5 6ZM14 14C13 14 13 15 13 15L13 18C13 18 13 19 14 19L19 19C20 19 20 18 20 18L20 15C20 15 20 14 19 14L14 14Z");
 
-export const SaveIcon = () => createPathIcon("M4 6C4 6 4 4 6 4L16 4L20 8L20 18C20 18 20 20 18 20L6 20C4 20 4 18 4 18L4 6ZM15 4L15 8C15 8 15 9 14 9L9 9C8 9 8 8 8 8L8 4M10.5 14.5C10.5 13.6716 11.1716 13 12 13C12.8284 13 13.5 13.6716 13.5 14.5C13.5 15.3284 12.8284 16 12 16C11.1716 16 10.5 15.3284 10.5 14.5Z");
-export const TrashIcon = () => createPathIcon("M6 6L6 18C6 18 6 21 9 21L15 21C18 21 18 18 18 18L18 6M4 6L20 6M8 6L9 3L15 3L16 6M10 10L10 17M14 10L14 17");
+export const FillIcon = () => (
+    <SvgIcon title="Fill">
+        <path d="M13 5L5 13C4 14 4 16 5 17L8 20C9 21 11 21 12 20L20 12L13 5ZM13 5L12 4C12 4 10 2 8 4C6 6 8 8 8 8L9 9M5 14L18 14M20 17L20 19C20 18 20 17 20 17Z" />
+    </SvgIcon>
+);
+
+export const StrokeIcon = () => (
+    <SvgIcon title="Stroke">
+        <path fill="currentColor" stroke="none" d="M 2,2 H 22 V 4 H 2 Z m 0,7 h 20 v 3 H 2 Z m 20,8 H 2 v 5 h 20 z" />
+    </SvgIcon>
+);
+
+export const SaveIcon = () => (
+    <SvgIcon title="Save">
+        <path d="M4 6C4 6 4 4 6 4L16 4L20 8L20 18C20 18 20 20 18 20L6 20C4 20 4 18 4 18L4 6ZM15 4L15 8C15 8 15 9 14 9L9 9C8 9 8 8 8 8L8 4M10.5 14.5C10.5 13.6716 11.1716 13 12 13C12.8284 13 13.5 13.6716 13.5 14.5C13.5 15.3284 12.8284 16 12 16C11.1716 16 10.5 15.3284 10.5 14.5Z" />
+    </SvgIcon>
+);
+
+export const TrashIcon = () => (
+    <SvgIcon title="Trash">
+        <path d="M6 6L6 18C6 18 6 21 9 21L15 21C18 21 18 18 18 18L18 6M4 6L20 6M8 6L9 3L15 3L16 6M10 10L10 17M14 10L14 17" />
+    </SvgIcon>
+);
 
 export const CameraIcon = () => (
     <SvgIcon title="Camera">
@@ -210,5 +224,11 @@ export const CloseIcon = () => (
 export const CodeIcon = () => (
     <SvgIcon title="Code">
         <path d="M14 5L10 19M7 8L3 12L7 16M17 8L21 12L17 16" />
+    </SvgIcon>
+);
+
+export const EraseIcon = () => (
+    <SvgIcon title="Erase">
+        <path d="M20 20L8 20L5 17C4 16 3 14 5 12L12 5C14 3 16 4 17 5L19 7C20 8 21 10 19 12L11 20M9 9L15 15" />
     </SvgIcon>
 );
