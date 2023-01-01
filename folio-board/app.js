@@ -43,6 +43,13 @@ export const createApp = callbacks => {
             // Trigger an update from the callbacks
             return callbacks?.onUpdate?.();
         },
+        load: data => {
+            app.setElements(data?.elements || []);
+            app.setAssets(data?.assets || {});
+            app.setHistory(data?.history || []);
+            app.setState(data?.state || {});
+            // app.update();
+        },
         reset: () => {
             state.activeElement = null;
             state.activeGroup = null;

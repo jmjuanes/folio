@@ -57,16 +57,37 @@ const Board = React.forwardRef((props, ref) => {
         return app.update();
     };
 
+    // Initialize board API
+    if (ref && typeof ref === "object" && !ref.current) {
+        ref.current = {
+            id: app.id,
+            ready: false,
+            forceUpdate: () => app.update(),
+            updateBoard: data => app.load(data || {}),
+            resetBoard: () => app.reset(),
+            getElements: () => app.getElements(),
+            getState: () => app.getState(),
+            getAssets: () => app.getAssets(),
+            addAsset: data => app.addAsset(data),
+            clearHistory: () => app.clearHistory(),
+            undoHistory: () => app.undo(),
+            redoHistory: () => app.redo(),
+            setActiveTool: newTool => app.setTool(newTool),
+        };
+    }
+
     // After mounting board component
     const handleBoardMount = () => {
         // Check for loading initial data from props
         if (props?.initialData) {
-            app.setElements(props.initialData?.elements || []);
-            app.setAssets(props.initialData?.assets || {});
-            app.setHistory(props.initialData?.history || []);
-            app.setState(props.initialData?.state || {});
+            app.load(props.initialData)
             app.update();
         }
+        // Set board ready to true
+        if (ref?.current) {
+            ref.current.ready = true;
+        }
+        // Call the onmount listener
         props?.onMount?.();
     };
 
@@ -411,4 +432,5 @@ export default {
     exportToBlob,
     exportToClipboard,
     exportToFile,
+    ELEMENTS,
 };

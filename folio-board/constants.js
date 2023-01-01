@@ -98,13 +98,8 @@ export const SELECTION_STROKE_COLOR = "#0d6efd";
 export const SCREENSHOT_FILL_COLOR = "#20c997";
 export const SCREENSHOT_STROKE_COLOR = "#20c997";
 
-export const DATA_TYPES = {
-    FOLIO_EXPORT: "folio/export_json",
-    FOLIO_CLIPBOARD: "folio/clipboard",
-};
-
 export const MIME_TYPES = {
-    FOLIO_EXPORT: "application/vnd.folio+json",
+    FOLIO: "application/vnd.folio+json",
     JSON: "application/json",
     PNG: "image/png",
     JPG: "image/jpeg",
