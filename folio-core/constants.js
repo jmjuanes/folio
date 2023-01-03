@@ -119,3 +119,17 @@ export const SIZES = {
     LARGE: "lg",
     XLARGE: "xl",
 };
+
+// Default values for style attributes of elements
+export const DEFAULT_FILL_COLOR = COLORS.NONE;
+export const DEFAULT_FILL_OPACITY = 1;
+export const DEFAULT_STROKE_COLOR = COLORS.BLACK;
+export const DEFAULT_STROKE_WIDTH = SIZES.MEDIUM;
+export const DEFAULT_STROKE_OPACITY = 1;
+export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
+export const DEFAULT_TEXT_FONT = FONTS.SANS;
+export const DEFAULT_TEXT_SIZE = SIZES.MEDIUM;
+export const DEFAULT_TEXT_COLOR = COLORS.BLACK;
+export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
+export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
+export const DEFAULT_ARROWHEAD_END = ARROWHEADS.ARROW;
