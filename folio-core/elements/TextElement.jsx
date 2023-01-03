@@ -1,7 +1,7 @@
 import React from "react";
-import {strokeColors, fontSizes, fontFaces} from "../../styles.js";
 import {measureText} from "../math.js";
 import {GRID_SIZE} from "../constants.js";
+import {useStyles} from "../contexts/StylesContext.jsx";
 
 // Stop event propagation
 const stopEventPropagation = event => {
@@ -10,14 +10,15 @@ const stopEventPropagation = event => {
 };
 
 export const TextElement = props => {
+    const styles = useStyles();
     const inputRef = React.useRef(null);
     const x = (props.x1 + props.x2) / 2;
     const y = (props.y1 + props.y2) / 2;
     const width = Math.abs(props.x2 - props.x1);
     const height = Math.abs(props.y2 - props.y1);
-    const textSize = fontSizes[props.textSize];
-    const textColor = strokeColors[props.textColor];
-    const textFont = fontFaces[props.textFont];
+    const textSize = styles?.fontSizes?.[props.textSize];
+    const textFont = styles?.fontFaces?.[props.textFont];
+    const textColor = styles?.textColors?.[props.textColor];
 
     // First time editing --> focus on input
     React.useEffect(() => {

@@ -1,7 +1,7 @@
 import React from "react";
 import {STROKES, ARROWHEADS} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../math.js";
-import {strokeColors, strokeWidths} from "../../styles.js";
+import {useStyles} from "../contexts/StylesContext.jsx";
 
 const Arrowhead = props => {
     const size = props.strokeWidth * 2 + 4;
@@ -30,7 +30,6 @@ const Arrowhead = props => {
         commands.push("Z");
     }
     else if (props.type === ARROWHEADS.SEGMENT) {
-        const angle2 = Math.atan(0.5); // Second angle for the rectangle
         const hsize = size / 2; // Half of the size
         commands.push(`M${props.x - hsize * Math.sin(angle)},${props.y + hsize * Math.cos(angle)}`);
         commands.push(`L${props.x + hsize * Math.sin(angle)},${props.y - hsize * Math.cos(angle)}`);
@@ -60,8 +59,9 @@ const Arrowhead = props => {
 };
 
 export const ArrowElement = props => {
-    const strokeColor = strokeColors[props.strokeColor];
-    const strokeWidth = strokeWidths[props.strokeWidth];
+    const styles = useStyles();
+    const strokeColor = styles?.strokeColors?.[props.strokeColor];
+    const strokeWidth = styles?.strokeWidths?.[props.strokeWidth];
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
             const length = getPointsDistance([props.x1, props.y1], [props.x2, props.y2]);

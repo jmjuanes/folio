@@ -1,6 +1,6 @@
 import React from "react";
-import {strokeColors, strokeWidths} from "../../styles.js";
 import {getPointsCenter} from "../math.js";
+import {useStyles} from "../contexts/StylesContext.jsx";
 
 const getPath = points => {
     let lastPoint = points[0];
@@ -18,8 +18,9 @@ const getPath = points => {
 };
 
 export const DrawElement = props => {
+    const styles = useStyles();
     const points = props.points || [];
-    const strokeWidth = strokeWidths[props.strokeWidth];
+    const strokeWidth = styles?.strokeWidths?.[props.strokeWidth];
     const path = React.useMemo(() => getPath(points), [points.length]);
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
@@ -35,7 +36,7 @@ export const DrawElement = props => {
                 data-element={props.id}
                 d={path}
                 fill="none"
-                stroke={strokeColors[props.strokeColor]}
+                stroke={styles?.strokeColors?.[props.strokeColor]}
                 strokeWidth={strokeWidth}
                 strokeOpacity={props.strokeOpacity}
                 strokeDasharray={strokeDasharray}
