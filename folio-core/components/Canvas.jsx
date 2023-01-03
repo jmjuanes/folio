@@ -1,11 +1,11 @@
 import React from "react";
-import {EVENTS} from "../../constants.js";
+import {EVENTS} from "../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
-import {getElementConfig} from "../../elements.jsx";
-import {AssetsProvider} from "../../contexts/AssetsProvider.jsx";
+import {getElementConfig} from "../elements/index.jsx";
+import {AssetsProvider} from "../contexts/AssetsContext.jsx";
 
 const useSelectedElements = props => {
     if (props.showHandlers || props.showBounds) {

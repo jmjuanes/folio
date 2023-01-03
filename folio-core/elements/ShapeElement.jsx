@@ -1,11 +1,10 @@
 import React from "react";
-import {STROKES, SHAPES} from "../../constants.js";
+import {STROKES, SHAPES} from "../constants.js";
 import {
     getBalancedDash,
-    // getRectanglePerimeter,
     getEllipsePerimeter,
     getPointsDistance,
-} from "../../utils/index.js";
+} from "../math.js";
 import {
     fillColors,
     strokeColors,

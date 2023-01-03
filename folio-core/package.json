@@ -1,0 +1,11 @@
+{
+    "name": "folio-core",
+    "version": "0.2.0-dev",
+    "description": "A minimalistic whiteboard for sketching and prototyping",
+    "private": true,
+    "files": [],
+    "dependencies": {
+        "classnames": "^2.3.2",
+        "react": "^18.2.0"
+    }
+}

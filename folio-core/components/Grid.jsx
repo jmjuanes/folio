@@ -1,5 +1,5 @@
 import React from "react";
-import {GRID_SIZE} from "../../constants.js";
+import {GRID_SIZE} from "../constants.js";
 
 export const Grid = props => {
     const translateX = props.translateX / props.zoom;

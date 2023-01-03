@@ -1,5 +1,5 @@
 import React from "react";
-import {getRectangleBounds} from "../../utils/index.js";
+import {getRectangleBounds} from "../math.js";
 
 export const Bounds = props => {
     const offset = props.offset / props.zoom;

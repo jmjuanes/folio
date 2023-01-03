@@ -4,13 +4,13 @@ import {
     GRID_SIZE,
     SHAPES,
     ARROWHEADS,
-} from "./constants";
-import {ArrowElement} from "./components/Elements/ArrowElement.jsx";
-import {DrawElement} from "./components/Elements/DrawElement.jsx";
-import {TextElement} from "./components/Elements/TextElement.jsx";
-import {ShapeElement} from "./components/Elements/ShapeElement.jsx";
-import {ImageElement} from "./components/Elements/ImageElement.jsx";
-import {simplifyPath} from "./utils/index.js";
+} from "../constants";
+import {ArrowElement} from "./ArrowElement.jsx";
+import {DrawElement} from "./DrawElement.jsx";
+import {TextElement} from "./TextElement.jsx";
+import {ShapeElement} from "./ShapeElement.jsx";
+import {ImageElement} from "./ImageElement.jsx";
+import {simplifyPath} from "../math.js";
 
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {

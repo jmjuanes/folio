@@ -1,5 +1,5 @@
 import React from "react";
-import {HANDLERS} from "../../constants.js";
+import {HANDLERS} from "../constants.js";
 
 export const NodeHandlers = props => {
     const radius = props.radius / props.zoom;

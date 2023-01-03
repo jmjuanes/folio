@@ -1,6 +1,6 @@
 import React from "react";
 import {strokeColors, strokeWidths} from "../../styles.js";
-import {getPointsCenter} from "../../utils/index.js";
+import {getPointsCenter} from "../math.js";
 
 const getPath = points => {
     let lastPoint = points[0];

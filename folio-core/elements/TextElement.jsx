@@ -1,7 +1,13 @@
 import React from "react";
 import {strokeColors, fontSizes, fontFaces} from "../../styles.js";
-import {measureText, stopEventPropagation} from "../../utils/index.js";
-import {GRID_SIZE} from "../../constants.js";
+import {measureText} from "../math.js";
+import {GRID_SIZE} from "../constants.js";
+
+// Stop event propagation
+const stopEventPropagation = event => {
+    event?.stopPropagation?.();
+    // event?.preventDefault?.();
+};
 
 export const TextElement = props => {
     const inputRef = React.useRef(null);

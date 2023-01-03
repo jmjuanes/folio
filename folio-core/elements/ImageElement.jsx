@@ -1,5 +1,5 @@
 import React from "react";
-import {useAssets} from "../../contexts/AssetsProvider.jsx";
+import {useAssets} from "../contexts/AssetsContext.jsx";
 
 export const ImageElement = props => {
     const assets = useAssets();
