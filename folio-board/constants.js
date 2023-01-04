@@ -1,5 +1,3 @@
-import {EXPORT_FORMATS} from "folio-core";
-
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
 export const KEYS = {
@@ -40,7 +38,8 @@ export const CHANGES = {
     REMOVE: "change:remove",
 };
 
-export const FILE_EXTENSIONS = {
-    [EXPORT_FORMATS.PNG]: ".png",
-    [EXPORT_FORMATS.SVG]: ".svg",
+export const FONT_FACES = {
+    NOTO_SANS: "Noto Sans",
+    NOTO_SERIF: "Noto Serif",
+    CAVEAT: "Caveat Brush",
 };

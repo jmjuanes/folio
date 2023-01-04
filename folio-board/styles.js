@@ -1,4 +1,5 @@
 import {COLORS, SIZES, FONTS} from "folio-core";
+import {FONT_FACES} from "./constants.js";
 
 export const strokeColors = {
     [COLORS.NONE]: "transparent",
@@ -41,9 +42,9 @@ export const fontSizes = {
 };
 
 export const fontFaces = {
-    [FONTS.SANS]: "Noto Sans, sans-serif",
-    [FONTS.SERIF]: "Noto Serif, serif",
-    [FONTS.DRAW]: "Caveat Brush, cursive",
+    [FONTS.SANS]: `${FONT_FACES.NOTO_SANS}, sans-serif`,
+    [FONTS.SERIF]: `${FONT_FACES.NOTO_SERIF}, serif`,
+    [FONTS.DRAW]: `${FONT_FACES.CAVEAT}, cursive`,
     [FONTS.MONO]: "monospace",
 };
 

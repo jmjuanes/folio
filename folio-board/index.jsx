@@ -12,7 +12,6 @@ import {
     SELECTION_STROKE_COLOR,
     EXPORT_FORMATS,
     Canvas,
-    exportToBlob,
     exportToClipboard,
     exportToFile,
 } from "folio-core";
@@ -20,7 +19,7 @@ import {
 import {
     ACTIONS,
     DIALOGS,
-    FILE_EXTENSIONS,
+    FONT_FACES,
 } from "./constants.js";
 import {useApp} from "./hooks/useApp.js";
 import {
@@ -55,7 +54,13 @@ const FolioBoard = props => {
     const [exportValues, setExportValues] = React.useState({});
     const app = useApp({
         onUpdate: forceUpdate,
-        onScreenshot: props.onScreenshot,
+        onScreenshot: region => {
+            return exportToClipboard({
+                elements: app.getElements(),
+                fonts: Object.values(FONT_FACES),
+                crop: region,
+            });
+        },
     });
 
     // Register element change
@@ -354,15 +359,21 @@ const FolioBoard = props => {
                         }))
                     }}
                     onSubmit={() => {
-                        if (typeof props.onExport === "function") {
-                            const extension = FILE_EXTENSIONS[exportValues.format];
-                            props.onExport({
-                                filename: `${exportValues.filename}${extension}`,
-                                background: false,
-                                format: exportValues.format,
-                                scale: exportValues.scale || 1,
+                        const exportOptions = {
+                            elements: app.getElements(),
+                            fonts: Object.values(FONT_FACES),
+                            filename: exportValues.filename,
+                            format: exportValues.format || EXPORT_FORMATS.PNG,
+                            // scale: exportValues.scale || 1,
+                        };
+                        exportToFile(exportOptions)
+                            .then(() => {
+                                console.log("Export completed");
+                            })
+                            .catch(error => {
+                                console.error(error);
                             });
-                        }
+                        // Hide export dialog
                         app.state.showExport = false;
                         app.update();
                     }}
@@ -396,13 +407,11 @@ FolioBoard.defaultProps = {
     showMenuButton: true,
     showExportButton: true,
     showScreenshotButton: true,
-    showSettingsButton: true,
+    showSettingsButton: false,
     showClearButton: true,
     showTitle: true,
     showLogo: true,
     onChange: null,
-    onScreenshot: null,
-    onExport: null,
     onMount: null,
     onLogoClick: null,
     onSettingsClick: null,

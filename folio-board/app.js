@@ -642,13 +642,13 @@ export const createApp = callbacks => {
                     });
                 }
                 else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
-                    const screenshotRegion = {
-                        x: Math.min(state.selection.x1, state.selection.x2),
-                        y: Math.min(state.selection.y1, state.selection.y2),
-                        width: Math.abs(state.selection.x2 - state.selection.x1),
-                        height: Math.abs(state.selection.y2 - state.selection.y1),
-                    };
-                    callbacks?.onScreenshot?.(app, screenshotRegion);
+                    // const screenshotRegion = {
+                    //     x: Math.min(state.selection.x1, state.selection.x2),
+                    //     y: Math.min(state.selection.y1, state.selection.y2),
+                    //     width: Math.abs(state.selection.x2 - state.selection.x1),
+                    //     height: Math.abs(state.selection.y2 - state.selection.y1),
+                    // };
+                    callbacks?.onScreenshot?.({...state.selection});
                 }
                 state.activeAction = null;
                 state.selection = null;
