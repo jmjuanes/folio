@@ -1,3 +1,8 @@
+import "@fontsource/noto-sans";
+import "@fontsource/noto-serif";
+import "@fontsource/caveat-brush";
+import "lowcss/dist/low.css";
+
 import React from "react";
 import {
     ELEMENTS,
@@ -11,6 +16,7 @@ import {
     exportToClipboard,
     exportToFile,
 } from "folio-core";
+
 import {
     ACTIONS,
     DIALOGS,
