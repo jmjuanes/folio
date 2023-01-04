@@ -1,0 +1,32 @@
+{
+    "name": "folio-app",
+    "version": "0.2.0-dev",
+    "private": true,
+    "main": "index.jsx",
+    "scripts": {
+        "build": "cross-env NODE_ENV=production webpack build",
+        "dev": "webpack serve",
+        "clean": "rm -rf ./www"
+    },
+    "dependencies": {
+        "folio-board": "0.2.0-dev",
+        "folio-core": "0.2.0-dev",
+        "lowcss": "^0.5.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.18.0",
+        "@babel/plugin-transform-react-jsx": "^7.17.12",
+        "@babel/plugin-transform-runtime": "^7.18.0",
+        "@babel/preset-env": "^7.18.10",
+        "@babel/preset-react": "^7.18.6",
+        "babel-loader": "^8.2.5",
+        "copy-webpack-plugin": "^11.0.0",
+        "cross-env": "^7.0.3",
+        "html-webpack-plugin": "^5.5.0",
+        "webpack": "^5.72.1",
+        "webpack-cli": "^4.9.2",
+        "webpack-dev-server": "^4.11.1"
+    }
+}

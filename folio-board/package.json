@@ -1,10 +1,12 @@
 {
     "name": "folio-board",
-    "version": "0.1.2",
+    "version": "0.2.0-dev",
     "description": "A minimalistic whiteboard for sketching and prototyping",
     "private": true,
+    "scripts": {},
     "dependencies": {
         "classnames": "^2.3.2",
+        "folio-core": "0.2.0-dev",
         "lowcss": "^0.5.1",
         "react": "^18.2.0"
     }

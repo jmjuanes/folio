@@ -5,20 +5,18 @@ const CopyPlugin = require("copy-webpack-plugin");
 const package = require("./package.json");
 
 module.exports = {
-    mode: "development", // "production",
+    mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: {
-        app: path.join(__dirname, "app", "index.js"),
-    },
+    entry: path.join(__dirname, "index.jsx"),
     output: {
-        path: path.join(__dirname, "public"),
+        path: path.join(__dirname, "www"),
         publicPath: "./",
         filename: "[contenthash:9].js",
     },
     devServer: {
         hot: false,
         static: {
-            directory: path.join(__dirname, "public"),
+            directory: path.join(__dirname, "www"),
         },
         devMiddleware: {
             writeToDisk: true,
@@ -26,8 +24,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-            "folio": path.join(__dirname, "folio-board", "index.jsx"),
-            "folio-board": path.join(__dirname, "folio-board", "index.jsx"),
+            "folio-core": path.resolve(__dirname, "../folio-core/index.jsx"),
+            "folio-board": path.resolve(__dirname, "../folio-board/index.jsx"),
         },
     },
     module: {
@@ -35,8 +33,9 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    path.join(__dirname, "app"),
-                    path.join(__dirname, "folio-board"),
+                    __dirname,
+                    path.resolve(__dirname, "../folio-board"),
+                    path.resolve(__dirname, "../folio-core"),
                 ],
                 exclude: /(node_modules|bower_components)/,
                 loader: "babel-loader",
@@ -64,16 +63,13 @@ module.exports = {
         }),
         new CopyPlugin({
             patterns: [
-                path.join(__dirname, "node_modules", "lowcss", "dist", "low.css"),
-                path.join(__dirname, "folio-board", "assets", "fonts.css"),
+                path.join(__dirname, "../node_modules/lowcss/dist/low.css"),
+                path.resolve(__dirname, "../folio-board/assets/fonts.css"),
             ],
         }),
         new HtmlWebpackPlugin({
             inject: true,
-            chunks: [
-                "app",
-            ],
-            template: path.join(__dirname, "app", "index.html"),
+            template: path.join(__dirname, "index.html"),
             minify: true,
         }),
     ],

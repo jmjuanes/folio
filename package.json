@@ -7,12 +7,15 @@
     "repository": "https://github.com/jmjuanes/folio",
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
+    "workspaces": [
+        "app",
+        "folio-board",
+        "folio-core"
+    ],
     "scripts": {
-        "build": "webpack build --config ./webpack.config.js",
-        "dev": "webpack serve",
+        "build:app": "yarn workspace folio-app build",
+        "dev:app": "yarn workspace folio-app dev",
         "clean": "rm -rf ./public",
-        "serve": "stattic --folder ./public --port 5000",
-        "pack": "tar -C ./public -czf folio.tar.gz .",
         "test": "jest"
     },
     "devDependencies": {
@@ -22,20 +25,11 @@
         "@babel/preset-env": "^7.18.10",
         "@babel/preset-react": "^7.18.6",
         "babel-jest": "^28.1.3",
-        "babel-loader": "^8.2.5",
-        "classnames": "^2.3.2",
-        "copy-webpack-plugin": "^11.0.0",
-        "html-webpack-plugin": "^5.5.0",
+        "cross-env": "^7.0.3",
         "jest": "^28.1.3",
         "jest-environment-jsdom": "^28.1.3",
-        "lowcss": "^0.5.1",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-test-renderer": "^18.2.0",
-        "stattic": "^0.4.0",
-        "webpack": "^5.72.1",
-        "webpack-cli": "^4.9.2",
-        "webpack-dev-server": "^4.11.1"
+        "react-test-renderer": "^18.2.0"
     },
     "license": "MIT",
     "jest": {
