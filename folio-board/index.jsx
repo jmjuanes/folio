@@ -43,7 +43,7 @@ import {blobToDataUrl} from "./utils/blob.js";
 import {formatDate} from "./utils/date.js";
 import {boardStyles} from "./styles.js";
 
-export default FolioBoard = props => {
+const FolioBoard = props => {
     const imageInputRef = React.useRef();
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const [exportValues, setExportValues] = React.useState({});
@@ -403,3 +403,5 @@ FolioBoard.defaultProps = {
     onExportClick: null,
     onClearClick: null,
 };
+
+export default FolioBoard;
