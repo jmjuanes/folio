@@ -20,7 +20,7 @@ import {DrawElement} from "./DrawElement.jsx";
 import {TextElement} from "./TextElement.jsx";
 import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
-import {simplifyPath} from "../math.js";
+import {simplifyPath, measureText} from "../math.js";
 
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
@@ -98,6 +98,11 @@ export const elementsConfig = {
             if (Math.abs(element.y2 - element.y1) < GRID_SIZE) {
                 element.y2 = element.y1 + GRID_SIZE;
             }
+        },
+        utils: {
+            measureText: (text, textSize, textFont) => {
+                return measureText(text || " ", textSize, textFont);
+            },
         },
     },
     [ELEMENTS.DRAW]: {

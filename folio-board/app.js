@@ -6,8 +6,6 @@ import {
     ZOOM_MIN,
     ZOOM_STEP,
     getElementConfig,
-    normalizeBounds,
-    measureText,
 } from "folio-core";
 import {
     IS_DARWIN,
@@ -273,7 +271,7 @@ export const createApp = callbacks => {
             const elementConfig = getElementConfig(element);
             const textSize = fontSizes[state.style.textSize];
             const textFont = fontFaces[state.style.textFont];
-            const [textWidth, textHeight] = measureText(text || " ", textSize, textFont);
+            const [textWidth, textHeight] = elementConfig.utils.measureText(text, textSize, textFont);
             // Override element attributes
             Object.assign(element, {
                 ...(elementConfig.initialize?.(state.style) || {}),
@@ -639,16 +637,19 @@ export const createApp = callbacks => {
                     state.isResized = false;
                 }
                 else if (app.state.activeAction === ACTIONS.SELECT) {
-                    const selection = normalizeBounds(state.selection);
-                    app.setSelectedElements(selection);
+                    app.setSelectedElements({
+                        x1: Math.min(state.selection.x1, state.selection.x2),
+                        x2: Math.max(state.selection.x1, state.selection.x2),
+                        y1: Math.min(state.selection.y1, state.selection.y2),
+                        y2: Math.max(state.selection.y1, state.selection.y2),
+                    });
                 }
                 else if (app.state.activeAction === ACTIONS.SCREENSHOT) {
-                    const selection = normalizeBounds(state.selection);
                     const screenshotRegion = {
-                        x: selection.x1,
-                        y: selection.y1,
-                        width: Math.abs(selection.x2 - selection.x1),
-                        height: Math.abs(selection.y2 - selection.y1),
+                        x: Math.min(state.selection.x1, state.selection.x2),
+                        y: Math.min(state.selection.y1, state.selection.y2),
+                        width: Math.abs(state.selection.x2 - state.selection.x1),
+                        height: Math.abs(state.selection.y2 - state.selection.y1),
                     };
                     callbacks?.onScreenshot?.(app, screenshotRegion);
                 }
