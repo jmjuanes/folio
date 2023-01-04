@@ -15,14 +15,11 @@ import {
 } from "./constants.js";
 import {getDefaultState} from "./state.js";
 import {fontSizes, fontFaces} from "./styles.js";
-import {
-    generateID,
-    isInputTarget,
-    isArrowKey,
-    getDataFromClipboard,
-    copyTextToClipboard,
-    loadImage,
-} from "./utils/index.js";
+import {generateRandomId} from "./utils/stringUtils.js";
+import {isInputTarget} from "./utils/events.js";
+import {getDataFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
+import {loadImage} from "./utils/image.js";
+import {isArrowKey} from "./utils/keys.js";
 
 export const createApp = callbacks => {
     const state = getDefaultState();
@@ -30,7 +27,7 @@ export const createApp = callbacks => {
         return state.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
     };
     const app = {
-        id: generateID(),
+        id: generateRandomId(),
         state: state,
         elements: [],
         assets: {},
@@ -119,7 +116,7 @@ export const createApp = callbacks => {
             });
             if (!assetId) {
                 // Register this asset using a new identifier
-                assetId = generateID();
+                assetId = generateRandomId();
                 app.assets[assetId] = data;
             }
             return assetId;
@@ -131,7 +128,7 @@ export const createApp = callbacks => {
         getElement: id => app.elements.find(el => el.id === id),
         createElement: type => ({
             type: type,
-            id: generateID(),
+            id: generateRandomId(),
             x1: 0,
             y1: 0,
             x2: 0,
@@ -234,11 +231,11 @@ export const createApp = callbacks => {
             const groups = new Map();
             const newElements = elements.map(element => {
                 if (elements.length > 1 && !!element.group && !groups.has(element.group)) {
-                    groups.set(element.group, generateID());
+                    groups.set(element.group, generateRandomId());
                 }
                 return {
                     ...element,
-                    id: generateID(),
+                    id: generateRandomId(),
                     selected: true,
                     group: state.activeGroup || groups.get(element.group) || null,
                 };

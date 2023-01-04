@@ -39,7 +39,8 @@ import {
     ToolIcon,
     TrashIcon,
 } from "./components/icons/index.jsx";
-import {blobToDataUrl, formatDate} from "./utils/index.js";
+import {blobToDataUrl} from "./utils/blob.js";
+import {formatDate} from "./utils/date.js";
 import {boardStyles} from "./styles.js";
 
 export default FolioBoard = props => {
@@ -231,7 +232,7 @@ export default FolioBoard = props => {
                             // boardApi.current.sendSelectionBackward();
                         }}
                         onGroupSelectionClick={() => {
-                            // const group = Folio.generateID();
+                            // const group = Folio.generateRandomId();
                             // app.current.registerSelectionUpdate(["group"], [group], false);
                             // app.current.updateSelectedElements("group", group);
                             // forceUpdate();
