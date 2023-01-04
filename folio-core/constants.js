@@ -1,5 +1,3 @@
-export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
-
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
     POINTER_MOVE: "pointermove",
@@ -69,6 +67,14 @@ export const MIME_TYPES = {
     PNG: "image/png",
     JPG: "image/jpeg",
     SVG: "image/svg+xml",
+};
+
+export const FILE_EXTENSIONS = {
+    FOLIO: ".folio",
+    JSON: ".json",
+    PNG: ".png",
+    JPG: ".jpg",
+    SVG: ".svg",
 };
 
 export const EXPORT_FORMATS = {

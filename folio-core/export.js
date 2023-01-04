@@ -1,9 +1,5 @@
+import {EXPORT_FORMATS, FILE_EXTENSIONS} from "./constants.js";
 import {getRectangleBounds} from "./math.js";
-
-// Create a new blob object
-const createBlob = (content, type) => {
-    return new Blob([content], {type: type});
-};
 
 // Convert a blob to file
 const blobToFile = (blob, filename) => {
@@ -29,12 +25,13 @@ const blobToClipboard = blob => {
 };
 
 // Get image in SVG
-export const exportToSvg = options => {
+const getSvgImage = options => {
     const elements = options?.elements || [];
     return new Promise(resolve => {
         const bounds = getRectangleBounds(elements);
         // 1. Create a new SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
         // 2. Set new svg attributes
         svg.setAttribute("style", ""); // Reset style
@@ -42,8 +39,19 @@ export const exportToSvg = options => {
         svg.setAttribute("height", Math.abs(bounds.y2 - bounds.y1));
         // 3. Set svg style
         svg.style.backgroundColor = options?.background || "#fff";
-        // 4. Set svg fonts
-        // TODO
+        // 4. Set internal styles
+        if (options.fonts) {
+            style.textContent = `
+                ${(options.fonts || []).map(font => (`
+                    @font-face {
+                        font-family: ${typeof font === "string" ? font : font.family};
+                        font-weight: ${font?.weight || "400"};
+                        font-style: normal;
+                    }
+                `)).join("\n")}
+            `;
+            svg.appendChild(style);
+        }
         // 5. Set group attributes
         group.setAttribute("transform", `translate(${bounds.x1} ${bounds.y1})`);
         svg.appendChild(group);
@@ -55,37 +63,60 @@ export const exportToSvg = options => {
             }
         });
         // 6. return SVG
-        const svgString = (new XMLSerializer()).serializeToString(svg);
-        const svgBlob = createBlob(svgString, "image/svg+xml;charset=utf-8");
-        return resolve(svgBlob);
+        const content = (new XMLSerializer()).serializeToString(svg);
+        return resolve(new Blob([content], {
+            type: "image/svg+xml;charset=utf-8",
+        }));
     });
 };
 
-// Export to blob image
-export const exportToBlob = options => {
+// Get image in PNG format
+const getPngImage = options => {
     return new Promise((resolve, reject) => {
         // Initialize canvas to render SVG image
         const canvas = document.createElement("canvas");
         // Initialize image
         const img = new Image();
         img.addEventListener("load", () => {
-            const x = (-1) * (options?.x || 0);
-            const y = (-1) * (options?.y || 0);
+            let x = 0, y = 0;
+            if (options.crop) {
+                const bounds = getRectangleBounds(options.elements);
+                x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2);
+                y = bounds.y1 - Math.min(options.crop.y1, options.crop.y2);
+                canvas.width = Math.abs(options.crop.x2 - options.crop.x1);
+                canvas.height = Math.abs(options.crop.y2 - options.crop.y1);
+            }
+            else {
+                // Set the canvas size to the total image size
+                canvas.width = img.width;
+                canvas.height = img.height;
+            }
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, x, y);
-            // return resolve(canvas.toDataURL("image/png"));
             canvas.toBlob(resolve);
         });
         img.addEventListener("error", event => {
             return reject(event);
         });
         // Load image
-        exportToSvg(options).then(svgBlob => {
-            canvas.width = options?.width || img.width;
-            canvas.height = options?.height || img.height;
-            img.src = window.URL.createObjectURL(svgBlob);
+        getSvgImage(options).then(data => {
+            img.src = window.URL.createObjectURL(data);
         });
     });
+};
+
+// Export to blob image
+export const exportToBlob = options => {
+    // TODO: throw an error if no elements list are provided
+    // Generate SVG image
+    if (options?.format === EXPORT_FORMATS.SVG) {
+        if (options?.crop) {
+            return Promise.reject(new Error("Can not crop a SVG export"));
+        }
+        return getSvgImage(options);
+    }
+    // Fallback: generate PNG image
+    return getPngImage(options)
 };
 
 // Export image to clipboard
@@ -98,6 +129,8 @@ export const exportToClipboard = options => {
 // Export image to file
 export const exportToFile = options => {
     return exportToBlob(options).then(imageBlob => {
-        return blobToFile(imageBlob, options?.filename || "export.png");
+        const name = options?.filename || "untitled";
+        const extension = FILE_EXTENSIONS[options?.format] || FILE_EXTENSIONS.PNG;
+        return blobToFile(imageBlob, `${name}${extension}`);
     });
 };
