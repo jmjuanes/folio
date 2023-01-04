@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {ARROWHEADS} from "../../constants.js";
+import {ARROWHEADS} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
 import {

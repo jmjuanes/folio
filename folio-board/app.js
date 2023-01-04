@@ -1,16 +1,20 @@
 import {
     ELEMENTS,
     HANDLERS,
-    ACTIONS,
-    CHANGES,
     GRID_SIZE,
-    IS_DARWIN,
-    KEYS,
     ZOOM_MAX,
     ZOOM_MIN,
     ZOOM_STEP,
+    getElementConfig,
+    normalizeBounds,
+    measureText,
+} from "folio-core";
+import {
+    IS_DARWIN,
+    ACTIONS,
+    CHANGES,
+    KEYS,
 } from "./constants.js";
-import {getElementConfig} from "./elements.jsx";
 import {getDefaultState} from "./state.js";
 import {fontSizes, fontFaces} from "./styles.js";
 import {
@@ -19,8 +23,6 @@ import {
     isArrowKey,
     getDataFromClipboard,
     copyTextToClipboard,
-    normalizeBounds,
-    measureText,
     loadImage,
 } from "./utils/index.js";
 

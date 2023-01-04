@@ -1,12 +1,8 @@
-import {ARROWHEADS, SHAPES, ZOOM_INITIAL} from "./constants.js";
+import {ARROWHEADS, SHAPES} from "folio-core";
 import {defaultStyles} from "./styles.js";
 
 export const getDefaultState = () => ({
-    elements: [],
-    settings: {},
     snapshot: null,
-    history: [],
-    historyIndex: 0,
     style: {
         ...defaultStyles,
         shape: SHAPES.RECTANGLE,
@@ -19,7 +15,7 @@ export const getDefaultState = () => ({
     activeElement: null,
     activeGroup: null,
     activeDialog: null,
-    zoom: ZOOM_INITIAL,
+    zoom: 1,
     translateX: 0,
     translateY: 0,
     lastTranslateX: 0,
@@ -32,5 +28,3 @@ export const getDefaultState = () => ({
     grid: true,
     background: "#fafafa",
 });
-
-export const cleanStateForExport = state => ({});

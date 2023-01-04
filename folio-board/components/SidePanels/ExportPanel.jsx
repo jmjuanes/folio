@@ -1,5 +1,5 @@
 import React from "react";
-import {EXPORT_FORMATS} from "../../constants.js";
+import {EXPORT_FORMATS} from "folio-core";
 import {SidePanel} from "./SidePanel.jsx";
 import {Form} from "../Form/index.jsx";
 import {ImageIcon, CodeIcon} from "../icons/index.jsx";
@@ -8,7 +8,7 @@ const options = {
     filename: {
         type: "input",
         title: "File name",
-        placeholder: "export.png",
+        placeholder: "untitled",
     },
     background: {
         type: "checkbox",

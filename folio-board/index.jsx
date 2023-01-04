@@ -1,13 +1,19 @@
 import React from "react";
 import {
     ELEMENTS,
-    ACTIONS,
-    DIALOGS,
     SCREENSHOT_FILL_COLOR,
     SCREENSHOT_STROKE_COLOR,
     SELECTION_FILL_COLOR,
     SELECTION_STROKE_COLOR,
     EXPORT_FORMATS,
+    Canvas,
+    exportToBlob,
+    exportToClipboard,
+    exportToFile,
+} from "folio-core";
+import {
+    ACTIONS,
+    DIALOGS,
     FILE_EXTENSIONS,
 } from "./constants.js";
 import {useApp} from "./hooks/useApp.js";
@@ -25,7 +31,6 @@ import {
     ShapeDialog,
     ArrowheadDialog,
 } from "./components/Dialogs/index.jsx";
-import {Canvas} from "./components/Canvas/index.jsx";
 import {DefaultButton, SimpleButton} from "./components/Buttons/index.jsx";
 import {ExportPanel, SettingsPanel} from "./components/SidePanels/index.jsx";
 import {
@@ -35,13 +40,9 @@ import {
     TrashIcon,
 } from "./components/icons/index.jsx";
 import {blobToDataUrl, formatDate} from "./utils/index.js";
-import {
-    exportToBlob,
-    exportToClipboard,
-    exportToFile,
-} from "./export.js";
+import {boardStyles} from "./styles.js";
 
-const Board = React.forwardRef((props, ref) => {
+export default FolioBoard = props => {
     const imageInputRef = React.useRef();
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const [exportValues, setExportValues] = React.useState({});
@@ -56,35 +57,12 @@ const Board = React.forwardRef((props, ref) => {
         return app.update();
     };
 
-    // Initialize board API
-    if (ref && typeof ref === "object" && !ref.current) {
-        ref.current = {
-            id: app.id,
-            ready: false,
-            forceUpdate: () => app.update(),
-            updateBoard: data => app.load(data || {}),
-            resetBoard: () => app.reset(),
-            getElements: () => app.getElements(),
-            getState: () => app.getState(),
-            getAssets: () => app.getAssets(),
-            addAsset: data => app.addAsset(data),
-            clearHistory: () => app.clearHistory(),
-            undoHistory: () => app.undo(),
-            redoHistory: () => app.redo(),
-            setActiveTool: newTool => app.setTool(newTool),
-        };
-    }
-
     // After mounting board component
     const handleBoardMount = () => {
         // Check for loading initial data from props
         if (props?.initialData) {
             app.load(props.initialData)
             app.update();
-        }
-        // Set board ready to true
-        if (ref?.current) {
-            ref.current.ready = true;
         }
         // Call the onmount listener
         props?.onMount?.();
@@ -187,6 +165,7 @@ const Board = React.forwardRef((props, ref) => {
                     id={app.id}
                     elements={app.elements}
                     assets={app.assets}
+                    styles={boardStyles}
                     backgroundColor={app.state.background}
                     translateX={app.state.translateX}
                     translateY={app.state.translateY}
@@ -395,9 +374,9 @@ const Board = React.forwardRef((props, ref) => {
             />
         </div>
     );
-});
+};
 
-Board.defaultProps = {
+FolioBoard.defaultProps = {
     initialData: null,
     logo: "",
     title: "Untitled",
@@ -422,14 +401,4 @@ Board.defaultProps = {
     onSettingsClick: null,
     onExportClick: null,
     onClearClick: null,
-};
-
-// Folio export
-export default {
-    Board,
-    Canvas,
-    exportToBlob,
-    exportToClipboard,
-    exportToFile,
-    ELEMENTS,
 };

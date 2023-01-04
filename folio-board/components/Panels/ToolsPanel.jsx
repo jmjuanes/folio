@@ -1,6 +1,7 @@
 import React from "react";
 import classNames from "classnames";
-import {ACTIONS, ELEMENTS} from "../../constants.js";
+import {ELEMENTS} from "folio-core";
+import {ACTIONS} from "../../constants.js";
 import {Panel, PanelTextButton} from "./Panel.jsx";
 import {
     // ArrowsIcon,

@@ -1,6 +1,6 @@
 import React from "react";
 import cn from "classnames";
-import {ZOOM_MIN, ZOOM_MAX} from "../../constants.js";
+import {ZOOM_MIN, ZOOM_MAX} from "folio-core";
 import {Panel, PanelButton} from "./Panel.jsx";
 import {ZoomInIcon, ZoomOutIcon} from "../icons/index.jsx";
 

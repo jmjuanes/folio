@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {COLOR_KEYS, FONT_KEYS, SIZE_KEYS} from "../../constants.js";
+import {COLORS, FONTS, SIZES} from "folio-core";
 import {strokeColors, fontFaces} from "../../styles.js";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
@@ -9,7 +9,7 @@ const options = {
     textColor: {
         type: "color",
         title: "Text Color",
-        values: Object.values(COLOR_KEYS).map(key => ({
+        values: Object.values(COLORS).map(key => ({
             value: key,
             // color: textColors[key],
             color: strokeColors[key],
@@ -19,20 +19,20 @@ const options = {
         type: "font",
         title: "Text Font",
         values: [
-            {value: FONT_KEYS.SANS, font: fontFaces[FONT_KEYS.SANS]},
-            {value: FONT_KEYS.SERIF, font: fontFaces[FONT_KEYS.SERIF]},
-            {value: FONT_KEYS.DRAW, font: fontFaces[FONT_KEYS.DRAW]},
-            {value: FONT_KEYS.MONO, font: fontFaces[FONT_KEYS.MONO]},
+            {value: FONTS.SANS, font: fontFaces[FONT_KEYS.SANS]},
+            {value: FONTS.SERIF, font: fontFaces[FONT_KEYS.SERIF]},
+            {value: FONTS.DRAW, font: fontFaces[FONT_KEYS.DRAW]},
+            {value: FONTS.MONO, font: fontFaces[FONT_KEYS.MONO]},
         ],
     },
     textSize: {
         type: "select",
         title: "Text Size",
         values: [
-            {value: SIZE_KEYS.SMALL, text: "S"},
-            {value: SIZE_KEYS.MEDIUM, text: "M"},
-            {value: SIZE_KEYS.LARGE, text: "L"},
-            {value: SIZE_KEYS.XLARGE, text: "XL"},
+            {value: SIZES.SMALL, text: "S"},
+            {value: SIZES.MEDIUM, text: "M"},
+            {value: SIZES.LARGE, text: "L"},
+            {value: SIZES.XLARGE, text: "XL"},
         ],
     },
 };
