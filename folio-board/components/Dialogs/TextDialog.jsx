@@ -19,10 +19,10 @@ const options = {
         type: "font",
         title: "Text Font",
         values: [
-            {value: FONTS.SANS, font: fontFaces[FONT_KEYS.SANS]},
-            {value: FONTS.SERIF, font: fontFaces[FONT_KEYS.SERIF]},
-            {value: FONTS.DRAW, font: fontFaces[FONT_KEYS.DRAW]},
-            {value: FONTS.MONO, font: fontFaces[FONT_KEYS.MONO]},
+            {value: FONTS.SANS, font: fontFaces[FONTS.SANS]},
+            {value: FONTS.SERIF, font: fontFaces[FONTS.SERIF]},
+            {value: FONTS.DRAW, font: fontFaces[FONTS.DRAW]},
+            {value: FONTS.MONO, font: fontFaces[FONTS.MONO]},
         ],
     },
     textSize: {
