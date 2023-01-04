@@ -1,14 +1,6 @@
-import {ARROWHEADS, SHAPES} from "folio-core";
-import {defaultStyles} from "./styles.js";
-
 export const getDefaultState = () => ({
     snapshot: null,
-    style: {
-        ...defaultStyles,
-        shape: SHAPES.RECTANGLE,
-        startArrowhead: ARROWHEADS.NONE,
-        endArrowhead: ARROWHEADS.NONE,
-    },
+    style: {},
     selection: null,
     activeTool: null,
     activeAction: null,

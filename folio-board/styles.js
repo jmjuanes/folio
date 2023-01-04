@@ -1,4 +1,4 @@
-import {COLORS, SIZES, FONTS, STROKES} from "folio-core";
+import {COLORS, SIZES, FONTS} from "folio-core";
 
 export const strokeColors = {
     [COLORS.NONE]: "transparent",
@@ -45,18 +45,6 @@ export const fontFaces = {
     [FONTS.SERIF]: "Noto Serif, serif",
     [FONTS.DRAW]: "Caveat Brush, cursive",
     [FONTS.MONO]: "monospace",
-};
-
-export const defaultStyles = {
-    fillColor: COLOR_KEYS.NONE,
-    fillOpacity: 1,
-    strokeColor: COLOR_KEYS.BLACK,
-    strokeWidth: SIZE_KEYS.MEDIUM,
-    strokeOpacity: 1,
-    strokeStyle: STROKES.SOLID,
-    textFont: FONT_KEYS.SANS,
-    textSize: SIZE_KEYS.MEDIUM,
-    textColor: COLOR_KEYS.BLACK,
 };
 
 export const boardStyles = {
