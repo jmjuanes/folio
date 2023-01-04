@@ -3,7 +3,9 @@ yarn.lock
 node_modules
 
 # Outputs
-public
+www
+app/www
+homepage/public
 firebase-debug.log
 .firebase
 *.tar.gz
