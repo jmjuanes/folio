@@ -1,7 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
 const package = require("./package.json");
 
 module.exports = {
@@ -51,7 +50,7 @@ module.exports = {
                 },
             },
             {
-                test: /\.(png|jpg|jpeg|svg)$/,
+                test: /\.(png|jpg|jpeg|svg|css)$/,
                 type: "asset/resource",
             },
         ],
@@ -59,13 +58,6 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             "process.env.VERSION": JSON.stringify(package.version),
-            // "process.env.HOMEPAGE_URL": JSON.stringify(package.homepage),
-        }),
-        new CopyPlugin({
-            patterns: [
-                path.join(__dirname, "../node_modules/lowcss/dist/low.css"),
-                path.resolve(__dirname, "../folio-board/assets/fonts.css"),
-            ],
         }),
         new HtmlWebpackPlugin({
             inject: true,
