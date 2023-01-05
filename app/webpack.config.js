@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const package = require("./package.json");
 
 module.exports = {
@@ -10,7 +11,13 @@ module.exports = {
     output: {
         path: path.join(__dirname, "www"),
         publicPath: "./",
-        filename: "[contenthash:9].js",
+        filename: "[contenthash].js",
+        assetModuleFilename: "assets/[hash][ext][query]",
+    },
+    optimization: {
+        splitChunks: {
+            chunks: "all",
+        },
     },
     devServer: {
         hot: false,
@@ -50,12 +57,27 @@ module.exports = {
                 },
             },
             {
-                test: /\.(png|jpg|jpeg|svg|css)$/,
+                test: /\.css$/,
+                use: [MiniCssExtractPlugin.loader, "css-loader"],
+            },
+            {
+                test: /\.(png|jpg|jpeg|svg)$/,
                 type: "asset/resource",
+            },
+            {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                type: "asset/resource",
+                // generator: {
+                //     filename: "fonts/[hash][ext][query]",
+                // },
             },
         ],
     },
     plugins: [
+        new MiniCssExtractPlugin({
+            filename: "[contenthash].css",
+            chunkFilename: "[id].css",
+        }),
         new webpack.DefinePlugin({
             "process.env.VERSION": JSON.stringify(package.version),
         }),
