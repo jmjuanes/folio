@@ -14,8 +14,9 @@
     ],
     "scripts": {
         "build:app": "yarn workspace folio-app build",
+        "dev": "yarn run dev:app",
         "dev:app": "yarn workspace folio-app dev",
-        "clean": "rm -rf ./public",
+        "clean": "rm -rf ./www",
         "test": "jest"
     },
     "devDependencies": {
