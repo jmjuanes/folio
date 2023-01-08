@@ -17,6 +17,7 @@ export const getDefaultState = () => ({
     isPrevSelected: false,
     showSettings: false,
     showExport: false,
+    showMenu: false,
     grid: true,
     background: "#fafafa",
 });

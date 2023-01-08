@@ -1,6 +1,6 @@
 import React from "react";
 import {EXPORT_FORMATS} from "folio-core";
-import {SidePanel} from "./SidePanel.jsx";
+import {Sidebar, SidebarContent, SidebarTitle, SidebarSubmit} from "./Sidebar.jsx";
 import {Form} from "../Form/index.jsx";
 import {ImageIcon, CodeIcon} from "../icons/index.jsx";
 
@@ -45,17 +45,21 @@ const options = {
     },
 };
 
-export const ExportPanel = props => (
-    <SidePanel title="Export" submitText="Export Image" onClose={props.onClose} onSubmit={props.onSubmit}>
-        <Form
-            data={props.values || {}}
-            items={options}
-            onChange={props.onChange}
-        />
-    </SidePanel>
+export const ExportSidebar = props => (
+    <Sidebar>
+        <SidebarTitle title="Export" onClose={props.onClose} />
+        <SidebarContent>
+            <Form
+                data={props.values || {}}
+                items={options}
+                onChange={props.onChange}
+            />
+        </SidebarContent>
+        <SidebarSubmit text="Export Image" onSubmit={props.onSubmit} />
+    </Sidebar>
 );
 
-ExportPanel.defaultProps = {
+ExportSidebar.defaultProps = {
     values: {},
     onChange: null,
     onSubmit: null,

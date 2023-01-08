@@ -37,12 +37,11 @@ import {
     ArrowheadDialog,
 } from "./components/Dialogs/index.jsx";
 import {DefaultButton, SimpleButton} from "./components/Buttons/index.jsx";
-import {ExportPanel, SettingsPanel} from "./components/SidePanels/index.jsx";
+import {ExportSidebar, MenuSidebar} from "./components/Sidebar/index.jsx";
 import {
     DownloadIcon,
     CameraIcon,
     ToolIcon,
-    TrashIcon,
 } from "./components/icons/index.jsx";
 import {blobToDataUrl} from "./utils/blob.js";
 import {formatDate} from "./utils/date.js";
@@ -71,12 +70,10 @@ const FolioBoard = props => {
 
     // After mounting board component
     const handleBoardMount = () => {
-        // Check for loading initial data from props
-        if (props?.initialData) {
-            app.load(props.initialData)
+        if (props.initialData) {
+            app.load(props.initialData);
             app.update();
         }
-        // Call the onmount listener
         props?.onMount?.();
     };
 
@@ -115,27 +112,8 @@ const FolioBoard = props => {
     const handleScreenshotClick = () => {
         app.state.showSettings = false;
         app.state.showExport = false;
+        app.state.showMenu = false;
         app.setAction(ACTIONS.SCREENSHOT);
-    };
-
-    // Handle settings click
-    const handleSettingsClick = () => {
-        if (typeof props.onSettingsClick === "function") {
-            return props.onSettingsClick();
-        }
-        app.cancelAction();
-        app.state.showSettings = !app.state.showSettings;
-        app.state.showExport = false;
-        app.update();
-    };
-
-    const handleClearClick = () => {
-        if (typeof props.onClearClick === "function") {
-            return props.onClearClick();
-        }
-        // TODO: we need to display a confirmation message
-        app.reset();
-        app.update();
     };
 
     // Register effects
@@ -162,15 +140,22 @@ const FolioBoard = props => {
     // Display actions buttons
     const showActions = (
         props.showExportButton || 
-        props.showScreenshotButton || 
-        props.showSettingsButton ||
+        props.showScreenshotButton
+    );
+    const showMenuPanel = (
+        props.showMenuButton ||
+        props.showSaveButton ||
         props.showClearButton
     );
-    const showMenu = (props.showLogo && !!props.logo) || (props.showTitle && !!props.title);
     const isScreenshot = action === ACTIONS.SCREENSHOT;
 
     return (
         <div className="d:flex flex:row w:full h:full">
+            {app.state.showMenu && (
+                <MenuSidebar
+                    boards={props.boards || []}
+                />
+            )}
             <div className="position:relative overflow:hidden h:full w:full">
                 <Canvas
                     key={app.state.showExport || app.state.showSettings}
@@ -193,7 +178,7 @@ const FolioBoard = props => {
                 />
                 {!isScreenshot && props.showTools && (
                     <ToolsPanel
-                        className={showMenu ? "pt:20" : ""}
+                        className={showMenuPanel ? "pt:20" : ""}
                         action={app.state.activeAction}
                         tool={app.state.activeTool}
                         onMoveClick={() => {
@@ -298,29 +283,33 @@ const FolioBoard = props => {
                         )}
                     </React.Fragment>
                 )}
-                {!isScreenshot && showMenu && (
+                {!isScreenshot && showMenuPanel && (
                     <MenuPanel
                         title={props.title}
-                        logo={props.logo}
-                        onLogoClick={props.onLogoClick}
+                        menuActive={!!app.state.showMenu}
+                        showMenu={props.showMenuButton}
+                        showSave={props.showSaveButtom}
+                        showClear={props.showClearButton}
+                        onMenuClick={() => {
+                            app.state.showMenu = !app.state.showMenu;
+                            app.update();
+                        }}
+                        onClearClick={() => {
+                            // TODO: we need to display a confirmation dialog
+                            app.reset();
+                            app.update();
+                        }}
+                        onSaveClick={() => {
+                            // TODO
+                        }}
                     />
                 )}
                 {!isScreenshot && showActions && (
                     <div className="position:absolute top:0 right:0 pt:4 pr:4 z:10">
                         <div className="d:flex gap:3 pt:1 pb:1">
-                            {props.showClearButton && (
-                                <SimpleButton onClick={handleClearClick}>
-                                    <TrashIcon />
-                                </SimpleButton>
-                            )}
                             {props.showScreenshotButton && (
                                 <SimpleButton onClick={handleScreenshotClick}>
                                     <CameraIcon />
-                                </SimpleButton>
-                            )}
-                            {props.showSettingsButton && (
-                                <SimpleButton onClick={handleSettingsClick}>
-                                    <ToolIcon />
                                 </SimpleButton>
                             )}
                             {props.showExportButton && (
@@ -332,21 +321,8 @@ const FolioBoard = props => {
                     </div>
                 )}
             </div>
-            {app.state.showSettings && (
-                <SettingsPanel
-                    values={app.getState()}
-                    onClose={() => {
-                        app.state.showSettings = false;
-                        app.update();
-                    }}
-                    onChange={(key, value) => {
-                        app.updateState(key, value);
-                        app.update();
-                    }}
-                />
-            )}
             {app.state.showExport && (
-                <ExportPanel
+                <ExportSidebar
                     values={exportValues}
                     onClose={() => {
                         app.state.showExport = false;
@@ -395,9 +371,9 @@ const FolioBoard = props => {
 };
 
 FolioBoard.defaultProps = {
-    initialData: null,
-    logo: "",
-    title: "Untitled",
+    boards: [],
+    initialData: {},
+    title: "",
     width: 0,
     height: 0,
     showZoom: true,
@@ -407,16 +383,13 @@ FolioBoard.defaultProps = {
     showMenuButton: true,
     showExportButton: true,
     showScreenshotButton: true,
-    showSettingsButton: false,
     showClearButton: true,
-    showTitle: true,
-    showLogo: true,
+    showSaveButton: false,
     onChange: null,
     onMount: null,
-    onLogoClick: null,
-    onSettingsClick: null,
-    onExportClick: null,
-    onClearClick: null,
+    onCreateBoard: null,
+    onUpdateBoard: null,
+    onDeleteBoard: null,
 };
 
 export default FolioBoard;
