@@ -30,7 +30,8 @@ export const Canvas = props => {
             originalX: (event.nativeEvent.clientX - left - props.translateX) / props.zoom,
             originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
-            nativeEvent: event.nativeEvent,
+            originalEvent: event.nativeEvent,
+            prevEvent: null,
         };
 
         if (source && event.nativeEvent.target?.dataset?.[source]) {
@@ -49,12 +50,15 @@ export const Canvas = props => {
         const handlePointerMove = event => {
             event.preventDefault();
             props.onPointerMove?.(Object.assign(eventInfo, {
-                // nativeEvent: event,
+                currentEvent: event,
                 currentX: (event.clientX - left - props.translateX) / props.zoom,
                 currentY: (event.clientY - top - props.translateY) / props.zoom,
-                dx: (event.clientX - eventInfo.nativeEvent.clientX) / props.zoom,
-                dy: (event.clientY - eventInfo.nativeEvent.clientY) / props.zoom,
+                dx: (event.clientX - eventInfo.originalEvent.clientX) / props.zoom,
+                dy: (event.clientY - eventInfo.originalEvent.clientY) / props.zoom,
+                prevDx: eventInfo.prevEvent ? ((eventInfo.prevEvent.clientX - eventInfo.originalEvent.clientX) / props.zoom) : 0,
+                prevDy: eventInfo.prevEvent ? ((eventInfo.prevEvent.clientY - eventInfo.originalEvent.clientY) / props.zoom) : 0,
             }));
+            eventInfo.prevEvent = event;
         };
 
         // Handle pointer up
