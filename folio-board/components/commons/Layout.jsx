@@ -2,7 +2,6 @@ import React from "react";
 import {
     ELEMENTS,
     EXPORT_FORMATS,
-    exportToClipboard,
     exportToFile,
 } from "folio-core";
 
@@ -27,10 +26,7 @@ import {
 } from "../Dialogs/index.jsx";
 import {DefaultButton, SimpleButton} from "../Buttons/index.jsx";
 import {ExportSidebar, MenuSidebar} from "../Sidebar/index.jsx";
-import {
-    DownloadIcon,
-    CameraIcon,
-} from "../icons/index.jsx";
+import {DownloadIcon, CameraIcon} from "../icons/index.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
 import {formatDate} from "../../utils/date.js";
@@ -38,45 +34,25 @@ import {formatDate} from "../../utils/date.js";
 export const Layout = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const state = React.useRef({
-        activeTool: null,
-        activeAction: null,
         activeDialog: null,
-        activeElement: null,
-        // activeGroup: null,
-        // showSettings: false,
         showExport: false,
         showMenu: false,
     });
     const board = useBoard();
     const imageInputRef = React.useRef();
     const [exportValues, setExportValues] = React.useState({});
-    // const app = useApp({
-    //     onUpdate: forceUpdate,
-    //     onScreenshot: region => {
-    //         return exportToClipboard({
-    //             elements: app.getElements(),
-    //             fonts: Object.values(FONT_FACES),
-    //             crop: region,
-    //         });
-    //     },
-    // });
 
     // Register element change
     const handleElementChange = (key, value) => {
         board.current.updateElements(selectedElements, [key], [value], true);
-        forceUpdate();
+        board.current.update();
     };
 
     // Handle export button click
     const handleExportClick = () => {
-        if (state.current.activeElement?.editing) {
-            state.current.activeElement.editing = false;
-        } 
-        state.current.activeElement = null;
-        state.current.activeAction = null;
+        board.current.setAction(null);
         state.current.showExport = !state.current.showExport;
         state.current.showMenu = false;
-        // state.current.showSettings = false;
         setExportValues({
             filename: `untitled-${formatDate()}`,
             background: false,
@@ -87,44 +63,22 @@ export const Layout = props => {
 
     // Handle screenshot button click
     const handleScreenshotClick = () => {
-        // state.current.showSettings = false;
         state.current.showExport = false;
         state.current.showMenu = false;
-        handleActionChange(ACTIONS.SCREENSHOT);
+        board.current.setAction(ACTIONS.SCREENSHOT);
+        board.current.update();
     };
 
-    const handleActionChange = newAction => {
-        board.current.clearSelectedElements();
-        if (state.current.activeElement?.editing) {
-            state.current.activeElement.editing = false;
-        }
-        state.current.activeElement = null;
-        state.current.activeTool = null;
-        state.current.activeAction = newAction;
-        forceUpdate();
-    };
-
-    const handleToolChange = newTool => {
-        board.current.clearSelectedElements();
-        if (state.current.activeElement?.editing) {
-            state.current.activeElement.editing = false;
-        }
-        state.current.activeElement = null;
-        state.current.activeAction = null;
-        state.current.activeTool = newTool;
-        forceUpdate();
-    };
-
-    const action = state.current.activeAction;
+    const action = board.current.activeAction;
     const selectedElements = board.current.getSelectedElements();
 
     // Force to reset the active dialog if there is an action or a tool active
-    if (state.current.activeAction || state.current.activeTool) {
+    if (board.current.activeAction || board.current.activeTool) {
         state.current.activeDialog = null;
     }
 
     // Compute common values for selected elements to be used in dialogs
-    let selectionValues = {}; // app.state.style || {};
+    let selectionValues = board.current.defaults || {};
     if (state.current.activeDialog && selectedElements.length > 0) {
         // TODO: we need to compute common values if length > 1
         if (selectedElements.length === 1) {
@@ -137,7 +91,6 @@ export const Layout = props => {
         <div className="d:flex flex:row w:full h:full">
             {state.current.showMenu && (
                 <MenuSidebar
-                    pages={props.pages || []}
                 />
             )}
             <div className="position:relative overflow:hidden h:full w:full">
@@ -145,20 +98,23 @@ export const Layout = props => {
                 {!isScreenshot && (
                     <ToolsPanel
                         className="pt:20"
-                        action={state.current.activeAction}
-                        tool={state.current.activeTool}
+                        action={board.current.activeAction}
+                        tool={board.current.activeTool}
                         onMoveClick={() => {
-                            handleActionChange(ACTIONS.MOVE);
+                            board.current.setAction(ACTIONS.MOVE);
+                            board.current.update();
                         }}
                         onSelectionClick={() => {
-                            handleToolChange(null);
+                            board.current.setTool(null);
+                            board.current.update();
                         }}
                         onToolClick={tool => {
                             // Special action if the image tool is activated
                             if (tool === ELEMENTS.IMAGE) {
                                 return imageInputRef.current.click();
                             }
-                            handleToolChange(tool);
+                            board.current.setTool(tool);
+                            board.current.update();
                         }}
                     />
                 )}
@@ -166,37 +122,15 @@ export const Layout = props => {
                     <HistoryPanel
                         undoDisabled={board.current.isUndoDisabled()}
                         redoDisabled={board.current.isRedoDisabled()}
-                        onUndoClick={() => {
-                            if (state.current.activeElement?.editing) {
-                                state.current.activeElement.editing = false;
-                            }
-                            state.current.activeAction = null;
-                            state.current.activeElement = null;
-                            board.current.undo();
-                            forceUpdate();
-                        }}
-                        onRedoClick={() => {
-                            if (state.current.activeElement?.editing) {
-                                state.current.activeElement.editing = false;
-                            }
-                            state.current.activeAction = null;
-                            state.current.activeElement = null;
-                            board.current.redo();
-                            forceUpdate();
-                        }}
+                        onUndoClick={() => board.current.undo()}
+                        onRedoClick={() => board.current.redo()}
                     />
                 )}
                 {!isScreenshot && (
                     <ZoomPanel
                         zoom={board.current.zoom}
-                        onZoomInClick={() => {
-                            board.current.zoomIn();
-                            forceUpdate();
-                        }}
-                        onZoomOutClick={() => {
-                            board.current.zoomOut();
-                            forceUpdate();
-                        }}
+                        onZoomInClick={() => board.current.zoomIn()}
+                        onZoomOutClick={() => board.current.zoomOut()}
                     />
                 )}
                 {!isScreenshot && (
@@ -206,29 +140,9 @@ export const Layout = props => {
                         elements={selectedElements}
                         dialog={state.current.activeDialog}
                         onRemoveClick={() => {
-                            if (state.current.activeElement?.editing) {
-                                state.current.activeElement.editing = false;
-                                state.current.activeElement = null;
-                            }
+                            board.current.setAction(null);
                             board.current.removeElements(selectedElements);
-                            forceUpdate();
-                        }}
-                        onBringForwardClick={() => {
-                            // boardApi.current.bringSelectionForward();
-                        }}
-                        onSendBackwardClick={() => {
-                            // boardApi.current.sendSelectionBackward();
-                        }}
-                        onGroupSelectionClick={() => {
-                            // const group = Folio.generateRandomId();
-                            // app.current.registerSelectionUpdate(["group"], [group], false);
-                            // app.current.updateSelectedElements("group", group);
-                            // forceUpdate();
-                        }}
-                        onUngroupSelectionClick={() => {
-                            // app.current.registerSelectionUpdate(["group"], [null], false);
-                            // app.current.updateSelectedElements("group", null);
-                            // forceUpdate();
+                            board.current.update();
                         }}
                         onDialogClick={id => {
                             state.current.activeDialog = id;
@@ -296,7 +210,7 @@ export const Layout = props => {
                         }}
                     />
                 )}
-                {!isScreenshot && showActions && (
+                {!isScreenshot && (
                     <div className="position:absolute top:0 right:0 pt:4 pr:4 z:10">
                         <div className="d:flex gap:3 pt:1 pb:1">
                             {props.showScreenshotButton && (
@@ -357,9 +271,7 @@ export const Layout = props => {
                     if (selectedFile) {
                         blobToDataUrl(selectedFile).then(data => {
                             event.target.value = "";
-                            board.current.addImage(data).then(() => {
-                                forceUpdate();
-                            });
+                            board.current.addImage(data);
                         });
                     }
                 }}
@@ -372,9 +284,7 @@ export const Layout = props => {
     );
 };
 
-FolioBoard.defaultProps = {
-    boards: [],
-    initialData: {},
+Layout.defaultProps = {
     title: "",
     width: 0,
     height: 0,
@@ -392,9 +302,4 @@ FolioBoard.defaultProps = {
     onCreateBoard: null,
     onUpdateBoard: null,
     onDeleteBoard: null,
-};
-
-Layout.defaultProps = {
-    title: "",
-    pages: [],
 };

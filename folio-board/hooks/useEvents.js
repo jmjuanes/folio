@@ -16,13 +16,10 @@ import {getDataFromClipboard, copyTextToClipboard} from "../utils/clipboard.js";
 import {isArrowKey} from "../utils/keys.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
-export const useEvents = () => {
-    const [_, forceUpdate] = React.useReducer(x => x + 1, 0);
+export const useEvents = callbacks => {
     const board = useBoard();
     const internalState = React.useRef({
         isPrevSelected: false,
-        lastTranslateX: 0,
-        lastTranslateY: 0,
         isDragged: false,
         isResized: false,
         snapshot: [],
@@ -30,18 +27,23 @@ export const useEvents = () => {
     const events = React.useRef(null);
 
     if (!events.current) {
+        const getPosition = pos => {
+            // return state.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
+            return Math.round(pos / GRID_SIZE) * GRID_SIZE;
+        };
+
         events.current = {
             onPointCanvas: () => {
-                if (state.current.activeAction === ACTIONS.EDIT) {
+                if (board.current.activeAction === ACTIONS.EDIT) {
                     board.current.setAction(null);
                 }
-                if (!state.current.activeTool) {
+                if (!board.current.activeTool) {
                     board.current.clearSelectedElements();
-                    forceUpdate();
+                    board.current.update();
                 }
             },
             onPointElement: event => {
-                if (!state.current.activeTool && !state.current.activeAction) {
+                if (!board.current.activeTool && !board.current.activeAction) {
                     const element = board.current.getElement(event.element);
                     internalState.current.isPrevSelected = element.selected;
                     const inCurrentSelection = board.current.getSelectedElements().some(el => {
@@ -51,27 +53,26 @@ export const useEvents = () => {
                         board.current.clearSelectedElements();
                     }
                     element.selected = true;
-                    forceUpdate();
+                    board.current.update();
                 }
             },
             onPointHandler: () => {
-                state.current.activeAction = ACTIONS.RESIZE;
-                // board.current.state.activeHandler = event.handler;
+                board.current.activeAction = ACTIONS.RESIZE;
             },
             onPointerDown: event => {
                 internalState.current.isDragged = false;
                 internalState.current.isResized = false;
                 // First we need to check if we are in a edit action
-                if (state.current.activeAction === ACTIONS.EDIT) {
+                if (board.current.activeAction === ACTIONS.EDIT) {
                     board.current.setAction(null);
                 }
-                if (state.current.activeTool) {
-                    state.current.activeAction = ACTIONS.CREATE;
-                    const element = board.current.createElement(board.current.tool);
+                if (board.current.activeTool) {
+                    board.current.activeAction = ACTIONS.CREATE;
+                    const element = board.current.createElement(board.current.activeTool);
                     const elementConfig = getElementConfig(element);
                     // Override element attributes
                     Object.assign(element, {
-                        ...(elementConfig.initialize?.(state.style) || {}),
+                        ...(elementConfig.initialize?.(board.current.defaults) || {}),
                         x1: getPosition(event.originalX),
                         y1: getPosition(event.originalY),
                         x2: getPosition(event.originalX),
@@ -79,24 +80,24 @@ export const useEvents = () => {
                         creating: true,
                     });
                     elementConfig.onCreateStart?.(element, event),
-                    state.current.activeElement = element; // Save element reference
+                    board.current.activeElement = element; // Save element reference
                     // state.activeGroup = null; // Reset current group
                     board.current.clearSelectedElements();
                     board.current.addElements([element]);
                 }
                 else if (board.current.getSelectedElements().length > 0) {
-                    if (!state.current.activeAction) {
-                        state.current.activeAction = ACTIONS.DRAG;
+                    if (!board.current.activeAction) {
+                        board.current.activeAction = ACTIONS.DRAG;
                     }
                     // Save a snapshot of the current selection for calculating the correct element position
                     internalState.current.snapshot = board.current.snapshotSelectedElements();
                 }
                 else if ((
-                    !state.current.activeAction ||
-                    state.current.activeAction === ACTIONS.SELECT ||
-                    state.current.activeAction === ACTIONS.SCREENSHOT
+                    !board.current.activeAction ||
+                    board.current.activeAction === ACTIONS.SELECT ||
+                    board.current.activeAction === ACTIONS.SCREENSHOT
                 )) {
-                    state.current.activeAction = state.current.activeAction || ACTIONS.SELECT;
+                    board.current.activeAction = board.current.activeAction || ACTIONS.SELECT;
                     board.current.selection = {
                         x1: event.originalX,
                         y1: event.originalY,
@@ -105,27 +106,29 @@ export const useEvents = () => {
                     };
                     board.current.clearSelectedElements();
                 }
-                else if (state.current.activeAction === ACTIONS.MOVE) {
+                else if (board.current.activeAction === ACTIONS.MOVE) {
                     // We need to update the last translated point before start moving the board
                     internalState.current.lastTranslateX = board.current.translateX;
                     internalState.current.lastTranslateY = board.current.translateY;
                 }
-                forceUpdate();
+                board.current.update();
             },
             onPointerMove: event => {
-                if (state.current.activeAction === ACTIONS.MOVE) {
-                    board.current.translateX = Math.floor(internalState.current.lastTranslateX + event.dx * board.current.zoom);
-                    board.current.translateY = Math.floor(internalState.current.lastTranslateY + event.dy * board.current.zoom);
+                if (board.current.activeAction === ACTIONS.MOVE) {
+                    // board.current.translateX = Math.floor(internalState.current.lastTranslateX + event.dx * board.current.zoom);
+                    // board.current.translateY = Math.floor(internalState.current.lastTranslateY + event.dy * board.current.zoom);
+                    board.current.translateX = board.current.translateX + (event.dx - event.prevDx) * board.current.zoom;
+                    board.current.translateY = board.current.translateY + (event.dy - event.prevDy) * board.current.zoom;
                 }
-                else if (state.current.activeAction === ACTIONS.CREATE) {
-                    const element = state.current.activeElement;
+                else if (board.current.activeAction === ACTIONS.CREATE) {
+                    const element = board.current.activeElement;
                     // First, update the second point of the element
                     element.x2 = getPosition(event.currentX);
                     element.y2 = getPosition(event.currentY);
                     // Second, call the onCreateMove listener of the element
                     getElementConfig(element)?.onCreateMove?.(element, event);
                 }
-                else if (state.current.activeAction === ACTIONS.DRAG) {
+                else if (board.current.activeAction === ACTIONS.DRAG) {
                     const snapshot = internalState.current.snapshot;
                     internalState.current.isDragged = true;
                     board.current.getSelectedElements().forEach((element, index) => {
@@ -136,7 +139,7 @@ export const useEvents = () => {
                         // getElementConfig(element)?.onDrag?.(snapshot[index], event);
                     });
                 }
-                else if (state.current.activeAction === ACTIONS.RESIZE) {
+                else if (board.current.activeAction === ACTIONS.RESIZE) {
                     const snapshot = internalState.current.snapshot;
                     internalState.current.isResized = true;
                     const element = board.current.getElement(snapshot[0].id);
@@ -177,23 +180,19 @@ export const useEvents = () => {
                         element.y2 = getPosition(snapshot[0].y2 + event.dy);
                     }
                 }
-                else if (state.current.activeAction === ACTIONS.SELECT || state.current.activeAction === ACTIONS.SCREENSHOT) {
+                else if (board.current.activeAction === ACTIONS.SELECT || board.current.activeAction === ACTIONS.SCREENSHOT) {
                     board.current.selection.x2 = event.currentX;
                     board.current.selection.y2 = event.currentY;
                 }
                 // board.current.update();
-                forceUpdate();
+                board.current.update();
             },
             onPointerUp: event => {
-                if (state.current.activeAction === ACTIONS.MOVE) {
-                    internalState.current.lastTranslateX = board.current.translateX;
-                    internalState.current.lastTranslateY = board.current.translateY;
-                    // Prevent reset of activeAction
-                    // return board.current.update();
-                    forceUpdate();
+                if (board.current.activeAction === ACTIONS.MOVE) {
+                    return board.current.update();
                 }
-                else if (state.current.activeAction === ACTIONS.CREATE && state.current.activeElement) {
-                    const element = state.current.activeElement;
+                else if (board.current.activeAction === ACTIONS.CREATE && board.current.activeElement) {
+                    const element = board.current.activeElement;
                     element.creating = false;
                     element.selected = true; // By default select this element
                     getElementConfig(element)?.onCreateEnd?.(element, event);
@@ -207,18 +206,17 @@ export const useEvents = () => {
                     }
                     // Call the element created listener
                     // callbacks?.onElementCreated?.(element);
-                    state.current.activeElement = null;
-                    state.current.activeTool = null; // reset active tool
+                    board.current.activeElement = null;
+                    board.current.activeTool = null; // reset active tool
                     // Terrible hack to enable editing in a text element
                     if (element.type === ELEMENTS.TEXT) {
                         element.editing = true;
-                        // state.current.activeElement = element;
-                        state.current.activeAction = ACTIONS.EDIT;
-                        // return board.current.update();
-                        return forceUpdate();
+                        board.current.activeElement = element;
+                        board.current.activeAction = ACTIONS.EDIT;
+                        return board.current.update();
                     }
                 }
-                else if (state.current.activeAction === ACTIONS.DRAG || state.current.activeAction === ACTIONS.RESIZE) {
+                else if (board.current.activeAction === ACTIONS.DRAG || board.current.activeAction === ACTIONS.RESIZE) {
                     if (internalState.current.isDragged || internalState.current.isResized) {
                         const snapshot = internalState.current.snapshot;
                         const keys = ["x1", "x2", "y1", "y2"];
@@ -245,7 +243,7 @@ export const useEvents = () => {
                     internalState.current.isDragged = false;
                     internalState.current.isResized = false;
                 }
-                else if (state.current.activeAction === ACTIONS.SELECT) {
+                else if (board.current.activeAction === ACTIONS.SELECT) {
                     const selection = board.current.selection;
                     board.current.setSelectedElements({
                         x1: Math.min(selection.x1, selection.x2),
@@ -254,45 +252,39 @@ export const useEvents = () => {
                         y2: Math.max(selection.y1, selection.y2),
                     });
                 }
-                else if (state.current.activeAction === ACTIONS.SCREENSHOT) {
+                else if (board.current.activeAction === ACTIONS.SCREENSHOT) {
                     // const screenshotRegion = {
                     //     x: Math.min(state.selection.x1, state.selection.x2),
                     //     y: Math.min(state.selection.y1, state.selection.y2),
                     //     width: Math.abs(state.selection.x2 - state.selection.x1),
                     //     height: Math.abs(state.selection.y2 - state.selection.y1),
                     // };
-                    // TODO
-                    callbacks?.onScreenshot?.({...state.selection});
+                    callbacks?.onScreenshot?.({...board.current.selection});
                 }
-                state.current.activeAction = null;
+                board.current.activeAction = null;
                 board.current.selection = null;
-                // board.current.update();
-                forceUpdate();
+                board.current.update();
             },
             onDoubleClickElement: event => {
-                if (!state.current.activeAction && !state.current.activeTool) {
+                if (!board.current.activeAction && !board.current.activeTool) {
                     board.current.clearSelectedElements();
                     const element = board.current.getElement(event.element);
                     // TODO: we need to check if this element is editable
-                    state.current.activeElement = element;
-                    state.current.activeElement.editing = true;
-                    state.current.activeAction = ACTIONS.EDIT;
-                    // board.current.update();
-                    forceUpdate();
+                    board.current.activeElement = element;
+                    board.current.activeElement.editing = true;
+                    board.current.activeAction = ACTIONS.EDIT;
+                    board.current.update();
                 }
             },
             onKeyDown: event => {
                 const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
                 // Check if we are in an input target and input element is active
                 if (isInputTarget(event)) {
-                    if (state.current.activeAction === ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
+                    if (board.current.activeAction === ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
                         event.preventDefault();
-                        if (state.current.activeElement?.editing) {
-                            state.current.activeElement.editing = false;
-                        }
-                        state.current.activeElement = null;
-                        state.current.activeAction = null;
-                        forceUpdate();
+                        board.current.setAction(null);
+                        board.current.activeElement = null;
+                        board.current.update();
                     }
                 }
                 else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
@@ -313,31 +305,23 @@ export const useEvents = () => {
                         //     state.activeGroup = null;
                         // }
                     }
-                    forceUpdate();
+                    board.current.update();
                 }
                 // Undo or redo key
                 else if (isCtrlKey && (event.key === KEYS.Z || event.key === KEYS.Y)) {
-                    if (state.current.activeElement?.editing) {
-                        state.current.activeElement.editing = false;
-                    }
-                    state.current.activeAction = null;
-                    state.current.activeElement = null;
+                    board.current.setAction(null);
+                    board.current.activeElement = null;
                     event.key === KEYS.Z ? board.current.undo() : board.current.redo();
-                    forceUpdate();
+                    board.current.update();
                 }
                 // Check ESCAPE key
                 else if (event.key === KEYS.ESCAPE) {
-                    if (state.current.activeAction === ACTIONS.SCREENSHOT) {
-                        state.current.activeAction = null;
-                    }
-                    else if (state.current.showExport || state.current.showMenu) {
-                        state.current.showExport = false;
-                        state.current.showMenu = false;
+                    if (board.current.activeAction === ACTIONS.SCREENSHOT) {
+                        board.current.activeAction = null;
                     }
                     event.preventDefault();
                     board.current.clearSelectedElements();
-                    // state.activeGroup = null;
-                    forceUpdate();
+                    board.current.update();
                 }
                 // Check for arrow keys --> move elements
                 else if (isArrowKey(event.key)) {
@@ -369,7 +353,7 @@ export const useEvents = () => {
                         }),
                     });
                     // board.current.update();
-                    forceUpdate();
+                    board.current.update();
                 }
             },
             // onKeyUp: event => {},
@@ -380,32 +364,27 @@ export const useEvents = () => {
                 board.current.clearSelectedElements();
                 // state.activeGroup = null;
                 return getDataFromClipboard(event).then(data => {
-                    // Paste elements
                     if (data?.type === "text" && data?.content?.startsWith("folio:::")) {
                         const newData = JSON.parse(data.content.split("folio:::")[1].trim());
                         board.current.paste(newData || {});
-                        forceUpdate();
+                        board.current.update();
                     }
                     // Create a new text element
                     else if (data?.type === "text") {
-                        board.current.addText(data.content).then(() => {
-                            forceUpdate();
-                        });
+                        board.current.addText(data.content);
                     }
                     // Create a new image element
                     else if (data?.type === "image") {
-                        board.current.addImage(data.content).then(() => {
-                            forceUpdate();
-                        });
+                        board.current.addImage(data.content);
                     }
                 });
             },
             // onCopy: event => null,
             // onCut: event => null,
             onElementChange: (id, keys, values) => {
-                if (state.current.activeElement?.id === id && state.current.activeElement?.editing) {
-                    board.current.updateElements([state.current.activeElement], keys, values, true);
-                    forceUpdate();
+                if (board.current.activeElement?.id === id && board.current.activeElement?.editing) {
+                    board.current.updateElements([board.current.activeElement], keys, values, true);
+                    board.current.update();
                 }
             },
         };

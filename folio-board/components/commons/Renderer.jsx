@@ -5,37 +5,45 @@ import {
     SCREENSHOT_STROKE_COLOR,
     SELECTION_FILL_COLOR,
     SELECTION_STROKE_COLOR,
+    exportToClipboard,
 } from "folio-core";
-import {ACTIONS} from "../../constants.jsx";
+import {ACTIONS, FONT_FACES} from "../../constants.js";
 
 import {useBoard} from "../../contexts/BoardContext.jsx";
-import {useEvents} from "../../hooks/useEvents.jsx";
+import {useEvents} from "../../hooks/useEvents.js";
 import {boardStyles} from "../../styles.js";
 
 export const Renderer = () => {
     const board = useBoard();
-    const events = useEvents();
+    const events = useEvents({
+        onScreenshot: region => {
+            return exportToClipboard({
+                elements: board.current.getElements(),
+                fonts: Object.values(FONT_FACES),
+                crop: region,
+            });
+        },
+    });
     // const action = board.current.state.activeAction;
-    const isSelection = board.current.state.activeAction === ACTIONS.SELECT;
-    const isScreenshot = board.current.state.activeAction === ACTIONS.SCREENSHOT;
+    const isSelection = board.current.activeAction === ACTIONS.SELECT;
+    const isScreenshot = board.current.activeAction === ACTIONS.SCREENSHOT;
 
     return (
         <Canvas
-            key={board.current.state.showExport || board.current.state.showSettings}
             id={board.current.id}
             elements={board.current.elements}
             assets={board.current.assets}
             styles={boardStyles}
-            backgroundColor={board.current.state.background}
-            translateX={board.current.state.translateX}
-            translateY={board.current.state.translateY}
-            zoom={board.current.state.zoom}
-            brush={board.current.state.selection}
+            backgroundColor="#fafafa"
+            translateX={board.current.translateX}
+            translateY={board.current.translateY}
+            zoom={board.current.zoom}
+            brush={board.current.selection}
             brushFillColor={isScreenshot ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
             brushStrokeColor={isScreenshot ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
-            showHandlers={!board.current.state.activeAction && !board.current.state.activeTool}
+            showHandlers={!board.current.activeAction && !board.current.activeTool}
             showBrush={isSelection || isScreenshot}
-            showBounds={!board.current.state.activeAction && !board.current.state.activeTool}
+            showBounds={!board.current.activeAction && !board.current.activeTool}
             showGrid={true}
             {...events}
         />
