@@ -57,6 +57,9 @@ export const Layout = props => {
 
     // Handle export button click
     const handleExportClick = () => {
+        if (board.elements.length === 0) {
+            return null;
+        }
         board.setAction(null);
         state.showExport = !state.showExport;
         state.showMenu = false;
@@ -70,6 +73,9 @@ export const Layout = props => {
 
     // Handle screenshot button click
     const handleScreenshotClick = () => {
+        if (board.elements.length === 0) {
+            return null;
+        }
         state.showExport = false;
         state.showMenu = false;
         board.setAction(ACTIONS.SCREENSHOT);
@@ -220,14 +226,19 @@ export const Layout = props => {
                     <div className="position:absolute top:0 right:0 pt:4 pr:4 z:5">
                         <div className="d:flex gap:3 pt:1 pb:1">
                             {props.showScreenshotButton && (
-                                <SimpleButton onClick={handleScreenshotClick}>
-                                    <CameraIcon />
-                                </SimpleButton>
+                                <SimpleButton
+                                    icon={(<CameraIcon />)}
+                                    disabled={board.elements.length === 0}
+                                    onClick={handleScreenshotClick}
+                                />
                             )}
                             {props.showExportButton && (
-                                <DefaultButton text="Export" onClick={handleExportClick}>
-                                    <DownloadIcon />
-                                </DefaultButton>
+                                <DefaultButton
+                                    text="Export"
+                                    icon={(<DownloadIcon />)}
+                                    disabled={board.elements.length === 0}
+                                    onClick={handleExportClick}
+                                />
                             )}
                         </div>
                     </div>
