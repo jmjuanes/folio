@@ -31,7 +31,7 @@ export const Canvas = props => {
             originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             originalEvent: event.nativeEvent,
-            prevEvent: null,
+            // prevEvent: null,
         };
 
         if (source && event.nativeEvent.target?.dataset?.[source]) {
@@ -55,10 +55,10 @@ export const Canvas = props => {
                 currentY: (event.clientY - top - props.translateY) / props.zoom,
                 dx: (event.clientX - eventInfo.originalEvent.clientX) / props.zoom,
                 dy: (event.clientY - eventInfo.originalEvent.clientY) / props.zoom,
-                prevDx: eventInfo.prevEvent ? ((eventInfo.prevEvent.clientX - eventInfo.originalEvent.clientX) / props.zoom) : 0,
-                prevDy: eventInfo.prevEvent ? ((eventInfo.prevEvent.clientY - eventInfo.originalEvent.clientY) / props.zoom) : 0,
+                // prevDx: eventInfo.prevEvent ? ((eventInfo.prevEvent.clientX - eventInfo.originalEvent.clientX) / props.zoom) : 0,
+                // prevDy: eventInfo.prevEvent ? ((eventInfo.prevEvent.clientY - eventInfo.originalEvent.clientY) / props.zoom) : 0,
             }));
-            eventInfo.prevEvent = event;
+            // eventInfo.prevEvent = event;
         };
 
         // Handle pointer up
