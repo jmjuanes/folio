@@ -24,8 +24,9 @@ import {
     ShapeDialog,
     ArrowheadDialog,
 } from "../Dialogs/index.jsx";
+import {ExportModal} from "../Modals/index.jsx";
 import {DefaultButton, SimpleButton} from "../Buttons/index.jsx";
-import {ExportSidebar, MenuSidebar} from "../Sidebar/index.jsx";
+import {Menu} from "./Menu.jsx";
 import {DownloadIcon, CameraIcon} from "../icons/index.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
@@ -96,8 +97,7 @@ export const Layout = props => {
     return (
         <div className="d:flex flex:row w:full h:full">
             {state.showMenu && (
-                <MenuSidebar
-                />
+                <Menu />
             )}
             <div className="position:relative overflow:hidden h:full w:full">
                 {props.children}
@@ -217,7 +217,7 @@ export const Layout = props => {
                     />
                 )}
                 {!isScreenshot && (
-                    <div className="position:absolute top:0 right:0 pt:4 pr:4 z:10">
+                    <div className="position:absolute top:0 right:0 pt:4 pr:4 z:5">
                         <div className="d:flex gap:3 pt:1 pb:1">
                             {props.showScreenshotButton && (
                                 <SimpleButton onClick={handleScreenshotClick}>
@@ -234,7 +234,7 @@ export const Layout = props => {
                 )}
             </div>
             {state.showExport && (
-                <ExportSidebar
+                <ExportModal
                     values={exportValues}
                     onClose={() => {
                         state.showExport = false;
