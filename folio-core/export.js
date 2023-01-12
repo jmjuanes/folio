@@ -24,6 +24,17 @@ const blobToClipboard = blob => {
     ]);
 };
 
+// Convert blob to dataurl
+const blobToDataUrl = blob => {
+    return new Promise(resolve => {
+        const file = new FileReader();
+        file.onload = event => {
+            return resolve(event.target.result);
+        };
+        return file.readAsDataURL(blob);
+    });
+};
+
 // Get image in SVG
 const getSvgImage = options => {
     const elements = options?.elements || [];
@@ -53,7 +64,7 @@ const getSvgImage = options => {
             svg.appendChild(style);
         }
         // 5. Set group attributes
-        group.setAttribute("transform", `translate(${bounds.x1} ${bounds.y1})`);
+        group.setAttribute("transform", `translate(-${bounds.x1} -${bounds.y1})`);
         svg.appendChild(group);
         // 6. Append elements into new SVG
         elements.forEach(element => {
@@ -77,6 +88,8 @@ const getPngImage = options => {
         const canvas = document.createElement("canvas");
         // Initialize image
         const img = new Image();
+        // img.setAttribute("crossorigin", "anonymous");
+        // img.crossOrigin = "anonymous";
         img.addEventListener("load", () => {
             let x = 0, y = 0;
             if (options.crop) {
@@ -99,9 +112,9 @@ const getPngImage = options => {
             return reject(event);
         });
         // Load image
-        getSvgImage(options).then(data => {
-            img.src = window.URL.createObjectURL(data);
-        });
+        getSvgImage(options)
+            .then(data => blobToDataUrl(data))
+            .then(data => img.src = data);
     });
 };
 
