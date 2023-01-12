@@ -92,7 +92,7 @@ const optionTypes = {
             )}
             <input
                 type="text"
-                className="w:full px:4 bg:light-500 b:0"
+                className="w:full px:4 bg:light-500 b:0 r:md"
                 placeholder={props.placeholder}
                 onChange={e => props.onChange(e.target.value || "")}
                 defaultValue={props.value}
