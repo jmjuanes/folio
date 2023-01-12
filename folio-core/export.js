@@ -105,6 +105,8 @@ const getPngImage = options => {
                 canvas.height = img.height;
             }
             const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, x, y);
             canvas.toBlob(resolve);
         });
