@@ -10,17 +10,22 @@ import {
 import {ACTIONS, FONT_FACES} from "../../constants.js";
 
 import {useBoard} from "../../contexts/BoardContext.jsx";
+import {useToasts} from "../../contexts/ToastProvider.jsx";
 import {useEvents} from "../../hooks/useEvents.js";
 import {boardStyles} from "../../styles.js";
 
 export const Renderer = () => {
     const board = useBoard();
+    const toasts = useToasts();
     const events = useEvents({
         onScreenshot: region => {
-            return exportToClipboard({
+            const exportOptions = {
                 elements: board.getElements(),
                 fonts: Object.values(FONT_FACES),
                 crop: region,
+            };
+            return exportToClipboard(exportOptions).then(() => {
+                toasts.add("Screenshot copied to clipboard.");
             });
         },
     });

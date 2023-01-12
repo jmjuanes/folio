@@ -29,6 +29,7 @@ import {DefaultButton, SimpleButton} from "../Buttons/index.jsx";
 import {Menu} from "./Menu.jsx";
 import {DownloadIcon, CameraIcon} from "../icons/index.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
+import {useToasts} from "../../contexts/ToastProvider.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
 import {formatDate} from "../../utils/date.js";
 
@@ -46,6 +47,7 @@ export const Layout = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const board = useBoard();
     const state = useLayoutState();
+    const toasts = useToasts();
     const imageInputRef = React.useRef();
     const [exportValues, setExportValues] = React.useState({});
 
@@ -266,8 +268,8 @@ export const Layout = props => {
                             // scale: exportValues.scale || 1,
                         };
                         exportToFile(exportOptions)
-                            .then(() => {
-                                console.log("Export completed");
+                            .then(filename => {
+                                toasts.add(`Board exported as '${filename}'`);
                             })
                             .catch(error => {
                                 console.error(error);

@@ -10,7 +10,7 @@ const blobToFile = (blob, filename) => {
         linkElement.download = filename;
         linkElement.click();
         window.URL.revokeObjectURL(url);
-        return resolve(true);
+        return resolve(filename);
     });
 };
 
