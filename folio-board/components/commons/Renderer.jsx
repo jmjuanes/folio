@@ -18,32 +18,31 @@ export const Renderer = () => {
     const events = useEvents({
         onScreenshot: region => {
             return exportToClipboard({
-                elements: board.current.getElements(),
+                elements: board.getElements(),
                 fonts: Object.values(FONT_FACES),
                 crop: region,
             });
         },
     });
-    // const action = board.current.state.activeAction;
-    const isSelection = board.current.activeAction === ACTIONS.SELECT;
-    const isScreenshot = board.current.activeAction === ACTIONS.SCREENSHOT;
+    const isSelection = board.activeAction === ACTIONS.SELECT;
+    const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
 
     return (
         <Canvas
-            id={board.current.id}
-            elements={board.current.elements}
-            assets={board.current.assets}
+            id={board.id}
+            elements={board.elements}
+            assets={board.assets}
             styles={boardStyles}
             backgroundColor="#fafafa"
-            translateX={board.current.translateX}
-            translateY={board.current.translateY}
-            zoom={board.current.zoom}
-            brush={board.current.selection}
+            translateX={board.translateX}
+            translateY={board.translateY}
+            zoom={board.zoom}
+            brush={board.selection}
             brushFillColor={isScreenshot ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
             brushStrokeColor={isScreenshot ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
-            showHandlers={!board.current.activeAction && !board.current.activeTool}
+            showHandlers={!board.activeAction && !board.activeTool}
             showBrush={isSelection || isScreenshot}
-            showBounds={!board.current.activeAction && !board.current.activeTool}
+            showBounds={!board.activeAction && !board.activeTool}
             showGrid={true}
             {...events}
         />

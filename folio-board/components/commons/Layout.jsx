@@ -31,28 +31,34 @@ import {useBoard} from "../../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
 import {formatDate} from "../../utils/date.js";
 
-export const Layout = props => {
-    const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
+const useLayoutState = () => {
     const state = React.useRef({
         activeDialog: null,
         showExport: false,
         showMenu: false,
     });
+
+    return state.current;
+};
+
+export const Layout = props => {
+    const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const board = useBoard();
+    const state = useLayoutState();
     const imageInputRef = React.useRef();
     const [exportValues, setExportValues] = React.useState({});
 
     // Register element change
     const handleElementChange = (key, value) => {
-        board.current.updateElements(selectedElements, [key], [value], true);
-        board.current.update();
+        board.updateElements(selectedElements, [key], [value], true);
+        board.update();
     };
 
     // Handle export button click
     const handleExportClick = () => {
-        board.current.setAction(null);
-        state.current.showExport = !state.current.showExport;
-        state.current.showMenu = false;
+        board.setAction(null);
+        state.showExport = !state.showExport;
+        state.showMenu = false;
         setExportValues({
             filename: `untitled-${formatDate()}`,
             background: false,
@@ -63,23 +69,23 @@ export const Layout = props => {
 
     // Handle screenshot button click
     const handleScreenshotClick = () => {
-        state.current.showExport = false;
-        state.current.showMenu = false;
-        board.current.setAction(ACTIONS.SCREENSHOT);
-        board.current.update();
+        state.showExport = false;
+        state.showMenu = false;
+        board.setAction(ACTIONS.SCREENSHOT);
+        board.update();
     };
 
-    const action = board.current.activeAction;
-    const selectedElements = board.current.getSelectedElements();
+    const action = board.activeAction;
+    const selectedElements = board.getSelectedElements();
 
     // Force to reset the active dialog if there is an action or a tool active
-    if (board.current.activeAction || board.current.activeTool) {
-        state.current.activeDialog = null;
+    if (board.activeAction || board.activeTool) {
+        state.activeDialog = null;
     }
 
     // Compute common values for selected elements to be used in dialogs
-    let selectionValues = board.current.defaults || {};
-    if (state.current.activeDialog && selectedElements.length > 0) {
+    let selectionValues = board.defaults || {};
+    if (state.activeDialog && selectedElements.length > 0) {
         // TODO: we need to compute common values if length > 1
         if (selectedElements.length === 1) {
             selectionValues = selectedElements[0];
@@ -89,7 +95,7 @@ export const Layout = props => {
 
     return (
         <div className="d:flex flex:row w:full h:full">
-            {state.current.showMenu && (
+            {state.showMenu && (
                 <MenuSidebar
                 />
             )}
@@ -98,39 +104,39 @@ export const Layout = props => {
                 {!isScreenshot && (
                     <ToolsPanel
                         className="pt:20"
-                        action={board.current.activeAction}
-                        tool={board.current.activeTool}
+                        action={board.activeAction}
+                        tool={board.activeTool}
                         onMoveClick={() => {
-                            board.current.setAction(ACTIONS.MOVE);
-                            board.current.update();
+                            board.setAction(ACTIONS.MOVE);
+                            board.update();
                         }}
                         onSelectionClick={() => {
-                            board.current.setTool(null);
-                            board.current.update();
+                            board.setTool(null);
+                            board.update();
                         }}
                         onToolClick={tool => {
                             // Special action if the image tool is activated
                             if (tool === ELEMENTS.IMAGE) {
                                 return imageInputRef.current.click();
                             }
-                            board.current.setTool(tool);
-                            board.current.update();
+                            board.setTool(tool);
+                            board.update();
                         }}
                     />
                 )}
                 {!isScreenshot && (
                     <HistoryPanel
-                        undoDisabled={board.current.isUndoDisabled()}
-                        redoDisabled={board.current.isRedoDisabled()}
-                        onUndoClick={() => board.current.undo()}
-                        onRedoClick={() => board.current.redo()}
+                        undoDisabled={board.isUndoDisabled()}
+                        redoDisabled={board.isRedoDisabled()}
+                        onUndoClick={() => board.undo()}
+                        onRedoClick={() => board.redo()}
                     />
                 )}
                 {!isScreenshot && (
                     <ZoomPanel
-                        zoom={board.current.zoom}
-                        onZoomInClick={() => board.current.zoomIn()}
-                        onZoomOutClick={() => board.current.zoomOut()}
+                        zoom={board.zoom}
+                        onZoomInClick={() => board.zoomIn()}
+                        onZoomOutClick={() => board.zoomOut()}
                     />
                 )}
                 {!isScreenshot && (
@@ -138,49 +144,49 @@ export const Layout = props => {
                         key={updateKey}
                         className="pt:20"
                         elements={selectedElements}
-                        dialog={state.current.activeDialog}
+                        dialog={state.activeDialog}
                         onRemoveClick={() => {
-                            board.current.setAction(null);
-                            board.current.removeElements(selectedElements);
-                            board.current.update();
+                            board.setAction(null);
+                            board.removeElements(selectedElements);
+                            board.update();
                         }}
                         onDialogClick={id => {
-                            state.current.activeDialog = id;
+                            state.activeDialog = id;
                             forceUpdate();
                         }}
                     />
                 )}
-                {!action && !!state.current.activeDialog && selectedElements.length < 2 && (
+                {!action && !!state.activeDialog && selectedElements.length < 2 && (
                     <React.Fragment>
-                        {state.current.activeDialog === DIALOGS.FILL && (
+                        {state.activeDialog === DIALOGS.FILL && (
                             <FillDialog
                                 className="pt:20"
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
-                        {state.current.activeDialog === DIALOGS.STROKE && (
+                        {state.activeDialog === DIALOGS.STROKE && (
                             <StrokeDialog
                                 className="pt:20"
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
-                        {state.current.activeDialog === DIALOGS.TEXT && (
+                        {state.activeDialog === DIALOGS.TEXT && (
                             <TextDialog
                                 className="pt:20"
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
-                        {state.current.activeDialog === DIALOGS.SHAPE && (
+                        {state.activeDialog === DIALOGS.SHAPE && (
                             <ShapeDialog
                                 className="pt:20"
                                 values={selectionValues}
                                 onChange={handleElementChange}
                             />
                         )}
-                        {state.current.activeDialog === DIALOGS.ARROWHEAD && (
+                        {state.activeDialog === DIALOGS.ARROWHEAD && (
                             <ArrowheadDialog
                                 className="pt:20"
                                 values={selectionValues}
@@ -192,12 +198,12 @@ export const Layout = props => {
                 {!isScreenshot && (
                     <MenuPanel
                         title={props.title}
-                        menuActive={!!state.current.showMenu}
+                        menuActive={!!state.showMenu}
                         showMenu={props.showMenuButton}
                         showSave={props.showSaveButtom}
                         showClear={props.showClearButton}
                         onMenuClick={() => {
-                            state.current.showMenu = !state.current.showMenu;
+                            state.showMenu = !state.showMenu;
                             forceUpdate();
                         }}
                         onClearClick={() => {
@@ -227,11 +233,11 @@ export const Layout = props => {
                     </div>
                 )}
             </div>
-            {state.current.showExport && (
+            {state.showExport && (
                 <ExportSidebar
                     values={exportValues}
                     onClose={() => {
-                        state.current.showExport = false;
+                        state.showExport = false;
                         forceUpdate();
                     }}
                     onChange={(key, value) => {
@@ -242,7 +248,7 @@ export const Layout = props => {
                     }}
                     onSubmit={() => {
                         const exportOptions = {
-                            elements: board.current.getElements(),
+                            elements: board.getElements(),
                             fonts: Object.values(FONT_FACES),
                             filename: exportValues.filename,
                             format: exportValues.format || EXPORT_FORMATS.PNG,
@@ -256,7 +262,7 @@ export const Layout = props => {
                                 console.error(error);
                             });
                         // Hide export dialog
-                        state.current.showExport = false;
+                        state.showExport = false;
                         forceUpdate();
                     }}
                 />
@@ -271,7 +277,7 @@ export const Layout = props => {
                     if (selectedFile) {
                         blobToDataUrl(selectedFile).then(data => {
                             event.target.value = "";
-                            board.current.addImage(data);
+                            board.addImage(data);
                         });
                     }
                 }}

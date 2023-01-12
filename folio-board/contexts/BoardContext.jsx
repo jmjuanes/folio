@@ -411,7 +411,7 @@ const createBoard = props => ({
 export const BoardContext = React.createContext({});
 
 export const useBoard = () => {
-    return React.useContext(BoardContext);
+    return React.useContext(BoardContext)?.current;
 };
 
 export const BoardProvider = props => {
