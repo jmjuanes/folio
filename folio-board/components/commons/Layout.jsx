@@ -29,7 +29,7 @@ import {DefaultButton, SimpleButton} from "../Buttons/index.jsx";
 import {Menu} from "./Menu.jsx";
 import {DownloadIcon, CameraIcon} from "../icons/index.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
-import {useToasts} from "../../contexts/ToastProvider.jsx";
+import {useToasts} from "../../contexts/ToastContext.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
 import {formatDate} from "../../utils/date.js";
 

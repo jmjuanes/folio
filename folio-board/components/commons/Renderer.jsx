@@ -10,7 +10,7 @@ import {
 import {ACTIONS, FONT_FACES} from "../../constants.js";
 
 import {useBoard} from "../../contexts/BoardContext.jsx";
-import {useToasts} from "../../contexts/ToastProvider.jsx";
+import {useToasts} from "../../contexts/ToastContext.jsx";
 import {useEvents} from "../../hooks/useEvents.js";
 import {boardStyles} from "../../styles.js";
 
