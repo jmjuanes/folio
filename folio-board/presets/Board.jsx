@@ -1,6 +1,6 @@
 import React from "react";
 import {BoardProvider} from "../contexts/BoardContext.jsx";
-import {ToastProvider} from "../contexts/ToastProvider.jsx";
+import {ToastProvider} from "../contexts/ToastContext.jsx";
 import {Layout, Renderer} from "../components/commons/index.jsx";
 
 export const Board = props => {
