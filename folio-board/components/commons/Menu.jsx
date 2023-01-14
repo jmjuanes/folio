@@ -1,11 +1,17 @@
 import React from "react";
+import classNames from "classnames";
 
 export const Menu = props => (
-    <div className="d:flex flex:col h:full w:80 bg:white">
-        <div className="h:full p:8 overflow-y:auto">
+    <div className={classNames("position:absolute z:6", props.className)}>
+        <div className="p:6 w:64 bg:dark-700 text:white r:md">
             Content
         </div>
     </div>
 );
 
-Menu.defaultProps = {};
+Menu.defaultProps = {
+    className: "",
+    grid: false,
+    background: "",
+    onChange: null,
+};

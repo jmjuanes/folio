@@ -72,6 +72,12 @@ export const StrokeIcon = () => (
     </SvgIcon>
 );
 
+export const FolderIcon = () => (
+    <SvgIcon title="Folder">
+        <path d="M6 5C3 5 3 8 3 8L3 16C3 16 3 19 6 19L18 19C21 19 21 16 21 16L21 10C21 10 21 8 19 8L13 8L10 5L6 5Z" />
+    </SvgIcon>
+);
+
 export const SaveIcon = () => (
     <SvgIcon title="Save">
         <path d="M4 6C4 6 4 4 6 4L16 4L20 8L20 18C20 18 20 20 18 20L6 20C4 20 4 18 4 18L4 6ZM15 4L15 8C15 8 15 9 14 9L9 9C8 9 8 8 8 8L8 4M10.5 14.5C10.5 13.6716 11.1716 13 12 13C12.8284 13 13.5 13.6716 13.5 14.5C13.5 15.3284 12.8284 16 12 16C11.1716 16 10.5 15.3284 10.5 14.5Z" />

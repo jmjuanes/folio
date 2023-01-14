@@ -15,7 +15,6 @@ import {
     HistoryPanel,
     ToolsPanel,
     ZoomPanel,
-    MenuPanel,
 } from "../Panels/index.jsx";
 import {
     FillDialog,
@@ -27,7 +26,8 @@ import {
 import {ExportModal} from "../Modals/index.jsx";
 import {DefaultButton, SimpleButton} from "../Buttons/index.jsx";
 import {Menu} from "./Menu.jsx";
-import {DownloadIcon, CameraIcon} from "../icons/index.jsx";
+import {Title} from "./Title.jsx";
+import {DownloadIcon, CameraIcon, MenuIcon, FolderIcon} from "../icons/index.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {useToasts} from "../../contexts/ToastContext.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
@@ -104,9 +104,6 @@ export const Layout = props => {
 
     return (
         <div className="d:flex flex:row w:full h:full">
-            {state.showMenu && (
-                <Menu />
-            )}
             <div className="position:relative overflow:hidden h:full w:full">
                 {props.children}
                 {!isScreenshot && (
@@ -204,44 +201,42 @@ export const Layout = props => {
                     </React.Fragment>
                 )}
                 {!isScreenshot && (
-                    <MenuPanel
-                        title={props.title}
-                        menuActive={!!state.showMenu}
-                        showMenu={props.showMenuButton}
-                        showSave={props.showSaveButtom}
-                        showClear={props.showClearButton}
-                        onMenuClick={() => {
-                            state.showMenu = !state.showMenu;
-                            forceUpdate();
-                        }}
-                        onClearClick={() => {
-                            // TODO: we need to display a confirmation dialog
-                            // app.reset();
-                            forceUpdate();
-                        }}
-                        onSaveClick={() => {
-                            // TODO
-                        }}
-                    />
-                )}
-                {!isScreenshot && (
-                    <div className="position:absolute top:0 right:0 pt:4 pr:4 z:5">
-                        <div className="d:flex gap:3 pt:1 pb:1">
-                            {props.showScreenshotButton && (
+                    <div className="position:absolute top:0 right:0 pt:4 px:4 z:7 w:full">
+                        <div className="d:grid cols:3 gap:3 pt:1 pb:1 w:full">
+                            <div className="d:flex gap:3">
                                 <SimpleButton
-                                    icon={(<CameraIcon />)}
-                                    disabled={board.elements.length === 0}
-                                    onClick={handleScreenshotClick}
+                                    icon={(<MenuIcon />)}
+                                    onClick={() => {
+                                        state.showMenu = !state.showMenu;
+                                        forceUpdate();
+                                    }}
                                 />
-                            )}
-                            {props.showExportButton && (
+                                <DefaultButton
+                                    text="Projects"
+                                    icon={(<FolderIcon />)}
+                                />
+                            </div>
+                            <div className="d:flex items:center justify:center">
+                                <Title
+                                    value={props.title}
+                                    onChange={newtitle => {
+                                        props.onChange?.({title: newtitle});
+                                    }}
+                                />
+                            </div>
+                            <div className="d:flex flex:row-reverse gap:3">
                                 <DefaultButton
                                     text="Export"
                                     icon={(<DownloadIcon />)}
                                     disabled={board.elements.length === 0}
                                     onClick={handleExportClick}
                                 />
-                            )}
+                                <SimpleButton
+                                    icon={(<CameraIcon />)}
+                                    disabled={board.elements.length === 0}
+                                    onClick={handleScreenshotClick}
+                                />
+                            </div>
                         </div>
                     </div>
                 )}
@@ -280,6 +275,16 @@ export const Layout = props => {
                     }}
                 />
             )}
+            {state.showMenu && (
+                <Menu
+                    className="top:0 left:0 pt:18 pl:4"
+                    grid={props.grid}
+                    background={props.background}
+                    onChange={values => {
+                        return props.onChange?.(values);
+                    }}
+                />
+            )}
             {/* Image input reference */}
             <input
                 ref={imageInputRef}    
@@ -305,6 +310,8 @@ export const Layout = props => {
 
 Layout.defaultProps = {
     title: "",
+    grid: false,
+    background: "",
     width: 0,
     height: 0,
     showZoom: true,
