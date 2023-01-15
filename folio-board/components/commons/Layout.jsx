@@ -104,144 +104,141 @@ export const Layout = props => {
     const isScreenshot = action === ACTIONS.SCREENSHOT;
 
     return (
-        <div className="d:flex flex:row w:full h:full">
-            <div className="position:relative overflow:hidden h:full w:full">
-                {props.children}
-                {!isScreenshot && (
-                    <ToolsPanel
-                        className="pt:20"
-                        action={board.activeAction}
-                        tool={board.activeTool}
-                        onMoveClick={() => {
-                            board.setAction(ACTIONS.MOVE);
-                            board.update();
-                        }}
-                        onSelectionClick={() => {
-                            board.setTool(null);
-                            board.update();
-                        }}
-                        onToolClick={tool => {
-                            // Special action if the image tool is activated
-                            if (tool === ELEMENTS.IMAGE) {
-                                return imageInputRef.current.click();
-                            }
-                            board.setTool(tool);
-                            board.update();
-                        }}
-                    />
-                )}
-                {!isScreenshot && (
-                    <HistoryPanel
-                        undoDisabled={board.isUndoDisabled()}
-                        redoDisabled={board.isRedoDisabled()}
-                        onUndoClick={() => board.undo()}
-                        onRedoClick={() => board.redo()}
-                    />
-                )}
-                {!isScreenshot && (
-                    <ZoomPanel
-                        zoom={board.zoom}
-                        onZoomInClick={() => board.zoomIn()}
-                        onZoomOutClick={() => board.zoomOut()}
-                    />
-                )}
-                {!isScreenshot && (
-                    <EditionPanel
-                        key={updateKey}
-                        className="pt:20"
-                        elements={selectedElements}
-                        dialog={state.activeDialog}
-                        onRemoveClick={() => {
-                            board.setAction(null);
-                            board.removeElements(selectedElements);
-                            board.update();
-                        }}
-                        onDialogClick={id => {
-                            state.activeDialog = id;
-                            forceUpdate();
-                        }}
-                    />
-                )}
-                {!action && !!state.activeDialog && selectedElements.length < 2 && (
-                    <React.Fragment>
-                        {state.activeDialog === DIALOGS.FILL && (
-                            <FillDialog
-                                className="pt:20"
-                                values={selectionValues}
-                                onChange={handleElementChange}
+        <React.Fragment>
+            {!isScreenshot && (
+                <ToolsPanel
+                    className="pt:20"
+                    action={board.activeAction}
+                    tool={board.activeTool}
+                    onMoveClick={() => {
+                        board.setAction(ACTIONS.MOVE);
+                        board.update();
+                    }}
+                    onSelectionClick={() => {
+                        board.setTool(null);
+                        board.update();
+                    }}
+                    onToolClick={tool => {
+                        // Special action if the image tool is activated
+                        if (tool === ELEMENTS.IMAGE) {
+                            return imageInputRef.current.click();
+                        }
+                        board.setTool(tool);
+                        board.update();
+                    }}
+                />
+            )}
+            {!isScreenshot && (
+                <HistoryPanel
+                    undoDisabled={board.isUndoDisabled()}
+                    redoDisabled={board.isRedoDisabled()}
+                    onUndoClick={() => board.undo()}
+                    onRedoClick={() => board.redo()}
+                />
+            )}
+            {!isScreenshot && (
+                <ZoomPanel
+                    zoom={board.zoom}
+                    onZoomInClick={() => board.zoomIn()}
+                    onZoomOutClick={() => board.zoomOut()}
+                />
+            )}
+            {!isScreenshot && (
+                <EditionPanel
+                    key={updateKey}
+                    className="pt:20"
+                    elements={selectedElements}
+                    dialog={state.activeDialog}
+                    onRemoveClick={() => {
+                        board.setAction(null);
+                        board.removeElements(selectedElements);
+                        board.update();
+                    }}
+                    onDialogClick={id => {
+                        state.activeDialog = id;
+                        forceUpdate();
+                    }}
+                />
+            )}
+            {!action && !!state.activeDialog && selectedElements.length < 2 && (
+                <React.Fragment>
+                    {state.activeDialog === DIALOGS.FILL && (
+                        <FillDialog
+                            className="pt:20"
+                            values={selectionValues}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                    {state.activeDialog === DIALOGS.STROKE && (
+                        <StrokeDialog
+                            className="pt:20"
+                            values={selectionValues}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                    {state.activeDialog === DIALOGS.TEXT && (
+                        <TextDialog
+                            className="pt:20"
+                            values={selectionValues}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                    {state.activeDialog === DIALOGS.SHAPE && (
+                        <ShapeDialog
+                            className="pt:20"
+                            values={selectionValues}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                    {state.activeDialog === DIALOGS.ARROWHEAD && (
+                        <ArrowheadDialog
+                            className="pt:20"
+                            values={selectionValues}
+                            onChange={handleElementChange}
+                        />
+                    )}
+                </React.Fragment>
+            )}
+            {!isScreenshot && (
+                <div className="position:absolute top:0 right:0 pt:4 px:4 z:7 w:full">
+                    <div className="d:grid cols:3 gap:3 pt:1 pb:1 w:full">
+                        <div className="d:flex gap:3">
+                            <SimpleButton
+                                icon={(<MenuIcon />)}
+                                active={state.showMenu}
+                                onClick={() => {
+                                    state.showMenu = !state.showMenu;
+                                    forceUpdate();
+                                }}
                             />
-                        )}
-                        {state.activeDialog === DIALOGS.STROKE && (
-                            <StrokeDialog
-                                className="pt:20"
-                                values={selectionValues}
-                                onChange={handleElementChange}
+                            <DefaultButton
+                                text="Projects"
+                                icon={(<FolderIcon />)}
                             />
-                        )}
-                        {state.activeDialog === DIALOGS.TEXT && (
-                            <TextDialog
-                                className="pt:20"
-                                values={selectionValues}
-                                onChange={handleElementChange}
+                        </div>
+                        <div className="d:flex items:center justify:center">
+                            <Title
+                                value={props.title}
+                                onChange={value => props?.onChange?.({title: value})}
                             />
-                        )}
-                        {state.activeDialog === DIALOGS.SHAPE && (
-                            <ShapeDialog
-                                className="pt:20"
-                                values={selectionValues}
-                                onChange={handleElementChange}
+                        </div>
+                        <div className="d:flex flex:row-reverse gap:3">
+                            <DefaultButton
+                                className="bg:dark-700 text:white"
+                                text="Export"
+                                icon={(<DownloadIcon />)}
+                                disabled={board.elements.length === 0}
+                                onClick={handleExportClick}
                             />
-                        )}
-                        {state.activeDialog === DIALOGS.ARROWHEAD && (
-                            <ArrowheadDialog
-                                className="pt:20"
-                                values={selectionValues}
-                                onChange={handleElementChange}
+                            <SimpleButton
+                                icon={(<CameraIcon />)}
+                                disabled={board.elements.length === 0}
+                                onClick={handleScreenshotClick}
                             />
-                        )}
-                    </React.Fragment>
-                )}
-                {!isScreenshot && (
-                    <div className="position:absolute top:0 right:0 pt:4 px:4 z:7 w:full">
-                        <div className="d:grid cols:3 gap:3 pt:1 pb:1 w:full">
-                            <div className="d:flex gap:3">
-                                <SimpleButton
-                                    icon={(<MenuIcon />)}
-                                    active={state.showMenu}
-                                    onClick={() => {
-                                        state.showMenu = !state.showMenu;
-                                        forceUpdate();
-                                    }}
-                                />
-                                <DefaultButton
-                                    text="Projects"
-                                    icon={(<FolderIcon />)}
-                                />
-                            </div>
-                            <div className="d:flex items:center justify:center">
-                                <Title
-                                    value={props.title}
-                                    onChange={value => props?.onChange?.({title: value})}
-                                />
-                            </div>
-                            <div className="d:flex flex:row-reverse gap:3">
-                                <DefaultButton
-                                    className="bg:dark-700 text:white"
-                                    text="Export"
-                                    icon={(<DownloadIcon />)}
-                                    disabled={board.elements.length === 0}
-                                    onClick={handleExportClick}
-                                />
-                                <SimpleButton
-                                    icon={(<CameraIcon />)}
-                                    disabled={board.elements.length === 0}
-                                    onClick={handleScreenshotClick}
-                                />
-                            </div>
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
             {state.showExport && (
                 <ExportModal
                     values={exportValues}
@@ -303,7 +300,7 @@ export const Layout = props => {
                     visibility: "hidden",
                 }}
             />
-        </div>
+        </React.Fragment>
     );
 };
 
@@ -311,8 +308,6 @@ Layout.defaultProps = {
     title: "",
     grid: false,
     background: DEFAULT_BACKGROUND,
-    width: 0,
-    height: 0,
     showZoom: true,
     showHistory: true,
     showTools: true,
@@ -320,11 +315,8 @@ Layout.defaultProps = {
     showMenuButton: true,
     showExportButton: true,
     showScreenshotButton: true,
-    showClearButton: true,
-    showSaveButton: false,
     onChange: null,
-    onMount: null,
-    onCreateBoard: null,
-    onUpdateBoard: null,
-    onDeleteBoard: null,
+    onSave: null,
+    onCreate: null,
+    onDelete: null,
 };
