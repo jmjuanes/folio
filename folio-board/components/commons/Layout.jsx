@@ -7,6 +7,7 @@ import {
 
 import {
     ACTIONS,
+    DEFAULT_BACKGROUND,
     DIALOGS,
     FONT_FACES,
 } from "../../constants.js";
@@ -206,6 +207,7 @@ export const Layout = props => {
                             <div className="d:flex gap:3">
                                 <SimpleButton
                                     icon={(<MenuIcon />)}
+                                    active={state.showMenu}
                                     onClick={() => {
                                         state.showMenu = !state.showMenu;
                                         forceUpdate();
@@ -219,13 +221,12 @@ export const Layout = props => {
                             <div className="d:flex items:center justify:center">
                                 <Title
                                     value={props.title}
-                                    onChange={newtitle => {
-                                        props.onChange?.({title: newtitle});
-                                    }}
+                                    onChange={value => props?.onChange?.({title: value})}
                                 />
                             </div>
                             <div className="d:flex flex:row-reverse gap:3">
                                 <DefaultButton
+                                    className="bg:dark-700 text:white"
                                     text="Export"
                                     icon={(<DownloadIcon />)}
                                     disabled={board.elements.length === 0}
@@ -280,9 +281,7 @@ export const Layout = props => {
                     className="top:0 left:0 pt:18 pl:4"
                     grid={props.grid}
                     background={props.background}
-                    onChange={values => {
-                        return props.onChange?.(values);
-                    }}
+                    onChange={props.onChange}
                 />
             )}
             {/* Image input reference */}
@@ -311,7 +310,7 @@ export const Layout = props => {
 Layout.defaultProps = {
     title: "",
     grid: false,
-    background: "",
+    background: DEFAULT_BACKGROUND,
     width: 0,
     height: 0,
     showZoom: true,

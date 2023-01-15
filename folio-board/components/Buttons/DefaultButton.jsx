@@ -2,11 +2,12 @@ import React from "react";
 import classNames from "classnames";
 
 export const DefaultButton = props => {
-    const classList = classNames({
+    const classList = classNames(props.className, {
         "d:flex items:center justify:center px:4 py:3 gap:2 r:full": true,
-        "bg:dark-700 text:white": true,
-        "bg:dark-400:hover cursor:pointer": !props.disabled,
+        "cursor:pointer": !props.disabled,
         "o:80 cursor:not-allowed": props.disabled,
+        // "bg:light-900 bg:light-800:hover text:dark-700":,
+        // "bg:dark-700 text:white": props.theme === THEMES.DARK,
     });
     return (
         <div className={classList} onClick={props.onClick}>
@@ -21,6 +22,7 @@ export const DefaultButton = props => {
 };
 
 DefaultButton.defaultProps = {
+    className: "bg:light-900 bg:light-800:hover text:dark-700",
     text: "",
     icon: null,
     disabled: false,
