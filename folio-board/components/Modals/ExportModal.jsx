@@ -51,7 +51,6 @@ const options = {
 };
 
 export const ExportModal = props => {
-    console.log("EXPORT VISIBLE");
     const {addToast} = useToasts();
     const board = useBoard();
     const [values, setValues] = React.useState({
@@ -66,7 +65,7 @@ export const ExportModal = props => {
     const handleSubmit = () => {
         exportToFile(values)
             .then(filename => {
-                addToast.add(`Board exported as '${filename}'`);
+                addToast(`Board exported as '${filename}'`);
             })
             .catch(error => {
                 console.error(error);

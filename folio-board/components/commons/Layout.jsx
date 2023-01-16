@@ -54,7 +54,6 @@ export const Layout = props => {
         if (board.elements.length === 0) {
             return null;
         }
-        console.log("DISPLAY EXPORT");
         state.showExport = !state.showExport;
         state.showMenu = false;
         board.setAction(null);
