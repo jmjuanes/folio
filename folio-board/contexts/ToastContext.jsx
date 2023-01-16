@@ -5,7 +5,7 @@ const REMOVE_TOAST = "remove_toast";
 
 const toastReducer = (toasts, action) => {
     if (action.type === ADD_TOAST) {
-        return [...toasts, payload];
+        return [...toasts, action.payload];
     }
     else if (action.type === REMOVE_TOAST) {
         return toasts.filter(toast => toast.id !== action.payload.id);
@@ -18,7 +18,7 @@ export const useToasts = () => {
 };
 
 export const ToastProvider = props => {
-    const [toasts, dispatch] = React.useReducer([], toastReducer);
+    const [toasts, dispatch] = React.useReducer(toastReducer, []);
     const toastCount = React.useRef(0);
 
     // Remove a toast
