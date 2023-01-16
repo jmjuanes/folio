@@ -1,7 +1,7 @@
 import React from "react";
 import {BoardProvider} from "../contexts/BoardContext.jsx";
 import {ToastProvider} from "../contexts/ToastContext.jsx";
-import {Layout, Renderer} from "../components/commons/index.jsx";
+import {Layout, Renderer, Toaster} from "../components/commons/index.jsx";
 import {DEFAULT_BACKGROUND} from "../constants.js";
 
 export const Board = props => {
@@ -41,6 +41,7 @@ export const Board = props => {
                         onCreate={props.onCreate}
                         onDelete={props.onDelete}
                     />
+                    <Toaster />
                 </BoardProvider>
             </ToastProvider>
         </div>

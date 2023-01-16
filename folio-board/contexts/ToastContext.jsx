@@ -1,8 +1,16 @@
 import React from "react";
-import {Toaster} from "../components/commons/Toaster.jsx";
 
-// Just a tiny utility for launching a setTimeout
-const delay = (duration, fn) => window.setTimeout(fn, duration);
+const ADD_TOAST = "add_toast";
+const REMOVE_TOAST = "remove_toast";
+
+const toastReducer = (toasts, action) => {
+    if (action.type === ADD_TOAST) {
+        return [...toasts, payload];
+    }
+    else if (action.type === REMOVE_TOAST) {
+        return toasts.filter(toast => toast.id !== action.payload.id);
+    }
+};
 
 export const ToastContext = React.createContext({});
 export const useToasts = () => {
@@ -10,36 +18,33 @@ export const useToasts = () => {
 };
 
 export const ToastProvider = props => {
-    const [toast, setToasts] = React.useState([]);
+    const [toasts, dispatch] = React.useReducer([], toastReducer);
     const toastCount = React.useRef(0);
 
     // Remove a toast
-    const remove = id => {
-        setToasts(prevToasts => {
-            return prevToasts.filter(item => item.id !== id);
-        })
+    const removeToast = toastId => {
+        return dispatch({
+            type: REMOVE_TOAST,
+            payload: {
+                id: toastId,
+            },
+        });
     };
 
     // Add a new toast element
-    const add = message => {
-        const newToast = {
-            id: toastCount.count,
-            message: message,
-        };
-        toastCount.current = toastCount.current + 1;
-        delay(props.duration, () => remove(newToast.id));
-        setToasts(prevToasts => {
-            return [...prevToasts, newToast];
+    const addToast = message => {
+        return dispatch({
+            type: ADD_TOAST,
+            payload: {
+                id: toastCount.current++,
+                message: message,
+            },
         });
     };
 
     return (
-        <ToastContext.Provider value={{add, remove}}>
+        <ToastContext.Provider value={{toasts, addToast, removeToast}}>
             {props.children}
-            <Toaster
-                toasts={toast}
-                onRemove={id => remove(id)}
-            />
         </ToastContext.Provider>
     );
 };
