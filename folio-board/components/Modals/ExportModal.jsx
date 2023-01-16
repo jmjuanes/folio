@@ -1,9 +1,13 @@
 import React from "react";
-import {EXPORT_FORMATS} from "folio-core";
+import {EXPORT_FORMATS, exportToFile} from "folio-core";
+import {FONT_FACES} from "../../constants.js";
 import {Form} from "../Form/index.jsx";
 import {ImageIcon, CodeIcon, DownloadIcon} from "../icons/index.jsx";
 import {Button} from "../commons/Button.jsx";
+import {useToasts} from "../../contexts/ToastContext.jsx";
+import {useBoard} from "../../contexts/BoardContext.jsx";
 import {Modal} from "./Modal.jsx";
+import {formatDate} from "../../utils/date.js";
 
 const options = {
     filename: {
@@ -46,26 +50,53 @@ const options = {
     },
 };
 
-export const ExportModal = props => (
-    <Modal title="Export" onClose={props.onClose}>
-        <Form
-            data={props.values || {}}
-            items={options}
-            onChange={props.onChange}
-        />
-        <div className="pt:10">
-            <Button
-                onClick={props.onSubmit}
-                text="Export Image"
-                icon={(<DownloadIcon />)}
+export const ExportModal = props => {
+    console.log("EXPORT VISIBLE");
+    const {addToast} = useToasts();
+    const board = useBoard();
+    const [values, setValues] = React.useState({
+        elements: board.getElements(),
+        filename: `untitled-${formatDate()}`,
+        format: EXPORT_FORMATS.PNG,
+        background: false,
+        fonts: Object.values(FONT_FACES),
+        scale: 1,
+    });
+
+    const handleSubmit = () => {
+        exportToFile(values)
+            .then(filename => {
+                addToast.add(`Board exported as '${filename}'`);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+            .finally(() => props.onClose());
+    };
+
+    return (
+        <Modal title="Export" onClose={props.onClose}>
+            <Form
+                data={values}
+                items={options}
+                onChange={(key, value) => {
+                    return setValues(prevValues => ({
+                        ...prevValues,
+                        [key]: value,
+                    }));
+                }}
             />
-        </div>
-    </Modal>
-);
+            <div className="pt:10">
+                <Button
+                    text="Export Image"
+                    icon={(<DownloadIcon />)}
+                    onClick={handleSubmit}
+                />
+            </div>
+        </Modal>
+    );
+};
 
 ExportModal.defaultProps = {
-    values: {},
-    onChange: null,
-    onSubmit: null,
     onClose: null,
 };

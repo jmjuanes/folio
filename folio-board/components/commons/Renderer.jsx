@@ -16,7 +16,7 @@ import {boardStyles} from "../../styles.js";
 
 export const Renderer = () => {
     const board = useBoard();
-    const toasts = useToasts();
+    const {addToast} = useToasts();
     const events = useEvents({
         onScreenshot: region => {
             const exportOptions = {
@@ -25,7 +25,7 @@ export const Renderer = () => {
                 crop: region,
             };
             return exportToClipboard(exportOptions).then(() => {
-                toasts.add("Screenshot copied to clipboard.");
+                addToast("Screenshot copied to clipboard.");
             });
         },
     });

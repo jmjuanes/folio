@@ -1,15 +1,10 @@
 import React from "react";
-import {
-    ELEMENTS,
-    EXPORT_FORMATS,
-    exportToFile,
-} from "folio-core";
+import {ELEMENTS} from "folio-core";
 
 import {
     ACTIONS,
     DEFAULT_BACKGROUND,
     DIALOGS,
-    FONT_FACES,
 } from "../../constants.js";
 import {
     EditionPanel,
@@ -30,9 +25,7 @@ import {Menu} from "./Menu.jsx";
 import {Title} from "./Title.jsx";
 import {DownloadIcon, CameraIcon, MenuIcon, FolderIcon} from "../icons/index.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
-import {useToasts} from "../../contexts/ToastContext.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
-import {formatDate} from "../../utils/date.js";
 
 const useLayoutState = () => {
     const state = React.useRef({
@@ -48,9 +41,7 @@ export const Layout = props => {
     const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const board = useBoard();
     const state = useLayoutState();
-    const toasts = useToasts();
     const imageInputRef = React.useRef();
-    const [exportValues, setExportValues] = React.useState({});
 
     // Register element change
     const handleElementChange = (key, value) => {
@@ -63,15 +54,11 @@ export const Layout = props => {
         if (board.elements.length === 0) {
             return null;
         }
-        board.setAction(null);
+        console.log("DISPLAY EXPORT");
         state.showExport = !state.showExport;
         state.showMenu = false;
-        setExportValues({
-            filename: `untitled-${formatDate()}`,
-            background: false,
-            format: EXPORT_FORMATS.PNG,
-            scale: 1,
-        });
+        board.setAction(null);
+        board.update();
     };
 
     // Handle screenshot button click
@@ -241,33 +228,7 @@ export const Layout = props => {
             )}
             {state.showExport && (
                 <ExportModal
-                    values={exportValues}
                     onClose={() => {
-                        state.showExport = false;
-                        forceUpdate();
-                    }}
-                    onChange={(key, value) => {
-                        setExportValues(prevExportValues => ({
-                            ...prevExportValues,
-                            [key]: value,
-                        }))
-                    }}
-                    onSubmit={() => {
-                        const exportOptions = {
-                            elements: board.getElements(),
-                            fonts: Object.values(FONT_FACES),
-                            filename: exportValues.filename,
-                            format: exportValues.format || EXPORT_FORMATS.PNG,
-                            // scale: exportValues.scale || 1,
-                        };
-                        exportToFile(exportOptions)
-                            .then(filename => {
-                                toasts.add(`Board exported as '${filename}'`);
-                            })
-                            .catch(error => {
-                                console.error(error);
-                            });
-                        // Hide export dialog
                         state.showExport = false;
                         forceUpdate();
                     }}
