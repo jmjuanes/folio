@@ -10,7 +10,8 @@ const KEYS = {
 
 export const createLocalClient = () => {
     const store = createStore(DB_NAME, DB_STORE);
-    const buildProjectId = id => `project:${id}`;
+    const getProjectKey = id => `project:${id}`;
+    const isProjectKey = key => key.startsWith("project:");
 
     return {
         async initialize() {
@@ -40,10 +41,13 @@ export const createLocalClient = () => {
                 title: "Untitled",
                 createdAt: Date.now(),
             };
-            await set(buildProjectId(newProject.id), newProject, store);
+            await set(getProjectKey(newProject.id), newProject, store);
             await this.registerProject(newProject);
 
             return newProject.id;
+        },
+        async getProject(id) {
+            return get(getProjectKey(id), store);
         },
         async registerProject(newProject) {
             return update(KEYS.PROJECTS, projects => ([...(projects || []), newProject]), store);
@@ -63,7 +67,7 @@ export const createLocalClient = () => {
 
             return Promise.all([
                 update(KEYS.PROJECTS, projectsListUpdater, store),
-                update(buildProjectId(id), projectUpdater, store),
+                update(getProjectKey(id), projectUpdater, store),
             ]);
         },
         async deleteProject(id) {
@@ -79,7 +83,7 @@ export const createLocalClient = () => {
             // To remove the project, we need to remove the project key and remove it from the list of projects
             // that are stored in KEYS.PROJECTS field
             return Promise.all([
-                del(buildProjectId(id), store),
+                del(getProjectKey(id), store),
                 set(KEYS.PROJECTS, projects.filter(p => p.id !== id), store),
             ]);
         }
