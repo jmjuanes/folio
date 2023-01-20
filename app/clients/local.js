@@ -1,91 +1,72 @@
-import {get, set, del, update, createStore} from "idb-keyval";
-// import {generateRandomId} from "folio-board/utils/stringUtils.js";
-
+import {
+    get,
+    set,
+    del,
+    update,
+    keys,
+    createStore,
+    promisifyRequest,
+} from "idb-keyval";
 import {DB_NAME, DB_STORE} from "../constants.js";
 
-const KEYS = {
-    PROJECTS: "projects",
-    CURRENT_PROJECT: "current_project",
+// A tiny forEach implementation for the provided store
+const each = (customStore, callback) => {
+    return customStore("readonly", store => {
+        store.openCursor().onsuccess = function () {
+            if (this.result) {
+                callback(this.result.key, this.result.value);
+                this.result.continue();
+            }
+        };
+        return promisifyRequest(store.transaction);
+    });
 };
 
 export const createLocalClient = () => {
     const store = createStore(DB_NAME, DB_STORE);
-    const getProjectKey = id => `project:${id}`;
-    const isProjectKey = key => key.startsWith("project:");
-
     return {
-        async initialize() {
-            let currentProject = await this.getCurrentProject();
-            // If current project is not defined, we will create a new empty project and set it
-            // as the current project
-            if (!currentProject) {
-                currentProject = await this.createProject();
-                await this.setCurrentProject(currentProject);
-            }
-            return currentProject;
+        store: store,
+        async list() {
+            const list = [];
+            await each(store, (key, value) => list.push({
+                id: key,
+                title: value.title,
+                createdAt: value.createdAt,
+                updatedAt: value.updatedAt,
+            }));
+            return list;
         },
-        getCurrentProject() {
-            return get(KEYS.CURRENT_PROJECT, store);
-        },
-        setCurrentProject(id) {
-            return set(KEYS.CURRENT_PROJECT, id, store);
-        },
-        getProjects() {
-            return get(KEYS.PROJECTS, store);
-        },
-        async createProject() {
+        async create(initialData) {
             // We do not need to register all project metadata, as the board will initialize the
             // non existing fields (like elements, assets and other settings)
             const newProject = {
+                ...initialData,
                 id: Math.random().toString(36).slice(2, 7),
                 title: "Untitled",
                 createdAt: Date.now(),
             };
-            await set(getProjectKey(newProject.id), newProject, store);
-            await this.registerProject(newProject);
-
+            await set(newProject.id, newProject, store);
             return newProject.id;
         },
-        async getProject(id) {
-            return get(getProjectKey(id), store);
+        async get(id) {
+            return get(id, store);
         },
-        async registerProject(newProject) {
-            return update(KEYS.PROJECTS, projects => ([...(projects || []), newProject]), store);
-        },
-        async updateProject(id, newData) {
-            const projectsListUpdater = prevProjects => {
-                return prevProjects.map(project => ({
+        async update(id, newData) {
+            const projectUpdater = project => {
+                return {
                     ...project,
-                    title: id === project.id ? (newData.title ?? project.title) : project.title,
-                }));
+                    ...newData,
+                    updatedAt: Date.now(),
+                };
             };
-            const projectUpdater = project => ({
-                ...project,
-                ...newData,
-                updatedAt: Date.now(),
-            });
-
-            return Promise.all([
-                update(KEYS.PROJECTS, projectsListUpdater, store),
-                update(getProjectKey(id), projectUpdater, store),
-            ]);
+            return update(id, projectUpdater, store);
         },
-        async deleteProject(id) {
-            const projects = await this.getProjects();
-            const projectExist = projects.some(p => p.id === id);
-            if (!projectExist) {
+        async delete(id) {
+            const projects = await keys(store);
+            if (!projects.includes(id)) {
                 return Promise.reject(new Error(`Project '${id}' not found`));
             }
-            else if (projects.length === 1) {
-                return Promise.reject(new Error(`Can not delete project '${id}' as it is the last project in your workspace`));
-            }
-
-            // To remove the project, we need to remove the project key and remove it from the list of projects
-            // that are stored in KEYS.PROJECTS field
-            return Promise.all([
-                del(getProjectKey(id), store),
-                set(KEYS.PROJECTS, projects.filter(p => p.id !== id), store),
-            ]);
+            return del(id, store);
         }
     };
 };
