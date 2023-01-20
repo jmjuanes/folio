@@ -14,10 +14,11 @@ import {useToasts} from "../../contexts/ToastContext.jsx";
 import {useEvents} from "../../hooks/useEvents.js";
 import {boardStyles} from "../../styles.js";
 
-export const Renderer = () => {
+export const Renderer = props => {
     const board = useBoard();
     const {addToast} = useToasts();
     const events = useEvents({
+        onChange: props.onChange,
         onScreenshot: region => {
             const exportOptions = {
                 elements: board.getElements(),

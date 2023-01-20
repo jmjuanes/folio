@@ -202,7 +202,9 @@ export const useEvents = callbacks => {
                         };
                     }
                     // Call the element created listener
-                    // callbacks?.onElementCreated?.(element);
+                    callbacks?.onChange?.({
+                        elements: board.elements,
+                    });
                     board.activeElement = null;
                     board.activeTool = null; // reset active tool
                     // Terrible hack to enable editing in a text element
@@ -223,6 +225,9 @@ export const useEvents = callbacks => {
                                 prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
                                 newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
                             })),
+                        });
+                        callbacks?.onChange?.({
+                            elements: board.elements,
                         });
                     }
                     else if (event.element) {
@@ -300,6 +305,10 @@ export const useEvents = callbacks => {
                         //     // Reset active group if all elements of this group have been removed
                         //     state.activeGroup = null;
                         // }
+                        callbacks?.onChange?.({
+                            elements: board.elements,
+                            assets: board.assets,
+                        });
                     }
                     board.update();
                 }
@@ -308,6 +317,10 @@ export const useEvents = callbacks => {
                     board.setAction(null);
                     board.activeElement = null;
                     event.key === KEYS.Z ? board.undo() : board.redo();
+                    callbacks?.onChange?.({
+                        elements: board.elements,
+                        assets: board.assets,
+                    });
                     board.update();
                 }
                 // Check ESCAPE key
@@ -348,7 +361,9 @@ export const useEvents = callbacks => {
                             };
                         }),
                     });
-                    // board.update();
+                    callbacks?.onChange?.({
+                        elements: board.elements,
+                    });
                     board.update();
                 }
             },
@@ -364,14 +379,28 @@ export const useEvents = callbacks => {
                         const newData = JSON.parse(data.content.split("folio:::")[1].trim());
                         board.paste(newData || {});
                         board.update();
+                        callbacks?.onChange?.({
+                            elements: board.elements,
+                            assets: board.assets,
+                        });
                     }
                     // Create a new text element
                     else if (data?.type === "text") {
-                        board.addText(data.content);
+                        board.addText(data.content).then(() => {
+                            callbacks?.onChange?.({
+                                elements: board.elements,
+                                assets: board.assets,
+                            });
+                        });
                     }
                     // Create a new image element
                     else if (data?.type === "image") {
-                        board.addImage(data.content);
+                        board.addImage(data.content).then(() => {
+                            callbacks?.onChange?.({
+                                elements: board.elements,
+                                assets: board.assets,
+                            });
+                        });
                     }
                 });
             },
@@ -380,6 +409,9 @@ export const useEvents = callbacks => {
             onElementChange: (id, keys, values) => {
                 if (board.activeElement?.id === id && board.activeElement?.editing) {
                     board.updateElements([board.activeElement], keys, values, true);
+                    callbacks?.onChange?.({
+                        elements: board.elements,
+                    });
                     board.update();
                 }
             },

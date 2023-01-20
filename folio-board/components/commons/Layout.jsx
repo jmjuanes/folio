@@ -47,6 +47,9 @@ export const Layout = props => {
     const handleElementChange = (key, value) => {
         board.updateElements(selectedElements, [key], [value], true);
         board.update();
+        props.onChange?.({
+            elements: board.elements,
+        });
     };
 
     // Handle export button click
@@ -139,6 +142,10 @@ export const Layout = props => {
                         board.setAction(null);
                         board.removeElements(selectedElements);
                         board.update();
+                        props.onChange?.({
+                            elements: board.elements,
+                            assets: board.assets,
+                        });
                     }}
                     onDialogClick={id => {
                         state.activeDialog = id;
@@ -249,10 +256,17 @@ export const Layout = props => {
                 onChange={event => {
                     const selectedFile = event.target.files?.[0];
                     if (selectedFile) {
-                        blobToDataUrl(selectedFile).then(data => {
-                            event.target.value = "";
-                            board.addImage(data);
-                        });
+                        blobToDataUrl(selectedFile)
+                            .then(data => {
+                                event.target.value = "";
+                                return board.addImage(data);
+                            })
+                            .then(() => {
+                                props.onChange?.({
+                                    elements: board.elements,
+                                    assets: board.assets,
+                                });
+                            });
                     }
                 }}
                 style={{
