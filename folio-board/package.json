@@ -10,7 +10,7 @@
         "@fontsource/noto-serif": "^4.5.11",
         "classnames": "^2.3.2",
         "folio-core": "0.2.0-dev",
-        "lowcss": "^0.5.1",
+        "lowcss": "^0.8.1",
         "react": "^18.2.0"
     }
 }
