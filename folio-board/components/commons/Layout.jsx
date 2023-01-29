@@ -22,9 +22,9 @@ import {
 import {DefaultButton, SimpleButton} from "../Buttons/index.jsx";
 import {Menu} from "./Menu.jsx";
 import {Title} from "./Title.jsx";
+import {FileInput} from "./FileInput.jsx";
 import {DownloadIcon, CameraIcon, MenuIcon, FolderIcon} from "../icons/index.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
-import {blobToDataUrl} from "../../utils/blob.js";
 
 export const Layout = props => {
     // const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
@@ -217,29 +217,16 @@ export const Layout = props => {
                 />
             )}
             {/* Image input reference */}
-            <input
-                ref={imageInputRef}    
-                type="file"
+            <FileInput
+                ref={imageInputRef}
                 accept="image/*"
-                onChange={event => {
-                    const selectedFile = event.target.files?.[0];
-                    if (selectedFile) {
-                        blobToDataUrl(selectedFile)
-                            .then(data => {
-                                event.target.value = "";
-                                return board.addImage(data);
-                            })
-                            .then(() => {
-                                props.onChange?.({
-                                    elements: board.elements,
-                                    assets: board.assets,
-                                });
-                            });
-                    }
-                }}
-                style={{
-                    display: "none",
-                    visibility: "hidden",
+                onFile={fileData => {
+                    board.addImage(fileData).then(() => {
+                        props.onChange?.({
+                            elements: board.elements,
+                            assets: board.assets,
+                        });
+                    });
                 }}
             />
         </React.Fragment>
