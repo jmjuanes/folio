@@ -5,30 +5,18 @@ import {
     SCREENSHOT_STROKE_COLOR,
     SELECTION_FILL_COLOR,
     SELECTION_STROKE_COLOR,
-    exportToClipboard,
 } from "folio-core";
-import {ACTIONS, FONT_FACES} from "../../constants.js";
+import {ACTIONS} from "../../constants.js";
 
 import {useBoard} from "../../contexts/BoardContext.jsx";
-import {useToasts} from "../../contexts/ToastContext.jsx";
 import {useEvents} from "../../hooks/useEvents.js";
 import {boardStyles} from "../../styles.js";
 
 export const Renderer = props => {
     const board = useBoard();
-    const {addToast} = useToasts();
     const events = useEvents({
         onChange: props.onChange,
-        onScreenshot: region => {
-            const exportOptions = {
-                elements: board.getElements(),
-                fonts: Object.values(FONT_FACES),
-                crop: region,
-            };
-            return exportToClipboard(exportOptions).then(() => {
-                addToast("Screenshot copied to clipboard.");
-            });
-        },
+        onScreenshot: props.onScreenshot,
     });
     const isSelection = board.activeAction === ACTIONS.SELECT;
     const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;

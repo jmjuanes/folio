@@ -1,5 +1,5 @@
 import React from "react";
-import {ELEMENTS} from "folio-core";
+import {ELEMENTS, EXPORT_FORMATS} from "folio-core";
 
 import {
     ACTIONS,
@@ -19,7 +19,6 @@ import {
     ShapeDialog,
     ArrowheadDialog,
 } from "../Dialogs/index.jsx";
-import {ExportModal} from "../Modals/index.jsx";
 import {DefaultButton, SimpleButton} from "../Buttons/index.jsx";
 import {Menu} from "./Menu.jsx";
 import {Title} from "./Title.jsx";
@@ -27,20 +26,11 @@ import {DownloadIcon, CameraIcon, MenuIcon, FolderIcon} from "../icons/index.jsx
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
 
-const useLayoutState = () => {
-    const state = React.useRef({
-        activeDialog: null,
-        showExport: false,
-        showMenu: false,
-    });
-
-    return state.current;
-};
-
 export const Layout = props => {
-    const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
+    // const [updateKey, forceUpdate] = React.useReducer(x => x + 1, 0);
     const board = useBoard();
-    const state = useLayoutState();
+    const [dialog, setDialog] = React.useState(null);
+    const [menuVisible, setMenuVisible] = React.useState(false);
     const imageInputRef = React.useRef();
 
     // Register element change
@@ -52,39 +42,18 @@ export const Layout = props => {
         });
     };
 
-    // Handle export button click
-    const handleExportClick = () => {
-        if (board.elements.length === 0) {
-            return null;
-        }
-        state.showExport = !state.showExport;
-        state.showMenu = false;
-        board.setAction(null);
-        board.update();
-    };
-
-    // Handle screenshot button click
-    const handleScreenshotClick = () => {
-        if (board.elements.length === 0) {
-            return null;
-        }
-        state.showExport = false;
-        state.showMenu = false;
-        board.setAction(ACTIONS.SCREENSHOT);
-        board.update();
-    };
-
+    const tool = board.activeTool;
     const action = board.activeAction;
     const selectedElements = board.getSelectedElements();
 
     // Force to reset the active dialog if there is an action or a tool active
-    if (board.activeAction || board.activeTool) {
-        state.activeDialog = null;
-    }
+    // if (board.activeAction || board.activeTool) {
+    //     activeDialog.current = null;
+    // }
 
     // Compute common values for selected elements to be used in dialogs
     let selectionValues = board.defaults || {};
-    if (state.activeDialog && selectedElements.length > 0) {
+    if (dialog && selectedElements.length > 0) {
         // TODO: we need to compute common values if length > 1
         if (selectedElements.length === 1) {
             selectionValues = selectedElements[0];
@@ -137,7 +106,8 @@ export const Layout = props => {
                     key={updateKey}
                     className="pt:20"
                     elements={selectedElements}
-                    dialog={state.activeDialog}
+                    dialog={dialog}
+                    onDialogClick={id => setDialog(id)}
                     onRemoveClick={() => {
                         board.setAction(null);
                         board.removeElements(selectedElements);
@@ -147,43 +117,39 @@ export const Layout = props => {
                             assets: board.assets,
                         });
                     }}
-                    onDialogClick={id => {
-                        state.activeDialog = id;
-                        forceUpdate();
-                    }}
                 />
             )}
-            {!action && !!state.activeDialog && selectedElements.length < 2 && (
+            {!action && !tool && !!dialog && selectedElements.length < 2 && (
                 <React.Fragment>
-                    {state.activeDialog === DIALOGS.FILL && (
+                    {dialog === DIALOGS.FILL && (
                         <FillDialog
                             className="pt:20"
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
-                    {state.activeDialog === DIALOGS.STROKE && (
+                    {dialog === DIALOGS.STROKE && (
                         <StrokeDialog
                             className="pt:20"
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
-                    {state.activeDialog === DIALOGS.TEXT && (
+                    {dialog === DIALOGS.TEXT && (
                         <TextDialog
                             className="pt:20"
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
-                    {state.activeDialog === DIALOGS.SHAPE && (
+                    {dialog === DIALOGS.SHAPE && (
                         <ShapeDialog
                             className="pt:20"
                             values={selectionValues}
                             onChange={handleElementChange}
                         />
                     )}
-                    {state.activeDialog === DIALOGS.ARROWHEAD && (
+                    {dialog === DIALOGS.ARROWHEAD && (
                         <ArrowheadDialog
                             className="pt:20"
                             values={selectionValues}
@@ -198,11 +164,8 @@ export const Layout = props => {
                         <div className="d:flex gap:3">
                             <SimpleButton
                                 icon={(<MenuIcon />)}
-                                active={state.showMenu}
-                                onClick={() => {
-                                    state.showMenu = !state.showMenu;
-                                    forceUpdate();
-                                }}
+                                active={menuVisible}
+                                onClick={() => setMenuVisible(visible => !visible)}
                             />
                             <DefaultButton
                                 text="Projects"
@@ -218,29 +181,34 @@ export const Layout = props => {
                         <div className="d:flex flex:row-reverse gap:3">
                             <DefaultButton
                                 className="bg:dark-700 text:white"
-                                text="Export"
+                                text="Export as PNG"
                                 icon={(<DownloadIcon />)}
                                 disabled={board.elements.length === 0}
-                                onClick={handleExportClick}
+                                onClick={() => {
+                                    setMenuVisible(false);
+                                    if (board.elements.length > 0) {
+                                        props.onExport?.({
+                                            format: EXPORT_FORMATS.PNG,
+                                        });
+                                    }
+                                }}
                             />
                             <SimpleButton
                                 icon={(<CameraIcon />)}
                                 disabled={board.elements.length === 0}
-                                onClick={handleScreenshotClick}
+                                onClick={() => {
+                                    setMenuVisible(false);
+                                    if (board.elements.length > 0) {
+                                        board.setAction(ACTIONS.SCREENSHOT);
+                                        board.update();
+                                    }
+                                }}
                             />
                         </div>
                     </div>
                 </div>
             )}
-            {state.showExport && (
-                <ExportModal
-                    onClose={() => {
-                        state.showExport = false;
-                        forceUpdate();
-                    }}
-                />
-            )}
-            {state.showMenu && (
+            {menuVisible && (
                 <Menu
                     className="top:0 left:0 pt:18 pl:4"
                     grid={props.grid}
@@ -290,7 +258,5 @@ Layout.defaultProps = {
     showExportButton: true,
     showScreenshotButton: true,
     onChange: null,
-    onSave: null,
-    onCreate: null,
-    onDelete: null,
+    onExport: null,
 };
