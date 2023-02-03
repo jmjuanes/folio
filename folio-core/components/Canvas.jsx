@@ -76,6 +76,11 @@ export const Canvas = props => {
         document.addEventListener("pointermove", handlePointerMove);
         document.addEventListener("pointerup", handlePointerUp);
         document.addEventListener("pointerleave", handlePointerUp);
+
+        // Clear focus
+        if (document?.activeElement && document?.activeElement !== document.body) {
+            document.activeElement.blur();
+        }
     };
 
     // Handle double click
