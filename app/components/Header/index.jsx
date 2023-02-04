@@ -1,9 +1,6 @@
 import React from "react";
-import {
-    DownloadIcon,
-    ImageIcon,
-    CodeIcon,
-} from "@mochicons/react";
+import {GridIcon, FolderIcon, PlusIcon} from "@mochicons/react";
+import {DownloadIcon, ImageIcon, CodeIcon} from "@mochicons/react";
 import {EXPORT_FORMATS} from "folio-core";
 
 import {Button} from "./Button.jsx";
@@ -12,15 +9,40 @@ import {Logo} from "../commons/Logo.jsx";
 
 export const Header = props => (
     <div className="d:grid cols:3 w:full">
-        <div className="d:flex gap:2">
-            <Logo />
+        <div className="d:flex gap:3">
+            <div className="d:flex">
+                <Logo />
+            </div>
+            {props.projectsVisible && (
+                <div className="group d:flex position:relative" tabIndex="0">
+                    <Button
+                        text="Projects"
+                        icon={(<GridIcon />)}
+                    />
+                    <Dropdown
+                        className="d:none d:block:group-focus-within top:full left:0"
+                        items={{
+                            createProject: {
+                                icon: (<PlusIcon />),
+                                text: "Create Project",
+                                onClick: props.onCreateProject,
+                            },
+                            loadProject: {
+                                icon: (<FolderIcon />),
+                                text: "Load Project",
+                                onClick: props.onLoadProject,
+                            },
+                        }}
+                    />
+                </div>
+            )}
         </div>
         <div className="d:flex justify:center items:center">
             <strong>{props.title}</strong>
         </div>
-        <div className="d:flex gap:2 justify:end">
+        <div className="d:flex gap:3 justify:end">
             {props.exportVisible && (
-                <div className="group d:flex position:relative">
+                <div className="group d:flex position:relative" tabIndex="0">
                     <Button
                         text="Export"
                         icon={(<DownloadIcon />)}
@@ -47,6 +69,9 @@ export const Header = props => (
 );
 
 Header.defaultProps = {
+    projectsVisible: true,
+    onCreateProject: null,
+    onLoadProject: null,
     title: "Untitled",
     onTitleChange: null,
     exportVisible: true,
