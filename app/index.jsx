@@ -3,12 +3,12 @@ import {createRoot} from "react-dom/client";
 import Rouct from "rouct";
 
 import {ClientProvider} from "./contexts/ClientContext.jsx";
-import {Board} from "./components/Board.jsx";
+import {Editor} from "./components/Editor.jsx";
 // import {Loading} from "./components/Loading.jsx";
 
 const App = () => (
-    <ClientProvider>
-        <Rouct.Router routing={Rouct.HashbangRouting}>
+    <ClientProvider render={() => (
+        <Rouct.Router routing={Rouct.MemoryRouting}>
             <Rouct.Route path="/:id" render={request => (
                 <Board
                     key={request.id || "draft"}
@@ -16,7 +16,7 @@ const App = () => (
                 />
             )} />
         </Rouct.Router>
-    </ClientProvider>
+    )} />
 );
 
 // Mount app
