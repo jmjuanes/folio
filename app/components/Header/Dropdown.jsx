@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 const DropdownItem = props => {
     const classList = classNames({
-        "d:flex items:center gap:3 r:md p:3": true,
+        "d:flex items:center gap:2 r:md p:3 select:none": true,
         "bg:light-200:hover cursor:pointer": !props.disabled,
         "o:80 cursor:not-allowed": props.disabled,
     });
@@ -17,10 +17,10 @@ const DropdownItem = props => {
     };
     return (
         <div className={classList} onClick={handleClick}>
-            <div className="d:flex items:center text:lg text:dark-700">
+            <div className="d:flex items:center text:dark-700">
                 {props.icon}
             </div>
-            <div className="d:flex items:center text:dark-700">
+            <div className="d:flex items:center text:sm text:dark-700">
                 <strong>{props.text}</strong>
             </div>
         </div>
@@ -35,8 +35,8 @@ DropdownItem.defaultProps = {
 };
 
 export const Dropdown = props => (
-    <div className={classNames(props.classNames, "position:absolute mt:2")}>
-        <div className="bg:white shadow:md w:48 p:6 r:lg d:flex flex:col gap:2">
+    <div className={classNames(props.className, "position:absolute mt:1")}>
+        <div className="bg:white shadow:md w:48 p:3 r:lg d:flex flex:col gap:0">
             {Object.keys(props.items).map(key => (
                 <DropdownItem
                     key={key}
