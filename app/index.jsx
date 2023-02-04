@@ -10,7 +10,7 @@ const App = () => (
     <ClientProvider render={() => (
         <Rouct.Router routing={Rouct.MemoryRouting}>
             <Rouct.Route path="/:id" render={request => (
-                <Board
+                <Editor
                     key={request.id || "draft"}
                     id={request.id || ""}
                 />
