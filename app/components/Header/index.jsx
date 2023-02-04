@@ -38,7 +38,14 @@ export const Header = props => (
             )}
         </div>
         <div className="d:flex justify:center items:center">
-            <strong>{props.title}</strong>
+            <input
+                type="text"
+                className="bg:transparent b:none font:bold text:center outline:transparent p:0"
+                defaultValue={props.title}
+                onChange={event => {
+                    props?.onTitleChange?.(event.target.value || "");
+                }}
+            />
         </div>
         <div className="d:flex gap:3 justify:end">
             {props.exportVisible && (
