@@ -40,10 +40,11 @@ export const createLocalClient = () => {
             // We do not need to register all project metadata, as the board will initialize the
             // non existing fields (like elements, assets and other settings)
             const newProject = {
+                title: "Untitled",
                 ...initialData,
                 id: Math.random().toString(36).slice(2, 7),
-                title: "Untitled",
                 createdAt: Date.now(),
+                updatedAt: Date.now(),
             };
             await set(newProject.id, newProject, store);
             return newProject.id;
