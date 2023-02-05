@@ -4,19 +4,24 @@ import Rouct from "rouct";
 
 import {ClientProvider} from "./contexts/ClientContext.jsx";
 import {Editor} from "./components/Editor.jsx";
-// import {Loading} from "./components/Loading.jsx";
+import {Welcome} from "./components/Welcome.jsx";
 
 const App = () => (
-    <ClientProvider render={() => (
-        <Rouct.Router routing={Rouct.MemoryRouting}>
-            <Rouct.Route path="/:id" render={request => (
-                <Editor
-                    key={request.id || "draft"}
-                    id={request.id || ""}
-                />
+    <Rouct.Router routing={Rouct.MemoryRouting}>
+        <ClientProvider render={() => (
+            <Rouct.Route path="*" render={(query) => (
+                <React.Fragment>
+                    <Editor
+                        key={query?.id || ""}
+                        id={query?.id || ""}
+                    />
+                    {(query?.welcome || !query?.id) && (
+                        <Welcome />
+                    )}
+                </React.Fragment>
             )} />
-        </Rouct.Router>
-    )} />
+        )} />
+    </Rouct.Router>
 );
 
 // Mount app
