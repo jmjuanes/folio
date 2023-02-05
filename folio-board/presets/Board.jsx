@@ -7,11 +7,10 @@ export const Board = props => {
     const [_, forceUpdate] = React.useReducer(x => x + 1, 0);
     const handleChange = values => {
         return props.onChange?.({
-            title: props.title,
             elements: props.elements,
             assets: props.assets,
-            grid: props.grid,
-            background: props.background,
+            // grid: props.grid,
+            // background: props.background,
             ...(values || {}),
         });
     };
