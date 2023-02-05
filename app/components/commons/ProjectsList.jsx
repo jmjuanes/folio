@@ -42,6 +42,9 @@ const ProjectItem = props => {
                 <div className="mt:2 font:bold">
                     {props.title}
                 </div>
+                <div className="text:2xs text:light-900">
+                    Updated at <strong>{new Date(props.updatedAt).toDateString()}</strong>
+                </div>
             </div>
             <div className="d:flex justify:end">
                 {!props.isCurrent && (
@@ -90,6 +93,7 @@ export const ProjectsList = props => {
                     key={project.id}
                     id={project.id}
                     title={project.title}
+                    updatedAt={project.updatedAt}
                     isCurrent={project.id === props.current}
                     onClick={() => {
                         return Rouct.redirect(`/?id=${project.id}`);
