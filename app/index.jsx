@@ -9,13 +9,13 @@ import {Welcome} from "./components/Welcome.jsx";
 const App = () => (
     <Rouct.Router routing={Rouct.MemoryRouting}>
         <ClientProvider render={() => (
-            <Rouct.Route path="*" render={(query) => (
+            <Rouct.Route path="*" render={request => (
                 <React.Fragment>
                     <Editor
-                        key={query?.id || ""}
-                        id={query?.id || ""}
+                        key={request.query?.id || ""}
+                        id={request.query?.id || ""}
                     />
-                    {(query?.welcome || !query?.id) && (
+                    {!request.query?.id && (
                         <Welcome />
                     )}
                 </React.Fragment>
