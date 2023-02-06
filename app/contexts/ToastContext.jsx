@@ -13,7 +13,7 @@ const toastReducer = (toasts, action) => {
 };
 
 export const ToastContext = React.createContext({});
-export const useToasts = () => {
+export const useToast = () => {
     return React.useContext(ToastContext);
 };
 

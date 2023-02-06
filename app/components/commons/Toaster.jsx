@@ -1,9 +1,9 @@
 import React from "react";
-import {useToasts} from "../../contexts/ToastContext.jsx";
-import {CloseIcon} from "../icons/index.jsx";
+import {CloseIcon} from "@mochicons/react";
+import {useToast} from "../../contexts/ToastContext.jsx";
 
 export const Toaster = props => {
-    const {toasts, removeToast} = useToasts();
+    const {toasts, removeToast} = useToast();
     const parentStyle = {
         transform: "translateX(-50%)",
         maxWidth: props.maxWidth,
