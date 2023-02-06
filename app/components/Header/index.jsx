@@ -40,7 +40,7 @@ export const Header = props => (
         <div className="d:flex justify:center items:center">
             <input
                 type="text"
-                className="bg:transparent b:none font:bold text:center outline:transparent p:0"
+                className="bg:transparent font:bold text:center outline:0 b:0 p:0"
                 defaultValue={props.title}
                 onChange={event => {
                     props?.onTitleChange?.(event.target.value || "");
