@@ -3,24 +3,30 @@ import {createRoot} from "react-dom/client";
 import Rouct from "rouct";
 
 import {ClientProvider} from "./contexts/ClientContext.jsx";
+import {ToastProvider} from "./contexts/ToastContext.jsx";
+
 import {Editor} from "./components/Editor.jsx";
 import {Welcome} from "./components/Welcome.jsx";
+import {Toaster} from "./components/commons/Toaster.jsx";
 
 const App = () => (
     <Rouct.Router routing={Rouct.MemoryRouting}>
-        <ClientProvider render={() => (
-            <Rouct.Route path="*" render={request => (
-                <React.Fragment>
-                    <Editor
-                        key={request.query?.id || ""}
-                        id={request.query?.id || ""}
-                    />
-                    {!request.query?.id && (
-                        <Welcome />
-                    )}
-                </React.Fragment>
+        <ToastProvider>
+            <ClientProvider render={() => (
+                <Rouct.Route path="*" render={request => (
+                    <React.Fragment>
+                        <Editor
+                            key={request.query?.id || ""}
+                            id={request.query?.id || ""}
+                        />
+                        {!request.query?.id && (
+                            <Welcome />
+                        )}
+                    </React.Fragment>
+                )} />
             )} />
-        )} />
+            <Toaster />
+        </ToastProvider>
     </Rouct.Router>
 );
 

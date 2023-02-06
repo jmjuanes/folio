@@ -2,7 +2,9 @@ import React from "react";
 import classNames from "classnames";
 import Rouct from "rouct";
 import {DrawingIcon, PlusIcon, TrashIcon, CheckIcon, CloseIcon} from "@mochicons/react";
+
 import {useClient} from "../../contexts/ClientContext.jsx";
+import {useToast} from "../../contexts/ToastContext.jsx";
 
 const Button = props => {
     const classList = classNames({
@@ -22,7 +24,7 @@ const ProjectEmpty = props => {
     const classList = classNames({
         "d:flex flex:shrink-0 items:center justify:center flex:col": true,
         "w:48 h:56 b:light-600 b:dashed b:3 r:lg p:4 cursor:pointer": true,
-        "bg:white bg:light-300:hover": true,
+        "bg:light-300:hover": true,
     });
 
     return (
@@ -41,7 +43,7 @@ const ProjectItem = props => {
     const [confirmDelete, setConfirmDelete] = React.useState(false);
     const classList = classNames({
         "d:flex flex:shrink-0 justify:between flex:col": true,
-        "w:48 h:56 shadow:md r:lg p:4": true,
+        "w:48 h:56 shadow:md r:lg p:4 bg:white": true,
         "o:50 cursor:not-allowed": props.isCurrent,
     });
 
@@ -98,6 +100,7 @@ ProjectItem.defaultProps = {
 
 export const ProjectsList = props => {
     const client = useClient();
+    const {addToast} = useToast();
     const [projects, setProjects] = React.useState([]);
 
     // Tiny method to reload projects
@@ -131,7 +134,7 @@ export const ProjectsList = props => {
                     }}
                     onDelete={() => {
                         return client.delete(project.id).then(() => {
-                            // TODO: display a toast notification
+                            addToast(`Project '${project.title}' has been removed.`);
                             handleReload();
                         });
                     }}
