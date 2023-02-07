@@ -1,6 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-import Rouct from "rouct";
 import {DrawingIcon, PlusIcon, TrashIcon, CheckIcon, CloseIcon} from "@mochicons/react";
 
 import {useClient} from "../../contexts/ClientContext.jsx";
@@ -23,7 +22,7 @@ const Button = props => {
 const ProjectEmpty = props => {
     const classList = classNames({
         "d:flex flex:shrink-0 items:center justify:center flex:col": true,
-        "w:48 h:56 b:light-600 b:dashed b:3 r:lg p:4 cursor:pointer": true,
+        "w:48 h:56 b:light-600 b:dashed b:3 r:lg p:4 cursor:pointer select:none": true,
         "bg:light-300:hover": true,
     });
 
@@ -117,7 +116,7 @@ export const ProjectsList = props => {
             <ProjectEmpty
                 onClick={() => {
                     return client.create({}).then(id => {
-                        return Rouct.redirect(`/?id=${id}`);
+                        props.onLoad?.(id);
                     });
                 }}
             />
@@ -128,10 +127,8 @@ export const ProjectsList = props => {
                     id={project.id}
                     title={project.title}
                     updatedAt={project.updatedAt}
-                    isCurrent={project.id === props.current}
-                    onClick={() => {
-                        return Rouct.redirect(`/?id=${project.id}`);
-                    }}
+                    isCurrent={project.id === props.currentProject}
+                    onClick={() => props.onLoad?.(project.id)}
                     onDelete={() => {
                         return client.delete(project.id).then(() => {
                             addToast(`Project '${project.title}' has been removed.`);
@@ -145,5 +142,6 @@ export const ProjectsList = props => {
 };
 
 ProjectsList.defaultProps = {
-    current: "",
+    currentProject: "",
+    onLoad: null,
 };

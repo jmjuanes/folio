@@ -1,4 +1,5 @@
 import React from "react";
+import Rouct from "rouct";
 import classNames from "classnames";
 import {Board} from "folio-board";
 
@@ -23,8 +24,8 @@ export const Editor = props => {
         state?.id && client.update(state.id, state);
     });
 
-    // Initialize board --> import current project data
-    useDelay(1000, () => {
+    // Initialize board data
+    useDelay(100, () => {
         client.get(props.id).then(project => {
             setState({...project});
             setLoadingVisible(false);
@@ -47,8 +48,14 @@ export const Editor = props => {
                                 setState(prev => ({...prev, title: newTitle}));
                             }}
                             exportDisabled={(state?.elements || []).length === 0}
-                            onExport={format => {
+                            onExportClick={format => {
                                 return null;
+                            }}
+                            onCreateProjectClick={() => {
+                                return null;
+                            }}
+                            onLoadProjectClick={() => {
+                                Rouct.redirect(`/?id=${props.id}&projects=true`);
                             }}
                         />
                     )}
@@ -57,7 +64,7 @@ export const Editor = props => {
                     }}
                 />
             </div>
-            {loadingVisible && props.id && (
+            {loadingVisible && !!props.id && (
                 <Loading />
             )}
         </React.Fragment>

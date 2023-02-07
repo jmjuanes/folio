@@ -25,12 +25,12 @@ export const Header = props => (
                             createProject: {
                                 icon: (<PlusIcon />),
                                 text: "Create Project",
-                                onClick: props.onCreateProject,
+                                onClick: props.onCreateProjectClick,
                             },
                             loadProject: {
                                 icon: (<FolderIcon />),
                                 text: "Load Project",
-                                onClick: props.onLoadProject,
+                                onClick: props.onLoadProjectClick,
                             },
                         }}
                     />
@@ -60,12 +60,12 @@ export const Header = props => (
                             exportAsPng: {
                                 icon: (<ImageIcon />),
                                 text: "Export as PNG",
-                                onClick: () => props.onExport(EXPORT_FORMATS.PNG),
+                                onClick: () => props.onExportClick(EXPORT_FORMATS.PNG),
                             },
                             exportAsSvg: {
                                 icon: (<CodeIcon />),
                                 text: "Export as SVG",
-                                onClick: () => props.onExport(EXPORT_FORMATS.SVG),
+                                onClick: () => props.onExportClick(EXPORT_FORMATS.SVG),
                             },
                         }}
                     />
@@ -77,11 +77,11 @@ export const Header = props => (
 
 Header.defaultProps = {
     projectsVisible: true,
-    onCreateProject: null,
-    onLoadProject: null,
+    onCreateProjectClick: null,
+    onLoadProjectClick: null,
     title: "Untitled",
     onTitleChange: null,
     exportVisible: true,
     exportDisabled: false,
-    onExport: null,
+    onExportClick: null,
 };
