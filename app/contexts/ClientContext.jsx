@@ -1,7 +1,7 @@
 import React from "react";
 import {createLocalClient} from "../clients/local.js";
 import {useDelay} from "../hooks/useDelay.js";
-import {Loading} from "../components/commons/Loading.jsx";
+import {Loading} from "../components/Loading.jsx";
 
 export const ClientContext = React.createContext({});
 

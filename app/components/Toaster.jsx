@@ -1,6 +1,6 @@
 import React from "react";
 import {CloseIcon} from "@mochicons/react";
-import {useToast} from "../../contexts/ToastContext.jsx";
+import {useToast} from "../contexts/ToastContext.jsx";
 
 export const Toaster = props => {
     const {toasts, removeToast} = useToast();
