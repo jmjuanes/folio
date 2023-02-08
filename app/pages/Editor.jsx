@@ -10,6 +10,7 @@ import {useClient} from "../contexts/ClientContext.jsx";
 import {useDebounce} from "../hooks/useDebounce.js";
 import {useDelay} from "../hooks/useDelay.js";
 import {useToast} from "../contexts/ToastContext.jsx";
+import {useConfirm} from "../contexts/ConfirmContext.jsx";
 
 const useEditorState = initialState => {
     return React.useReducer((prev, state) => ({...prev, ...state}), initialState);
@@ -24,6 +25,7 @@ export const Editor = props => {
     const [projectsVisible, setProjectsVisible] = React.useState(false);
     const client = useClient();
     const {addToast} = useToast();
+    const {showConfirm} = useConfirm();
     const classList = classNames({
         "position:fixed top:0 left:0 h:full w:full": true,
         "bg:white text:base text:dark-700": true,
@@ -62,7 +64,8 @@ export const Editor = props => {
                             onTitleChange={newTitle => {
                                 return setState({title: newTitle});
                             }}
-                            saveVisible={props.draft}
+                            newDraftDisabled={isDraft}
+                            saveVisible={isDraft}
                             saveDisabled={(state?.elements || []).length === 0}
                             exportDisabled={(state?.elements || []).length === 0}
                             onExport={format => {
@@ -72,7 +75,11 @@ export const Editor = props => {
                                 return null;
                             }}
                             onNewProject={() => {
-                                return null;
+                                if (isDraft && state?.elements?.length > 0) {
+                                    showConfirm("Changes made in this draft will be lost. Do you want to continue?").then(() => {
+                                        // TODO
+                                    });
+                                }
                             }}
                             onLoadProject={() => {
                                 setProjectsVisible(true);

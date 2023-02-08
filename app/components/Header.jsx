@@ -21,12 +21,14 @@ export const Header = props => (
                         newDraft: {
                             icon: (<FileDotsIcon />),
                             text: "New Draft",
-                            onClick: props.onNewDraft,
+                            disabled: props.newDraftDisabled,
+                            onClick: () => !props.newDraftDisabled && props.onNewDraft?.(),
                         },
                         newProject: {
                             icon: (<FilePlusIcon />),
                             text: "New Project",
-                            onClick: props.onNewProject,
+                            disabled: props.newProjectDisabled,
+                            onClick: () => !props.newProjectDisabled && props.onNewProject?.(),
                         },
                         loadProject: {
                             icon: (<FolderIcon />),
@@ -88,7 +90,9 @@ export const Header = props => (
 );
 
 Header.defaultProps = {
+    newDraftDisabled: false,
     onNewDraft: null,
+    newProjectDisabled: false,
     onNewProject: null,
     onLoadProject: null,
     title: "Untitled",
