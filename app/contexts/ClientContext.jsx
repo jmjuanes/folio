@@ -15,7 +15,9 @@ export const ClientProvider = props => {
 
     useDelay(props.delay, () => {
         client.current = createLocalClient();
-        setReady(true);
+        client.current.init().then(() => {
+            setReady(true);
+        });
     });
 
     return (

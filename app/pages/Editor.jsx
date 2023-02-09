@@ -37,13 +37,15 @@ export const Editor = props => {
 
     // Debounce the data saving to database
     useDebounce(state, 250, () => {
-        state?.id && client.update(state.id, state);
+        if (!isDraft && state?.id) {
+            return client.updateProject(state.id, state);
+        }
     });
 
     // Initialize board data
     useDelay(100, () => {
         if (!isDraft) {
-            return client.get(props.id).then(project => {
+            return client.getProject(props.id).then(project => {
                 setState(project);
                 setLoadingVisible(false);
             });
@@ -88,7 +90,7 @@ export const Editor = props => {
                                 setProjectsVisible(true);
                             }}
                             onSave={() => {
-                                client.create({...state}).then(id => {
+                                client.createProject(state).then(id => {
                                     addToast(`Draft saved as a new project '${state.title}'.`);
                                     Rouct.redirect(`/${id}`);
                                 });

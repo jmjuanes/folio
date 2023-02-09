@@ -84,7 +84,7 @@ export const Projects = props => {
 
     // Tiny method to reload projects
     const handleReload = () => {
-        client.list()
+        client.listProjects()
             .then(list => list.sort((a, b) => a.updatedAt < b.updatedAt ? +1 : -1))
             .then(list => setProjects(list));
     };
@@ -118,7 +118,7 @@ export const Projects = props => {
                             isCurrent={project.id === props.current}
                             onClick={() => props.onLoad?.(project.id)}
                             onDelete={() => {
-                                return client.delete(project.id).then(() => {
+                                return client.deleteProject(project.id).then(() => {
                                     addToast(`Project '${project.title}' has been removed.`);
                                     handleReload();
                                 });
