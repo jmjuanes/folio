@@ -6,30 +6,33 @@ import {Board} from "folio-board";
 import {Header} from "../components/Header.jsx";
 import {Loading} from "../components/Loading.jsx";
 import {Projects} from "../components/Projects.jsx";
+import {Welcome} from "../components/Welcome.jsx";
+import {Modal} from "../components/Modal.jsx";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useDebounce} from "../hooks/useDebounce.js";
 import {useDelay} from "../hooks/useDelay.js";
 import {useToast} from "../contexts/ToastContext.jsx";
 import {useConfirm} from "../contexts/ConfirmContext.jsx";
 
-const useEditorState = initialState => {
-    return React.useReducer((prev, state) => ({...prev, ...state}), initialState);
+const useEditorState = () => {
+    return React.useReducer((prev, state) => ({...prev, ...state}), {
+        title: "Untitled",
+    });
 };
 
 export const Editor = props => {
     const isDraft = !props.id || props.id === "draft";
-    const [state, setState] = useEditorState({
-        title: "Untitled",
-    });
+    const [state, setState] = useEditorState();
     const [loadingVisible, setLoadingVisible] = React.useState(true);
     const [projectsVisible, setProjectsVisible] = React.useState(false);
+    const [welcomeVisible, setWelcomeVisible] = React.useState(!props.id);
     const client = useClient();
     const {addToast} = useToast();
     const {showConfirm} = useConfirm();
     const classList = classNames({
         "position:fixed top:0 left:0 h:full w:full": true,
         "bg:white text:base text:dark-700": true,
-        "blur:md": !props.id || loadingVisible,
+        "blur:md": loadingVisible || welcomeVisible || projectsVisible,
     });
 
     // Debounce the data saving to database
@@ -72,7 +75,7 @@ export const Editor = props => {
                                 return null;
                             }}
                             onNewDraft={() => {
-                                return null;
+                                Rouct.redirect("/draft");
                             }}
                             onNewProject={() => {
                                 if (isDraft && state?.elements?.length > 0) {
@@ -105,15 +108,24 @@ export const Editor = props => {
                 <Loading />
             )}
             {projectsVisible && (
-                <Projects
-                    current={state.id ?? ""}
-                    onClose={() => {
-                        setProjectsVisible(false);
-                    }}
-                    onLoad={id => {
-                        Rouct.redirect(`/${id}`);
-                    }}
-                />
+                <Modal maxWidth="720px" onClose={() => setProjectsVisible(false)}>
+                    <div className="text:5xl mb:8 select:none">
+                        <strong>Projects</strong>
+                    </div>
+                    <Projects
+                        current={state.id ?? ""}
+                        onLoad={id => {
+                            Rouct.redirect(`/${id}`);
+                        }}
+                    />
+                </Modal>
+            )}
+            {welcomeVisible && (
+                <Modal maxWidth="720px" onClose={() => setWelcomeVisible(false)}>
+                    <Welcome
+                        onClose={() => setWelcomeVisible(false)}
+                    />
+                </Modal>
             )}
         </React.Fragment>
     );

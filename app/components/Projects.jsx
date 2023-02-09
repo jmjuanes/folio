@@ -3,7 +3,6 @@ import classNames from "classnames";
 import {DrawingIcon, TrashIcon, CheckIcon, CloseIcon} from "@mochicons/react";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useToast} from "../contexts/ToastContext.jsx";
-import {Modal} from "./Modal.jsx";
 
 const MiniButton = props => {
     const classList = classNames({
@@ -29,7 +28,7 @@ const ProjectItem = props => {
 
     return (
         <div className={classList}>
-            <div className="cursor:pointer select:none" onClick={props.onClick}>
+            <div className="cursor:pointer" onClick={props.onClick}>
                 <div className="d:flex items:center justify:center w:full h:24 r:lg bg:light-500">
                     <div className="d:flex text:2xl text:dark-100">
                         <DrawingIcon />
@@ -85,19 +84,28 @@ export const Projects = props => {
 
     // Tiny method to reload projects
     const handleReload = () => {
-        client.list().then(list => setProjects(list));
+        client.list()
+            .then(list => list.sort((a, b) => a.updatedAt < b.updatedAt ? +1 : -1))
+            .then(list => setProjects(list));
     };
     
     // Load projects when component is mounted
     React.useEffect(handleReload, []);
 
     return (
-        <Modal maxWidth="640px" onClose={props.onClose}>
-            <div className="text:5xl mb:4">
-                <strong>Projects</strong>
-            </div>
+        <div className="select:none">
             {projects.length === 0 && (
-                <div className="">No projects</div>
+                <div className="d:flex items:center justify:center flex:col p:16 r:xl b:4 b:dashed b:light-300">
+                    <div className="d:flex text:6xl text:light-900">
+                        <DrawingIcon />
+                    </div>
+                    <div className="mt:2 text:lg text:dark-100">
+                        <strong>You do not have any project... Yet.</strong>
+                    </div>
+                    <div className="mt:1 text:center text:sm text:dark-100 o:50">
+                        Projects are securely stored on your browser. You can create as many projects as you need.
+                    </div>
+                </div>
             )}
             {projects.length > 0 && (
                 <div className="d:flex gap:4 w:full overflow-x:auto p:4">
@@ -119,7 +127,7 @@ export const Projects = props => {
                     ))}
                 </div>
             )}
-        </Modal>
+        </div>
     );
 };
 

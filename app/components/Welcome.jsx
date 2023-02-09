@@ -1,6 +1,5 @@
 import React from "react";
 import {ShieldCheckIcon, TabletIcon, DrawingIcon} from "@mochicons/react";
-import {Modal} from "./Modal.jsx";
 
 const WelcomeItem = props => (
     <div className="d:flex flex:col w:full r:lg bg:light-300 p:6 justify:center items:center select:none">
@@ -31,7 +30,7 @@ export const Welcome = props => {
     };
 
     return (
-        <Modal maxWidth="640px">
+        <div>
             <div className="pt:8">
                 <div className="font:bold text:7xl">Folio.</div>
                 <div className="text:dark-100">
@@ -55,6 +54,6 @@ export const Welcome = props => {
                     </div>
                 </div>
             </div>
-        </Modal>
+        </div>
     );
 };
