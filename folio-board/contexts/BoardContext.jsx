@@ -1,4 +1,5 @@
 import React from "react";
+import {uid} from "uid/secure";
 import {
     ELEMENTS,
     GRID_SIZE,
@@ -10,7 +11,8 @@ import {
 import {CHANGES} from "../constants.js";
 import {fontSizes, fontFaces} from "../styles.js";
 import {loadImage} from "../utils/image.js";
-import {generateRandomId} from "../utils/stringUtils.js";
+
+const generateRandomId = () => uid(20);
 
 const createBoard = props => ({
     id: generateRandomId(),

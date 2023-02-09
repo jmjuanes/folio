@@ -1,12 +1,6 @@
-import {
-    get,
-    set,
-    del,
-    update,
-    keys,
-    createStore,
-    promisifyRequest,
-} from "idb-keyval";
+import {get, set, del, update, keys, createStore} from "idb-keyval";
+import {promisifyRequest} from "idb-keyval";
+import {uid} from "uid/secure";
 import {DB_NAME, DB_STORE} from "../constants.js";
 
 // A tiny forEach implementation for the provided store
@@ -42,7 +36,7 @@ export const createLocalClient = () => {
             const newProject = {
                 title: "Untitled",
                 ...initialData,
-                id: Math.random().toString(36).slice(2, 7),
+                id: uid(12),
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
             };
