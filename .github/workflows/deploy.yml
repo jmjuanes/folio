@@ -32,10 +32,10 @@ jobs:
           node-version: 16
       - uses: actions/configure-pages@v1
       - run: yarn install
-      - run: yarn run build
-      # Folio app is available in ./public folder
+      - run: yarn run build:app
+      # Folio app is available in ./app/www folder
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: "public"
+          path: app/www
       - uses: actions/deploy-pages@v1
         id: deployment
