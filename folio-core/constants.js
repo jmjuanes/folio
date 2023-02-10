@@ -1,3 +1,5 @@
+export const VERSION = "2";
+
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
     POINTER_MOVE: "pointermove",

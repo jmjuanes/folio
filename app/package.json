@@ -10,15 +10,14 @@
     },
     "dependencies": {
         "@mochicons/react": "^0.0.1",
+        "browser-fs-access": "^0.31.2",
         "classnames": "^2.3.2",
         "folio-board": "0.2.0-dev",
         "folio-core": "0.2.0-dev",
         "idb-keyval": "^6.2.0",
         "lowcss": "^0.9.0",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "rouct": "^0.5.0",
-        "uid": "^2.0.1"
+        "react-dom": "^18.2.0"
     },
     "devDependencies": {
         "@babel/core": "^7.18.0",

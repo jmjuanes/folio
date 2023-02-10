@@ -1,33 +1,22 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
-import Rouct from "rouct";
 
 import {ConfirmProvider} from "./contexts/ConfirmContext.jsx";
-import {ClientProvider} from "./contexts/ClientContext.jsx";
 import {ToastProvider} from "./contexts/ToastContext.jsx";
 
-import {Editor} from "./pages/index.jsx";
+import {Editor} from "./components/Editor.jsx";
 import {Toaster} from "./components/Toaster.jsx";
 import {Confirm} from "./components/Confirm.jsx";
 
-const App = () => (
+const root = document.getElementById("root");
+
+// Mount app
+createRoot(root).render((
     <ToastProvider>
         <ConfirmProvider>
-            <ClientProvider render={() => (
-                <Rouct.Router routing={Rouct.HashbangRouting}>
-                    <Rouct.Route path="/:id" render={request => (
-                        <Editor
-                            key={request.pathname}
-                            id={request.params?.id}
-                        />
-                    )} />
-                </Rouct.Router>
-            )} />
+            <Editor />
             <Confirm />
         </ConfirmProvider>
         <Toaster />
     </ToastProvider>
-);
-
-// Mount app
-createRoot(document.getElementById("root")).render(<App />);
+));
