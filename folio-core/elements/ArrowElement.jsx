@@ -1,7 +1,6 @@
 import React from "react";
-import {STROKES, ARROWHEADS} from "../constants.js";
+import {STROKES, ARROWHEADS, COLORS} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../math.js";
-import {useStyles} from "../contexts/StylesContext.jsx";
 
 const Arrowhead = props => {
     const size = props.strokeWidth * 2 + 4;
@@ -59,9 +58,8 @@ const Arrowhead = props => {
 };
 
 export const ArrowElement = props => {
-    const styles = useStyles();
-    const strokeColor = styles?.strokeColors?.[props.strokeColor];
-    const strokeWidth = styles?.strokeWidths?.[props.strokeWidth];
+    const strokeColor = props.strokeColor ?? COLORS.BLACK;
+    const strokeWidth = props.strokeWidth ?? 0;
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
             const length = getPointsDistance([props.x1, props.y1], [props.x2, props.y2]);

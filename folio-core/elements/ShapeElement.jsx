@@ -1,7 +1,6 @@
 import React from "react";
-import {STROKES, SHAPES} from "../constants.js";
+import {STROKES, SHAPES, COLORS} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../math.js";
-import {useStyles} from "../contexts/StylesContext.jsx";
 
 // Simple line for shapes
 const SimpleLine = props => {
@@ -206,14 +205,13 @@ const TriangleShape = props => (
 );
 
 export const ShapeElement = props => {
-    const styles = useStyles();
     const x = Math.min(props.x1, props.x2);
     const y = Math.min(props.y1, props.y2);
     const width = Math.abs(props.x2 - props.x1);
     const height = Math.abs(props.y2 - props.y1);
-    const fillColor = styles?.fillColors?.[props.fillColor];
-    const strokeColor = styles?.strokeColors?.[props.strokeColor];
-    const strokeWidth = styles?.strokeWidths?.[props.strokeWidth];
+    const fillColor = props.fillColor ?? COLORS.TRANSPARENT;
+    const strokeColor = props.strokeColor ?? COLORS.BLACK;
+    const strokeWidth = props.strokeWidth ?? 0;
     return (
         <g transform={`translate(${x},${y})`}>
             {props.shape === SHAPES.RECTANGLE && (
