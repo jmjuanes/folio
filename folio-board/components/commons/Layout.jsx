@@ -162,8 +162,8 @@ export const Layout = props => {
             <FileInput
                 ref={imageInputRef}
                 accept="image/*"
-                onFile={fileData => {
-                    board.addImage(fileData).then(() => {
+                onFile={(data, type) => {
+                    board.addImage(data, type).then(() => {
                         props.onChange?.({
                             elements: board.elements,
                             assets: board.assets,
