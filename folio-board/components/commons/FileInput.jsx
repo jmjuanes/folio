@@ -10,9 +10,10 @@ export const FileInput = React.forwardRef((props, ref) => (
         onChange={event => {
             const selectedFile = event.target.files?.[0];
             if (selectedFile) {
+                const type = selectedFile.type;
                 blobToDataUrl(selectedFile).then(data => {
                     event.target.value = "";
-                    props.onFile?.(data);
+                    props.onFile?.(data, type);
                 });
             }
         }}

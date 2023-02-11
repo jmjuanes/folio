@@ -59,8 +59,10 @@ const createBoard = props => ({
         // We need to register the provided assets in the new assets object
         // To prevent different assets ids, we will use a map to convert provided assets Ids to new assets ids
         const assetMap = {};
-        Object.keys(data?.assets || {}).forEach(assetId => {
-            assetMap[assetId] = this.addAsset(data.assets[assetId]);
+        Object.values(data?.assets || {}).forEach(asset => {
+            if (asset && asset.id && asset.dataUrl) {
+                assetMap[asset.id] = this.addAsset(asset.dataUrl, asset.type);
+            }
         });
         // Paste provided elements
         this.pasteElements((data?.elements || []).map(originalElement => {
@@ -71,18 +73,26 @@ const createBoard = props => ({
             return element;
         }));
     },
-    getAsset(assetId) {
-        return this.assets[assetId] || "";
+    getAsset(id) {
+        return this.assets[id] || null;
     },
-    addAsset(data) {
+    getAssetData(id) {
+        return this.assets[id]?.dataUrl || "";
+    },
+    addAsset(data, type) {
         // First we need to check if this asset is already registered
         let assetId = Object.keys(this.assets).find(assetId => {
-            return this.assets[assetId] === data;
+            return this.assets[assetId]?.dataUrl === data;
         });
         if (!assetId) {
             // Register this asset using a new identifier
             assetId = generateRandomId();
-            this.assets[assetId] = data;
+            this.assets[assetId] = {
+                id: assetId,
+                createdAt: Date.now(),
+                type: type || "image/png",
+                dataUrl: data,
+            };
         }
         return assetId;
     },
@@ -246,7 +256,7 @@ const createBoard = props => ({
         this.update();
         return Promise.resolve(element);
     },
-    addImage(image) {
+    addImage(image, type) {
         this.clearSelectedElements();
         return loadImage(image).then(img => {
             const target = document.querySelector(`svg[data-id="${this.id}"]`);
@@ -257,7 +267,7 @@ const createBoard = props => ({
             const elementConfig = getElementConfig(element);
             Object.assign(element, {
                 ...(elementConfig.initialize?.(this.defaults) || {}),
-                assetId: this.addAsset(image),
+                assetId: this.addAsset(image, type),
                 // image: image,
                 imageWidth: img.width,
                 imageHeight: img.height,
