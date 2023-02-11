@@ -1,14 +1,7 @@
 import React from "react";
 import classNames from "classnames";
-import {
-    COLORS,
-    SIZES,
-    STROKES,
-    OPACITY_STEP,
-    OPACITY_MIN,
-    OPACITY_MAX,
-} from "folio-core";
-import {strokeColors} from "../../styles.js";
+import {STROKES, STROKE_WIDTHS, COLORS} from "folio-core";
+import {OPACITY_STEP, OPACITY_MIN, OPACITY_MAX} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
 import {
@@ -21,19 +14,16 @@ const options = {
     strokeColor: {
         type: "color",
         title: "Stroke color",
-        values: Object.values(COLORS).map(key => ({
-            value: key,
-            color: strokeColors[key],
-        })),
+        values: Object.values(COLORS),
     },
     strokeWidth: {
         type: "select",
         title: "Stroke Width",
         values: [
-            {value: SIZES.SMALL, text: "S"},
-            {value: SIZES.MEDIUM, text: "M"},
-            {value: SIZES.LARGE, text: "L"},
-            {value: SIZES.XLARGE, text: "XL"},
+            {value: STROKE_WIDTHS.SMALL, text: "S"},
+            {value: STROKE_WIDTHS.MEDIUM, text: "M"},
+            {value: STROKE_WIDTHS.LARGE, text: "L"},
+            {value: STROKE_WIDTHS.XLARGE, text: "XL"},
         ],
     },
     strokeStyle: {

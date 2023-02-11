@@ -1,7 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {COLORS, OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "folio-core";
-import {fillColors} from "../../styles.js";
+import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP, COLORS} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
 
@@ -9,10 +8,7 @@ const options = {
     fillColor: {
         type: "color",
         title: "Fill Color",
-        values: Object.values(COLORS).map(key => ({
-            value: key,
-            color: fillColors[key],
-        })),
+        values: Object.values(COLORS),
     },
     fillOpacity: {
         type: "range",
