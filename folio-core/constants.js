@@ -36,12 +36,6 @@ export const ARROWHEADS = {
     SEGMENT: "segment",
 };
 
-export const STROKES = {
-    SOLID: "solid",
-    DASHED: "dashed",
-    DOTTED: "dotted",
-};
-
 // Grid constants
 export const GRID_SIZE = 20;
 
@@ -97,46 +91,60 @@ export const HANDLERS = {
     NODE_END: "node-end",
 };
 
-// Allowed colors for elements
+// Default font faces
+export const FONT_FACES = {
+    SANS: "Arial, sans-serif",
+    SERIF: "Georgia, serif",
+    CURSIVE: "Bradley Hand, cursive",
+    MONOSPACE: "Courier, monospace",
+};
+
+// Default colors
 export const COLORS = {
-    NONE: "none",
-    WHITE: "white",
-    GRAY: "gray",
-    BLACK: "black",
-    BLUE: "blue",
-    GREEN: "green",
-    PURPLE: "purple",
-    PINK: "pink",
-    YELLOW: "yellow",
-    RED: "red",
+    TRANSPARENT: "transparent",
+    WHITE: "#ffffff",
+    BLACK: "#000000",
+    GRAY:   "#424852", 
+    BLUE:   "#4a88da",
+    GREEN:  "#89c054",
+    PURPLE: "#9579da",
+    PINK:   "#d56fac",
+    YELLOW: "#f5b945",
+    RED:    "#e8553e",
 };
 
-// Allowed fonts for elements
-export const FONTS = {
-    DRAW: "draw",
-    SANS: "sans",
-    SERIF: "serif",
-    MONO: "monospace"
+// Common stroke widths
+export const STROKE_WIDTHS = {
+    SMALL: 2,
+    MEDIUM: 4,
+    LARGE: 8,
+    XLARGE: 16,
 };
 
-// Allowed sizes for elements
-export const SIZES = {
-    NONE: "none",
-    SMALL: "sm",
-    MEDIUM: "md",
-    LARGE: "lg",
-    XLARGE: "xl",
+// Common text sizes
+export const TEXT_SIZES = {
+    SMALL: 12,
+    MEDIUM: 16,
+    LARGE: 32,
+    XLARGE: 64,
+};
+
+// Allowed stroke styles
+export const STROKES = {
+    SOLID: "solid",
+    DASHED: "dashed",
+    DOTTED: "dotted",
 };
 
 // Default values for style attributes of elements
-export const DEFAULT_FILL_COLOR = COLORS.NONE;
-export const DEFAULT_FILL_OPACITY = 1;
+export const DEFAULT_FILL_COLOR = COLORS.TRANSPARENT;
+export const DEFAULT_FILL_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_COLOR = COLORS.BLACK;
-export const DEFAULT_STROKE_WIDTH = SIZES.MEDIUM;
-export const DEFAULT_STROKE_OPACITY = 1;
+export const DEFAULT_STROKE_WIDTH = STROKE_WIDTHS.MEDIUM;
+export const DEFAULT_STROKE_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
-export const DEFAULT_TEXT_FONT = FONTS.SANS;
-export const DEFAULT_TEXT_SIZE = SIZES.MEDIUM;
+export const DEFAULT_TEXT_FONT = FONT_FACES.SANS;
+export const DEFAULT_TEXT_SIZE = TEXT_SIZES.MEDIUM;
 export const DEFAULT_TEXT_COLOR = COLORS.BLACK;
 export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
 export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;

@@ -10,7 +10,6 @@ import {ACTIONS} from "../../constants.js";
 
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {useEvents} from "../../hooks/useEvents.js";
-import {boardStyles} from "../../styles.js";
 
 export const Renderer = props => {
     const board = useBoard();
@@ -26,7 +25,6 @@ export const Renderer = props => {
             id={board.id}
             elements={board.elements}
             assets={board.assets}
-            styles={boardStyles}
             backgroundColor="#fafafa"
             translateX={board.translateX}
             translateY={board.translateY}

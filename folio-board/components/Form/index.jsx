@@ -18,6 +18,7 @@ export const Form = props => (
                 <div className={index === 0 ? "mt:0" : "mt:4"} key={key}>
                     <Option
                         {...item}
+                        field={key}
                         value={value}
                         onChange={v => props.onChange(key, v)}
                     />

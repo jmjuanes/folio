@@ -5,9 +5,6 @@
     "private": true,
     "scripts": {},
     "dependencies": {
-        "@fontsource/caveat-brush": "^4.5.9",
-        "@fontsource/noto-sans": "^4.5.11",
-        "@fontsource/noto-serif": "^4.5.11",
         "@mochicons/react": "^0.0.1",
         "classnames": "^2.3.2",
         "folio-core": "0.2.0-dev",

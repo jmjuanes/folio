@@ -42,9 +42,9 @@ export const Editor = props => {
                 setState({...prevState, id: Date.now()});
                 // Check if is the first time in the application
                 // We will display the welcome message
-                if (!prevState?.elements || prevState?.elements?.length === 0) {
-                    setWelcomeVisible(true);
-                }
+                // if (!prevState?.elements || prevState?.elements?.length === 0) {
+                //     setWelcomeVisible(true);
+                // }
                 setLoadingVisible(false);
             });
     });

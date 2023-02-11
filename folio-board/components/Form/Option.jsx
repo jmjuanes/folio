@@ -1,49 +1,71 @@
 import React from "react";
 import classNames from "classnames";
-import backgroundImg from "./background.svg";
+import {COLORS} from "folio-core";
+
+const transparent = window.encodeURIComponent([
+    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="#fdfdfd">`,
+    `<rect x="0" y="0" width="8" height="8" fill="#cacacc" />`,
+    `<rect x="8" y="8" width="8" height="8" fill="#cacacc" />`,
+    `</svg>`,
+].join(""));
 
 const optionTypes = {
     color: props => (
-        <div className="d:grid gap:1 cols:5 w:full">
-            {(props.values || []).map(item => (
+        <div className="w:full">
+            <div className="d:flex items:center gap:2 w:full mb:2">
                 <div
-                    key={item.value}
-                    className={classNames({
-                        "w:full h:full text:lg text:red-500": item.color === "transparent",
-                        "p:4": item.color !== "transparent",
-                        "d:flex items:center justify:center": true,
-                        "b:2 b:solid r:md cursor:pointer": true,
-                        "b:dark-100": item.value === props.value,
-                        // "b:white": color !== props.value,
-                        "b:light-200": item.value !== props.value,
-                    })}
-                    data-color={item.value}
+                    className="d:flex r:md p:4 h:10 w:10 b:1 b:solid b:dark-100"
                     style={{
-                        backgroundColor: item.color !== "transparent" ? item.color : null,
-                        backgroundImage: item.color === "transparent" ? `url('${backgroundImg}')` : null,
+                        backgroundColor: props.value !== "transparent" ? props.value : null,
+                        backgroundImage: props.value === "transparent" ? `url('data:image/svg+xml;utf-8,${transparent}')` : null,
                         backgroundSize: "16px 16px",
                         backgroundRepeat: "repeat",
-                        // cursor: "pointer",
+                        minWidth: "2.5rem",
                     }}
-                    onClick={() => props.onChange(item.value)}
                 />
-            ))}
+                <input
+                    type="text"
+                    data-field={props.field}
+                    className="w:full px:4 py:0 h:10 bg:light-300 r:md outline:0 b:0"
+                    defaultValue={props.value}
+                    onChange={event => props.onChange(event.target.value || COLORS.BLACK)}
+                />
+            </div>
+            <div className="d:grid gap:1 cols:5 w:full">
+                {(props.values || []).map(color => (
+                    <div
+                        key={color}
+                        className="d:flex p:4 r:md cursor:pointer b:1 b:solid b:dark-100"
+                        style={{
+                            backgroundColor: color !== "transparent" ? color : null,
+                            backgroundImage: color === "transparent" ? `url('data:image/svg+xml;utf-8,${transparent}')` : null,
+                            backgroundSize: "16px 16px",
+                            backgroundRepeat: "repeat",
+                        }}
+                        onClick={() => {
+                            // Terrible hack to change the input color
+                            document.querySelector(`input[data-field="${props.field}"]`).value = color;
+                            props.onChange(color);
+                        }}
+                    />
+                ))}
+            </div>
         </div>
     ),
     font: props => (
         <div className="d:flex gap:1 w:full">
-            {(props.values || []).map(item => (
+            {(props.values || []).map(font => (
                 <div
-                    key={item.value}
+                    key={font}
                     className={classNames({
                         "d:flex justify:center items:center": true,
                         "r:md cursor:pointer p:2 w:full text:lg": true,
-                        "bg:dark-700 text:white": item.value === props.value,
+                        "bg:dark-700 text:white": font === props.value,
                     })}
                     style={{
-                        fontFamily: item.font,
+                        fontFamily: font,
                     }}
-                    onClick={() => props.onChange(item.value)}
+                    onClick={() => props.onChange(font)}
                 >
                     <strong>Aa</strong>
                 </div>
