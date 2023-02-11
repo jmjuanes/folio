@@ -104,6 +104,29 @@ export const COLORS = {
     TRANSPARENT: "transparent",
     WHITE: "#ffffff",
     BLACK: "#000000",
+    GRAY:   "#424852", 
+    BLUE:   "#4a88da",
+    GREEN:  "#89c054",
+    PURPLE: "#9579da",
+    PINK:   "#d56fac",
+    YELLOW: "#f5b945",
+    RED:    "#e8553e",
+};
+
+// Common stroke widths
+export const STROKE_WIDTHS = {
+    SMALL: 2,
+    MEDIUM: 4,
+    LARGE: 8,
+    XLARGE: 16,
+};
+
+// Common text sizes
+export const TEXT_SIZES = {
+    SMALL: 12,
+    MEDIUM: 16,
+    LARGE: 32,
+    XLARGE: 64,
 };
 
 // Allowed stroke styles
@@ -117,11 +140,11 @@ export const STROKES = {
 export const DEFAULT_FILL_COLOR = COLORS.TRANSPARENT;
 export const DEFAULT_FILL_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_COLOR = COLORS.BLACK;
-export const DEFAULT_STROKE_WIDTH = 4;
+export const DEFAULT_STROKE_WIDTH = STROKE_WIDTHS.MEDIUM;
 export const DEFAULT_STROKE_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
 export const DEFAULT_TEXT_FONT = FONT_FACES.SANS;
-export const DEFAULT_TEXT_SIZE = 16;
+export const DEFAULT_TEXT_SIZE = TEXT_SIZES.MEDIUM;
 export const DEFAULT_TEXT_COLOR = COLORS.BLACK;
 export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
 export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;

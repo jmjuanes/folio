@@ -45,9 +45,3 @@ export const CHANGES = {
     UPDATE: "change:update",
     REMOVE: "change:remove",
 };
-
-export const FONT_FACES = {
-    NOTO_SANS: "Noto Sans",
-    NOTO_SERIF: "Noto Serif",
-    CAVEAT: "Caveat Brush",
-};
