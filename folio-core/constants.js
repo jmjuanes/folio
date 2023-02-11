@@ -36,12 +36,6 @@ export const ARROWHEADS = {
     SEGMENT: "segment",
 };
 
-export const STROKES = {
-    SOLID: "solid",
-    DASHED: "dashed",
-    DOTTED: "dotted",
-};
-
 // Grid constants
 export const GRID_SIZE = 20;
 
@@ -97,46 +91,37 @@ export const HANDLERS = {
     NODE_END: "node-end",
 };
 
-// Allowed colors for elements
+// Default font faces
+export const FONT_FACES = {
+    SANS: "Arial, sans-serif",
+    SERIF: "Georgia, serif",
+    CURSIVE: "Bradley Hand, cursive",
+    MONOSPACE: "Courier, monospace",
+};
+
+// Default colors
 export const COLORS = {
-    NONE: "none",
-    WHITE: "white",
-    GRAY: "gray",
-    BLACK: "black",
-    BLUE: "blue",
-    GREEN: "green",
-    PURPLE: "purple",
-    PINK: "pink",
-    YELLOW: "yellow",
-    RED: "red",
+    TRANSPARENT: "transparent",
+    WHITE: "#ffffff",
+    BLACK: "#000000",
 };
 
-// Allowed fonts for elements
-export const FONTS = {
-    DRAW: "draw",
-    SANS: "sans",
-    SERIF: "serif",
-    MONO: "monospace"
-};
-
-// Allowed sizes for elements
-export const SIZES = {
-    NONE: "none",
-    SMALL: "sm",
-    MEDIUM: "md",
-    LARGE: "lg",
-    XLARGE: "xl",
+// Allowed stroke styles
+export const STROKES = {
+    SOLID: "solid",
+    DASHED: "dashed",
+    DOTTED: "dotted",
 };
 
 // Default values for style attributes of elements
-export const DEFAULT_FILL_COLOR = COLORS.NONE;
-export const DEFAULT_FILL_OPACITY = 1;
+export const DEFAULT_FILL_COLOR = COLORS.TRANSPARENT;
+export const DEFAULT_FILL_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_COLOR = COLORS.BLACK;
-export const DEFAULT_STROKE_WIDTH = SIZES.MEDIUM;
-export const DEFAULT_STROKE_OPACITY = 1;
+export const DEFAULT_STROKE_WIDTH = 4;
+export const DEFAULT_STROKE_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
-export const DEFAULT_TEXT_FONT = FONTS.SANS;
-export const DEFAULT_TEXT_SIZE = SIZES.MEDIUM;
+export const DEFAULT_TEXT_FONT = FONT_FACES.SANS;
+export const DEFAULT_TEXT_SIZE = 16;
 export const DEFAULT_TEXT_COLOR = COLORS.BLACK;
 export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
 export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
