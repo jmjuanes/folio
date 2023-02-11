@@ -6,10 +6,22 @@ import {
     ZOOM_MAX,
     ZOOM_MIN,
     ZOOM_STEP,
+    FONT_FACES,
     getElementConfig,
+    DEFAULT_FILL_COLOR,
+    DEFAULT_FILL_OPACITY,
+    DEFAULT_STROKE_COLOR,
+    DEFAULT_STROKE_STYLE,
+    DEFAULT_STROKE_OPACITY,
+    DEFAULT_STROKE_WIDTH,
+    DEFAULT_TEXT_COLOR,
+    DEFAULT_TEXT_SIZE,
+    DEFAULT_TEXT_FONT,
+    DEFAULT_ARROWHEAD_END,
+    DEFAULT_ARROWHEAD_START,
+    DEFAULT_SHAPE,
 } from "folio-core";
 import {CHANGES} from "../constants.js";
-import {fontSizes, fontFaces} from "../styles.js";
 import {loadImage} from "../utils/image.js";
 
 const generateRandomId = () => uid(20);
@@ -30,7 +42,20 @@ const createBoard = props => ({
     translateX: 0,
     translateY: 0,
     selection: null,
-    defaults: {},
+    defaults: {
+        fillColor: DEFAULT_FILL_COLOR,
+        fillOpacity: DEFAULT_FILL_OPACITY,
+        strokeWidth: DEFAULT_STROKE_WIDTH,
+        strokeColor: DEFAULT_STROKE_COLOR,
+        strokeStyle: DEFAULT_STROKE_STYLE,
+        strokeOpacity: DEFAULT_STROKE_OPACITY,
+        textColor: DEFAULT_TEXT_COLOR,
+        textFont: DEFAULT_TEXT_FONT,
+        textSize: DEFAULT_TEXT_SIZE,
+        shape: DEFAULT_SHAPE,
+        startArrowhead: DEFAULT_ARROWHEAD_START,
+        endArrowhead: DEFAULT_ARROWHEAD_END,
+    },
     
     update() {
         return props?.onUpdate?.();
@@ -238,8 +263,8 @@ const createBoard = props => ({
             selected: true,
         });
 
-        const textSize = fontSizes[element.textSize];
-        const textFont = fontFaces[element.textFont];
+        const textSize = (element.textSize ?? 0) + "px";
+        const textFont = element.textFont ?? FONT_FACES.SANS;
         const [textWidth, textHeight] = elementConfig.utils.measureText(text, textSize, textFont);
         // Override element position
         Object.assign(element, {
