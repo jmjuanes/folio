@@ -55,6 +55,7 @@ const RectangleShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
         <SimpleLine
             x1={props.width}
@@ -64,6 +65,7 @@ const RectangleShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
         <SimpleLine
             x1={0}
@@ -73,6 +75,7 @@ const RectangleShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
         <SimpleLine
             x1={0}
@@ -82,6 +85,7 @@ const RectangleShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
     </React.Fragment>
 );
@@ -135,6 +139,7 @@ const DiamondShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
         <SimpleLine
             x1={props.width}
@@ -144,6 +149,7 @@ const DiamondShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
         <SimpleLine
             x1={props.width / 2}
@@ -153,6 +159,7 @@ const DiamondShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
         <SimpleLine
             x1={0}
@@ -162,6 +169,7 @@ const DiamondShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
     </React.Fragment>
 );
@@ -182,6 +190,7 @@ const TriangleShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
         <SimpleLine
             x1={props.width / 2}
@@ -191,6 +200,7 @@ const TriangleShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
         <SimpleLine
             x1={0}
@@ -200,6 +210,7 @@ const TriangleShape = props => (
             strokeColor={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeStyle={props.strokeStyle}
+            strokeOpacity={props.strokeOpacity}
         />
     </React.Fragment>
 );
@@ -223,6 +234,7 @@ export const ShapeElement = props => {
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     strokeStyle={props.strokeStyle}
+                    strokeOpacity={props.strokeOpacity}
                 />
             )}
             {props.shape === SHAPES.ELLIPSE && (
@@ -234,6 +246,7 @@ export const ShapeElement = props => {
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     strokeStyle={props.strokeStyle}
+                    strokeOpacity={props.strokeOpacity}
                 />
             )}
             {props.shape === SHAPES.TRIANGLE && (
@@ -245,6 +258,7 @@ export const ShapeElement = props => {
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     strokeStyle={props.strokeStyle}
+                    strokeOpacity={props.strokeOpacity}
                 />
             )}
             {props.shape === SHAPES.DIAMOND && (
@@ -256,6 +270,7 @@ export const ShapeElement = props => {
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     strokeStyle={props.strokeStyle}
+                    strokeOpacity={props.strokeOpacity}
                 />
             )}
             <rect
