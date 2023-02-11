@@ -6,7 +6,6 @@ import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
 import {getElementConfig} from "../elements/index.jsx";
 import {AssetsProvider} from "../contexts/AssetsContext.jsx";
-import {StylesProvider} from "../contexts/StylesContext.jsx";
 
 const useSelectedElements = props => {
     if (props.showHandlers || props.showBounds) {
@@ -175,21 +174,19 @@ export const Canvas = props => {
                     />
                 )}
                 <AssetsProvider value={props.assets || {}}>
-                    <StylesProvider value={props.styles}>
-                        {props.elements.map(element => {
-                            const content = getElementConfig(element).render({
-                                ...element,
-                                onChange: (k, v) => props?.onElementChange?.(element.id, k, v),
-                                onPointerDown: e => handlePointerDown(e, "element", props.onPointElement),
-                                onDoubleClick: e => handleDoubleClick(e, "element", props.onDoubleClickElement),
-                            });
-                            return (
-                                <g key={element.id} data-element={element.id} style={{cursor: "move"}}>
-                                    {content}
-                                </g>
-                            );
-                        })}
-                    </StylesProvider>
+                    {props.elements.map(element => {
+                        const content = getElementConfig(element).render({
+                            ...element,
+                            onChange: (k, v) => props?.onElementChange?.(element.id, k, v),
+                            onPointerDown: e => handlePointerDown(e, "element", props.onPointElement),
+                            onDoubleClick: e => handleDoubleClick(e, "element", props.onDoubleClickElement),
+                        });
+                        return (
+                            <g key={element.id} data-element={element.id} style={{cursor: "move"}}>
+                                {content}
+                            </g>
+                        );
+                    })}
                 </AssetsProvider>
                 {props.showBrush && !!props.brush && (
                     <Brush
@@ -220,7 +217,6 @@ Canvas.defaultProps = {
     backgroundColor: "#fafafa",
     elements: [],
     assets: {},
-    styles: {},
     translateX: 0,
     translateY: 0,
     zoom: 1,
