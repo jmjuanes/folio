@@ -1,6 +1,6 @@
 {
     "name": "folio-app",
-    "version": "0.2.0-dev",
+    "version": "0.2.0",
     "private": true,
     "main": "index.jsx",
     "scripts": {
