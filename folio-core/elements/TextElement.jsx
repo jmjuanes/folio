@@ -14,7 +14,7 @@ export const TextElement = props => {
     const y = (props.y1 + props.y2) / 2;
     const width = Math.abs(props.x2 - props.x1);
     const height = Math.abs(props.y2 - props.y1);
-    const textSize = props.textSize ?? 0;
+    const textSize = (props.textSize ?? 0) + "px";
     const textFont = props.textFont ?? FONT_FACES.SANS;
     const textColor = props.textColor ?? COLORS.BLACK;
 
