@@ -56,6 +56,13 @@ export const elementsConfig = {
                 y2: Math.max(element.y1, element.y2),
             });
         },
+        onUpdate: (element, changedKeys) => {
+            if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
+                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont);
+                element.textWidth = textWidth;
+                element.textHeight = textHeight;
+            }
+        },
     },
     [ELEMENTS.ARROW]: {
         render: props => <ArrowElement {...props} />,
@@ -97,6 +104,20 @@ export const elementsConfig = {
             }
             if (Math.abs(element.y2 - element.y1) < GRID_SIZE) {
                 element.y2 = element.y1 + GRID_SIZE;
+            }
+        },
+        onUpdate: (element, changedKeys) => {
+            if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
+                const x = (element.x1 + element.x2) / 2;
+                const y = (element.y1 + element.y2) / 2;
+                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont);
+
+                element.x1 = Math.min(element.x1, Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE);
+                element.x2 = Math.max(element.x2, Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE);
+                element.y1 = Math.min(element.y1, Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE);
+                element.y2 = Math.max(element.y2, Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE);
+                element.textWidth = Math.ceil(textWidth / GRID_SIZE) * GRID_SIZE;
+                element.textHeight = Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
             }
         },
         utils: {

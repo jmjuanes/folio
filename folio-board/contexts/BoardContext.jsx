@@ -31,6 +31,8 @@ const createBoard = props => ({
     elements: [...props.elements].map(element => ({
         ...element,
         selected: false,
+        editing: false,
+        creating: false,
     })),
     assets: {...props.assets},
     history: [],
@@ -208,8 +210,10 @@ const createBoard = props => ({
                 })),
             });
             // 2. Update the elements
+            const changedKeys = new Set(keys);
             elements.forEach(element => {
                 keys.forEach((key, index) => element[key] = values[index]);
+                getElementConfig(element)?.onUpdate?.(element, changedKeys);
             });
         }
         // 3. Update defaults
@@ -374,14 +378,22 @@ const createBoard = props => ({
             } else if (entry.type === CHANGES.REMOVE) {
                 entry.elements.forEach(el => this.elements.unshift({...el.prevValues}));
             } else if (entry.type === CHANGES.UPDATE) {
-                entry.elements.forEach(element => {
-                    Object.assign(this.elements.find(el => el.id === element.id), element.prevValues);
+                entry.elements.forEach(item => {
+                    // 1. Update element values
+                    const element = this.elements.find(el => el.id === item.id);
+                    Object.assign(element, item.prevValues);
+                    // 2. Apply element update
+                    const changedKeys = new Set(Object.keys(item.prevValues));
+                    getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
             this.historyIndex = this.historyIndex + 1;
             this.setAction(null);
             // this.state.activeGroup = null;
-            this.elements.forEach(el => el.selected = false);
+            this.elements.forEach(el => {
+                el.selected = false;
+                el.editing = false;
+            });
             this.update();
         }
     },
@@ -395,13 +407,21 @@ const createBoard = props => ({
                 const removeElements = new Set(entry.elements.map(el => el.id));
                 this.elements = this.elements.filter(el => !removeElements.has(el.id));
             } else if (entry.type === CHANGES.UPDATE) {
-                entry.elements.forEach(element => {
-                    Object.assign(this.elements.find(el => el.id === element.id) || {}, element.newValues);
+                entry.elements.forEach(item => {
+                    // 1. Update element values
+                    const element = this.elements.find(el => el.id === item.id);
+                    Object.assign(element, item.newValues);
+                    // 2. Apply element update
+                    const changedKeys = new Set(Object.keys(item.newValues));
+                    getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
             this.setAction(null);
             // this.state.activeGroup = null;
-            this.elements.forEach(el => el.selected = false);
+            this.elements.forEach(el => {
+                el.selected = false;
+                el.editing = false;
+            });
             this.update();
         }
     },
