@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button should render 1`] = `
+<div
+  className="d:flex items:center justify:center gap:2 select:none px:4 py:3 r:xl cursor:pointer"
+  onClick={null}
+/>
+`;
