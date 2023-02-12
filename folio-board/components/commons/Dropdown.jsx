@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 
-const DropdownItem = props => {
+export const DropdownItem = props => {
     const classList = classNames({
         "d:flex items:center gap:2 r:md px:3 py:2 select:none": true,
         "bg:light-200:hover cursor:pointer": !props.disabled,
@@ -37,14 +37,8 @@ DropdownItem.defaultProps = {
 export const Dropdown = props => (
     <div className={classNames(props.className, "position:absolute mt:1")}>
         <div className="bg:white shadow:md w:56 p:3 r:lg d:flex flex:col gap:0">
-            {Object.keys(props.items).map(key => (
-                <DropdownItem
-                    key={key}
-                    text={props.items[key].text}
-                    icon={props.items[key].icon}
-                    disabled={props.items[key].disabled}
-                    onClick={props.items[key].onClick}
-                />
+            {props.items.map((item, index) => (
+                <DropdownItem key={index} {...item} />
             ))}
         </div>
     </div>
@@ -52,5 +46,5 @@ export const Dropdown = props => (
 
 Dropdown.defaultProps = {
     className: "top:0 left:0",
-    items: {},
+    items: [],
 };
