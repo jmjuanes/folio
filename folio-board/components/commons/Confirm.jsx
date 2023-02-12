@@ -1,6 +1,6 @@
 import React from "react";
 import {CloseIcon, CheckIcon} from "@mochicons/react";
-import {useConfirm} from "../contexts/ConfirmContext.jsx";
+import {useConfirm} from "../../contexts/ConfirmContext.jsx";
 import {Modal} from "./Modal.jsx";
 import {Button} from "./Button.jsx";
 
