@@ -6,6 +6,7 @@ import {Dropdown} from "../commons/Dropdown.jsx";
 export const Menu = props => (
     <div className="d:flex position:relative group" tabIndex="0">
         <Button
+            className={"bg:white b:1 b:dark-100 b:solid"}
             text={props.text}
             icon={props.icon}
             disabled={props.disabled}
