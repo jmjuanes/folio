@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dropdown should render 1`] = `
+<div
+  className="top:0 left:0 position:absolute mt:1"
+>
+  <div
+    className="bg:white shadow:md w:56 p:3 r:lg d:flex flex:col gap:0"
+  >
+    <div
+      className="d:flex items:center gap:2 r:md px:3 py:2 select:none bg:light-200:hover cursor:pointer"
+      onClick={[Function]}
+      tabIndex="0"
+    >
+      <div
+        className="d:flex text:lg items:center text:dark-700"
+      />
+      <div
+        className="d:flex items:center text:sm text:dark-700"
+      >
+        <span>
+          Item 1
+        </span>
+      </div>
+    </div>
+    <div
+      className="d:flex items:center gap:2 r:md px:3 py:2 select:none bg:light-200:hover cursor:pointer"
+      onClick={[Function]}
+      tabIndex="0"
+    >
+      <div
+        className="d:flex text:lg items:center text:dark-700"
+      />
+      <div
+        className="d:flex items:center text:sm text:dark-700"
+      >
+        <span>
+          Item 2
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

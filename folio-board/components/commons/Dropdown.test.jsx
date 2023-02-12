@@ -2,6 +2,19 @@ import TestRenderer from "react-test-renderer";
 import {Dropdown, DropdownItem} from "./Dropdown.jsx";
 
 describe("Dropdown", () => {
+    it("should render", () => {
+        const testRenderer = TestRenderer.create((
+            <Dropdown
+                items={[
+                    {text: "Item 1"},
+                    {text: "Item 2"},
+                ]}
+            />
+        ));
+
+        expect(testRenderer.toJSON()).toMatchSnapshot();
+    });
+
     it("should render the provided items", () => {
         const items = [
             {text: "Item 1"},
