@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 
 export const Button = props => {
-    const classList = classNames({
+    const classList = classNames(props.className, {
         "d:flex items:center justify:center gap:2 select:none": true,
         "px:4 py:3 r:xl": true,
         "cursor:pointer": !props.disabled,
@@ -26,6 +26,7 @@ export const Button = props => {
 };
 
 Button.defaultProps = {
+    className: "",
     text: "",
     icon: null,
     disabled: false,
