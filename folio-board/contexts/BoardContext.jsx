@@ -31,6 +31,8 @@ const createBoard = props => ({
     elements: [...props.elements].map(element => ({
         ...element,
         selected: false,
+        editing: false,
+        creating: false,
     })),
     assets: {...props.assets},
     history: [],
@@ -208,8 +210,10 @@ const createBoard = props => ({
                 })),
             });
             // 2. Update the elements
+            const changedKeys = new Set(keys);
             elements.forEach(element => {
                 keys.forEach((key, index) => element[key] = values[index]);
+                getElementConfig(element).onUpdate?.(element, changedKeys);
             });
         }
         // 3. Update defaults
