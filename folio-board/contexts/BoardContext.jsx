@@ -213,7 +213,7 @@ const createBoard = props => ({
             const changedKeys = new Set(keys);
             elements.forEach(element => {
                 keys.forEach((key, index) => element[key] = values[index]);
-                getElementConfig(element).onUpdate?.(element, changedKeys);
+                getElementConfig(element)?.onUpdate?.(element, changedKeys);
             });
         }
         // 3. Update defaults
@@ -378,12 +378,13 @@ const createBoard = props => ({
             } else if (entry.type === CHANGES.REMOVE) {
                 entry.elements.forEach(el => this.elements.unshift({...el.prevValues}));
             } else if (entry.type === CHANGES.UPDATE) {
-                entry.elements.forEach(element => {
+                entry.elements.forEach(item => {
                     // 1. Update element values
-                    Object.assign(this.elements.find(el => el.id === element.id), element.prevValues);
+                    const element = this.elements.find(el => el.id === item.id);
+                    Object.assign(element, item.prevValues);
                     // 2. Apply element update
-                    const changedKeys = new Set(Object.keys(element.prevValues));
-                    getElementConfig(element).onUpdate?.(element, changedKeys);
+                    const changedKeys = new Set(Object.keys(item.prevValues));
+                    getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
             this.historyIndex = this.historyIndex + 1;
@@ -406,12 +407,13 @@ const createBoard = props => ({
                 const removeElements = new Set(entry.elements.map(el => el.id));
                 this.elements = this.elements.filter(el => !removeElements.has(el.id));
             } else if (entry.type === CHANGES.UPDATE) {
-                entry.elements.forEach(element => {
+                entry.elements.forEach(item => {
                     // 1. Update element values
-                    Object.assign(this.elements.find(el => el.id === element.id) || {}, element.newValues);
+                    const element = this.elements.find(el => el.id === item.id);
+                    Object.assign(element, item.newValues);
                     // 2. Apply element update
-                    const changedKeys = new Set(Object.keys(element.newValues));
-                    getElementConfig(element).onUpdate?.(element, changedKeys);
+                    const changedKeys = new Set(Object.keys(item.newValues));
+                    getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
             this.setAction(null);
