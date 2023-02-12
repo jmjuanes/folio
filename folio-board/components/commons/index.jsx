@@ -3,6 +3,7 @@ export * from "./Confirm.jsx";
 export * from "./Dropdown.jsx";
 export * from "./FileInput.jsx";
 export * from "./Layout.jsx";
+export * from "./Loading.jsx";
 export * from "./Modal.jsx";
 export * from "./Renderer.jsx";
 export * from "./Toaster.jsx";
