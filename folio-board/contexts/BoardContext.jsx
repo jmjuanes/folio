@@ -379,13 +379,20 @@ const createBoard = props => ({
                 entry.elements.forEach(el => this.elements.unshift({...el.prevValues}));
             } else if (entry.type === CHANGES.UPDATE) {
                 entry.elements.forEach(element => {
+                    // 1. Update element values
                     Object.assign(this.elements.find(el => el.id === element.id), element.prevValues);
+                    // 2. Apply element update
+                    const changedKeys = new Set(Object.keys(element.prevValues));
+                    getElementConfig(element).onUpdate?.(element, changedKeys);
                 });
             }
             this.historyIndex = this.historyIndex + 1;
             this.setAction(null);
             // this.state.activeGroup = null;
-            this.elements.forEach(el => el.selected = false);
+            this.elements.forEach(el => {
+                el.selected = false;
+                el.editing = false;
+            });
             this.update();
         }
     },
@@ -400,12 +407,19 @@ const createBoard = props => ({
                 this.elements = this.elements.filter(el => !removeElements.has(el.id));
             } else if (entry.type === CHANGES.UPDATE) {
                 entry.elements.forEach(element => {
+                    // 1. Update element values
                     Object.assign(this.elements.find(el => el.id === element.id) || {}, element.newValues);
+                    // 2. Apply element update
+                    const changedKeys = new Set(Object.keys(element.newValues));
+                    getElementConfig(element).onUpdate?.(element, changedKeys);
                 });
             }
             this.setAction(null);
             // this.state.activeGroup = null;
-            this.elements.forEach(el => el.selected = false);
+            this.elements.forEach(el => {
+                el.selected = false;
+                el.editing = false;
+            });
             this.update();
         }
     },
