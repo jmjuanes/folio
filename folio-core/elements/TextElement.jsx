@@ -14,7 +14,7 @@ export const TextElement = props => {
     const y = (props.y1 + props.y2) / 2;
     const width = Math.abs(props.x2 - props.x1);
     const height = Math.abs(props.y2 - props.y1);
-    const textSize = (props.textSize ?? 0) + "px";
+    const textSize = (props.textSize ?? 0);
     const textFont = props.textFont ?? FONT_FACES.SANS;
     const textColor = props.textColor ?? COLORS.BLACK;
 
@@ -32,7 +32,8 @@ export const TextElement = props => {
         whiteSpace: "pre", // "pre-wrap",
         color: textColor,
         fontFamily: textFont,
-        fontSize: textSize,
+        fontSize: textSize + "px",
+        lineHeight: "normal",
         textAlign: "center",
         userSelect: "none",
     };
@@ -73,7 +74,8 @@ export const TextElement = props => {
                             color: textColor,
                             display: "inline-block",
                             fontFamily: textFont,
-                            fontSize: textSize,
+                            fontSize: textSize + "px",
+                            lineHeight: "normal",
                             height: props.textHeight,
                             margin: "0px",
                             minHeight: "1em",
