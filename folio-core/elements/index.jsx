@@ -112,12 +112,14 @@ export const elementsConfig = {
                 const y = (element.y1 + element.y2) / 2;
                 const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont);
 
+                element.textWidth = textWidth;
+                element.textHeight = textHeight;
                 element.x1 = Math.min(element.x1, Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE);
                 element.x2 = Math.max(element.x2, Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE);
                 element.y1 = Math.min(element.y1, Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE);
                 element.y2 = Math.max(element.y2, Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE);
-                element.textWidth = Math.ceil(textWidth / GRID_SIZE) * GRID_SIZE;
-                element.textHeight = Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
+                element.minWidth = Math.ceil(textWidth / GRID_SIZE) * GRID_SIZE;
+                element.minHeight = Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
             }
         },
         utils: {
