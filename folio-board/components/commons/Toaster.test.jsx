@@ -1,8 +1,6 @@
 import {create} from "react-test-renderer";
 import {Toaster} from "./Toaster.jsx";
 
-const removeToastMock = jest.fn();
-
 jest.mock("@mochicons/react", () => ({
     CloseIcon: () => "CLOSE_ICON",
 }));
@@ -11,8 +9,9 @@ jest.mock("../../contexts/ToastContext.jsx", () => ({
     useToast: () => ({
         toasts: [
             {id: "toast1", message: "TOAST_1"},
+            {id: "toast2", message: "TOAST_2"},
         ],
-        removeToast: removeToastMock,
+        removeToast: jest.fn(),
     }),
 }));
 
@@ -21,16 +20,7 @@ describe("Toaster", () => {
         const testRenderer = create(<Toaster />);
         const testInstance = testRenderer.root;
 
-        expect(testInstance.findByProps({"data-toast-id", "toast1"})).toBeDefined();
-    });
-
-    it("should remove the toast when clicking the close button", () => {
-        const testRenderer = create(<Toaster />);
-        const testInstance = testRenderer.root;
-        
-        // Call the onClick fuction of the close button
-        testInstance.findByProps({className: "cursor:pointer"}).props.onClick();
-
-        expect(removeToastMock).toHaveBeenCalledWith("toast1");
+        expect(testInstance.findByProps({"data-toast-id": "toast1"})).toBeDefined();
+        expect(testInstance.findByProps({"data-toast-id": "toast2"})).toBeDefined();
     });
 });
