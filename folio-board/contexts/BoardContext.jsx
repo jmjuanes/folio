@@ -472,15 +472,21 @@ export const useBoard = () => {
 };
 
 export const BoardProvider = props => {
+    const [_, forceUpdate] = React.useReducer(x => x + 1, 0);
     const board = React.useRef(null);
 
     if (!board.current) {
-        board.current = createBoard(props);
+        board.current = createBoard({
+            elements: props.elements,
+            assets: props.assets,
+            onChange: props.onChange,
+            onUpdate: forceUpdate,
+        });
     }
 
     return (
         <BoardContext.Provider value={board}>
-            {props.children}
+            {props.render()}
         </BoardContext.Provider>
     );
 };
@@ -490,4 +496,5 @@ BoardProvider.defaultProps = {
     assets: {},
     onChange: null,
     onUpdate: null,
+    render: null,
 };
