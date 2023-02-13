@@ -1,5 +1,5 @@
 import React from "react";
-import {MenuIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
+import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
 import {ImageIcon, CodeIcon} from "@mochicons/react";
 import {EXPORT_FORMATS} from "folio-core";
 import {DEFAULT_BACKGROUND} from "../constants.js";
@@ -67,10 +67,10 @@ const BoardWrapper = props => {
                 grid={props.grid}
                 background={props.background}
                 header={(
-                    <div className="d:grid cols:2 w:full h:12">
+                    <div className="d:grid cols:2 w:full">
                         <div className="d:flex gap:3">
                             <Menu
-                                icon={(<MenuIcon />)}
+                                icon={(<BarsIcon />)}
                                 items={mainMenuItems}
                             />
                         </div>
@@ -78,6 +78,7 @@ const BoardWrapper = props => {
                             <Menu
                                 text="Export Image"
                                 icon={(<ImageIcon />)}
+                                align="right"
                                 items={exportItems}
                             />
                         </div>
@@ -87,29 +88,24 @@ const BoardWrapper = props => {
             />
             <Confirm />
             <Toaster />
-        </BoardProvider>
+        </div>
     );
 };
 
-export const Board = React.forwardRef((props, ref) => {
-    const [_, onUpdate] = React.useReducer(x => x + 1, 0);
-    const boardProps = {
-        elements: props.elements,
-        assets: props.assets,
-        onChange: props.onChange,
-        onUpdate: onUpdate,
-    };
-
-    return (
-        <BoardProvider {...boardProps}>
+export const Board = React.forwardRef((props, ref) => (
+    <BoardProvider
+        elements={props.elements}
+        assets={props.assets}
+        onChange={props.onChange}
+        render={() => ((
             <ConfirmProvider>
                 <ToastProvider>
                     <BoardWrapper {...props} folioRef={ref} />
                 </ToastProvider>
             </ConfirmProvider>
-        </BoardProvider>
-    );
-});
+        ))}
+    />
+));
 
 Board.defaultProps = {
     elements: [],
