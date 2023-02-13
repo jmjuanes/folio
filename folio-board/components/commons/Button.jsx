@@ -3,20 +3,22 @@ import classNames from "classnames";
 
 export const Button = props => {
     const classList = classNames(props.className, {
-        "d:flex items:center justify:center px:4 py:3 gap:2 select:none r:xl": true,
+        "d:flex items:center justify:center gap:2 select:none": true,
+        "p:3 r:lg": true,
         "cursor:pointer": !props.disabled,
         "o:80 cursor:not-allowed": props.disabled,
     });
+
     return (
         <div className={classList} onClick={props.onClick}>
             {!!props.icon && (
-                <div className="text:xl d:flex items:center">
+                <div className={classNames(props.iconClassName, "d:flex items:center")} data-test="icon">
                     {props.icon}
                 </div>
             )}
             {!!props.text && (
-                <div className="">
-                    <strong>{props.text}</strong>
+                <div className={props.textClassName} data-test="text">
+                    {props.text}
                 </div>
             )}
         </div>
@@ -24,9 +26,11 @@ export const Button = props => {
 };
 
 Button.defaultProps = {
-    className: "bg:light-900 bg:light-800:hover text:dark-700",
+    className: "",
     text: "",
+    textClassName: "",
     icon: null,
+    iconClassName: "text:xl",
     disabled: false,
     onClick: null,
 };

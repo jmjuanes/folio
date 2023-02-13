@@ -1,6 +1,6 @@
 import React from "react";
 import {CloseIcon} from "@mochicons/react";
-import {useToast} from "../contexts/ToastContext.jsx";
+import {useToast} from "../../contexts/ToastContext.jsx";
 
 export const Toaster = props => {
     const {toasts, removeToast} = useToast();
@@ -12,7 +12,7 @@ export const Toaster = props => {
     return (
         <div className="position:fixed bottom:0 left:half z:10 w:full" style={parentStyle}>
             {toasts.map(item => (
-                <div key={item.id} className="w:full mb:2">
+                <div key={item.id} data-toast-id={item.id} className="w:full mb:2">
                     <div className="w:full p:4 bg:dark-600 text:white r:lg d:flex items:center">
                         <div className="w:full">
                             <strong>{item.message}</strong>
