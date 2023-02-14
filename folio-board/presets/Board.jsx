@@ -7,7 +7,7 @@ import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
 import {ToastProvider, useToast} from "../contexts/ToastContext.jsx";
 import {Layout, Renderer, Confirm, Toaster} from "../components/commons/index.jsx";
-import {Menu} from "../components/View/Menu.jsx";
+import {Menu, MenuItem} from "../components/View/Menu.jsx";
 
 const BoardWrapper = props => {
     const board = useBoard();
@@ -17,43 +17,20 @@ const BoardWrapper = props => {
     // Initialize board API
     if (props.folioRef && !props.folioRef.current) {
         props.folioRef.current = {
-            addToast: addToast,
-            showConfirm: showConfirm,
+            forceUpdate: () => board.update(),
+            // Board content
+            getElements: () => board.elements,
+            getAssets: () => board.assets,
+            addAsset: data => board.addAsset(data),
+            reset: () => board.reset(),
+            // History API
+            undo: () => board.undo(),
+            redo: () => board.redo(),
+            // Extra actions
+            addToast: message => addToast(message),
+            showConfirm: message => showConfirm(message),
         };
     }
-
-    // Main menu items
-    const mainMenuItems = Object.values({
-        loadFile: {
-            icon: (<FolderIcon />),
-            text: "Open...",
-            onClick: props.onLoad,
-        },
-        saveFile: {
-            icon: (<DownloadIcon />),
-            text: "Save as...",
-            onClick: props.onSave,
-        },
-        resetBoard: {
-            icon: (<TrashIcon />),
-            text: "Reset the board",
-            onClick: props.onReset,
-        },
-    });
-
-    // Export menu items
-    const exportItems = Object.values({
-        exportAsPng: {
-            icon: (<ImageIcon />),
-            text: "Export as PNG",
-            onClick: () => props.onExport?.(EXPORT_FORMATS.PNG),
-        },
-        exportAsSvg: {
-            icon: (<CodeIcon />),
-            text: "Export as SVG",
-            onClick: () => props.onExport?.(EXPORT_FORMATS.SVG),
-        },
-    })
 
     return (
         <div className="position:relative overflow:hidden h:full w:full">
@@ -66,24 +43,59 @@ const BoardWrapper = props => {
             <Layout
                 grid={props.grid}
                 background={props.background}
-                header={(
-                    <div className="d:grid cols:2 w:full">
-                        <div className="d:flex gap:3">
-                            <Menu
-                                icon={(<BarsIcon />)}
-                                items={mainMenuItems}
-                            />
-                        </div>
-                        <div className="d:flex gap:3 justify:end">
-                            <Menu
-                                text="Export Image"
-                                icon={(<ImageIcon />)}
-                                align="right"
-                                items={exportItems}
-                            />
-                        </div>
+                header={true}
+                headerLeftContent={(
+                    <div className="d:flex gap:2">
+                        <Menu icon={(<BarsIcon />)}>
+                            {props.boardActions?.load !== false && (
+                                <MenuItem
+                                    icon={(<FolderIcon />)}
+                                    text="Open..."
+                                    onClick={props.onLoad}
+                                />
+                            )}
+                            {props.boardActions?.save !== false && (
+                                <MenuItem
+                                    icon={(<DownloadIcon />)}
+                                    text="Save as..."
+                                    onClick={props.onSave}
+                                />
+                            )}
+                            {props.boardActions?.reset !== false && (
+                                <MenuItem
+                                    icon={(<TrashIcon />)}
+                                    text="Reset the board"
+                                    onClick={props.onReset}
+                                />
+                            )}
+                        </Menu>
+                        {props.customHeaderLeftContent}
                     </div>
                 )}
+                headerRightContent={(
+                    <div className="d:flex gap:2">
+                        {props.customHeaderRightContent}
+                        {(props.boardActions?.exportPng !== false || props.boardActions?.exportSvg !== false) && (
+                            <Menu text="Export" icon={(<ImageIcon />)} align="right">
+                                {props.boardActions?.exportPng !== false && (
+                                    <MenuItem
+                                        icon={(<ImageIcon />)}
+                                        text="Export as PNG"
+                                        onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
+                                    />
+                                )}
+                                {props.boardActions?.exportSvg !== false && (
+                                    <MenuItem
+                                        icon={(<CodeIcon />)}
+                                        text="Export as SVG"
+                                        onClick={() => props.onExport?.(EXPORT_FORMATS.SVG)}
+                                    />
+                                )}
+                            </Menu>
+                        )}
+                    </div>
+                )}
+                footer={false}
                 onChange={props.onChange}
             />
             <Confirm />
@@ -110,6 +122,9 @@ export const Board = React.forwardRef((props, ref) => (
 Board.defaultProps = {
     elements: [],
     assets: {},
+    boardActions: {},
+    customHeaderLeftContent: null,
+    custonHeaderRightContent: null,
     onChange: null,
     onExport: null,
     onSave: null,

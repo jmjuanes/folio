@@ -59,11 +59,13 @@ export const Layout = props => {
 
     return (
         <React.Fragment>
-            {!isScreenshot && (
+            {!isScreenshot && props.tools && (
                 <ToolsPanel
-                    className={!!props.header ? "pt:20" : ""}
                     action={board.activeAction}
                     tool={board.activeTool}
+                    style={{
+                        paddingTop: props.header ? props.headerHeight : null,
+                    }}
                     onMoveClick={() => {
                         board.setAction(ACTIONS.MOVE);
                         board.update();
@@ -82,26 +84,34 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {!isScreenshot && (
+            {!isScreenshot && props.history && (
                 <HistoryPanel
                     undoDisabled={board.isUndoDisabled()}
                     redoDisabled={board.isRedoDisabled()}
+                    style={{
+                        paddingBottom: props.footer ? props.footerHeight : null,
+                    }}
                     onUndoClick={() => board.undo()}
                     onRedoClick={() => board.redo()}
                 />
             )}
-            {!isScreenshot && (
+            {!isScreenshot && props.zoom && (
                 <ZoomPanel
                     zoom={board.zoom}
+                    style={{
+                        paddingBottom: props.footer ? props.footerHeight : null,
+                    }}
                     onZoomInClick={() => board.zoomIn()}
                     onZoomOutClick={() => board.zoomOut()}
                 />
             )}
-            {!isScreenshot && (
+            {!isScreenshot && props.edition && (
                 <EditionPanel
-                    className={!!props.header ? "pt:20" : ""}
                     elements={selectedElements}
                     dialog={dialog}
+                    style={{
+                        paddingTop: props.header ? props.headerHeight : null,
+                    }}
                     onDialogClick={id => setDialog(id)}
                     onRemoveClick={() => {
                         board.setAction(null);
@@ -118,44 +128,68 @@ export const Layout = props => {
                 <React.Fragment>
                     {dialog === DIALOGS.FILL && (
                         <FillDialog
-                            className={!!props.header ? "pt:20" : ""}
                             values={selectionValues}
+                            style={{
+                                paddingTop: props.header ? props.headerHeight : 0,
+                            }}
                             onChange={handleElementChange}
                         />
                     )}
                     {dialog === DIALOGS.STROKE && (
                         <StrokeDialog
-                            className={!!props.header ? "pt:20" : ""}
                             values={selectionValues}
+                            style={{
+                                paddingTop: props.header ? props.headerHeight : 0,
+                            }}
                             onChange={handleElementChange}
                         />
                     )}
                     {dialog === DIALOGS.TEXT && (
                         <TextDialog
-                            className={!!props.header ? "pt:20" : ""}
                             values={selectionValues}
+                            style={{
+                                paddingTop: props.header ? props.headerHeight : 0,
+                            }}
                             onChange={handleElementChange}
                         />
                     )}
                     {dialog === DIALOGS.SHAPE && (
                         <ShapeDialog
-                            className={!!props.header ? "pt:20" : ""}
                             values={selectionValues}
+                            style={{
+                                paddingTop: props.header ? props.headerHeight : 0,
+                            }}
                             onChange={handleElementChange}
                         />
                     )}
                     {dialog === DIALOGS.ARROWHEAD && (
                         <ArrowheadDialog
-                            className={!!props.header ? "pt:20" : ""}
                             values={selectionValues}
+                            style={{
+                                paddingTop: props.header ? props.headerHeight : 0,
+                            }}
                             onChange={handleElementChange}
                         />
                     )}
                 </React.Fragment>
             )}
-            {!isScreenshot && !!props.header && (
-                <div className="position:absolute top:0 right:0 pt:4 px:4 z:7 w:full">
-                    {props.header}
+            {!isScreenshot && props.header && (
+                <React.Fragment>
+                    {!!props.headerLeftContent && (
+                        <div className="position:absolute top:0 left:0 pt:4 pl:4 z:7">
+                            {props.headerLeftContent}
+                        </div>
+                    )}
+                    {!!props.headerRightContent && (
+                        <div className="position:absolute top:0 right:0 pt:4 pr:4 z:7">
+                            {props.headerRightContent}
+                        </div>
+                    )}
+                </React.Fragment>
+            )}
+            {!isScreenshot && props.footer && (
+                <div className="position:absolute bottom:0 left:0 pb:4 px:4 z:7 w:full">
+                    {props.footerContent}
                 </div>
             )}
             {/* Image input reference */}
@@ -178,10 +212,16 @@ export const Layout = props => {
 Layout.defaultProps = {
     grid: false,
     background: DEFAULT_BACKGROUND,
-    header: null,
-    showZoom: true,
-    showHistory: true,
-    showTools: true,
-    showEdition: true,
+    header: false,
+    headerHeight: "5rem",
+    headerLeftContent: null,
+    headerRightContent: null,
+    footer: false,
+    footerHeight: "3em",
+    footerContent: null,
+    zoom: true,
+    history: true,
+    tools: true,
+    edition: true,
     onChange: null,
 };

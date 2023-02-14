@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import {STROKES, STROKE_WIDTHS, COLORS} from "folio-core";
 import {OPACITY_STEP, OPACITY_MIN, OPACITY_MAX} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
@@ -45,7 +44,7 @@ const options = {
 };
 
 export const StrokeDialog = props => (
-    <Dialog className={classNames("pt:4 right:0 top:0 pr:28", props.className)}>
+    <Dialog className={props.className} style={props.style}>
         <Form
             data={props.values || {}}
             items={options}
@@ -55,7 +54,8 @@ export const StrokeDialog = props => (
 );
 
 StrokeDialog.defaultProps = {
-    className: "",
+    className: "pt:4 right:0 top:0 pr:28",
+    style: {},
     values: {},
     onChange: null,
 };

@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import {DIALOGS} from "../../constants.js";
 import {Panel, PanelTextButton} from "./Panel.jsx";
 import {
@@ -38,7 +37,7 @@ const getButtonProps = (props, type, test) => {
 };
 
 export const EditionPanel = props => (
-    <Panel direction="col" className={classNames("top:0 right:0 pt:4 pr:4", props.className)}>
+    <Panel direction="col" className={props.className} style={props.style}>
         {/* Style buttons */}
         <PanelTextButton text="Fill" {...getButtonProps(props, DIALOGS.FILL, "fillColor")}>
             <FillIcon />
@@ -87,7 +86,8 @@ export const EditionPanel = props => (
 );
 
 EditionPanel.defaultProps = {
-    className: "",
+    className: "top:0 right:0 pt:4 pr:4",
+    style: {},
     elements: [],
     dialog: null,
     // activeGroup: null,

@@ -1,7 +1,12 @@
 import React from "react";
 import classNames from "classnames";
 import {Button} from "../commons/Button.jsx";
-import {Dropdown} from "../commons/Dropdown.jsx";
+import {Dropdown, DropdownItem} from "../commons/Dropdown.jsx";
+
+// Just a tiny wrapper around the DropdownItem
+export const MenuItem = props => (
+    <DropdownItem {...props} />
+);
 
 export const Menu = props => (
     <div className="d:flex position:relative group" tabIndex="0">
@@ -20,8 +25,9 @@ export const Menu = props => (
                     "top:full left:0": props.align === "left",
                     "top:full right:0": props.align === "right",
                 })}
-                items={props.items}
-            />
+            >
+                {props.children}
+            </Dropdown>
         )}
     </div>
 );
@@ -31,5 +37,4 @@ Menu.defaultProps = {
     text: null,
     icon: null,
     disabled: false,
-    items: [],
 };
