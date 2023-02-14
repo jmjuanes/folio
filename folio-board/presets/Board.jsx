@@ -17,8 +17,18 @@ const BoardWrapper = props => {
     // Initialize board API
     if (props.folioRef && !props.folioRef.current) {
         props.folioRef.current = {
-            addToast: addToast,
-            showConfirm: showConfirm,
+            forceUpdate: () => board.update(),
+            // Board content
+            getElements: () => board.elements,
+            getAssets: () => board.assets,
+            addAsset: data => board.addAsset(data),
+            reset: () => board.reset(),
+            // History API
+            undo: () => board.undo(),
+            redo: () => board.redo(),
+            // Extra actions
+            addToast: message => addToast(message),
+            showConfirm: message => showConfirm(message),
         };
     }
 
