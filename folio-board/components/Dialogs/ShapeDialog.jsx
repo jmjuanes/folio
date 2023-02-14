@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import {SHAPES} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
@@ -25,7 +24,7 @@ const options = {
 };
 
 export const ShapeDialog = props => (
-    <Dialog className={classNames("pt:4 right:0 top:0 pr:28", props.className)} width="10rem">
+    <Dialog className={props.className} style={props.style} width="10rem">
         <Form
             data={props.values || {}}
             items={options}
@@ -35,7 +34,8 @@ export const ShapeDialog = props => (
 );
 
 ShapeDialog.defaultProps = {
-    className: "",
+    className: "pt:4 right:0 top:0 pr:28",
+    style: {},
     values: {},
     onChange: null,
 };

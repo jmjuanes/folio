@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import {COLORS, TEXT_SIZES, FONT_FACES} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
@@ -28,7 +27,7 @@ const options = {
 };
 
 export const TextDialog = props => (
-    <Dialog className={classNames("pt:4 right:0 top:0 pr:28", props.className)}>
+    <Dialog className={props.className} style={props.style}>
         <Form
             data={props.values || {}}
             items={options}
@@ -38,7 +37,8 @@ export const TextDialog = props => (
 );
 
 TextDialog.defaultProps = {
-    className: "",
+    className: "pt:4 right:0 top:0 pr:28",
+    style: {},
     values: {},
     onChange: null,
 };

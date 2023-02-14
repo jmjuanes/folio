@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import {ARROWHEADS} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
@@ -37,7 +36,7 @@ const options = {
 };
 
 export const ArrowheadDialog = props => (
-    <Dialog className={classNames("right:0 top:0 pt:4 pr:28", props.className)} width="11rem">
+    <Dialog className={props.className} style={props.style} width="11rem">
         <Form
             data={props.values || {}}
             items={options}
@@ -47,7 +46,8 @@ export const ArrowheadDialog = props => (
 );
 
 ArrowheadDialog.defaultProps = {
-    className: "",
+    className: "right:0 top:0 pt:4 pr:28",
     values: {},
+    style: {},
     onChange: null,
 };
