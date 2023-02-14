@@ -64,7 +64,7 @@ export const Layout = props => {
                     action={board.activeAction}
                     tool={board.activeTool}
                     style={{
-                        paddingTop: props.header ? props.headerHeight : 0,
+                        paddingTop: props.header ? props.headerHeight : null,
                     }}
                     onMoveClick={() => {
                         board.setAction(ACTIONS.MOVE);
@@ -89,7 +89,7 @@ export const Layout = props => {
                     undoDisabled={board.isUndoDisabled()}
                     redoDisabled={board.isRedoDisabled()}
                     style={{
-                        paddingBottom: props.footer ? props.footerHeight : 0,
+                        paddingBottom: props.footer ? props.footerHeight : null,
                     }}
                     onUndoClick={() => board.undo()}
                     onRedoClick={() => board.redo()}
@@ -99,7 +99,7 @@ export const Layout = props => {
                 <ZoomPanel
                     zoom={board.zoom}
                     style={{
-                        paddingBottom: props.footer ? props.footerHeight : 0,
+                        paddingBottom: props.footer ? props.footerHeight : null,
                     }}
                     onZoomInClick={() => board.zoomIn()}
                     onZoomOutClick={() => board.zoomOut()}
@@ -110,7 +110,7 @@ export const Layout = props => {
                     elements={selectedElements}
                     dialog={dialog}
                     style={{
-                        paddingTop: props.header ? props.headerHeight : 0,
+                        paddingTop: props.header ? props.headerHeight : null,
                     }}
                     onDialogClick={id => setDialog(id)}
                     onRemoveClick={() => {
