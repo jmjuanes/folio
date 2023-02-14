@@ -1,11 +1,10 @@
 import React from "react";
-import cn from "classnames";
 import {ZOOM_MIN, ZOOM_MAX} from "folio-core";
 import {Panel, PanelButton} from "./Panel.jsx";
 import {ZoomInIcon, ZoomOutIcon} from "../icons/index.jsx";
 
 export const ZoomPanel = props => (
-    <Panel className={cn("bottom:0 right:0 pb:4 pr:4", props.className)}>
+    <Panel className={props.className} style={props.style}>
         <PanelButton disabled={props.zoom <= ZOOM_MIN} onClick={props.onZoomOutClick}>
             <ZoomOutIcon />
         </PanelButton>
@@ -19,7 +18,8 @@ export const ZoomPanel = props => (
 );
 
 ZoomPanel.defaultProps = {
-    className: "",
+    className: "bottom:0 right:0 pb:4 pr:4",
+    style: {},
     zoom: 1,
     onZoomInClick: null,
     onZoomOutClick: null,

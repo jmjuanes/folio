@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import {ELEMENTS} from "folio-core";
 import {ACTIONS} from "../../constants.js";
 import {Panel, PanelTextButton} from "./Panel.jsx";
@@ -15,7 +14,7 @@ import {
 } from "../icons/index.jsx";
 
 export const ToolsPanel = props => (
-    <Panel direction="col" className={classNames("top:0 left:0 pt:4 pl:4", props.className)}>
+    <Panel direction="col" className={props.className} style={props.style}>
         <PanelTextButton
             text="Drag"
             active={props.action === ACTIONS.MOVE}
@@ -51,7 +50,8 @@ export const ToolsPanel = props => (
 );
 
 ToolsPanel.defaultProps = {
-    className: "",
+    className: "top:0 left:0 pt:4 pl:4", 
+    style: {},
     action: null,
     tool: null,
     // shape: null,
