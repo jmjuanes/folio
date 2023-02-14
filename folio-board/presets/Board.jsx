@@ -44,52 +44,58 @@ const BoardWrapper = props => {
                 grid={props.grid}
                 background={props.background}
                 header={props.header}
-                headerLeftContent={props.headerLeftContent || (
-                    <Menu icon={(<BarsIcon />)}>
-                        {props.boardActions?.load !== false && (
-                            <MenuItem
-                                icon={(<FolderIcon />)}
-                                text="Open..."
-                                onClick={props.onLoad}
-                            />
-                        )}
-                        {props.boardActions?.save !== false && (
-                            <MenuItem
-                                icon={(<DownloadIcon />)}
-                                text="Save as..."
-                                onClick={props.onSave}
-                            />
-                        )}
-                        {props.boardActions?.reset !== false && (
-                            <MenuItem
-                                icon={(<TrashIcon />)}
-                                text="Reset the board"
-                                onClick={props.onReset}
-                            />
-                        )}
-                    </Menu>
-                )}
-                headerRightContent={props.headerRightContent || (
+                headerLeftContent={(
                     <div className="d:flex gap:2">
-                        <Menu text="Export" icon={(<ImageIcon />)} align="right">
-                            {props.boardActions?.exportPng !== false && (
+                        <Menu icon={(<BarsIcon />)}>
+                            {props.boardActions?.load !== false && (
                                 <MenuItem
-                                    icon={(<ImageIcon />)}
-                                    text="Export as PNG"
-                                    onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
+                                    icon={(<FolderIcon />)}
+                                    text="Open..."
+                                    onClick={props.onLoad}
                                 />
                             )}
-                            {props.boardActions?.exportSvg !== false && (
+                            {props.boardActions?.save !== false && (
                                 <MenuItem
-                                    icon={(<CodeIcon />)}
-                                    text="Export as SVG"
-                                    onClick={() => props.onExport?.(EXPORT_FORMATS.SVG)}
+                                    icon={(<DownloadIcon />)}
+                                    text="Save as..."
+                                    onClick={props.onSave}
+                                />
+                            )}
+                            {props.boardActions?.reset !== false && (
+                                <MenuItem
+                                    icon={(<TrashIcon />)}
+                                    text="Reset the board"
+                                    onClick={props.onReset}
                                 />
                             )}
                         </Menu>
+                        {props.customHeaderLeftContent}
                     </div>
                 )}
-                footer={props.footer}
+                headerRightContent={(
+                    <div className="d:flex gap:2">
+                        {props.customHeaderRightContent}
+                        {(props.boardActions?.exportPng !== false || props.boardActions?.exportSvg !== false) && (
+                            <Menu text="Export" icon={(<ImageIcon />)} align="right">
+                                {props.boardActions?.exportPng !== false && (
+                                    <MenuItem
+                                        icon={(<ImageIcon />)}
+                                        text="Export as PNG"
+                                        onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
+                                    />
+                                )}
+                                {props.boardActions?.exportSvg !== false && (
+                                    <MenuItem
+                                        icon={(<CodeIcon />)}
+                                        text="Export as SVG"
+                                        onClick={() => props.onExport?.(EXPORT_FORMATS.SVG)}
+                                    />
+                                )}
+                            </Menu>
+                        )}
+                    </div>
+                )}
+                footer={false}
                 onChange={props.onChange}
             />
             <Confirm />
@@ -117,10 +123,8 @@ Board.defaultProps = {
     elements: [],
     assets: {},
     boardActions: {},
-    header: true,
-    headerLeftContent: null,
-    headerRightContent: null,
-    footer: false,
+    customHeaderLeftContent: null,
+    custonHeaderRightContent: null,
     onChange: null,
     onExport: null,
     onSave: null,
