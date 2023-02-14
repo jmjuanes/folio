@@ -1,12 +1,12 @@
 import React from "react";
 import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
-import {ImageIcon, CodeIcon} from "@mochicons/react";
+import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
 import {EXPORT_FORMATS} from "folio-core";
-import {DEFAULT_BACKGROUND} from "../constants.js";
+import {DEFAULT_BACKGROUND, ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
 import {ToastProvider, useToast} from "../contexts/ToastContext.jsx";
-import {Layout, Renderer, Confirm, Toaster} from "../components/commons/index.jsx";
+import {Layout, Renderer, Button, Confirm, Toaster} from "../components/commons/index.jsx";
 import {Menu, MenuItem} from "../components/View/Menu.jsx";
 
 const BoardWrapper = props => {
@@ -75,6 +75,18 @@ const BoardWrapper = props => {
                 headerRightContent={(
                     <div className="d:flex gap:2">
                         {props.customHeaderRightContent}
+                        {props.boardActions?.screenshot !== false && (
+                            <Button
+                                className="bg:white bg:light-300:hover b:1 b:light-900 b:solid"
+                                icon={(<CameraIcon />)}
+                                iconClassName="text:lg"
+                                disabled={board.elements.length === 0}
+                                onClick={() => {
+                                    board.setAction(ACTIONS.SCREENSHOT);
+                                    board.update();
+                                }}
+                            />
+                        )}
                         {(props.boardActions?.exportPng !== false || props.boardActions?.exportSvg !== false) && (
                             <Menu text="Export" icon={(<ImageIcon />)} align="right">
                                 {props.boardActions?.exportPng !== false && (
@@ -130,4 +142,5 @@ Board.defaultProps = {
     onSave: null,
     onLoad: null,
     onReset: null,
+    onScreenshot: null,
 };
