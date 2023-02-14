@@ -1,26 +1,25 @@
-import TestRenderer from "react-test-renderer";
+import {create} from "react-test-renderer";
 import {Dropdown, DropdownItem} from "./Dropdown.jsx";
 
 describe("Dropdown", () => {
     it("should render", () => {
-        const testRenderer = TestRenderer.create((
-            <Dropdown
-                items={[
-                    {text: "Item 1"},
-                    {text: "Item 2"},
-                ]}
-            />
+        const testRenderer = create((
+            <Dropdown>
+                <DropdownItem text="Item 1" />
+                <DropdownItem text="Item 2" />
+            </Dropdown>
         ));
 
         expect(testRenderer.toJSON()).toMatchSnapshot();
     });
 
     it("should render the provided items", () => {
-        const items = [
-            {text: "Item 1"},
-            {text: "Item 2"},
-        ];
-        const testRenderer = TestRenderer.create(<Dropdown items={items} />);
+        const testRenderer = create((
+            <Dropdown>
+                <DropdownItem text="Item 1" />
+                <DropdownItem text="Item 2" />
+            </Dropdown>
+        ));
         const testInstance = testRenderer.root;
         const childItems = testInstance.findAllByType(DropdownItem);
 
@@ -30,10 +29,11 @@ describe("Dropdown", () => {
 
     it("should call the provided onClick listener", () => {
         const mockFn = jest.fn();
-        const items = [
-            {text: "Item 1", onClick: mockFn},
-        ];
-        const testRenderer = TestRenderer.create(<Dropdown items={items} />);
+        const testRenderer = create((
+            <Dropdown>
+                <DropdownItem text="Item 1" onClick={mockFn} />
+            </Dropdown>
+        ));
 
         // Run the onClick method
         testRenderer.root.findByType(DropdownItem).props.onClick();

@@ -37,14 +37,11 @@ DropdownItem.defaultProps = {
 export const Dropdown = props => (
     <div className={classNames(props.className, "position:absolute mt:1")}>
         <div className="bg:white shadow:md w:56 p:3 r:lg d:flex flex:col gap:0">
-            {props.items.map((item, index) => (
-                <DropdownItem key={index} {...item} />
-            ))}
+            {props.children}
         </div>
     </div>
 );
 
 Dropdown.defaultProps = {
     className: "top:0 left:0",
-    items: [],
 };
