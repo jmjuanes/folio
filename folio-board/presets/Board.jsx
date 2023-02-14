@@ -82,8 +82,10 @@ const BoardWrapper = props => {
                                 iconClassName="text:lg"
                                 disabled={board.elements.length === 0}
                                 onClick={() => {
-                                    board.setAction(ACTIONS.SCREENSHOT);
-                                    board.update();
+                                    if (board.elements.length > 0) {
+                                        board.setAction(ACTIONS.SCREENSHOT);
+                                        board.update();
+                                    }
                                 }}
                             />
                         )}
