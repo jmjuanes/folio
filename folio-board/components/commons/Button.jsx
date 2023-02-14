@@ -6,7 +6,7 @@ export const Button = props => {
         "d:flex items:center justify:center gap:2 select:none": true,
         "p:3 r:lg": true,
         "cursor:pointer": !props.disabled,
-        "o:80 cursor:not-allowed": props.disabled,
+        "o:70 cursor:not-allowed": props.disabled,
     });
 
     return (
