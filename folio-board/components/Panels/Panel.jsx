@@ -5,7 +5,6 @@ import classNames from "classnames";
 export const Panel = props => {
     const panelWrapperClass = classNames(props.className, {
         "position:absolute z:5 select:none": true,
-        "b:1 b:solid b:light-900": true,
         // "top:0 left:0 pl:4 pt:4": props.position === "top-left",
         // "top:0 right:0 pr:4 pt:4": props.position === "top-right",
         // "bottom:0 left:0 pb:4 pl:4": props.position === "bottom-left",
@@ -18,7 +17,7 @@ export const Panel = props => {
         ...props.style,
     };
     const panelContentClass = classNames({
-        // "b-1 b-solid b-gray-900": true,
+        "b:1 b:solid b:light-900": true,
         "r:lg shadow:md items:center bg:white d:flex gap:2 p:2": true,
         // "flex:col": props.position === "top-left" || props.position === "top-right",
         "flex:col": props.direction === "col",

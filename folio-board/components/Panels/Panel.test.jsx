@@ -1,24 +1,31 @@
 import {create} from "react-test-renderer";
-
 import {Panel, PanelButton} from "./Panel.jsx";
 
 describe("Panel", () => {
     it("should render", () => {
-        const component = create(<Panel position="top-left" />);
+        const component = create((
+            <Panel position="top-left">
+                CONTENT
+            </Panel>
+        ));
 
-        expect(component.toJSON).toMatchSnapshot();
+        expect(component.toJSON()).toMatchSnapshot();
     });
 });
 
 describe("PanelButton", () => {
     it("should render", () => {
-        const component = create(<Panel position="top-left" />);
+        const component = create((
+            <PanelButton>CONTENT</PanelButton>
+        ));
 
-        expect(component.toJSON).toMatchSnapshot();
+        expect(component.toJSON()).toMatchSnapshot();
     });
 
     it("should have the 'is-active' class when the active prop is 'true'", () => {
-        const component = create(<PanelButton active={true} />);
+        const component = create((
+            <PanelButton active={true} />
+        ));
         const root = component.root;
 
         expect(root.findByType("div").props.className).toEqual(
@@ -27,7 +34,9 @@ describe("PanelButton", () => {
     });
 
     it("should have the 'is-disabled' class when the disabled prop is 'true'", () => {
-        const component = create(<PanelButton disabled={true} />);
+        const component = create((
+            <PanelButton disabled={true} />
+        ));
         const root = component.root;
 
         expect(root.findByType("div").props.className).toEqual(
