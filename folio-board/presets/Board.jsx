@@ -43,7 +43,7 @@ const BoardWrapper = props => {
             <Layout
                 grid={props.grid}
                 background={props.background}
-                header={props.header}
+                header={true}
                 headerLeftContent={(
                     <div className="d:flex gap:2">
                         <Menu icon={(<BarsIcon />)}>
