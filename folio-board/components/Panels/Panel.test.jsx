@@ -4,7 +4,9 @@ import {Panel, PanelButton} from "./Panel.jsx";
 describe("Panel", () => {
     it("should render", () => {
         const component = create((
-            <Panel position="top-left" />
+            <Panel position="top-left">
+                CONTENT
+            </Panel>
         ));
 
         expect(component.toJSON()).toMatchSnapshot();
@@ -14,7 +16,7 @@ describe("Panel", () => {
 describe("PanelButton", () => {
     it("should render", () => {
         const component = create((
-            <PanelButton>Hello</PanelButton>
+            <PanelButton>CONTENT</PanelButton>
         ));
 
         expect(component.toJSON()).toMatchSnapshot();
