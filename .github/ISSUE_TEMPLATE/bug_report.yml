@@ -1,0 +1,34 @@
+name: "🐛 Report a bug"
+description: "Okay, Houston... I think we've had a problem here..."
+title: "Bug: "
+labels: ["under-investigation"]
+body:
+  - type: textarea
+    attributes:
+      label: "Describe the issue"
+      description: "Please provide a clear and concise description of the bug or issue."
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "To reproduce"
+      description: "Steps to reproduce the issue. If possible, add screenshots to help explain yout problem."
+    validations:
+      required: true
+  
+  - type: dropdown
+    attributes:
+      label: "What browser(s) are you seeing the problem on?"
+      multiple: true
+      options:
+        - Chrome
+        - Safari
+        - Firefox
+        - Microsoft Edge
+        - Opera
+
+  - type: textarea
+    attributes:
+      label: "Additional context"
+      description: "You can add any other context about the problem here..."
