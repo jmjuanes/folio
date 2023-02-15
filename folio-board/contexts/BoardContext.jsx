@@ -106,7 +106,7 @@ const createBoard = props => ({
     getAssetData(id) {
         return this.assets[id]?.dataUrl || "";
     },
-    addAsset(data, type) {
+    addAsset(data) {
         // First we need to check if this asset is already registered
         let assetId = Object.keys(this.assets).find(assetId => {
             return this.assets[assetId]?.dataUrl === data;
@@ -117,7 +117,8 @@ const createBoard = props => ({
             this.assets[assetId] = {
                 id: assetId,
                 createdAt: Date.now(),
-                type: type || "image/png",
+                type: data.substring(data.indexOf(":") + 1, data.indexOf(";")),
+                size: data.length,
                 dataUrl: data,
             };
         }
