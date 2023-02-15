@@ -14,7 +14,7 @@ const optionTypes = {
         <div className="w:full">
             <div className="d:flex items:center gap:2 w:full mb:2">
                 <div
-                    className="d:flex r:md p:4 h:10 w:10 b:1 b:solid b:dark-100"
+                    className="d:flex r:md p:4 h:10 w:10 b:1 b:solid b:light-900"
                     style={{
                         backgroundColor: props.value !== "transparent" ? props.value : null,
                         backgroundImage: props.value === "transparent" ? `url('data:image/svg+xml;utf-8,${transparent}')` : null,
@@ -26,8 +26,11 @@ const optionTypes = {
                 <input
                     type="text"
                     data-field={props.field}
-                    className="w:full px:4 py:0 h:10 bg:light-300 r:md outline:0 b:0"
+                    className="w:full px:4 py:0 h:10 bg:white r:md outline:0 b:1 b:solid b:light-900 text:sm"
                     defaultValue={props.value}
+                    style={{
+                        fontFamily: "monospace",
+                    }}
                     onChange={event => props.onChange(event.target.value || COLORS.BLACK)}
                 />
             </div>
@@ -35,7 +38,7 @@ const optionTypes = {
                 {(props.values || []).map(color => (
                     <div
                         key={color}
-                        className="d:flex p:4 r:md cursor:pointer b:1 b:solid b:dark-100"
+                        className="d:flex p:4 r:md cursor:pointer b:1 b:solid b:light-900"
                         style={{
                             backgroundColor: color !== "transparent" ? color : null,
                             backgroundImage: color === "transparent" ? `url('data:image/svg+xml;utf-8,${transparent}')` : null,
