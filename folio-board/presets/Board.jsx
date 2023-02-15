@@ -4,17 +4,12 @@ import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
 import {EXPORT_FORMATS} from "folio-core";
 import {DEFAULT_BACKGROUND, ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
-import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
-import {ToastProvider, useToast} from "../contexts/ToastContext.jsx";
-import {Layout, Renderer, Button, Confirm, Toaster} from "../components/commons/index.jsx";
+import {Layout, Renderer, Button} from "../components/commons/index.jsx";
 import {Menu, MenuItem} from "../components/View/Menu.jsx";
 
 const BoardWrapper = props => {
     const board = useBoard();
-    const {addToast} = useToast();
-    const {showConfirm} = useConfirm();
 
-    // Initialize board API
     if (props.folioRef && !props.folioRef.current) {
         props.folioRef.current = {
             forceUpdate: () => board.update(),
@@ -26,9 +21,6 @@ const BoardWrapper = props => {
             // History API
             undo: () => board.undo(),
             redo: () => board.redo(),
-            // Extra actions
-            addToast: message => addToast(message),
-            showConfirm: message => showConfirm(message),
         };
     }
 
@@ -112,8 +104,6 @@ const BoardWrapper = props => {
                 footer={false}
                 onChange={props.onChange}
             />
-            <Confirm />
-            <Toaster />
         </div>
     );
 };
@@ -124,11 +114,7 @@ export const Board = React.forwardRef((props, ref) => (
         assets={props.assets}
         onChange={props.onChange}
         render={() => ((
-            <ConfirmProvider>
-                <ToastProvider>
-                    <BoardWrapper {...props} folioRef={ref} />
-                </ToastProvider>
-            </ConfirmProvider>
+            <BoardWrapper {...props} folioRef={ref} />
         ))}
     />
 ));

@@ -1,4 +1,5 @@
 import React from "react";
+import {Confirm} from "../components/commons/index.jsx";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
@@ -49,6 +50,7 @@ export const ConfirmProvider = props => {
     return (
         <ConfirmContext.Provider value={{confirm, showConfirm, hideConfirm}}>
             {props.children}
+            <Confirm />
         </ConfirmContext.Provider>
     );
 };

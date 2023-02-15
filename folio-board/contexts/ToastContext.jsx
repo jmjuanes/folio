@@ -1,4 +1,5 @@
 import React from "react";
+import {Toaster} from "../components/commons/index.jsx";
 
 const ADD_TOAST = "add_toast";
 const REMOVE_TOAST = "remove_toast";
@@ -45,6 +46,7 @@ export const ToastProvider = props => {
     return (
         <ToastContext.Provider value={{toasts, addToast, removeToast}}>
             {props.children}
+            <Toaster />
         </ToastContext.Provider>
     );
 };

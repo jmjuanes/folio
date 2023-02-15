@@ -1,20 +1,28 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import classNames from "classnames";
-import {exportToFile} from "folio-core";
+import * as idb from "idb-keyval";
+import {fileOpen, fileSave} from "browser-fs-access";
+import {VERSION, MIME_TYPES, FILE_EXTENSIONS, EXPORT_FORMATS} from "folio-core";
+import {exportToFile, exportToClipboard} from "folio-core";
 import {Board} from "folio-board";
+import {ToastProvider, useToast} from "folio-board";
+import {ConfirmProvider, useConfirm} from "folio-board";
 
-import {useDebounce} from "./hooks/useDebounce.js";
-import {useDelay} from "./hooks/useDelay.js";
-import {getStore} from "./data/store.js";
-import {loadFromFileSystem, saveToFilesystem} from "./data/filesystem.js";
+// Store keys for IDB
+const STORE_KEYS = {
+    VERSION: "version",
+    STATE: "state",
+};
 
-const App = () => {
-    const storeRef = React.useRef(null);
+// Global store
+const store = idb.createStore("folio", "folio-store");
+
+const App = props => {
+    const boardRef = React.useRef(null);
+    const {addToast} = useToast();
+    const {showConfirm} = useConfirm();
     const [state, setState] = React.useReducer((prev, state) => ({...prev, ...state}), {});
-    // const [loadingVisible, setLoadingVisible] = React.useState(true);
-    // const [welcomeVisible, setWelcomeVisible] = React.useState(false);
-
     const classList = classNames({
         "position:fixed top:0 left:0 h:full w:full": true,
         "bg:white text:base text:dark-700": true,
@@ -22,15 +30,26 @@ const App = () => {
     });
 
     // Debounce the data saving to store
-    useDebounce(state, 250, () => {
-        state?.id && storeRef.current.set(state);
-    });
+    React.useEffect(() => {
+        const callback = () => {
+            state.id && idb.set(STORE_KEYS.STATE, state, store);
+        };
+        const handler = setTimeout(() => callback(), props.delaySave);
+
+        return () => clearTimeout(handler);
+    }, [state]);
 
     // Initialize board store
-    useDelay(100, () => {
-        storeRef.current = getStore();
-        storeRef.current.init()
-            .then(() => storeRef.current.get())
+    React.useEffect(() => {
+        const initializeStore = async () => {
+            if ((await idb.keys(store)).length === 0) {
+                await idb.set("version", VERSION, store);
+            }
+            return true;
+        };
+
+        initializeStore()
+            .then(() => idb.get(STORE_KEYS.STATE, store))
             .then(prevState => {
                 setState({...prevState, id: Date.now()});
                 // Check if is the first time in the application
@@ -40,58 +59,126 @@ const App = () => {
                 // }
                 // setLoadingVisible(false);
             });
-    });
+    }, []);
+
+    // Handle file save
+    const handleFileSave = () => {
+        const content = JSON.stringify({
+            elements: state.elements || [],
+            assets: state.assets || {},
+            version: VERSION,
+        });
+        const blob = new Blob([content], {
+            type: MIME_TYPES.FOLIO,
+        });
+        const options = {
+            description: "Folio board",
+            fileName: `untitled${FILE_EXTENSIONS.FOLIO}`,
+            extensions: [
+                FILE_EXTENSIONS.FOLIO,
+            ],
+        };
+
+        // Save to the file system
+        return fileSave(blob, options)
+            .then(() => addToast("Board saved to file"))
+            .catch(error => {
+                console.error(error);
+            });
+    };
 
     // Handle file load
-    const handleFileLoad = async () => {
-        const data = await loadFromFileSystem();
-        if (data) {
-            return setState({...data, id: Date.now()});
-        }
+    const handleFileLoad = () => {
+        const options = {
+            description: "Folio Board",
+            extensions: [
+                FILE_EXTENSIONS.FOLIO,
+            ],
+            multiple: false,
+        };
+        fileOpen(options)
+            .then(blob => {
+                if (!blob) {
+                    return Promise.reject(new Error("No file selected"));
+                }
+                // Load data
+                return (new Promise(resolve => {
+                    const file = new FileReader();
+                    file.onload = event => {
+                        return resolve(JSON.parse(event.target.result));
+                    };
+                    file.readAsText(blob, "utf8");
+                }));
+            })
+            .then(data => setState({...data, id: Date.now()}))
+            .catch(error => {
+                console.error(error);
+            });
     };
 
     return (
         <div className={classList}>
             <Board
                 key={state.id ?? ""}
+                ref={boardRef}
                 elements={state?.elements || []}
                 assets={state?.assets || {}}
                 onChange={newData => setState(newData)}
                 onExport={format => {
                     if (state?.elements?.length > 0) {
-                        return exportToFile(state, {
+                        return exportToFile({
+                            elements: state.elements,
                             format: format,
                         });
                     }
                 }}
-                onSave={() => saveToFilesystem(state)}
-                onLoad={() => {
-                    // Check if a change has been made to the board
+                onScreenshot={region => {
                     if (state?.elements?.length > 0) {
-                        // return showConfirm("Changes made in this board will be lost. Do you want to continue?").then(() => {
-                        //     return handleFileLoad();
-                        // });
+                        const exportOptions = {
+                            elements: state.elements,
+                            format: EXPORT_FORMATS.PNG,
+                            crop: region,
+                        };
+                        return exportToClipboard(exportOptions).then(() => {
+                            addToast("Screenshot copied to clipboard");
+                        });
+                    }
+                }}
+                onSave={() => handleFileSave()}
+                onLoad={() => {
+                    if (state?.elements?.length > 0) {
+                        return showConfirm("Changes made in this board will be lost. Do you want to continue?")
+                            .then(() => {
+                                return handleFileLoad();
+                            });
                     }
                     // Just load the new folio file
                     handleFileLoad();
                 }}
                 onReset={() => {
-                    if (state?.elements?.length > 0) {
-                        return showConfirm("This will clear the whole board. Do you want to continue?").then(() => {
-                            setState({
-                                elements: [],
-                                assets: {},
-                                id: Date.now(),
-                            });
-                        });
-                    }
+                    showConfirm("This will clear the whole board. Do you want to continue?")
+                        .then(() => setState({
+                            elements: [],
+                            assets: {},
+                            id: Date.now(),
+                        }));
                 }}
             />
         </div>
     );
 };
 
+App.defaultProps = {
+    delaySave: 250,
+};
+
 const root = document.getElementById("root");
 
 // Mount app
-createRoot(root).render((<App />));
+createRoot(root).render((
+    <ConfirmProvider>
+        <ToastProvider>
+            <App />
+        </ToastProvider>
+    </ConfirmProvider>
+));
