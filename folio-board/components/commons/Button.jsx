@@ -34,3 +34,12 @@ Button.defaultProps = {
     disabled: false,
     onClick: null,
 };
+
+export const SecondaryButton = props => (
+    <Button
+        className="bg:white bg:light-300:hover b:1 b:light-900 b:solid"
+        textClassName="text:sm"
+        iconClassName="text:lg"
+        {...props}
+    />
+);

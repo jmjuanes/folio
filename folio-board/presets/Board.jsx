@@ -4,8 +4,8 @@ import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
 import {EXPORT_FORMATS} from "folio-core";
 import {DEFAULT_BACKGROUND, ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
-import {Layout, Renderer, Button} from "../components/commons/index.jsx";
-import {Menu, MenuItem} from "../components/View/Menu.jsx";
+import {Layout, Renderer, SecondaryButton} from "../components/commons/index.jsx";
+import {Dropdown, DropdownItem} from "../components/commons/index.jsx";
 
 const BoardWrapper = props => {
     const board = useBoard();
@@ -24,29 +24,32 @@ const BoardWrapper = props => {
                 header={true}
                 headerLeftContent={(
                     <div className="d:flex gap:2">
-                        <Menu icon={(<BarsIcon />)}>
-                            {props.boardActions?.load !== false && (
-                                <MenuItem
-                                    icon={(<FolderIcon />)}
-                                    text="Open..."
-                                    onClick={props.onLoad}
-                                />
-                            )}
-                            {props.boardActions?.save !== false && (
-                                <MenuItem
-                                    icon={(<DownloadIcon />)}
-                                    text="Save as..."
-                                    onClick={props.onSave}
-                                />
-                            )}
-                            {props.boardActions?.reset !== false && (
-                                <MenuItem
-                                    icon={(<TrashIcon />)}
-                                    text="Reset the board"
-                                    onClick={props.onReset}
-                                />
-                            )}
-                        </Menu>
+                        <div className="d:flex position:relative group" tabIndex="0">
+                            <SecondaryButton icon={(<BarsIcon />)} />
+                            <Dropdown className="d:none d:block:group-focus-within top:full left:0">
+                                {props.boardActions?.load !== false && (
+                                    <DropdownItem
+                                        icon={(<FolderIcon />)}
+                                        text="Open..."
+                                        onClick={props.onLoad}
+                                    />
+                                )}
+                                {props.boardActions?.save !== false && (
+                                    <DropdownItem
+                                        icon={(<DownloadIcon />)}
+                                        text="Save as..."
+                                        onClick={props.onSave}
+                                    />
+                                )}
+                                {props.boardActions?.reset !== false && (
+                                    <DropdownItem
+                                        icon={(<TrashIcon />)}
+                                        text="Reset the board"
+                                        onClick={props.onReset}
+                                    />
+                                )}
+                            </Dropdown>
+                        </div>
                         {props.customHeaderLeftContent}
                     </div>
                 )}
@@ -54,10 +57,8 @@ const BoardWrapper = props => {
                     <div className="d:flex gap:2">
                         {props.customHeaderRightContent}
                         {props.boardActions?.screenshot !== false && (
-                            <Button
-                                className="bg:white bg:light-300:hover b:1 b:light-900 b:solid"
+                            <SecondaryButton
                                 icon={(<CameraIcon />)}
-                                iconClassName="text:lg"
                                 disabled={board.elements.length === 0}
                                 onClick={() => {
                                     if (board.elements.length > 0) {
@@ -68,22 +69,28 @@ const BoardWrapper = props => {
                             />
                         )}
                         {(props.boardActions?.exportPng !== false || props.boardActions?.exportSvg !== false) && (
-                            <Menu text="Export" icon={(<ImageIcon />)} align="right">
-                                {props.boardActions?.exportPng !== false && (
-                                    <MenuItem
-                                        icon={(<ImageIcon />)}
-                                        text="Export as PNG"
-                                        onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
-                                    />
-                                )}
-                                {props.boardActions?.exportSvg !== false && (
-                                    <MenuItem
-                                        icon={(<CodeIcon />)}
-                                        text="Export as SVG"
-                                        onClick={() => props.onExport?.(EXPORT_FORMATS.SVG)}
-                                    />
-                                )}
-                            </Menu>
+                            <div className="d:flex position:relative group" tabIndex="0">
+                                <SecondaryButton
+                                    icon={(<ImageIcon />)}
+                                    text="Export"
+                                />
+                                <Dropdown className="d:none d:block:group-focus-within top:full right:0">
+                                    {props.boardActions?.exportPng !== false && (
+                                        <DropdownItem
+                                            icon={(<ImageIcon />)}
+                                            text="Export as PNG"
+                                            onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
+                                        />
+                                    )}
+                                    {props.boardActions?.exportSvg !== false && (
+                                        <DropdownItem
+                                            icon={(<CodeIcon />)}
+                                            text="Export as SVG"
+                                            onClick={() => props.onExport?.(EXPORT_FORMATS.SVG)}
+                                        />
+                                    )}
+                                </Dropdown>
+                            </div>
                         )}
                     </div>
                 )}
