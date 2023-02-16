@@ -73,12 +73,14 @@ const BoardWrapper = props => {
                                 <SecondaryButton
                                     icon={(<ImageIcon />)}
                                     text="Export"
+                                    disabled={board.elements.length === 0}
                                 />
                                 <Dropdown className="d:none d:block:group-focus-within top:full right:0">
                                     {props.boardActions?.exportPng !== false && (
                                         <DropdownItem
                                             icon={(<ImageIcon />)}
                                             text="Export as PNG"
+                                            disabled={board.elements.length === 0}
                                             onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
                                         />
                                     )}
@@ -86,6 +88,7 @@ const BoardWrapper = props => {
                                         <DropdownItem
                                             icon={(<CodeIcon />)}
                                             text="Export as SVG"
+                                            disabled={board.elements.length === 0}
                                             onClick={() => props.onExport?.(EXPORT_FORMATS.SVG)}
                                         />
                                     )}
