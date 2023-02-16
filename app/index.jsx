@@ -19,10 +19,9 @@ const STORE_KEYS = {
 const store = idb.createStore("folio", "folio-store");
 
 const App = props => {
-    const boardRef = React.useRef(null);
     const {addToast} = useToast();
     const {showConfirm} = useConfirm();
-    const [state, setState] = React.useReducer((prev, state) => ({...prev, ...state}), {});
+    const [state, setState] = React.useState({});
     const classList = classNames({
         "position:fixed top:0 left:0 h:full w:full": true,
         "bg:white text:base text:dark-700": true,
@@ -66,7 +65,6 @@ const App = props => {
         const content = JSON.stringify({
             elements: state.elements || [],
             assets: state.assets || {},
-            version: VERSION,
         });
         const blob = new Blob([content], {
             type: MIME_TYPES.FOLIO,
@@ -80,7 +78,7 @@ const App = props => {
         };
 
         // Save to the file system
-        return fileSave(blob, options)
+        fileSave(blob, options)
             .then(() => addToast("Board saved to file"))
             .catch(error => {
                 console.error(error);
@@ -105,7 +103,7 @@ const App = props => {
                 return (new Promise(resolve => {
                     const file = new FileReader();
                     file.onload = event => {
-                        return resolve(JSON.parse(event.target.result));
+                        resolve(JSON.parse(event.target.result));
                     };
                     file.readAsText(blob, "utf8");
                 }));
@@ -120,10 +118,10 @@ const App = props => {
         <div className={classList}>
             <Board
                 key={state.id ?? ""}
-                ref={boardRef}
-                elements={state?.elements || []}
-                assets={state?.assets || {}}
-                onChange={newData => setState(newData)}
+                initialState={state}
+                onChange={newState => {
+                    setState(prevState => ({...prevState, ...newState}));
+                }}
                 onExport={format => {
                     if (state?.elements?.length > 0) {
                         return exportToFile({
@@ -148,20 +146,14 @@ const App = props => {
                 onLoad={() => {
                     if (state?.elements?.length > 0) {
                         return showConfirm("Changes made in this board will be lost. Do you want to continue?")
-                            .then(() => {
-                                return handleFileLoad();
-                            });
+                            .then(() => handleFileLoad());
                     }
                     // Just load the new folio file
                     handleFileLoad();
                 }}
                 onReset={() => {
                     showConfirm("This will clear the whole board. Do you want to continue?")
-                        .then(() => setState({
-                            elements: [],
-                            assets: {},
-                            id: Date.now(),
-                        }));
+                        .then(() => setState({id: Date.now()}));
                 }}
             />
         </div>

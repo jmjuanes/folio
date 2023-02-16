@@ -10,20 +10,6 @@ import {Menu, MenuItem} from "../components/View/Menu.jsx";
 const BoardWrapper = props => {
     const board = useBoard();
 
-    if (props.folioRef && !props.folioRef.current) {
-        props.folioRef.current = {
-            forceUpdate: () => board.update(),
-            // Board content
-            getElements: () => board.elements,
-            getAssets: () => board.assets,
-            addAsset: data => board.addAsset(data),
-            reset: () => board.reset(),
-            // History API
-            undo: () => board.undo(),
-            redo: () => board.redo(),
-        };
-    }
-
     return (
         <div className="position:relative overflow:hidden h:full w:full">
             <Renderer
@@ -108,20 +94,17 @@ const BoardWrapper = props => {
     );
 };
 
-export const Board = React.forwardRef((props, ref) => (
+export const Board = props => (
     <BoardProvider
-        elements={props.elements}
-        assets={props.assets}
-        onChange={props.onChange}
+        initialState={props.initialState}
         render={() => ((
-            <BoardWrapper {...props} folioRef={ref} />
+            <BoardWrapper {...props} />
         ))}
     />
-));
+);
 
 Board.defaultProps = {
-    elements: [],
-    assets: {},
+    initialtate: {},
     boardActions: {},
     customHeaderLeftContent: null,
     custonHeaderRightContent: null,

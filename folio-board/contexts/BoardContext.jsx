@@ -3,6 +3,7 @@ import {uid} from "uid/secure";
 import {
     ELEMENTS,
     GRID_SIZE,
+    ZOOM_DEFAULT,
     ZOOM_MAX,
     ZOOM_MIN,
     ZOOM_STEP,
@@ -21,28 +22,32 @@ import {
     DEFAULT_ARROWHEAD_START,
     DEFAULT_SHAPE,
 } from "folio-core";
-import {CHANGES} from "../constants.js";
+import {CHANGES, DEFAULT_BACKGROUND} from "../constants.js";
 import {loadImage} from "../utils/image.js";
 
 const generateRandomId = () => uid(20);
 
 const createBoard = props => ({
     id: generateRandomId(),
-    elements: [...props.elements].map(element => ({
+    elements: (props.state?.elements || []).map(element => ({
         ...element,
         selected: false,
         editing: false,
         creating: false,
     })),
-    assets: {...props.assets},
+    assets: {
+        ...props.state?.assets,
+    },
     history: [],
     historyIndex: 0,
     activeAction: null,
     activeTool: null,
     activeElement: null,
-    zoom: 1,
-    translateX: 0,
-    translateY: 0,
+    zoom: props.state?.zoom ?? ZOOM_DEFAULT,
+    translateX: props.state?.translateX ?? 0,
+    translateY: props.state?.translateY ?? 0,
+    grid: props.state?.grid ?? true,
+    background: props.state?.background ?? DEFAULT_BACKGROUND,
     selection: null,
     defaults: {
         fillColor: DEFAULT_FILL_COLOR,
@@ -62,12 +67,7 @@ const createBoard = props => ({
     update() {
         return props?.onUpdate?.();
     },
-    reset() {
-        this.elements = [];
-        this.assets = {};
-        this.history = [];
-        this.historyIndex = 0;
-    },
+
     copy() {
         const elements = this.getSelectedElements();
         const allAssets = this.assets;
@@ -478,9 +478,7 @@ export const BoardProvider = props => {
 
     if (!board.current) {
         board.current = createBoard({
-            elements: props.elements,
-            assets: props.assets,
-            onChange: props.onChange,
+            state: props.initialState || {},
             onUpdate: forceUpdate,
         });
     }
@@ -493,9 +491,6 @@ export const BoardProvider = props => {
 };
 
 BoardProvider.defaultProps = {
-    elements: [],
-    assets: {},
-    onChange: null,
-    onUpdate: null,
+    initialState: {},
     render: null,
 };
