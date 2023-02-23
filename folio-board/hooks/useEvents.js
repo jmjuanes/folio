@@ -206,7 +206,11 @@ export const useEvents = callbacks => {
                         elements: board.elements,
                     });
                     board.activeElement = null;
-                    board.activeTool = null; // reset active tool
+                    // Check if the tool is not the handdraw
+                    // TODO: we need also to check if lock is enabled
+                    if (board.activeTool !== ELEMENTS.DRAW) {
+                        board.activeTool = null;
+                    }
                     // Terrible hack to enable editing in a text element
                     if (element.type === ELEMENTS.TEXT) {
                         element.editing = true;
