@@ -83,7 +83,7 @@ export const measureText = (text, textSize, textFont) => {
             document.body.appendChild(measureText.container);
         }
         // .replace(/\r\n?/g, "\n"); // .split("\n").join("<br>");
-        measureText.container.innerHTML = text.charAt(text.length - 1) === "\n" ? text + " " : text;
+        measureText.container.textContent = text.charAt(text.length - 1) === "\n" ? text + " " : text;
         measureText.container.style.fontFamily = textFont;
         measureText.container.style.fontSize = textSize + "px";
         width = measureText.container.offsetWidth; // Set computed width
