@@ -42,7 +42,6 @@ const getSvgImage = options => {
         const bounds = getRectangleBounds(elements);
         // 1. Create a new SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
         // 2. Set new svg attributes
         svg.setAttribute("style", ""); // Reset style
@@ -51,17 +50,13 @@ const getSvgImage = options => {
         // 3. Set svg style
         svg.style.backgroundColor = options?.background || "#fff";
         // 4. Set internal styles
-        if (options.fonts) {
-            style.textContent = `
-                ${(options.fonts || []).map(font => (`
-                    @font-face {
-                        font-family: ${typeof font === "string" ? font : font.family};
-                        font-weight: ${font?.weight || "400"};
-                        font-style: normal;
-                    }
-                `)).join("\n")}
-            `;
-            svg.appendChild(style);
+        if (options?.fonts && options.fonts?.length > 0) {
+            const styleElement = document.createElementNS("http://www.w3.org/2000/svg", "style");
+            const styleContent = (options.fonts || [])
+                .map(font => `@import url('${font}');`)
+                .join("\n");
+            styleElement.textContent = styleContent;
+            svg.appendChild(styleElement);
         }
         // 5. Set group attributes
         group.setAttribute("transform", `translate(-${bounds.x1} -${bounds.y1})`);
@@ -84,9 +79,7 @@ const getSvgImage = options => {
 // Get image in PNG format
 const getPngImage = options => {
     return new Promise((resolve, reject) => {
-        // Initialize canvas to render SVG image
         const canvas = document.createElement("canvas");
-        // Initialize image
         const img = new Image();
         // img.setAttribute("crossorigin", "anonymous");
         // img.crossOrigin = "anonymous";
