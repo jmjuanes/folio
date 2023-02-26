@@ -1,5 +1,5 @@
 import React from "react";
-import {EVENTS} from "../constants.js";
+import {EVENTS, FONT_SOURCES} from "../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
@@ -156,6 +156,9 @@ export const Canvas = props => {
             onPointerDown={e => handlePointerDown(e, null, props.onPointCanvas)}
             onDoubleClick={e => handleDoubleClick(e, null, props.onDoubleClickCanvas)}
         >
+            <style type="text/css">
+                {props.fonts.map(font => `@import url('${font}');`).join("")}
+            </style>
             <g transform={transform.join(" ")}>
                 {props.showGrid && (
                     <Grid
@@ -217,6 +220,7 @@ Canvas.defaultProps = {
     backgroundColor: "#fafafa",
     elements: [],
     assets: {},
+    fonts: Object.values(FONT_SOURCES),
     translateX: 0,
     translateY: 0,
     zoom: 1,
