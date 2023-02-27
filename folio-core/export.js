@@ -1,4 +1,4 @@
-import {EXPORT_FORMATS, FILE_EXTENSIONS} from "./constants.js";
+import {EXPORT_FORMATS, FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
 import {getRectangleBounds} from "./math.js";
 
 // Convert a blob to file
@@ -35,14 +35,48 @@ const blobToDataUrl = blob => {
     });
 };
 
+const importFontsFromCss = cssText => {
+    const output = {css: cssText};
+    const fontFilesToImport = cssText.match(/https:\/\/[^)]+/g);
+    const fontFilesPromises = fontFilesToImport.map(fileUrl => {
+        return fetch(fileUrl)
+            .then(response => response.blob())
+            .then(blob => blobToDataUrl(blob))
+            .then(data => {
+                output.css = output.css.replace(fileUrl, data);
+                return true;
+            });
+    });
+    return Promise.all(fontFilesPromises)
+        .then(() => output.css);
+};
+
+const getFonts = (fonts, embedFonts) => {
+    if (!embedFonts) {
+        const fontsImports = fonts.map(font => `@import url('${font}');`);
+        return Promise.resolve(fontsImports.join("\n"))
+    }
+    const fontsPromises = fonts.map(fontUrl => {
+        return fetch(fontUrl)
+            .then(response => response.text())
+            .then(cssText => importFontsFromCss(cssText))
+    });
+    return Promise.all(fontsPromises)
+        .then(result => result.join("\n"));
+};
+
 // Get image in SVG
 const getSvgImage = options => {
     const elements = options?.elements || [];
-    return new Promise(resolve => {
+    const fonts = options?.fonts || Object.values(FONT_SOURCES);
+    return getFonts(fonts, !!options.embedFonts).then(fontsCss => {
         const bounds = getRectangleBounds(elements);
         // 1. Create a new SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+        svg.appendChild(style);
+        svg.appendChild(group);
         // 2. Set new svg attributes
         svg.setAttribute("style", ""); // Reset style
         svg.setAttribute("width", Math.abs(bounds.x2 - bounds.x1));
@@ -50,29 +84,21 @@ const getSvgImage = options => {
         // 3. Set svg style
         svg.style.backgroundColor = options?.background || "#fff";
         // 4. Set internal styles
-        if (options?.fonts && options.fonts?.length > 0) {
-            const styleElement = document.createElementNS("http://www.w3.org/2000/svg", "style");
-            const styleContent = (options.fonts || [])
-                .map(font => `@import url('${font}');`)
-                .join("\n");
-            styleElement.textContent = styleContent;
-            svg.appendChild(styleElement);
-        }
+        style.textContent = fontsCss;
         // 5. Set group attributes
         group.setAttribute("transform", `translate(-${bounds.x1} -${bounds.y1})`);
-        svg.appendChild(group);
-        // 6. Append elements into new SVG
+        // 6. Append elements into  group
         elements.forEach(element => {
             const nodeElement = document.querySelector(`g[data-element="${element.id}"]`);
             if (nodeElement) {
                 group.appendChild(nodeElement.cloneNode(true));
             }
         });
-        // 6. return SVG
+        // 7. return SVG
         const content = (new XMLSerializer()).serializeToString(svg);
-        return resolve(new Blob([content], {
+        return new Blob([content], {
             type: "image/svg+xml;charset=utf-8",
-        }));
+        });
     });
 };
 
@@ -121,10 +147,16 @@ export const exportToBlob = options => {
         if (options?.crop) {
             return Promise.reject(new Error("Can not crop a SVG export"));
         }
-        return getSvgImage(options);
+        return getSvgImage({
+            embedFonts: false,
+            ...options,
+        });
     }
     // Fallback: generate PNG image
-    return getPngImage(options)
+    return getPngImage({
+        embedFonts: true,
+        ...options,
+    })
 };
 
 // Export image to clipboard
