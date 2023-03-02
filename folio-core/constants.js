@@ -137,6 +137,13 @@ export const TEXT_SIZES = {
     XLARGE: 64,
 };
 
+// Text aligns
+export const TEXT_ALIGNS = {
+    LEFT: "left",
+    CENTER: "center",
+    RIGHT: "right",
+};
+
 // Allowed stroke styles
 export const STROKES = {
     SOLID: "solid",
@@ -154,6 +161,7 @@ export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
 export const DEFAULT_TEXT_FONT = FONT_FACES.ROBOTO;
 export const DEFAULT_TEXT_SIZE = TEXT_SIZES.MEDIUM;
 export const DEFAULT_TEXT_COLOR = COLORS.BLACK;
+export const DEFAULT_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
 export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
 export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
 export const DEFAULT_ARROWHEAD_END = ARROWHEADS.ARROW;

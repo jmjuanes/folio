@@ -1,8 +1,7 @@
 import React from "react";
 import {measureText} from "../math.js";
-import {COLORS, FONT_FACES, GRID_SIZE} from "../constants.js";
+import {COLORS, FONT_FACES, GRID_SIZE, TEXT_ALIGNS} from "../constants.js";
 
-// Stop event propagation
 const stopEventPropagation = event => {
     event?.stopPropagation?.();
     // event?.preventDefault?.();
@@ -27,14 +26,14 @@ export const TextElement = props => {
 
     // Preview styles
     const previewStyles = {
-        width: props.textWidth,
-        height: props.textHeight,
+        width: width, // props.textWidth,
+        height: height, // props.textHeight,
         whiteSpace: "pre", // "pre-wrap",
         color: textColor,
         fontFamily: textFont,
         fontSize: textSize + "px",
         lineHeight: "normal",
-        textAlign: "center",
+        textAlign: props.textAlign || TEXT_ALIGNS.CENTER,
         userSelect: "none",
     };
 
@@ -53,10 +52,10 @@ export const TextElement = props => {
                 />
             )}
             <foreignObject
-                x={(-1) * props.textWidth / 2}
+                x={width ? ((-1) * width / 2) : "-0.5rem"}
                 y={(-1) * props.textHeight / 2}
-                width={props.textWidth || "1rem"}
-                height={props.textHeight || "1rem"}
+                width={width || "1rem"}
+                height={height || "1rem"}
             >
                 {props.text && !props.editing && (
                     <div style={previewStyles}>
@@ -76,7 +75,7 @@ export const TextElement = props => {
                             fontFamily: textFont,
                             fontSize: textSize + "px",
                             lineHeight: "normal",
-                            height: props.textHeight,
+                            height: height, // props.textHeight,
                             margin: "0px",
                             minHeight: "1em",
                             minWidth: "1em",
@@ -85,10 +84,10 @@ export const TextElement = props => {
                             padding: "0px",
                             // position: "absolute",
                             resize: "none",
-                            textAlign: "center",
+                            textAlign: props.textAlign || TEXT_ALIGNS.CENTER,
                             // transform: "translateX(-50%) translateY(-50%)",
                             whiteSpace: "break-word",
-                            width: props.textWidth,
+                            width: width, // props.textWidth,
                             wordBreak: "pre",
                         }}
                         onPointerDown={stopEventPropagation}

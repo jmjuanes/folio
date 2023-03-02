@@ -1,5 +1,6 @@
 import React from "react";
-import {COLORS, TEXT_SIZES, FONT_FACES} from "folio-core";
+import {TextCenterIcon, TextLeftIcon, TextRightIcon} from "@mochicons/react";
+import {COLORS, TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
 
@@ -22,6 +23,15 @@ const options = {
             {value: TEXT_SIZES.MEDIUM, text: "M"},
             {value: TEXT_SIZES.LARGE, text: "L"},
             {value: TEXT_SIZES.XLARGE, text: "XL"},
+        ],
+    },
+    textAlign: {
+        type: "select",
+        title: "Text Align",
+        values: [
+            {value: TEXT_ALIGNS.LEFT, icon: TextLeftIcon()},
+            {value: TEXT_ALIGNS.CENTER, icon: TextCenterIcon()},
+            {value: TEXT_ALIGNS.RIGHT, icon: TextRightIcon()},
         ],
     },
 };

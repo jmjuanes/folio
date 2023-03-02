@@ -14,6 +14,7 @@ import {
     DEFAULT_TEXT_COLOR,
     DEFAULT_TEXT_FONT,
     DEFAULT_TEXT_SIZE,
+    DEFAULT_TEXT_ALIGN,
 } from "../constants";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
@@ -44,7 +45,7 @@ export const elementsConfig = {
             textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
             textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
             textSize: values?.textSize ?? DEFAULT_TEXT_SIZE,
-            textAlign: "",
+            textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
             textWidth: GRID_SIZE,
             textHeight: GRID_SIZE,
         }),
@@ -85,7 +86,7 @@ export const elementsConfig = {
             textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
             textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
             textSize: values?.textSize ?? DEFAULT_TEXT_SIZE,
-            textAlign: "",
+            textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
             textWidth: GRID_SIZE,
             textHeight: GRID_SIZE,
             minWidth: GRID_SIZE,
