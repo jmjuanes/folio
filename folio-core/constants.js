@@ -142,6 +142,7 @@ export const TEXT_ALIGNS = {
     LEFT: "left",
     CENTER: "center",
     RIGHT: "right",
+    JUSTIFY: "justify",
 };
 
 // Allowed stroke styles

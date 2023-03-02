@@ -1,5 +1,5 @@
 import React from "react";
-import {TextCenterIcon, TextLeftIcon, TextRightIcon} from "@mochicons/react";
+import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "@mochicons/react";
 import {COLORS, TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
 import {Form} from "../Form/index.jsx";
@@ -32,6 +32,7 @@ const options = {
             {value: TEXT_ALIGNS.LEFT, icon: TextLeftIcon()},
             {value: TEXT_ALIGNS.CENTER, icon: TextCenterIcon()},
             {value: TEXT_ALIGNS.RIGHT, icon: TextRightIcon()},
+            {value: TEXT_ALIGNS.JUSTIFY, icon: TextJustifyIcon()},
         ],
     },
 };
