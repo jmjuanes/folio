@@ -4,7 +4,7 @@ import classNames from "classnames";
 import * as idb from "idb-keyval";
 import {fileOpen, fileSave} from "browser-fs-access";
 import {VERSION, MIME_TYPES, FILE_EXTENSIONS, EXPORT_FORMATS} from "folio-core";
-import {exportToFile, exportToClipboard} from "folio-core";
+import {migrate, exportToFile, exportToClipboard} from "folio-core";
 import {Board} from "folio-board";
 import {ToastProvider, useToast} from "folio-board";
 import {ConfirmProvider, useConfirm} from "folio-board";
@@ -42,7 +42,16 @@ const App = props => {
     React.useEffect(() => {
         const initializeStore = async () => {
             if ((await idb.keys(store)).length === 0) {
-                await idb.set("version", VERSION, store);
+                await idb.set(STORE_KEYS.VERSION, VERSION, store);
+            }
+
+            // Check if we need to perform an upgrade to the new version of folio
+            const currentVersion = await idb.get(STORE_KEYS.VERSION, store);
+            if (currentVersion !== VERSION) {
+                const prevState = await idb.get(STORE_KEYS.STATE, store);
+                const newState = migrate(prevState, currentVersion);
+                await idb.set(STORE_KEYS.STATE, newState, store);
+                await idb.set(STORE_KEYS.VERSION, VERSION, store);
             }
             return true;
         };
@@ -63,6 +72,7 @@ const App = props => {
     // Handle file save
     const handleFileSave = () => {
         const content = JSON.stringify({
+            version: VERSION,
             elements: state.elements || [],
             assets: state.assets || {},
         });
@@ -108,6 +118,7 @@ const App = props => {
                     file.readAsText(blob, "utf8");
                 }));
             })
+            .then(data => data.version !== VERSION ? migrate(data, data.version) : data)
             .then(data => setState({...data, id: Date.now()}))
             .catch(error => {
                 console.error(error);
