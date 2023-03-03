@@ -8,10 +8,7 @@ import {getElementConfig} from "../elements/index.jsx";
 import {AssetsProvider} from "../contexts/AssetsContext.jsx";
 
 const useSelectedElements = props => {
-    if (props.showHandlers || props.showBounds) {
-        return (props.elements || []).filter(el => !!el.selected);
-    }
-    return [];
+    return (props.elements || []).filter(el => !!el.selected);
 };
 
 export const Canvas = props => {
@@ -201,13 +198,11 @@ export const Canvas = props => {
                         strokeColor={props.brushStrokeColor}
                     />
                 )}
-                {props.showHandlers && (
-                    <Handlers
-                        elements={selectedElements}
-                        zoom={props.zoom}
-                        onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
-                    />
-                )}
+                <Handlers
+                    elements={selectedElements}
+                    zoom={props.zoom}
+                    onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
+                />
             </g>
         </svg>
     );

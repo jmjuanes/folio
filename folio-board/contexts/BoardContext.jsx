@@ -7,7 +7,6 @@ import {
     ZOOM_MAX,
     ZOOM_MIN,
     ZOOM_STEP,
-    FONT_FACES,
     getElementConfig,
     DEFAULT_FILL_COLOR,
     DEFAULT_FILL_OPACITY,
@@ -270,9 +269,9 @@ const createBoard = props => ({
             selected: true,
         });
 
-        const textSize = (element.textSize ?? 0) + "px";
-        const textFont = element.textFont ?? FONT_FACES.SANS;
-        const [textWidth, textHeight] = elementConfig.utils.measureText(text, textSize, textFont);
+        const textSize = element.textSize ?? 0;
+        const textFont = element.textFont ?? "";
+        const [textWidth, textHeight] = elementConfig.utils.measureText(text || " ", textSize, textFont, "200px");
         // Override element position
         Object.assign(element, {
             x1: Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE,
@@ -281,8 +280,6 @@ const createBoard = props => ({
             y2: Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE,
             textWidth: textWidth,
             textHeight: textHeight,
-            minWidth: Math.ceil(textWidth / GRID_SIZE) * GRID_SIZE,
-            minHeight: Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE,
         });
         this.addElements([element]);
         this.update();

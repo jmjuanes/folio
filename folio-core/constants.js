@@ -131,9 +131,9 @@ export const STROKE_WIDTHS = {
 
 // Common text sizes
 export const TEXT_SIZES = {
-    SMALL: 12,
-    MEDIUM: 16,
-    LARGE: 32,
+    SMALL: 16,
+    MEDIUM: 24,
+    LARGE: 40,
     XLARGE: 64,
 };
 

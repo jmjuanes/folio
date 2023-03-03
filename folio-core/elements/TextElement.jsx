@@ -26,25 +26,26 @@ export const TextElement = props => {
 
     // Preview styles
     const previewStyles = {
-        width: width, // props.textWidth,
-        height: height, // props.textHeight,
-        whiteSpace: "pre", // "pre-wrap",
+        width: Math.max(width, GRID_SIZE) + "px",
+        height: props.textHeight + "px",
+        whiteSpace: "pre-wrap", // "pre-wrap",
         color: textColor,
         fontFamily: textFont,
         fontSize: textSize + "px",
         lineHeight: "normal",
         textAlign: props.textAlign || TEXT_ALIGNS.CENTER,
         userSelect: "none",
+        wordBreak: "break-all",
     };
 
     return (
         <g transform={`translate(${x} ${y})`}>
             {!props.embedded && (!!props.creating || props.editing) && (
                 <rect
-                    x={(-1) * Math.max(props.textWidth, width) / 2}
-                    y={(-1) * Math.max(props.textHeight, height) / 2}
-                    width={Math.max(props.textWidth, width)}
-                    height={Math.max(props.textHeight, height)}
+                    x={(-1) * width / 2}
+                    y={(-1) * height / 2}
+                    width={width}
+                    height={height}
                     fill="transparent"
                     stroke="#0d6efd"
                     strokeWidth="2"
@@ -52,10 +53,10 @@ export const TextElement = props => {
                 />
             )}
             <foreignObject
-                x={width ? ((-1) * width / 2) : "-0.5rem"}
+                x={(-1) * width / 2}
                 y={(-1) * props.textHeight / 2}
-                width={width || "1rem"}
-                height={height || "1rem"}
+                width={Math.max(width, GRID_SIZE)}
+                height={props.textHeight}
             >
                 {props.text && !props.editing && (
                     <div style={previewStyles}>
@@ -68,6 +69,8 @@ export const TextElement = props => {
                         wrap="off"
                         defaultValue={props.text || ""}
                         style={{
+                            width: Math.max(width, GRID_SIZE) + "px",
+                            height: props.textHeight + "px",
                             backgroundColor: "transparent",
                             border: "0px solid transparent",
                             color: textColor,
@@ -75,7 +78,6 @@ export const TextElement = props => {
                             fontFamily: textFont,
                             fontSize: textSize + "px",
                             lineHeight: "normal",
-                            height: height, // props.textHeight,
                             margin: "0px",
                             minHeight: "1em",
                             minWidth: "1em",
@@ -86,9 +88,8 @@ export const TextElement = props => {
                             resize: "none",
                             textAlign: props.textAlign || TEXT_ALIGNS.CENTER,
                             // transform: "translateX(-50%) translateY(-50%)",
-                            whiteSpace: "break-word",
-                            width: width, // props.textWidth,
-                            wordBreak: "pre",
+                            whiteSpace: "pre-wrap",
+                            wordBreak: "break-all",
                         }}
                         onPointerDown={stopEventPropagation}
                         onMouseDown={stopEventPropagation}
@@ -96,19 +97,12 @@ export const TextElement = props => {
                         onChange={event => {
                             if (typeof props.onChange === "function") {
                                 const text = event.target.value || "";
-                                const [textWidth, textHeight] = measureText(text || " ", textSize, textFont);
+                                const [textWidth, textHeight] = measureText(text || " ", textSize, textFont, width + "px");
                                 const keys = ["text", "textWidth", "textHeight"];
                                 const values = [text, textWidth, textHeight];
                                 if (!props.embedded) {
-                                    keys.push("x1", "x2", "y1", "y2", "minWidth", "minHeight");
-                                    values.push(
-                                        Math.min(props.x1, Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE),
-                                        Math.max(props.x2, Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE),
-                                        Math.min(props.y1, Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE),
-                                        Math.max(props.y2, Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE),
-                                        Math.ceil(textWidth / GRID_SIZE) * GRID_SIZE,
-                                        Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE,
-                                    );
+                                    keys.push("y2");
+                                    values.push(props.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE);
                                 }
                                 return props.onChange?.(keys, values);
                             }
@@ -119,10 +113,10 @@ export const TextElement = props => {
             {!props.editing && (
                 <rect
                     data-element={props.id}
-                    x={(-1) * Math.max(props.textWidth, width) / 2}
-                    y={(-1) * Math.max(props.textHeight, height) / 2}
-                    width={Math.max(props.textWidth, width)}
-                    height={Math.max(props.textHeight, height)}
+                    x={(-1) * width / 2}
+                    y={(-1) * height / 2}
+                    width={width}
+                    height={height}
                     fill="transparent"
                     stroke="none"
                     onPointerDown={props.onPointerDown}

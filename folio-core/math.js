@@ -68,7 +68,7 @@ export const getBalancedDash = (length = 0, strokeWidth = 0, style = "dashed") =
 };
 
 // Measure text size
-export const measureText = (text, textSize, textFont) => {
+export const measureText = (text, textSize, textFont, maxWidth) => {
     let width = 0, height = 0;
     if (text.length > 0) {
         if (!measureText.container) {
@@ -78,14 +78,19 @@ export const measureText = (text, textSize, textFont) => {
             measureText.container.style.top = "-9999px";
             measureText.container.style.left = "-9999px";
             measureText.container.style.lineHeight = "normal"; // Set line-height as normal
-            measureText.container.style.whiteSpace = "pre";
+            measureText.container.style.whiteSpace = "pre-wrap";
+            measureText.container.style.wordBreak = "break-all";
             measureText.container.style.minHeight = "1em";
+            measureText.container.style.minWidth = "1em";
+            measureText.container.style.margin = "0";
+            measureText.container.style.padding = "0";
             document.body.appendChild(measureText.container);
         }
         // .replace(/\r\n?/g, "\n"); // .split("\n").join("<br>");
         measureText.container.textContent = text.charAt(text.length - 1) === "\n" ? text + " " : text;
         measureText.container.style.fontFamily = textFont;
         measureText.container.style.fontSize = textSize + "px";
+        measureText.container.style.maxWidth = maxWidth ?? "auto";
         width = measureText.container.offsetWidth; // Set computed width
         height = measureText.container.offsetHeight; // Set computed height
         // document.body.removeChild(div); // Remove div from DOM

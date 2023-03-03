@@ -33,7 +33,8 @@ export const elementsConfig = {
         ),
         initialize: values => ({
             shape: values.shape || DEFAULT_SHAPE,
-            edgeHandlers: true,
+            edgeXHandlers: true,
+            edgeYHandlers: true,
             cornerHandlers: true,
             fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
             fillOpacity: values?.fillOpacity ?? DEFAULT_FILL_OPACITY,
@@ -79,19 +80,29 @@ export const elementsConfig = {
     },
     [ELEMENTS.TEXT]: {
         render: props => <TextElement {...props} />,
-        initialize: values => ({
-            edgeHandlers: true,
-            cornerHandlers: true,
-            text: "",
-            textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
-            textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
-            textSize: values?.textSize ?? DEFAULT_TEXT_SIZE,
-            textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
-            textWidth: GRID_SIZE,
-            textHeight: GRID_SIZE,
-            minWidth: GRID_SIZE,
-            minHeight: GRID_SIZE,
-        }),
+        initialize: values => {
+            // We need to measure the height of an empty text to calculate the height of the element
+            const [textWidth, textHeight] = measureText(
+                " ",
+                values?.textSize ?? DEFAULT_TEXT_SIZE,
+                values?.textFont ?? DEFAULT_TEXT_FONT,
+            );
+            return ({
+                edgeXHandlers: true,
+                edgeYHandlers: false,
+                cornerHandlers: true,
+                text: "",
+                textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
+                textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
+                textSize: values?.textSize ?? DEFAULT_TEXT_SIZE,
+                textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
+                textWidth: GRID_SIZE,
+                textHeight: Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE,
+            });
+        },
+        onCreateMove: element => {
+            element.y2 = element.y1 + element.textHeight;
+        },
         onCreateEnd: element => {
             Object.assign(element, {
                 x1: Math.min(element.x1, element.x2),
@@ -109,23 +120,26 @@ export const elementsConfig = {
         },
         onUpdate: (element, changedKeys) => {
             if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
-                const x = (element.x1 + element.x2) / 2;
-                const y = (element.y1 + element.y2) / 2;
-                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont);
+                const width = Math.abs(element.x2 - element.x1);
+                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
 
                 element.textWidth = textWidth;
                 element.textHeight = textHeight;
-                element.x1 = Math.min(element.x1, Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE);
-                element.x2 = Math.max(element.x2, Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE);
-                element.y1 = Math.min(element.y1, Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE);
-                element.y2 = Math.max(element.y2, Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE);
-                element.minWidth = Math.ceil(textWidth / GRID_SIZE) * GRID_SIZE;
-                element.minHeight = Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
+                element.y2 = element.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
             }
         },
+        onResize: (element, snapshot) => {
+            const width = Math.abs(element.x2 - element.x1);
+            const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+
+            element.textWidth = textWidth;
+            element.textHeight = textHeight;
+            element.y1 = snapshot.y1;
+            element.y2 = element.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
+        },
         utils: {
-            measureText: (text, textSize, textFont) => {
-                return measureText(text || " ", textSize, textFont);
+            measureText: (text, textSize, textFont, maxWidth) => {
+                return measureText(text || " ", textSize, textFont, maxWidth);
             },
         },
     },
@@ -169,7 +183,8 @@ export const elementsConfig = {
     [ELEMENTS.IMAGE]: {
         render: props => <ImageElement {...props} />,
         initialize: () => ({
-            edgeHandlers: true,
+            edgeXHandlers: true,
+            edgeYHandlers: true,
             cornerHandlers: true,
             assetId: "",
             // image: "",

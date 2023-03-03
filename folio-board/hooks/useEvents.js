@@ -138,33 +138,34 @@ export const useEvents = callbacks => {
                 else if (board.activeAction === ACTIONS.RESIZE) {
                     isResized = true;
                     const element = board.getElement(snapshot[0].id);
+                    const elementConfig = getElementConfig(element);
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - element.minWidth);
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - element.minHeight);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2);
                     }
                     else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + element.minWidth);
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - element.minHeight);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2);
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - element.minWidth);
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + element.minHeight);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1);
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + element.minWidth);
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + element.minHeight);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1);
                     }
                     else if (event.handler === HANDLERS.EDGE_TOP) {
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2 - element.minHeight);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2);
                     }
                     else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1 + element.minHeight);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1);
                     }
                     else if (event.handler === HANDLERS.EDGE_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2 - element.minWidth);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2);
                     }
                     else if (event.handler === HANDLERS.EDGE_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1 + element.minWidth);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1);
                     }
                     else if (event.handler === HANDLERS.NODE_START) {
                         element.x1 = getPosition(snapshot[0].x1 + event.dx);
@@ -173,6 +174,9 @@ export const useEvents = callbacks => {
                     else if (event.handler === HANDLERS.NODE_END) {
                         element.x2 = getPosition(snapshot[0].x2 + event.dx);
                         element.y2 = getPosition(snapshot[0].y2 + event.dy);
+                    }
+                    if (elementConfig?.onResize) {
+                        elementConfig.onResize(element, snapshot[0], event, getPosition);
                     }
                 }
                 else if (board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT) {
@@ -378,10 +382,12 @@ export const useEvents = callbacks => {
                 }
                 board.clearSelectedElements();
                 // state.activeGroup = null;
-                return getDataFromClipboard(event).then(data => {
-                    if (data?.type === "text" && data?.content?.startsWith("folio:::")) {
-                        const newData = JSON.parse(data.content.split("folio:::")[1].trim());
-                        board.paste(newData || {});
+                return getDataFromClipboard(event).then(result => {
+                    const type = result[0];
+                    const content = result[1];
+                    if (type === "text" && content?.startsWith("folio:::")) {
+                        const data = JSON.parse(content.split("folio:::")[1].trim());
+                        board.paste(data || {});
                         board.update();
                         callbacks?.onChange?.({
                             elements: board.elements,
@@ -389,8 +395,8 @@ export const useEvents = callbacks => {
                         });
                     }
                     // Create a new text element
-                    else if (data?.type === "text") {
-                        board.addText(data.content).then(() => {
+                    else if (type === "text") {
+                        board.addText(content).then(() => {
                             callbacks?.onChange?.({
                                 elements: board.elements,
                                 assets: board.assets,
@@ -398,8 +404,8 @@ export const useEvents = callbacks => {
                         });
                     }
                     // Create a new image element
-                    else if (data?.type === "image") {
-                        board.addImage(data.content).then(() => {
+                    else if (type === "image") {
+                        board.addImage(content).then(() => {
                             callbacks?.onChange?.({
                                 elements: board.elements,
                                 assets: board.assets,
