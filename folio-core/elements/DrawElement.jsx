@@ -18,6 +18,8 @@ const getPath = points => {
 };
 
 export const DrawElement = props => {
+    const width = Math.abs(props.x2 - props.x1);
+    const height = Math.abs(props.y2 - props.y1);
     const points = props.points || [];
     const strokeWidth = props.strokeWidth ?? 0;
     const path = React.useMemo(() => getPath(points), [points.length]);
@@ -31,19 +33,21 @@ export const DrawElement = props => {
     );
     return (
         <g transform={`translate(${props.x1},${props.y1})`}>
-            <path
-                data-element={props.id}
-                d={path}
-                fill="none"
-                stroke={props.strokeColor ?? COLORS.BLACK}
-                strokeWidth={strokeWidth}
-                strokeOpacity={props.strokeOpacity}
-                strokeDasharray={strokeDasharray}
-                strokeDashoffset={strokeDashoffset}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                onPointerDown={props.onPointerDown}
-            />
+            <g transform={`scale(${width/props.drawWidth} ${height/props.drawHeight})`}>
+                <path
+                    data-element={props.id}
+                    d={path}
+                    fill="none"
+                    stroke={props.strokeColor ?? COLORS.BLACK}
+                    strokeWidth={strokeWidth}
+                    strokeOpacity={props.strokeOpacity}
+                    strokeDasharray={strokeDasharray}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    onPointerDown={props.onPointerDown}
+                />
+            </g>
             <rect
                 data-element={props.id}
                 x="0"

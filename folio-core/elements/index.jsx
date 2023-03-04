@@ -169,11 +169,15 @@ export const elementsConfig = {
     [ELEMENTS.DRAW]: {
         render: props => <DrawElement {...props} />,
         initialize: values => ({
+            edgeHandlers: true,
+            cornerHandlers: true,
             points: [],
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
             strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
             strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
             strokeOpacity: values?.strokeOpacity ?? DEFAULT_STROKE_OPACITY,
+            drawWidth: 0,
+            drawHeight: 0,
         }),
         onCreateStart: element => {
             element.points.push([0, 0]);
@@ -201,6 +205,9 @@ export const elementsConfig = {
                     point[1] - element.y1 + initialY,
                 ];
             });
+            // Save drawing width and height
+            element.drawWidth = Math.abs(element.x2 - element.x1);
+            element.drawHeight = Math.abs(element.y2 - element.y1);
         },
     },
     [ELEMENTS.IMAGE]: {
