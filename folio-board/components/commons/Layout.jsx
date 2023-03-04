@@ -21,11 +21,13 @@ import {
 } from "../Dialogs/index.jsx";
 import {FileInput} from "./FileInput.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
+import {isDialogEnabledForSelection} from "../../utils.js";
 
 export const Layout = props => {
     const board = useBoard();
     const [dialog, setDialog] = React.useState(null);
     const imageInputRef = React.useRef();
+    const prevSelectionCount = React.useRef(0);
 
     // Register element change
     const handleElementChange = (key, value) => {
@@ -42,10 +44,19 @@ export const Layout = props => {
 
     // Force to reset the active dialog if there is an action or a tool active
     React.useEffect(() => {
-        if (!!dialog && (board.activeAction || board.activeTool)) {
-            setDialog(null);
+        // if (!!dialog && (board.activeAction || board.activeTool)) {
+        //     setDialog(null);
+        // }
+        // Hide if we have changed action or dialog is not available in selection
+        if (dialog) {
+            const hideDialog = !isDialogEnabledForSelection(dialog, selectedElements);
+            const differentCount = prevSelectionCount.current !== selectedElements.length;
+            if (board.activeAction || hideDialog || differentCount) {
+                setDialog(null);
+            }
         }
-    }, [tool, action]);
+        prevSelectionCount.current = selectedElements.length;
+    }, [tool, action, selectedElements.length]);
 
     // Compute common values for selected elements to be used in dialogs
     let selectionValues = board.defaults || {};
@@ -124,7 +135,7 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {!action && !tool && !!dialog && selectedElements.length < 2 && (
+            {dialog && (
                 <React.Fragment>
                     {dialog === DIALOGS.FILL && (
                         <FillDialog

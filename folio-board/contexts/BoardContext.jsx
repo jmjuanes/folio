@@ -196,12 +196,16 @@ const createBoard = props => ({
     },
     updateElements(elements, keys, values, groupChanges = true) {
         if (elements && elements.length > 0) {
+            // 0. Get elements to update
+            const elementsToChange = elements.filter(el => {
+                return keys.every(key => typeof el[key] !== "undefined");
+            });
             // 1. Register element update in the history
             this.addHistory({
                 type: CHANGES.UPDATE,
-                ids: groupChanges && elements.map(element => element.id).join(","),
+                ids: groupChanges && elementsToChange.map(element => element.id).join(","),
                 keys: groupChanges && keys.join(","),
-                elements: elements.map(element => ({
+                elements: elementsToChange.map(element => ({
                     id: element.id,
                     prevValues: Object.fromEntries(keys.map(key => {
                         return [key, element[key]];
@@ -213,7 +217,7 @@ const createBoard = props => ({
             });
             // 2. Update the elements
             const changedKeys = new Set(keys);
-            elements.forEach(element => {
+            elementsToChange.forEach(element => {
                 keys.forEach((key, index) => element[key] = values[index]);
                 getElementConfig(element)?.onUpdate?.(element, changedKeys);
             });

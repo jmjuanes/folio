@@ -276,7 +276,7 @@ export const useEvents = callbacks => {
             },
             onDoubleClickElement: event => {
                 if (!board.activeAction && !board.activeTool) {
-                    board.clearSelectedElements();
+                    // board.clearSelectedElements();
                     const element = board.getElement(event.element);
                     // TODO: we need to check if this element is editable
                     board.activeElement = element;

@@ -9,6 +9,7 @@ import {
     ArrowheadArrowIcon,
     TrashIcon,
 } from "../icons/index.jsx";
+import {isDialogEnabledForSelection} from "../../utils.js";
 
 // const isGroupSelectionVisible = selection => {
 //     const selectedGroups = new Set(selection.map(el => el.group));
@@ -21,10 +22,10 @@ import {
 
 const getButtonProps = (props, type, test) => {
     const elements = props.elements || [];
-    let isDisabled = true;
-    if (elements.length === 0 || (elements.length === 1 && typeof elements[0]?.[test] !== "undefined")) {
-        isDisabled = false;
-    }
+    let isDisabled = !isDialogEnabledForSelection(type, elements);
+    // if (elements.length === 0 || (elements.length === 1 && typeof elements[0]?.[test] !== "undefined")) {
+    //     isDisabled = false;
+    // }
     return {
         active: props.dialog === type,
         disabled: isDisabled,
