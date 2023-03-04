@@ -1,4 +1,4 @@
-export const VERSION = "2";
+export const VERSION = "3";
 
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
