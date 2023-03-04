@@ -21,6 +21,7 @@ export const useEvents = callbacks => {
     const events = React.useRef(null);
 
     if (!events.current) {
+        const updatedKeys = new Set();
         const getPosition = pos => {
             // return state.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
             return Math.round(pos / GRID_SIZE) * GRID_SIZE;
@@ -176,7 +177,10 @@ export const useEvents = callbacks => {
                         element.y2 = getPosition(snapshot[0].y2 + event.dy);
                     }
                     if (elementConfig?.onResize) {
-                        elementConfig.onResize(element, snapshot[0], event, getPosition);
+                        const newKeys = elementConfig.onResize(element, snapshot[0], event, getPosition);
+                        if (newKeys && newKeys.length > 0) {
+                            newKeys.forEach(key => updatedKeys.add(key));
+                        }
                     }
                 }
                 else if (board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT) {
@@ -226,6 +230,7 @@ export const useEvents = callbacks => {
                 else if (board.activeAction === ACTIONS.DRAG || board.activeAction === ACTIONS.RESIZE) {
                     if (isDragged || isResized) {
                         const keys = ["x1", "x2", "y1", "y2"];
+                        updatedKeys.forEach(extraKey => keys.push(extraKey));
                         board.addHistory({
                             type: CHANGES.UPDATE,
                             elements: board.getSelectedElements().map((element, index) => ({
@@ -251,6 +256,7 @@ export const useEvents = callbacks => {
                     }
                     isDragged = false;
                     isResized = false;
+                    updatedKeys.clear();
                 }
                 else if (board.activeAction === ACTIONS.SELECT) {
                     const selection = board.selection;
