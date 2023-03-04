@@ -93,18 +93,18 @@ export const HANDLERS = {
 
 // Default font faces
 export const FONT_FACES = {
-    ROBOTO: "Roboto, sans-serif",
-    ROBOTO_SLAB: "Roboto Slab, serif",
-    CAVEAT: "Caveat, cursive",
-    ROBOTO_MONO: "Roboto Mono, monospace",
+    SANS: "Roboto, sans-serif",
+    SERIF: "Roboto Slab, serif",
+    DRAW: "Caveat, cursive",
+    MONO: "Roboto Mono, monospace",
 };
 
 // Fonts sources
 export const FONT_SOURCES = {
-    ROBOTO: "https://fonts.googleapis.com/css2?family=Roboto&display=swap",
-    ROBOTO_SLAB: "https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap",
-    CAVEAT: "https://fonts.googleapis.com/css2?family=Caveat&display=swap",
-    ROBOTO_MONO: "https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap",
+    SANS: "https://fonts.googleapis.com/css2?family=Roboto&display=swap",
+    SERIF: "https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap",
+    DRAW: "https://fonts.googleapis.com/css2?family=Caveat&display=swap",
+    MONO: "https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap",
 };
 
 // Default colors
@@ -163,7 +163,7 @@ export const DEFAULT_STROKE_COLOR = COLORS.BLACK;
 export const DEFAULT_STROKE_WIDTH = STROKE_WIDTHS.MEDIUM;
 export const DEFAULT_STROKE_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
-export const DEFAULT_TEXT_FONT = FONT_FACES.ROBOTO;
+export const DEFAULT_TEXT_FONT = FONT_FACES.SANS;
 export const DEFAULT_TEXT_SIZE = TEXT_SIZES.MEDIUM;
 export const DEFAULT_TEXT_COLOR = COLORS.BLACK;
 export const DEFAULT_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
