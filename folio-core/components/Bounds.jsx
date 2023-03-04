@@ -23,7 +23,7 @@ export const Bounds = props => {
 
 Bounds.defaultProps = {
     elements: [],
-    offset: 4,
+    offset: 0,
     fillColor: "transparent",
     fillOpacity: "0.2",
     strokeColor: "#0d6efd",

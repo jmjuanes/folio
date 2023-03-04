@@ -13,12 +13,14 @@ import {useEvents} from "../../hooks/useEvents.js";
 
 export const Renderer = props => {
     const board = useBoard();
+    const action = board.activeAction;
     const events = useEvents({
         onChange: props.onChange,
         onScreenshot: props.onScreenshot,
     });
     const isSelection = board.activeAction === ACTIONS.SELECT;
     const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
+    const showHandlersAndBounds = !board.activeTool && (!action || action === ACTIONS.DRAG || action === ACTIONS.RESIZE);
 
     return (
         <Canvas
@@ -32,9 +34,9 @@ export const Renderer = props => {
             brush={board.selection}
             brushFillColor={isScreenshot ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
             brushStrokeColor={isScreenshot ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
-            showHandlers={!board.activeAction && !board.activeTool}
             showBrush={isSelection || isScreenshot}
-            showBounds={!board.activeAction && !board.activeTool}
+            showHandlers={showHandlersAndBounds}
+            showBounds={showHandlersAndBounds}
             showGrid={true}
             {...events}
         />
