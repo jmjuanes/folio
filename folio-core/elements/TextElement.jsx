@@ -46,10 +46,12 @@ export const TextElement = props => {
                     y={(-1) * height / 2}
                     width={width}
                     height={height}
-                    fill="#0d6efd"
+                    fill={props.editing ? "#0d6efd" : "transparent"}
                     fillOpacity="0.1"
-                    stroke="none"
-                    rx="8"
+                    stroke={props.editing ? "none" : "#0d6efd"}
+                    strokeWidth="2"
+                    strokeDasharray="5 5"
+                    rx={props.editing ? "8" : "0"}
                 />
             )}
             <foreignObject
