@@ -1,6 +1,7 @@
 import React from "react";
 import {
     ELEMENTS,
+    HANDLERS,
     GRID_SIZE,
     DEFAULT_ARROWHEAD_END,
     DEFAULT_ARROWHEAD_START,
@@ -15,6 +16,9 @@ import {
     DEFAULT_TEXT_FONT,
     DEFAULT_TEXT_SIZE,
     DEFAULT_TEXT_ALIGN,
+    TEXT_SIZE_MIN,
+    TEXT_SIZE_STEP,
+    TEXT_SIZE_MAX,
 } from "../constants";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
@@ -22,6 +26,7 @@ import {TextElement} from "./TextElement.jsx";
 import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
 import {simplifyPath, measureText} from "../math.js";
+import {isCornerHandler} from "../utils.js";
 
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
@@ -33,8 +38,7 @@ export const elementsConfig = {
         ),
         initialize: values => ({
             shape: values.shape || DEFAULT_SHAPE,
-            edgeXHandlers: true,
-            edgeYHandlers: true,
+            edgeHandlers: true,
             cornerHandlers: true,
             fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
             fillOpacity: values?.fillOpacity ?? DEFAULT_FILL_OPACITY,
@@ -88,8 +92,7 @@ export const elementsConfig = {
                 values?.textFont ?? DEFAULT_TEXT_FONT,
             );
             return ({
-                edgeXHandlers: true,
-                edgeYHandlers: false,
+                edgeHandlers: true,
                 cornerHandlers: true,
                 text: "",
                 textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
@@ -128,14 +131,30 @@ export const elementsConfig = {
                 element.y2 = element.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
             }
         },
-        onResize: (element, snapshot) => {
+        onResize: (element, snapshot, event) => {
+            const handler = event.handler || "";
             const width = Math.abs(element.x2 - element.x1);
-            const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
-
-            element.textWidth = textWidth;
-            element.textHeight = textHeight;
-            element.y1 = snapshot.y1;
-            element.y2 = element.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
+            const height = Math.abs(element.y2 - element.y1);
+            if (isCornerHandler(handler) || handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.EDGE_TOP) {
+                let textSize = TEXT_SIZE_MIN;
+                while (textSize <= TEXT_SIZE_MAX) {
+                    const size = measureText(element.text || " ", textSize, element.textFont, width + "px");
+                    if (size[1] >= height) {
+                        break;
+                    }
+                    element.textSize = textSize;
+                    element.textWidth = size[0];
+                    element.textHeight = size[1];
+                    textSize = textSize + TEXT_SIZE_STEP;
+                }
+            }
+            else if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
+                const sizes = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                element.textWidth = sizes[0];
+                element.textHeight = sizes[1];
+                element.y1 = snapshot.y1;
+                element.y2 = element.y1 + Math.ceil(sizes[1] / GRID_SIZE) * GRID_SIZE;
+            }
         },
         utils: {
             measureText: (text, textSize, textFont, maxWidth) => {
@@ -183,11 +202,9 @@ export const elementsConfig = {
     [ELEMENTS.IMAGE]: {
         render: props => <ImageElement {...props} />,
         initialize: () => ({
-            edgeXHandlers: true,
-            edgeYHandlers: true,
+            edgeHandlers: true,
             cornerHandlers: true,
             assetId: "",
-            // image: "",
             imageWidth: 0,
             imageHeight: 0,
         }),

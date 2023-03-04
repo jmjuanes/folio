@@ -88,9 +88,9 @@ export const EdgeHandlers = props => {
                 width={width}
                 height={size}
                 style={{
-                    cursor: props.edgeYEnabled ? "ns-resize" : "",
+                    cursor: "ns-resize",
                 }}
-                onPointerDown={props.edgeYEnabled ? props.onPointerDown : null}
+                onPointerDown={props.onPointerDown}
             />
             <rect
                 data-handler={HANDLERS.EDGE_BOTTOM}
@@ -99,9 +99,9 @@ export const EdgeHandlers = props => {
                 width={width}
                 height={size}
                 style={{
-                    cursor: props.edgeYEnabled ? "ns-resize" : "",
+                    cursor: "ns-resize",
                 }}
-                onPointerDown={props.edgeYEnabled ? props.onPointerDown : null}
+                onPointerDown={props.onPointerDown}
             />
             <rect
                 data-handler={HANDLERS.EDGE_LEFT}
@@ -110,9 +110,9 @@ export const EdgeHandlers = props => {
                 width={size}
                 height={height}
                 style={{
-                    cursor: props.edgeXEnabled ? "ew-resize" : "",
+                    cursor: "ew-resize",
                 }}
-                onPointerDown={props.edgeXEnabled ? props.onPointerDown : null}
+                onPointerDown={props.onPointerDown}
             />
             <rect
                 data-handler={HANDLERS.EDGE_RIGHT}
@@ -121,17 +121,15 @@ export const EdgeHandlers = props => {
                 width={size}
                 height={height}
                 style={{
-                    cursor: props.edgeXEnabled ? "ew-resize" : "",
+                    cursor: "ew-resize",
                 }}
-                onPointerDown={props.edgeXEnabled ? props.onPointerDown : null}
+                onPointerDown={props.onPointerDown}
             />
         </g>
     );
 };
 
 EdgeHandlers.defaultProps = {
-    edgeXEnabled: false,
-    edgeYEnabled: false,
     element: null,
     strokeColor: "#0d6efd",
     strokeWidth: 2,
@@ -219,10 +217,8 @@ export const Handlers = props => {
     const element = props.elements[0];
     return (
         <React.Fragment>
-            {(element.edgeXHandlers || element.edgeYHandlers) && (
+            {element.edgeHandlers && (
                 <EdgeHandlers
-                    edgeXEnabled={!!element.edgeXHandlers}
-                    edgeYEnabled={!!element.edgeYHandlers}
                     element={element}
                     zoom={props.zoom}
                     onPointerDown={props.onPointerDown}

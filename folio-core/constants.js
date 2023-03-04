@@ -1,4 +1,4 @@
-export const VERSION = "3";
+export const VERSION = "2";
 
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
@@ -136,6 +136,10 @@ export const TEXT_SIZES = {
     LARGE: 40,
     XLARGE: 64,
 };
+
+export const TEXT_SIZE_STEP = 8;
+export const TEXT_SIZE_MIN = 8;
+export const TEXT_SIZE_MAX = 256;
 
 // Text aligns
 export const TEXT_ALIGNS = {
