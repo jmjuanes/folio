@@ -63,6 +63,7 @@ const BoardWrapper = props => {
                                 onClick={() => {
                                     if (board.elements.length > 0) {
                                         board.setAction(ACTIONS.SCREENSHOT);
+                                        board.clearSelectedElements();
                                         board.update();
                                     }
                                 }}

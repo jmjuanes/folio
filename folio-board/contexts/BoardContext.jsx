@@ -456,13 +456,14 @@ const createBoard = props => ({
     },
     setTool(newTool) {
         this.setAction(null);
+        this.clearSelectedElements();
         this.activeTool = newTool;
     },
     setAction(newAction) {
         // Disable editing in all elements of the board
         this.elements.forEach(element => {
             element.editing = false;
-            element.selected = false;
+            // element.selected = false;
         });
         this.activeElement = null;
         this.activeAction = newAction;

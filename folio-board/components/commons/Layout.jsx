@@ -79,6 +79,7 @@ export const Layout = props => {
                     }}
                     onMoveClick={() => {
                         board.setAction(ACTIONS.MOVE);
+                        board.clearSelectedElements();
                         board.update();
                     }}
                     onSelectionClick={() => {

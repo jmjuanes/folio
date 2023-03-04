@@ -329,6 +329,7 @@ export const useEvents = callbacks => {
                 // Undo or redo key
                 else if (isCtrlKey && (event.key === KEYS.Z || event.key === KEYS.Y)) {
                     board.setAction(null);
+                    board.clearSelectedElements();
                     board.activeElement = null;
                     event.key === KEYS.Z ? board.undo() : board.redo();
                     callbacks?.onChange?.({
