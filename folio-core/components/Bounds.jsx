@@ -1,31 +1,26 @@
 import React from "react";
-import {getRectangleBounds} from "../math.js";
 
 export const Bounds = props => {
     const offset = props.offset / props.zoom;
-    const bound = getRectangleBounds(props.elements);
-
     return (
-        <React.Fragment>
-            <rect
-                x={bound.x1 - offset}
-                y={bound.y1 - offset}
-                width={Math.abs(bound.x2 - bound.x1) + 2 * offset}
-                height={Math.abs(bound.y2 - bound.y1) + 2 * offset}
-                fill={props.fillColor}
-                stroke={props.strokeColor}
-                strokeWidth={props.strokeWidth / props.zoom}
-                onPointerDown={props.onPointerDown}
-            />
-        </React.Fragment>
+        <rect
+            x={props.position.x1 - offset}
+            y={props.position.y1 - offset}
+            width={Math.abs(props.position.x2 - props.position.x1) + 2 * offset}
+            height={Math.abs(props.position.y2 - props.position.y1) + 2 * offset}
+            fill={props.fillColor}
+            stroke={props.strokeColor}
+            strokeWidth={props.strokeWidth / props.zoom}
+            onPointerDown={props.onPointerDown}
+        />
     );
 };
 
 Bounds.defaultProps = {
-    elements: [],
+    position: null,
     offset: 0,
     fillColor: "transparent",
-    fillOpacity: "0.2",
+    // fillOpacity: "0.2",
     strokeColor: "#0d6efd",
     strokeWidth: 2,
     zoom: 1,

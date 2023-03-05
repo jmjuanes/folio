@@ -7,16 +7,16 @@ export const NodeHandlers = props => {
     return (
         <g stroke={props.strokeColor} strokeWidth={strokeWidth}>
             <line
-                x1={props.element.x1}
-                y1={props.element.y1}
-                x2={props.element.x2}
-                y2={props.element.y2}
+                x1={props.position.x1}
+                y1={props.position.y1}
+                x2={props.position.x2}
+                y2={props.position.y2}
                 fill="none"
             />
             <circle
                 data-handler={HANDLERS.NODE_START}
-                cx={props.element.x1}
-                cy={props.element.y1}
+                cx={props.position.x1}
+                cy={props.position.y1}
                 r={radius}
                 fill={props.fillColor}
                 style={{
@@ -26,8 +26,8 @@ export const NodeHandlers = props => {
             />
             <circle
                 data-handler={HANDLERS.NODE_END}
-                cx={props.element.x2}
-                cy={props.element.y2}
+                cx={props.position.x2}
+                cy={props.position.y2}
                 r={radius}
                 fill={props.fillColor}
                 style={{
@@ -40,7 +40,7 @@ export const NodeHandlers = props => {
 };
 
 NodeHandlers.defaultProps = {
-    element: null,
+    position: null,
     fillColor: "#fff",
     strokeColor: "#0d6efd",
     strokeWidth: 2,
@@ -49,42 +49,42 @@ NodeHandlers.defaultProps = {
 };
 
 export const EdgeHandlers = props => {
-    const width = Math.abs(props.element.x2 - props.element.x1);
-    const height = Math.abs(props.element.y2 - props.element.y1);
+    const width = Math.abs(props.position.x2 - props.position.x1);
+    const height = Math.abs(props.position.y2 - props.position.y1);
     const size = props.size / props.zoom;
     const strokeWidth = props.strokeWidth / props.zoom;
     return (
         <g fill="transparent">
             <g stroke={props.strokeColor} strokeWidth={strokeWidth}>
                 <line
-                    x1={props.element.x1}
-                    x2={props.element.x2}
-                    y1={props.element.y1}
-                    y2={props.element.y1}
+                    x1={props.position.x1}
+                    x2={props.position.x2}
+                    y1={props.position.y1}
+                    y2={props.position.y1}
                 />
                 <line
-                    x1={props.element.x2}
-                    x2={props.element.x2}
-                    y1={props.element.y1}
-                    y2={props.element.y2}
+                    x1={props.position.x2}
+                    x2={props.position.x2}
+                    y1={props.position.y1}
+                    y2={props.position.y2}
                 />
                 <line
-                    x1={props.element.x1}
-                    x2={props.element.x2}
-                    y1={props.element.y2}
-                    y2={props.element.y2}
+                    x1={props.position.x1}
+                    x2={props.position.x2}
+                    y1={props.position.y2}
+                    y2={props.position.y2}
                 />
                 <line
-                    x1={props.element.x1}
-                    x2={props.element.x1}
-                    y1={props.element.y1}
-                    y2={props.element.y2}
+                    x1={props.position.x1}
+                    x2={props.position.x1}
+                    y1={props.position.y1}
+                    y2={props.position.y2}
                 />
             </g>
             <rect
                 data-handler={HANDLERS.EDGE_TOP}
-                x={props.element.x1}
-                y={props.element.y1 - size / 2}
+                x={props.position.x1}
+                y={props.position.y1 - size / 2}
                 width={width}
                 height={size}
                 style={{
@@ -94,8 +94,8 @@ export const EdgeHandlers = props => {
             />
             <rect
                 data-handler={HANDLERS.EDGE_BOTTOM}
-                x={props.element.x1}
-                y={props.element.y2}
+                x={props.position.x1}
+                y={props.position.y2}
                 width={width}
                 height={size}
                 style={{
@@ -105,8 +105,8 @@ export const EdgeHandlers = props => {
             />
             <rect
                 data-handler={HANDLERS.EDGE_LEFT}
-                x={props.element.x1 - size / 2}
-                y={props.element.y1}
+                x={props.position.x1 - size / 2}
+                y={props.position.y1}
                 width={size}
                 height={height}
                 style={{
@@ -116,8 +116,8 @@ export const EdgeHandlers = props => {
             />
             <rect
                 data-handler={HANDLERS.EDGE_RIGHT}
-                x={props.element.x2}
-                y={props.element.y1}
+                x={props.position.x2}
+                y={props.position.y1}
                 width={size}
                 height={height}
                 style={{
@@ -130,7 +130,7 @@ export const EdgeHandlers = props => {
 };
 
 EdgeHandlers.defaultProps = {
-    element: null,
+    position: null,
     strokeColor: "#0d6efd",
     strokeWidth: 2,
     size: 12,
@@ -147,8 +147,8 @@ export const CornerHandlers = props => {
         <g fill={props.fillColor} stroke={props.strokeColor} strokeWidth={strokeWidth}>
             <rect
                 data-handler={HANDLERS.CORNER_TOP_LEFT}
-                x={props.element.x1 - width / 2}
-                y={props.element.y1 - height / 2}
+                x={props.position.x1 - width / 2}
+                y={props.position.y1 - height / 2}
                 width={width}
                 height={height}
                 rx={radius}
@@ -159,8 +159,8 @@ export const CornerHandlers = props => {
             />
             <rect
                 data-handler={HANDLERS.CORNER_TOP_RIGHT}
-                x={props.element.x2 - width / 2}
-                y={props.element.y1 - height / 2}
+                x={props.position.x2 - width / 2}
+                y={props.position.y1 - height / 2}
                 width={width}
                 height={height}
                 rx={radius}
@@ -171,8 +171,8 @@ export const CornerHandlers = props => {
             />
             <rect
                 data-handler={HANDLERS.CORNER_BOTTOM_RIGHT}
-                x={props.element.x2 - width / 2}
-                y={props.element.y2 - height / 2}
+                x={props.position.x2 - width / 2}
+                y={props.position.y2 - height / 2}
                 width={width}
                 height={height}
                 rx={radius}
@@ -183,8 +183,8 @@ export const CornerHandlers = props => {
             />
             <rect
                 data-handler={HANDLERS.CORNER_BOTTOM_LEFT}
-                x={props.element.x1 - width / 2}
-                y={props.element.y2 - height / 2}
+                x={props.position.x1 - width / 2}
+                y={props.position.y2 - height / 2}
                 width={width}
                 height={height}
                 rx={radius}
@@ -198,7 +198,7 @@ export const CornerHandlers = props => {
 };
 
 CornerHandlers.defaultProps = {
-    element: null,
+    position: null,
     fillColor: "#fff",
     strokeColor: "#0d6efd",
     strokeWidth: 2,
@@ -208,42 +208,37 @@ CornerHandlers.defaultProps = {
     zoom: 1,
 };
 
-export const Handlers = props => {
-    // At this moment we only support one element for resizing
-    // const selectedElements = props.elements.filter(el => !!el.selected);
-    if (props.elements.length !== 1) {
-        return null;
-    }
-    const element = props.elements[0];
-    return (
-        <React.Fragment>
-            {element.edgeHandlers && (
-                <EdgeHandlers
-                    element={element}
-                    zoom={props.zoom}
-                    onPointerDown={props.onPointerDown}
-                />
-            )}
-            {element.cornerHandlers && (
-                <CornerHandlers
-                    element={element}
-                    zoom={props.zoom}
-                    onPointerDown={props.onPointerDown}
-                />
-            )}
-            {element.nodeHandlers && (
-                <NodeHandlers
-                    element={element}
-                    zoom={props.zoom}
-                    onPointerDown={props.onPointerDown}
-                />
-            )}
-        </React.Fragment>
-    );
-};
+export const Handlers = props => (
+    <React.Fragment>
+        {props.edgeHandlers && (
+            <EdgeHandlers
+                position={props.position}
+                zoom={props.zoom}
+                onPointerDown={props.onPointerDown}
+            />
+        )}
+        {props.cornerHandlers && (
+            <CornerHandlers
+                position={props.position}
+                zoom={props.zoom}
+                onPointerDown={props.onPointerDown}
+            />
+        )}
+        {props.nodeHandlers && (
+            <NodeHandlers
+                position={props.position}
+                zoom={props.zoom}
+                onPointerDown={props.onPointerDown}
+            />
+        )}
+    </React.Fragment>
+);
 
 Handlers.defaultProps = {
-    elements: [],
+    position: {},
+    edgeHandlers: false,
+    cornerHandlers: false,
+    nodeHandlers: false,
     zoom: 1,
     onPointerDown: null,
 };

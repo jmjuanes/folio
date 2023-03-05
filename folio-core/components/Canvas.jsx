@@ -6,6 +6,7 @@ import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
 import {getElementConfig} from "../elements/index.jsx";
 import {AssetsProvider} from "../contexts/AssetsContext.jsx";
+import {getRectangleBounds} from "../math.js";
 
 const useSelectedElements = props => {
     if (props.showHandlers || props.showBounds) {
@@ -18,6 +19,7 @@ export const Canvas = props => {
     const canvasRef = React.useRef(null);
     const selectedElements = useSelectedElements(props);
     const [canvasSize, setCanvasSize] = React.useState([100, 100]);
+    const bounds = selectedElements.length > 0 ? getRectangleBounds(selectedElements) : null;
 
     const handlePointerDown = (event, source, pointListener) => {
         event.preventDefault();
@@ -171,8 +173,10 @@ export const Canvas = props => {
                 )}
                 {props.showBounds && selectedElements.length > 1 && (
                     <Bounds
-                        elements={selectedElements}
+                        position={bounds}
                         zoom={props.zoom}
+                        fillColor="transparent"
+                        strokeColor="transparent"
                         onPointerDown={e => handlePointerDown(e, null, null)}
                     />
                 )}
@@ -193,17 +197,20 @@ export const Canvas = props => {
                 </AssetsProvider>
                 {props.showBrush && !!props.brush && (
                     <Brush
-                        x1={props.brush?.x1}
-                        x2={props.brush?.x2}
-                        y1={props.brush?.y1}
-                        y2={props.brush?.y2}
+                        position={props.brush}
                         fillColor={props.brushFillColor}
                         strokeColor={props.brushStrokeColor}
                     />
                 )}
+                {props.showBounds && selectedElements.length > 1 && (
+                    <Bounds position={bounds} zoom={props.zoom} fillColor="none" />
+                )}
                 {props.showHandlers && selectedElements.length === 1 && (
                     <Handlers
-                        elements={selectedElements}
+                        position={bounds}
+                        edgeHandlers={selectedElements[0].edgeHandlers}
+                        cornerHandlers={selectedElements[0].cornerHandlers}
+                        nodeHandlers={selectedElements[0].nodeHandlers}
                         zoom={props.zoom}
                         onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
                     />
