@@ -1,13 +1,13 @@
 {
     "name": "folio-board",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "description": "A minimalistic whiteboard for sketching and prototyping",
     "private": true,
     "scripts": {},
     "dependencies": {
         "@mochicons/react": "^0.0.1",
         "classnames": "^2.3.2",
-        "folio-core": "0.3.1",
+        "folio-core": "0.4.0",
         "lowcss": "^0.9.0",
         "react": "^18.2.0",
         "uid": "^2.0.1"
