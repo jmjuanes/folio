@@ -1,8 +1,19 @@
 import {
     normalizeBounds,
+    getPointsDistance,
     getRectangleBounds,
     simplifyPath,
 } from "./math.js";
+
+describe("getPointsDistance", () => {
+    it("should calculate the distance between two points", () => {
+        expect(getPointsDistance([0,0], [10,0])).toEqual(10);
+    });
+
+    it("should calculate the distance between the given points", () => {
+        expect(getPointsDistance([0,0], [10,0], [10,5])).toEqual(15);
+    });
+});
 
 describe("normalizeBounds", () => {
     it("should return normalized bounds", () => {

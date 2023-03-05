@@ -1,6 +1,6 @@
 import React from "react";
-import {COLORS} from "../constants.js";
-import {getPointsCenter} from "../math.js";
+import {COLORS, STROKES} from "../constants.js";
+import {getPointsCenter, getBalancedDash, getPointsDistance} from "../math.js";
 
 const getPath = points => {
     let lastPoint = points[0];
@@ -25,11 +25,14 @@ export const DrawElement = props => {
     const path = React.useMemo(() => getPath(points), [points.length]);
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
-            // const length = getRectanglePerimeter(width, height);
-            // return getBalancedDash(length, strokeWidth, props.strokeStyle);
+            const strokeStyle = props.strokeStyle;
+            const length = getPointsDistance(...points);
+            if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
+                return getBalancedDash(length, strokeWidth, strokeStyle);
+            }
             return ["none", "none"];
         },
-        [strokeWidth, props.strokeStyle],
+        [points.length, strokeWidth, props.strokeStyle],
     );
     return (
         <g transform={`translate(${props.x1},${props.y1})`}>

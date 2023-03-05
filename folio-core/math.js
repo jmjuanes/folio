@@ -1,8 +1,12 @@
-// Calculate the distance between two points
-export const getPointsDistance = (start, end) => {
-    const x = end[0] - start[0];
-    const y = end[1] - start[1];
-    return Math.sqrt(x * x + y * y);
+// Calculate the distance between the provided list of points
+export const getPointsDistance = (...points) => {
+    let length = 0;
+    for (let i = 1; i < points.length; i++) {
+        const x = points[i][0] - points[i-1][0];
+        const y = points[i][1] - points[i-1][1];
+        length = length + Math.sqrt(x * x + y * y);
+    }
+    return length;
 };
 
 // Calculate the center between two points
