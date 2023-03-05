@@ -19,7 +19,7 @@ export const Canvas = props => {
     const canvasRef = React.useRef(null);
     const selectedElements = useSelectedElements(props);
     const [canvasSize, setCanvasSize] = React.useState([100, 100]);
-    const bounds = selectedElements.length > 0 ? getRectangleBounds(selectedElements) : null;
+    const bounds = selectedElements.length > 1 ? getRectangleBounds(selectedElements) : null;
 
     const handlePointerDown = (event, source, pointListener) => {
         event.preventDefault();
@@ -207,7 +207,7 @@ export const Canvas = props => {
                 )}
                 {props.showHandlers && selectedElements.length === 1 && (
                     <Handlers
-                        position={bounds}
+                        position={selectedElements[0]}
                         edgeHandlers={selectedElements[0].edgeHandlers}
                         cornerHandlers={selectedElements[0].cornerHandlers}
                         nodeHandlers={selectedElements[0].nodeHandlers}
