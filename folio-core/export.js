@@ -86,7 +86,7 @@ const getSvgImage = options => {
         // 4. Set internal styles
         style.textContent = fontsCss;
         // 5. Set group attributes
-        group.setAttribute("transform", `translate(-${bounds.x1} -${bounds.y1})`);
+        group.setAttribute("transform", `translate(${(-1) * bounds.x1} ${(-1) * bounds.y1})`);
         // 6. Append elements into  group
         elements.forEach(element => {
             const nodeElement = document.querySelector(`g[data-element="${element.id}"]`);
