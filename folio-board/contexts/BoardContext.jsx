@@ -49,6 +49,7 @@ const createBoard = props => ({
     translateY: props.state?.translateY ?? 0,
     grid: props.state?.grid ?? true,
     background: props.state?.background ?? DEFAULT_BACKGROUND,
+    lockTook: props.state?.lockTook ?? false,
     selection: null,
     defaults: {
         fillColor: DEFAULT_FILL_COLOR,

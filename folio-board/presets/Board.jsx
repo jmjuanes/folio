@@ -1,11 +1,12 @@
 import React from "react";
 import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
 import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
+import {ToolIcon, LockIcon} from "@mochicons/react";
 import {EXPORT_FORMATS} from "folio-core";
 import {DEFAULT_BACKGROUND, ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {Layout, Renderer, SecondaryButton} from "../components/commons/index.jsx";
-import {Dropdown, DropdownItem} from "../components/commons/index.jsx";
+import {Dropdown, DropdownItem, DropdownCheckItem} from "../components/commons/index.jsx";
 
 const BoardWrapper = props => {
     const board = useBoard();
@@ -56,6 +57,22 @@ const BoardWrapper = props => {
                 headerRightContent={(
                     <div className="d:flex gap:2">
                         {props.customHeaderRightContent}
+                        {props.boardActions?.preferences !== false && (
+                            <div className="d:flex position:relative group" tabIndex="0">
+                                <SecondaryButton icon={(<ToolIcon />)} />
+                                <Dropdown className="d:none d:block:group-focus-within top:full right:0">
+                                    <DropdownCheckItem
+                                        active={board.lockTool}
+                                        icon={(<LockIcon />)}
+                                        text="Lock tool"
+                                        onClick={() => {
+                                            board.lockTool = !board.lockTool;
+                                            board.update();
+                                        }}
+                                    />
+                                </Dropdown>
+                            </div>
+                        )}
                         {props.boardActions?.screenshot !== false && (
                             <SecondaryButton
                                 icon={(<CameraIcon />)}

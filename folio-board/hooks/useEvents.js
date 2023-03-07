@@ -224,8 +224,12 @@ export const useEvents = callbacks => {
                     board.activeElement = null;
                     // Check if the tool is not the handdraw
                     // TODO: we need also to check if lock is enabled
-                    if (board.activeTool !== ELEMENTS.DRAW) {
+                    if (!board.lockTool && board.activeTool !== ELEMENTS.DRAW) {
                         board.activeTool = null;
+                    }
+                    else {
+                        // If tool is locked, we need to reset the current selection
+                        element.selected = false;
                     }
                     // Terrible hack to enable editing in a text element
                     if (element.type === ELEMENTS.TEXT) {

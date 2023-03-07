@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import {CheckIcon} from "@mochicons/react";
 
 export const DropdownItem = props => {
     const classList = classNames({
@@ -31,6 +32,29 @@ DropdownItem.defaultProps = {
     icon: null,
     text: null,
     disabled: false,
+    onClick: null,
+};
+
+export const DropdownCheckItem = props => (
+    <div className="d:flex items:center gap:2 r:md px:3 py:2 select:none bg:gray-200:hover cursor:pointer" onClick={props.onClick}>
+        <div className="d:flex text:lg items:center text:gray-700">
+            {props.icon}
+        </div>
+        <div className="d:flex items:center text:sm text:gray-700">
+            <span>{props.text}</span>
+        </div>
+        {props.active && (
+            <div className="ml:auto d:flex items:center text:sm text:gray-800">
+                <CheckIcon />
+            </div>
+        )}
+    </div>
+);
+
+DropdownCheckItem.defaultProps = {
+    active: false,
+    icon: null,
+    text: null,
     onClick: null,
 };
 

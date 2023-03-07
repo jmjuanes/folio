@@ -78,8 +78,9 @@ export const Layout = props => {
                         paddingTop: props.header ? props.headerHeight : null,
                     }}
                     onMoveClick={() => {
+                        board.setTool(null);
                         board.setAction(ACTIONS.MOVE);
-                        board.clearSelectedElements();
+                        // board.clearSelectedElements();
                         board.update();
                     }}
                     onSelectionClick={() => {
