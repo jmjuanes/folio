@@ -1,5 +1,5 @@
 import React from "react";
-import {HANDLERS} from "../constants.js";
+import {CURSORS, HANDLERS} from "../constants.js";
 
 export const NodeHandlers = props => {
     const radius = props.radius / props.zoom;
@@ -20,7 +20,7 @@ export const NodeHandlers = props => {
                 r={radius}
                 fill={props.fillColor}
                 style={{
-                    cursor: "grab",
+                    cursor: CURSORS.GRAB,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -31,7 +31,7 @@ export const NodeHandlers = props => {
                 r={radius}
                 fill={props.fillColor}
                 style={{
-                    cursor: "grab",
+                    cursor: CURSORS.GRAB,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -88,7 +88,7 @@ export const EdgeHandlers = props => {
                 width={width}
                 height={size}
                 style={{
-                    cursor: "ns-resize",
+                    cursor: CURSORS.RESIZE_NS,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -99,7 +99,7 @@ export const EdgeHandlers = props => {
                 width={width}
                 height={size}
                 style={{
-                    cursor: "ns-resize",
+                    cursor: CURSORS.RESIZE_NS,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -110,7 +110,7 @@ export const EdgeHandlers = props => {
                 width={size}
                 height={height}
                 style={{
-                    cursor: "ew-resize",
+                    cursor: CURSORS.RESIZE_EW,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -121,7 +121,7 @@ export const EdgeHandlers = props => {
                 width={size}
                 height={height}
                 style={{
-                    cursor: "ew-resize",
+                    cursor: CURSORS.RESIZE_EW,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -153,7 +153,7 @@ export const CornerHandlers = props => {
                 height={height}
                 rx={radius}
                 style={{
-                    cursor: "nwse-resize",
+                    cursor: CURSORS.RESIZE_NWSE,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -165,7 +165,7 @@ export const CornerHandlers = props => {
                 height={height}
                 rx={radius}
                 style={{
-                    cursor: "nesw-resize",
+                    cursor: CURSORS.RESIZE_NESW,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -177,7 +177,7 @@ export const CornerHandlers = props => {
                 height={height}
                 rx={radius}
                 style={{
-                    cursor: "nwse-resize",
+                    cursor: CURSORS.RESIZE_NWSE,
                 }}
                 onPointerDown={props.onPointerDown}
             />
@@ -189,7 +189,7 @@ export const CornerHandlers = props => {
                 height={height}
                 rx={radius}
                 style={{
-                    cursor: "nesw-resize",
+                    cursor: CURSORS.RESIZE_NESW,
                 }}
                 onPointerDown={props.onPointerDown}
             />

@@ -1,5 +1,5 @@
 import React from "react";
-import {EVENTS, FONT_SOURCES} from "../constants.js";
+import {CURSORS, EVENTS, FONT_SOURCES} from "../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
@@ -153,6 +153,7 @@ export const Canvas = props => {
                 backgroundColor: props.backgroundColor,
                 touchAction: "none",
                 userSelect: "none",
+                cursor: props.cursor,
                 ...props.svgStyle,
             }}
             onPointerDown={e => handlePointerDown(e, null, props.onPointCanvas)}
@@ -188,8 +189,11 @@ export const Canvas = props => {
                             onPointerDown: e => handlePointerDown(e, "element", props.onPointElement),
                             onDoubleClick: e => handleDoubleClick(e, "element", props.onDoubleClickElement),
                         });
+                        const style = {
+                            cursor: props.cursor ? CURSORS.NONE : CURSORS.MOVE,
+                        };
                         return (
-                            <g key={element.id} data-element={element.id} style={{cursor: "move"}}>
+                            <g key={element.id} data-element={element.id} style={style}>
                                 {content}
                             </g>
                         );
@@ -228,6 +232,7 @@ Canvas.defaultProps = {
     elements: [],
     assets: {},
     fonts: Object.values(FONT_SOURCES),
+    cursor: "",
     translateX: 0,
     translateY: 0,
     zoom: 1,

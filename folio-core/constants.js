@@ -11,6 +11,22 @@ export const EVENTS = {
     RESIZE: "resize",
 };
 
+export const CURSORS = {
+    NONE: "",
+    DEFAULT: "default",
+    DISABLED: "not-allowed",
+    POINTER: "pointer",
+    CROSS: "crosshair",
+    TEXT: "text",
+    GRAB: "grab",
+    GRABBING: "grabbing",
+    MOVE: "move",
+    RESIZE_EW: "ew-resize",
+    RESIZE_NS: "ns-resize",
+    RESIZE_NESW: "nesw-resize",
+    RESIZE_NWSE: "nwse-resize",
+};
+
 export const ELEMENTS = {
     SHAPE: "shape",
     LINE: "line",
