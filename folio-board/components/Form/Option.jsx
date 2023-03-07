@@ -12,21 +12,21 @@ const transparent = window.encodeURIComponent([
 const optionTypes = {
     color: props => (
         <div className="w:full">
-            <div className="d:flex items:center gap:2 w:full mb:2">
+            <div className="d:flex items:center gap:1 w:full mb:2">
                 <div
-                    className="d:flex r:md p:4 h:10 w:10 b:1 b:solid b:light-900"
+                    className="d:flex r:md h:8 w:8 b:1 b:solid b:gray-300"
                     style={{
                         backgroundColor: props.value !== "transparent" ? props.value : null,
                         backgroundImage: props.value === "transparent" ? `url('data:image/svg+xml;utf-8,${transparent}')` : null,
-                        backgroundSize: "16px 16px",
+                        backgroundSize: "10px 10px",
                         backgroundRepeat: "repeat",
-                        minWidth: "2.5rem",
+                        minWidth: "2rem",
                     }}
                 />
                 <input
                     type="text"
                     data-field={props.field}
-                    className="w:full px:4 py:0 h:10 bg:white r:md outline:0 b:1 b:solid b:light-900 text:sm"
+                    className="w:full px:2 py:0 h:8 bg:white r:md outline:0 b:1 b:solid b:gray-300 text:xs"
                     defaultValue={props.value}
                     style={{
                         fontFamily: "monospace",
@@ -38,11 +38,11 @@ const optionTypes = {
                 {(props.values || []).map(color => (
                     <div
                         key={color}
-                        className="d:flex p:4 r:md cursor:pointer b:1 b:solid b:light-900"
+                        className="d:flex w:8 h:8 r:md cursor:pointer b:1 b:solid b:gray-300"
                         style={{
                             backgroundColor: color !== "transparent" ? color : null,
                             backgroundImage: color === "transparent" ? `url('data:image/svg+xml;utf-8,${transparent}')` : null,
-                            backgroundSize: "16px 16px",
+                            backgroundSize: "10px 10px",
                             backgroundRepeat: "repeat",
                         }}
                         onClick={() => {
@@ -56,14 +56,14 @@ const optionTypes = {
         </div>
     ),
     font: props => (
-        <div className="d:flex gap:1 w:full">
+        <div className="d:grid cols:4 gap:1 w:full">
             {(props.values || []).map(font => (
                 <div
                     key={font}
                     className={classNames({
                         "d:flex justify:center items:center": true,
-                        "r:md cursor:pointer p:2 w:full text:lg": true,
-                        "bg:dark-700 text:white": font === props.value,
+                        "r:md cursor:pointer w:10 h:10 text:md": true,
+                        "bg:gray-800 text:white": font === props.value,
                     })}
                     style={{
                         fontFamily: font,
@@ -80,20 +80,18 @@ const optionTypes = {
             {(props.values || []).map(item => {
                 const itemClass = classNames({
                     "d:flex flex:col justify:center items:center": true,
-                    "r:md cursor:pointer p:2 w:full": true,
-                    // "text:lg": !!item.icon,
-                    // "font:bold": !!item.text,
-                    "bg:dark-700 text:white": item.value === props.value,
+                    "r:md cursor:pointer w:10 h:10": true,
+                    "bg:gray-800 text:white": item.value === props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
                         {!!item.icon && (
-                            <div className={classNames("d:flex items:center h:8 text:xl", item.iconClass)}>
+                            <div className={classNames("d:flex items:center text:lg", item.iconClass)}>
                                 {item.icon}
                             </div>
                         )}
                         {!!item.text && (
-                            <div className={classNames("d:flex items:center h:8", item.textClass)}>
+                            <div className={classNames("d:flex items:center", item.textClass)}>
                                 <span className="font:bold">{item.text}</span>
                             </div>
                         )}
@@ -117,7 +115,7 @@ const optionTypes = {
             )}
             <input
                 type="text"
-                className="w:full px:4 bg:light-500 b:0 r:md"
+                className="w:full px:4 b:0 r:md"
                 placeholder={props.placeholder}
                 onChange={e => props.onChange(e.target.value || "")}
                 defaultValue={props.value}
@@ -131,7 +129,7 @@ const optionTypes = {
         <div className="">
             <input
                 type="range"
-                className="m:0 w:full bg:light-900 h:1 mt:3 mb:2"
+                className="m:0 w:full bg:gray-300 h:1 mt:3 mb:2"
                 onChange={e => props.onChange(e.target.value || 0)}
                 defaultValue={props.value}
                 min={props.minValue}
@@ -149,7 +147,7 @@ export const Option = props => {
         display: isInline ? "flex" : "block",
     };
     const titleStyle = {
-        fontSize: "0.875rem",
+        fontSize: "0.75rem",
         fontWeight: "bold",
         marginBottom: isInline ? "0px" : "0.5rem",
     };
@@ -157,7 +155,7 @@ export const Option = props => {
         marginLeft: isInline ? "auto" : "0px",
     };
     return (
-        <div className="mt:0 text:dark-700">
+        <div className="mt:0 text:gray-700">
             <div style={wrapperStyle}>
                 <div style={titleStyle}>{props.title}</div>
                 <div style={contentStyle}>
@@ -165,7 +163,7 @@ export const Option = props => {
                 </div>
             </div>
             {!!props.helper && (
-                <div className="text:light-900 text:xs mt:0">
+                <div className="text:gray-400 text:2xs mt:0">
                     {props.helper}
                 </div>
             )}

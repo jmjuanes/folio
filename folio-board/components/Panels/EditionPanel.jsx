@@ -1,6 +1,6 @@
 import React from "react";
 import {DIALOGS} from "../../constants.js";
-import {Panel, PanelTextButton} from "./Panel.jsx";
+import {Panel, PanelSeparator, PanelTextButton} from "./Panel.jsx";
 import {
     FillIcon,
     StrokeIcon,
@@ -55,6 +55,7 @@ export const EditionPanel = props => (
         <PanelTextButton text="Shape" {...getButtonProps(props, DIALOGS.SHAPE, "shape")}>
             <ShapesIcon />
         </PanelTextButton>
+        <PanelSeparator />
         {/* Order buttons */}
         {/*
         <{false && (

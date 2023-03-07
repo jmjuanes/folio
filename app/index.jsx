@@ -24,7 +24,7 @@ const App = props => {
     const [state, setState] = React.useState({});
     const classList = classNames({
         "position:fixed top:0 left:0 h:full w:full": true,
-        "bg:white text:base text:dark-700": true,
+        "bg:white text:base text:gray-700": true,
         // "blur:md": loadingVisible,
     });
 

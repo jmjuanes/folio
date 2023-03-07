@@ -1,7 +1,7 @@
 import React from "react";
 import {ELEMENTS} from "folio-core";
 import {ACTIONS} from "../../constants.js";
-import {Panel, PanelTextButton} from "./Panel.jsx";
+import {Panel, PanelSeparator, PanelTextButton} from "./Panel.jsx";
 import {
     // ArrowsIcon,
     HandGrabIcon,
@@ -29,7 +29,7 @@ export const ToolsPanel = props => (
         >
             <PointerIcon />
         </PanelTextButton>
-        <div className="bg:light-900 w:12 h:px" />
+        <PanelSeparator />
         {/* Available tools */}
         <PanelTextButton text="Shape" active={props.tool === ELEMENTS.SHAPE} onClick={() => props.onToolClick(ELEMENTS.SHAPE)}>
             <RectangleIcon />

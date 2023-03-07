@@ -9,7 +9,7 @@ export const Dialog = props => (
         }}
     >
         <div
-            className="bg:white r:xl shadow:md p:6 z:5 b:1 b:solid b:light-900"
+            className="bg:white r:xl shadow:md p:6 z:5 b:1 b:solid b:gray-300"
             style={{
                 width: props.width,
             }}
@@ -21,6 +21,6 @@ export const Dialog = props => (
 
 Dialog.defaultProps = {
     className: "",
-    width: "16rem",
+    width: "14rem",
     style: {},
 };

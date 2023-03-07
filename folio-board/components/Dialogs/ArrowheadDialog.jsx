@@ -24,19 +24,19 @@ const options = {
     startArrowhead: {
         type: "select",
         title: "Start Arrowhead",
-        grid: 3,
+        // grid: 3,
         values: arrowheadValues,
     },
     endArrowhead: {
         type: "select",
         title: "End Arrowhead",
-        grid: 3,
+        // grid: 3,
         values: arrowheadValues,
     },
 };
 
 export const ArrowheadDialog = props => (
-    <Dialog className={props.className} style={props.style} width="11rem">
+    <Dialog className={props.className} style={props.style}>
         <Form
             data={props.values || {}}
             items={options}
@@ -46,7 +46,7 @@ export const ArrowheadDialog = props => (
 );
 
 ArrowheadDialog.defaultProps = {
-    className: "right:0 top:0 pt:4 pr:28",
+    className: "right:0 top:0 pt:4 pr:24",
     values: {},
     style: {},
     onChange: null,

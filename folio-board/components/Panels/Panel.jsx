@@ -17,7 +17,7 @@ export const Panel = props => {
         ...props.style,
     };
     const panelContentClass = classNames({
-        "b:1 b:solid b:light-900": true,
+        "b:1 b:solid b:gray-300": true,
         "r:lg shadow:md items:center bg:white d:flex gap:2 p:2": true,
         // "flex:col": props.position === "top-left" || props.position === "top-right",
         "flex:col": props.direction === "col",
@@ -40,9 +40,9 @@ export const PanelButton = props => {
     // TODO: missing height: 2.25rem height!!
     const classList = classNames({
         "items:center r:md d:flex text:lg p:2": true,
-        "text:dark-700 bg:dark-800:hover text:white:hover cursor:pointer": !props.active && !props.disabled,
-        "is-active bg:dark-800 text:white cursor:pointer": props.active && !props.disabled,
-        "is-disabled text:dark-100 cursor:not-allowed o:60": !props.active && props.disabled,
+        "text:gray-800 bg:gray-800:hover text:white:hover cursor:pointer": !props.active && !props.disabled,
+        "is-active bg:gray-800 text:white cursor:pointer": props.active && !props.disabled,
+        "is-disabled text:gray-500 cursor:not-allowed o:60": !props.active && props.disabled,
     });
     return (
         <div className={classList} onClick={props.onClick}>
@@ -59,16 +59,16 @@ PanelButton.defaultProps = {
 export const PanelTextButton = props => {
     // TODO: missing height: 2.25rem height!!
     const classList = classNames({
-        "d:flex flex:col w:16": true,
-        "items:center r:md d:flex text:lg p:3": true,
-        "text:dark-700 bg:dark-800:hover text:white:hover cursor:pointer": !props.active && !props.disabled,
-        "is-active bg:dark-800 text:white cursor:pointer": props.active && !props.disabled,
-        "is-disabled text:dark-100 cursor:not-allowed o:60": !props.active && props.disabled,
+        "d:flex flex:col w:12": true,
+        "items:center r:md d:flex text:lg p:2": true,
+        "text:gray-800 bg:gray-800:hover text:white:hover cursor:pointer": !props.active && !props.disabled,
+        "is-active bg:gray-800 text:white cursor:pointer": props.active && !props.disabled,
+        "is-disabled text:gray-500 cursor:not-allowed o:60": !props.active && props.disabled,
     });
     return (
         <div className={classList} onClick={props.onClick}>
             {props.children}
-            <div className="mt:1 text:2xs">
+            <div className="mt:1 text:3xs">
                 <strong>{props.text}</strong>
             </div>
         </div>
@@ -80,3 +80,7 @@ PanelTextButton.defaultProps = {
     active: false,
     disabled: false,
 };
+
+export const PanelSeparator = () => (
+    <div className="bg:gray-300 w:12 h:px" />
+);

@@ -2,7 +2,7 @@ import React from "react";
 import {CloseIcon, CheckIcon} from "@mochicons/react";
 import {useConfirm} from "../../contexts/ConfirmContext.jsx";
 import {Modal} from "./Modal.jsx";
-import {Button} from "./Button.jsx";
+import {PrimaryButton, SecondaryButton} from "./Button.jsx";
 
 export const Confirm = () => {
     const {confirm, hideConfirm} = useConfirm();
@@ -14,16 +14,16 @@ export const Confirm = () => {
                     {confirm.message}
                 </div>
                 <div className="d:flex gap:2 w:full flex:row-reverse">
-                    <Button
-                        className="w:full bg:dark-700 bg:dark-900:hover text:white"
+                    <PrimaryButton
+                        fullWidth={true}
                         icon={<CheckIcon />}
                         onClick={() => {
                             confirm.callback();
                             hideConfirm();
                         }}
                     />
-                    <Button
-                        className="w:full bg:light-300:hover text:dark-700"
+                    <SecondaryButton
+                        fullWidth={true}
                         icon={<CloseIcon />}
                         onClick={() => hideConfirm()}
                     />

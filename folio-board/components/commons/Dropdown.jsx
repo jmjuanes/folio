@@ -4,7 +4,7 @@ import classNames from "classnames";
 export const DropdownItem = props => {
     const classList = classNames({
         "d:flex items:center gap:2 r:md px:3 py:2 select:none": true,
-        "bg:light-200:hover cursor:pointer": !props.disabled,
+        "bg:gray-200:hover cursor:pointer": !props.disabled,
         "o:80 cursor:not-allowed": props.disabled,
     });
     const handleClick = () => {
@@ -17,10 +17,10 @@ export const DropdownItem = props => {
     };
     return (
         <div className={classList} tabIndex="0" onClick={handleClick}>
-            <div className="d:flex text:lg items:center text:dark-700">
+            <div className="d:flex text:lg items:center text:gray-700">
                 {props.icon}
             </div>
-            <div className="d:flex items:center text:sm text:dark-700">
+            <div className="d:flex items:center text:sm text:gray-700">
                 <span>{props.text}</span>
             </div>
         </div>

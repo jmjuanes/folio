@@ -54,7 +54,7 @@ export const StrokeDialog = props => (
 );
 
 StrokeDialog.defaultProps = {
-    className: "pt:4 right:0 top:0 pr:28",
+    className: "pt:4 right:0 top:0 pr:24",
     style: {},
     values: {},
     onChange: null,
