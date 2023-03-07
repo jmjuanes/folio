@@ -10,6 +10,7 @@ import {
     ACTIONS,
     CHANGES,
     KEYS,
+    STATES,
 } from "../constants.js";
 import {isInputTarget} from "../utils/events.js";
 import {getDataFromClipboard, copyTextToClipboard} from "../utils/clipboard.js";
@@ -87,7 +88,7 @@ export const useEvents = callbacks => {
                 }
                 else if (board.getSelectedElements().length > 0) {
                     if (!board.activeAction) {
-                        board.activeAction = ACTIONS.DRAG;
+                        board.activeAction = ACTIONS.TRANSLATE;
                     }
                     // Save a snapshot of the current selection for calculating the correct element position
                     snapshot = board.snapshotSelectedElements();
@@ -111,14 +112,17 @@ export const useEvents = callbacks => {
                     lastTranslateX = board.translateX;
                     lastTranslateY = board.translateY;
                 }
+                board.currentState = STATES.POINTING;
                 board.update();
             },
             onPointerMove: event => {
                 if (board.activeAction === ACTIONS.MOVE) {
+                    board.currentState = STATES.DRAGGING;
                     board.translateX = Math.floor(lastTranslateX + event.dx * board.zoom);
                     board.translateY = Math.floor(lastTranslateY + event.dy * board.zoom);
                 }
                 else if (board.activeAction === ACTIONS.CREATE) {
+                    board.currentState = STATES.CREATING;
                     const element = board.activeElement;
                     // First, update the second point of the element
                     element.x2 = getPosition(event.currentX);
@@ -126,7 +130,8 @@ export const useEvents = callbacks => {
                     // Second, call the onCreateMove listener of the element
                     getElementConfig(element)?.onCreateMove?.(element, event);
                 }
-                else if (board.activeAction === ACTIONS.DRAG) {
+                else if (board.activeAction === ACTIONS.TRANSLATE) {
+                    board.currentState = STATES.TRANSLATING;
                     isDragged = true;
                     board.getSelectedElements().forEach((element, index) => {
                         element.x1 = getPosition(snapshot[index].x1 + event.dx);
@@ -137,6 +142,7 @@ export const useEvents = callbacks => {
                     });
                 }
                 else if (board.activeAction === ACTIONS.RESIZE) {
+                    board.currentState = STATES.RESIZING;
                     isResized = true;
                     const element = board.getElement(snapshot[0].id);
                     const elementConfig = getElementConfig(element);
@@ -184,6 +190,7 @@ export const useEvents = callbacks => {
                     }
                 }
                 else if (board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT) {
+                    board.currentState = STATES.BRUSHING;
                     board.selection.x2 = event.currentX;
                     board.selection.y2 = event.currentY;
                 }
@@ -191,6 +198,7 @@ export const useEvents = callbacks => {
                 board.update();
             },
             onPointerUp: event => {
+                board.currentState = STATES.IDLE;
                 if (board.activeAction === ACTIONS.MOVE) {
                     lastTranslateX = board.translateX;
                     lastTranslateY = board.translateY;
@@ -227,7 +235,7 @@ export const useEvents = callbacks => {
                         return board.update();
                     }
                 }
-                else if (board.activeAction === ACTIONS.DRAG || board.activeAction === ACTIONS.RESIZE) {
+                else if (board.activeAction === ACTIONS.TRANSLATE || board.activeAction === ACTIONS.RESIZE) {
                     if (isDragged || isResized) {
                         const keys = ["x1", "x2", "y1", "y2"];
                         updatedKeys.forEach(extraKey => keys.push(extraKey));

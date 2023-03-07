@@ -22,7 +22,7 @@ import {
     DEFAULT_ARROWHEAD_START,
     DEFAULT_SHAPE,
 } from "folio-core";
-import {CHANGES, DEFAULT_BACKGROUND} from "../constants.js";
+import {CHANGES, DEFAULT_BACKGROUND, STATES} from "../constants.js";
 import {loadImage} from "../utils/image.js";
 
 const generateRandomId = () => uid(20);
@@ -40,6 +40,7 @@ const createBoard = props => ({
     },
     history: [],
     historyIndex: 0,
+    currentState: STATES.IDLE,
     activeAction: null,
     activeTool: null,
     activeElement: null,

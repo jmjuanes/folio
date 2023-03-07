@@ -35,7 +35,7 @@ export const ACTIONS = {
     SELECT: "action:select",
     SCREENSHOT: "action:screenshot",
     CREATE: "action:create",
-    DRAG: "action:drag",
+    TRANSLATE: "action:translate",
     RESIZE: "actionresize",
     EDIT: "action:edit",
 };
@@ -44,4 +44,14 @@ export const CHANGES = {
     CREATE: "change:create",
     UPDATE: "change:update",
     REMOVE: "change:remove",
+};
+
+export const STATES = {
+    IDLE: "idle",
+    POINTING: "pointing",
+    DRAGGING: "dragging",
+    CREATING: "creating",
+    RESIZING: "resizing",
+    TRANSLATING: "translating",
+    BRUSHING: "brushing",
 };
