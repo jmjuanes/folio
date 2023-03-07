@@ -89,6 +89,9 @@ export const FILE_EXTENSIONS = {
     SVG: ".svg",
 };
 
+// Export constants
+export const EXPORT_PADDING = 16;
+export const EXPORT_OFFSET = 0.5;
 export const EXPORT_FORMATS = {
     PNG: "PNG",
     SVG: "SVG",

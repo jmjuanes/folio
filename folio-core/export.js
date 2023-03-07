@@ -1,4 +1,5 @@
-import {EXPORT_FORMATS, FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
+import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING} from "./constants.js";
+import {FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
 import {getRectangleBounds} from "./math.js";
 
 // Convert a blob to file
@@ -68,6 +69,7 @@ const getFonts = (fonts, embedFonts) => {
 // Get image in SVG
 const getSvgImage = options => {
     const elements = options?.elements || [];
+    const padding = options?.padding ?? EXPORT_PADDING;
     const fonts = options?.fonts || Object.values(FONT_SOURCES);
     return getFonts(fonts, !!options.embedFonts).then(fontsCss => {
         const bounds = getRectangleBounds(elements);
@@ -79,14 +81,14 @@ const getSvgImage = options => {
         svg.appendChild(group);
         // 2. Set new svg attributes
         svg.setAttribute("style", ""); // Reset style
-        svg.setAttribute("width", Math.abs(bounds.x2 - bounds.x1));
-        svg.setAttribute("height", Math.abs(bounds.y2 - bounds.y1));
+        svg.setAttribute("width", Math.abs(bounds.x2 - bounds.x1) + 2 * padding);
+        svg.setAttribute("height", Math.abs(bounds.y2 - bounds.y1) + 2 * padding);
         // 3. Set svg style
         svg.style.backgroundColor = options?.background || "#fff";
         // 4. Set internal styles
         style.textContent = fontsCss;
         // 5. Set group attributes
-        group.setAttribute("transform", `translate(${(-1) * bounds.x1} ${(-1) * bounds.y1})`);
+        group.setAttribute("transform", `translate(${padding - bounds.x1} ${padding - bounds.y1})`);
         // 6. Append elements into  group
         elements.forEach(element => {
             const nodeElement = document.querySelector(`g[data-element="${element.id}"]`);
@@ -111,22 +113,23 @@ const getPngImage = options => {
         // img.crossOrigin = "anonymous";
         img.addEventListener("load", () => {
             let x = 0, y = 0;
+            const padding = (options.padding ?? EXPORT_PADDING) + EXPORT_OFFSET;
             if (options.crop) {
                 const bounds = getRectangleBounds(options.elements);
                 x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2);
                 y = bounds.y1 - Math.min(options.crop.y1, options.crop.y2);
-                canvas.width = Math.abs(options.crop.x2 - options.crop.x1);
-                canvas.height = Math.abs(options.crop.y2 - options.crop.y1);
+                canvas.width = Math.abs(options.crop.x2 - options.crop.x1) + 2 * padding;
+                canvas.height = Math.abs(options.crop.y2 - options.crop.y1) + 2 * padding;
             }
             else {
                 // Set the canvas size to the total image size
-                canvas.width = img.width;
-                canvas.height = img.height;
+                canvas.width = img.width + padding;
+                canvas.height = img.height + padding;
             }
             const ctx = canvas.getContext("2d");
             ctx.fillStyle = "white";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, x, y);
+            ctx.drawImage(img, x + padding, y + padding);
             canvas.toBlob(resolve);
         });
         img.addEventListener("error", event => {
