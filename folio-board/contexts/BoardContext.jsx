@@ -49,7 +49,7 @@ const createBoard = props => ({
     translateY: props.state?.translateY ?? 0,
     grid: props.state?.grid ?? true,
     background: props.state?.background ?? DEFAULT_BACKGROUND,
-    lockTook: props.state?.lockTook ?? false,
+    lockTool: props.state?.lockTool ?? false,
     selection: null,
     defaults: {
         fillColor: DEFAULT_FILL_COLOR,
@@ -65,6 +65,20 @@ const createBoard = props => ({
         shape: DEFAULT_SHAPE,
         startArrowhead: DEFAULT_ARROWHEAD_START,
         endArrowhead: DEFAULT_ARROWHEAD_END,
+    },
+
+    // Get current state
+    getState() {
+        return {
+            elements: this.elements,
+            assets: this.assets,
+            background: this.background,
+            grid: this.grid,
+            lockTool: this.lockTool,
+            // zoom: this.zoom,
+            // translateX: this.translateX,
+            // translateY: this.translateY,
+        };
     },
     
     update() {

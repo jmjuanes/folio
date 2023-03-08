@@ -11,6 +11,10 @@ import {ColorPicker} from "../components/Form/ColorPicker.jsx";
 
 const BoardWrapper = props => {
     const board = useBoard();
+    const handleSettingsUpdate = () => {
+        props.onChange?.(board.getState());
+        board.update();
+    };
 
     return (
         <div className="position:relative overflow:hidden h:full w:full">
@@ -67,7 +71,7 @@ const BoardWrapper = props => {
                                         text="Grid"
                                         onClick={() => {
                                             board.grid = !board.grid;
-                                            board.update();
+                                            handleSettingsUpdate();
                                         }}
                                     />
                                     <DropdownCheckItem
@@ -76,7 +80,7 @@ const BoardWrapper = props => {
                                         text="Lock tool"
                                         onClick={() => {
                                             board.lockTool = !board.lockTool;
-                                            board.update();
+                                            handleSettingsUpdate();
                                         }}
                                     />
                                     <DropdownSeparator />
@@ -86,7 +90,7 @@ const BoardWrapper = props => {
                                             value={board.background}
                                             onChange={newBackground => {
                                                 board.background = newBackground;
-                                                board.update();
+                                                handleSettingsUpdate();
                                             }}
                                         />
                                     </div>
