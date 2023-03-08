@@ -1,35 +1,28 @@
 import React from "react";
 import {Option} from "./Option.jsx";
 
+// TODO: check the visible field of each item to decide if item should be visible
+const getVisibleItems = (items, data) => {
+    return Object.keys(items || {});
+};
+
 export const Form = props => (
     <div className={props.className} style={props.style}>
-        {Object.keys(props.items || {}).map((key, index) => {
+        {getVisibleItems(props.items, props.data).map(key => {
             const item = props.items[key];
-            const value = props.data?.[key] || null;
-            if (typeof item.visible !== "undefined") {
-                if (typeof item.visible === "function" && !item.visible(value, data)) {
-                    return null;
-                }
-                else if (!item.visible) {
-                    return null;
-                }
-            }
-            return (
-                <div className={index === 0 ? "mt:0" : "mt:4"} key={key}>
-                    <Option
-                        {...item}
-                        field={key}
-                        value={value}
-                        onChange={v => props.onChange(key, v)}
-                    />
-                </div>
-            );
+            return React.createElement(Option, {
+                ...item,
+                key: key,
+                field: key,
+                value: props.data?.[key] || null,
+                onChange: value => props.onChange?.(key, value),
+            });
         })}
     </div>
 );
 
 Form.defaultProps = {
-    className: "",
+    className: "d:flex flex:col gap:4",
     data: {},
     items: {},
     style: {},
