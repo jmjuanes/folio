@@ -24,8 +24,7 @@ export const useEvents = callbacks => {
     if (!events.current) {
         const updatedKeys = new Set();
         const getPosition = pos => {
-            // return state.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
-            return Math.round(pos / GRID_SIZE) * GRID_SIZE;
+            return board.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
         };
 
         // Internal variables

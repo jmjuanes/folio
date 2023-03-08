@@ -40,7 +40,7 @@ export const Renderer = props => {
             showBrush={isSelection || isScreenshot}
             showHandlers={showHandlersAndBounds}
             showBounds={showHandlersAndBounds}
-            showGrid={true}
+            showGrid={board.grid}
             {...events}
         />
     );

@@ -1,7 +1,7 @@
 import React from "react";
 import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
 import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
-import {ToolIcon, LockIcon} from "@mochicons/react";
+import {ToolIcon, LockIcon, GridIcon} from "@mochicons/react";
 import {EXPORT_FORMATS} from "folio-core";
 import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
@@ -15,7 +15,6 @@ const BoardWrapper = props => {
     return (
         <div className="position:relative overflow:hidden h:full w:full">
             <Renderer
-                grid={true}
                 onChange={props.onChange}
                 onScreenshot={props.onScreenshot}
             />
@@ -62,6 +61,15 @@ const BoardWrapper = props => {
                                 <SecondaryButton icon={(<ToolIcon />)} />
                                 <Dropdown className="d:none d:block:group-focus-within top:full right:0">
                                     <DropdownGroup title="General settings" />
+                                    <DropdownCheckItem
+                                        active={board.grid}
+                                        icon={(<GridIcon />)}
+                                        text="Grid"
+                                        onClick={() => {
+                                            board.grid = !board.grid;
+                                            board.update();
+                                        }}
+                                    />
                                     <DropdownCheckItem
                                         active={board.lockTool}
                                         icon={(<LockIcon />)}
