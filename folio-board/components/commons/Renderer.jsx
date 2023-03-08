@@ -29,7 +29,7 @@ export const Renderer = props => {
             id={board.id}
             elements={board.elements}
             assets={board.assets}
-            backgroundColor="#fafafa"
+            backgroundColor={board.background}
             cursor={cursor}
             translateX={board.translateX}
             translateY={board.translateY}

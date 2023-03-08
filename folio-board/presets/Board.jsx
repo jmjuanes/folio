@@ -3,10 +3,11 @@ import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
 import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
 import {ToolIcon, LockIcon} from "@mochicons/react";
 import {EXPORT_FORMATS} from "folio-core";
-import {DEFAULT_BACKGROUND, ACTIONS} from "../constants.js";
+import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {Layout, Renderer, SecondaryButton} from "../components/commons/index.jsx";
-import {Dropdown, DropdownItem, DropdownCheckItem} from "../components/commons/index.jsx";
+import {Dropdown, DropdownSeparator, DropdownGroup, DropdownItem, DropdownCheckItem} from "../components/commons/index.jsx";
+import {ColorPicker} from "../components/Form/ColorPicker.jsx";
 
 const BoardWrapper = props => {
     const board = useBoard();
@@ -15,7 +16,6 @@ const BoardWrapper = props => {
         <div className="position:relative overflow:hidden h:full w:full">
             <Renderer
                 grid={true}
-                background={DEFAULT_BACKGROUND}
                 onChange={props.onChange}
                 onScreenshot={props.onScreenshot}
             />
@@ -61,6 +61,7 @@ const BoardWrapper = props => {
                             <div className="d:flex position:relative group" tabIndex="0">
                                 <SecondaryButton icon={(<ToolIcon />)} />
                                 <Dropdown className="d:none d:block:group-focus-within top:full right:0">
+                                    <DropdownGroup title="General settings" />
                                     <DropdownCheckItem
                                         active={board.lockTool}
                                         icon={(<LockIcon />)}
@@ -70,6 +71,17 @@ const BoardWrapper = props => {
                                             board.update();
                                         }}
                                     />
+                                    <DropdownSeparator />
+                                    <div className="d:block mt:2">
+                                        <DropdownGroup title="Background" />
+                                        <ColorPicker
+                                            value={board.background}
+                                            onChange={newBackground => {
+                                                board.background = newBackground;
+                                                board.update();
+                                            }}
+                                        />
+                                    </div>
                                 </Dropdown>
                             </div>
                         )}

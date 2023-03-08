@@ -2,6 +2,16 @@ import React from "react";
 import classNames from "classnames";
 import {CheckIcon} from "@mochicons/react";
 
+export const DropdownSeparator = () => (
+    <div className="bg:gray-200 h:px w:full my:2" />
+);
+
+export const DropdownGroup = props => (
+    <div className="text:xs mb:2 text:gray-500 select:none">
+        {props.title}
+    </div>
+);
+
 export const DropdownItem = props => {
     const classList = classNames({
         "d:flex items:center gap:2 r:md px:3 py:2 select:none": true,
