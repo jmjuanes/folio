@@ -37,10 +37,12 @@ export const Renderer = props => {
             brush={board.selection}
             brushFillColor={isScreenshot ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
             brushStrokeColor={isScreenshot ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
+            pointer={board.erase}
             showBrush={isSelection || isScreenshot}
             showHandlers={showHandlersAndBounds}
             showBounds={showHandlersAndBounds}
             showGrid={board.grid}
+            showPointer={board.activeAction === ACTIONS.ERASE}
             {...events}
         />
     );

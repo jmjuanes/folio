@@ -4,6 +4,7 @@ import {
     HANDLERS,
     GRID_SIZE,
     getElementConfig,
+    normalizeBounds,
 } from "folio-core";
 import {
     IS_DARWIN,
@@ -111,6 +112,12 @@ export const useEvents = callbacks => {
                     lastTranslateX = board.translateX;
                     lastTranslateY = board.translateY;
                 }
+                else if (board.activeAction === ACTIONS.ERASE) {
+                    board.erase = {
+                        x: event.originalX,
+                        y: event.originalY,
+                    };
+                }
                 board.currentState = STATES.POINTING;
                 board.update();
             },
@@ -119,6 +126,21 @@ export const useEvents = callbacks => {
                     board.currentState = STATES.DRAGGING;
                     board.translateX = Math.floor(lastTranslateX + event.dx * board.zoom);
                     board.translateY = Math.floor(lastTranslateY + event.dy * board.zoom);
+                }
+                else if (board.activeAction === ACTIONS.ERASE) {
+                    board.currentState = STATES.ERASING;
+                    board.erase.x = event.originalX + event.dx;
+                    board.erase.y = event.originalY + event.dy;
+                    board.elements.forEach(el => {
+                        if (!el.erased) {
+                            const b = el.type === ELEMENTS.ARROW ? normalizeBounds(el) : el;
+                            if (b.x1 <= board.erase.x && board.erase.x <= b.x2) {
+                                if (b.y1 <= board.erase.y && board.erase.y <= b.y2) {
+                                    el.erased = true;
+                                }
+                            }
+                        }
+                    });
                 }
                 else if (board.activeAction === ACTIONS.CREATE) {
                     board.currentState = STATES.CREATING;
@@ -201,6 +223,14 @@ export const useEvents = callbacks => {
                 if (board.activeAction === ACTIONS.MOVE) {
                     lastTranslateX = board.translateX;
                     lastTranslateY = board.translateY;
+                    return board.update();
+                }
+                else if (board.activeAction === ACTIONS.ERASE) {
+                    board.erase = null;
+                    board.removeElements(board.elements.filter(el => el.erased));
+                    callbacks?.onChange?.({
+                        elements: board.elements,
+                    });
                     return board.update();
                 }
                 else if (board.activeAction === ACTIONS.CREATE && board.activeElement) {
@@ -417,7 +447,6 @@ export const useEvents = callbacks => {
                         board.addText(content).then(() => {
                             callbacks?.onChange?.({
                                 elements: board.elements,
-                                assets: board.assets,
                             });
                         });
                     }

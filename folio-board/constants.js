@@ -38,6 +38,7 @@ export const ACTIONS = {
     TRANSLATE: "action:translate",
     RESIZE: "actionresize",
     EDIT: "action:edit",
+    ERASE: "action:erase",
 };
 
 export const CHANGES = {
@@ -54,4 +55,5 @@ export const STATES = {
     RESIZING: "resizing",
     TRANSLATING: "translating",
     BRUSHING: "brushing",
+    ERASING: "erasing",
 };

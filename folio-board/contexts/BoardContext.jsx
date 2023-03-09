@@ -51,6 +51,7 @@ const createBoard = props => ({
     background: props.state?.background ?? DEFAULT_BACKGROUND,
     lockTool: props.state?.lockTool ?? false,
     selection: null,
+    erase: null,
     defaults: {
         fillColor: DEFAULT_FILL_COLOR,
         fillOpacity: DEFAULT_FILL_OPACITY,
@@ -199,6 +200,7 @@ const createBoard = props => ({
                     prevValues: {
                         ...element,
                         selected: false,
+                        erased: false,
                     },
                     newValues: null,
                 })),

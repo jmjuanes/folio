@@ -1,9 +1,10 @@
 import React from "react";
-import {CURSORS, EVENTS, FONT_SOURCES} from "../constants.js";
+import {COLORS, CURSORS, EVENTS, FONT_SOURCES} from "../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
+import {Pointer} from "./Pointer.jsx";
 import {getElementConfig} from "../elements/index.jsx";
 import {AssetsProvider} from "../contexts/AssetsContext.jsx";
 import {getRectangleBounds} from "../math.js";
@@ -190,6 +191,7 @@ export const Canvas = props => {
                             onDoubleClick: e => handleDoubleClick(e, "element", props.onDoubleClickElement),
                         });
                         const style = {
+                            opacity: element.erased ? "0.3" : "1.0",
                             cursor: props.cursor ? CURSORS.NONE : CURSORS.MOVE,
                         };
                         return (
@@ -219,6 +221,13 @@ export const Canvas = props => {
                         onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
                     />
                 )}
+                {props.showPointer && props.pointer && (
+                    <Pointer
+                        position={props.pointer}
+                        fillColor={props.pointerFillColor}
+                        strokeColor={props.pointerStrokeColor}
+                    />
+                )}
             </g>
         </svg>
     );
@@ -239,6 +248,8 @@ Canvas.defaultProps = {
     brush: null,
     brushFillColor: "#4184f4",
     brushStrokeColor: "#4285f4",
+    pointer: null,
+    pointerFillColor: "#fff",
     onPointCanvas: null,
     onDoubleClickCanvas: null,
     onPointElement: null,
@@ -257,6 +268,7 @@ Canvas.defaultProps = {
     showBounds: false,
     showBrush: false,
     showGrid: true,
+    showPointer: false,
     svgStyle: {},
     svgClassName: "",
 };

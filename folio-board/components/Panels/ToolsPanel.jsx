@@ -1,4 +1,5 @@
 import React from "react";
+import {EraseIcon} from "@mochicons/react";
 import {ELEMENTS} from "folio-core";
 import {ACTIONS} from "../../constants.js";
 import {Panel, PanelSeparator, PanelTextButton} from "./Panel.jsx";
@@ -24,7 +25,7 @@ export const ToolsPanel = props => (
         </PanelTextButton>
         <PanelTextButton
             text="Select"
-            active={!props.tool && props.action !== ACTIONS.MOVE}
+            active={!props.tool && props.action !== ACTIONS.MOVE && props.action !== ACTIONS.ERASE}
             onClick={props.onSelectionClick}
         >
             <PointerIcon />
@@ -43,8 +44,12 @@ export const ToolsPanel = props => (
         <PanelTextButton text="Image" active={props.tool === ELEMENTS.IMAGE} onClick={() => props.onToolClick(ELEMENTS.IMAGE)}>
             <ImageIcon />
         </PanelTextButton>
+        <PanelSeparator />
         <PanelTextButton text="Draw" active={props.tool === ELEMENTS.DRAW} onClick={() => props.onToolClick(ELEMENTS.DRAW)}>
             <PenIcon />
+        </PanelTextButton>
+        <PanelTextButton text="Erase" active={props.action === ACTIONS.ERASE} onClick={props.onEraseClick}>
+            <EraseIcon />
         </PanelTextButton>
     </Panel>
 );
@@ -57,5 +62,6 @@ ToolsPanel.defaultProps = {
     // shape: null,
     onMoveClick: null,
     onSelectionClick: null,
+    onEraseClick: null,
     onToolClick: null,
 };

@@ -80,7 +80,11 @@ export const Layout = props => {
                     onMoveClick={() => {
                         board.setTool(null);
                         board.setAction(ACTIONS.MOVE);
-                        // board.clearSelectedElements();
+                        board.update();
+                    }}
+                    onEraseClick={() => {
+                        board.setTool(null);
+                        board.setAction(ACTIONS.ERASE);
                         board.update();
                     }}
                     onSelectionClick={() => {
