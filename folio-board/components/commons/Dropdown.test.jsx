@@ -3,6 +3,7 @@ import {Dropdown, DropdownItem} from "./Dropdown.jsx";
 
 jest.mock("@mochicons/react", () => ({
     CheckIcon: () => null,
+    ExternalLinkIcon: () => null,
 }));
 
 describe("Dropdown", () => {

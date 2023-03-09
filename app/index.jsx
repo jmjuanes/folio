@@ -130,6 +130,10 @@ const App = props => {
             <Board
                 key={state.id ?? ""}
                 initialState={state}
+                customLinks={[
+                    {url: process.env.URL_REPOSITORY, text: "About Folio"},
+                    {url: process.env.URL_ISSUES, text: "Report a bug"},
+                ]}
                 onChange={newState => {
                     setState(prevState => ({...prevState, ...newState}));
                 }}

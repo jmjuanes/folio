@@ -6,7 +6,8 @@ import {EXPORT_FORMATS} from "folio-core";
 import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {Layout, Renderer, SecondaryButton} from "../components/commons/index.jsx";
-import {Dropdown, DropdownSeparator, DropdownGroup, DropdownItem, DropdownCheckItem} from "../components/commons/index.jsx";
+import {Dropdown, DropdownSeparator, DropdownGroup} from "../components/commons/index.jsx";
+import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/commons/index.jsx";
 import {ColorPicker} from "../components/Form/ColorPicker.jsx";
 
 const BoardWrapper = props => {
@@ -52,6 +53,57 @@ const BoardWrapper = props => {
                                         onClick={props.onReset}
                                     />
                                 )}
+                                {props.boardActions?.settings !== false && (
+                                    <React.Fragment>
+                                        <DropdownSeparator />
+                                        <DropdownGroup title="General settings" />
+                                        <DropdownCheckItem
+                                            active={board.grid}
+                                            icon={(<GridIcon />)}
+                                            text="Grid"
+                                            onClick={() => {
+                                                board.grid = !board.grid;
+                                                handleSettingsUpdate();
+                                            }}
+                                        />
+                                        <DropdownCheckItem
+                                            active={board.lockTool}
+                                            icon={(<LockIcon />)}
+                                            text="Lock tool"
+                                            onClick={() => {
+                                                board.lockTool = !board.lockTool;
+                                                handleSettingsUpdate();
+                                            }}
+                                        />
+                                    </React.Fragment>
+                                )}
+                                {props.boardActions?.background !== false && (
+                                    <React.Fragment>
+                                        <DropdownSeparator />
+                                        <div className="d:block mt:2">
+                                            <DropdownGroup title="Background" />
+                                            <ColorPicker
+                                                value={board.background}
+                                                onChange={newBackground => {
+                                                    board.background = newBackground;
+                                                    handleSettingsUpdate();
+                                                }}
+                                            />
+                                        </div>
+                                    </React.Fragment>
+                                )}
+                                {props.customLinks?.length > 0 && (
+                                    <React.Fragment>
+                                        <DropdownSeparator />
+                                        {props.customLinks.map(link => (
+                                            <DropdownLinkItem
+                                                key={link.url}
+                                                url={link.url}
+                                                text={link.text}
+                                            />
+                                        ))}
+                                    </React.Fragment>
+                                )}
                             </Dropdown>
                         </div>
                         {props.customHeaderLeftContent}
@@ -60,43 +112,6 @@ const BoardWrapper = props => {
                 headerRightContent={(
                     <div className="d:flex gap:2">
                         {props.customHeaderRightContent}
-                        {props.boardActions?.preferences !== false && (
-                            <div className="d:flex position:relative group" tabIndex="0">
-                                <SecondaryButton icon={(<ToolIcon />)} />
-                                <Dropdown className="d:none d:block:group-focus-within top:full right:0">
-                                    <DropdownGroup title="General settings" />
-                                    <DropdownCheckItem
-                                        active={board.grid}
-                                        icon={(<GridIcon />)}
-                                        text="Grid"
-                                        onClick={() => {
-                                            board.grid = !board.grid;
-                                            handleSettingsUpdate();
-                                        }}
-                                    />
-                                    <DropdownCheckItem
-                                        active={board.lockTool}
-                                        icon={(<LockIcon />)}
-                                        text="Lock tool"
-                                        onClick={() => {
-                                            board.lockTool = !board.lockTool;
-                                            handleSettingsUpdate();
-                                        }}
-                                    />
-                                    <DropdownSeparator />
-                                    <div className="d:block mt:2">
-                                        <DropdownGroup title="Background" />
-                                        <ColorPicker
-                                            value={board.background}
-                                            onChange={newBackground => {
-                                                board.background = newBackground;
-                                                handleSettingsUpdate();
-                                            }}
-                                        />
-                                    </div>
-                                </Dropdown>
-                            </div>
-                        )}
                         {props.boardActions?.screenshot !== false && (
                             <SecondaryButton
                                 icon={(<CameraIcon />)}
@@ -160,6 +175,7 @@ Board.defaultProps = {
     boardActions: {},
     customHeaderLeftContent: null,
     custonHeaderRightContent: null,
+    customLinks: [],
     onChange: null,
     onExport: null,
     onSave: null,

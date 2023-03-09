@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {CheckIcon} from "@mochicons/react";
+import {CheckIcon, ExternalLinkIcon} from "@mochicons/react";
 
 export const DropdownSeparator = () => (
     <div className="bg:gray-200 h:px w:full my:2" />
@@ -43,6 +43,28 @@ DropdownItem.defaultProps = {
     text: null,
     disabled: false,
     onClick: null,
+};
+
+export const DropdownLinkItem = props => {
+    const classList = classNames({
+        "d:flex items:center gap:2 r:md px:3 py:2 select:none": true,
+        "bg:gray-200:hover cursor:pointer text:no-underline": true,
+    });
+    return (
+        <a className={classList} href={props.url} target="_blank">
+            <div className="d:flex text:lg items:center text:gray-700">
+                <ExternalLinkIcon />
+            </div>
+            <div className="d:flex items:center text:sm text:gray-700">
+                <span>{props.text}</span>
+            </div>
+        </a>
+    );
+};
+
+DropdownLinkItem.defaultProps = {
+    url: "",
+    text: "",
 };
 
 export const DropdownCheckItem = props => (

@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const package = require("./package.json");
+const package = require("../package.json");
 
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
@@ -80,6 +80,9 @@ module.exports = {
         }),
         new webpack.DefinePlugin({
             "process.env.VERSION": JSON.stringify(package.version),
+            "process.env.URL_REPOSITORY": JSON.stringify(package.repository),
+            "process.env.URL_ISSUES": JSON.stringify(package.bugs),
+            "process.env.URL_HOMEPAGE": JSON.stringify(package.homepage),
         }),
         new HtmlWebpackPlugin({
             inject: true,
