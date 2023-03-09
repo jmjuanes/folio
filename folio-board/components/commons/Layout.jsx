@@ -108,8 +108,18 @@ export const Layout = props => {
                     style={{
                         paddingBottom: props.footer ? props.footerHeight : null,
                     }}
-                    onUndoClick={() => board.undo()}
-                    onRedoClick={() => board.redo()}
+                    onUndoClick={() => {
+                        board.undo();
+                        props.onChange?.({
+                            elements: board.elements,
+                        });
+                    }}
+                    onRedoClick={() => {
+                        board.redo();
+                        props.onChange?.({
+                            elements: board.elements,
+                        });
+                    }}
                 />
             )}
             {!isScreenshot && props.zoom && (
@@ -118,8 +128,22 @@ export const Layout = props => {
                     style={{
                         paddingBottom: props.footer ? props.footerHeight : null,
                     }}
-                    onZoomInClick={() => board.zoomIn()}
-                    onZoomOutClick={() => board.zoomOut()}
+                    onZoomInClick={() => {
+                        board.zoomIn();
+                        props.onChange?.({
+                            zoom: board.zoom,
+                            translateX: board.translateX,
+                            translateY: board.translateY,
+                        });
+                    }}
+                    onZoomOutClick={() => {
+                        board.zoomOut();
+                        props.onChange?.({
+                            zoom: board.zoom,
+                            translateX: board.translateX,
+                            translateY: board.translateY,
+                        });
+                    }}
                 />
             )}
             {!isScreenshot && props.edition && (

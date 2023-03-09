@@ -12,11 +12,6 @@ import {ColorPicker} from "../components/Form/ColorPicker.jsx";
 
 const BoardWrapper = props => {
     const board = useBoard();
-    const handleSettingsUpdate = () => {
-        props.onChange?.(board.getState());
-        board.update();
-    };
-
     return (
         <div className="position:relative overflow:hidden h:full w:full">
             <Renderer
@@ -63,7 +58,10 @@ const BoardWrapper = props => {
                                             text="Grid"
                                             onClick={() => {
                                                 board.grid = !board.grid;
-                                                handleSettingsUpdate();
+                                                board.update();
+                                                props.onChange?.({
+                                                    grid: board.grid,
+                                                });
                                             }}
                                         />
                                         <DropdownCheckItem
@@ -72,7 +70,10 @@ const BoardWrapper = props => {
                                             text="Lock tool"
                                             onClick={() => {
                                                 board.lockTool = !board.lockTool;
-                                                handleSettingsUpdate();
+                                                board.update();
+                                                props.onChange?.({
+                                                    lockTool: board.lockTool,
+                                                });
                                             }}
                                         />
                                     </React.Fragment>
@@ -86,7 +87,10 @@ const BoardWrapper = props => {
                                                 value={board.background}
                                                 onChange={newBackground => {
                                                     board.background = newBackground;
-                                                    handleSettingsUpdate();
+                                                    board.update();
+                                                    props.onChange?.({
+                                                        background: board.background,
+                                                    });
                                                 }}
                                             />
                                         </div>

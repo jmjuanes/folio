@@ -31,7 +31,7 @@ const App = props => {
     // Debounce the data saving to store
     React.useEffect(() => {
         const callback = () => {
-            state.id && idb.set(STORE_KEYS.STATE, state, store);
+            state.createdAt && idb.set(STORE_KEYS.STATE, state, store);
         };
         const handler = setTimeout(() => callback(), props.delaySave);
 
@@ -59,7 +59,7 @@ const App = props => {
         initializeStore()
             .then(() => idb.get(STORE_KEYS.STATE, store))
             .then(prevState => {
-                setState({...prevState, id: Date.now()});
+                setState({createdAt: Date.now(), ...prevState});
                 // Check if is the first time in the application
                 // We will display the welcome message
                 // if (!prevState?.elements || prevState?.elements?.length === 0) {
@@ -73,6 +73,7 @@ const App = props => {
     const handleFileSave = () => {
         const content = JSON.stringify({
             version: VERSION,
+            ...state,
             elements: state.elements || [],
             assets: state.assets || {},
         });
@@ -119,7 +120,7 @@ const App = props => {
                 }));
             })
             .then(data => data.version !== VERSION ? migrate(data, data.version) : data)
-            .then(data => setState({...data, id: Date.now()}))
+            .then(data => setState({createdAt: Date.now(), ...data}))
             .catch(error => {
                 console.error(error);
             });
@@ -128,7 +129,7 @@ const App = props => {
     return (
         <div className={classList}>
             <Board
-                key={state.id ?? ""}
+                key={state.createdAt ?? ""}
                 initialState={state}
                 customLinks={[
                     {url: process.env.URL_REPOSITORY, text: "About Folio"},
@@ -168,7 +169,7 @@ const App = props => {
                 }}
                 onReset={() => {
                     showConfirm("This will clear the whole board. Do you want to continue?")
-                        .then(() => setState({id: Date.now()}));
+                        .then(() => setState({createdAt: Date.now()}));
                 }}
             />
         </div>

@@ -68,20 +68,6 @@ const createBoard = props => ({
         endArrowhead: DEFAULT_ARROWHEAD_END,
     },
 
-    // Get current state
-    getState() {
-        return {
-            elements: this.elements,
-            assets: this.assets,
-            background: this.background,
-            grid: this.grid,
-            lockTool: this.lockTool,
-            // zoom: this.zoom,
-            // translateX: this.translateX,
-            // translateY: this.translateY,
-        };
-    },
-    
     update() {
         return props?.onUpdate?.();
     },
