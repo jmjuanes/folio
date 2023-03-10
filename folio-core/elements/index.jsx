@@ -16,9 +16,11 @@ import {
     DEFAULT_TEXT_FONT,
     DEFAULT_TEXT_SIZE,
     DEFAULT_TEXT_ALIGN,
+    DRAWING_THRESHOLD,
     TEXT_SIZE_MIN,
     TEXT_SIZE_STEP,
     TEXT_SIZE_MAX,
+    DRAWING_OFFSET,
 } from "../constants";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
@@ -179,11 +181,16 @@ export const elementsConfig = {
             drawWidth: 0,
             drawHeight: 0,
         }),
-        onCreateStart: element => {
-            element.points.push([0, 0]);
+        onCreateStart: (element, event) => {
+            element.points.push([event.originalX - element.x1, event.originalY - element.y1]);
         },
         onCreateMove: (element, event) => {
-            element.points.push([event.dx, event.dy]);
+            const lastPoint = element.points[element.points.length - 1];
+            const newPointX = element.points[0][0] + event.dx;
+            const newPointY = element.points[0][1] + event.dy;
+            if (Math.abs(lastPoint[0] - newPointX) > DRAWING_THRESHOLD || Math.abs(lastPoint[1] - newPointY) > DRAWING_THRESHOLD) {
+                element.points.push([newPointX, newPointY]);
+            }
         },
         onCreateEnd: element => {
             const initialX = element.x1;
@@ -194,15 +201,16 @@ export const elementsConfig = {
             const minY = Math.min.apply(null, element.points.map(point => point[1]));
             const maxY = Math.max.apply(null, element.points.map(point => point[1]));
             // Update element position
-            element.x1 = Math.floor((initialX + minX) / GRID_SIZE) * GRID_SIZE;
-            element.y1 = Math.floor((initialY + minY) / GRID_SIZE) * GRID_SIZE;
-            element.x2 = Math.ceil((initialX + maxX) / GRID_SIZE) * GRID_SIZE;
-            element.y2 = Math.ceil((initialY + maxY) / GRID_SIZE) * GRID_SIZE;
+            element.x1 = Math.floor((initialX + minX - DRAWING_OFFSET) / GRID_SIZE) * GRID_SIZE;
+            element.y1 = Math.floor((initialY + minY - DRAWING_OFFSET) / GRID_SIZE) * GRID_SIZE;
+            element.x2 = Math.ceil((initialX + maxX + DRAWING_OFFSET) / GRID_SIZE) * GRID_SIZE;
+            element.y2 = Math.ceil((initialY + maxY + DRAWING_OFFSET) / GRID_SIZE) * GRID_SIZE;
             // Simplify path and translate to (x1,y1)
-            element.points = simplifyPath(element.points, 0.5).map(point => {
+            // element.points = simplifyPath(element.points, 0.5).map(point => {
+            element.points = element.points.map(point => {
                 return [
-                    point[0] - element.x1 + initialX,
-                    point[1] - element.y1 + initialY,
+                    initialX - element.x1 + point[0],
+                    initialY - element.y1 + point[1],
                 ];
             });
             // Save drawing width and height

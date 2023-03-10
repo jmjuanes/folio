@@ -22,7 +22,7 @@ export const DrawElement = props => {
     const height = Math.abs(props.y2 - props.y1);
     const points = props.points || [];
     const strokeWidth = props.strokeWidth ?? 0;
-    const path = React.useMemo(() => getPath(points), [points.length]);
+    const path = React.useMemo(() => getPath(points), [points.length, props.creating]);
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
             const strokeStyle = props.strokeStyle;
