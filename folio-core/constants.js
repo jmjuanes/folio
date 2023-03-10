@@ -73,6 +73,10 @@ export const SELECTION_STROKE_COLOR = "#0d6efd";
 export const SCREENSHOT_FILL_COLOR = "#20c997";
 export const SCREENSHOT_STROKE_COLOR = "#20c997";
 
+// Drawing constants
+export const DRAWING_THRESHOLD = 3;
+export const DRAWING_OFFSET = 10;
+
 export const MIME_TYPES = {
     FOLIO: "application/vnd.folio+json",
     JSON: "application/json",
@@ -126,18 +130,30 @@ export const FONT_SOURCES = {
     MONO: "https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap",
 };
 
+// Default background colors
+export const BACKGROUND_COLORS = {
+    WHITE: "#ffffff",
+    GRAY: "#fafafa",
+    BLUE: "#e9f4fb",
+    GREEN: "#eafaf1",
+    YELLOW: "#fef9e7",
+    RED: "#fceae8",
+};
+
 // Default colors
 export const COLORS = {
     TRANSPARENT: "transparent",
-    WHITE: "#ffffff",
-    BLACK: "#000000",
-    GRAY:   "#424852", 
-    BLUE:   "#4a88da",
-    GREEN:  "#89c054",
-    PURPLE: "#9579da",
+    WHITE:  "#ffffff",
+    BLACK:  "#000000",
+    GRAY:   "#7f8c8d",
+    BLUE:   "#3498db",
+    GREEN:  "#27ae60",
+    MINT:   "#1abc9c",
+    PURPLE: "#9b59b6",
     PINK:   "#d56fac",
-    YELLOW: "#f5b945",
-    RED:    "#e8553e",
+    YELLOW: "#f1c40f",
+    ORANGE: "#e67e22",
+    RED:    "#e74c3c",
 };
 
 // Common stroke widths

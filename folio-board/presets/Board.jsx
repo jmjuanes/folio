@@ -1,8 +1,8 @@
 import React from "react";
 import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
 import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
-import {ToolIcon, LockIcon, GridIcon} from "@mochicons/react";
-import {EXPORT_FORMATS} from "folio-core";
+import {LockIcon, GridIcon} from "@mochicons/react";
+import {EXPORT_FORMATS, BACKGROUND_COLORS} from "folio-core";
 import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {Layout, Renderer, SecondaryButton} from "../components/commons/index.jsx";
@@ -85,6 +85,7 @@ const BoardWrapper = props => {
                                             <DropdownGroup title="Background" />
                                             <ColorPicker
                                                 value={board.background}
+                                                values={Object.values(BACKGROUND_COLORS)}
                                                 onChange={newBackground => {
                                                     board.background = newBackground;
                                                     board.update();
