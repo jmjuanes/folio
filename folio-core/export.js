@@ -116,15 +116,15 @@ const getPngImage = options => {
             const padding = (options.padding ?? EXPORT_PADDING) + EXPORT_OFFSET;
             if (options.crop) {
                 const bounds = getRectangleBounds(options.elements);
-                x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2);
-                y = bounds.y1 - Math.min(options.crop.y1, options.crop.y2);
-                canvas.width = Math.abs(options.crop.x2 - options.crop.x1) + 2 * padding;
-                canvas.height = Math.abs(options.crop.y2 - options.crop.y1) + 2 * padding;
+                x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2) - 2 * padding;
+                y = bounds.y1 - Math.min(options.crop.y1, options.crop.y2) - 2 * padding;
+                canvas.width = Math.abs(options.crop.x2 - options.crop.x1);
+                canvas.height = Math.abs(options.crop.y2 - options.crop.y1);
             }
             else {
                 // Set the canvas size to the total image size
-                canvas.width = img.width + padding;
-                canvas.height = img.height + padding;
+                canvas.width = img.width + 2 * padding;
+                canvas.height = img.height + 2 * padding;
             }
             const ctx = canvas.getContext("2d");
             ctx.fillStyle = "white";
