@@ -156,9 +156,9 @@ export const useEvents = callbacks => {
                     isDragged = true;
                     board.getSelectedElements().forEach((element, index) => {
                         element.x1 = getPosition(snapshot[index].x1 + event.dx);
-                        element.x2 = getPosition(snapshot[index].x2 + event.dx);
                         element.y1 = getPosition(snapshot[index].y1 + event.dy);
-                        element.y2 = getPosition(snapshot[index].y2 + event.dy);
+                        element.x2 = element.x1 + (snapshot[index].x2 - snapshot[index].x1);
+                        element.y2 = element.y1 + (snapshot[index].y2 - snapshot[index].y1);
                         // getElementConfig(element)?.onDrag?.(snapshot[index], event);
                     });
                 }
@@ -313,13 +313,7 @@ export const useEvents = callbacks => {
                     });
                 }
                 else if (board.activeAction === ACTIONS.SCREENSHOT) {
-                    // const screenshotRegion = {
-                    //     x: Math.min(state.selection.x1, state.selection.x2),
-                    //     y: Math.min(state.selection.y1, state.selection.y2),
-                    //     width: Math.abs(state.selection.x2 - state.selection.x1),
-                    //     height: Math.abs(state.selection.y2 - state.selection.y1),
-                    // };
-                    callbacks?.onScreenshot?.({...board.selection});
+                    callbacks?.onScreenshot?.({...board.selection}, board.elements);
                 }
                 board.activeAction = null;
                 board.selection = null;
