@@ -1,24 +1,9 @@
 import React from "react";
 import {ELEMENTS} from "folio-core";
 
-import {
-    ACTIONS,
-    DEFAULT_BACKGROUND,
-    DIALOGS,
-} from "../../constants.js";
-import {
-    EditionPanel,
-    HistoryPanel,
-    ToolsPanel,
-    ZoomPanel,
-} from "../Panels/index.jsx";
-import {
-    FillDialog,
-    StrokeDialog,
-    TextDialog,
-    ShapeDialog,
-    ArrowheadDialog,
-} from "../Dialogs/index.jsx";
+import {ACTIONS, DIALOGS} from "../../constants.js";
+import {EditionPanel, HistoryPanel, ToolsPanel, ZoomPanel} from "../Panels/index.jsx";
+import {FillDialog, StrokeDialog, TextDialog, ShapeDialog, ArrowheadDialog} from "../Dialogs/index.jsx";
 import {FileInput} from "./FileInput.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {isDialogEnabledForSelection} from "../../utils.js";
@@ -251,8 +236,6 @@ export const Layout = props => {
 };
 
 Layout.defaultProps = {
-    grid: false,
-    background: DEFAULT_BACKGROUND,
     header: false,
     headerHeight: "5rem",
     headerLeftContent: null,

@@ -7,7 +7,6 @@ import {
     ZOOM_MAX,
     ZOOM_MIN,
     ZOOM_STEP,
-    getElementConfig,
     DEFAULT_FILL_COLOR,
     DEFAULT_FILL_OPACITY,
     DEFAULT_STROKE_COLOR,
@@ -22,6 +21,7 @@ import {
     DEFAULT_ARROWHEAD_START,
     DEFAULT_SHAPE,
 } from "folio-core";
+import {getElementConfig} from "folio-core";
 import {CHANGES, DEFAULT_BACKGROUND, STATES} from "../constants.js";
 import {loadImage} from "../utils/image.js";
 
@@ -47,7 +47,7 @@ const createBoard = props => ({
     zoom: props.state?.zoom ?? ZOOM_DEFAULT,
     translateX: props.state?.translateX ?? 0,
     translateY: props.state?.translateY ?? 0,
-    grid: props.state?.grid ?? true,
+    grid: props.state?.grid ?? false,
     background: props.state?.background ?? DEFAULT_BACKGROUND,
     lockTool: props.state?.lockTool ?? false,
     selection: null,

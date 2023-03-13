@@ -1,4 +1,4 @@
-import {ELEMENTS, VERSION} from "./constants.js";
+import {ELEMENTS, VERSION, BACKGROUND_COLORS} from "./constants.js";
 
 export const migrateElements = (prevElements, version) => {
     return (prevElements || []).map(element => {
@@ -31,6 +31,9 @@ export const migrate = (state, version = "2") => {
         ...state,
         elements: migrateElements(state.elements, state.version || version),
         assets: migrateAssets(state.assets, state.version || version),
+        grid: state.grid ?? false,
+        lockTool: state.lockTool ?? false,
+        background: state.background ?? BACKGROUND_COLORS.GRAY,
         version: VERSION,
     };
 };

@@ -64,7 +64,7 @@ export const ColorPicker = props => {
                     {props.values.map(color => (
                         <div
                             key={color}
-                            className="d:flex w:6 h:6 r:sm cursor:pointer b:1 b:solid b:gray-300"
+                            className="d:flex w:full h:6 r:sm cursor:pointer b:1 b:solid b:gray-300"
                             style={getStyleForColor(color)}
                             onClick={() => {
                                 inputRef.current.value = color;
