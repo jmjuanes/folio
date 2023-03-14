@@ -1,29 +1,16 @@
 import React from "react";
 import classNames from "classnames";
-// import {ChevronUpIcon} from "../icons/index.jsx";
 
 export const Panel = props => {
-    const panelWrapperClass = classNames(props.className, {
-        "position:absolute z:5 select:none": true,
-        // "top:0 left:0 pl:4 pt:4": props.position === "top-left",
-        // "top:0 right:0 pr:4 pt:4": props.position === "top-right",
-        // "bottom:0 left:0 pb:4 pl:4": props.position === "bottom-left",
-        // "bottom:0 right:0 pb:4 pr:4": props.position === "bottom-right",
-        // "bottom:0 left:half pb:4": props.position === "bottom-center",
-    });
-    // TODO: we should move this to a classname
-    const panelWrapperStyle = {
-        // transform: props.position === "bottom-center" ? "translateX(-50%)" : null,
-        ...props.style,
-    };
+    const panelWrapperClass = classNames(props.className, "position:absolute z:5 select:none");
     const panelContentClass = classNames({
         "b:1 b:solid b:gray-300": true,
         "r:lg shadow:md items:center bg:white d:flex gap:2 p:2": true,
-        // "flex:col": props.position === "top-left" || props.position === "top-right",
         "flex:col": props.direction === "col",
     });
+
     return (
-        <div className={panelWrapperClass} style={panelWrapperStyle}>
+        <div className={panelWrapperClass} style={props.style}>
             <div className={panelContentClass}>
                 {props.children}
             </div>
@@ -33,17 +20,18 @@ export const Panel = props => {
 
 Panel.defaultProps = {
     className: "",
+    style: {},
     direction: "row",
 };
 
 export const PanelButton = props => {
-    // TODO: missing height: 2.25rem height!!
-    const classList = classNames({
-        "items:center r:md d:flex text:lg p:2": true,
+    const classList = classNames(props.className, {
+        "justify:center items:center r:md d:flex text:lg p:2": true,
         "text:gray-800 bg:gray-800:hover text:white:hover cursor:pointer": !props.active && !props.disabled,
         "is-active bg:gray-800 text:white cursor:pointer": props.active && !props.disabled,
         "is-disabled text:gray-500 cursor:not-allowed o:60": !props.active && props.disabled,
     });
+
     return (
         <div className={classList} onClick={props.onClick}>
             {props.children}
@@ -52,19 +40,20 @@ export const PanelButton = props => {
 };
 
 PanelButton.defaultProps = {
+    className: "",
     active: false,
     disabled: false,
 };
 
 export const PanelTextButton = props => {
-    // TODO: missing height: 2.25rem height!!
-    const classList = classNames({
+    const classList = classNames(props.className, {
         "d:flex flex:col w:12": true,
-        "items:center r:md d:flex text:lg p:2": true,
+        "justify:center items:center r:md d:flex text:lg p:2": true,
         "text:gray-800 bg:gray-800:hover text:white:hover cursor:pointer": !props.active && !props.disabled,
         "is-active bg:gray-800 text:white cursor:pointer": props.active && !props.disabled,
         "is-disabled text:gray-500 cursor:not-allowed o:60": !props.active && props.disabled,
     });
+
     return (
         <div className={classList} onClick={props.onClick}>
             {props.children}
@@ -76,6 +65,7 @@ export const PanelTextButton = props => {
 };
 
 PanelTextButton.defaultProps = {
+    className: "",
     text: "",
     active: false,
     disabled: false,

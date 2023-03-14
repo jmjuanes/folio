@@ -1,10 +1,9 @@
 import React from "react";
-import {EraseIcon} from "@mochicons/react";
+import {EraseIcon, LockIcon, UnlockIcon} from "@mochicons/react";
 import {ELEMENTS} from "folio-core";
 import {ACTIONS} from "../../constants.js";
-import {Panel, PanelSeparator, PanelTextButton} from "./Panel.jsx";
+import {Panel, PanelSeparator, PanelTextButton, PanelButton} from "./Panel.jsx";
 import {
-    // ArrowsIcon,
     HandGrabIcon,
     PointerIcon,
     RectangleIcon,
@@ -16,6 +15,12 @@ import {
 
 export const ToolsPanel = props => (
     <Panel direction="col" className={props.className} style={props.style}>
+        {/* Settings */}
+        <PanelButton className="w:full" active={props.lockTool} onClick={props.onLockToolClick}>
+            {props.lockTool ? <LockIcon /> : <UnlockIcon />}
+        </PanelButton>
+        <PanelSeparator />
+        {/* Actions */}
         <PanelTextButton
             text="Drag"
             active={props.action === ACTIONS.MOVE}
@@ -59,9 +64,10 @@ ToolsPanel.defaultProps = {
     style: {},
     action: null,
     tool: null,
-    // shape: null,
+    lockTool: false,
     onMoveClick: null,
     onSelectionClick: null,
     onEraseClick: null,
     onToolClick: null,
+    onLockToolClick: null,
 };

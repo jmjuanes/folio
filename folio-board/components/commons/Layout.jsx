@@ -59,6 +59,7 @@ export const Layout = props => {
                 <ToolsPanel
                     action={board.activeAction}
                     tool={board.activeTool}
+                    lockTool={board.lockTool}
                     style={{
                         paddingTop: props.header ? props.headerHeight : null,
                     }}
@@ -82,6 +83,10 @@ export const Layout = props => {
                             return imageInputRef.current.click();
                         }
                         board.setTool(tool);
+                        board.update();
+                    }}
+                    onLockToolClick={() => {
+                        board.lockTool = !board.lockTool;
                         board.update();
                     }}
                 />
@@ -115,19 +120,19 @@ export const Layout = props => {
                     }}
                     onZoomInClick={() => {
                         board.zoomIn();
-                        props.onChange?.({
-                            zoom: board.zoom,
-                            translateX: board.translateX,
-                            translateY: board.translateY,
-                        });
+                        // props.onChange?.({
+                        //     zoom: board.zoom,
+                        //     translateX: board.translateX,
+                        //     translateY: board.translateY,
+                        // });
                     }}
                     onZoomOutClick={() => {
                         board.zoomOut();
-                        props.onChange?.({
-                            zoom: board.zoom,
-                            translateX: board.translateX,
-                            translateY: board.translateY,
-                        });
+                        // props.onChange?.({
+                        //     zoom: board.zoom,
+                        //     translateX: board.translateX,
+                        //     translateY: board.translateY,
+                        // });
                     }}
                 />
             )}

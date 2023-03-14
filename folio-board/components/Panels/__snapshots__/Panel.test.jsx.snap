@@ -15,7 +15,7 @@ exports[`Panel should render 1`] = `
 
 exports[`PanelButton should render 1`] = `
 <div
-  className="items:center r:md d:flex text:lg p:2 text:gray-800 bg:gray-800:hover text:white:hover cursor:pointer"
+  className="justify:center items:center r:md d:flex text:lg p:2 text:gray-800 bg:gray-800:hover text:white:hover cursor:pointer"
 >
   CONTENT
 </div>
