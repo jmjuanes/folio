@@ -66,14 +66,14 @@ const optionTypes = {
 
 export const Option = props => (
     <div className="text:gray-700">
-        <div className="text:xs mb:4">
+        <div className="text:xs mb:2 select:none">
             <strong>{props.title || ""}</strong>
         </div>
         <div className="d:block">
             {optionTypes[props.type](props)}
         </div>
         {!!props.helper && (
-            <div className="text:gray-400 text:2xs mt:0">
+            <div className="text:gray-400 text:2xs mt:0 select:none">
                 {props.helper}
             </div>
         )}
