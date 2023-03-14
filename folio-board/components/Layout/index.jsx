@@ -1,1 +1,1 @@
-// export * from "./Welcome.jsx";
+export * from "./Welcome.jsx";
