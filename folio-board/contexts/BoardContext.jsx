@@ -1,6 +1,7 @@
 import React from "react";
 import {uid} from "uid/secure";
 import {
+    BACKGROUND_COLORS,
     ELEMENTS,
     GRID_SIZE,
     ZOOM_DEFAULT,
@@ -22,21 +23,21 @@ import {
     DEFAULT_SHAPE,
 } from "folio-core";
 import {getElementConfig} from "folio-core";
-import {CHANGES, DEFAULT_BACKGROUND, STATES} from "../constants.js";
+import {CHANGES, STATES} from "../constants.js";
 import {loadImage} from "../utils/image.js";
 
 const generateRandomId = () => uid(20);
 
 const createBoard = props => ({
     id: generateRandomId(),
-    elements: (props.state?.elements || []).map(element => ({
+    elements: (props.data?.elements || []).map(element => ({
         ...element,
         selected: false,
         editing: false,
         creating: false,
     })),
     assets: {
-        ...props.state?.assets,
+        ...props.data?.assets,
     },
     history: [],
     historyIndex: 0,
@@ -44,12 +45,12 @@ const createBoard = props => ({
     activeAction: null,
     activeTool: null,
     activeElement: null,
-    zoom: props.state?.zoom ?? ZOOM_DEFAULT,
-    translateX: props.state?.translateX ?? 0,
-    translateY: props.state?.translateY ?? 0,
-    grid: props.state?.grid ?? false,
-    background: props.state?.background ?? DEFAULT_BACKGROUND,
-    lockTool: props.state?.lockTool ?? false,
+    zoom: ZOOM_DEFAULT,
+    translateX: 0,
+    translateY: 0,
+    grid: props.data?.grid ?? false,
+    background: props.data?.background || BACKGROUND_COLORS.GRAY,
+    lockTool: false,
     selection: null,
     erase: null,
     defaults: {
@@ -486,7 +487,7 @@ export const BoardProvider = props => {
 
     if (!board.current) {
         board.current = createBoard({
-            state: props.initialState || {},
+            data: props.initialData || {},
             onUpdate: forceUpdate,
         });
     }
@@ -499,6 +500,6 @@ export const BoardProvider = props => {
 };
 
 BoardProvider.defaultProps = {
-    initialState: {},
+    initialData: {},
     render: null,
 };

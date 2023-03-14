@@ -223,10 +223,10 @@ export const useEvents = callbacks => {
                 if (board.activeAction === ACTIONS.MOVE) {
                     lastTranslateX = board.translateX;
                     lastTranslateY = board.translateY;
-                    callbacks?.onChange?.({
-                        translateX: board.translateX,
-                        translateY: board.translateY,
-                    });
+                    // callbacks?.onChange?.({
+                    //     translateX: board.translateX,
+                    //     translateY: board.translateY,
+                    // });
                     return board.update();
                 }
                 else if (board.activeAction === ACTIONS.ERASE) {

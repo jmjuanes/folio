@@ -1,8 +1,5 @@
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
-export const DEFAULT_BACKGROUND = "#fafafa";
-export const DEFAULT_TITLE = "Untitled";
-
 export const KEYS = {
     ESCAPE: "Escape",
     BACKSPACE: "Backspace",
