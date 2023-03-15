@@ -1,7 +1,7 @@
 import React from "react";
 import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
 import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
-import {ToolIcon, LockIcon, GridIcon} from "@mochicons/react";
+import {GridIcon} from "@mochicons/react";
 import {EXPORT_FORMATS, BACKGROUND_COLORS} from "folio-core";
 import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
