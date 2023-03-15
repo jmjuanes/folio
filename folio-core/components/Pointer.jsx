@@ -1,5 +1,5 @@
 import React from "react";
-import {COLORS} from "../constants.js";
+import {WHITE, BLACK} from "../constants";
 
 export const Pointer = props => (
     <ellipse
@@ -20,9 +20,9 @@ export const Pointer = props => (
 Pointer.defaultProps = {
     position: null,
     radius: 5,
-    fillColor: COLORS.WHITE,
+    fillColor: WHITE,
     fillOpacity: 1.0,
-    strokeColor: COLORS.GRAY,
+    strokeColor: BLACK,
     strokeWidth: 1,
-    strokeOpacity: 0.3,
+    strokeOpacity: 0.2,
 };

@@ -130,6 +130,10 @@ export const FONT_SOURCES = {
     MONO: "https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap",
 };
 
+export const TRANSPARENT = "transparent";
+export const WHITE = "#ffffff";
+export const BLACK = "#000000";
+
 // Default background colors
 export const BACKGROUND_COLORS = {
     WHITE: "#ffffff",
@@ -142,18 +146,18 @@ export const BACKGROUND_COLORS = {
 
 // Default colors
 export const COLORS = {
-    TRANSPARENT: "transparent",
-    WHITE:  "#ffffff",
-    BLACK:  "#000000",
-    GRAY:   "#7f8c8d",
-    BLUE:   "#3498db",
-    GREEN:  "#27ae60",
-    MINT:   "#1abc9c",
-    PURPLE: "#9b59b6",
-    PINK:   "#d56fac",
-    YELLOW: "#f1c40f",
-    ORANGE: "#e67e22",
-    RED:    "#e74c3c",
+    TRANSPARENT: TRANSPARENT,
+    LIGHT_GRAY:  "#CAD0D7", // "#e4e8eb",
+    DARK_GRAY:   "#424852", // "#636c77",
+    PINK_ROSE:   "#D56FAC", // "#eb86be",
+    LAVENDER:    "#9579DA", // "#ac92ea",
+    BLUE_JEANS:  "#4A88DA", // "#5e9cea",
+    AQUA:        "#3AADD9", // "#4fc0e8",
+    MINT:        "#35BA9B", // "#46ceac",
+    GRASS:       "#89C053", // "#9ed26a",
+    SUNFLOWER:   "#F5B945", // "#fdcd56",
+    BITTERSWEET: "#E8553E", // "#fa6c51",
+    GRAPEFRUIT:  "#D94452", // "#eb5463",
 };
 
 // Common stroke widths
@@ -192,15 +196,15 @@ export const STROKES = {
 };
 
 // Default values for style attributes of elements
-export const DEFAULT_FILL_COLOR = COLORS.TRANSPARENT;
+export const DEFAULT_FILL_COLOR = TRANSPARENT;
 export const DEFAULT_FILL_OPACITY = OPACITY_DEFAULT;
-export const DEFAULT_STROKE_COLOR = COLORS.BLACK;
+export const DEFAULT_STROKE_COLOR = BLACK;
 export const DEFAULT_STROKE_WIDTH = STROKE_WIDTHS.MEDIUM;
 export const DEFAULT_STROKE_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
 export const DEFAULT_TEXT_FONT = FONT_FACES.SANS;
 export const DEFAULT_TEXT_SIZE = TEXT_SIZES.MEDIUM;
-export const DEFAULT_TEXT_COLOR = COLORS.BLACK;
+export const DEFAULT_TEXT_COLOR = BLACK;
 export const DEFAULT_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
 export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
 export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
