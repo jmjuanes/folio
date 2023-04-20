@@ -21,13 +21,15 @@ import {
     TEXT_SIZE_STEP,
     TEXT_SIZE_MAX,
     DRAWING_OFFSET,
+    EPSILON,
+    TEXT_BOX_MIN_WIDTH,
 } from "../constants";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
 import {TextElement} from "./TextElement.jsx";
 import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
-import {simplifyPath, measureText} from "../math.js";
+import {measureText} from "../math.js";
 import {isCornerHandler} from "../utils.js";
 
 export const elementsConfig = {
@@ -88,21 +90,19 @@ export const elementsConfig = {
         render: props => <TextElement {...props} />,
         initialize: values => {
             // We need to measure the height of an empty text to calculate the height of the element
-            const [textWidth, textHeight] = measureText(
-                " ",
-                values?.textSize ?? DEFAULT_TEXT_SIZE,
-                values?.textFont ?? DEFAULT_TEXT_FONT,
-            );
+            const textSize = values?.textSize ?? DEFAULT_TEXT_SIZE;
+            const textFont = values?.textFont ?? DEFAULT_TEXT_FONT;
+            const [textWidth, textHeight] = measureText(" ", textSize, textFont);
             return ({
                 edgeHandlers: true,
                 cornerHandlers: true,
                 text: "",
                 textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
-                textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
-                textSize: values?.textSize ?? DEFAULT_TEXT_SIZE,
+                textFont: textFont,
+                textSize: textSize,
                 textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
                 textWidth: GRID_SIZE,
-                textHeight: Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE,
+                textHeight: textHeight, // Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE,
             });
         },
         onCreateMove: element => {
@@ -115,13 +115,16 @@ export const elementsConfig = {
                 x2: Math.max(element.x1, element.x2),
                 y2: Math.max(element.y1, element.y2),
             });
-            // Fix text initial position
-            if (Math.abs(element.x2 - element.x1) < GRID_SIZE) {
+            // Fix text initial X position
+            const deltax = Math.abs(element.x2 - element.x1);
+            if (deltax < (EPSILON / 2)) {
+                element.x2 = element.x1 + TEXT_BOX_MIN_WIDTH;
+            }
+            else if (deltax < GRID_SIZE) {
                 element.x2 = element.x1 + GRID_SIZE;
             }
-            if (Math.abs(element.y2 - element.y1) < GRID_SIZE) {
-                element.y2 = element.y1 + GRID_SIZE;
-            }
+            // Fix text initial Y position
+            element.y2 = element.y1 + Math.max(Math.abs(element.y2 - element.y1), GRID_SIZE, Math.ceil(element.textHeight / GRID_SIZE) * GRID_SIZE);
         },
         onUpdate: (element, changedKeys) => {
             if (changedKeys.has("textSize") || changedKeys.has("textFont")) {

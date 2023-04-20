@@ -1,5 +1,8 @@
 export const VERSION = "3";
 
+export const PI = Math.PI;
+export const EPSILON = 1e-6;
+
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
     POINTER_MOVE: "pointermove",
@@ -76,6 +79,9 @@ export const SCREENSHOT_STROKE_COLOR = "#20c997";
 // Drawing constants
 export const DRAWING_THRESHOLD = 3;
 export const DRAWING_OFFSET = 10;
+
+// Text box constants
+export const TEXT_BOX_MIN_WIDTH = 400;
 
 export const MIME_TYPES = {
     FOLIO: "application/vnd.folio+json",

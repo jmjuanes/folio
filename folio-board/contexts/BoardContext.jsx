@@ -21,6 +21,7 @@ import {
     DEFAULT_ARROWHEAD_END,
     DEFAULT_ARROWHEAD_START,
     DEFAULT_SHAPE,
+    TEXT_BOX_MIN_WIDTH,
 } from "folio-core";
 import {getElementConfig} from "folio-core";
 import {CHANGES, STATES} from "../constants.js";
@@ -280,7 +281,7 @@ const createBoard = props => ({
 
         const textSize = element.textSize ?? 0;
         const textFont = element.textFont ?? "";
-        const [textWidth, textHeight] = elementConfig.utils.measureText(text || " ", textSize, textFont, "200px");
+        const [textWidth, textHeight] = elementConfig.utils.measureText(text || " ", textSize, textFont, `${TEXT_BOX_MIN_WIDTH}px`);
         // Override element position
         Object.assign(element, {
             x1: Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE,
