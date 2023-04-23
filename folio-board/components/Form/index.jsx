@@ -22,7 +22,7 @@ export const Form = props => (
 );
 
 Form.defaultProps = {
-    className: "d:flex flex:col gap:4",
+    className: "d-flex flex-col gap-4",
     data: {},
     items: {},
     style: {},

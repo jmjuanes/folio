@@ -8,7 +8,7 @@ export const ZoomPanel = props => (
         <PanelButton disabled={props.zoom <= ZOOM_MIN} onClick={props.onZoomOutClick}>
             <ZoomOutIcon />
         </PanelButton>
-        <div className="text:xs o:80 text:center w:16 select:none">
+        <div className="text-xs o-80 text-center w-16 select-none">
             {(props.zoom * 100).toFixed(0)}%
         </div>
         <PanelButton disabled={ZOOM_MAX <= props.zoom} onClick={props.onZoomInClick}>
@@ -18,7 +18,7 @@ export const ZoomPanel = props => (
 );
 
 ZoomPanel.defaultProps = {
-    className: "bottom:0 right:0 pb:4 pr:4",
+    className: "bottom-0 right-0 pb-4 pr-4",
     style: {},
     zoom: 1,
     onZoomInClick: null,

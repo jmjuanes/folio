@@ -16,7 +16,7 @@ import {
 export const ToolsPanel = props => (
     <Panel direction="col" className={props.className} style={props.style}>
         {/* Settings */}
-        <PanelButton className="w:full" active={props.lockTool} onClick={props.onLockToolClick}>
+        <PanelButton className="w-full" active={props.lockTool} onClick={props.onLockToolClick}>
             {props.lockTool ? <LockIcon /> : <UnlockIcon />}
         </PanelButton>
         <PanelSeparator />
@@ -60,7 +60,7 @@ export const ToolsPanel = props => (
 );
 
 ToolsPanel.defaultProps = {
-    className: "top:0 left:0 pt:4 pl:4", 
+    className: "top-0 left-0 pt-4 pl-4", 
     style: {},
     action: null,
     tool: null,

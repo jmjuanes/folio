@@ -29,7 +29,7 @@ export const FillDialog = props => (
 );
 
 FillDialog.defaultProps = {
-    className: "pt:4 right:0 top:0 pr:24",
+    className: "pt-4 right-0 top-0 pr-24",
     style: {},
     values: {},
     onChange: null,

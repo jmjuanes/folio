@@ -207,19 +207,19 @@ export const Layout = props => {
             {!isScreenshot && props.header && (
                 <React.Fragment>
                     {!!props.headerLeftContent && (
-                        <div className="position:absolute top:0 left:0 pt:4 pl:4 z:7">
+                        <div className="position-absolute top-0 left-0 pt-4 pl-4 z-7">
                             {props.headerLeftContent}
                         </div>
                     )}
                     {!!props.headerRightContent && (
-                        <div className="position:absolute top:0 right:0 pt:4 pr:4 z:7">
+                        <div className="position-absolute top-0 right-0 pt-4 pr-4 z-7">
                             {props.headerRightContent}
                         </div>
                     )}
                 </React.Fragment>
             )}
             {!isScreenshot && props.footer && (
-                <div className="position:absolute bottom:0 left:0 pb:4 px:4 z:7 w:full">
+                <div className="position-absolute bottom-0 left-0 pb-4 px-4 z-7 w-full">
                     {props.footerContent}
                 </div>
             )}

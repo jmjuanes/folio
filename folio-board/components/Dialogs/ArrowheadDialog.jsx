@@ -46,7 +46,7 @@ export const ArrowheadDialog = props => (
 );
 
 ArrowheadDialog.defaultProps = {
-    className: "right:0 top:0 pt:4 pr:24",
+    className: "right-0 top-0 pt-4 pr-24",
     values: {},
     style: {},
     onChange: null,

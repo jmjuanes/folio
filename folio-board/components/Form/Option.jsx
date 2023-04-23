@@ -7,14 +7,14 @@ const optionTypes = {
         <ColorPicker {...props} />
     ),
     font: props => (
-        <div className="d:grid cols:4 gap:1 w:full">
+        <div className="d-grid cols-4 gap-1 w-full">
             {(props.values || []).map(font => (
                 <div
                     key={font}
                     className={classNames({
-                        "d:flex justify:center items:center": true,
-                        "r:md cursor:pointer w:10 h:10 text:md": true,
-                        "bg:gray-800 text:white": font === props.value,
+                        "d-flex justify-center items-center": true,
+                        "r-md cursor-pointer w-10 h-10 text-md": true,
+                        "bg-gray-800 text-white": font === props.value,
                     })}
                     style={{
                         fontFamily: font,
@@ -27,23 +27,23 @@ const optionTypes = {
         </div>
     ),
     select: props => (
-        <div className={`d:grid cols:${props.grid || "4"} gap:1 w:full`}>
+        <div className={`d-grid cols-${props.grid || "4"} gap-1 w-full`}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
-                    "d:flex flex:col justify:center items:center": true,
-                    "r:md cursor:pointer w:10 h:10": true,
-                    "bg:gray-800 text:white": item.value === props.value,
+                    "d-flex flex-col justify-center items-center": true,
+                    "r-md cursor-pointer w-10 h-10": true,
+                    "bg-gray-800 text-white": item.value === props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
                         {!!item.icon && (
-                            <div className={classNames("d:flex items:center text:lg", item.iconClass)}>
+                            <div className={classNames("d-flex items-center text-lg", item.iconClass)}>
                                 {item.icon}
                             </div>
                         )}
                         {!!item.text && (
-                            <div className={classNames("d:flex items:center", item.textClass)}>
-                                <span className="font:bold">{item.text}</span>
+                            <div className={classNames("d-flex items-center", item.textClass)}>
+                                <span className="font-bold">{item.text}</span>
                             </div>
                         )}
                     </div>
@@ -54,7 +54,7 @@ const optionTypes = {
     range: props => (
         <input
             type="range"
-            className="m:0 w:full bg:gray-300 h:1 mt:3 mb:2"
+            className="m-0 w-full bg-gray-300 h-1 mt-3 mb-2"
             onChange={e => props.onChange(e.target.value || 0)}
             defaultValue={props.value}
             min={props.minValue}
@@ -65,15 +65,15 @@ const optionTypes = {
 };
 
 export const Option = props => (
-    <div className="text:gray-700">
-        <div className="text:xs mb:2 select:none">
+    <div className="text-gray-700">
+        <div className="text-xs mb-2 select-none">
             <strong>{props.title || ""}</strong>
         </div>
-        <div className="d:block">
+        <div className="d-block">
             {optionTypes[props.type](props)}
         </div>
         {!!props.helper && (
-            <div className="text:gray-400 text:2xs mt:0 select:none">
+            <div className="text-gray-400 text-2xs mt-0 select-none">
                 {props.helper}
             </div>
         )}

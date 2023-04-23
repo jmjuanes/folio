@@ -14,7 +14,7 @@ export const HistoryPanel = props => (
 );
 
 HistoryPanel.defaultProps = {
-    className: "bottom:0 left:0 pb:4 pl:4",
+    className: "bottom-0 left-0 pb-4 pl-4",
     style: {},
     undoDisabled: true,
     redoDisabled: true,

@@ -10,10 +10,10 @@ export const Confirm = () => {
     if (confirm.visible) {
         return (
             <Modal maxWidth="400px">
-                <div className="pb:8 text:center">
+                <div className="pb-8 text-center">
                     {confirm.message}
                 </div>
-                <div className="d:flex gap:2 w:full flex:row-reverse">
+                <div className="d-flex gap-2 w-full flex-row-reverse">
                     <PrimaryButton
                         fullWidth={true}
                         icon={<CheckIcon />}

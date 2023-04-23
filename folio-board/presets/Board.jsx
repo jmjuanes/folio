@@ -16,7 +16,7 @@ const BoardWrapper = props => {
     const [welcomeVisible, setWelcomeVisible] = React.useState(props.showWelcome && (board.elements.length === 0));
 
     return (
-        <div className="position:relative overflow:hidden h:full w:full">
+        <div className="position-relative overflow-hidden h-full w-full">
             <Renderer
                 onChange={props.onChange}
                 onScreenshot={props.onScreenshot}
@@ -24,10 +24,10 @@ const BoardWrapper = props => {
             <Layout
                 header={true}
                 headerLeftContent={(
-                    <div className="d:flex gap:2">
-                        <div className="d:flex position:relative group" tabIndex="0">
+                    <div className="d-flex gap-2">
+                        <div className="d-flex position-relative group" tabIndex="0">
                             <SecondaryButton icon={(<BarsIcon />)} />
-                            <Dropdown className="d:none d:block:group-focus-within top:full left:0">
+                            <Dropdown className="d-none d-block:group-focus-within top-full left-0">
                                 <DropdownGroup title="Actions" />
                                 {props.showLoadAction && (
                                     <DropdownItem
@@ -104,7 +104,7 @@ const BoardWrapper = props => {
                     </div>
                 )}
                 headerRightContent={(
-                    <div className="d:flex gap:2">
+                    <div className="d-flex gap-2">
                         {props.customHeaderRightContent}
                         {props.showScreenshot && (
                             <SecondaryButton
@@ -120,13 +120,13 @@ const BoardWrapper = props => {
                             />
                         )}
                         {props.showExport && (
-                            <div className="d:flex position:relative group" tabIndex="0">
+                            <div className="d-flex position-relative group" tabIndex="0">
                                 <SecondaryButton
                                     icon={(<ImageIcon />)}
                                     text="Export"
                                     disabled={board.elements.length === 0}
                                 />
-                                <Dropdown className="d:none d:block:group-focus-within top:full right:0">
+                                <Dropdown className="d-none d-block:group-focus-within top-full right-0">
                                     <DropdownItem
                                         icon={(<ImageIcon />)}
                                         text="Export as PNG"

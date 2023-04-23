@@ -5,11 +5,11 @@ import {SecondaryButton} from "../commons/Button.jsx";
 
 export const Welcome = props => (
     <Modal maxWidth={props.width}>
-        <div className="pt:4 select:none">
-            <div className="font:bold text:7xl mb:4">{props.title}</div>
-            <div className="text:dark-100 lh:relaxed">{props.description}</div>
+        <div className="pt-4 select-none">
+            <div className="font-bold text-7xl mb-4">{props.title}</div>
+            <div className="text-dark-100 lh-relaxed">{props.description}</div>
         </div>
-        <div className="mt:8 d:flex flex:col gap:2">
+        <div className="mt-8 d-flex flex-col gap-2">
             <SecondaryButton
                 icon={(<DrawingIcon />)}
                 text="Start Drawing"
@@ -22,7 +22,7 @@ export const Welcome = props => (
             />
         </div>
         {props.version && (
-            <div className="mt:4 text:gray-400 text:center text:xs select:none">
+            <div className="mt-4 text-gray-400 text-center text-xs select-none">
                 Currently <b>v{props.version}</b>. 
             </div>
         )}

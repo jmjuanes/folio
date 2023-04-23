@@ -88,7 +88,7 @@ export const EditionPanel = props => (
 );
 
 EditionPanel.defaultProps = {
-    className: "top:0 right:0 pt:4 pr:4",
+    className: "top-0 right-0 pt-4 pr-4",
     style: {},
     elements: [],
     dialog: null,
