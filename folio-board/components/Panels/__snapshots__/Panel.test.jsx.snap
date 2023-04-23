@@ -2,11 +2,11 @@
 
 exports[`Panel should render 1`] = `
 <div
-  className="position:absolute z:5 select:none"
+  className="position-absolute z-5 select-none"
   style={Object {}}
 >
   <div
-    className="b:1 b:solid b:gray-300 r:lg shadow:md items:center bg:white d:flex gap:2 p:2"
+    className="b-1 b-solid b-gray-300 r-lg shadow-md items-center bg-white d-flex gap-2 p-2"
   >
     CONTENT
   </div>
@@ -15,7 +15,7 @@ exports[`Panel should render 1`] = `
 
 exports[`PanelButton should render 1`] = `
 <div
-  className="justify:center items:center r:md d:flex text:lg p:2 text:gray-800 bg:gray-800:hover text:white:hover cursor:pointer"
+  className="justify-center items-center r-md d-flex text-lg p-2 text-gray-800 bg-gray-800:hover text-white:hover cursor-pointer"
 >
   CONTENT
 </div>

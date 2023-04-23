@@ -2,21 +2,21 @@
 
 exports[`Dropdown should render 1`] = `
 <div
-  className="top:0 left:0 position:absolute mt:1"
+  className="top-0 left-0 position-absolute mt-1"
 >
   <div
-    className="bg:white shadow:md w:56 p:3 r:lg d:flex flex:col gap:0"
+    className="bg-white shadow-md w-56 p-3 r-lg d-flex flex-col gap-0"
   >
     <div
-      className="d:flex items:center gap:2 r:md px:3 py:2 select:none bg:gray-200:hover cursor:pointer"
+      className="d-flex items-center gap-2 r-md px-3 py-2 select-none bg-gray-200:hover cursor-pointer"
       onClick={[Function]}
       tabIndex="0"
     >
       <div
-        className="d:flex text:lg items:center text:gray-700"
+        className="d-flex text-lg items-center text-gray-700"
       />
       <div
-        className="d:flex items:center text:sm text:gray-700"
+        className="d-flex items-center text-sm text-gray-700"
       >
         <span>
           Item 1
@@ -24,15 +24,15 @@ exports[`Dropdown should render 1`] = `
       </div>
     </div>
     <div
-      className="d:flex items:center gap:2 r:md px:3 py:2 select:none bg:gray-200:hover cursor:pointer"
+      className="d-flex items-center gap-2 r-md px-3 py-2 select-none bg-gray-200:hover cursor-pointer"
       onClick={[Function]}
       tabIndex="0"
     >
       <div
-        className="d:flex text:lg items:center text:gray-700"
+        className="d-flex text-lg items-center text-gray-700"
       />
       <div
-        className="d:flex items:center text:sm text:gray-700"
+        className="d-flex items-center text-sm text-gray-700"
       >
         <span>
           Item 2
