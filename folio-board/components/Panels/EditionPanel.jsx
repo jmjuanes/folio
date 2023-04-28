@@ -8,17 +8,21 @@ import {
     ShapesIcon,
     ArrowheadArrowIcon,
     TrashIcon,
+    ObjectGroupIcon,
+    ObjectUngroupIcon,
 } from "../icons/index.jsx";
 import {isDialogEnabledForSelection} from "../../utils.js";
 
-// const isGroupSelectionVisible = selection => {
-//     const selectedGroups = new Set(selection.map(el => el.group));
-//     return selection.length > 1 && (selectedGroups.size > 1 || selectedGroups.has(null));
-// };
+const isGroupSelectionVisible = props => {
+    // if (props.elements.length > 0 && !props.group) {
+    // }
+    const selectedGroups = new Set(props.elements.map(el => el.group));
+    return !props.group && props.elements.length > 1 && (selectedGroups.size > 1 || selectedGroups.has(null));
+};
 
-// const isUngroupSelectionVisible = selection => {
-//     return selection.length > 0 && selection.some(el => !!el.group);
-// };
+const isUngroupSelectionVisible = props => {
+    return !props.group && props.elements.length > 0 && props.elements.some(el => !!el.group);
+};
 
 const getButtonProps = (props, type, test) => {
     const elements = props.elements || [];
@@ -72,14 +76,12 @@ export const EditionPanel = props => (
         )}
         */}
         {/* Group handlers */}
-        {/*
-        <PanelButton disabled={hasActiveGroup || !isGroupSelectionVisible(props.selection)} onClick={props.onGroupSelectionClick}>
+        <PanelTextButton text="Group" disabled={!isGroupSelectionVisible(props)} onClick={props.onGroupClick}>
             <ObjectGroupIcon />
-        </PanelButton>
-        <PanelButton disabled={hasActiveGroup || !isUngroupSelectionVisible(props.selection)} onClick={props.onUngroupSelectionClick}>
+        </PanelTextButton>
+        <PanelTextButton text="Ungroup" disabled={!isUngroupSelectionVisible(props)} onClick={props.onUngroupClick}>
             <ObjectUngroupIcon />
-        </PanelButton>
-        */}
+        </PanelTextButton>
         {/* Remove current selection */}
         <PanelTextButton text="Remove" disabled={(props.elements || []).length === 0} onClick={props.onRemoveClick}>
             <TrashIcon />
@@ -91,10 +93,10 @@ EditionPanel.defaultProps = {
     className: "top-0 right-0 pt-4 pr-4",
     style: {},
     elements: [],
+    group: null,
     dialog: null,
-    // activeGroup: null,
-    // onGroupSelectionClick: null,
-    // onUngroupSelectionClick: null,
+    onGroupClick: null,
+    onUngroupClick: null,
     onRemoveClick: null,
     onDialogClick: null,
 };

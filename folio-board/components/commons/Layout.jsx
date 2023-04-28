@@ -139,6 +139,7 @@ export const Layout = props => {
             {!isScreenshot && props.edition && (
                 <EditionPanel
                     elements={selectedElements}
+                    group={board.activeGroup}
                     dialog={dialog}
                     style={{
                         paddingTop: props.header ? props.headerHeight : null,
@@ -151,6 +152,20 @@ export const Layout = props => {
                         props.onChange?.({
                             elements: board.elements,
                             assets: board.assets,
+                        });
+                    }}
+                    onGroupClick={() => {
+                        board.groupSelectedElements();
+                        board.update();
+                        props.onChange?.({
+                            elements: board.elements,
+                        });
+                    }}
+                    onUngroupClick={() => {
+                        board.ungroupSelectedElements();
+                        board.update();
+                        props.onChange?.({
+                            elements: board.elements,
                         });
                     }}
                 />

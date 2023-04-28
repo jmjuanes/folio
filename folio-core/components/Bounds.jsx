@@ -1,5 +1,5 @@
 import React from "react";
-import {CURSORS} from "../constants.js";
+import {CURSORS, LIGHT_BLUE, TRANSPARENT} from "../constants.js";
 
 export const Bounds = props => {
     const offset = props.offset / props.zoom;
@@ -12,6 +12,8 @@ export const Bounds = props => {
             fill={props.fillColor}
             stroke={props.strokeColor}
             strokeWidth={props.strokeWidth / props.zoom}
+            strokeDasharray={(props.strokeDasharray / props.zoom)}
+            strokeDashoffset={props.strokeDashoffset}
             style={props.style}
             onPointerDown={props.onPointerDown}
         />
@@ -21,10 +23,12 @@ export const Bounds = props => {
 Bounds.defaultProps = {
     position: null,
     offset: 0,
-    fillColor: "transparent",
+    fillColor: TRANSPARENT,
     // fillOpacity: "0.2",
-    strokeColor: "#0d6efd",
+    strokeColor: LIGHT_BLUE,
     strokeWidth: 2,
+    strokeDasharray: 0,
+    strokeDashoffset: null,
     style: {
         cursor: CURSORS.MOVE,
     },

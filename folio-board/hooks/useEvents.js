@@ -38,6 +38,10 @@ export const useEvents = callbacks => {
                 if (board.activeAction === ACTIONS.EDIT) {
                     board.setAction(null);
                 }
+                if (board.activeGroup) {
+                    board.activeGroup = null;
+                    board.update();
+                }
                 if (!board.activeTool) {
                     board.clearSelectedElements();
                     board.update();
@@ -47,6 +51,10 @@ export const useEvents = callbacks => {
                 if (!board.activeTool && !board.activeAction) {
                     const element = board.getElement(event.element);
                     isPrevSelected = element.selected;
+                    // Check to reset active group
+                    if (board.activeGroup && element.group !== board.activeGroup) {
+                        board.activeGroup = null;
+                    }
                     const inCurrentSelection = board.getSelectedElements().some(el => {
                         return el.id === element.id;
                     });
@@ -54,6 +62,11 @@ export const useEvents = callbacks => {
                         board.clearSelectedElements();
                     }
                     element.selected = true;
+                    if (!board.activeGroup && element.group) {
+                        board.elements.forEach(el => {
+                            el.selected = el.selected || (el.group && el.group === element.group);
+                        });
+                    }
                     board.update();
                 }
             },
@@ -298,6 +311,12 @@ export const useEvents = callbacks => {
                             // Toggle element selection
                             element.selected = !isPrevSelected;
                         }
+                        // Select all elements of this group
+                        if (element.group && !board.activeGroup) {
+                            board.elements.forEach(el => {
+                                el.selected = el.group === element.group ? element.selected : el.selected;
+                            });
+                        }
                     }
                     isDragged = false;
                     isResized = false;
@@ -323,10 +342,17 @@ export const useEvents = callbacks => {
                 if (!board.activeAction && !board.activeTool) {
                     // board.clearSelectedElements();
                     const element = board.getElement(event.element);
+                    if (!board.activeGroup && element.group) {
+                        board.activeGroup = element.group;
+                        board.clearSelectedElements();
+                        element.selected = true; // Mark this element as selected
+                    }
                     // TODO: we need to check if this element is editable
-                    board.activeElement = element;
-                    board.activeElement.editing = true;
-                    board.activeAction = ACTIONS.EDIT;
+                    else if (element) {
+                        board.activeElement = element;
+                        board.activeElement.editing = true;
+                        board.activeAction = ACTIONS.EDIT;
+                    }
                     board.update();
                 }
             },
@@ -354,10 +380,6 @@ export const useEvents = callbacks => {
                     // Check for backspace key or cut --> remove elements
                     if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
                         board.removeSelectedElements();
-                        // if (board.getElementsInActiveGroup().length === 0) {
-                        //     // Reset active group if all elements of this group have been removed
-                        //     state.activeGroup = null;
-                        // }
                         callbacks?.onChange?.({
                             elements: board.elements,
                             assets: board.assets,
@@ -379,8 +401,13 @@ export const useEvents = callbacks => {
                 }
                 // Check ESCAPE key
                 else if (event.key === KEYS.ESCAPE) {
+                    // Check for screenshot action --> exit screenshot mode
                     if (board.activeAction === ACTIONS.SCREENSHOT) {
                         board.activeAction = null;
+                    }
+                    // Check for active group enabled --> exit group edition
+                    if (board.activeGroup) {
+                        board.activeGroup = null;
                     }
                     event.preventDefault();
                     board.clearSelectedElements();

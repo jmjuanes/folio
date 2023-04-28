@@ -1,5 +1,5 @@
 import React from "react";
-import {COLORS, CURSORS, EVENTS, FONT_SOURCES} from "../constants.js";
+import {CURSORS, EVENTS, FONT_SOURCES, GROUP_BOUNDS_FILL_COLOR, GROUP_BOUNDS_OFFSET, GROUP_BOUNDS_STROKE_COLOR, GROUP_BOUNDS_STROKE_DASHARRAY, GROUP_BOUNDS_STROKE_DASHOFFSET, GROUP_BOUNDS_STROKE_WIDTH} from "../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
@@ -11,7 +11,10 @@ import {getRectangleBounds} from "../math.js";
 
 const useSelectedElements = props => {
     if (props.showHandlers || props.showBounds) {
-        return (props.elements || []).filter(el => !!el.selected);
+        const selectedGroups = props.group ? new Set() : new Set(props.elements.map(el => el.selected && el.group));
+        return props.elements.filter(el => {
+            return !!el.selected || (el.group && selectedGroups.has(el.group));
+        });
     }
     return [];
 };
@@ -21,6 +24,7 @@ export const Canvas = props => {
     const selectedElements = useSelectedElements(props);
     const [canvasSize, setCanvasSize] = React.useState([100, 100]);
     const bounds = selectedElements.length > 1 ? getRectangleBounds(selectedElements) : null;
+    const groups = props.group ? [props.group] : Array.from(new Set(selectedElements.map(el => el.group).filter(g => !!g)));
 
     const handlePointerDown = (event, source, pointListener) => {
         event.preventDefault();
@@ -208,6 +212,24 @@ export const Canvas = props => {
                         strokeColor={props.brushStrokeColor}
                     />
                 )}
+                {props.showBounds && groups.length > 0 && (
+                    <React.Fragment>
+                        {groups.map(group => (
+                            <Bounds
+                                key={group}
+                                position={getRectangleBounds(props.elements.filter(el => el.group === group))}
+                                offset={GROUP_BOUNDS_OFFSET}
+                                fillColor={GROUP_BOUNDS_FILL_COLOR}
+                                strokeColor={GROUP_BOUNDS_STROKE_COLOR}
+                                strokeWidth={GROUP_BOUNDS_STROKE_WIDTH}
+                                strokeDasharray={GROUP_BOUNDS_STROKE_DASHARRAY}
+                                strokeDashoffset={GROUP_BOUNDS_STROKE_DASHOFFSET}
+                                zoom={props.zoom}
+                            />
+                        ))}
+                    </React.Fragment>
+                )}
+
                 {props.showBounds && selectedElements.length > 1 && (
                     <Bounds position={bounds} zoom={props.zoom} fillColor="none" />
                 )}
@@ -240,6 +262,7 @@ Canvas.defaultProps = {
     backgroundColor: "#fafafa",
     elements: [],
     assets: {},
+    group: null,
     fonts: Object.values(FONT_SOURCES),
     cursor: "",
     translateX: 0,

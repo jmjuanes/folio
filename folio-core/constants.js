@@ -3,6 +3,12 @@ export const VERSION = "3";
 export const PI = Math.PI;
 export const EPSILON = 1e-6;
 
+export const TRANSPARENT = "transparent";
+export const WHITE = "#ffffff";
+export const BLACK = "#000000";
+export const LIGHT_BLUE = "#0d6efd";
+export const LIGHT_MINT = "#20c997";
+
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
     POINTER_MOVE: "pointermove",
@@ -70,11 +76,21 @@ export const OPACITY_STEP = 0.1;
 export const OPACITY_MIN = 0;
 export const OPACITY_MAX = 1;
 
-export const SELECTION_FILL_COLOR = "#0d6efd";
-export const SELECTION_STROKE_COLOR = "#0d6efd";
+export const SELECTION_FILL_COLOR = LIGHT_BLUE;
+export const SELECTION_STROKE_COLOR = LIGHT_BLUE;
 
-export const SCREENSHOT_FILL_COLOR = "#20c997";
-export const SCREENSHOT_STROKE_COLOR = "#20c997";
+export const SELECTION_BOUNDS_FILL_COLOR = "none";
+export const SELECTION_BOUNDS_STROKE_COLOR = LIGHT_BLUE;
+
+export const GROUP_BOUNDS_OFFSET = 0;
+export const GROUP_BOUNDS_FILL_COLOR = "none";
+export const GROUP_BOUNDS_STROKE_WIDTH = 2;
+export const GROUP_BOUNDS_STROKE_COLOR = LIGHT_BLUE;
+export const GROUP_BOUNDS_STROKE_DASHARRAY = 5;
+export const GROUP_BOUNDS_STROKE_DASHOFFSET = 0;
+
+export const SCREENSHOT_FILL_COLOR = LIGHT_MINT;
+export const SCREENSHOT_STROKE_COLOR = LIGHT_MINT;
 
 // Drawing constants
 export const DRAWING_THRESHOLD = 3;
@@ -135,10 +151,6 @@ export const FONT_SOURCES = {
     DRAW: "https://fonts.googleapis.com/css2?family=Caveat&display=swap",
     MONO: "https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap",
 };
-
-export const TRANSPARENT = "transparent";
-export const WHITE = "#ffffff";
-export const BLACK = "#000000";
 
 // Default background colors
 export const BACKGROUND_COLORS = {

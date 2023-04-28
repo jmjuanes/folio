@@ -46,6 +46,7 @@ const createBoard = props => ({
     activeAction: null,
     activeTool: null,
     activeElement: null,
+    activeGroup: null,
     zoom: ZOOM_DEFAULT,
     translateX: 0,
     translateY: 0,
@@ -236,16 +237,18 @@ const createBoard = props => ({
     pasteElements(elements) {
         this.clearSelectedElements();
         // 1. Process new elements
-        // const groups = new Map();
+        const groups = new Map();
         const newElements = elements.map(element => {
-            // if (elements.length > 1 && !!element.group && !groups.has(element.group)) {
-            //     groups.set(element.group, generateRandomId());
-            // }
+            // 1.1. Check if this element is part of a group
+            if (elements.length > 1 && !!element.group && !groups.has(element.group)) {
+                groups.set(element.group, generateRandomId());
+            }
+            // 1.2. Return new element data
             return {
                 ...element,
                 id: generateRandomId(),
                 selected: true,
-                // group: state.activeGroup || groups.get(element.group) || null,
+                group: this.activeGroup || groups.get(element.group) || null,
             };
         });
         // 2. insert new elements
@@ -277,6 +280,7 @@ const createBoard = props => ({
             ...(elementConfig.initialize?.(this.defaults) || {}),
             text: text,
             selected: true,
+            group: this.activeGroup || null,
         });
 
         const textSize = element.textSize ?? 0;
@@ -315,11 +319,18 @@ const createBoard = props => ({
                 x2: Math.ceil((x + img.width / 2) / GRID_SIZE) * GRID_SIZE,
                 y2: Math.ceil((y + img.height / 2) / GRID_SIZE) * GRID_SIZE,
                 selected: true,
+                group: this.activeGroup || null,
             });
             this.addElements([element]);
             this.update();
             return element;
         });
+    },
+    getGroupElements(group) {
+        return this.elements.filter(el => el.group === group);
+    },
+    getActiveGroupElements() {
+        return this.activeGroup ? this.getGroupElements(this.activeGroup) : [];
     },
     getSelectedElements() {
         return this.elements.filter(el => !!el.selected);
@@ -328,17 +339,32 @@ const createBoard = props => ({
         return this.elements.forEach(el => el.selected = false);
     },
     setSelectedElements(selection) {
-        return this.elements.forEach(element => {
+        const selectedGroups = new Set();
+        this.elements.forEach(element => {
             element.selected = false;
             if (element.x1 < selection.x2 && selection.x1 < element.x2) {
                 if (element.y1 < selection.y2 && selection.y1 < element.y2) {
                     element.selected = true;
+                    // Check if this element has a group for adding this element to the selected groups list
+                    if (!this.activeGroup && element.group) {
+                        selectedGroups.add(element.group);
+                    }
                 }
             }
         });
+        // Select other elements in the group
+        this.elements.forEach(element => {
+            if (element.group && selectedGroups.has(element.group)) {
+                element.selected = true;
+            }
+        })
     },
     removeSelectedElements() {
-        return this.removeElements(this.getSelectedElements());
+        this.removeElements(this.getSelectedElements());
+        // Make sure we exit active group if there are no more elements on this group
+        if (this.activeGroup && this.elements.every(el => el.group !== this.activeGroup)) {
+            this.activeGroup = null;
+        }
     },
     snapshotSelectedElements() {
         return this.getSelectedElements().map(el => ({...el}));
@@ -348,6 +374,16 @@ const createBoard = props => ({
     },
     cloneSelectedElements() {
         return this.pasteElements(this.snapshotSelectedElements());
+    },
+    groupSelectedElements() {
+        if (!this.activeGroup) {
+            this.updateElements(this.getSelectedElements(), ["group"], [generateRandomId()], false);
+        }
+    },
+    ungroupSelectedElements() {
+        if (!this.activeGroup) {
+            this.updateElements(this.getSelectedElements(), ["group"], [null], false);
+        }
     },
     getHistory() {
         return [...this.history];

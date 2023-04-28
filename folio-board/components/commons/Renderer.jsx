@@ -29,6 +29,7 @@ export const Renderer = props => {
             id={board.id}
             elements={board.elements}
             assets={board.assets}
+            group={board.activeGroup}
             backgroundColor={board.background}
             cursor={cursor}
             translateX={board.translateX}
