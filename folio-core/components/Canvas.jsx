@@ -29,6 +29,12 @@ export const Canvas = props => {
     const handlePointerDown = (event, source, pointListener) => {
         event.preventDefault();
         event.stopPropagation();
+
+        // Prevent fire pointer down event if pressed button is not left
+        if (event.nativeEvent.button) {
+            return;
+        }
+
         // const source = event.nativeEvent?.target?.dataset?.type || null;
         const {top, left} = canvasRef.current.getBoundingClientRect();
 
@@ -93,6 +99,12 @@ export const Canvas = props => {
     const handleDoubleClick = (event, source, listener) => {
         event.preventDefault();
         event.stopPropagation();
+
+        // Prevent fire pointer down event if pressed button is not left
+        if (event.nativeEvent.button) {
+            return;
+        }
+
         const {top, left} = canvasRef.current.getBoundingClientRect();
         const eventInfo = {
             originalX: (event.nativeEvent.clientX - left - props.translateX) / props.zoom,
