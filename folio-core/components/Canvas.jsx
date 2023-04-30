@@ -8,6 +8,7 @@ import {Pointer} from "./Pointer.jsx";
 import {getElementConfig} from "../elements/index.jsx";
 import {AssetsProvider} from "../contexts/AssetsContext.jsx";
 import {getRectangleBounds} from "../math.js";
+import {delay, isTouchOrPenEvent} from "../utils.js";
 
 const useSelectedElements = props => {
     if (props.showHandlers || props.showBounds) {
@@ -21,10 +22,21 @@ const useSelectedElements = props => {
 
 export const Canvas = props => {
     const canvasRef = React.useRef(null);
+    const longPressTimerRef = React.useRef(0);
+    const clearLongPressTimer = React.useCallback(() => window.clearTimeout(longPressTimerRef.current), []);
     const selectedElements = useSelectedElements(props);
     const [canvasSize, setCanvasSize] = React.useState([100, 100]);
     const bounds = selectedElements.length > 1 ? getRectangleBounds(selectedElements) : null;
     const groups = props.group ? [props.group] : Array.from(new Set(selectedElements.map(el => el.group).filter(g => !!g)));
+
+    const handleContextMenu = event => {
+        console.log("LAUNCH CONTEXT MENU");
+        props?.onContextMenu?.({
+            x: event.nativeEvent.clientX,
+            y: event.nativeEvent.clientY,
+        });
+        return false;
+    };
 
     const handlePointerDown = (event, source, pointListener) => {
         event.preventDefault();
@@ -34,10 +46,18 @@ export const Canvas = props => {
         if (event.nativeEvent.button) {
             return;
         }
-
+        // Register timer function
+        if (isTouchOrPenEvent(event)) {
+            longPressTimerRef.current = delay(props.longPressDelay, () => {
+                document.removeEventListener("pointermove", handlePointerMove);
+                document.removeEventListener("pointerup", handlePointerUp);
+                document.removeEventListener("pointerleave", handlePointerUp);
+                // Execute context menu handler
+                return handleContextMenu(event);
+            });
+        }
         // const source = event.nativeEvent?.target?.dataset?.type || null;
         const {top, left} = canvasRef.current.getBoundingClientRect();
-
         const eventInfo = {
             originalX: (event.nativeEvent.clientX - left - props.translateX) / props.zoom,
             originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
@@ -60,6 +80,7 @@ export const Canvas = props => {
 
         // Handle pointer move
         const handlePointerMove = event => {
+            clearLongPressTimer();
             event.preventDefault();
             props.onPointerMove?.(Object.assign(eventInfo, {
                 currentEvent: event,
@@ -75,6 +96,7 @@ export const Canvas = props => {
 
         // Handle pointer up
         const handlePointerUp = event => {
+            clearLongPressTimer();
             event.preventDefault();
             props.onPointerUp?.(eventInfo);
 
@@ -170,11 +192,13 @@ export const Canvas = props => {
                 backgroundColor: props.backgroundColor,
                 touchAction: "none",
                 userSelect: "none",
+                WebkitTouchCallout: "none",
                 cursor: props.cursor,
                 ...props.svgStyle,
             }}
             onPointerDown={e => handlePointerDown(e, null, props.onPointCanvas)}
             onDoubleClick={e => handleDoubleClick(e, null, props.onDoubleClickCanvas)}
+            onContextMenu={e => handleContextMenu(e)}
         >
             <style type="text/css">
                 {props.fonts.map(font => `@import url('${font}');`).join("")}
@@ -295,6 +319,7 @@ Canvas.defaultProps = {
     onPointerMove: null,
     onPointerUp: null,
     onDoubleClick: null,
+    onContextMenu: null,
     onKeyDown: null,
     onKeyUp: null,
     onPaste: null,
@@ -306,4 +331,5 @@ Canvas.defaultProps = {
     showPointer: false,
     svgStyle: {},
     svgClassName: "",
+    longPressDelay: 700,
 };

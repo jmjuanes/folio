@@ -5,3 +5,13 @@ export const isCornerHandler = handler => {
 export const isEdgeHandler = handler => {
     return handler.startsWith("edge");
 };
+
+// Check if the event is fired from touch or pen
+export const isTouchOrPenEvent = event => {
+    return event.pointerType !== "mouse";
+};
+
+// Wrapper around window.setTimeout
+export const delay = (timeout, callback) => {
+    return window.setTimeout(callback, timeout);
+};
