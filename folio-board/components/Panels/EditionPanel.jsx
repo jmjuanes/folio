@@ -11,7 +11,7 @@ import {
     ObjectGroupIcon,
     ObjectUngroupIcon,
 } from "../icons/index.jsx";
-import {isDialogEnabledForSelection} from "../../utils.js";
+import {isDialogEnabledForSelection} from "../../board.js";
 
 const isGroupSelectionVisible = props => {
     // if (props.elements.length > 0 && !props.group) {

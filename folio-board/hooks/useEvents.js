@@ -14,7 +14,6 @@ import {
     STATES,
 } from "../constants.js";
 import {isInputTarget} from "../utils/events.js";
-import {getDataFromClipboard, copyTextToClipboard} from "../utils/clipboard.js";
 import {isArrowKey} from "../utils/keys.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
@@ -132,7 +131,7 @@ export const useEvents = callbacks => {
                     };
                 }
                 board.currentState = STATES.POINTING;
-                board.appState.contextMenuVisible = false;
+                board.state.contextMenuVisible = false;
                 board.update();
             },
             onPointerMove: event => {
@@ -451,7 +450,7 @@ export const useEvents = callbacks => {
                 }
                 board.clearSelectedElements();
                 board.activeGroup = null;
-                board.appState.contextMenuVisible = false;
+                board.state.contextMenuVisible = false;
                 board.paste(event).then(() => {
                     return callbacks?.onChange?.({
                         elements: board.elements,

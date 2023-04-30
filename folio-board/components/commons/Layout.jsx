@@ -6,7 +6,7 @@ import {EditionPanel, HistoryPanel, ToolsPanel, ZoomPanel} from "../Panels/index
 import {FillDialog, StrokeDialog, TextDialog, ShapeDialog, ArrowheadDialog} from "../Dialogs/index.jsx";
 import {FileInput} from "./FileInput.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
-import {isDialogEnabledForSelection} from "../../utils.js";
+import {isDialogEnabledForSelection} from "../../board.js";
 
 export const Layout = props => {
     const board = useBoard();
