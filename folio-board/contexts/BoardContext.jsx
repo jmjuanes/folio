@@ -26,6 +26,8 @@ import {
 import {getElementConfig} from "folio-core";
 import {CHANGES, STATES} from "../constants.js";
 import {loadImage} from "../utils/image.js";
+import {getTextFromClipboard, copyTextToClipboard} from "../utils/clipboard.js";
+import {getTextFromClipboardItem, getBlobFromClipboardItem} from "../utils/clipboard.js";
 
 const generateRandomId = () => uid(20);
 
@@ -70,6 +72,11 @@ const createBoard = props => ({
         startArrowhead: DEFAULT_ARROWHEAD_START,
         endArrowhead: DEFAULT_ARROWHEAD_END,
     },
+    appState: {
+        contextMenuVisible: false,
+        contextMenuX: 0,
+        contextMenuY: 0,
+    },
 
     update() {
         return props?.onUpdate?.();
@@ -77,35 +84,79 @@ const createBoard = props => ({
 
     copy() {
         const elements = this.getSelectedElements();
-        const allAssets = this.assets;
-        return {
+        const dataToCopy = {
             elements: elements,
             assets: elements.reduce((assets, element) => {
                 // Copy only assets in the current selection
-                if (element.assetId && allAssets[element.assetId]) {
-                    assets[element.assetId] = allAssets[element.assetId];
+                if (element.assetId && this.assets[element.assetId]) {
+                    assets[element.assetId] = this.assets[element.assetId];
                 }
                 return assets;
             }, {}),
         };   
+        const data = `folio:::${JSON.stringify(dataToCopy)}`;
+        return copyTextToClipboard(data);
     },
-    paste(data) {
-        // We need to register the provided assets in the new assets object
-        // To prevent different assets ids, we will use a map to convert provided assets Ids to new assets ids
-        const assetMap = {};
-        Object.values(data?.assets || {}).forEach(asset => {
-            if (asset && asset.id && asset.dataUrl) {
-                assetMap[asset.id] = this.addAsset(asset.dataUrl, asset.type);
+    paste(event) {
+        // Tiny function to parse text data
+        const parseTextData = content => {
+            if (typeof content === "string") {
+                if (content?.startsWith("folio:::")) {
+                    const data = JSON.parse(content.split("folio:::")[1].trim());
+                    // We need to register the provided assets in the new assets object
+                    // To prevent different assets ids, we will use a map to convert provided
+                    // assets Ids to new assets ids
+                    const assetMap = {};
+                    Object.values(data?.assets || {}).forEach(asset => {
+                        if (asset && asset.id && asset.dataUrl) {
+                            assetMap[asset.id] = this.addAsset(asset.dataUrl, asset.type);
+                        }
+                    });
+                    // Paste provided elements
+                    this.pasteElements((data?.elements || []).map(originalElement => {
+                        const element = {...originalElement};
+                        if (!!element.assetId && !!assetMap[element.assetId]) {
+                            element.assetId = assetMap[element.assetId];
+                        }
+                        return element;
+                    }));
+                    this.update();
+                    return Promise.resolve(true);
+                }
+                // Create a new text element
+                return this.addText(content);
             }
-        });
-        // Paste provided elements
-        this.pasteElements((data?.elements || []).map(originalElement => {
-            const element = {...originalElement};
-            if (!!element.assetId && !!assetMap[element.assetId]) {
-                element.assetId = assetMap[element.assetId];
+            // No valid text, reject promise
+            return Promise.reject(null);
+        };
+
+        // Check for paste event
+        if (event?.clipboardData) {
+            const clipboardItems = event.clipboardData?.items || [];
+            for (let i = 0; i < clipboardItems.length; i++) {
+                const item = clipboardItems[i];
+                // Check for image data (image/png, image/jpg)
+                if (item.type.startsWith("image/")) {
+                    return getBlobFromClipboardItem(item).then(content => {
+                        return this.addImage(content);
+                    });
+                }
+                // Check for text data
+                else if (item.type === "text/plain") {
+                    return getTextFromClipboardItem(item).then(content => {
+                        return parseTextData(content);
+                    });
+                }
             }
-            return element;
-        }));
+        }
+        // If not, check clipboard
+        else {
+            return getTextFromClipboard().then(content => {
+                return parseTextData(content);
+            });
+        }
+        // Other case, no data to paste
+        return Promise.reject(null);
     },
     getAsset(id) {
         return this.assets[id] || null;
@@ -332,6 +383,9 @@ const createBoard = props => ({
     getActiveGroupElements() {
         return this.activeGroup ? this.getGroupElements(this.activeGroup) : [];
     },
+    selectAllElements() {
+        return this.elements.forEach(el => el.selected = true);
+    },
     getSelectedElements() {
         return this.elements.filter(el => !!el.selected);
     },
@@ -488,6 +542,7 @@ const createBoard = props => ({
         this.translateX = Math.floor(this.translateX + (size.width || 0) * (prevZoom - nextZoom) / 2);
         this.translateY = Math.floor(this.translateY + (size.height || 0) * (prevZoom - nextZoom) / 2);
         this.zoom = nextZoom;
+        this.appState.contextMenuVisible = false;
         this.update();
     },
     zoomIn() {
@@ -500,6 +555,7 @@ const createBoard = props => ({
         this.setAction(null);
         this.clearSelectedElements();
         this.activeTool = newTool;
+        this.appState.contextMenuVisible = false;
     },
     setAction(newAction) {
         // Disable editing in all elements of the board
@@ -509,6 +565,7 @@ const createBoard = props => ({
         });
         this.activeElement = null;
         this.activeAction = newAction;
+        this.appState.contextMenuVisible = false;
     },
 });
 

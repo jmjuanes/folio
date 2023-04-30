@@ -132,6 +132,7 @@ export const useEvents = callbacks => {
                     };
                 }
                 board.currentState = STATES.POINTING;
+                board.appState.contextMenuVisible = false;
                 board.update();
             },
             onPointerMove: event => {
@@ -370,12 +371,7 @@ export const useEvents = callbacks => {
                 else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                     event.preventDefault();
                     if (event.key === KEYS.X || event.key === KEYS.C) {
-                        const data = `folio:::${JSON.stringify(board.copy())}`;
-                        copyTextToClipboard(data).then(() => {
-                            // console.log("Copied to clipboard");
-                        });
-                        // If clipboard is not available
-                        // return Promise.reject(new Error("Clipboard not available"));
+                        board.copy();
                     }
                     // Check for backspace key or cut --> remove elements
                     if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
@@ -454,36 +450,13 @@ export const useEvents = callbacks => {
                     return null;
                 }
                 board.clearSelectedElements();
-                // state.activeGroup = null;
-                return getDataFromClipboard(event).then(result => {
-                    const type = result[0];
-                    const content = result[1];
-                    if (type === "text" && content?.startsWith("folio:::")) {
-                        const data = JSON.parse(content.split("folio:::")[1].trim());
-                        board.paste(data || {});
-                        board.update();
-                        callbacks?.onChange?.({
-                            elements: board.elements,
-                            assets: board.assets,
-                        });
-                    }
-                    // Create a new text element
-                    else if (type === "text") {
-                        board.addText(content).then(() => {
-                            callbacks?.onChange?.({
-                                elements: board.elements,
-                            });
-                        });
-                    }
-                    // Create a new image element
-                    else if (type === "image") {
-                        board.addImage(content).then(() => {
-                            callbacks?.onChange?.({
-                                elements: board.elements,
-                                assets: board.assets,
-                            });
-                        });
-                    }
+                board.activeGroup = null;
+                board.appState.contextMenuVisible = false;
+                board.paste(event).then(() => {
+                    return callbacks?.onChange?.({
+                        elements: board.elements,
+                        assets: board.assets,
+                    });
                 });
             },
             // onCopy: event => null,

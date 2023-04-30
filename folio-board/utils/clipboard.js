@@ -17,28 +17,24 @@ export const copyTextToClipboard = text => {
         return navigator.clipboard.writeText(text);
     }
     // TODO: use an alternate method to copy to clipboard
-    return Promise.resolve(false);
+    return Promise.reject(null);
 };
 
-// Get pasted items
-export const getDataFromClipboard = event => {
+// Get text from clipboard
+export const getTextFromClipboard = () => {
+    if (navigator?.clipboard) {
+        return navigator.clipboard.readText();
+    }
+    // TODO: use an alternate method to read from clipboard
+    return Promise.reject(null);
+};
+
+export const getTextFromClipboardItem = item => {
     return new Promise(resolve => {
-        const clipboardItems = event?.clipboardData?.items || [];
-        for (let i = 0; i < clipboardItems.length; i++) {
-            const item = clipboardItems[i];
-            // Check for image data (image/png, image/jpg)
-            if (item.type.startsWith("image/")) {
-                const blob = item.getAsFile();
-                return blobToDataUrl(blob).then(content => {
-                    return resolve(["image", content]);
-                });
-            }
-            // Check for text data
-            else if (item.type === "text/plain") {
-                return item.getAsString(text => {
-                    return resolve(["text", text.trim()]);
-                });
-            }
-        }
+        return item.getAsString(text => resolve(text.trim()));
     });
+};
+
+export const getBlobFromClipboardItem = item => {
+    return blobToDataUrl(item.getAsFile());
 };
