@@ -469,6 +469,14 @@ export const useEvents = callbacks => {
                     board.update();
                 }
             },
+            onContextMenu: event => {
+                if ((board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.TRANSLATE) && !board.activeTool) {
+                    board.state.contextMenuVisible = true;
+                    board.state.contextMenuX = event.x;
+                    board.state.contextMenuY = event.y;
+                    board.update();
+                }
+            },
         };
     }
 

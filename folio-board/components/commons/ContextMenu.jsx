@@ -13,7 +13,7 @@ export const ContextMenuSeparator = () => (
 );
 
 export const ContextMenu = props => (
-    <div className="position-absolute" style={{top: props.y, left: props.y}}>
+    <div className="position-absolute" style={{top: props.y, left: props.x}}>
         <div className="bg-white shadow-md w-40 p-3 r-lg d-flex flex-col gap-0 b-1 b-gray-300 b-solid">
             {props.children}
         </div>
@@ -23,36 +23,4 @@ export const ContextMenu = props => (
 ContextMenu.defaultProps = {
     x: 0,
     y: 0,
-};
-
-export const ContextMenuTrigger = props => {
-    const {onOpen, ...otherProps} = props;
-    const handleOpen = event => {
-        event.preventDefault();
-        event.stopPropagation();
-        return onOpen({
-            x: event.nativeEvent.clientX,
-            y: event.nativeEvent.clientY,
-            event: event.nativeEvent,
-        });
-    };
-
-    return (
-        <span
-            {...otherProps}
-            onContextMenu={event => {
-                handleOpen(event);
-                return false;
-            }}
-        />
-    );
-};
-
-ContextMenuTrigger.defaultProps = {
-    onOpen: null,
-    style: {
-        touchAction: "none",
-        userSelect: "none",
-        WebkitTouchCallout: "none",
-    },
 };
