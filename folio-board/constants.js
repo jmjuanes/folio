@@ -54,3 +54,5 @@ export const STATES = {
     BRUSHING: "brushing",
     ERASING: "erasing",
 };
+
+export const PASTE_OFFSET = 20;

@@ -32,9 +32,7 @@ const BoardWrapper = props => {
                                 onClick={() => {
                                     board.state.contextMenuVisible = false;
                                     board.duplicate();
-                                    props.onChange?.({
-                                        elements: board.elements,
-                                    });
+                                    props.onChange?.(board.export());
                                     board.update();
                                 }}
                             />
@@ -67,7 +65,11 @@ const BoardWrapper = props => {
                     <ContextMenuItem
                         text="Paste"
                         onClick={() => {
-                            board.paste().then(() => {
+                            const point = {
+                                x: board.state.contextMenuX,
+                                y: board.state.contextMenuY,
+                            };
+                            board.paste(null, point).then(() => {
                                 props.onChange?.(board.export());
                                 board.state.contextMenuVisible = false;
                                 board.update();

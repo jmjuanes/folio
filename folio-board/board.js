@@ -22,8 +22,8 @@ import {
     DEFAULT_SHAPE,
     TEXT_BOX_MIN_WIDTH,
 } from "folio-core";
-import {getElementConfig} from "folio-core";
-import {CHANGES, STATES, DIALOGS} from "./constants.js";
+import {getElementConfig, getRectangleBounds} from "folio-core";
+import {CHANGES, STATES, DIALOGS, PASTE_OFFSET} from "./constants.js";
 import {loadImage} from "./utils/image.js";
 import {getTextFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
 import {getTextFromClipboardItem, getBlobFromClipboardItem} from "./utils/clipboard.js";
@@ -81,8 +81,8 @@ export const createBoard = props => ({
     update() {
         return props?.onUpdate?.();
     },
-    export() {
-        const elements = this.getSelectedElements();
+    export(elementsToExport) {
+        const elements = elementsToExport || this.elements;
         return {
             elements: elements,
             assets: elements.reduce((assets, element) => {
@@ -92,17 +92,21 @@ export const createBoard = props => ({
                 }
                 return assets;
             }, {}),
-        };   
+        };
     },
-    copy() {
-        return copyTextToClipboard(`folio:::${JSON.stringify(this.export())}`);
+    copy(elementsToCopy) {
+        const elements = elementsToCopy || this.getSelectedElements();
+        const data = this.export(elements);  
+        return copyTextToClipboard(`folio:::${JSON.stringify(data)}`);
     },
-    cut() {
-        return this.copy().then(() => {
+    cut(elements) {
+        return this.copy(elements).then(() => {
             return this.removeSelectedElements();
         });
     },
-    paste(event) {
+    paste(event, point) {
+        const x = point ? (point.x - this.translateX) / this.zoom : null;
+        const y = point ? (point.y - this.translateY) / this.zoom : null;
         // Tiny function to parse text data
         const parseTextData = content => {
             if (typeof content === "string") {
@@ -118,18 +122,22 @@ export const createBoard = props => ({
                         }
                     });
                     // Paste provided elements
-                    this.pasteElements((data?.elements || []).map(originalElement => {
+                    const elements = (data?.elements || []).map(originalElement => {
                         const element = {...originalElement};
                         if (!!element.assetId && !!assetMap[element.assetId]) {
                             element.assetId = assetMap[element.assetId];
                         }
                         return element;
-                    }));
+                    });
+                    const bounds = getRectangleBounds(data?.elements || []);
+                    const dx = point ? x - bounds.x1 : 0;
+                    const dy = point ? y - bounds.y1 : 0;
+                    this.pasteElements(elements, dx, dy);
                     this.update();
                     return Promise.resolve(true);
                 }
                 // Create a new text element
-                return this.addText(content);
+                return this.addText(content, x, y);
             }
             // No valid text, reject promise
             return Promise.reject(null);
@@ -143,7 +151,7 @@ export const createBoard = props => ({
                 // Check for image data (image/png, image/jpg)
                 if (item.type.startsWith("image/")) {
                     return getBlobFromClipboardItem(item).then(content => {
-                        return this.addImage(content);
+                        return this.addImage(content, x, y);
                     });
                 }
                 // Check for text data
@@ -165,7 +173,9 @@ export const createBoard = props => ({
     },
     duplicate() {
         const elements = this.snapshotSelectedElements();
-        this.pasteElements(elements);
+        const bounds = getRectangleBounds(elements);
+        const dx = (bounds.x2 + PASTE_OFFSET) - bounds.x1;
+        this.pasteElements(elements, dx, 0);
     },
     remove() {
         this.removeSelectedElements();
@@ -306,7 +316,7 @@ export const createBoard = props => ({
             this.defaults[key] = values[index];
         });
     },
-    pasteElements(elements) {
+    pasteElements(elements, dx = 0, dy = 0) {
         this.clearSelectedElements();
         // 1. Process new elements
         const groups = new Map();
@@ -319,6 +329,10 @@ export const createBoard = props => ({
             return {
                 ...element,
                 id: generateRandomId(),
+                x1: element.x1 + dx,
+                x2: element.x2 + dx,
+                y1: element.y1 + dy,
+                y2: element.y2 + dy,
                 selected: true,
                 group: this.activeGroup || groups.get(element.group) || null,
             };
@@ -338,12 +352,12 @@ export const createBoard = props => ({
             })),
         });
     },
-    addText(text) {
+    addText(text, tx = null, ty = null) {
         this.clearSelectedElements();
         const target = document.querySelector(`svg[data-id="${this.id}"]`);
         const size = target?.getBoundingClientRect?.() || {};
-        const x = this.translateX + (size.width || 0)/ 2;
-        const y = this.translateY + (size.height || 0) / 2;
+        const x = tx ?? (this.translateX + (size.width || 0)/ 2);
+        const y = ty ?? (this.translateY + (size.height || 0) / 2);
         const element = this.createElement(ELEMENTS.TEXT);
         const elementConfig = getElementConfig(element);
 
@@ -371,18 +385,18 @@ export const createBoard = props => ({
         this.update();
         return Promise.resolve(element);
     },
-    addImage(image, type) {
+    addImage(image, tx = null, ty = null) {
         this.clearSelectedElements();
         return loadImage(image).then(img => {
             const target = document.querySelector(`svg[data-id="${this.id}"]`);
             const size = target?.getBoundingClientRect?.() || {};
-            const x = this.translateX + (size.width || 0)/ 2;
-            const y = this.translateY + (size.height || 0) / 2;
+            const x = tx ?? (this.translateX + (size.width || 0)/ 2);
+            const y = ty ?? (this.translateY + (size.height || 0) / 2);
             const element = this.createElement(ELEMENTS.IMAGE);
             const elementConfig = getElementConfig(element);
             Object.assign(element, {
                 ...(elementConfig.initialize?.(this.defaults) || {}),
-                assetId: this.addAsset(image, type),
+                assetId: this.addAsset(image),
                 // image: image,
                 imageWidth: img.width,
                 imageHeight: img.height,
