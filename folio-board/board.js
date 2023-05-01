@@ -515,8 +515,8 @@ export const createBoard = props => ({
                 });
             }
             this.historyIndex = this.historyIndex + 1;
+            this.activeGroup = null;
             this.setAction(null);
-            // this.state.activeGroup = null;
             this.elements.forEach(el => {
                 el.selected = false;
                 el.editing = false;
@@ -543,8 +543,8 @@ export const createBoard = props => ({
                     getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
+            this.activeGroup = null;
             this.setAction(null);
-            // this.state.activeGroup = null;
             this.elements.forEach(el => {
                 el.selected = false;
                 el.editing = false;
