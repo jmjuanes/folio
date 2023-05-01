@@ -81,9 +81,9 @@ export const createBoard = props => ({
     update() {
         return props?.onUpdate?.();
     },
-    copy() {
+    export() {
         const elements = this.getSelectedElements();
-        const dataToCopy = {
+        return {
             elements: elements,
             assets: elements.reduce((assets, element) => {
                 // Copy only assets in the current selection
@@ -93,8 +93,14 @@ export const createBoard = props => ({
                 return assets;
             }, {}),
         };   
-        const data = `folio:::${JSON.stringify(dataToCopy)}`;
-        return copyTextToClipboard(data);
+    },
+    copy() {
+        return copyTextToClipboard(`folio:::${JSON.stringify(this.export())}`);
+    },
+    cut() {
+        return this.copy().then(() => {
+            return this.removeSelectedElements();
+        });
     },
     paste(event) {
         // Tiny function to parse text data
@@ -157,6 +163,22 @@ export const createBoard = props => ({
         // Other case, no data to paste
         return Promise.reject(null);
     },
+    duplicate() {
+        const elements = this.snapshotSelectedElements();
+        this.pasteElements(elements);
+    },
+    remove() {
+        this.removeSelectedElements();
+    },
+    selectAll() {
+        this.elements.forEach(el => el.selected = true);
+        this.activeGroup = null;
+    },
+    selectNone() {
+        this.elements.forEach(el => el.selected = false);
+        this.activeGroup = null;
+    },
+
     getAsset(id) {
         return this.assets[id] || null;
     },
@@ -382,9 +404,6 @@ export const createBoard = props => ({
     getActiveGroupElements() {
         return this.activeGroup ? this.getGroupElements(this.activeGroup) : [];
     },
-    selectAllElements() {
-        return this.elements.forEach(el => el.selected = true);
-    },
     getSelectedElements() {
         return this.elements.filter(el => !!el.selected);
     },
@@ -424,9 +443,6 @@ export const createBoard = props => ({
     },
     updateSelectedElements(key, value) {
         return this.updateElements(this.getSelectedElements(), [key], [value], false);
-    },
-    cloneSelectedElements() {
-        return this.pasteElements(this.snapshotSelectedElements());
     },
     groupSelectedElements() {
         if (!this.activeGroup) {

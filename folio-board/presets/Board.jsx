@@ -8,19 +8,111 @@ import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {Layout, Renderer, SecondaryButton} from "../components/commons/index.jsx";
 import {Dropdown, DropdownSeparator, DropdownGroup} from "../components/commons/index.jsx";
 import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/commons/index.jsx";
+import {ContextMenu, ContextMenuItem, ContextMenuSeparator} from "../components/commons/index.jsx";
 import {ColorPicker} from "../components/Form/ColorPicker.jsx";
 import {Welcome} from "../components/Layout/Welcome.jsx";
 
 const BoardWrapper = props => {
     const board = useBoard();
     const [welcomeVisible, setWelcomeVisible] = React.useState(props.showWelcome && (board.elements.length === 0));
+    const selectedElements = board.state.contextMenuVisible ? board.getSelectedElements() : [];
 
     return (
-        <div className="position-relative overflow-hidden h-full w-full">
+        <div className="position-relative overflow-hidden h-full w-full select-none">
             <Renderer
                 onChange={props.onChange}
                 onScreenshot={props.onScreenshot}
             />
+            {board.state.contextMenuVisible && (
+                <ContextMenu x={board.state.contextMenuX} y={board.state.contextMenuY}>
+                    {selectedElements.length > 0 && (
+                        <React.Fragment>
+                            <ContextMenuItem
+                                text="Duplicate"
+                                onClick={() => {
+                                    board.state.contextMenuVisible = false;
+                                    board.duplicate();
+                                    props.onChange?.({
+                                        elements: board.elements,
+                                    });
+                                    board.update();
+                                }}
+                            />
+                            <ContextMenuSeparator />
+                        </React.Fragment>
+                    )} 
+                    {selectedElements.length > 0 && (
+                        <React.Fragment>
+                            <ContextMenuItem
+                                text="Cut"
+                                onClick={() => {
+                                    board.cut().then(() => {
+                                        board.state.contextMenuVisible = false;
+                                        props.onChange?.(board.export());
+                                        board.update();
+                                    });
+                                }}
+                            />
+                            <ContextMenuItem
+                                text="Copy"
+                                onClick={() => {
+                                    board.copy().then(() => {
+                                        board.state.contextMenuVisible = false;
+                                        board.update();
+                                    });
+                                }}
+                            />
+                        </React.Fragment>
+                    )}
+                    <ContextMenuItem
+                        text="Paste"
+                        onClick={() => {
+                            board.paste().then(() => {
+                                props.onChange?.(board.export());
+                                board.state.contextMenuVisible = false;
+                                board.update();
+                            });
+                        }}
+                    />
+                    {board.elements.length > 0 && (
+                        <React.Fragment>
+                            <ContextMenuSeparator />
+                            <ContextMenuItem
+                                text="Select All"
+                                onClick={() => {
+                                    board.selectAll();
+                                    board.state.contextMenuVisible = false;
+                                    board.update();
+                                }}
+                            />
+                            {selectedElements.length > 0 && (
+                                <ContextMenuItem
+                                    text="Select None"
+                                    onClick={() => {
+                                        board.selectedNone();
+                                        board.state.contextMenuVisible = false;
+                                        board.update();
+                                    }}
+                                />
+                            )}
+                        </React.Fragment>
+                    )}
+                    {selectedElements.length > 0 && (
+                        <React.Fragment>
+                            <ContextMenuSeparator />
+                            <ContextMenuItem
+                                text="Delete"
+                                onClick={() => {
+                                    board.state.contextMenuVisible = false;
+                                    board.remove();
+                                    props.onChange?.(board.export());
+                                    board.update();
+                                }}
+                            />
+                        </React.Fragment>
+                    )} 
+                </ContextMenu>
+            )}
             <Layout
                 header={true}
                 headerLeftContent={(
