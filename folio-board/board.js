@@ -239,9 +239,6 @@ export const createBoard = props => ({
             editing: false,
             locked: false,
             group: null,
-            edgeHandlers: false,
-            cornerHandlers: false,
-            nodeHandlers: false,
         };
     },
     getElements() {

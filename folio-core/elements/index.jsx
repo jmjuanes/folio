@@ -34,6 +34,8 @@ import {isCornerHandler} from "../utils.js";
 
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
+        edgeHandlers: true,
+        cornerHandlers: true,
         render: props => (
             <React.Fragment>
                 <ShapeElement {...props} />
@@ -42,8 +44,6 @@ export const elementsConfig = {
         ),
         initialize: values => ({
             shape: values.shape || DEFAULT_SHAPE,
-            edgeHandlers: true,
-            cornerHandlers: true,
             fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
             fillOpacity: values?.fillOpacity ?? DEFAULT_FILL_OPACITY,
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
@@ -75,9 +75,9 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.ARROW]: {
+        nodeHandlers: true,
         render: props => <ArrowElement {...props} />,
         initialize: values => ({
-            nodeHandlers: true,
             startArrowhead: values?.startArrowhead || DEFAULT_ARROWHEAD_START,
             endArrowhead: values?.endArrowhead || DEFAULT_ARROWHEAD_END,
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
@@ -87,6 +87,8 @@ export const elementsConfig = {
         }),
     },
     [ELEMENTS.TEXT]: {
+        edgeHandlers: true,
+        cornerHandlers: true,
         render: props => <TextElement {...props} />,
         initialize: values => {
             // We need to measure the height of an empty text to calculate the height of the element
@@ -94,8 +96,6 @@ export const elementsConfig = {
             const textFont = values?.textFont ?? DEFAULT_TEXT_FONT;
             const [textWidth, textHeight] = measureText(" ", textSize, textFont);
             return ({
-                edgeHandlers: true,
-                cornerHandlers: true,
                 text: "",
                 textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
                 textFont: textFont,
@@ -172,10 +172,10 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.DRAW]: {
+        edgeHandlers: true,
+        cornerHandlers: true,
         render: props => <DrawElement {...props} />,
         initialize: values => ({
-            edgeHandlers: true,
-            cornerHandlers: true,
             points: [],
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
             strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
@@ -222,10 +222,10 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.IMAGE]: {
+        edgeHandlers: true,
+        cornerHandlers: true,
         render: props => <ImageElement {...props} />,
         initialize: () => ({
-            edgeHandlers: true,
-            cornerHandlers: true,
             assetId: "",
             imageWidth: 0,
             imageHeight: 0,
