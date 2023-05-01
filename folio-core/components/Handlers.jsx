@@ -1,5 +1,5 @@
 import React from "react";
-import {CURSORS, HANDLERS, LIGHT_BLUE, WHITE} from "../constants.js";
+import {CURSORS, HANDLERS, PRIMARY, WHITE} from "../constants.js";
 
 export const NodeHandlers = props => {
     const radius = props.radius / props.zoom;
@@ -42,7 +42,7 @@ export const NodeHandlers = props => {
 NodeHandlers.defaultProps = {
     position: null,
     fillColor: WHITE,
-    strokeColor: LIGHT_BLUE,
+    strokeColor: PRIMARY,
     strokeWidth: 2,
     radius: 6,
     zoom: 1,
@@ -131,7 +131,7 @@ export const EdgeHandlers = props => {
 
 EdgeHandlers.defaultProps = {
     position: null,
-    strokeColor: LIGHT_BLUE,
+    strokeColor: PRIMARY,
     strokeWidth: 2,
     size: 12,
     zoom: 1,
@@ -200,7 +200,7 @@ export const CornerHandlers = props => {
 CornerHandlers.defaultProps = {
     position: null,
     fillColor: WHITE,
-    strokeColor: LIGHT_BLUE,
+    strokeColor: PRIMARY,
     strokeWidth: 2,
     width: 12,
     height: 12,

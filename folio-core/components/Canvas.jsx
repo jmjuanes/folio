@@ -1,5 +1,5 @@
 import React from "react";
-import {CURSORS, EVENTS, FONT_SOURCES, GROUP_BOUNDS_FILL_COLOR, GROUP_BOUNDS_OFFSET, GROUP_BOUNDS_STROKE_COLOR, GROUP_BOUNDS_STROKE_DASHARRAY, GROUP_BOUNDS_STROKE_DASHOFFSET, GROUP_BOUNDS_STROKE_WIDTH} from "../constants.js";
+import {CURSORS, EVENTS, FONT_SOURCES} from "../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
@@ -7,27 +7,13 @@ import {Grid} from "./Grid.jsx";
 import {Pointer} from "./Pointer.jsx";
 import {getElementConfig} from "../elements/index.jsx";
 import {AssetsProvider} from "../contexts/AssetsContext.jsx";
-import {getRectangleBounds} from "../math.js";
 import {delay, isTouchOrPenEvent} from "../utils.js";
-
-const useSelectedElements = props => {
-    if (props.showHandlers || props.showBounds) {
-        const selectedGroups = props.group ? new Set() : new Set(props.elements.map(el => el.selected && el.group));
-        return props.elements.filter(el => {
-            return !!el.selected || (el.group && selectedGroups.has(el.group));
-        });
-    }
-    return [];
-};
 
 export const Canvas = props => {
     const canvasRef = React.useRef(null);
     const longPressTimerRef = React.useRef(0);
     const clearLongPressTimer = React.useCallback(() => window.clearTimeout(longPressTimerRef.current), []);
-    const selectedElements = useSelectedElements(props);
     const [canvasSize, setCanvasSize] = React.useState([100, 100]);
-    const bounds = selectedElements.length > 1 ? getRectangleBounds(selectedElements) : null;
-    const groups = props.group ? [props.group] : Array.from(new Set(selectedElements.map(el => el.group).filter(g => !!g)));
 
     const handleContextMenu = event => {
         props?.onContextMenu?.({
@@ -212,15 +198,6 @@ export const Canvas = props => {
                         height={canvasSize[1]}
                     />
                 )}
-                {props.showBounds && selectedElements.length > 1 && (
-                    <Bounds
-                        position={bounds}
-                        zoom={props.zoom}
-                        fillColor="transparent"
-                        strokeColor="transparent"
-                        onPointerDown={e => handlePointerDown(e, null, null)}
-                    />
-                )}
                 <AssetsProvider value={props.assets || {}}>
                     {props.elements.map(element => {
                         const content = getElementConfig(element).render({
@@ -247,33 +224,26 @@ export const Canvas = props => {
                         strokeColor={props.brushStrokeColor}
                     />
                 )}
-                {props.showBounds && groups.length > 0 && (
+                {props.showBounds && props.bounds?.length > 0 && (
                     <React.Fragment>
-                        {groups.map(group => (
+                        {props.bounds.map((item, index) => (
                             <Bounds
-                                key={group}
-                                position={getRectangleBounds(props.elements.filter(el => el.group === group))}
-                                offset={GROUP_BOUNDS_OFFSET}
-                                fillColor={GROUP_BOUNDS_FILL_COLOR}
-                                strokeColor={GROUP_BOUNDS_STROKE_COLOR}
-                                strokeWidth={GROUP_BOUNDS_STROKE_WIDTH}
-                                strokeDasharray={GROUP_BOUNDS_STROKE_DASHARRAY}
-                                strokeDashoffset={GROUP_BOUNDS_STROKE_DASHOFFSET}
+                                key={index}
+                                position={item}
+                                fillColor={item.fillColor}
+                                strokeColor={item.strokeColor}
+                                strokeDasharray={item.strokeDasharray}
                                 zoom={props.zoom}
                             />
                         ))}
                     </React.Fragment>
                 )}
-
-                {props.showBounds && selectedElements.length > 1 && (
-                    <Bounds position={bounds} zoom={props.zoom} fillColor="none" />
-                )}
-                {props.showHandlers && selectedElements.length === 1 && (
+                {props.showHandlers && props.handlers && (
                     <Handlers
-                        position={selectedElements[0]}
-                        edgeHandlers={selectedElements[0].edgeHandlers}
-                        cornerHandlers={selectedElements[0].cornerHandlers}
-                        nodeHandlers={selectedElements[0].nodeHandlers}
+                        position={props.handlers}
+                        edgeHandlers={props.showEdgeHandlers}
+                        cornerHandlers={props.showCornerHandlers}
+                        nodeHandlers={props.showNodeHandlers}
                         zoom={props.zoom}
                         onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
                     />
@@ -297,12 +267,13 @@ Canvas.defaultProps = {
     backgroundColor: "#fafafa",
     elements: [],
     assets: {},
-    group: null,
     fonts: Object.values(FONT_SOURCES),
     cursor: "",
     translateX: 0,
     translateY: 0,
     zoom: 1,
+    bounds: [],
+    handlers: null,
     brush: null,
     brushFillColor: "#4184f4",
     brushStrokeColor: "#4285f4",
@@ -323,8 +294,11 @@ Canvas.defaultProps = {
     onKeyUp: null,
     onPaste: null,
     onResize: null,
-    showHandlers: false,
-    showBounds: false,
+    showBounds: true,
+    showHandlers: true,
+    showEdgeHandlers: false,
+    showCornerHandlers: false,
+    showNodeHandlers: false,
     showBrush: false,
     showGrid: true,
     showPointer: false,
