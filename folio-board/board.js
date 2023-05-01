@@ -618,12 +618,12 @@ export const isDialogEnabledForSelection = (dialog, selection) => {
 };
 
 export const isGroupVisible = board => {
-    // if (props.elements.length > 0 && !props.group) {
-    // }
-    const selectedGroups = new Set(board.elements.map(el => el.group));
-    return !board.activeGroup && board.elements.length > 1 && (selectedGroups.size > 1 || selectedGroups.has(null));
+    const selectedElements = board.getSelectedElements();
+    const selectedGroups = new Set(selectedElements.map(el => el.group));
+    return !board.activeGroup && selectedElements.length > 1 && (selectedGroups.size > 1 || selectedGroups.has(null));
 };
 
 export const isUngroupVisible = board => {
-    return !board.activeGroup && board.elements.length > 0 && board.elements.some(el => !!el.group);
+    const selectedElements = board.getSelectedElements();
+    return !board.activeGroup && selectedElements.some(el => !!el.group);
 };
