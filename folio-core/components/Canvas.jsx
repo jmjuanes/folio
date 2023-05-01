@@ -30,7 +30,6 @@ export const Canvas = props => {
     const groups = props.group ? [props.group] : Array.from(new Set(selectedElements.map(el => el.group).filter(g => !!g)));
 
     const handleContextMenu = event => {
-        console.log("LAUNCH CONTEXT MENU");
         props?.onContextMenu?.({
             x: event.nativeEvent.clientX,
             y: event.nativeEvent.clientY,
