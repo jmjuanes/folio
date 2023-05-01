@@ -11,6 +11,7 @@ import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/c
 import {ContextMenu, ContextMenuItem, ContextMenuSeparator} from "../components/commons/index.jsx";
 import {ColorPicker} from "../components/Form/ColorPicker.jsx";
 import {Welcome} from "../components/Layout/Welcome.jsx";
+import {isGroupVisible, isUngroupVisible} from "../board.js";
 
 const BoardWrapper = props => {
     const board = useBoard();
@@ -36,6 +37,28 @@ const BoardWrapper = props => {
                                     board.update();
                                 }}
                             />
+                            {isGroupVisible(board) && (
+                                <ContextMenuItem
+                                    text="Group"
+                                    onClick={() => {
+                                        board.state.contextMenuVisible = false;
+                                        board.group();
+                                        props.onChange?.(board.export);
+                                        board.update();
+                                    }}
+                                />
+                            )}
+                            {isUngroupVisible(board) && (
+                                <ContextMenuItem
+                                    text="Ungroup"
+                                    onClick={() => {
+                                        board.state.contextMenuVisible = false;
+                                        board.ungroup();
+                                        props.onChange?.(board.export);
+                                        board.update();
+                                    }}
+                                />
+                            )}
                             <ContextMenuSeparator />
                         </React.Fragment>
                     )} 
@@ -91,7 +114,7 @@ const BoardWrapper = props => {
                                 <ContextMenuItem
                                     text="Select None"
                                     onClick={() => {
-                                        board.selectedNone();
+                                        board.selectNone();
                                         board.state.contextMenuVisible = false;
                                         board.update();
                                     }}

@@ -188,6 +188,14 @@ export const createBoard = props => ({
         this.elements.forEach(el => el.selected = false);
         this.activeGroup = null;
     },
+    group(elementsToGroup) {
+        const elements = elementsToGroup || this.getSelectedElements();
+        this.updateElements(elements, ["group"], [generateRandomId()], false);
+    },
+    ungroup(elementsToUngroup) {
+        const elements = elementsToUngroup || this.getSelectedElements();
+        this.updateElements(elements, ["group"], [null], false);
+    },
 
     getAsset(id) {
         return this.assets[id] || null;
@@ -458,16 +466,6 @@ export const createBoard = props => ({
     updateSelectedElements(key, value) {
         return this.updateElements(this.getSelectedElements(), [key], [value], false);
     },
-    groupSelectedElements() {
-        if (!this.activeGroup) {
-            this.updateElements(this.getSelectedElements(), ["group"], [generateRandomId()], false);
-        }
-    },
-    ungroupSelectedElements() {
-        if (!this.activeGroup) {
-            this.updateElements(this.getSelectedElements(), ["group"], [null], false);
-        }
-    },
     getHistory() {
         return [...this.history];
     },
@@ -620,4 +618,15 @@ export const isDialogEnabledForSelection = (dialog, selection) => {
     }
     // Dialog is enabled
     return true;
+};
+
+export const isGroupVisible = board => {
+    // if (props.elements.length > 0 && !props.group) {
+    // }
+    const selectedGroups = new Set(board.elements.map(el => el.group));
+    return !board.activeGroup && board.elements.length > 1 && (selectedGroups.size > 1 || selectedGroups.has(null));
+};
+
+export const isUngroupVisible = board => {
+    return !board.activeGroup && board.elements.length > 0 && board.elements.some(el => !!el.group);
 };

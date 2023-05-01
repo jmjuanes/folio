@@ -2,7 +2,7 @@ import React from "react";
 
 export const ContextMenuItem = props => (
     <div className="d-flex items-center gap-2 r-md px-3 py-2 select-none bg-gray-200:hover cursor-pointer" onClick={props.onClick}>
-        <div className="d-flex items-center text-sm text-gray-700">
+        <div className="d-flex items-center text-xs text-gray-700">
             <span>{props.text}</span>
         </div>
     </div>

@@ -139,35 +139,11 @@ export const Layout = props => {
             {!isScreenshot && props.edition && (
                 <EditionPanel
                     elements={selectedElements}
-                    group={board.activeGroup}
                     dialog={dialog}
                     style={{
                         paddingTop: props.header ? props.headerHeight : null,
                     }}
                     onDialogClick={id => setDialog(id)}
-                    onRemoveClick={() => {
-                        board.setAction(null);
-                        board.removeElements(selectedElements);
-                        board.update();
-                        props.onChange?.({
-                            elements: board.elements,
-                            assets: board.assets,
-                        });
-                    }}
-                    onGroupClick={() => {
-                        board.groupSelectedElements();
-                        board.update();
-                        props.onChange?.({
-                            elements: board.elements,
-                        });
-                    }}
-                    onUngroupClick={() => {
-                        board.ungroupSelectedElements();
-                        board.update();
-                        props.onChange?.({
-                            elements: board.elements,
-                        });
-                    }}
                 />
             )}
             {dialog && (
