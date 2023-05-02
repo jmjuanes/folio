@@ -470,7 +470,7 @@ export const useEvents = callbacks => {
                 }
             },
             onContextMenu: event => {
-                if ((board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.TRANSLATE) && !board.activeTool) {
+                if ((!board.activeAction || board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.TRANSLATE) && !board.activeTool) {
                     board.currentState = STATES.IDLE;
                     board.activeAction = null;
                     board.state.contextMenuVisible = true;

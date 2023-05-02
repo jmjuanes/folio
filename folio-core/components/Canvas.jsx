@@ -16,6 +16,7 @@ export const Canvas = props => {
     const [canvasSize, setCanvasSize] = React.useState([100, 100]);
 
     const handleContextMenu = event => {
+        event.preventDefault();
         props?.onContextMenu?.({
             x: event.nativeEvent.clientX,
             y: event.nativeEvent.clientY,
