@@ -52,6 +52,9 @@ export const useEvents = callbacks => {
                     isPrevSelected = element.selected;
                     // Check to reset active group
                     if (board.activeGroup && element.group !== board.activeGroup) {
+                        board.elements.forEach(el => {
+                            el.selected = el.group === board.activeGroup || el.selected;
+                        });
                         board.activeGroup = null;
                     }
                     const inCurrentSelection = board.getSelectedElements().some(el => {
