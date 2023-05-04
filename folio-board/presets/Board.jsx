@@ -110,16 +110,6 @@ const BoardWrapper = props => {
                                     board.update();
                                 }}
                             />
-                            {selectedElements.length > 0 && (
-                                <ContextMenuItem
-                                    text="Select None"
-                                    onClick={() => {
-                                        board.selectNone();
-                                        board.state.contextMenuVisible = false;
-                                        board.update();
-                                    }}
-                                />
-                            )}
                         </React.Fragment>
                     )}
                     {selectedElements.length > 0 && (
