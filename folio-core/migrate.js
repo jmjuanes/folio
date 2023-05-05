@@ -12,11 +12,18 @@ export const migrateElements = (data, version) => {
                     delete element.minHeight;
                 }
                 else if (element.type === ELEMENTS.DRAW) {
-                    element.edgeHandlers = true;
-                    element.cornerHandlers = true;
+                    // element.edgeHandlers = true;
+                    // element.cornerHandlers = true;
                     element.drawWidth = Math.abs(element.x2 - element.x1);
                     element.drawHeight = Math.abs(element.y2 - element.y1);
                 }
+            case "3":
+                // new field group
+                // edgeHandlers, cornerHandlers and nodeHandlers have been deprecated
+                element.group = element.group || null;
+                delete element.edgeHandlers;
+                delete element.cornerHandlers;
+                delete element.nodeHandlers;
         }
         return element;
     });
