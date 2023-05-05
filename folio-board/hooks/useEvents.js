@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    EPSILON,
     ELEMENTS,
     HANDLERS,
     GRID_SIZE,
@@ -480,6 +481,21 @@ export const useEvents = callbacks => {
                     board.state.contextMenuX = event.x;
                     board.state.contextMenuY = event.y;
                     board.update();
+                }
+            },
+            onWheel: event => {
+                if (!isInputTarget(event)) {
+                    const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
+                    // CTRL KEY --> apply zooming
+                    if (isCtrlKey) {
+                        event.deltaY < 0 ? board.zoomIn() : board.zoomOut();
+                    }
+                    // NO CTRL_KEY --> apply translation
+                    else {
+                        board.translateX = board.translateX - event.deltaX;
+                        board.translateY = board.translateY - event.deltaY;
+                        board.update();
+                    }
                 }
             },
         };
