@@ -133,6 +133,7 @@ export const Canvas = props => {
 
     // Register additional events
     React.useEffect(() => {
+        const target = canvasRef.current;
         const handleKeyDown = event => props?.onKeyDown?.(event);
         const handleKeyUp = event => props?.onKeyUp?.(event);
         const handlePaste = event => props?.onPaste?.(event);
@@ -143,7 +144,15 @@ export const Canvas = props => {
             }
             props?.onResize?.(event);
         };
+        const handleWheel = event => {
+            event.preventDefault();
+            return props.onWheel?.(event);
+        };
+
         // Add events listeners
+        if (target) {
+            target.addEventListener(EVENTS.WHEEL, handleWheel, {passive: false});
+        }
         document.addEventListener(EVENTS.KEY_DOWN, handleKeyDown);
         document.addEventListener(EVENTS.KEY_UP, handleKeyUp);
         document.addEventListener(EVENTS.PASTE, handlePaste);
@@ -152,6 +161,9 @@ export const Canvas = props => {
         // We need to call the resize for the first time
         handleResize(null);
         return () => {
+            if (target) {
+                target.removeEventListener(EVENTS.WHEEL, handleWheel, {passive: false});
+            }
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown);
             document.removeEventListener(EVENTS.KEY_UP, handleKeyUp);
             document.removeEventListener(EVENTS.PASTE, handlePaste);
@@ -295,6 +307,7 @@ Canvas.defaultProps = {
     onKeyUp: null,
     onPaste: null,
     onResize: null,
+    onWheel: null,
     showBounds: true,
     showHandlers: true,
     showEdgeHandlers: false,

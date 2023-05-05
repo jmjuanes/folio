@@ -20,6 +20,7 @@ export const EVENTS = {
     KEY_UP: "keyup",
     PASTE: "paste",
     RESIZE: "resize",
+    WHEEL: "wheel",
 };
 
 export const CURSORS = {
