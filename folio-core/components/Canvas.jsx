@@ -7,7 +7,7 @@ import {Grid} from "./Grid.jsx";
 import {Pointer} from "./Pointer.jsx";
 import {getElementConfig} from "../elements/index.jsx";
 import {AssetsProvider} from "../contexts/AssetsContext.jsx";
-import {delay, isTouchOrPenEvent} from "../utils.js";
+import {delay, isTouchOrPenEvent, preventDefault} from "../utils.js";
 
 export const Canvas = props => {
     const canvasRef = React.useRef(null);
@@ -131,6 +131,16 @@ export const Canvas = props => {
         props?.onDoubleClick?.(eventInfo);
     };
 
+    // Handle touch start
+    const handleTouchStart = event => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (event.targetTouches.length === 2) {
+            // TODO
+        }
+    };
+
     // Register additional events
     React.useEffect(() => {
         const target = canvasRef.current;
@@ -152,6 +162,9 @@ export const Canvas = props => {
         // Add events listeners
         if (target) {
             target.addEventListener(EVENTS.WHEEL, handleWheel, {passive: false});
+            target.addEventListener(EVENTS.GESTURE_START, preventDefault);
+            target.addEventListener(EVENTS.GESTURE_CHANGE, preventDefault);
+            target.addEventListener(EVENTS.GESTURE_END, preventDefault);
         }
         document.addEventListener(EVENTS.KEY_DOWN, handleKeyDown);
         document.addEventListener(EVENTS.KEY_UP, handleKeyUp);
@@ -163,6 +176,9 @@ export const Canvas = props => {
         return () => {
             if (target) {
                 target.removeEventListener(EVENTS.WHEEL, handleWheel, {passive: false});
+                target.removeEventListener(EVENTS.GESTURE_START, preventDefault);
+                target.removeEventListener(EVENTS.GESTURE_CHANGE, preventDefault);
+                target.removeEventListener(EVENTS.GESTURE_END, preventDefault);
             }
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown);
             document.removeEventListener(EVENTS.KEY_UP, handleKeyUp);
@@ -196,6 +212,7 @@ export const Canvas = props => {
             }}
             onPointerDown={e => handlePointerDown(e, null, props.onPointCanvas)}
             onDoubleClick={e => handleDoubleClick(e, null, props.onDoubleClickCanvas)}
+            onTouchStart={e => handleTouchStart(e)}
             onContextMenu={e => handleContextMenu(e)}
         >
             <style type="text/css">

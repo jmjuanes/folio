@@ -11,6 +11,11 @@ export const isTouchOrPenEvent = event => {
     return event.pointerType !== "mouse";
 };
 
+// Automatically prevent default in the specified event
+export const preventDefault = event => {
+    event.preventDefault();
+};
+
 // Wrapper around window.setTimeout
 export const delay = (timeout, callback) => {
     return window.setTimeout(callback, timeout);

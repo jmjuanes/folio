@@ -21,6 +21,12 @@ export const EVENTS = {
     PASTE: "paste",
     RESIZE: "resize",
     WHEEL: "wheel",
+    TOUCH_START: "touchstart",
+    TOUCH_END: "touchend",
+    TOUCH_MOVE: "touchmove",
+    GESTURE_START: "gesturestart",
+    GESTURE_CHANGE: "gesturechange",
+    GESTURE_END: "gestureend",
 };
 
 export const CURSORS = {
