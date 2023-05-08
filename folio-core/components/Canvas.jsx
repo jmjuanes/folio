@@ -131,16 +131,6 @@ export const Canvas = props => {
         props?.onDoubleClick?.(eventInfo);
     };
 
-    // Handle touch start
-    const handleTouchStart = event => {
-        event.stopPropagation();
-        event.preventDefault();
-
-        if (event.targetTouches.length === 2) {
-            // TODO
-        }
-    };
-
     // Register additional events
     React.useEffect(() => {
         const target = canvasRef.current;
@@ -212,7 +202,6 @@ export const Canvas = props => {
             }}
             onPointerDown={e => handlePointerDown(e, null, props.onPointCanvas)}
             onDoubleClick={e => handleDoubleClick(e, null, props.onDoubleClickCanvas)}
-            onTouchStart={e => handleTouchStart(e)}
             onContextMenu={e => handleContextMenu(e)}
         >
             <style type="text/css">
@@ -252,6 +241,7 @@ export const Canvas = props => {
                         position={props.brush}
                         fillColor={props.brushFillColor}
                         strokeColor={props.brushStrokeColor}
+                        zoom={props.zoom}
                     />
                 )}
                 {props.showBounds && props.bounds?.length > 0 && (

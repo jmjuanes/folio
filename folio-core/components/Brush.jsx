@@ -9,8 +9,8 @@ export const Brush = props => (
         fill={props.fillColor}
         fillOpacity={props.fillOpacity}
         stroke={props.strokeColor}
-        strokeWidth={props.strokeWidth}
-        strokeDasharray={props.strokeDash}
+        strokeWidth={props.strokeWidth / props.zoom}
+        strokeDasharray={props.strokeDash / props.zoom}
     />
 );
 
@@ -20,5 +20,6 @@ Brush.defaultProps = {
     fillOpacity: 0.1,
     strokeColor: "#0d6efd",
     strokeWidth: 2,
-    strokeDash: "5 5",
+    strokeDash: 5,
+    zoom: 1,
 };
