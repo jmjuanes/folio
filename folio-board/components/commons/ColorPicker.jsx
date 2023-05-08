@@ -1,5 +1,4 @@
 import React from "react";
-import {COLORS} from "folio-core";
 
 const transparentImage = window.encodeURIComponent([
     `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="#fdfdfd">`,
@@ -15,6 +14,10 @@ const getStyleForColor = color => ({
     backgroundRepeat: "repeat",
     // minWidth: "1.5rem",
 });
+
+const validateColor = value => {
+    return value && (value === "transparent" || (value.length === 7 && value.startsWith("#")));
+};
 
 export const ColorPicker = props => {
     const inputRef = React.useRef(null);
@@ -56,7 +59,11 @@ export const ColorPicker = props => {
                     style={{
                         fontFamily: "monospace",
                     }}
-                    onChange={event => props.onChange(event.target.value || COLORS.BLACK)}
+                    onChange={event => {
+                        if (validateColor(event.target.value)) {
+                            props.onChange(event.target.value);
+                        }
+                    }}
                 />
             </div>
             {props.values?.length > 0 && (
