@@ -4,7 +4,7 @@ import {ELEMENTS} from "folio-core";
 import {ACTIONS, DIALOGS} from "../../constants.js";
 import {EditionPanel, HistoryPanel, ToolsPanel, ZoomPanel} from "../Panels/index.jsx";
 import {FillDialog, StrokeDialog, TextDialog, ShapeDialog, ArrowheadDialog} from "../Dialogs/index.jsx";
-import {FileInput} from "./FileInput.jsx";
+import {FileInput} from "../commons/FileInput.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {isDialogEnabledForSelection} from "../../board.js";
 
