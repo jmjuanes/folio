@@ -2,7 +2,7 @@ import React from "react";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "@mochicons/react";
 import {COLORS, TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
-import {Form} from "../Form/index.jsx";
+import {Form} from "../commons/Form.jsx";
 
 const options = {
     textColor: {

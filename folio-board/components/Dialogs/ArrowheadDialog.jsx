@@ -1,7 +1,7 @@
 import React from "react";
 import {ARROWHEADS} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
-import {Form} from "../Form/index.jsx";
+import {Form} from "../commons/Form.jsx";
 import {
     ArrowheadNoneIcon,
     ArrowheadArrowIcon,

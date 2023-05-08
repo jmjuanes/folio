@@ -2,7 +2,7 @@ import React from "react";
 import {STROKES, STROKE_WIDTHS, COLORS} from "folio-core";
 import {OPACITY_STEP, OPACITY_MIN, OPACITY_MAX} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
-import {Form} from "../Form/index.jsx";
+import {Form} from "../commons/Form.jsx";
 import {
     CircleSolidIcon,
     CircleDashedIcon,

@@ -5,12 +5,11 @@ import {GridIcon} from "@mochicons/react";
 import {EXPORT_FORMATS, BACKGROUND_COLORS} from "folio-core";
 import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
-import {Renderer, SecondaryButton} from "../components/commons/index.jsx";
+import {Renderer, SecondaryButton, ColorPicker} from "../components/commons/index.jsx";
 import {Layout} from "../components/Layout/index.jsx";
 import {Dropdown, DropdownSeparator, DropdownGroup} from "../components/commons/index.jsx";
 import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/commons/index.jsx";
 import {ContextMenu, ContextMenuItem, ContextMenuSeparator} from "../components/commons/index.jsx";
-import {ColorPicker} from "../components/Form/ColorPicker.jsx";
 import {Welcome} from "../components/Layout/Welcome.jsx";
 import {isGroupVisible, isUngroupVisible} from "../board.js";
 

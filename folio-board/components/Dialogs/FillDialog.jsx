@@ -1,7 +1,7 @@
 import React from "react";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP, COLORS} from "folio-core";
 import {Dialog} from "./Dialog.jsx";
-import {Form} from "../Form/index.jsx";
+import {Form} from "../commons/Form.jsx";
 
 const options = {
     fillColor: {
