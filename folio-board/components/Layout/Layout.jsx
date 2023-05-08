@@ -1,17 +1,17 @@
 import React from "react";
-import {ELEMENTS} from "folio-core";
+import {ELEMENTS, FILE_EXTENSIONS} from "folio-core";
+import {fileOpen} from "browser-fs-access";
 
 import {ACTIONS, DIALOGS} from "../../constants.js";
 import {EditionPanel, HistoryPanel, ToolsPanel, ZoomPanel} from "../Panels/index.jsx";
 import {FillDialog, StrokeDialog, TextDialog, ShapeDialog, ArrowheadDialog} from "../Dialogs/index.jsx";
-import {FileInput} from "../commons/FileInput.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {isDialogEnabledForSelection} from "../../board.js";
+import {blobToDataUrl} from "../../utils/blob.js";
 
 export const Layout = props => {
     const board = useBoard();
     const [dialog, setDialog] = React.useState(null);
-    const imageInputRef = React.useRef();
     const prevSelectionCount = React.useRef(0);
 
     // Register element change
@@ -26,6 +26,33 @@ export const Layout = props => {
     const tool = board.activeTool;
     const action = board.activeAction;
     const selectedElements = board.getSelectedElements();
+
+    // Handle image load
+    const handleImageLoad = () => {
+        const options = {
+            description: "Folio Board",
+            extensions: [
+                FILE_EXTENSIONS.PNG,
+                FILE_EXTENSIONS.JPG,
+            ],
+            multiple: false,
+        };
+        fileOpen(options)
+            .then(blob => {
+                if (!blob) {
+                    return Promise.reject(new Error("No file selected"));
+                }
+                return blobToDataUrl(blob);
+            })
+            .then(data => board.addImage(data))
+            .then(() => {
+                props.onChange?.({
+                    elements: board.elements,
+                    assets: board.assets,
+                });
+            })
+            .catch(error => console.error(error));
+    };
 
     // Force to reset the active dialog if there is an action or a tool active
     React.useEffect(() => {
@@ -80,7 +107,7 @@ export const Layout = props => {
                     onToolClick={tool => {
                         // Special action if the image tool is activated
                         if (tool === ELEMENTS.IMAGE) {
-                            return imageInputRef.current.click();
+                            return handleImageLoad();
                         }
                         board.setTool(tool);
                         board.update();
@@ -214,19 +241,6 @@ export const Layout = props => {
                     {props.footerContent}
                 </div>
             )}
-            {/* Image input reference */}
-            <FileInput
-                ref={imageInputRef}
-                accept="image/*"
-                onFile={data => {
-                    board.addImage(data).then(() => {
-                        props.onChange?.({
-                            elements: board.elements,
-                            assets: board.assets,
-                        });
-                    });
-                }}
-            />
         </React.Fragment>
     );
 };
