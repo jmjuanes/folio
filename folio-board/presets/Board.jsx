@@ -2,27 +2,61 @@ import React from "react";
 import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
 import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
 import {GridIcon} from "@mochicons/react";
+
+import {Canvas} from "folio-core";
 import {EXPORT_FORMATS, BACKGROUND_COLORS} from "folio-core";
+
 import {ACTIONS} from "../constants.js";
+import {SCREENSHOT_FILL_COLOR, SCREENSHOT_STROKE_COLOR} from "../constants.js";
+import {SELECTION_FILL_COLOR, SELECTION_STROKE_COLOR} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
-import {Renderer, SecondaryButton, ColorPicker} from "../components/commons/index.jsx";
+import {SecondaryButton, ColorPicker} from "../components/commons/index.jsx";
 import {Layout} from "../components/Layout/index.jsx";
 import {Dropdown, DropdownSeparator, DropdownGroup} from "../components/commons/index.jsx";
 import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/commons/index.jsx";
 import {ContextMenu, ContextMenuItem, ContextMenuSeparator} from "../components/commons/index.jsx";
 import {Welcome} from "../components/Layout/Welcome.jsx";
 import {isGroupVisible, isUngroupVisible} from "../board.js";
+import {useEvents, useCursor, useBounds, useHandlers} from "../hooks/index.js";
 
-const BoardWrapper = props => {
+const InnerBoard = props => {
     const board = useBoard();
     const [welcomeVisible, setWelcomeVisible] = React.useState(props.showWelcome && (board.elements.length === 0));
+    const events = useEvents({
+        onChange: props.onChange,
+        onScreenshot: props.onScreenshot,
+    });
+    const cursor = useCursor();
+    const bounds = useBounds();
+    const handlers = useHandlers();
+    const isSelection = board.activeAction === ACTIONS.SELECT;
+    const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
     const selectedElements = board.state.contextMenuVisible ? board.getSelectedElements() : [];
 
     return (
         <div className="position-relative overflow-hidden h-full w-full select-none">
-            <Renderer
-                onChange={props.onChange}
-                onScreenshot={props.onScreenshot}
+            <Canvas
+                id={board.id}
+                elements={board.elements}
+                assets={board.assets}
+                backgroundColor={board.background}
+                cursor={cursor}
+                translateX={board.translateX}
+                translateY={board.translateY}
+                zoom={board.zoom}
+                bounds={bounds}
+                handlers={handlers}
+                showEdgeHandlers={handlers?.showEdgeHandlers}
+                showCornerHandlers={handlers?.showCornerHandlers}
+                showNodeHandlers={handlers?.showNodeHandlers}
+                brush={board.selection}
+                brushFillColor={isScreenshot ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
+                brushStrokeColor={isScreenshot ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
+                showBrush={isSelection || isScreenshot}
+                pointer={board.erase}
+                showPointer={board.activeAction === ACTIONS.ERASE}
+                showGrid={board.grid}
+                {...events}
             />
             {board.state.contextMenuVisible && (
                 <ContextMenu x={board.state.contextMenuX} y={board.state.contextMenuY}>
@@ -269,7 +303,7 @@ export const Board = props => (
     <BoardProvider
         initialData={props.initialData}
         render={() => ((
-            <BoardWrapper {...props} />
+            <InnerBoard {...props} />
         ))}
     />
 );
