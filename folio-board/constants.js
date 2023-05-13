@@ -16,12 +16,10 @@ export const KEYS = {
     Y: "y",
 };
 
-export const DIALOGS = {
+export const EDITION_TABS = {
     FILL: "fill",
     STROKE: "stroke",
     TEXT: "text",
-    SHAPE: "shape",
-    ARROWHEAD: "arrowhead",
 };
 
 export const THEMES = {

@@ -2,30 +2,15 @@ import React from "react";
 import {ELEMENTS, FILE_EXTENSIONS} from "folio-core";
 import {fileOpen} from "browser-fs-access";
 
-import {ACTIONS, DIALOGS} from "../../constants.js";
-import {EditionPanel, HistoryPanel, ToolsPanel, ZoomPanel} from "../Panels/index.jsx";
-import {FillDialog, StrokeDialog, TextDialog, ShapeDialog, ArrowheadDialog} from "../Dialogs/index.jsx";
+import {ACTIONS} from "../../constants.js";
+import {HistoryPanel, ToolsPanel, ZoomPanel} from "../Panels/index.jsx";
+import {EditionPanel} from "../EditionPanel.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
-import {isDialogEnabledForSelection} from "../../board.js";
 import {blobToDataUrl} from "../../utils/blob.js";
 
 export const Layout = props => {
     const board = useBoard();
-    const [dialog, setDialog] = React.useState(null);
-    const prevSelectionCount = React.useRef(0);
-
-    // Register element change
-    const handleElementChange = (key, value) => {
-        board.updateElements(selectedElements, [key], [value], true);
-        board.update();
-        props.onChange?.({
-            elements: board.elements,
-        });
-    };
-
-    const tool = board.activeTool;
     const action = board.activeAction;
-    const selectedElements = board.getSelectedElements();
 
     // Handle image load
     const handleImageLoad = () => {
@@ -54,30 +39,6 @@ export const Layout = props => {
             .catch(error => console.error(error));
     };
 
-    // Force to reset the active dialog if there is an action or a tool active
-    React.useEffect(() => {
-        // if (!!dialog && (board.activeAction || board.activeTool)) {
-        //     setDialog(null);
-        // }
-        // Hide if we have changed action or dialog is not available in selection
-        if (dialog) {
-            const hideDialog = !isDialogEnabledForSelection(dialog, selectedElements);
-            const differentCount = prevSelectionCount.current !== selectedElements.length;
-            if (board.activeAction || hideDialog || differentCount) {
-                setDialog(null);
-            }
-        }
-        prevSelectionCount.current = selectedElements.length;
-    }, [tool, action, selectedElements.length]);
-
-    // Compute common values for selected elements to be used in dialogs
-    let selectionValues = board.defaults || {};
-    if (dialog && selectedElements.length > 0) {
-        // TODO: we need to compute common values if length > 1
-        if (selectedElements.length === 1) {
-            selectionValues = selectedElements[0];
-        }
-    }
     const isScreenshot = action === ACTIONS.SCREENSHOT;
 
     return (
@@ -163,64 +124,18 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {!isScreenshot && props.edition && (
+            {!isScreenshot && (
                 <EditionPanel
-                    elements={selectedElements}
-                    dialog={dialog}
                     style={{
-                        paddingTop: props.header ? props.headerHeight : null,
+                        paddingTop: props.header ? props.headerHeight : 0,
                     }}
-                    onDialogClick={id => setDialog(id)}
+                    onChange={() => {
+                        board.update();
+                        props.onChange?.({
+                            elements: board.elements,
+                        });
+                    }}
                 />
-            )}
-            {dialog && (
-                <React.Fragment>
-                    {dialog === DIALOGS.FILL && (
-                        <FillDialog
-                            values={selectionValues}
-                            style={{
-                                paddingTop: props.header ? props.headerHeight : 0,
-                            }}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                    {dialog === DIALOGS.STROKE && (
-                        <StrokeDialog
-                            values={selectionValues}
-                            style={{
-                                paddingTop: props.header ? props.headerHeight : 0,
-                            }}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                    {dialog === DIALOGS.TEXT && (
-                        <TextDialog
-                            values={selectionValues}
-                            style={{
-                                paddingTop: props.header ? props.headerHeight : 0,
-                            }}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                    {dialog === DIALOGS.SHAPE && (
-                        <ShapeDialog
-                            values={selectionValues}
-                            style={{
-                                paddingTop: props.header ? props.headerHeight : 0,
-                            }}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                    {dialog === DIALOGS.ARROWHEAD && (
-                        <ArrowheadDialog
-                            values={selectionValues}
-                            style={{
-                                paddingTop: props.header ? props.headerHeight : 0,
-                            }}
-                            onChange={handleElementChange}
-                        />
-                    )}
-                </React.Fragment>
             )}
             {!isScreenshot && props.header && (
                 <React.Fragment>
@@ -230,7 +145,7 @@ export const Layout = props => {
                         </div>
                     )}
                     {!!props.headerRightContent && (
-                        <div className="position-absolute top-0 right-0 pt-4 pr-4 z-7">
+                        <div className="d-none position-absolute top-0 right-0 pt-4 pr-4 z-7">
                             {props.headerRightContent}
                         </div>
                     )}

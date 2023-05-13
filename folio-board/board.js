@@ -23,7 +23,7 @@ import {
     TEXT_BOX_MIN_WIDTH,
 } from "folio-core";
 import {getElementConfig, getRectangleBounds} from "folio-core";
-import {CHANGES, STATES, DIALOGS, PASTE_OFFSET} from "./constants.js";
+import {CHANGES, STATES, PASTE_OFFSET} from "./constants.js";
 import {loadImage} from "./utils/image.js";
 import {getTextFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
 import {getTextFromClipboardItem, getBlobFromClipboardItem} from "./utils/clipboard.js";
@@ -592,30 +592,6 @@ export const createBoard = props => ({
         this.state.contextMenuVisible = false;
     },
 });
-
-// Check if dialog is enabled for the provided selection
-export const isDialogEnabledForSelection = (dialog, selection) => {
-    if (selection.length > 0) {
-        return selection.some(el => {
-            switch (dialog) {
-                case DIALOGS.FILL:
-                    return typeof el.fillColor !== "undefined";
-                case DIALOGS.STROKE:
-                    return typeof el.strokeColor !== "undefined";
-                case DIALOGS.TEXT:
-                    return typeof el.textColor !== "undefined";
-                case DIALOGS.SHAPE:
-                    return typeof el.shape !== "undefined";
-                case DIALOGS.ARROWHEAD:
-                    return typeof el.startArrowhead !== "undefined";
-                default:
-                    return false;
-            }
-        });
-    }
-    // Dialog is enabled
-    return true;
-};
 
 export const isGroupVisible = board => {
     const selectedElements = board.getSelectedElements();
