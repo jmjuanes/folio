@@ -16,12 +16,6 @@ export const KEYS = {
     Y: "y",
 };
 
-export const EDITION_TABS = {
-    FILL: "fill",
-    STROKE: "stroke",
-    TEXT: "text",
-};
-
 export const THEMES = {
     LIGHT: "light",
     DARK: "dark",

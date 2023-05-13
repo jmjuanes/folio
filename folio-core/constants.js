@@ -220,3 +220,13 @@ export const DEFAULT_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
 export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
 export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
 export const DEFAULT_ARROWHEAD_END = ARROWHEADS.ARROW;
+
+// Fields in elements
+export const FIELDS = {
+    FILL_COLOR: "fillColor",
+    STROKE_COLOR: "strokeColor",
+    TEXT_COLOR: "textColor",
+    SHAPE: "shape",
+    START_ARROWHEAD: "startArrowhead",
+    END_ARROWHEAD: "endArrowhead",
+};
