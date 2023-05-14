@@ -2,11 +2,11 @@ import React from "react";
 import {ELEMENTS, FILE_EXTENSIONS} from "folio-core";
 import {fileOpen} from "browser-fs-access";
 
-import {ACTIONS} from "../../constants.js";
-import {HistoryPanel, ZoomPanel, ToolsPanel} from "../Panels.jsx";
-import {EditionPanel} from "../EditionPanel.jsx";
-import {useBoard} from "../../contexts/BoardContext.jsx";
-import {blobToDataUrl} from "../../utils/blob.js";
+import {ACTIONS} from "../constants.js";
+import {HistoryPanel, ZoomPanel, ToolsPanel} from "./Panels.jsx";
+import {EditionPanel} from "./EditionPanel.jsx";
+import {useBoard} from "../contexts/BoardContext.jsx";
+import {blobToDataUrl} from "../utils/blob.js";
 
 export const Layout = props => {
     const board = useBoard();
