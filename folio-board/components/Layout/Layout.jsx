@@ -3,7 +3,7 @@ import {ELEMENTS, FILE_EXTENSIONS} from "folio-core";
 import {fileOpen} from "browser-fs-access";
 
 import {ACTIONS} from "../../constants.js";
-import {HistoryPanel, ToolsPanel, ZoomPanel} from "../Panels/index.jsx";
+import {HistoryPanel, ZoomPanel, ToolsPanel} from "../Panels.jsx";
 import {EditionPanel} from "../EditionPanel.jsx";
 import {useBoard} from "../../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../../utils/blob.js";
@@ -45,9 +45,6 @@ export const Layout = props => {
         <React.Fragment>
             {!isScreenshot && props.tools && (
                 <ToolsPanel
-                    action={board.activeAction}
-                    tool={board.activeTool}
-                    lockTool={board.lockTool}
                     style={{
                         paddingTop: props.header ? props.headerHeight : null,
                     }}
@@ -81,8 +78,6 @@ export const Layout = props => {
             )}
             {!isScreenshot && props.history && (
                 <HistoryPanel
-                    undoDisabled={board.isUndoDisabled()}
-                    redoDisabled={board.isRedoDisabled()}
                     style={{
                         paddingBottom: props.footer ? props.footerHeight : null,
                     }}
@@ -102,25 +97,14 @@ export const Layout = props => {
             )}
             {!isScreenshot && props.zoom && (
                 <ZoomPanel
-                    zoom={board.zoom}
                     style={{
                         paddingBottom: props.footer ? props.footerHeight : null,
                     }}
                     onZoomInClick={() => {
                         board.zoomIn();
-                        // props.onChange?.({
-                        //     zoom: board.zoom,
-                        //     translateX: board.translateX,
-                        //     translateY: board.translateY,
-                        // });
                     }}
                     onZoomOutClick={() => {
                         board.zoomOut();
-                        // props.onChange?.({
-                        //     zoom: board.zoom,
-                        //     translateX: board.translateX,
-                        //     translateY: board.translateY,
-                        // });
                     }}
                 />
             )}
