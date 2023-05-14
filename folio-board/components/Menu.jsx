@@ -1,0 +1,105 @@
+import React from "react";
+import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
+import {GridIcon} from "@mochicons/react";
+import {BACKGROUND_COLORS} from "folio-core";
+
+import {useBoard} from "../contexts/BoardContext.jsx";
+import {SecondaryButton, ColorPicker} from "../components/commons/index.jsx";
+import {Dropdown, DropdownSeparator, DropdownGroup} from "../components/commons/index.jsx";
+import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/commons/index.jsx";
+
+export const Menu = props => {
+    const board = useBoard();
+    return (
+        <div className="d-flex position-relative group" tabIndex="0">
+            <SecondaryButton
+                icon={(<BarsIcon />)}
+            />
+            <Dropdown className="d-none d-block:group-focus-within top-full left-0">
+                <DropdownGroup title="Actions" />
+                {props.showLoad && (
+                    <DropdownItem
+                        icon={(<FolderIcon />)}
+                        text="Open..."
+                        onClick={props.onLoad}
+                    />
+                )}
+                {props.showSave && (
+                    <DropdownItem
+                        icon={(<DownloadIcon />)}
+                        text="Save as..."
+                        onClick={props.onSave}
+                    />
+                )}
+                {props.showResetBoard && (
+                    <DropdownItem
+                        icon={(<TrashIcon />)}
+                        text="Reset the board"
+                        onClick={props.onResetBoard}
+                    />
+                )}
+                {props.showSettings && (
+                    <React.Fragment>
+                        <DropdownSeparator />
+                        <DropdownGroup title="Board Settings" />
+                        <DropdownCheckItem
+                            active={board.grid}
+                            icon={(<GridIcon />)}
+                            text="Show Grid"
+                            onClick={() => {
+                                board.grid = !board.grid;
+                                board.update();
+                                props.onChange?.({
+                                    grid: board.grid,
+                                });
+                            }}
+                        />
+                    </React.Fragment>
+                )}
+                {props.showChangeBackground && (
+                    <React.Fragment>
+                        <DropdownSeparator />
+                        <DropdownGroup title="Background" />
+                        <ColorPicker
+                            value={board.background}
+                            values={Object.values(BACKGROUND_COLORS)}
+                            onChange={newBackground => {
+                                board.background = newBackground;
+                                board.update();
+                                props.onChange?.({
+                                    background: board.background,
+                                });
+                            }}
+                        />
+                    </React.Fragment>
+                )}
+                {(props.showLinks && props.links?.length > 0) && (
+                    <React.Fragment>
+                        <DropdownSeparator />
+                        <DropdownGroup title="Links" />
+                        {props.links.map(link => (
+                            <DropdownLinkItem
+                                key={link.url}
+                                url={link.url}
+                                text={link.text}
+                            />
+                        ))}
+                    </React.Fragment>
+                )}
+            </Dropdown>
+        </div>
+    );
+};
+
+Menu.defaultProps = {
+    links: [],
+    showLoad: true,
+    showResetBoard: true,
+    showSettings: true,
+    showChangeBackground: true,
+    showLinks: true,
+    onChange: null,
+    onSave: null,
+    onResetBoard: null,
+    onLoad: null,
+};
