@@ -1,7 +1,6 @@
 export * from "./Button.jsx";
 export * from "./ColorPicker.jsx";
 export * from "./Confirm.jsx";
-export * from "./ContextMenu.jsx";
 export * from "./Dropdown.jsx";
 export * from "./Form.jsx";
 export * from "./Loading.jsx";
