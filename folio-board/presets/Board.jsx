@@ -1,24 +1,38 @@
 import React from "react";
-import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
-import {ImageIcon, CodeIcon, CameraIcon} from "@mochicons/react";
-import {GridIcon} from "@mochicons/react";
+import {ImageIcon} from "@mochicons/react";
+import {EXPORT_FORMATS} from "folio-core";
 
-import {EXPORT_FORMATS, BACKGROUND_COLORS} from "folio-core";
-
-import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
-import {SecondaryButton, ColorPicker} from "../components/commons/index.jsx";
-import {Dropdown, DropdownSeparator, DropdownGroup} from "../components/commons/index.jsx";
-import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/commons/index.jsx";
+import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
+import {SecondaryButton} from "../components/commons/index.jsx";
 import {Layout} from "../components/Layout.jsx";
 import {Renderer} from "../components/Renderer.jsx";
 import {ContextMenu} from "../components/ContextMenu.jsx";
 import {Welcome} from "../components/Welcome.jsx";
+import {Menu} from "../components/Menu.jsx";
 
 const InnerBoard = props => {
+    const {showConfirm} = useConfirm();
     const board = useBoard();
     const [welcomeVisible, setWelcomeVisible] = React.useState(props.showWelcome && (board.elements.length === 0));
 
+    // Handle board reset
+    const handleResetBoard = () => {
+        showConfirm("This will clear the whole board. Do you want to continue?").then(() => {
+            return props.onResetBoard?.();
+        });
+    };
+    // Handle load
+    const handleLoad = () => {
+        if (board.elements.length > 0) {
+            const message = "Changes made in this board will be lost. Do you want to continue?";
+            return showConfirm(message).then(() => {
+                return props.onLoad?.();
+            });
+        }
+        // Just call the onLoad listener
+        props.onLoad?.();
+    };
     return (
         <div className="position-relative overflow-hidden h-full w-full select-none">
             <Renderer onChange={props.onChange} />
@@ -26,129 +40,38 @@ const InnerBoard = props => {
                 <ContextMenu onChange={props.onChange} />
             )}
             <Layout
-                header={true}
+                showHeader={true}
                 headerLeftContent={(
                     <div className="d-flex gap-2">
-                        <div className="d-flex position-relative group" tabIndex="0">
-                            <SecondaryButton icon={(<BarsIcon />)} />
-                            <Dropdown className="d-none d-block:group-focus-within top-full left-0">
-                                <DropdownGroup title="Actions" />
-                                {props.showLoadAction && (
-                                    <DropdownItem
-                                        icon={(<FolderIcon />)}
-                                        text="Open..."
-                                        onClick={props.onLoad}
-                                    />
-                                )}
-                                {props.showOpenAction && (
-                                    <DropdownItem
-                                        icon={(<DownloadIcon />)}
-                                        text="Save as..."
-                                        onClick={props.onSave}
-                                    />
-                                )}
-                                {props.showResetBoardAction && (
-                                    <DropdownItem
-                                        icon={(<TrashIcon />)}
-                                        text="Reset the board"
-                                        onClick={props.onReset}
-                                    />
-                                )}
-                                {props.showBoardSettings && (
-                                    <React.Fragment>
-                                        <DropdownSeparator />
-                                        <DropdownGroup title="Board Settings" />
-                                        <DropdownCheckItem
-                                            active={board.grid}
-                                            icon={(<GridIcon />)}
-                                            text="Show Grid"
-                                            onClick={() => {
-                                                board.grid = !board.grid;
-                                                board.update();
-                                                props.onChange?.({
-                                                    grid: board.grid,
-                                                });
-                                            }}
-                                        />
-                                    </React.Fragment>
-                                )}
-                                {props.showChangeBackground && (
-                                    <React.Fragment>
-                                        <DropdownSeparator />
-                                        <DropdownGroup title="Background" />
-                                        <ColorPicker
-                                            value={board.background}
-                                            values={Object.values(BACKGROUND_COLORS)}
-                                            onChange={newBackground => {
-                                                board.background = newBackground;
-                                                board.update();
-                                                props.onChange?.({
-                                                    background: board.background,
-                                                });
-                                            }}
-                                        />
-                                    </React.Fragment>
-                                )}
-                                {(props.showLinks && props.links?.length > 0) && (
-                                    <React.Fragment>
-                                        <DropdownSeparator />
-                                        <DropdownGroup title="Links" />
-                                        {props.links.map(link => (
-                                            <DropdownLinkItem
-                                                key={link.url}
-                                                url={link.url}
-                                                text={link.text}
-                                            />
-                                        ))}
-                                    </React.Fragment>
-                                )}
-                            </Dropdown>
-                        </div>
-                        {props.customHeaderLeftContent}
+                        <Menu
+                            links={props.links}
+                            showLinks={props.showLinks}
+                            showLoad={props.showLoad}
+                            showSave={props.showSave}
+                            showResetBoard={props.showResetBoard}
+                            showChangeBackground={props.showChangeBackground}
+                            showSettings={props.showSettings}
+                            onChange={props.onChange}
+                            onSave={props.onSave}
+                            onLoad={handleLoad}
+                            onResetBoard={handleResetBoard}
+                        />
+                        {props.headerLeftContent}
                     </div>
                 )}
                 headerRightContent={(
                     <div className="d-flex gap-2">
-                        {props.customHeaderRightContent}
-                        {props.showScreenshot && (
-                            <SecondaryButton
-                                icon={(<CameraIcon />)}
-                                disabled={board.elements.length === 0}
-                                onClick={() => {
-                                    if (board.elements.length > 0) {
-                                        board.setAction(ACTIONS.SCREENSHOT);
-                                        board.clearSelectedElements();
-                                        board.update();
-                                    }
-                                }}
-                            />
-                        )}
+                        {props.headerRightContent}
                         {props.showExport && (
-                            <div className="d-flex position-relative group" tabIndex="0">
-                                <SecondaryButton
-                                    icon={(<ImageIcon />)}
-                                    text="Export"
-                                    disabled={board.elements.length === 0}
-                                />
-                                <Dropdown className="d-none d-block:group-focus-within top-full right-0">
-                                    <DropdownItem
-                                        icon={(<ImageIcon />)}
-                                        text="Export as PNG"
-                                        disabled={board.elements.length === 0}
-                                        onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
-                                    />
-                                    <DropdownItem
-                                        icon={(<CodeIcon />)}
-                                        text="Export as SVG"
-                                        disabled={board.elements.length === 0}
-                                        onClick={() => props.onExport?.(EXPORT_FORMATS.SVG)}
-                                    />
-                                </Dropdown>
-                            </div>
+                            <SecondaryButton
+                                icon={(<ImageIcon />)}
+                                text="Export"
+                                disabled={board.elements.length === 0}
+                                onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
+                            />
                         )}
                     </div>
                 )}
-                footer={false}
                 onChange={props.onChange}
             />
             {welcomeVisible && (
@@ -163,32 +86,32 @@ const InnerBoard = props => {
 };
 
 export const Board = props => (
-    <BoardProvider
-        initialData={props.initialData}
-        render={() => ((
-            <InnerBoard {...props} />
-        ))}
-    />
+    <ConfirmProvider>
+        <BoardProvider
+            initialData={props.initialData}
+            render={() => ((
+                <InnerBoard {...props} />
+            ))}
+        />
+    </ConfirmProvider>
 );
 
 Board.defaultProps = {
     initialData: {},
     links: [],
-    customHeaderLeftContent: null,
-    custonHeaderRightContent: null,
+    headerLeftContent: null,
+    headerRightContent: null,
     onChange: null,
     onExport: null,
     onSave: null,
     onLoad: null,
-    onReset: null,
-    onScreenshot: null,
+    onResetBoard: null,
     showWelcome: true,
-    showScreenshot: true,
     showExport: true,
     showLinks: true,
-    showLoadAction: true,
-    showOpenAction: true,
-    showResetBoardAction: true,
-    showBoardSettings: true,
+    showLoad: true,
+    showSave: true,
+    showResetBoard: true,
+    showSettings: true,
     showChangeBackground: true,
 };

@@ -3,11 +3,9 @@ import {createRoot} from "react-dom/client";
 import classNames from "classnames";
 import * as idb from "idb-keyval";
 import {fileOpen, fileSave} from "browser-fs-access";
-import {VERSION, MIME_TYPES, FILE_EXTENSIONS, EXPORT_FORMATS} from "folio-core";
-import {migrate, exportToFile, exportToClipboard} from "folio-core";
+import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "folio-core";
+import {migrate, exportToFile} from "folio-core";
 import {Board} from "folio-board";
-import {ToastProvider, useToast} from "folio-board";
-import {ConfirmProvider, useConfirm} from "folio-board";
 
 // Store keys for IDB
 const STORE_KEYS = {
@@ -51,8 +49,6 @@ const initializeStore = async () => {
 };
 
 const App = props => {
-    const {addToast} = useToast();
-    const {showConfirm} = useConfirm();
     const [state, setState] = React.useState({});
     const [welcomeVisible, setWelcomeVisible] = React.useState(true);
     const classList = classNames({
@@ -101,11 +97,9 @@ const App = props => {
         };
 
         // Save to the file system
-        fileSave(blob, options)
-            .then(() => addToast("Board saved to file"))
-            .catch(error => {
-                console.error(error);
-            });
+        fileSave(blob, options).catch(error => {
+            console.error(error);
+        });
     };
 
     // Handle file load
@@ -151,41 +145,21 @@ const App = props => {
                 ]}
                 showWelcome={welcomeVisible}
                 onChange={newState => {
-                    setState(prevState => ({...prevState, ...newState, updatedAt: Date.now()}));
+                    setState(prevState => ({
+                        ...prevState,
+                        ...newState,
+                        updatedAt: Date.now(),
+                    }));
                 }}
                 onExport={format => {
-                    if (state?.elements?.length > 0) {
-                        return exportToFile({
-                            elements: state.elements,
-                            format: format,
-                        });
-                    }
-                }}
-                onScreenshot={(region, elements) => {
-                    if (elements?.length > 0) {
-                        const exportOptions = {
-                            elements: elements,
-                            format: EXPORT_FORMATS.PNG,
-                            crop: region,
-                        };
-                        return exportToClipboard(exportOptions).then(() => {
-                            addToast("Screenshot copied to clipboard");
-                        });
-                    }
+                    return exportToFile({
+                        elements: state.elements,
+                        format: format,
+                    });
                 }}
                 onSave={() => handleFileSave()}
-                onLoad={() => {
-                    if (state?.elements?.length > 0) {
-                        return showConfirm("Changes made in this board will be lost. Do you want to continue?")
-                            .then(() => handleFileLoad());
-                    }
-                    // Just load the new folio file
-                    handleFileLoad();
-                }}
-                onReset={() => {
-                    showConfirm("This will clear the whole board. Do you want to continue?")
-                        .then(() => setState({createdAt: Date.now()}));
-                }}
+                onLoad={() => handleFileLoad()}
+                onResetBoard={() => setState({createdAt: Date.now()})}
             />
         </div>
     );
@@ -198,10 +172,4 @@ App.defaultProps = {
 const root = document.getElementById("root");
 
 // Mount app
-createRoot(root).render((
-    <ConfirmProvider>
-        <ToastProvider>
-            <App />
-        </ToastProvider>
-    </ConfirmProvider>
-));
+createRoot(root).render(<App />);

@@ -10,9 +10,6 @@ import {blobToDataUrl} from "../utils/blob.js";
 
 export const Layout = props => {
     const board = useBoard();
-    const action = board.activeAction;
-
-    // Handle image load
     const handleImageLoad = () => {
         const options = {
             description: "Folio Board",
@@ -39,14 +36,12 @@ export const Layout = props => {
             .catch(error => console.error(error));
     };
 
-    const isScreenshot = action === ACTIONS.SCREENSHOT;
-
     return (
         <React.Fragment>
-            {!isScreenshot && props.tools && (
+            {props.showTools && (
                 <ToolsPanel
                     style={{
-                        paddingTop: props.header ? props.headerHeight : null,
+                        paddingTop: props.showHeader ? props.headerHeight : null,
                     }}
                     onMoveClick={() => {
                         board.setTool(null);
@@ -76,10 +71,10 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {!isScreenshot && props.history && (
+            {props.showHistory && (
                 <HistoryPanel
                     style={{
-                        paddingBottom: props.footer ? props.footerHeight : null,
+                        paddingBottom: props.showFooter ? props.footerHeight : null,
                     }}
                     onUndoClick={() => {
                         board.undo();
@@ -95,10 +90,10 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {!isScreenshot && props.zoom && (
+            {props.showZoom && (
                 <ZoomPanel
                     style={{
-                        paddingBottom: props.footer ? props.footerHeight : null,
+                        paddingBottom: props.showFooter ? props.footerHeight : null,
                     }}
                     onZoomInClick={() => {
                         board.zoomIn();
@@ -108,10 +103,11 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {!isScreenshot && (
+            {props.showEdition && (
                 <EditionPanel
+                    maxHeight={`calc(100vh - 8rem - ${props.showHeader ? props.headerHeight : "0rem"})`}
                     style={{
-                        paddingTop: props.header ? props.headerHeight : 0,
+                        paddingTop: props.showHeader ? props.headerHeight : 0,
                     }}
                     onChange={() => {
                         board.update();
@@ -121,7 +117,7 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {!isScreenshot && props.header && (
+            {props.showHeader && (
                 <React.Fragment>
                     {!!props.headerLeftContent && (
                         <div className="position-absolute top-0 left-0 pt-4 pl-4 z-7">
@@ -129,13 +125,13 @@ export const Layout = props => {
                         </div>
                     )}
                     {!!props.headerRightContent && (
-                        <div className="d-none position-absolute top-0 right-0 pt-4 pr-4 z-7">
+                        <div className="position-absolute top-0 right-0 pt-4 pr-4 z-7">
                             {props.headerRightContent}
                         </div>
                     )}
                 </React.Fragment>
             )}
-            {!isScreenshot && props.footer && (
+            {props.showFooter && (
                 <div className="position-absolute bottom-0 left-0 pb-4 px-4 z-7 w-full">
                     {props.footerContent}
                 </div>
@@ -145,16 +141,16 @@ export const Layout = props => {
 };
 
 Layout.defaultProps = {
-    header: false,
+    showHeader: false,
+    showFooter: false,
+    showZoom: true,
+    showHistory: true,
+    showTools: true,
+    showEdition: true,
     headerHeight: "5rem",
     headerLeftContent: null,
     headerRightContent: null,
-    footer: false,
     footerHeight: "3em",
     footerContent: null,
-    zoom: true,
-    history: true,
-    tools: true,
-    edition: true,
     onChange: null,
 };

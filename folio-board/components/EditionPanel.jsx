@@ -216,7 +216,7 @@ export const EditionPanel = props => {
     };
 
     return (
-        <div className={props.className}>
+        <div className={props.className} style={props.style}>
             <div className="bg-white z-5 b-1 b-solid b-gray-300 w-60 r-xl shadow-md overflow-y-auto scrollbar" style={{maxHeight: props.maxHeight}}>
                 <div className="">
                     <div className="mx-4 pt-4 pb-2 bg-white position-sticky top-0">
