@@ -1,5 +1,7 @@
 import React from "react";
-import {Confirm} from "../components/commons/index.jsx";
+import {CloseIcon, CheckIcon} from "@mochicons/react";
+import {Modal} from "../components/commons/Modal.jsx";
+import {PrimaryButton, SecondaryButton} from "../components/commons/Button.jsx";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
@@ -9,6 +11,7 @@ const confirmReducer = (state, action) => {
     if (action.type === SHOW_CONFIRM) {
         return {
             visible: true,
+            title: action.payload.title,
             message: action.payload.message,
             callback: action.payload.callback,
         };
@@ -29,15 +32,10 @@ export const ConfirmProvider = props => {
         visible: false,
     });
 
-    const showConfirm = message => {
-        return new Promise(resolve => {
-            return dispatch({
-                type: SHOW_CONFIRM,
-                payload: {
-                    message: message,
-                    callback: resolve,
-                },
-            });
+    const showConfirm = payload => {
+        return dispatch({
+            type: SHOW_CONFIRM,
+            payload: payload,
         });
     };
 
@@ -50,7 +48,33 @@ export const ConfirmProvider = props => {
     return (
         <ConfirmContext.Provider value={{confirm, showConfirm, hideConfirm}}>
             {props.children}
-            <Confirm />
+            {confirm?.visible && (
+                <Modal maxWidth={props.width}>
+                    {!!confirm.title && (
+                        <div className="font-bold text-lg mb-4 lh-normal">{confirm.title}</div>
+                    )}
+                    <div className="mb-8 lh-normal">{confirm.message}</div>
+                    <div className="d-flex gap-2 w-full flex-row-reverse">
+                        <PrimaryButton
+                            text={props.confirmText}
+                            onClick={() => {
+                                confirm?.callback?.();
+                                hideConfirm();
+                            }}
+                        />
+                        <SecondaryButton
+                            text={props.cancelText}
+                            onClick={() => hideConfirm()}
+                        />
+                    </div>
+                </Modal>
+            )}
         </ConfirmContext.Provider>
     );
+};
+
+ConfirmProvider.defaultProps = {
+    width: "500px",
+    confirmText: "Confirm",
+    cancelText: "Cancel",
 };

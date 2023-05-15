@@ -18,16 +18,19 @@ const InnerBoard = props => {
 
     // Handle board reset
     const handleResetBoard = () => {
-        showConfirm("This will clear the whole board. Do you want to continue?").then(() => {
-            return props.onResetBoard?.();
+        return showConfirm({
+            title: "Clear board",
+            message: "This will clear the whole board. Do you want to continue?",
+            callback: () => props.onResetBoard?.(),
         });
     };
     // Handle load
     const handleLoad = () => {
         if (board.elements.length > 0) {
-            const message = "Changes made in this board will be lost. Do you want to continue?";
-            return showConfirm(message).then(() => {
-                return props.onLoad?.();
+            return showConfirm({
+                title: "Load new board",
+                message: "Changes made in this board will be lost. Do you want to continue?",
+                callback: () => props.onLoad?.(),
             });
         }
         // Just call the onLoad listener
