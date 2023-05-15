@@ -129,7 +129,7 @@ export const ToolsPanel = props => {
         <Panel direction="col" className={props.className} style={props.style}>
             <PanelButton
                 className="w-full"
-                icon={(props.lockTool ? <LockIcon /> : <UnlockIcon />)}
+                icon={(board.lockTool ? <LockIcon /> : <UnlockIcon />)}
                 active={board.lockTool}
                 onClick={props.onLockToolClick}
             />
