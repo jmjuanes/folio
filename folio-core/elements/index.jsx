@@ -1,4 +1,5 @@
 import React from "react";
+import {uid} from "uid/secure";
 import {
     ELEMENTS,
     HANDLERS,
@@ -30,7 +31,14 @@ import {TextElement} from "./TextElement.jsx";
 import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
 import {measureText} from "../math.js";
-import {isCornerHandler} from "../utils.js";
+
+const isCornerHandler = handler => {
+    return handler.startsWith("corner");
+};
+
+const isEdgeHandler = handler => {
+    return handler.startsWith("edge");
+};
 
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
@@ -235,4 +243,28 @@ export const elementsConfig = {
 
 export const getElementConfig = element => {
     return elementsConfig[element.type];
+};
+
+// Tiny utility to generate an element ID
+export const generateElementId = () => {
+    return `el::${uid(20)}`;
+};
+
+// Create a new element
+export const createElement = elementType => {
+    return {
+        type: elementType,
+        id: generateElementId(),
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 0,
+        minWidth: 1,
+        minHeight: 1,
+        selected: false,
+        creating: false,
+        editing: false,
+        locked: false,
+        group: null,
+    };
 };
