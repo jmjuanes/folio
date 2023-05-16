@@ -1,7 +1,7 @@
-import {ELEMENTS, VERSION, BACKGROUND_COLORS} from "./constants.js";
+import {ELEMENTS, VERSION} from "./constants.js";
 
-export const migrateElements = (data, version) => {
-    return (data.elements || []).map(element => {
+export const migrateElements = (elements, version) => {
+    return (elements || []).map(element => {
         switch (version) {
             case "2":
                 // - the minWidth and minHeight attributes of the text element are deprecated
@@ -29,17 +29,14 @@ export const migrateElements = (data, version) => {
     });
 };
 
-export const migrateAssets = (data, version) => {
-    return data.assets || {};
+export const migrateAssets = (assets, version) => {
+    return assets || {};
 };
 
 export const migrate = (data, version = "2") => {
     return {
-        ...data,
-        elements: migrateElements(data, data.version || version),
-        assets: migrateAssets(data, data.version || version),
-        grid: data.grid ?? false,
-        background: data.background || BACKGROUND_COLORS.GRAY,
         version: VERSION,
+        elements: migrateElements(data.elements, data.version || version),
+        assets: migrateAssets(data.assets, data.version || version),
     };
 };
