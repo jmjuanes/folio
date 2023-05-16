@@ -1,4 +1,5 @@
 import React from "react";
+import {SquareIcon, CheckSquareIcon} from "@mochicons/react";
 import classNames from "classnames";
 import {ColorPicker} from "./ColorPicker.jsx";
 
@@ -64,13 +65,51 @@ const optionTypes = {
             step={props.step}
         />
     ),
+    checkbox: props => {
+        const handleClick = () => {
+            return props.onChange(!props.value);
+        };
+        return (
+            <div className="d-flex items-center justify-between select-none">
+                <div className="text-xs">
+                    <strong>{props.title}</strong>
+                </div>
+                <div className="text-lg cursor-pointer d-flex items-center" onClick={handleClick}>
+                    {props.value ? <CheckSquareIcon /> : <SquareIcon />}
+                </div>
+            </div>
+        );
+    },
+    pixels: props => (
+        <div className="d-flex items-center justify-between select-none">
+            <div className="text-xs">
+                <strong>{props.title}</strong>
+            </div>
+            <div className="d-flex items-center">
+                <input
+                    type="number"
+                    className="w-full px-2 py-0 h-8 bg-white r-md outline-0 b-1 b-solid b-gray-300 text-xs"
+                    defaultValue={props.value}
+                    min={props.minValue}
+                    max={props.maxValue}
+                    style={{
+                        fontFamily: "monospace",
+                    }}
+                    onChange={event => props.onChange(Number(event.target.value) ?? 0)}
+                />
+                <span className="text-xs pl-2">px</span>
+            </div>
+        </div>
+    ),
 };
 
 export const Option = props => (
     <div className="text-gray-700">
-        <div className="text-xs mb-2 select-none">
-            <strong>{props.title || ""}</strong>
-        </div>
+        {(props.type !== "checkbox" && props.type !== "pixels") && (
+            <div className="text-xs mb-2 select-none">
+                <strong>{props.title || ""}</strong>
+            </div>
+        )}
         <div className="d-block">
             {optionTypes[props.type](props)}
         </div>

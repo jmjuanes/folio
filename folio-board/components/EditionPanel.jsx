@@ -282,6 +282,6 @@ export const EditionPanel = props => {
 EditionPanel.defaultProps = {
     className: "position-absolute top-0 right-0 pt-4 pr-4",
     style: {},
-    maxHeight: "calc(100vh - 8rem)",
+    maxHeight: "100vh",
     onChange: null,
 };

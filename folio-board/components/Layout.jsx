@@ -105,7 +105,7 @@ export const Layout = props => {
             )}
             {props.showEdition && (
                 <EditionPanel
-                    maxHeight={`calc(100vh - 8rem - ${props.showHeader ? props.headerHeight : "0rem"})`}
+                    maxHeight={`calc(100vh - 5.5rem - ${props.showHeader ? props.headerHeight : "0rem"})`}
                     style={{
                         paddingTop: props.showHeader ? props.headerHeight : 0,
                     }}

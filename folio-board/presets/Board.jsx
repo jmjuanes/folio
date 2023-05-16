@@ -1,6 +1,5 @@
 import React from "react";
 import {ImageIcon} from "@mochicons/react";
-import {EXPORT_FORMATS} from "folio-core";
 
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
@@ -10,11 +9,13 @@ import {Renderer} from "../components/Renderer.jsx";
 import {ContextMenu} from "../components/ContextMenu.jsx";
 import {Welcome} from "../components/Welcome.jsx";
 import {Menu} from "../components/Menu.jsx";
+import {ExportDialog} from "../components/ExportDialog.jsx";
 
 const InnerBoard = props => {
     const {showConfirm} = useConfirm();
     const board = useBoard();
     const [welcomeVisible, setWelcomeVisible] = React.useState(props.showWelcome && (board.elements.length === 0));
+    const [exportVisible, setExportVisible] = React.useState(false);
 
     // Handle board reset
     const handleResetBoard = () => {
@@ -70,7 +71,11 @@ const InnerBoard = props => {
                                 icon={(<ImageIcon />)}
                                 text="Export"
                                 disabled={board.elements.length === 0}
-                                onClick={() => props.onExport?.(EXPORT_FORMATS.PNG)}
+                                onClick={() => {
+                                    if (board.elements.length > 0) {
+                                        setExportVisible(true);
+                                    }
+                                }}
                             />
                         )}
                     </div>
@@ -82,6 +87,11 @@ const InnerBoard = props => {
                     version={process.env.VERSION}
                     onClose={() => setWelcomeVisible(false)}
                     onLoad={props.onLoad}
+                />
+            )}
+            {exportVisible && (
+                <ExportDialog
+                    onClose={() => setExportVisible(false)}
                 />
             )}
         </div>
@@ -105,7 +115,6 @@ Board.defaultProps = {
     headerLeftContent: null,
     headerRightContent: null,
     onChange: null,
-    onExport: null,
     onSave: null,
     onLoad: null,
     onResetBoard: null,

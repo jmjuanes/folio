@@ -2,9 +2,8 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import classNames from "classnames";
 import * as idb from "idb-keyval";
-import {fileOpen, fileSave} from "browser-fs-access";
-import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "folio-core";
-import {migrate, exportToFile} from "folio-core";
+import {VERSION} from "folio-core";
+import {migrate, loadFromJson, saveAsJson} from "folio-core";
 import {Board} from "folio-board";
 
 // Store keys for IDB
@@ -12,6 +11,7 @@ const STORE_KEYS = {
     VERSION: "version",
     DATA: "data",
     STATE: "state",
+    SETTINGS: "settings",
 };
 
 // Global store
@@ -38,7 +38,10 @@ const initializeStore = async () => {
         const currentVersion = await idb.get(STORE_KEYS.VERSION, store);
         if (currentVersion !== VERSION) {
             const prevData = await idb.get(STORE_KEYS.DATA, store);
-            const newData = migrate(prevData, currentVersion);
+            const newData = {
+                ...prevData,
+                ...migrate(prevData, currentVersion),
+            };
             await idb.set(STORE_KEYS.DATA, newData, store);
             await idb.set(STORE_KEYS.VERSION, VERSION, store);
         }
@@ -79,54 +82,22 @@ const App = props => {
 
     // Handle file save
     const handleFileSave = () => {
-        const content = JSON.stringify({
-            version: VERSION,
-            ...state,
+        return saveAsJson({
             elements: state.elements || [],
             assets: state.assets || {},
-        });
-        const blob = new Blob([content], {
-            type: MIME_TYPES.FOLIO,
-        });
-        const options = {
-            description: "Folio board",
-            fileName: `untitled${FILE_EXTENSIONS.FOLIO}`,
-            extensions: [
-                FILE_EXTENSIONS.FOLIO,
-            ],
-        };
-
-        // Save to the file system
-        fileSave(blob, options).catch(error => {
-            console.error(error);
+            grid: !!state.grid,
+            background: state.background || null,
         });
     };
 
     // Handle file load
     const handleFileLoad = () => {
-        const options = {
-            description: "Folio Board",
-            extensions: [
-                FILE_EXTENSIONS.FOLIO,
-            ],
-            multiple: false,
-        };
-        fileOpen(options)
-            .then(blob => {
-                if (!blob) {
-                    return Promise.reject(new Error("No file selected"));
-                }
-                const file = new FileReader();
-                return (new Promise((resolve, reject) => {
-                    file.onload = event => resolve(event.target.result);
-                    file.onerror = error => reject(error);
-                    file.readAsText(blob, "utf8");
-                }));
-            })
-            .then(dataText => JSON.parse(dataText))
-            .then(data => migrate(data, data.version))
+        loadFromJson()
             .then(data => {
-                setState({createdAt: Date.now(), ...data});
+                setState({
+                    ...data,
+                    createdAt: Date.now(),
+                });
                 setWelcomeVisible(false);
             })
             .catch(error => {
@@ -150,12 +121,6 @@ const App = props => {
                         ...newState,
                         updatedAt: Date.now(),
                     }));
-                }}
-                onExport={format => {
-                    return exportToFile({
-                        elements: state.elements,
-                        format: format,
-                    });
                 }}
                 onSave={() => handleFileSave()}
                 onLoad={() => handleFileLoad()}
