@@ -1,17 +1,13 @@
+import {fileSave} from "browser-fs-access";
 import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING} from "./constants.js";
 import {FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
 import {getRectangleBounds} from "./math.js";
 
 // Convert a blob to file
 const blobToFile = (blob, filename) => {
-    return new Promise(resolve => {
-        const linkElement = document.createElement("a");
-        const url = window.URL.createObjectURL(blob);
-        linkElement.href = url;
-        linkElement.download = filename;
-        linkElement.click();
-        window.URL.revokeObjectURL(url);
-        return resolve(filename);
+    return fileSave(blob, {
+        description: "Folio Export",
+        fileName: filename,
     });
 };
 
@@ -123,13 +119,13 @@ const getPngImage = options => {
             }
             else {
                 // Set the canvas size to the total image size
-                canvas.width = img.width + 2 * padding;
-                canvas.height = img.height + 2 * padding;
+                canvas.width = img.width;
+                canvas.height = img.height;
             }
             const ctx = canvas.getContext("2d");
-            ctx.fillStyle = "white";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, x + padding, y + padding);
+            // ctx.fillStyle = "white";
+            // ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, x, y);
             canvas.toBlob(resolve);
         });
         img.addEventListener("error", event => {
@@ -160,6 +156,11 @@ export const exportToBlob = options => {
         embedFonts: true,
         ...options,
     })
+};
+
+// Export image to DataURL
+export const exportToDataURL = options => {
+    return exportToBlob(options).then(blob => blobToDataUrl(blob));
 };
 
 // Export image to clipboard
