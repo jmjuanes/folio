@@ -15,8 +15,12 @@ const getStyleForColor = color => ({
     // minWidth: "1.5rem",
 });
 
+const isValidHexColor = value => {
+    return value.startsWith("#") && (value.length === 7 || value.length === 9);
+};
+
 const validateColor = value => {
-    return value && (value === "transparent" || (value.length === 7 && value.startsWith("#")));
+    return value && (value === "transparent" || isValidHexColor(value));
 };
 
 export const ColorPicker = props => {
