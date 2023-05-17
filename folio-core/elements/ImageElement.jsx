@@ -6,7 +6,7 @@ export const ImageElement = props => {
     const dataUrl = assets[props.assetId]?.dataUrl || "";
 
     return (
-        <g transform="">
+        <g transform="" opacity={props.opacity}>
             <image
                 data-element={props.id}
                 x={Math.min(props.x1, props.x2)}

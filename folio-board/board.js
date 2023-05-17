@@ -8,10 +8,8 @@ import {
     ZOOM_MIN,
     ZOOM_STEP,
     DEFAULT_FILL_COLOR,
-    DEFAULT_FILL_OPACITY,
     DEFAULT_STROKE_COLOR,
     DEFAULT_STROKE_STYLE,
-    DEFAULT_STROKE_OPACITY,
     DEFAULT_STROKE_WIDTH,
     DEFAULT_TEXT_COLOR,
     DEFAULT_TEXT_SIZE,
@@ -21,6 +19,7 @@ import {
     DEFAULT_ARROWHEAD_START,
     DEFAULT_SHAPE,
     TEXT_BOX_MIN_WIDTH,
+    DEFAULT_OPACITY,
 } from "folio-core";
 import {getElementConfig, getRectangleBounds} from "folio-core";
 import {CHANGES, STATES, PASTE_OFFSET} from "./constants.js";
@@ -59,11 +58,9 @@ export const createBoard = props => ({
     erase: null,
     defaults: {
         fillColor: DEFAULT_FILL_COLOR,
-        fillOpacity: DEFAULT_FILL_OPACITY,
         strokeWidth: DEFAULT_STROKE_WIDTH,
         strokeColor: DEFAULT_STROKE_COLOR,
         strokeStyle: DEFAULT_STROKE_STYLE,
-        strokeOpacity: DEFAULT_STROKE_OPACITY,
         textColor: DEFAULT_TEXT_COLOR,
         textFont: DEFAULT_TEXT_FONT,
         textSize: DEFAULT_TEXT_SIZE,
@@ -71,6 +68,7 @@ export const createBoard = props => ({
         shape: DEFAULT_SHAPE,
         startArrowhead: DEFAULT_ARROWHEAD_START,
         endArrowhead: DEFAULT_ARROWHEAD_END,
+        opacity: DEFAULT_OPACITY,
     },
     state: {
         contextMenuVisible: false,

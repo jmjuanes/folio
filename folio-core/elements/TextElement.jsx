@@ -36,6 +36,7 @@ export const TextElement = props => {
         textAlign: props.textAlign || TEXT_ALIGNS.CENTER,
         userSelect: "none",
         wordBreak: "break-all",
+        opacity: props.opacity,
     };
 
     return (

@@ -47,13 +47,13 @@ const allOptions = {
                 title: "Fill Color",
                 values: Object.values(COLORS),
             },
-            fillOpacity: {
-                type: "range",
-                title: "Fill Opacity",
-                minValue: OPACITY_MIN,
-                maxValue: OPACITY_MAX,
-                step: OPACITY_STEP,
-            },
+            // fillOpacity: {
+            //     type: "range",
+            //     title: "Fill Opacity",
+            //     minValue: OPACITY_MIN,
+            //     maxValue: OPACITY_MAX,
+            //     step: OPACITY_STEP,
+            // },
         },
     },
     [TABS.STROKE]: {
@@ -83,13 +83,13 @@ const allOptions = {
                     {value: STROKES.DOTTED, icon: CircleDottedIcon()},
                 ],
             },
-            strokeOpacity: {
-                type: "range",
-                title: "Stroke Opacity",
-                minValue: OPACITY_MIN,
-                maxValue: OPACITY_MAX,
-                step: OPACITY_STEP,
-            },
+            // strokeOpacity: {
+            //     type: "range",
+            //     title: "Stroke Opacity",
+            //     minValue: OPACITY_MIN,
+            //     maxValue: OPACITY_MAX,
+            //     step: OPACITY_STEP,
+            // },
         },
     },
     [TABS.TEXT]: {
@@ -126,6 +126,16 @@ const allOptions = {
                 ],
             },
         },
+    },
+};
+
+const opacityOptions = {
+    [FIELDS.OPACITY]: {
+        type: "range",
+        title: "Opacity",
+        minValue: OPACITY_MIN,
+        maxValue: OPACITY_MAX,
+        step: OPACITY_STEP,
     },
 };
 
@@ -191,6 +201,9 @@ export const EditionPanel = props => {
     // Get the visible options in the dialog
     const visibleOptions = React.useMemo(
         () => {
+            if (!visibleTab) {
+                return null;
+            }
             const options = allOptions[visibleTab].items;
             // If no keys are available, we will display all availabe options in this category
             if (keys.length === 0) {
@@ -217,38 +230,50 @@ export const EditionPanel = props => {
 
     return (
         <div className={props.className} style={props.style}>
-            <div className="bg-white z-5 b-1 b-solid b-gray-300 w-60 r-xl shadow-md overflow-y-auto scrollbar" style={{maxHeight: props.maxHeight}}>
-                <div className="">
-                    <div className="mx-4 pt-4 pb-2 bg-white position-sticky top-0">
-                        <div className="w-full d-flex flex-no-wrap b-1 b-solid b-gray-300 r-md h-10">
-                            <TabsItem
-                                active={visibleTab === TABS.FILL}
-                                disabled={keys.length > 0 && typeof values[allOptions[TABS.FILL].test] === "undefined"}
-                                icon={(<FillIcon />)}
-                                onClick={() => setActiveTab(TABS.FILL)}
-                            />
-                            <TabsItem
-                                active={visibleTab === TABS.STROKE}
-                                disabled={keys.length > 0 && typeof values[allOptions[TABS.STROKE].test] === "undefined"}
-                                icon={(<StrokeIcon />)}
-                                onClick={() => setActiveTab(TABS.STROKE)}
-                            />
-                            <TabsItem
-                                active={visibleTab === TABS.TEXT}
-                                disabled={keys.length > 0 && typeof values[allOptions[TABS.TEXT].test] === "undefined"}
-                                icon={(<TextIcon />)}
-                                onClick={() => setActiveTab(TABS.TEXT)}
+            <div className="bg-white z-5 b-1 b-solid b-gray-300 w-56 r-xl shadow-md overflow-y-auto scrollbar" style={{maxHeight: props.maxHeight}}>
+                {visibleTab && (
+                    <div className="">
+                        <div className="mx-4 pt-4 pb-2 bg-white position-sticky top-0">
+                            <div className="w-full d-flex flex-no-wrap b-1 b-solid b-gray-300 r-md h-10">
+                                <TabsItem
+                                    active={visibleTab === TABS.FILL}
+                                    disabled={keys.length > 0 && typeof values[allOptions[TABS.FILL].test] === "undefined"}
+                                    icon={(<FillIcon />)}
+                                    onClick={() => setActiveTab(TABS.FILL)}
+                                />
+                                <TabsItem
+                                    active={visibleTab === TABS.STROKE}
+                                    disabled={keys.length > 0 && typeof values[allOptions[TABS.STROKE].test] === "undefined"}
+                                    icon={(<StrokeIcon />)}
+                                    onClick={() => setActiveTab(TABS.STROKE)}
+                                />
+                                <TabsItem
+                                    active={visibleTab === TABS.TEXT}
+                                    disabled={keys.length > 0 && typeof values[allOptions[TABS.TEXT].test] === "undefined"}
+                                    icon={(<TextIcon />)}
+                                    onClick={() => setActiveTab(TABS.TEXT)}
+                                />
+                            </div>
+                        </div>
+                        <div className="px-4 pb-4 pt-2">
+                            <Form
+                                key={visibleTab + selection.length}
+                                data={values || {}}
+                                items={visibleOptions}
+                                onChange={handleChange}
                             />
                         </div>
+                        <div className="w-full h-px bg-gray-300" />
                     </div>
-                    <div className="px-4 pb-4 pt-2">
-                        <Form
-                            key={visibleTab + selection.length}
-                            data={values || {}}
-                            items={visibleOptions}
-                            onChange={handleChange}
-                        />
-                    </div>
+                )}
+                {/* Opacity options */}
+                <div className="p-4">
+                    <Form
+                        key={selection.length + (selection.length > 0 ? selection[0].id : "")}
+                        data={values || {}}
+                        items={opacityOptions}
+                        onChange={handleChange}
+                    />
                 </div>
                 {hasArrowheadOptions && (
                     <React.Fragment>

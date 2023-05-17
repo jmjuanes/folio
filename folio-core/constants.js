@@ -220,6 +220,7 @@ export const DEFAULT_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
 export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
 export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
 export const DEFAULT_ARROWHEAD_END = ARROWHEADS.ARROW;
+export const DEFAULT_OPACITY = OPACITY_DEFAULT;
 
 // Fields in elements
 export const FIELDS = {
@@ -229,4 +230,5 @@ export const FIELDS = {
     SHAPE: "shape",
     START_ARROWHEAD: "startArrowhead",
     END_ARROWHEAD: "endArrowhead",
+    OPACITY: "opacity",
 };

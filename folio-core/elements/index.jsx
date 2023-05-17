@@ -17,6 +17,7 @@ import {
     DEFAULT_TEXT_FONT,
     DEFAULT_TEXT_SIZE,
     DEFAULT_TEXT_ALIGN,
+    DEFAULT_OPACITY,
     DRAWING_THRESHOLD,
     TEXT_SIZE_MIN,
     TEXT_SIZE_STEP,
@@ -51,13 +52,12 @@ export const elementsConfig = {
             </React.Fragment>
         ),
         initialize: values => ({
+            opacity: values?.opacity ?? DEFAULT_OPACITY,
             shape: values.shape || DEFAULT_SHAPE,
             fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
-            fillOpacity: values?.fillOpacity ?? DEFAULT_FILL_OPACITY,
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
             strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
             strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
-            strokeOpacity: values?.strokeOpacity ?? DEFAULT_STROKE_OPACITY,
             text: "",
             textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
             textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
@@ -86,6 +86,7 @@ export const elementsConfig = {
         nodeHandlers: true,
         render: props => <ArrowElement {...props} />,
         initialize: values => ({
+            opacity: values?.opacity ?? DEFAULT_OPACITY,
             startArrowhead: values?.startArrowhead || DEFAULT_ARROWHEAD_START,
             endArrowhead: values?.endArrowhead || DEFAULT_ARROWHEAD_END,
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
@@ -104,6 +105,7 @@ export const elementsConfig = {
             const textFont = values?.textFont ?? DEFAULT_TEXT_FONT;
             const [textWidth, textHeight] = measureText(" ", textSize, textFont);
             return ({
+                opacity: values?.opacity ?? DEFAULT_OPACITY,
                 text: "",
                 textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
                 textFont: textFont,
@@ -184,6 +186,7 @@ export const elementsConfig = {
         cornerHandlers: true,
         render: props => <DrawElement {...props} />,
         initialize: values => ({
+            opacity: values?.opacity ?? DEFAULT_OPACITY,
             points: [],
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
             strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
@@ -233,8 +236,9 @@ export const elementsConfig = {
         edgeHandlers: true,
         cornerHandlers: true,
         render: props => <ImageElement {...props} />,
-        initialize: () => ({
+        initialize: values => ({
             assetId: "",
+            opacity: values?.opacity ?? DEFAULT_OPACITY,
             imageWidth: 0,
             imageHeight: 0,
         }),

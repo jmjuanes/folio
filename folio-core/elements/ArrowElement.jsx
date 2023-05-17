@@ -49,7 +49,6 @@ const Arrowhead = props => {
             fill="transparent"
             stroke={props.strokeColor}
             strokeWidth={props.strokeWidth}
-            strokeOpacity={props.strokeOpacity}
             strokeLinecap="round"
             strokeLinejoin="round"
             onPointerDown={props.onPointerDown}
@@ -72,7 +71,7 @@ export const ArrowElement = props => {
         [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
     );
     return (
-        <React.Fragment>
+        <g opacity={props.opacity}>
             <line
                 data-element={props.id}
                 x1={props.x1}
@@ -82,7 +81,6 @@ export const ArrowElement = props => {
                 fill="none"
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
-                strokeOpacity={props.strokeOpacity}
                 strokeDasharray={strokeDasharray}
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
@@ -99,7 +97,6 @@ export const ArrowElement = props => {
                     y2={props.y2}
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
-                    strokeOpacity={props.strokeOpacity}
                     onPointerDown={props.onPointerDown}
                 />
             )}
@@ -113,10 +110,9 @@ export const ArrowElement = props => {
                     y2={props.y1}
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
-                    strokeOpacity={props.strokeOpacity}
                     onPointerDown={props.onPointerDown}
                 />
             )}
-        </React.Fragment>
+        </g>
     );
 };
