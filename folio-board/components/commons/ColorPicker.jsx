@@ -1,4 +1,6 @@
 import React from "react";
+import classNames from "classnames";
+import {DropletIcon} from "@mochicons/react";
 
 const transparentImage = window.encodeURIComponent([
     `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="#fdfdfd">`,
@@ -26,6 +28,11 @@ const validateColor = value => {
 export const ColorPicker = props => {
     const inputRef = React.useRef(null);
     const pickerRef = React.useRef(null);
+    const [colorPaletteVisible, setColorPaletteVisible] = React.useState(false);
+    
+    const handleColorPaletteClick = () => {
+        return setColorPaletteVisible(!colorPaletteVisible);
+    };
 
     return (
         <div className="d-flex flex-col gap-2 w-full">
@@ -69,8 +76,21 @@ export const ColorPicker = props => {
                         }
                     }}
                 />
+                {props.collapseColorPalette && (
+                    <div
+                        className={classNames({
+                            "d-flex items-center px-1 py-2 r-md b-1 b-solid b-gray-300 ml-1": true,
+                            "bg-gray-200:hover cursor-pointer": !colorPaletteVisible,
+                            "bg-gray-800 text-white cursor-pointer": colorPaletteVisible,
+                        })}
+                        title="Expand/Collapse color palette"
+                        onClick={handleColorPaletteClick}
+                    >
+                        <DropletIcon />
+                    </div>
+                )}
             </div>
-            {props.values?.length > 0 && (
+            {props.values?.length > 0 && (colorPaletteVisible || !props.collapseColorPalette) && (
                 <div className="d-grid gap-1 cols-6 w-full">
                     {props.values.map(color => (
                         <div
@@ -93,4 +113,5 @@ ColorPicker.defaultProps = {
     value: "",
     values: [],
     onChange: null,
+    collapseColorPalette: true,
 };

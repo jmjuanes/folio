@@ -63,6 +63,7 @@ export const Menu = props => {
                         <ColorPicker
                             value={board.background}
                             values={Object.values(BACKGROUND_COLORS)}
+                            collapseColorPalette={false}
                             onChange={newBackground => {
                                 board.background = newBackground;
                                 board.update();

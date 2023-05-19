@@ -16,6 +16,16 @@ export const KEYS = {
     Y: "y",
 };
 
+// Form option types
+export const FORM_OPTIONS = {
+    COLOR: "color",
+    SELECT: "select",
+    FONT: "font",
+    RANGE: "range",
+    CHECKBOX: "checkbox",
+    PIXELS: "pixels",
+};
+
 export const THEMES = {
     LIGHT: "light",
     DARK: "dark",

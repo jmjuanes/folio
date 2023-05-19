@@ -1,11 +1,13 @@
 import React from "react";
 import classNames from "classnames";
+import {SunIcon, ShapesIcon, PlusIcon, MinusIcon} from "@mochicons/react";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "@mochicons/react";
 
 import {COLORS, FIELDS} from "folio-core";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "folio-core";
 import {STROKES, STROKE_WIDTHS} from "folio-core";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "folio-core";
+import {BLUR_MAX, BLUR_MIN, BLUR_STEP} from "folio-core";
 import {SHAPES} from "folio-core";
 import {ARROWHEADS} from "folio-core";
 
@@ -21,12 +23,16 @@ import {
     ArrowheadCircleIcon,
 } from "./icons/index.jsx";
 import {FillIcon, StrokeIcon, TextIcon} from "./icons/index.jsx";
+import { FORM_OPTIONS } from "../constants.js";
 
 // Available tabs
-const TABS = {
+const SECTIONS = {
     FILL: "fill",
     STROKE: "stroke",
     TEXT: "text",
+    EFFECTS: "effects",
+    ARROWHEADS: "arrowheads",
+    SHAPE: "shape",
 };
 
 const arrowheadValues = [
@@ -39,33 +45,30 @@ const arrowheadValues = [
 ];
 
 const allOptions = {
-    [TABS.FILL]: {
+    [SECTIONS.FILL]: {
+        title: "Fill",
+        icon: (<FillIcon />),
         test: FIELDS.FILL_COLOR,
         items: {
             fillColor: {
-                type: "color",
+                type: FORM_OPTIONS.COLOR,
                 title: "Fill Color",
                 values: Object.values(COLORS),
             },
-            // fillOpacity: {
-            //     type: "range",
-            //     title: "Fill Opacity",
-            //     minValue: OPACITY_MIN,
-            //     maxValue: OPACITY_MAX,
-            //     step: OPACITY_STEP,
-            // },
         },
     },
-    [TABS.STROKE]: {
+    [SECTIONS.STROKE]: {
+        title: "Stroke",
+        icon: (<StrokeIcon />),
         test: FIELDS.STROKE_COLOR,
         items: {
             strokeColor: {
-                type: "color",
+                type: FORM_OPTIONS.COLOR,
                 title: "Stroke color",
                 values: Object.values(COLORS),
             },
             strokeWidth: {
-                type: "select",
+                type: FORM_OPTIONS.SELECT,
                 title: "Stroke Width",
                 values: [
                     {value: STROKE_WIDTHS.SMALL, text: "S"},
@@ -75,7 +78,7 @@ const allOptions = {
                 ],
             },
             strokeStyle: {
-                type: "select",
+                type: FORM_OPTIONS.SELECT,
                 title: "Stroke Style",
                 values: [
                     {value: STROKES.SOLID, icon: CircleSolidIcon()},
@@ -83,30 +86,25 @@ const allOptions = {
                     {value: STROKES.DOTTED, icon: CircleDottedIcon()},
                 ],
             },
-            // strokeOpacity: {
-            //     type: "range",
-            //     title: "Stroke Opacity",
-            //     minValue: OPACITY_MIN,
-            //     maxValue: OPACITY_MAX,
-            //     step: OPACITY_STEP,
-            // },
         },
     },
-    [TABS.TEXT]: {
+    [SECTIONS.TEXT]: {
+        title: "Text",
+        icon: (<TextIcon />),
         test: FIELDS.TEXT_COLOR,
         items: {
             textColor: {
-                type: "color",
+                type: FORM_OPTIONS.COLOR,
                 title: "Text Color",
                 values: Object.values(COLORS),
             },
             textFont: {
-                type: "font",
+                type: FORM_OPTIONS.FONT,
                 title: "Text Font",
                 values: Object.values(FONT_FACES),
             },
             textSize: {
-                type: "select",
+                type: FORM_OPTIONS.SELECT,
                 title: "Text Size",
                 values: [
                     {value: TEXT_SIZES.SMALL, text: "S"},
@@ -116,7 +114,7 @@ const allOptions = {
                 ],
             },
             textAlign: {
-                type: "select",
+                type: FORM_OPTIONS.SELECT,
                 title: "Text Align",
                 values: [
                     {value: TEXT_ALIGNS.LEFT, icon: TextLeftIcon()},
@@ -127,41 +125,60 @@ const allOptions = {
             },
         },
     },
-};
-
-const opacityOptions = {
-    [FIELDS.OPACITY]: {
-        type: "range",
-        title: "Opacity",
-        minValue: OPACITY_MIN,
-        maxValue: OPACITY_MAX,
-        step: OPACITY_STEP,
+    [SECTIONS.ARROWHEADS]: {
+        title: "Arrowhead",
+        test: FIELDS.START_ARROWHEAD,
+        icon: (<ArrowheadArrowIcon />),
+        items: {
+            [FIELDS.START_ARROWHEAD]: {
+                type: FORM_OPTIONS.SELECT,
+                title: "Start Arrowhead",
+                values: arrowheadValues,
+            },
+            [FIELDS.END_ARROWHEAD]: {
+                type: FORM_OPTIONS.SELECT,
+                title: "End Arrowhead",
+                values: arrowheadValues,
+            },
+        },
     },
-};
-
-const shapeOptions = {
-    [FIELDS.SHAPE]: {
-        type: "select",
+    [SECTIONS.SHAPE]: {
         title: "Shape",
-        values: [
-            {value: SHAPES.RECTANGLE, icon: RectangleIcon()},
-            {value: SHAPES.ELLIPSE, icon: CircleIcon()},
-            {value: SHAPES.DIAMOND, icon: DiamondIcon()},
-            {value: SHAPES.TRIANGLE, icon: TriangleIcon()},
-        ],
+        test: FIELDS.SHAPE,
+        icon: (<ShapesIcon />),
+        items: {
+            [FIELDS.SHAPE]: {
+                type: FORM_OPTIONS.SELECT,
+                title: "Shape",
+                values: [
+                    {value: SHAPES.RECTANGLE, icon: RectangleIcon()},
+                    {value: SHAPES.ELLIPSE, icon: CircleIcon()},
+                    {value: SHAPES.DIAMOND, icon: DiamondIcon()},
+                    {value: SHAPES.TRIANGLE, icon: TriangleIcon()},
+                ],
+            },
+        },
     },
-};
-
-const arrowheadOptions = {
-    [FIELDS.START_ARROWHEAD]: {
-        type: "select",
-        title: "Start Arrowhead",
-        values: arrowheadValues,
-    },
-    [FIELDS.END_ARROWHEAD]: {
-        type: "select",
-        title: "End Arrowhead",
-        values: arrowheadValues,
+    [SECTIONS.EFFECTS]: {
+        title: "Effects",
+        icon: (<SunIcon />),
+        test: FIELDS.OPACITY,
+        items: {
+            [FIELDS.OPACITY]: {
+                type: FORM_OPTIONS.RANGE,
+                title: "Opacity",
+                minValue: OPACITY_MIN,
+                maxValue: OPACITY_MAX,
+                step: OPACITY_STEP,
+            },
+            [FIELDS.BLUR]: {
+                type: FORM_OPTIONS.RANGE,
+                title: "Blur",
+                minValue: BLUR_MIN,
+                maxValue: BLUR_MAX,
+                step: BLUR_STEP,
+            },
+        },
     },
 };
 
@@ -179,48 +196,65 @@ const TabsItem = props => {
     );
 };
 
+const SectionItem = props => {
+    const [collapsed, setCollapsed] = React.useState(false);
+    const classList = classNames({
+        "d-flex items-center justify-between w-full p-4": true,
+        "cursor-pointer": !props.disabled,
+        "text-gray-500 cursor-not-allowed": props.disabled,
+    });
+    return (
+        <React.Fragment>
+            <div className="d-none:first w-full h-px bg-gray-300" />
+            <div className={classList} onClick={() => !props.disabled && setCollapsed(!collapsed)}>
+                <div className="d-flex items-center gap-2">
+                    <div className="d-flex items-center text-lg">
+                        {props.config.icon}
+                    </div>
+                    <div className="text-xs d-flex items-center">
+                        <strong>{props.config.title}</strong>
+                    </div>
+                </div>
+                <div className="d-flex items-center">
+                    {collapsed ? <PlusIcon /> : <MinusIcon />}
+                </div>
+            </div>
+            <div className={(collapsed || props.disabled) ? "d-none" : "px-4 pb-4"}>
+                <Form
+                    className="d-flex flex-col gap-2"
+                    key={props.selection.length + (props.selection.length > 0 ? props.selection[0].id : "")}
+                    data={props.values || {}}
+                    items={props.config.items}
+                    onChange={props.onChange}
+                />
+            </div>
+        </React.Fragment>
+    );
+};
+
 export const EditionPanel = props => {
     const board = useBoard();
-    const [activeTab, setActiveTab] = React.useState(TABS.FILL);
+    // const [activeTab, setActiveTab] = React.useState(SECTIONS.FILL);
     const selection = board.getSelectedElements();
     // TODO: we would need to compute common values for all elements in selection
     const values = selection.length === 1 ? selection[0] : (board.defaults || {});
     const keys = Object.keys(values);
 
-    // Get the real visible tab
-    const visibleTab = React.useMemo(
-        () => {
-            if (keys.length === 0 || typeof values[allOptions[activeTab].test] !== "undefined") {
-                return activeTab;
-            }
-            // Get the first visible tab
-            return Object.keys(allOptions).find(key => typeof values[allOptions[key].test] !== "undefined");
-        },
-        [keys.length, activeTab],
-    );
     // Get the visible options in the dialog
     const visibleOptions = React.useMemo(
         () => {
-            if (!visibleTab) {
-                return null;
-            }
-            const options = allOptions[visibleTab].items;
             // If no keys are available, we will display all availabe options in this category
             if (keys.length === 0) {
-                return options;
+                return new Set(Object.keys(allOptions));
             }
             // Filter options
-            const keysSet = new Set(keys);
-            return Object.fromEntries(Object.entries(options).filter(entry => {
-                return keysSet.has(entry[0]);
-            }));
+            const visibleKeys = Object.keys(allOptions).filter(option => {
+                return typeof values[allOptions[option].test] !== "undefined";
+            });
+            return new Set(visibleKeys);
         },
-        [keys.length, activeTab, visibleTab],
+        [keys.length],
     );
-
-    // Additional options
-    const hasShapeOptions = keys.length === 0 || typeof values[FIELDS.SHAPE] !== "undefined";
-    const hasArrowheadOptions = keys.length === 0 || typeof values[FIELDS.START_ARROWHEAD] !== "undefined";
 
     // Handle selection change
     const handleChange = (key, value) => {
@@ -231,74 +265,16 @@ export const EditionPanel = props => {
     return (
         <div className={props.className} style={props.style}>
             <div className="bg-white z-5 b-1 b-solid b-gray-300 w-56 r-xl shadow-md overflow-y-auto scrollbar" style={{maxHeight: props.maxHeight}}>
-                {visibleTab && (
-                    <div className="">
-                        <div className="mx-4 pt-4 pb-2 bg-white position-sticky top-0">
-                            <div className="w-full d-flex flex-no-wrap b-1 b-solid b-gray-300 r-md h-10">
-                                <TabsItem
-                                    active={visibleTab === TABS.FILL}
-                                    disabled={keys.length > 0 && typeof values[allOptions[TABS.FILL].test] === "undefined"}
-                                    icon={(<FillIcon />)}
-                                    onClick={() => setActiveTab(TABS.FILL)}
-                                />
-                                <TabsItem
-                                    active={visibleTab === TABS.STROKE}
-                                    disabled={keys.length > 0 && typeof values[allOptions[TABS.STROKE].test] === "undefined"}
-                                    icon={(<StrokeIcon />)}
-                                    onClick={() => setActiveTab(TABS.STROKE)}
-                                />
-                                <TabsItem
-                                    active={visibleTab === TABS.TEXT}
-                                    disabled={keys.length > 0 && typeof values[allOptions[TABS.TEXT].test] === "undefined"}
-                                    icon={(<TextIcon />)}
-                                    onClick={() => setActiveTab(TABS.TEXT)}
-                                />
-                            </div>
-                        </div>
-                        <div className="px-4 pb-4 pt-2">
-                            <Form
-                                key={visibleTab + selection.length}
-                                data={values || {}}
-                                items={visibleOptions}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="w-full h-px bg-gray-300" />
-                    </div>
-                )}
-                {/* Opacity options */}
-                <div className="p-4">
-                    <Form
-                        key={selection.length + (selection.length > 0 ? selection[0].id : "")}
-                        data={values || {}}
-                        items={opacityOptions}
+                {Object.keys(allOptions).map(key => (
+                    <SectionItem
+                        key={key}
+                        values={values}
+                        config={allOptions[key]}
+                        disabled={!visibleOptions.has(key)}
+                        selection={selection}
                         onChange={handleChange}
                     />
-                </div>
-                {hasArrowheadOptions && (
-                    <React.Fragment>
-                        <div className="w-full h-px bg-gray-300" />
-                        <div className="p-4">
-                            <Form
-                                data={values || {}}
-                                items={arrowheadOptions}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </React.Fragment>
-                )}
-                {hasShapeOptions && (
-                    <React.Fragment>
-                        <div className="w-full h-px bg-gray-300" />
-                        <div className="p-4">
-                            <Form
-                                data={values || {}}
-                                items={shapeOptions}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </React.Fragment>
-                )}
+                ))}
             </div>
         </div>
     );

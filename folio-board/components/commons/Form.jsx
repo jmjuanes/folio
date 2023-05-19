@@ -1,13 +1,20 @@
 import React from "react";
 import {SquareIcon, CheckSquareIcon} from "@mochicons/react";
 import classNames from "classnames";
+import {FORM_OPTIONS} from "../../constants.js";
 import {ColorPicker} from "./ColorPicker.jsx";
 
+const optionsWithInlineTitle = new Set([
+    FORM_OPTIONS.CHECKBOX,
+    FORM_OPTIONS.PIXELS,
+    FORM_OPTIONS.RANGE,
+]);
+
 const optionTypes = {
-    color: props => (
+    [FORM_OPTIONS.COLOR]: props => (
         <ColorPicker {...props} />
     ),
-    font: props => (
+    [FORM_OPTIONS.FONT]: props => (
         <div className="d-grid cols-5 gap-1 w-full">
             {(props.values || []).map(font => (
                 <div
@@ -28,7 +35,7 @@ const optionTypes = {
             ))}
         </div>
     ),
-    select: props => (
+    [FORM_OPTIONS.SELECT]: props => (
         <div className={`d-grid cols-${props.grid || "5"} gap-1 w-full`}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
@@ -54,33 +61,38 @@ const optionTypes = {
             })}
         </div>
     ),
-    range: props => (
-        <input
-            type="range"
-            className="m-0 w-full bg-gray-300 h-1 mt-3 mb-2"
-            onChange={e => props.onChange(e.target.value || 0)}
-            defaultValue={props.value}
-            min={props.minValue}
-            max={props.maxValue}
-            step={props.step}
-        />
+    [FORM_OPTIONS.RANGE]: props => (
+        <div className="d-flex items-center gap-2">
+            {props.title && (
+                <div className="text-xs w-20 flex-shrink-0">{props.title}</div>
+            )}
+            <div className="d-flex items-center">
+                <input
+                    type="range"
+                    className="m-0 w-full bg-gray-300 h-1 mt-3 mb-2"
+                    onChange={e => props.onChange(e.target.value || 0)}
+                    defaultValue={props.value}
+                    min={props.minValue}
+                    max={props.maxValue}
+                    step={props.step}
+                />
+            </div>
+        </div>
     ),
-    checkbox: props => {
+    [FORM_OPTIONS.CHECKBOX]: props => {
         const handleClick = () => {
             return props.onChange(!props.value);
         };
         return (
             <div className="d-flex items-center justify-between select-none">
-                <div className="text-xs">
-                    <strong>{props.title}</strong>
-                </div>
+                <div className="text-xs">{props.title}</div>
                 <div className="text-lg cursor-pointer d-flex items-center" onClick={handleClick}>
                     {props.value ? <CheckSquareIcon /> : <SquareIcon />}
                 </div>
             </div>
         );
     },
-    pixels: props => (
+    [FORM_OPTIONS.PIXELS]: props => (
         <div className="d-flex items-center justify-between select-none">
             <div className="text-xs">
                 <strong>{props.title}</strong>
@@ -105,9 +117,9 @@ const optionTypes = {
 
 export const Option = props => (
     <div className="text-gray-700">
-        {(props.type !== "checkbox" && props.type !== "pixels") && (
+        {(!optionsWithInlineTitle.has(props.type)) && props.title && (
             <div className="text-xs mb-2 select-none">
-                <strong>{props.title || ""}</strong>
+                {props.title}
             </div>
         )}
         <div className="d-block">
@@ -134,7 +146,7 @@ export const Form = props => (
                 ...item,
                 key: key,
                 field: key,
-                value: props.data?.[key] || null,
+                value: props.data?.[key] ?? null,
                 onChange: value => props.onChange?.(key, value),
             });
         })}
