@@ -85,6 +85,12 @@ export const OPACITY_STEP = 0.1;
 export const OPACITY_MIN = 0;
 export const OPACITY_MAX = 1;
 
+// Blur constants
+export const BLUR_DEFAULT = 0;
+export const BLUR_STEP = 1;
+export const BLUR_MIN = 0;
+export const BLUR_MAX = 20;
+
 // Drawing constants
 export const DRAWING_THRESHOLD = 3;
 export const DRAWING_OFFSET = 10;
@@ -221,6 +227,7 @@ export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
 export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
 export const DEFAULT_ARROWHEAD_END = ARROWHEADS.ARROW;
 export const DEFAULT_OPACITY = OPACITY_DEFAULT;
+export const DEFAULT_BLUR = BLUR_DEFAULT;
 
 // Fields in elements
 export const FIELDS = {
@@ -231,4 +238,5 @@ export const FIELDS = {
     START_ARROWHEAD: "startArrowhead",
     END_ARROWHEAD: "endArrowhead",
     OPACITY: "opacity",
+    BLUR: "blur",
 };
