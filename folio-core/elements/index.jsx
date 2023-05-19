@@ -7,10 +7,8 @@ import {
     DEFAULT_ARROWHEAD_END,
     DEFAULT_ARROWHEAD_START,
     DEFAULT_FILL_COLOR,
-    DEFAULT_FILL_OPACITY,
     DEFAULT_SHAPE,
     DEFAULT_STROKE_COLOR,
-    DEFAULT_STROKE_OPACITY,
     DEFAULT_STROKE_STYLE,
     DEFAULT_STROKE_WIDTH,
     DEFAULT_TEXT_COLOR,
@@ -18,6 +16,7 @@ import {
     DEFAULT_TEXT_SIZE,
     DEFAULT_TEXT_ALIGN,
     DEFAULT_OPACITY,
+    DEFAULT_BLUR,
     DRAWING_THRESHOLD,
     TEXT_SIZE_MIN,
     TEXT_SIZE_STEP,
@@ -53,6 +52,7 @@ export const elementsConfig = {
         ),
         initialize: values => ({
             opacity: values?.opacity ?? DEFAULT_OPACITY,
+            blur: values?.blur ?? DEFAULT_BLUR,
             shape: values.shape || DEFAULT_SHAPE,
             fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
@@ -87,12 +87,12 @@ export const elementsConfig = {
         render: props => <ArrowElement {...props} />,
         initialize: values => ({
             opacity: values?.opacity ?? DEFAULT_OPACITY,
+            blur: values?.blur ?? DEFAULT_BLUR,
             startArrowhead: values?.startArrowhead || DEFAULT_ARROWHEAD_START,
             endArrowhead: values?.endArrowhead || DEFAULT_ARROWHEAD_END,
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
             strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
             strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
-            strokeOpacity: values?.strokeOpacity ?? DEFAULT_STROKE_OPACITY,
         }),
     },
     [ELEMENTS.TEXT]: {
@@ -106,6 +106,7 @@ export const elementsConfig = {
             const [textWidth, textHeight] = measureText(" ", textSize, textFont);
             return ({
                 opacity: values?.opacity ?? DEFAULT_OPACITY,
+                blur: values?.blur ?? DEFAULT_BLUR,
                 text: "",
                 textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
                 textFont: textFont,
@@ -187,11 +188,11 @@ export const elementsConfig = {
         render: props => <DrawElement {...props} />,
         initialize: values => ({
             opacity: values?.opacity ?? DEFAULT_OPACITY,
+            blur: values?.blur ?? DEFAULT_BLUR,
             points: [],
             strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
             strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
             strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
-            strokeOpacity: values?.strokeOpacity ?? DEFAULT_STROKE_OPACITY,
             drawWidth: 0,
             drawHeight: 0,
         }),
@@ -239,6 +240,7 @@ export const elementsConfig = {
         initialize: values => ({
             assetId: "",
             opacity: values?.opacity ?? DEFAULT_OPACITY,
+            blur: values?.blur ?? DEFAULT_BLUR,
             imageWidth: 0,
             imageHeight: 0,
         }),

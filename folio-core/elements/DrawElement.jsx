@@ -35,7 +35,7 @@ export const DrawElement = props => {
         [points.length, strokeWidth, props.strokeStyle],
     );
     return (
-        <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity}>
+        <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity} style={{filter: `blur(${props.blur}px)`}}>
             <g transform={`scale(${width/props.drawWidth} ${height/props.drawHeight})`}>
                 <path
                     data-element={props.id}

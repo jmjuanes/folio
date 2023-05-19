@@ -71,7 +71,7 @@ export const ArrowElement = props => {
         [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
     );
     return (
-        <g opacity={props.opacity}>
+        <g opacity={props.opacity} style={{filter: `blur(${props.blur}px)`}}>
             <line
                 data-element={props.id}
                 x1={props.x1}

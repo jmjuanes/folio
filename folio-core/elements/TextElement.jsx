@@ -37,6 +37,7 @@ export const TextElement = props => {
         userSelect: "none",
         wordBreak: "break-all",
         opacity: props.opacity,
+        filter: `blur(${props.blur}px)`,
     };
 
     return (
