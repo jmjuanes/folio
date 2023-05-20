@@ -1,4 +1,5 @@
 import {ELEMENTS, VERSION} from "./constants.js";
+import {FIELDS, OPACITY_DEFAULT, BLUR_DEFAULT} from "./constants.js";
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map(element => {
@@ -18,12 +19,20 @@ export const migrateElements = (elements, version) => {
                     element.drawHeight = Math.abs(element.y2 - element.y1);
                 }
             case "3":
-                // new field group
+                // new field group (DEPRECATED IN v5)
                 // edgeHandlers, cornerHandlers and nodeHandlers have been deprecated
-                element.group = element.group || null;
+                // element.group = element.group || null;
                 delete element.edgeHandlers;
                 delete element.cornerHandlers;
                 delete element.nodeHandlers;
+            case "4":
+                // deprecated group, fillOpacity and strokeOpacity fields
+                // new fields: opacity and blur
+                element[FIELDS.OPACITY] = OPACITY_DEFAULT;
+                element[FIELDS.BLUR] = BLUR_DEFAULT;
+                delete element.group;
+                delete element.fillOpacity;
+                delete element.strokeOpacity;
         }
         return element;
     });

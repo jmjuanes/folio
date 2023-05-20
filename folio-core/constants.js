@@ -1,4 +1,4 @@
-export const VERSION = "4";
+export const VERSION = "5";
 
 export const PI = Math.PI;
 export const EPSILON = 1e-6;
