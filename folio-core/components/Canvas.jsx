@@ -152,14 +152,14 @@ export const Canvas = props => {
             }
             props?.onResize?.(event);
         };
-        const handleWheel = event => {
-            event.preventDefault();
-            return props.onWheel?.(event);
-        };
+        // const handleWheel = event => {
+        //     event.preventDefault();
+        //     return props.onWheel?.(event);
+        // };
 
         // Add events listeners
         if (target) {
-            target.addEventListener(EVENTS.WHEEL, handleWheel, {passive: false});
+            // target.addEventListener(EVENTS.WHEEL, handleWheel, {passive: false});
             target.addEventListener(EVENTS.GESTURE_START, preventDefault);
             target.addEventListener(EVENTS.GESTURE_CHANGE, preventDefault);
             target.addEventListener(EVENTS.GESTURE_END, preventDefault);
@@ -173,7 +173,7 @@ export const Canvas = props => {
         handleResize(null);
         return () => {
             if (target) {
-                target.removeEventListener(EVENTS.WHEEL, handleWheel, {passive: false});
+                // target.removeEventListener(EVENTS.WHEEL, handleWheel, {passive: false});
                 target.removeEventListener(EVENTS.GESTURE_START, preventDefault);
                 target.removeEventListener(EVENTS.GESTURE_CHANGE, preventDefault);
                 target.removeEventListener(EVENTS.GESTURE_END, preventDefault);
