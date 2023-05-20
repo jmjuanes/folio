@@ -87,7 +87,7 @@ export const HistoryPanel = props => {
 };
 
 HistoryPanel.defaultProps = {
-    className: "bottom-0 left-0 pb-4 pl-4",
+    className: "",
     style: {},
     onUndoClick: null,
     onRedoClick: null,
@@ -116,7 +116,7 @@ export const ZoomPanel = props => {
 };
 
 ZoomPanel.defaultProps = {
-    className: "bottom-0 right-0 pb-4 pr-4",
+    className: "",
     style: {},
     onZoomInClick: null,
     onZoomOutClick: null,
@@ -191,7 +191,7 @@ export const ToolsPanel = props => {
 };
 
 ToolsPanel.defaultProps = {
-    className: "top-0 left-0 pt-4 pl-4", 
+    className: "", 
     style: {},
     onMoveClick: null,
     onSelectionClick: null,

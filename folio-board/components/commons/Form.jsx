@@ -64,7 +64,7 @@ const optionTypes = {
     [FORM_OPTIONS.RANGE]: props => (
         <div className="d-flex items-center gap-2">
             {props.title && (
-                <div className="text-xs w-20 flex-shrink-0">{props.title}</div>
+                <div className="text-xs w-16 flex-shrink-0">{props.title}</div>
             )}
             <div className="d-flex items-center">
                 <input

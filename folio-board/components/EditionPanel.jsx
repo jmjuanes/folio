@@ -264,7 +264,7 @@ export const EditionPanel = props => {
 
     return (
         <div className={props.className} style={props.style}>
-            <div className="bg-white z-5 b-1 b-solid b-gray-300 w-56 r-xl shadow-md overflow-y-auto scrollbar" style={{maxHeight: props.maxHeight}}>
+            <div className="bg-white b-1 b-solid b-gray-300 w-48 r-xl shadow-md overflow-y-auto scrollbar h-full maxh-full">
                 {Object.keys(allOptions).map(key => (
                     <SectionItem
                         key={key}
@@ -281,8 +281,7 @@ export const EditionPanel = props => {
 };
 
 EditionPanel.defaultProps = {
-    className: "position-absolute top-0 right-0 pt-4 pr-4",
+    className: "position-absolute z-6",
     style: {},
-    maxHeight: "100vh",
     onChange: null,
 };

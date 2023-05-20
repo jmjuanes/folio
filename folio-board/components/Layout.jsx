@@ -41,7 +41,8 @@ export const Layout = props => {
             {props.showTools && (
                 <ToolsPanel
                     style={{
-                        paddingTop: props.showHeader ? props.headerHeight : null,
+                        top: `calc(1rem + ${props.showHeader ? props.headerHeight : "0px"})`,
+                        left: "1rem",
                     }}
                     onMoveClick={() => {
                         board.setTool(null);
@@ -74,7 +75,9 @@ export const Layout = props => {
             {props.showHistory && (
                 <HistoryPanel
                     style={{
-                        paddingBottom: props.showFooter ? props.footerHeight : null,
+                        bottom: "1rem",
+                        left: "1rem",
+                        // paddingBottom: props.showFooter ? props.footerHeight : null,
                     }}
                     onUndoClick={() => {
                         board.undo();
@@ -93,7 +96,9 @@ export const Layout = props => {
             {props.showZoom && (
                 <ZoomPanel
                     style={{
-                        paddingBottom: props.showFooter ? props.footerHeight : null,
+                        bottom: "1rem",
+                        right: "14rem",
+                        // paddingBottom: props.showFooter ? props.footerHeight : null,
                     }}
                     onZoomInClick={() => {
                         board.zoomIn();
@@ -105,7 +110,11 @@ export const Layout = props => {
             )}
             {props.showEdition && (
                 <EditionPanel
-                    maxHeight={`calc(100vh - 6.5rem)`}
+                    style={{
+                        top: "1rem",
+                        right: "1rem",
+                        bottom: "1rem",
+                    }}
                     onChange={() => {
                         board.update();
                         props.onChange?.({
@@ -135,9 +144,9 @@ Layout.defaultProps = {
     showHistory: true,
     showTools: true,
     showEdition: true,
-    headerHeight: "5rem",
+    headerHeight: "4rem",
     headerContent: null,
-    footerHeight: "3em",
+    footerHeight: "2rem",
     footerContent: null,
     onChange: null,
 };
