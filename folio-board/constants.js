@@ -66,18 +66,6 @@ export const PASTE_OFFSET = 20;
 export const SELECTION_FILL_COLOR = PRIMARY;
 export const SELECTION_STROKE_COLOR = PRIMARY;
 
-// Screenshot brush constants
-export const SCREENSHOT_FILL_COLOR = SECONDARY;
-export const SCREENSHOT_STROKE_COLOR = SECONDARY;
-
 // Select bounds constants
 export const SELECT_BOUNDS_FILL_COLOR = NONE;
 export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
-
-// Group bounds constants
-export const GROUP_BOUNDS_FILL_COLOR = NONE;
-export const GROUP_BOUNDS_STROKE_COLOR = PRIMARY;
-export const GROUP_BOUNDS_STROKE_DASHARRAY = 5;
-
-// Active group bounds constants
-export const ACTIVE_GROUP_BOUNDS_STROKE_COLOR = ACCENT;

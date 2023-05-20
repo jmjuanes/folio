@@ -1,5 +1,5 @@
 import React from "react";
-import {CURSORS, EVENTS, FONT_SOURCES} from "../constants.js";
+import {CURSORS, EVENTS, FONT_SOURCES, NONE, TRANSPARENT} from "../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
@@ -225,6 +225,15 @@ export const Canvas = props => {
                         height={canvasSize[1]}
                     />
                 )}
+                {props.showBounds && props.bounds && (
+                    <Bounds
+                        position={props.bounds}
+                        zoom={props.zoom}
+                        fillColor={TRANSPARENT}
+                        strokeColor={TRANSPARENT}
+                        onPointerDown={e => handlePointerDown(e, null, null)}
+                    />
+                )}
                 <AssetsProvider value={props.assets || {}}>
                     {props.elements.map(element => {
                         const content = getElementConfig(element).render({
@@ -244,27 +253,22 @@ export const Canvas = props => {
                         );
                     })}
                 </AssetsProvider>
-                {props.showBrush && !!props.brush && (
+                {props.showBounds && props.bounds && (
+                    <Bounds
+                        position={props.bounds}
+                        fillColor={props.boundsFillColor}
+                        strokeColor={props.boundsStrokeColor}
+                        strokeDasharray={props.boundsStrokeDasharray}
+                        zoom={props.zoom}
+                    />
+                )}
+                {props.showBrush && props.brush && (
                     <Brush
                         position={props.brush}
                         fillColor={props.brushFillColor}
                         strokeColor={props.brushStrokeColor}
                         zoom={props.zoom}
                     />
-                )}
-                {props.showBounds && props.bounds?.length > 0 && (
-                    <React.Fragment>
-                        {props.bounds.map((item, index) => (
-                            <Bounds
-                                key={index}
-                                position={item}
-                                fillColor={item.fillColor}
-                                strokeColor={item.strokeColor}
-                                strokeDasharray={item.strokeDasharray}
-                                zoom={props.zoom}
-                            />
-                        ))}
-                    </React.Fragment>
                 )}
                 {props.showHandlers && props.handlers && (
                     <Handlers
@@ -300,7 +304,9 @@ Canvas.defaultProps = {
     translateX: 0,
     translateY: 0,
     zoom: 1,
-    bounds: [],
+    bounds: null,
+    boundsFillColor: NONE,
+    boundsStrokeColor: NONE,
     handlers: null,
     brush: null,
     brushFillColor: "#4184f4",

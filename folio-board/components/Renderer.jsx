@@ -1,8 +1,8 @@
 import React from "react";
 import {Canvas} from "folio-core";
 
-import {SCREENSHOT_FILL_COLOR, SCREENSHOT_STROKE_COLOR} from "../constants.js";
 import {SELECTION_FILL_COLOR, SELECTION_STROKE_COLOR} from "../constants.js";
+import {SELECT_BOUNDS_FILL_COLOR, SELECT_BOUNDS_STROKE_COLOR} from "../constants.js";
 import {ACTIONS} from "../constants.js";
 
 import {useBoard} from "../contexts/BoardContext.jsx";
@@ -20,8 +20,6 @@ export const Renderer = props => {
     const cursor = useCursor();
     const bounds = useBounds();
     const handlers = useHandlers();
-    const isSelection = board.activeAction === ACTIONS.SELECT;
-    const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
 
     return (
         <Canvas
@@ -34,14 +32,17 @@ export const Renderer = props => {
             translateY={board.translateY}
             zoom={board.zoom}
             bounds={bounds}
+            boundsFillColor={SELECT_BOUNDS_FILL_COLOR}
+            boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
+            showBounds={!!bounds}
             handlers={handlers}
             showEdgeHandlers={handlers?.showEdgeHandlers}
             showCornerHandlers={handlers?.showCornerHandlers}
             showNodeHandlers={handlers?.showNodeHandlers}
             brush={board.selection}
-            brushFillColor={isScreenshot ? SCREENSHOT_FILL_COLOR : SELECTION_FILL_COLOR}
-            brushStrokeColor={isScreenshot ? SCREENSHOT_STROKE_COLOR : SELECTION_STROKE_COLOR}
-            showBrush={isSelection || isScreenshot}
+            brushFillColor={SELECTION_FILL_COLOR}
+            brushStrokeColor={SELECTION_STROKE_COLOR}
+            showBrush={board.activeAction === ACTIONS.SELECT}
             pointer={board.erase}
             showPointer={board.activeAction === ACTIONS.ERASE}
             showGrid={board.grid}

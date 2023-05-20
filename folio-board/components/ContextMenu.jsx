@@ -1,6 +1,5 @@
 import React from "react";
 import {useBoard} from "../contexts/BoardContext.jsx";
-import {isGroupVisible, isUngroupVisible} from "../board.js";
 
 const Item = props => (
     <div className="d-flex items-center gap-2 r-md px-3 py-2 select-none bg-gray-200:hover cursor-pointer" onClick={props.onClick}>
@@ -33,28 +32,6 @@ export const ContextMenu = props => {
                                 board.update();
                             }}
                         />
-                        {isGroupVisible(board) && (
-                            <Item
-                                text="Group"
-                                onClick={() => {
-                                    board.state.contextMenuVisible = false;
-                                    board.group();
-                                    props.onChange?.(board.export);
-                                    board.update();
-                                }}
-                            />
-                        )}
-                        {isUngroupVisible(board) && (
-                            <Item
-                                text="Ungroup"
-                                onClick={() => {
-                                    board.state.contextMenuVisible = false;
-                                    board.ungroup();
-                                    props.onChange?.(board.export);
-                                    board.update();
-                                }}
-                            />
-                        )}
                         <Separator />
                     </React.Fragment>
                 )} 
