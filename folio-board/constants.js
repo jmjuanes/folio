@@ -34,7 +34,6 @@ export const THEMES = {
 export const ACTIONS = {
     MOVE: "action:move",
     SELECT: "action:select",
-    SCREENSHOT: "action:screenshot",
     CREATE: "action:create",
     TRANSLATE: "action:translate",
     RESIZE: "actionresize",

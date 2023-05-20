@@ -15,7 +15,6 @@ export const Renderer = props => {
     const board = useBoard();
     const events = useEvents({
         onChange: props.onChange,
-        onScreenshot: props.onScreenshot,
     });
     const cursor = useCursor();
     const bounds = useBounds();

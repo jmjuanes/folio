@@ -9,8 +9,8 @@ export const useCursor = () => {
     if (board.activeAction === ACTIONS.MOVE) {
         return board.currentState === STATES.DRAGGING ? CURSORS.GRABBING : CURSORS.GRAB;
     }
-    // Check for active tool or screenshot action --> cross cursor
-    else if (board.activeTool || board.activeAction === ACTIONS.SCREENSHOT || board.activeAction === ACTIONS.ERASE) {
+    // Check for active tool or erase action --> cross cursor
+    else if (board.activeTool || board.activeAction === ACTIONS.ERASE) {
         return CURSORS.CROSS;
     }
 
