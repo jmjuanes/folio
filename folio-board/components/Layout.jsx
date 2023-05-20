@@ -105,10 +105,7 @@ export const Layout = props => {
             )}
             {props.showEdition && (
                 <EditionPanel
-                    maxHeight={`calc(100vh - 5.5rem - ${props.showHeader ? props.headerHeight : "0rem"})`}
-                    style={{
-                        paddingTop: props.showHeader ? props.headerHeight : 0,
-                    }}
+                    maxHeight={`calc(100vh - 6.5rem)`}
                     onChange={() => {
                         board.update();
                         props.onChange?.({
@@ -118,18 +115,9 @@ export const Layout = props => {
                 />
             )}
             {props.showHeader && (
-                <React.Fragment>
-                    {!!props.headerLeftContent && (
-                        <div className="position-absolute top-0 left-0 pt-4 pl-4 z-7">
-                            {props.headerLeftContent}
-                        </div>
-                    )}
-                    {!!props.headerRightContent && (
-                        <div className="position-absolute top-0 right-0 pt-4 pr-4 z-7">
-                            {props.headerRightContent}
-                        </div>
-                    )}
-                </React.Fragment>
+                <div className="position-absolute top-0 left-0 pt-4 pl-4 z-7">
+                    {props.headerContent}
+                </div>
             )}
             {props.showFooter && (
                 <div className="position-absolute bottom-0 left-0 pb-4 px-4 z-7 w-full">
@@ -148,8 +136,7 @@ Layout.defaultProps = {
     showTools: true,
     showEdition: true,
     headerHeight: "5rem",
-    headerLeftContent: null,
-    headerRightContent: null,
+    headerContent: null,
     footerHeight: "3em",
     footerContent: null,
     onChange: null,

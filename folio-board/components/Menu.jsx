@@ -1,5 +1,5 @@
 import React from "react";
-import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon} from "@mochicons/react";
+import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon, ImageIcon} from "@mochicons/react";
 import {GridIcon} from "@mochicons/react";
 import {BACKGROUND_COLORS} from "folio-core";
 
@@ -31,6 +31,13 @@ export const Menu = props => {
                         onClick={props.onSave}
                     />
                 )}
+                {props.showExport && (
+                    <DropdownItem
+                        icon={(<ImageIcon />)}
+                        text="Export image..."
+                        onClick={props.onExport}
+                    />
+                )}
                 {props.showResetBoard && (
                     <DropdownItem
                         icon={(<TrashIcon />)}
@@ -41,7 +48,7 @@ export const Menu = props => {
                 {props.showSettings && (
                     <React.Fragment>
                         <DropdownSeparator />
-                        <DropdownGroup title="Board Settings" />
+                        <DropdownGroup title="Preferences" />
                         <DropdownCheckItem
                             active={board.grid}
                             icon={(<GridIcon />)}
@@ -99,8 +106,10 @@ Menu.defaultProps = {
     showSettings: true,
     showChangeBackground: true,
     showLinks: true,
+    showExport: true,
     onChange: null,
     onSave: null,
     onResetBoard: null,
     onLoad: null,
+    onExport: null,
 };

@@ -1,5 +1,4 @@
 import React from "react";
-import {ImageIcon} from "@mochicons/react";
 
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
@@ -45,7 +44,7 @@ const InnerBoard = props => {
             )}
             <Layout
                 showHeader={true}
-                headerLeftContent={(
+                headerContent={(
                     <div className="d-flex gap-2">
                         <Menu
                             links={props.links}
@@ -55,29 +54,18 @@ const InnerBoard = props => {
                             showResetBoard={props.showResetBoard}
                             showChangeBackground={props.showChangeBackground}
                             showSettings={props.showSettings}
+                            showExport={props.showExport}
                             onChange={props.onChange}
                             onSave={props.onSave}
                             onLoad={handleLoad}
                             onResetBoard={handleResetBoard}
+                            onExport={() => {
+                                if (board.elements.length > 0) {
+                                    setExportVisible(true);
+                                }
+                            }}
                         />
-                        {props.headerLeftContent}
-                    </div>
-                )}
-                headerRightContent={(
-                    <div className="d-flex gap-2">
-                        {props.headerRightContent}
-                        {props.showExport && (
-                            <SecondaryButton
-                                icon={(<ImageIcon />)}
-                                text="Export"
-                                disabled={board.elements.length === 0}
-                                onClick={() => {
-                                    if (board.elements.length > 0) {
-                                        setExportVisible(true);
-                                    }
-                                }}
-                            />
-                        )}
+                        {props.header}
                     </div>
                 )}
                 onChange={props.onChange}
@@ -112,8 +100,7 @@ export const Board = props => (
 Board.defaultProps = {
     initialData: {},
     links: [],
-    headerLeftContent: null,
-    headerRightContent: null,
+    header: null,
     onChange: null,
     onSave: null,
     onLoad: null,
