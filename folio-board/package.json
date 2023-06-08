@@ -9,7 +9,7 @@
         "browser-fs-access": "^0.33.1",
         "classnames": "^2.3.2",
         "folio-core": "0.5.0",
-        "lowcss": "^0.11.1",
+        "lowcss": "^0.12.0",
         "react": "^18.2.0",
         "uid": "^2.0.2"
     }
