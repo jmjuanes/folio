@@ -3,8 +3,8 @@ import classNames from "classnames";
 
 export const Button = props => {
     const classList = classNames(props.className, {
-        "d-flex items-center justify-center gap-2 select-none": true,
-        "p-3 r-lg": true,
+        "flex items-center justify-center gap-2 select-none": true,
+        "p-3 rounded-lg": true,
         "cursor-pointer": !props.disabled,
         "o-70 cursor-not-allowed": props.disabled,
         "w-full": props.fullWidth,
@@ -13,7 +13,7 @@ export const Button = props => {
     return (
         <div className={classList} onClick={props.onClick}>
             {!!props.icon && (
-                <div className={classNames(props.iconClassName, "d-flex items-center")} data-test="icon">
+                <div className={classNames(props.iconClassName, "flex items-center")} data-test="icon">
                     {props.icon}
                 </div>
             )}
@@ -31,7 +31,7 @@ Button.defaultProps = {
     text: "",
     textClassName: "",
     icon: null,
-    iconClassName: "text-xl",
+    iconClassName: "text-2xl",
     disabled: false,
     fullWidth: false,
     onClick: null,
@@ -39,18 +39,18 @@ Button.defaultProps = {
 
 export const PrimaryButton = props => (
     <Button
-        className="bg-gray-800 bg-gray-900:hover text-white"
+        className="bg-gray-800 hover:bg-gray-900 text-white"
         textClassName="text-sm"
-        iconClassName="text-lg"
+        iconClassName="text-xl"
         {...props}
     />
 );
 
 export const SecondaryButton = props => (
     <Button
-        className="bg-white bg-gray-100:hover b-1 b-gray-300 b-solid"
+        className="bg-white hover:bg-gray-100 border border-gray-300"
         textClassName="text-sm"
-        iconClassName="text-lg"
+        iconClassName="text-xl"
         {...props}
     />
 );

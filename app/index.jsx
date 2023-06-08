@@ -55,7 +55,7 @@ const App = props => {
     const [state, setState] = React.useState({});
     const [welcomeVisible, setWelcomeVisible] = React.useState(true);
     const classList = classNames({
-        "position-fixed top-0 left-0 h-full w-full": true,
+        "fixed top-0 left-0 h-full w-full": true,
         "bg-white text-base text-gray-700": true,
         // "blur-md": loadingVisible,
     });

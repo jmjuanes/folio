@@ -42,20 +42,20 @@ export const ExportDialog = props => {
     );
     return (
         <Modal maxWidth={props.width}>
-            <div className="d-flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8">
                 <div className="font-bold text-lg">Export image</div>
-                <div className="d-flex items-center cursor-pointer text-xl text-gray-500 text-gray-700:hover" onClick={props.onClose}>
+                <div className="flex items-center cursor-pointer text-2xl text-gray-500 hover:text-gray-700" onClick={props.onClose}>
                     <CloseIcon />
                 </div>
             </div>
-            <div className="select-none mb-4 b-1 b-solid b-gray-300">
-                <div className="d-flex items-center justify-center h-48">
+            <div className="select-none mb-4 border border-gray-300">
+                <div className="flex items-center justify-center h-48">
                     {!!preview && (
                         <img src={preview} className="maxh-48" />
                     )}
                     {!preview && (
                         <React.Fragment>
-                            <div className="d-flex text-lg text-gray-400">
+                            <div className="flex text-lg text-gray-400">
                                 <ImageIcon />
                             </div>
                             <span className="text-xs text-gray-400">Generating preview...</span>
@@ -72,7 +72,7 @@ export const ExportDialog = props => {
                     }}
                 />
             </div>
-            <div className="d-flex gap-2 w-full flex-col">
+            <div className="flex gap-2 w-full flex-col">
                 <SecondaryButton
                     text="Download PNG"
                     icon={(<DownloadIcon />)}

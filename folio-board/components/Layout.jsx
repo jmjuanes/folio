@@ -124,12 +124,12 @@ export const Layout = props => {
                 />
             )}
             {props.showHeader && (
-                <div className="position-absolute top-0 left-0 pt-4 pl-4 z-7">
+                <div className="absolute top-0 left-0 pt-4 pl-4 z-7">
                     {props.headerContent}
                 </div>
             )}
             {props.showFooter && (
-                <div className="position-absolute bottom-0 left-0 pb-4 px-4 z-7 w-full">
+                <div className="absolute bottom-0 left-0 pb-4 px-4 z-7 w-full">
                     {props.footerContent}
                 </div>
             )}

@@ -7,9 +7,9 @@ export const Welcome = props => (
     <Modal maxWidth={props.width}>
         <div className="pt-4 select-none">
             <div className="font-bold text-7xl mb-4">{props.title}</div>
-            <div className="text-dark-100 lh-relaxed">{props.description}</div>
+            <div className="text-dark-100 leading-relaxed">{props.description}</div>
         </div>
-        <div className="mt-8 d-flex flex-col gap-2">
+        <div className="mt-8 flex flex-col gap-2">
             <SecondaryButton
                 icon={(<DrawingIcon />)}
                 text="Start Drawing"

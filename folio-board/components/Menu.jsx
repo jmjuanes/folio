@@ -11,11 +11,11 @@ import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/c
 export const Menu = props => {
     const board = useBoard();
     return (
-        <div className="d-flex position-relative group" tabIndex="0">
+        <div className="flex relative group" tabIndex="0">
             <SecondaryButton
                 icon={(<BarsIcon />)}
             />
-            <Dropdown className="d-none d-block:group-focus-within top-full left-0">
+            <Dropdown className="hidden group-focus-within:block top-full left-0">
                 <DropdownGroup title="Actions" />
                 {props.showLoad && (
                     <DropdownItem

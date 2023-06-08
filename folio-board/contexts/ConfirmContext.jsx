@@ -51,10 +51,10 @@ export const ConfirmProvider = props => {
             {confirm?.visible && (
                 <Modal maxWidth={props.width}>
                     {!!confirm.title && (
-                        <div className="font-bold text-lg mb-4 lh-normal">{confirm.title}</div>
+                        <div className="font-bold text-xl mb-4 leading-normal">{confirm.title}</div>
                     )}
-                    <div className="mb-8 lh-normal">{confirm.message}</div>
-                    <div className="d-flex gap-2 w-full flex-row-reverse">
+                    <div className="mb-8 leading-normal">{confirm.message}</div>
+                    <div className="flex gap-2 w-full flex-row-reverse">
                         <PrimaryButton
                             text={props.confirmText}
                             onClick={() => {

@@ -2,7 +2,6 @@ import React from "react";
 
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
-import {SecondaryButton} from "../components/commons/index.jsx";
 import {Layout} from "../components/Layout.jsx";
 import {Renderer} from "../components/Renderer.jsx";
 import {ContextMenu} from "../components/ContextMenu.jsx";
@@ -37,7 +36,7 @@ const InnerBoard = props => {
         props.onLoad?.();
     };
     return (
-        <div className="position-relative overflow-hidden h-full w-full select-none">
+        <div className="relative overflow-hidden h-full w-full select-none">
             <Renderer onChange={props.onChange} />
             {board.state.contextMenuVisible && (
                 <ContextMenu onChange={props.onChange} />
@@ -45,7 +44,7 @@ const InnerBoard = props => {
             <Layout
                 showHeader={true}
                 headerContent={(
-                    <div className="d-flex gap-2">
+                    <div className="flex gap-2">
                         <Menu
                             links={props.links}
                             showLinks={props.showLinks}

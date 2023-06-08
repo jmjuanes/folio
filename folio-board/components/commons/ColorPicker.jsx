@@ -35,10 +35,10 @@ export const ColorPicker = props => {
     };
 
     return (
-        <div className="d-flex flex-col gap-2 w-full">
-            <div className="d-flex items-center w-full">
+        <div className="flex flex-col gap-2 w-full">
+            <div className="flex items-center w-full">
                 <div
-                    className="d-flex r-md h-8 w-8 b-1 b-solid b-gray-300 mr-1"
+                    className="flex rounded-md h-8 w-8 border border-gray-300 mr-1"
                     style={{
                         ...getStyleForColor(props.value),
                         minWidth: "2rem",
@@ -65,7 +65,7 @@ export const ColorPicker = props => {
                 <input
                     ref={inputRef}
                     type="text"
-                    className="w-full px-2 py-0 h-8 bg-white r-md outline-0 b-1 b-solid b-gray-300 text-xs"
+                    className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border border-gray-300 text-xs"
                     defaultValue={props.value}
                     style={{
                         fontFamily: "monospace",
@@ -79,8 +79,8 @@ export const ColorPicker = props => {
                 {props.collapseColorPalette && (
                     <div
                         className={classNames({
-                            "d-flex items-center px-1 py-2 r-md b-1 b-solid b-gray-300 ml-1": true,
-                            "bg-gray-200:hover cursor-pointer": !colorPaletteVisible,
+                            "flex items-center px-1 py-2 rounded-md border border-gray-300 ml-1": true,
+                            "hover:bg-gray-200 cursor-pointer": !colorPaletteVisible,
                             "bg-gray-800 text-white cursor-pointer": colorPaletteVisible,
                         })}
                         title="Expand/Collapse color palette"
@@ -91,11 +91,11 @@ export const ColorPicker = props => {
                 )}
             </div>
             {props.values?.length > 0 && (colorPaletteVisible || !props.collapseColorPalette) && (
-                <div className="d-grid gap-1 cols-6 w-full">
+                <div className="grid gap-1 grid-cols-6 w-full">
                     {props.values.map(color => (
                         <div
                             key={color}
-                            className="d-flex w-full h-6 r-sm cursor-pointer b-1 b-solid b-gray-300"
+                            className="flex w-full h-6 rounded cursor-pointer border border-gray-300"
                             style={getStyleForColor(color)}
                             onClick={() => {
                                 inputRef.current.value = color;

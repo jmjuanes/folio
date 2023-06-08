@@ -15,15 +15,15 @@ const optionTypes = {
         <ColorPicker {...props} />
     ),
     [FORM_OPTIONS.FONT]: props => (
-        <div className="d-grid cols-5 gap-1 w-full">
+        <div className="grid grid-cols-5 gap-1 w-full">
             {(props.values || []).map(font => (
                 <div
                     key={font}
                     className={classNames({
-                        "d-flex justify-center items-center": true,
-                        "r-md h-8 text-sm b-1 b-solid b-gray-300": true,
+                        "flex justify-center items-center": true,
+                        "rounded-md h-8 text-sm border border-gray-300": true,
                         "bg-gray-800 text-white": font === props.value,
-                        "bg-gray-200:hover cursor-pointer": font !== props.value,
+                        "hover:bg-gray-200 cursor-pointer": font !== props.value,
                     })}
                     style={{
                         fontFamily: font,
@@ -36,23 +36,23 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.SELECT]: props => (
-        <div className={`d-grid cols-${props.grid || "5"} gap-1 w-full`}>
+        <div className={`grid grid-cols-${props.grid || "5"} gap-1 w-full`}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
-                    "d-flex flex-col justify-center items-center": true,
-                    "r-md h-8 b-1 b-solid b-gray-300": true,
+                    "flex flex-col justify-center items-center": true,
+                    "rounded-md h-8 border border-gray-300": true,
                     "bg-gray-800 text-white": item.value === props.value,
-                    "bg-gray-200:hover cursor-pointer": item.value !== props.value,
+                    "hover:bg-gray-200 cursor-pointer": item.value !== props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
                         {!!item.icon && (
-                            <div className={classNames("d-flex items-center text-md", item.iconClass)}>
+                            <div className={classNames("flex items-center text-md", item.iconClass)}>
                                 {item.icon}
                             </div>
                         )}
                         {!!item.text && (
-                            <div className={classNames("d-flex items-center", item.textClass)}>
+                            <div className={classNames("flex items-center", item.textClass)}>
                                 <span className="font-bold text-sm">{item.text}</span>
                             </div>
                         )}
@@ -62,11 +62,11 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.RANGE]: props => (
-        <div className="d-flex items-center gap-2">
+        <div className="flex items-center gap-2">
             {props.title && (
-                <div className="text-xs w-16 flex-shrink-0">{props.title}</div>
+                <div className="text-xs w-16 shrink-0">{props.title}</div>
             )}
-            <div className="d-flex items-center">
+            <div className="flex items-center">
                 <input
                     type="range"
                     className="m-0 w-full bg-gray-300 h-1 mt-3 mb-2"
@@ -84,23 +84,23 @@ const optionTypes = {
             return props.onChange(!props.value);
         };
         return (
-            <div className="d-flex items-center justify-between select-none">
+            <div className="flex items-center justify-between select-none">
                 <div className="text-xs">{props.title}</div>
-                <div className="text-lg cursor-pointer d-flex items-center" onClick={handleClick}>
+                <div className="text-lg cursor-pointer flex items-center" onClick={handleClick}>
                     {props.value ? <CheckSquareIcon /> : <SquareIcon />}
                 </div>
             </div>
         );
     },
     [FORM_OPTIONS.PIXELS]: props => (
-        <div className="d-flex items-center justify-between select-none">
+        <div className="flex items-center justify-between select-none">
             <div className="text-xs">
                 <strong>{props.title}</strong>
             </div>
-            <div className="d-flex items-center">
+            <div className="flex items-center">
                 <input
                     type="number"
-                    className="w-full px-2 py-0 h-8 bg-white r-md outline-0 b-1 b-solid b-gray-300 text-xs"
+                    className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border border-gray-300 text-xs"
                     defaultValue={props.value}
                     min={props.minValue}
                     max={props.maxValue}
@@ -122,7 +122,7 @@ export const Option = props => (
                 {props.title}
             </div>
         )}
-        <div className="d-block">
+        <div className="block">
             {optionTypes[props.type](props)}
         </div>
         {!!props.helper && (
@@ -154,7 +154,7 @@ export const Form = props => (
 );
 
 Form.defaultProps = {
-    className: "d-flex flex-col gap-4",
+    className: "flex flex-col gap-4",
     data: {},
     items: {},
     style: {},

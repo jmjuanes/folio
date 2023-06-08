@@ -14,8 +14,8 @@ export const DropdownGroup = props => (
 
 export const DropdownItem = props => {
     const classList = classNames({
-        "d-flex items-center gap-2 r-md px-3 py-2 select-none": true,
-        "bg-gray-200:hover cursor-pointer": !props.disabled,
+        "flex items-center gap-2 rounded-md px-3 py-2 select-none": true,
+        "hover:bg-gray-200 cursor-pointer": !props.disabled,
         "o-80 cursor-not-allowed": props.disabled,
     });
     const handleClick = () => {
@@ -28,10 +28,10 @@ export const DropdownItem = props => {
     };
     return (
         <div className={classList} tabIndex="0" onClick={handleClick}>
-            <div className="d-flex text-lg items-center text-gray-700">
+            <div className="flex text-lg items-center text-gray-700">
                 {props.icon}
             </div>
-            <div className="d-flex items-center text-sm text-gray-700">
+            <div className="flex items-center text-sm text-gray-700">
                 <span>{props.text}</span>
             </div>
         </div>
@@ -47,15 +47,15 @@ DropdownItem.defaultProps = {
 
 export const DropdownLinkItem = props => {
     const classList = classNames({
-        "d-flex items-center gap-2 r-md px-3 py-2 select-none": true,
-        "bg-gray-200:hover cursor-pointer text-no-underline": true,
+        "flex items-center gap-2 rounded-md px-3 py-2 select-none": true,
+        "hover:bg-gray-200 cursor-pointer no-underline": true,
     });
     return (
         <a className={classList} href={props.url} target="_blank">
-            <div className="d-flex text-lg items-center text-gray-700">
+            <div className="flex text-lg items-center text-gray-700">
                 <ExternalLinkIcon />
             </div>
-            <div className="d-flex items-center text-sm text-gray-700">
+            <div className="flex items-center text-sm text-gray-700">
                 <span>{props.text}</span>
             </div>
         </a>
@@ -68,15 +68,15 @@ DropdownLinkItem.defaultProps = {
 };
 
 export const DropdownCheckItem = props => (
-    <div className="d-flex items-center gap-2 r-md px-3 py-2 select-none bg-gray-200:hover cursor-pointer" onClick={props.onClick}>
-        <div className="d-flex text-lg items-center text-gray-700">
+    <div className="flex items-center gap-2 rounded-md px-3 py-2 select-none hover:bg-gray-200 cursor-pointer" onClick={props.onClick}>
+        <div className="flex text-lg items-center text-gray-700">
             {props.icon}
         </div>
-        <div className="d-flex items-center text-sm text-gray-700">
+        <div className="flex items-center text-sm text-gray-700">
             <span>{props.text}</span>
         </div>
         {props.active && (
-            <div className="ml-auto d-flex items-center text-sm text-gray-800">
+            <div className="ml-auto flex items-center text-sm text-gray-800">
                 <CheckIcon />
             </div>
         )}
@@ -91,8 +91,8 @@ DropdownCheckItem.defaultProps = {
 };
 
 export const Dropdown = props => (
-    <div className={classNames(props.className, "position-absolute mt-1")}>
-        <div className="bg-white shadow-md w-56 p-3 r-lg d-flex flex-col gap-0">
+    <div className={classNames(props.className, "absolute mt-1")}>
+        <div className="bg-white shadow-md w-56 p-3 rounded-lg flex flex-col gap-0">
             {props.children}
         </div>
     </div>

@@ -184,7 +184,7 @@ const allOptions = {
 
 const TabsItem = props => {
     const classList = classNames({
-        "w-full h-full r-md text-lg d-flex items-center justify-center": true,
+        "w-full h-full rounded-md text-lg flex items-center justify-center": true,
         "bg-gray-800 text-white": props.active,
         "text-gray-800 cursor-pointer": !props.active && !props.disabled,
         "text-gray-400 cursor-not-allowed": !props.active && props.disabled,
@@ -199,29 +199,29 @@ const TabsItem = props => {
 const SectionItem = props => {
     const [collapsed, setCollapsed] = React.useState(false);
     const classList = classNames({
-        "d-flex items-center justify-between w-full p-4": true,
+        "flex items-center justify-between w-full p-4": true,
         "cursor-pointer": !props.disabled,
         "text-gray-500 cursor-not-allowed": props.disabled,
     });
     return (
         <React.Fragment>
-            <div className="d-none:first w-full h-px bg-gray-300" />
+            <div className="first:hidden w-full h-px bg-gray-300" />
             <div className={classList} onClick={() => !props.disabled && setCollapsed(!collapsed)}>
-                <div className="d-flex items-center gap-2">
-                    <div className="d-flex items-center text-lg">
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center text-lg">
                         {props.config.icon}
                     </div>
-                    <div className="text-xs d-flex items-center">
+                    <div className="text-xs flex items-center">
                         <strong>{props.config.title}</strong>
                     </div>
                 </div>
-                <div className="d-flex items-center">
+                <div className="flex items-center">
                     {collapsed ? <PlusIcon /> : <MinusIcon />}
                 </div>
             </div>
-            <div className={(collapsed || props.disabled) ? "d-none" : "px-4 pb-4"}>
+            <div className={(collapsed || props.disabled) ? "hidden" : "px-4 pb-4"}>
                 <Form
-                    className="d-flex flex-col gap-2"
+                    className="flex flex-col gap-2"
                     key={props.selection.length + (props.selection.length > 0 ? props.selection[0].id : "")}
                     data={props.values || {}}
                     items={props.config.items}
@@ -264,7 +264,7 @@ export const EditionPanel = props => {
 
     return (
         <div className={props.className} style={props.style}>
-            <div className="bg-white b-1 b-solid b-gray-300 w-48 r-xl shadow-md overflow-y-auto scrollbar h-full maxh-full">
+            <div className="bg-white border border-gray-300 w-48 rounded-xl shadow-md overflow-y-auto scrollbar h-full maxh-full">
                 {Object.keys(allOptions).map(key => (
                     <SectionItem
                         key={key}
@@ -281,7 +281,7 @@ export const EditionPanel = props => {
 };
 
 EditionPanel.defaultProps = {
-    className: "position-absolute z-6",
+    className: "absolute z-6",
     style: {},
     onChange: null,
 };

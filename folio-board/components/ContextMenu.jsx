@@ -2,8 +2,8 @@ import React from "react";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
 const Item = props => (
-    <div className="d-flex items-center gap-2 r-md px-3 py-2 select-none bg-gray-200:hover cursor-pointer" onClick={props.onClick}>
-        <div className="d-flex items-center text-xs text-gray-700">
+    <div className="flex items-center gap-2 rounded-md px-3 py-2 select-none hover:bg-gray-200 cursor-pointer" onClick={props.onClick}>
+        <div className="flex items-center text-xs text-gray-700">
             <span>{props.text}</span>
         </div>
     </div>
@@ -19,8 +19,8 @@ export const ContextMenu = props => {
     const x = board.state.contextMenuX;
     const y = board.state.contextMenuY;
     return (
-        <div className="position-absolute" style={{top: y, left: x}}>
-            <div className="bg-white shadow-md w-40 p-3 r-lg d-flex flex-col gap-0 b-1 b-gray-300 b-solid">
+        <div className="absolute" style={{top: y, left: x}}>
+            <div className="bg-white shadow-md w-40 p-3 rounded-lg flex flex-col gap-0 border border-gray-300">
                 {selectedElements.length > 0 && (
                     <React.Fragment>
                         <Item

@@ -10,10 +10,10 @@ import {HandGrabIcon, PointerIcon, RectangleIcon, ArrowIcon, TextIcon} from "./i
 import {PenIcon, ImageIcon} from "./icons/index.jsx";
 
 const Panel = props => {
-    const panelWrapperClass = classNames(props.className, "position-absolute z-5 select-none");
+    const panelWrapperClass = classNames(props.className, "absolute z-5 select-none");
     const panelContentClass = classNames({
-        "b-1 b-solid b-gray-300": true,
-        "r-lg shadow-md items-center bg-white d-flex gap-2 p-2": true,
+        "border border-gray-300": true,
+        "rounded-lg shadow-md items-center bg-white flex gap-2 p-2": true,
         "flex-col": props.direction === "col",
     });
 
@@ -34,15 +34,15 @@ Panel.defaultProps = {
 
 const PanelButton = props => {
     const classList = classNames(props.className, {
-        "d-flex flex-col w-12 justify-center items-center r-md d-flex p-2 gap-1": true,
-        "text-gray-800 bg-gray-800:hover text-white:hover cursor-pointer": !props.active && !props.disabled,
-        "is-active bg-gray-800 text-white cursor-pointer": props.active && !props.disabled,
-        "is-disabled text-gray-500 cursor-not-allowed o-60": !props.active && props.disabled,
+        "flex flex-col w-12 justify-center items-center rounded-md flex p-2 gap-1": true,
+        "text-gray-800 hover:bg-gray-800 hover:text-white cursor-pointer": !props.active && !props.disabled,
+        "bg-gray-800 text-white cursor-pointer": props.active && !props.disabled,
+        "text-gray-500 cursor-not-allowed o-60": !props.active && props.disabled,
     });
     return (
         <div className={classList} onClick={props.onClick}>
             {props.icon && (
-                <div className="text-lg d-flex items-center">
+                <div className="text-lg flex items-center">
                     {props.icon}
                 </div>
             )}
