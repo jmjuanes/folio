@@ -30,8 +30,7 @@ module.exports = {
     },
     resolve: {
         alias: {
-            "folio-core": path.resolve(__dirname, "../folio-core/index.jsx"),
-            "folio-board": path.resolve(__dirname, "../folio-board/index.jsx"),
+            folio: path.resolve(__dirname, "../src/index.jsx"),
         },
     },
     module: {
@@ -40,8 +39,7 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 include: [
                     __dirname,
-                    path.resolve(__dirname, "../folio-board"),
-                    path.resolve(__dirname, "../folio-core"),
+                    path.resolve(__dirname, "../src"),
                 ],
                 exclude: /(node_modules|bower_components)/,
                 loader: "babel-loader",
