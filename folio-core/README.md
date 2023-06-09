@@ -1,2 +1,0 @@
-# folio-core
-
