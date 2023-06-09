@@ -2,9 +2,9 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import classNames from "classnames";
 import * as idb from "idb-keyval";
-import {VERSION} from "folio-core";
-import {migrate, loadFromJson, saveAsJson} from "folio-core";
-import {Board} from "folio-board";
+import {VERSION} from "folio";
+import {migrate, loadFromJson, saveAsJson} from "folio";
+import {Board} from "folio";
 
 // Store keys for IDB
 const STORE_KEYS = {
