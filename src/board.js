@@ -1,6 +1,7 @@
 import {uid} from "uid/secure";
 import {
     BACKGROUND_COLORS,
+    CHANGES,
     ELEMENTS,
     GRID_SIZE,
     ZOOM_DEFAULT,
@@ -21,9 +22,10 @@ import {
     TEXT_BOX_MIN_WIDTH,
     DEFAULT_OPACITY,
     DEFAULT_BLUR,
-} from "folio-core";
-import {getElementConfig, getRectangleBounds} from "folio-core";
-import {CHANGES, STATES, PASTE_OFFSET} from "./constants.js";
+    STATES,
+    PASTE_OFFSET,
+} from "./constants.js";
+import {getElementConfig, getRectangleBounds} from "./elements/index.jsx";
 import {loadImage} from "./utils/image.js";
 import {getTextFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
 import {getTextFromClipboardItem, getBlobFromClipboardItem} from "./utils/clipboard.js";

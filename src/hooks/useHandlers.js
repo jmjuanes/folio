@@ -1,5 +1,5 @@
-import {getElementConfig} from "folio-core";
 import {ACTIONS} from "../constants.js";
+import {getElementConfig} from "../elements/index.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
 export const useHandlers = () => {

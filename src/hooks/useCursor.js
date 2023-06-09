@@ -1,5 +1,4 @@
-import {CURSORS} from "folio-core";
-import {ACTIONS, STATES} from "../constants.js";
+import {ACTIONS, STATES, CURSORS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
 export const useCursor = () => {

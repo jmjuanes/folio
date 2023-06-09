@@ -1,4 +1,4 @@
-import {getRectangleBounds} from "folio-core";
+import {getRectangleBounds} from "../math.js";
 import {ACTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
