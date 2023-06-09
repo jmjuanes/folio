@@ -30,7 +30,7 @@ import {DrawElement} from "./DrawElement.jsx";
 import {TextElement} from "./TextElement.jsx";
 import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
-import {measureText} from "../math.js";
+import {measureText} from "../utils/math.js";
 
 const isCornerHandler = handler => {
     return handler.startsWith("corner");

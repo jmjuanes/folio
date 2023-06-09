@@ -1,7 +1,7 @@
 import {fileSave} from "browser-fs-access";
 import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING} from "./constants.js";
 import {FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
-import {getRectangleBounds} from "./math.js";
+import {getRectangleBounds} from "./utils/math.js";
 
 // Convert a blob to file
 const blobToFile = (blob, filename) => {

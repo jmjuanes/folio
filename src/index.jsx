@@ -17,7 +17,7 @@ export * from "./json.js";
 export * from "./migrate.js";
 
 // Export math utilities
-export * from "./math.js";
+export * from "./utils/math.js";
 
 // Export components
 export * from "./elements/index.jsx";

@@ -1,4 +1,4 @@
-import {getRectangleBounds} from "../math.js";
+import {getRectangleBounds} from "../utils/math.js";
 import {ACTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 

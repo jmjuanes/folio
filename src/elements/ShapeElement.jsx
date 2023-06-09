@@ -1,6 +1,6 @@
 import React from "react";
 import {STROKES, SHAPES, COLORS} from "../constants.js";
-import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../math.js";
+import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
 
 // Simple line for shapes
 const SimpleLine = props => {

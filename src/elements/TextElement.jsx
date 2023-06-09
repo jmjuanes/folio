@@ -1,5 +1,5 @@
 import React from "react";
-import {measureText} from "../math.js";
+import {measureText} from "../utils/math.js";
 import {COLORS, FONT_FACES, GRID_SIZE, TEXT_ALIGNS} from "../constants.js";
 
 const stopEventPropagation = event => {

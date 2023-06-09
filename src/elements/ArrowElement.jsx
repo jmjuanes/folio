@@ -1,6 +1,6 @@
 import React from "react";
 import {STROKES, ARROWHEADS, COLORS} from "../constants.js";
-import {getBalancedDash, getPointsDistance} from "../math.js";
+import {getBalancedDash, getPointsDistance} from "../utils/math.js";
 
 const Arrowhead = props => {
     const size = props.strokeWidth * 2 + 4;

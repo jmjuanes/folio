@@ -26,7 +26,7 @@ import {
     PASTE_OFFSET,
 } from "./constants.js";
 import {getElementConfig} from "./elements/index.jsx";
-import {getRectangleBounds} from "./math.js";
+import {getRectangleBounds} from "./utils/math.js";
 import {loadImage} from "./utils/image.js";
 import {getTextFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
 import {getTextFromClipboardItem, getBlobFromClipboardItem} from "./utils/clipboard.js";

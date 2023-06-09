@@ -10,7 +10,7 @@ import {
     STATES,
 } from "../constants.js";
 import {getElementConfig} from "../elements/index.jsx";
-import {normalizeBounds} from "../math.js";
+import {normalizeBounds} from "../utils/math.js";
 import {isInputTarget} from "../utils/events.js";
 import {isArrowKey} from "../utils/keys.js";
 import {useBoard} from "../contexts/BoardContext.jsx";

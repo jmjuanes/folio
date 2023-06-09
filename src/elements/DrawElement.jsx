@@ -1,6 +1,6 @@
 import React from "react";
 import {COLORS, STROKES} from "../constants.js";
-import {getPointsCenter, getBalancedDash, getPointsDistance} from "../math.js";
+import {getPointsCenter, getBalancedDash, getPointsDistance} from "../utils/math.js";
 
 const getPath = points => {
     let lastPoint = points[0];
