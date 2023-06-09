@@ -1,5 +1,5 @@
 import React from "react";
-import {WHITE, BLACK} from "../constants";
+import {WHITE, BLACK} from "../constants.js";
 
 export const Pointer = props => (
     <ellipse

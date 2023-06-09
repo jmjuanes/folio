@@ -1,12 +1,13 @@
 import React from "react";
 import {BarsIcon, DownloadIcon, FolderIcon, TrashIcon, ImageIcon} from "@mochicons/react";
 import {GridIcon} from "@mochicons/react";
-import {BACKGROUND_COLORS} from "folio-core";
 
+import {BACKGROUND_COLORS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
-import {SecondaryButton, ColorPicker} from "../components/commons/index.jsx";
-import {Dropdown, DropdownSeparator, DropdownGroup} from "../components/commons/index.jsx";
-import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "../components/commons/index.jsx";
+import {SecondaryButton} from "./Button.jsx";
+import {ColorPicker} from "./ColorPicker.jsx";
+import {Dropdown, DropdownSeparator, DropdownGroup} from "./Dropdown.jsx";
+import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "./Dropdown.jsx";
 
 export const Menu = props => {
     const board = useBoard();

@@ -3,27 +3,20 @@ import classNames from "classnames";
 import {SunIcon, ShapesIcon, PlusIcon, MinusIcon} from "@mochicons/react";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "@mochicons/react";
 
-import {COLORS, FIELDS} from "folio-core";
-import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "folio-core";
-import {STROKES, STROKE_WIDTHS} from "folio-core";
-import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "folio-core";
-import {BLUR_MAX, BLUR_MIN, BLUR_STEP} from "folio-core";
-import {SHAPES} from "folio-core";
-import {ARROWHEADS} from "folio-core";
-
+import {COLORS, FIELDS} from "../constants.js";
+import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
+import {STROKES, STROKE_WIDTHS} from "../constants.js";
+import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
+import {BLUR_MAX, BLUR_MIN, BLUR_STEP} from "../constants.js";
+import {SHAPES} from "../constants.js";
+import {ARROWHEADS} from "../constants.js";
+import {FORM_OPTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
-import {Form} from "./commons/Form.jsx";
-import {CircleSolidIcon, CircleDashedIcon, CircleDottedIcon} from "./icons/index.jsx";
-import {RectangleIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./icons/index.jsx";
-import {
-    ArrowheadNoneIcon,
-    ArrowheadArrowIcon,
-    ArrowheadTriangleIcon,
-    ArrowheadSquareIcon,
-    ArrowheadCircleIcon,
-} from "./icons/index.jsx";
-import {FillIcon, StrokeIcon, TextIcon} from "./icons/index.jsx";
-import { FORM_OPTIONS } from "../constants.js";
+import {Form} from "./Form.jsx";
+import {CircleSolidIcon, CircleDashedIcon, CircleDottedIcon} from "./Icons.jsx";
+import {RectangleIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
+import {ArrowheadNoneIcon, ArrowheadArrowIcon, ArrowheadTriangleIcon, ArrowheadSquareIcon, ArrowheadCircleIcon} from "./Icons.jsx";
+import {FillIcon, StrokeIcon, TextIcon} from "./Icons.jsx";
 
 // Available tabs
 const SECTIONS = {

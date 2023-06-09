@@ -1,7 +1,8 @@
 import React from "react";
 import {DrawingIcon, FolderIcon} from "@mochicons/react";
-import {Modal} from "./commons/Modal.jsx";
-import {SecondaryButton} from "./commons/Button.jsx";
+
+import {Modal} from "./Modal.jsx";
+import {SecondaryButton} from "./Button.jsx";
 
 export const Welcome = props => (
     <Modal maxWidth={props.width}>

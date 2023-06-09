@@ -1,5 +1,4 @@
 import React from "react";
-import {Canvas} from "folio-core";
 
 import {SELECTION_FILL_COLOR, SELECTION_STROKE_COLOR} from "../constants.js";
 import {SELECT_BOUNDS_FILL_COLOR, SELECT_BOUNDS_STROKE_COLOR} from "../constants.js";
@@ -10,6 +9,7 @@ import {useEvents} from "../hooks/useEvents.js";
 import {useCursor} from "../hooks/useCursor.js";
 import {useBounds} from "../hooks/useBounds.js";
 import {useHandlers} from "../hooks/useHandlers.js";
+import {Canvas} from "./Canvas.jsx";
 
 export const Renderer = props => {
     const board = useBoard();

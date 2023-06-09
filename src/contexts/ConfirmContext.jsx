@@ -1,7 +1,7 @@
 import React from "react";
-import {CloseIcon, CheckIcon} from "@mochicons/react";
-import {Modal} from "../components/commons/Modal.jsx";
-import {PrimaryButton, SecondaryButton} from "../components/commons/Button.jsx";
+
+import {Modal} from "../components/Modal.jsx";
+import {PrimaryButton, SecondaryButton} from "../components/Button.jsx";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
