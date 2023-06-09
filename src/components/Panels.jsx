@@ -1,13 +1,13 @@
 import React from "react";
 import classNames from "classnames";
-import {EraseIcon, LockIcon, UnlockIcon} from "@mochicons/react";
 
 import {ELEMENTS, ZOOM_MIN, ZOOM_MAX, ACTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {UndoIcon, RedoIcon} from "./Icons.jsx";
 import {ZoomInIcon, ZoomOutIcon} from "./Icons.jsx";
-import {HandGrabIcon, PointerIcon, RectangleIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
+import {HandGrabIcon, PointerIcon, SquareIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
 import {PenIcon, ImageIcon} from "./Icons.jsx";
+import {EraseIcon, LockIcon, UnlockIcon} from "./Icons.jsx";
 
 const Panel = props => {
     const panelWrapperClass = classNames(props.className, "absolute z-5 select-none");
@@ -151,7 +151,7 @@ export const ToolsPanel = props => {
             {/* Available tools */}
             <PanelButton
                 text="Shape"
-                icon={(<RectangleIcon />)}
+                icon={(<SquareIcon />)}
                 active={board.activeTool === ELEMENTS.SHAPE}
                 onClick={() => props.onToolClick(ELEMENTS.SHAPE)}
             />

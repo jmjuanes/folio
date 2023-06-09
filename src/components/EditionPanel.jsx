@@ -1,7 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-import {SunIcon, ShapesIcon, PlusIcon, MinusIcon} from "@mochicons/react";
-import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "@mochicons/react";
 
 import {COLORS, FIELDS} from "../constants.js";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
@@ -14,9 +12,12 @@ import {FORM_OPTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {Form} from "./Form.jsx";
 import {CircleSolidIcon, CircleDashedIcon, CircleDottedIcon} from "./Icons.jsx";
-import {RectangleIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
+import {SquareIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
 import {ArrowheadNoneIcon, ArrowheadArrowIcon, ArrowheadTriangleIcon, ArrowheadSquareIcon, ArrowheadCircleIcon} from "./Icons.jsx";
 import {FillIcon, StrokeIcon, TextIcon} from "./Icons.jsx";
+import {SunIcon, ShapesIcon, PlusIcon, MinusIcon} from "./Icons.jsx";
+import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "./Icons.jsx";
+
 
 // Available tabs
 const SECTIONS = {
@@ -144,7 +145,7 @@ const allOptions = {
                 type: FORM_OPTIONS.SELECT,
                 title: "Shape",
                 values: [
-                    {value: SHAPES.RECTANGLE, icon: RectangleIcon()},
+                    {value: SHAPES.RECTANGLE, icon: SquareIcon()},
                     {value: SHAPES.ELLIPSE, icon: CircleIcon()},
                     {value: SHAPES.DIAMOND, icon: DiamondIcon()},
                     {value: SHAPES.TRIANGLE, icon: TriangleIcon()},

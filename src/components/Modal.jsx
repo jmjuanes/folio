@@ -1,5 +1,5 @@
 import React from "react";
-import {CloseIcon} from "@mochicons/react";
+import {CloseIcon} from "./Icons.jsx";
 
 export const Modal = props => (
     <React.Fragment>

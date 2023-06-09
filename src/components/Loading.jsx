@@ -1,5 +1,5 @@
 import React from "react";
-import {DrawingIcon} from "@mochicons/react";
+import {DrawingIcon} from "./Icons.jsx";
 
 export const Loading = () => (
     <div className="fixed w-full h-full top-0 left-0 z-10">

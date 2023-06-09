@@ -1,9 +1,9 @@
 import React from "react";
-import {SquareIcon, CheckSquareIcon} from "@mochicons/react";
 import classNames from "classnames";
 
 import {FORM_OPTIONS} from "../constants.js";
 import {ColorPicker} from "./ColorPicker.jsx";
+import {SquareIcon, CheckSquareIcon} from "./Icons.jsx";
 
 const optionsWithInlineTitle = new Set([
     FORM_OPTIONS.CHECKBOX,

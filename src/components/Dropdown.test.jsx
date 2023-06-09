@@ -1,11 +1,6 @@
 import {create} from "react-test-renderer";
 import {Dropdown, DropdownItem} from "./Dropdown.jsx";
 
-jest.mock("@mochicons/react", () => ({
-    CheckIcon: () => null,
-    ExternalLinkIcon: () => null,
-}));
-
 describe("Dropdown", () => {
     it("should render", () => {
         const testRenderer = create((

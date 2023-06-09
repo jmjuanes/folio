@@ -1,11 +1,11 @@
 import React from "react";
-import {ImageIcon, CloseIcon, DownloadIcon, ClipboardIcon} from "@mochicons/react";
 
 import {EXPORT_FORMATS, EXPORT_PADDING} from "../constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../export.js";
 import {Modal} from "./Modal.jsx";
 import {SecondaryButton} from "./Button.jsx";
 import {Form} from "./Form.jsx";
+import {ImageIcon, CloseIcon, DownloadIcon, ClipboardIcon} from "./Icons.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
 const formOptions = {

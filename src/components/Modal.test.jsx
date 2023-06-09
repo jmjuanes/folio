@@ -1,10 +1,6 @@
 import {create} from "react-test-renderer";
 import {Modal} from "./Modal.jsx";
 
-jest.mock("@mochicons/react", () => ({
-    CloseIcon: () => null,
-}));
-
 describe("Modal", () => {
     it("should render", () => {
         const testRenderer = create(<Modal>Content</Modal>);
