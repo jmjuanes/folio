@@ -8,9 +8,7 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
-        "app",
-        "folio-board",
-        "folio-core"
+        "app"
     ],
     "scripts": {
         "build:app": "yarn workspace folio-app build",
@@ -18,6 +16,13 @@
         "dev:app": "yarn workspace folio-app dev",
         "clean": "rm -rf ./www",
         "test": "jest"
+    },
+    "dependencies": {
+        "browser-fs-access": "^0.33.1",
+        "classnames": "^2.3.2",
+        "lowcss": "^0.12.0",
+        "react": "^18.2.0",
+        "uid": "^2.0.2"
     },
     "devDependencies": {
         "@babel/core": "^7.18.0",
