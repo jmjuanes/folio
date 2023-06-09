@@ -11,9 +11,10 @@
         "app"
     ],
     "scripts": {
-        "build:app": "yarn workspace folio-app build",
-        "dev": "yarn run dev:app",
-        "dev:app": "yarn workspace folio-app dev",
+        "build": "yarn build:app",
+        "build:app": "yarn workspace app build",
+        "serve": "yarn run start:app",
+        "start:app": "yarn workspace app serve",
         "clean": "rm -rf ./www",
         "test": "jest"
     },

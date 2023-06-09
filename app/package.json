@@ -1,11 +1,11 @@
 {
-    "name": "folio-app",
+    "name": "app",
     "version": "0.5.0",
     "private": true,
     "main": "index.jsx",
     "scripts": {
         "build": "cross-env NODE_ENV=production webpack build",
-        "dev": "webpack serve",
+        "serve": "webpack serve",
         "clean": "rm -rf ./www"
     },
     "dependencies": {
