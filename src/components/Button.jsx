@@ -11,7 +11,7 @@ export const Button = props => {
     });
 
     return (
-        <div className={classList} onClick={props.onClick}>
+        <div className={classList} onClick={props.onClick} style={props.style}>
             {!!props.icon && (
                 <div className={classNames(props.iconClassName, "flex items-center")} data-test="icon">
                     {props.icon}
@@ -34,6 +34,7 @@ Button.defaultProps = {
     iconClassName: "text-2xl",
     disabled: false,
     fullWidth: false,
+    style: null,
     onClick: null,
 };
 
