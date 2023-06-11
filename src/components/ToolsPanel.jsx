@@ -13,7 +13,7 @@ const Panel = props => {
     const panelWrapperClass = classNames(props.className, "absolute z-5 select-none");
     const panelContentClass = classNames({
         "border border-gray-300": true,
-        "rounded-lg shadow-md items-center bg-white flex gap-2 p-2": true,
+        "rounded-xl shadow-md items-center bg-white flex gap-2 p-2": true,
         "flex-col": props.direction === "col",
     });
 
@@ -34,7 +34,7 @@ Panel.defaultProps = {
 
 const PanelButton = props => {
     const classList = classNames(props.className, {
-        "flex flex-col w-12 justify-center items-center rounded-md flex p-2 gap-1": true,
+        "flex flex-col justify-center items-center flex px-4 py-2 gap-1": true,
         "text-gray-800 hover:bg-gray-800 hover:text-white cursor-pointer": !props.active && !props.disabled,
         "bg-gray-800 text-white cursor-pointer": props.active && !props.disabled,
         "text-gray-500 cursor-not-allowed o-60": !props.active && props.disabled,
@@ -42,7 +42,7 @@ const PanelButton = props => {
     return (
         <div className={classList} onClick={props.onClick}>
             {props.icon && (
-                <div className="text-lg flex items-center">
+                <div className="text-xl flex items-center">
                     {props.icon}
                 </div>
             )}
@@ -56,7 +56,7 @@ const PanelButton = props => {
 };
 
 PanelButton.defaultProps = {
-    className: "",
+    className: "rounded-lg",
     text: null,
     icon: null,
     active: false,
@@ -64,71 +64,16 @@ PanelButton.defaultProps = {
 };
 
 const PanelSeparator = () => (
-    <div className="bg-gray-300 w-12 h-px" />
+    <div className="bg-gray-300 w-px h-12" />
 );
-
-// History panel component
-export const HistoryPanel = props => {
-    const board = useBoard();
-    return (
-        <Panel className={props.className} style={props.style}>
-            <PanelButton
-                icon={(<UndoIcon />)}
-                disabled={board.isUndoDisabled()}
-                onClick={props.onUndoClick}
-            />
-            <PanelButton
-                icon={(<RedoIcon />)}
-                disabled={board.isRedoDisabled()}
-                onClick={props.onRedoClick}
-            />
-        </Panel>
-    );
-};
-
-HistoryPanel.defaultProps = {
-    className: "",
-    style: {},
-    onUndoClick: null,
-    onRedoClick: null,
-};
-
-// Zooming panel component
-export const ZoomPanel = props => {
-    const board = useBoard();
-    return (
-        <Panel className={props.className} style={props.style}>
-            <PanelButton
-                icon={(<ZoomOutIcon />)}
-                disabled={board.zoom <= ZOOM_MIN}
-                onClick={props.onZoomOutClick}
-            />
-            <div className="text-xs o-80 text-center w-16 select-none">
-                {(board.zoom * 100).toFixed(0)}%
-            </div>
-            <PanelButton
-                icon={(<ZoomInIcon />)}
-                disabled={ZOOM_MAX <= board.zoom}
-                onClick={props.onZoomInClick}
-            />
-        </Panel>
-    );
-};
-
-ZoomPanel.defaultProps = {
-    className: "",
-    style: {},
-    onZoomInClick: null,
-    onZoomOutClick: null,
-};
 
 // Tools Panel component
 export const ToolsPanel = props => {
     const board = useBoard();
     return (
-        <Panel direction="col" className={props.className} style={props.style}>
+        <Panel direction="row" className={props.className} style={props.style}>
             <PanelButton
-                className="w-full"
+                className="w-8 rounded-full"
                 icon={(board.lockTool ? <LockIcon /> : <UnlockIcon />)}
                 active={board.lockTool}
                 onClick={props.onLockToolClick}
