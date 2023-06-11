@@ -177,9 +177,9 @@ export const ImageIcon = () => (
 );
 
 export const LockIcon = () => (
-    <Svg title="Lock">
+    <SvgIcon title="Lock">
         <path d="M9 11L9 6C9 6 9 3 12 3C15 3 15 6 15 6L15 11M8 11C5 11 5 14 5 14L5 18C5 18 5 21 8 21L16 21C19 21 19 18 19 18L19 14C19 14 19 11 16 11L8 11ZM12 17L12 16" />
-    </Svg>
+    </SvgIcon>
 );
 
 export const MenuIcon = () => (
