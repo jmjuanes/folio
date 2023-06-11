@@ -43,8 +43,8 @@ const InnerBoard = props => {
             )}
             <Layout
                 showHeader={true}
-                headerContent={(
-                    <div className="flex gap-2">
+                headerLeftContent={(
+                    <React.Fragment>
                         <Menu
                             links={props.links}
                             showLinks={props.showLinks}
@@ -64,8 +64,13 @@ const InnerBoard = props => {
                                 }
                             }}
                         />
-                        {props.header}
-                    </div>
+                        {props.headerLeftContent}
+                    </React.Fragment>
+                )}
+                headerRightContent={(
+                    <React.Fragment>
+                        {props.headerRightContent}
+                    </React.Fragment>
                 )}
                 onChange={props.onChange}
             />
@@ -99,7 +104,8 @@ export const Board = props => (
 Board.defaultProps = {
     initialData: {},
     links: [],
-    header: null,
+    headerLeftContent: null,
+    headerRightContent: null,
     onChange: null,
     onSave: null,
     onLoad: null,
