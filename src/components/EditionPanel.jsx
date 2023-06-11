@@ -1,11 +1,9 @@
 import React from "react";
-import classNames from "classnames";
 
 import {COLORS, FIELDS} from "../constants.js";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
 import {STROKES, STROKE_WIDTHS} from "../constants.js";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
-import {BLUR_MAX, BLUR_MIN, BLUR_STEP} from "../constants.js";
 import {SHAPES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
 import {FORM_OPTIONS} from "../constants.js";
@@ -14,12 +12,12 @@ import {Form} from "./Form.jsx";
 import {CircleSolidIcon, CircleDashedIcon, CircleDottedIcon} from "./Icons.jsx";
 import {SquareIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
 import {ArrowheadNoneIcon, ArrowheadArrowIcon, ArrowheadTriangleIcon, ArrowheadSquareIcon, ArrowheadCircleIcon} from "./Icons.jsx";
-import {FillIcon, StrokeIcon, TextIcon} from "./Icons.jsx";
-import {SunIcon, ShapesIcon, PlusIcon, MinusIcon} from "./Icons.jsx";
+// import {FillIcon, StrokeIcon, TextIcon} from "./Icons.jsx";
+// import {SunIcon, ShapesIcon, PlusIcon, MinusIcon} from "./Icons.jsx";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "./Icons.jsx";
+import {elementsConfig} from "../elements/index.jsx";
 
-
-// Available tabs
+// Available sections
 const SECTIONS = {
     FILL: "fill",
     STROKE: "stroke",
@@ -41,7 +39,7 @@ const arrowheadValues = [
 const allOptions = {
     [SECTIONS.FILL]: {
         title: "Fill",
-        icon: (<FillIcon />),
+        // icon: (<FillIcon />),
         test: FIELDS.FILL_COLOR,
         items: {
             fillColor: {
@@ -53,7 +51,7 @@ const allOptions = {
     },
     [SECTIONS.STROKE]: {
         title: "Stroke",
-        icon: (<StrokeIcon />),
+        // icon: (<StrokeIcon />),
         test: FIELDS.STROKE_COLOR,
         items: {
             strokeColor: {
@@ -84,7 +82,7 @@ const allOptions = {
     },
     [SECTIONS.TEXT]: {
         title: "Text",
-        icon: (<TextIcon />),
+        // icon: (<TextIcon />),
         test: FIELDS.TEXT_COLOR,
         items: {
             textColor: {
@@ -122,7 +120,7 @@ const allOptions = {
     [SECTIONS.ARROWHEADS]: {
         title: "Arrowhead",
         test: FIELDS.START_ARROWHEAD,
-        icon: (<ArrowheadArrowIcon />),
+        // icon: (<ArrowheadArrowIcon />),
         items: {
             [FIELDS.START_ARROWHEAD]: {
                 type: FORM_OPTIONS.SELECT,
@@ -139,7 +137,7 @@ const allOptions = {
     [SECTIONS.SHAPE]: {
         title: "Shape",
         test: FIELDS.SHAPE,
-        icon: (<ShapesIcon />),
+        // icon: (<ShapesIcon />),
         items: {
             [FIELDS.SHAPE]: {
                 type: FORM_OPTIONS.SELECT,
@@ -155,7 +153,7 @@ const allOptions = {
     },
     [SECTIONS.EFFECTS]: {
         title: "Effects",
-        icon: (<SunIcon />),
+        // icon: (<SunIcon />),
         test: FIELDS.OPACITY,
         items: {
             [FIELDS.OPACITY]: {
@@ -165,87 +163,42 @@ const allOptions = {
                 maxValue: OPACITY_MAX,
                 step: OPACITY_STEP,
             },
-            [FIELDS.BLUR]: {
-                type: FORM_OPTIONS.RANGE,
-                title: "Blur",
-                minValue: BLUR_MIN,
-                maxValue: BLUR_MAX,
-                step: BLUR_STEP,
-            },
         },
     },
 };
 
-const TabsItem = props => {
-    const classList = classNames({
-        "w-full h-full rounded-md text-lg flex items-center justify-center": true,
-        "bg-gray-800 text-white": props.active,
-        "text-gray-800 cursor-pointer": !props.active && !props.disabled,
-        "text-gray-400 cursor-not-allowed": !props.active && props.disabled,
-    });
-    return (
-        <div className={classList} onClick={!props.disabled ? props.onClick : null}>
-            {props.icon}
-        </div>
-    );
-};
-
-const SectionItem = props => {
-    const [collapsed, setCollapsed] = React.useState(false);
-    const classList = classNames({
-        "flex items-center justify-between w-full p-4": true,
-        "cursor-pointer": !props.disabled,
-        "text-gray-500 cursor-not-allowed": props.disabled,
-    });
-    return (
-        <React.Fragment>
-            <div className="first:hidden w-full h-px bg-gray-300" />
-            <div className={classList} onClick={() => !props.disabled && setCollapsed(!collapsed)}>
-                <div className="flex items-center gap-2">
-                    <div className="flex items-center text-lg">
-                        {props.config.icon}
-                    </div>
-                    <div className="text-xs flex items-center">
-                        <strong>{props.config.title}</strong>
-                    </div>
-                </div>
-                <div className="flex items-center">
-                    {collapsed ? <PlusIcon /> : <MinusIcon />}
-                </div>
-            </div>
-            <div className={(collapsed || props.disabled) ? "hidden" : "px-4 pb-4"}>
-                <Form
-                    className="flex flex-col gap-2"
-                    key={props.selection.length + (props.selection.length > 0 ? props.selection[0].id : "")}
-                    data={props.values || {}}
-                    items={props.config.items}
-                    onChange={props.onChange}
-                />
-            </div>
-        </React.Fragment>
-    );
-};
-
 export const EditionPanel = props => {
     const board = useBoard();
-    // const [activeTab, setActiveTab] = React.useState(SECTIONS.FILL);
     const selection = board.getSelectedElements();
-    // TODO: we would need to compute common values for all elements in selection
-    const values = selection.length === 1 ? selection[0] : (board.defaults || {});
+    const values = React.useMemo(
+        () => {
+            // Check for active tool enabled
+            // Generate initial default values for this element type
+            if (board.activeTool && elementsConfig[board.activeTool]) {
+                return elementsConfig[board.activeTool].initialize(board.defaults);
+            }
+            // Check if we have only one selected item
+            if (selection.length === 1) {
+                return selection[0];
+            }
+            // Compute values from selection
+            return selection.reduce((prevValues, item) => {
+                return {...prevValues, ...item};
+            }, {});
+        },
+        [selection.length, selection?.[0]?.id, board.activeTool],
+    );
     const keys = Object.keys(values);
-
-    // Get the visible options in the dialog
     const visibleOptions = React.useMemo(
         () => {
             // If no keys are available, we will display all availabe options in this category
             if (keys.length === 0) {
-                return new Set(Object.keys(allOptions));
+                return Object.keys(allOptions);
             }
             // Filter options
-            const visibleKeys = Object.keys(allOptions).filter(option => {
+            return Object.keys(allOptions).filter(option => {
                 return typeof values[allOptions[option].test] !== "undefined";
             });
-            return new Set(visibleKeys);
         },
         [keys.length],
     );
@@ -258,16 +211,20 @@ export const EditionPanel = props => {
 
     return (
         <div className={props.className} style={props.style}>
-            <div className="bg-white border border-gray-300 w-48 rounded-xl shadow-md overflow-y-auto scrollbar h-full maxh-full">
-                {Object.keys(allOptions).map(key => (
-                    <SectionItem
-                        key={key}
-                        values={values}
-                        config={allOptions[key]}
-                        disabled={!visibleOptions.has(key)}
-                        selection={selection}
-                        onChange={handleChange}
-                    />
+            <div className="bg-white border border-gray-300 w-48 rounded-xl shadow-md overflow-y-auto scrollbar maxh-full">
+                {visibleOptions.map(key => (
+                    <React.Fragment key={key}>
+                        <div className="first:hidden w-full h-px bg-gray-300" />
+                        <div className="p-4">
+                            <Form
+                                className="flex flex-col gap-2"
+                                key={selection.length + (selection.length > 0 ? selection[0].id : "")}
+                                data={values || {}}
+                                items={allOptions[key].items}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </React.Fragment>
                 ))}
             </div>
         </div>
