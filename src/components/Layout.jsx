@@ -2,13 +2,16 @@ import React from "react";
 import {fileOpen} from "browser-fs-access";
 
 import {ELEMENTS, FILE_EXTENSIONS, ACTIONS} from "../constants.js";
-import {HistoryPanel, ZoomPanel, ToolsPanel} from "./Panels.jsx";
+import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../utils/blob.js";
+import {Zooming} from "./Zooming.jsx";
+import {History} from "./History.jsx";
 
 export const Layout = props => {
     const board = useBoard();
+    const selectedElements = board.getSelectedElements();
     const handleImageLoad = () => {
         const options = {
             description: "Folio Board",
@@ -40,8 +43,10 @@ export const Layout = props => {
             {props.showTools && (
                 <ToolsPanel
                     style={{
-                        top: `calc(1rem + ${props.showHeader ? props.headerHeight : "0px"})`,
-                        left: "1rem",
+                        // top: `calc(1rem + ${props.showHeader ? props.headerHeight : "0px"})`,
+                        bottom: "1rem",
+                        left: "50%",
+                        transform: "translateX(-50%)",
                     }}
                     onMoveClick={() => {
                         board.setTool(null);
@@ -71,48 +76,12 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {props.showHistory && (
-                <HistoryPanel
-                    style={{
-                        bottom: "1rem",
-                        left: "1rem",
-                        // paddingBottom: props.showFooter ? props.footerHeight : null,
-                    }}
-                    onUndoClick={() => {
-                        board.undo();
-                        props.onChange?.({
-                            elements: board.elements,
-                        });
-                    }}
-                    onRedoClick={() => {
-                        board.redo();
-                        props.onChange?.({
-                            elements: board.elements,
-                        });
-                    }}
-                />
-            )}
-            {props.showZoom && (
-                <ZoomPanel
-                    style={{
-                        bottom: "1rem",
-                        right: "14rem",
-                        // paddingBottom: props.showFooter ? props.footerHeight : null,
-                    }}
-                    onZoomInClick={() => {
-                        board.zoomIn();
-                    }}
-                    onZoomOutClick={() => {
-                        board.zoomOut();
-                    }}
-                />
-            )}
-            {props.showEdition && (
+            {props.showEdition && (selectedElements.length > 0 || board.activeTool) && (
                 <EditionPanel
                     style={{
-                        top: "1rem",
-                        right: "1rem",
-                        bottom: "1rem",
+                        top: "5rem",
+                        left: "1rem",
+                        bottom: "6.5rem",
                     }}
                     onChange={() => {
                         board.update();
@@ -123,9 +92,40 @@ export const Layout = props => {
                 />
             )}
             {props.showHeader && (
-                <div className="absolute top-0 left-0 pt-4 pl-4 z-7">
-                    {props.headerContent}
-                </div>
+                <React.Fragment>
+                    <div className="absolute top-0 left-0 pt-4 pl-4 z-7">
+                        <div className="flex gap-2">
+                            {props.headerLeftContent}
+                        </div>
+                    </div>
+                    <div className="absolute top-0 right-0 pt-4 pr-4 z-7">
+                        <div className="flex gap-2">
+                            {props.showHistory && (
+                                <History
+                                    onUndoClick={() => {
+                                        board.undo();
+                                        props.onChange?.({
+                                            elements: board.elements,
+                                        });
+                                    }}
+                                    onRedoClick={() => {
+                                        board.redo();
+                                        props.onChange?.({
+                                            elements: board.elements,
+                                        });
+                                    }}
+                                />
+                            )}
+                            {props.showZoom && (
+                                <Zooming
+                                    onZoomInClick={() => board.zoomIn()}
+                                    onZoomOutClick={() => board.zoomOut()}
+                                />
+                            )}
+                            {props.headerRightContent}
+                        </div>
+                    </div>
+                </React.Fragment>
             )}
             {props.showFooter && (
                 <div className="absolute bottom-0 left-0 pb-4 px-4 z-7 w-full">
@@ -144,7 +144,8 @@ Layout.defaultProps = {
     showTools: true,
     showEdition: true,
     headerHeight: "4rem",
-    headerContent: null,
+    headerLeftContent: null,
+    headerRightContent: null,
     footerHeight: "2rem",
     footerContent: null,
     onChange: null,
