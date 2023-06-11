@@ -167,27 +167,24 @@ const allOptions = {
     },
 };
 
+const useValues = (board, selection) => {
+    // Check for active tool enabled
+    // Generate initial default values for this element type
+    if (board.activeTool && elementsConfig[board.activeTool]) {
+        return elementsConfig[board.activeTool].initialize(board.defaults);
+    }
+    // Check if we have only one selected item
+    if (selection.length === 1) {
+        return selection[0];
+    }
+    // Compute common values from selection
+    return selection.reduce((prev, item) => ({...prev, ...item}), {});
+};
+
 export const EditionPanel = props => {
     const board = useBoard();
     const selection = board.getSelectedElements();
-    const values = React.useMemo(
-        () => {
-            // Check for active tool enabled
-            // Generate initial default values for this element type
-            if (board.activeTool && elementsConfig[board.activeTool]) {
-                return elementsConfig[board.activeTool].initialize(board.defaults);
-            }
-            // Check if we have only one selected item
-            if (selection.length === 1) {
-                return selection[0];
-            }
-            // Compute values from selection
-            return selection.reduce((prevValues, item) => {
-                return {...prevValues, ...item};
-            }, {});
-        },
-        [selection.length, selection?.[0]?.id, board.activeTool],
-    );
+    const values = useValues(board, selection);
     const keys = Object.keys(values);
     const visibleOptions = React.useMemo(
         () => {
