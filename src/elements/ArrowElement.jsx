@@ -73,7 +73,7 @@ export const ArrowElement = props => {
         [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
     );
     return (
-        <g transform={`translate(${x},${y})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL}`}>
+        <g transform={`translate(${x},${y})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL})`}>
             <rect
                 x={-strokeWidth}
                 y={-strokeWidth}

@@ -224,7 +224,7 @@ export const ShapeElement = props => {
     const strokeColor = props.strokeColor ?? COLORS.BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     return (
-        <g transform={`translate(${x},${y})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL}`}>
+        <g transform={`translate(${x},${y})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL})`}>
             {props.shape === SHAPES.RECTANGLE && (
                 <RectangleShape
                     width={width}
