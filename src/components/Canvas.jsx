@@ -1,10 +1,11 @@
 import React from "react";
-import {CURSORS, EVENTS, FONT_SOURCES, NONE, TRANSPARENT} from "../constants.js";
+import {CURSORS, EVENTS, FONT_SOURCES, NONE, TRANSPARENT, TEXTURES, CANVAS_ROLES} from "../constants.js";
 import {Handlers} from "./Handlers.jsx";
 import {Bounds} from "./Bounds.jsx";
 import {Brush} from "./Brush.jsx";
 import {Grid} from "./Grid.jsx";
 import {Pointer} from "./Pointer.jsx";
+import {Textures} from "./Textures.jsx";
 import {getElementConfig} from "../elements/index.jsx";
 import {AssetsProvider} from "../contexts/AssetsContext.jsx";
 
@@ -196,6 +197,7 @@ export const Canvas = props => {
             ref={canvasRef}
             className={props.svgClassName}
             data-id={props.id}
+            data-role={CANVAS_ROLES.MAIN}
             data-width={props.width}
             data-height={props.height}
             width="100%"
@@ -215,6 +217,7 @@ export const Canvas = props => {
             <style type="text/css">
                 {props.fonts.map(font => `@import url('${font}');`).join("")}
             </style>
+            <Textures id={props.id} />
             <g transform={transform.join(" ")}>
                 {props.showGrid && (
                     <Grid

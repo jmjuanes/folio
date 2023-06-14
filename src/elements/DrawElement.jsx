@@ -1,5 +1,5 @@
 import React from "react";
-import {COLORS, STROKES} from "../constants.js";
+import {COLORS, STROKES, TEXTURES} from "../constants.js";
 import {getPointsCenter, getBalancedDash, getPointsDistance} from "../utils/math.js";
 
 const getPath = points => {
@@ -35,7 +35,7 @@ export const DrawElement = props => {
         [points.length, strokeWidth, props.strokeStyle],
     );
     return (
-        <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity} style={{filter: `blur(${props.blur}px)`}}>
+        <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL})`}>
             <g transform={`scale(${width/props.drawWidth} ${height/props.drawHeight})`}>
                 <path
                     data-element={props.id}
