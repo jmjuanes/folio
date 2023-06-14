@@ -1,5 +1,5 @@
 import React from "react";
-import {STROKES, ARROWHEADS, COLORS} from "../constants.js";
+import {STROKES, ARROWHEADS, COLORS, TEXTURES} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../utils/math.js";
 
 const Arrowhead = props => {
@@ -57,6 +57,8 @@ const Arrowhead = props => {
 };
 
 export const ArrowElement = props => {
+    const x = Math.min(props.x1, props.x2);
+    const y = Math.min(props.y1, props.y2);
     const strokeColor = props.strokeColor ?? COLORS.BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
@@ -71,13 +73,21 @@ export const ArrowElement = props => {
         [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
     );
     return (
-        <g opacity={props.opacity} style={{filter: `blur(${props.blur}px)`}}>
+        <g transform={`translate(${x},${y})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL}`}>
+            <rect
+                x={-strokeWidth}
+                y={-strokeWidth}
+                width={Math.abs(props.x1 - props.x2) + 2 * strokeWidth}
+                height={Math.abs(props.y1 - props.y2) + 2 * strokeWidth}
+                fill="none"
+                stroke="none"
+            />
             <line
                 data-element={props.id}
-                x1={props.x1}
-                y1={props.y1}
-                x2={props.x2}
-                y2={props.y2}
+                x1={props.x1 - x}
+                y1={props.y1 - y}
+                x2={props.x2 - x}
+                y2={props.y2 - y}
                 fill="none"
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
@@ -91,10 +101,10 @@ export const ArrowElement = props => {
                 <Arrowhead
                     id={props.id}
                     type={props.startArrowhead}
-                    x={props.x1}
-                    y={props.y1}
-                    x2={props.x2}
-                    y2={props.y2}
+                    x={props.x1 - x}
+                    y={props.y1 - y}
+                    x2={props.x2 - x}
+                    y2={props.y2 - y}
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     onPointerDown={props.onPointerDown}
@@ -104,10 +114,10 @@ export const ArrowElement = props => {
                 <Arrowhead
                     id={props.id}
                     type={props.endArrowhead}
-                    x={props.x2}
-                    y={props.y2}
-                    x2={props.x1}
-                    y2={props.y1}
+                    x={props.x2 - x}
+                    y={props.y2 - y}
+                    x2={props.x1 - x}
+                    y2={props.y1 - y}
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     onPointerDown={props.onPointerDown}

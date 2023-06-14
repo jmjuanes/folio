@@ -1,6 +1,6 @@
 import React from "react";
 import {measureText} from "../utils/math.js";
-import {COLORS, FONT_FACES, GRID_SIZE, TEXT_ALIGNS} from "../constants.js";
+import {COLORS, FONT_FACES, GRID_SIZE, TEXTURES, TEXT_ALIGNS} from "../constants.js";
 
 const stopEventPropagation = event => {
     event?.stopPropagation?.();
@@ -41,7 +41,7 @@ export const TextElement = props => {
     };
 
     return (
-        <g transform={`translate(${x} ${y})`}>
+        <g transform={`translate(${x} ${y})`} filter={`url(#${TEXTURES.PENCIL})`}>
             {!props.embedded && (!!props.creating || props.editing) && (
                 <rect
                     x={(-1) * width / 2}

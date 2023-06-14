@@ -1,5 +1,5 @@
 import React from "react";
-import {STROKES, SHAPES, COLORS} from "../constants.js";
+import {STROKES, SHAPES, COLORS, TEXTURES} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
 
 // Simple line for shapes
@@ -224,7 +224,7 @@ export const ShapeElement = props => {
     const strokeColor = props.strokeColor ?? COLORS.BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     return (
-        <g transform={`translate(${x},${y})`} opacity={props.opacity} style={{filter: `blur(${props.blur}px)`}}>
+        <g transform={`translate(${x},${y})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL}`}>
             {props.shape === SHAPES.RECTANGLE && (
                 <RectangleShape
                     width={width}
