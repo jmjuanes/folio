@@ -1,5 +1,5 @@
 import {fileSave} from "browser-fs-access";
-import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING} from "./constants.js";
+import {CANVAS_ROLES, EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING} from "./constants.js";
 import {FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
 import {getRectangleBounds} from "./utils/math.js";
 
@@ -73,7 +73,9 @@ const getSvgImage = options => {
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
         const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
         svg.appendChild(style);
+        svg.appendChild(defs);
         svg.appendChild(group);
         // 2. Set new svg attributes
         svg.setAttribute("style", ""); // Reset style
@@ -83,16 +85,18 @@ const getSvgImage = options => {
         svg.style.backgroundColor = options?.background || "#fff";
         // 4. Set internal styles
         style.textContent = fontsCss;
-        // 5. Set group attributes
+        // 5. Set textures
+        defs.innerHTML = document.querySelector(`defs[data-role="${CANVAS_ROLES.TEXTURES}"]`)?.innerHTML || "";
+        // 6. Set group attributes
         group.setAttribute("transform", `translate(${padding - bounds.x1} ${padding - bounds.y1})`);
-        // 6. Append elements into  group
+        // 7. Append elements into  group
         elements.forEach(element => {
             const nodeElement = document.querySelector(`g[data-element="${element.id}"]`);
             if (nodeElement) {
                 group.appendChild(nodeElement.cloneNode(true));
             }
         });
-        // 7. return SVG
+        // 8. return SVG
         const content = (new XMLSerializer()).serializeToString(svg);
         return new Blob([content], {
             type: "image/svg+xml;charset=utf-8",
