@@ -311,3 +311,14 @@ export const SELECTION_STROKE_COLOR = PRIMARY;
 // Select bounds constants
 export const SELECT_BOUNDS_FILL_COLOR = NONE;
 export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
+
+// Textures
+export const TEXTURES = {
+    PENCIL: "pencilTexture",
+};
+
+// Canvas roles
+export const CANVAS_ROLES = {
+    MAIN: "folio_canvas_main",
+    TEXTURES: "folio_canvas_textures",
+};
