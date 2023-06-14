@@ -1,5 +1,5 @@
 import {ELEMENTS, VERSION} from "./constants.js";
-import {FIELDS, OPACITY_DEFAULT, BLUR_DEFAULT} from "./constants.js";
+import {FIELDS, OPACITY_DEFAULT} from "./constants.js";
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map(element => {
@@ -27,9 +27,8 @@ export const migrateElements = (elements, version) => {
                 delete element.nodeHandlers;
             case "4":
                 // deprecated group, fillOpacity and strokeOpacity fields
-                // new fields: opacity and blur
+                // new fields: opacity
                 element[FIELDS.OPACITY] = OPACITY_DEFAULT;
-                element[FIELDS.BLUR] = BLUR_DEFAULT;
                 delete element.group;
                 delete element.fillOpacity;
                 delete element.strokeOpacity;

@@ -21,7 +21,6 @@ import {
     DEFAULT_SHAPE,
     TEXT_BOX_MIN_WIDTH,
     DEFAULT_OPACITY,
-    DEFAULT_BLUR,
     STATES,
     PASTE_OFFSET,
 } from "./constants.js";
@@ -73,7 +72,6 @@ export const createBoard = props => ({
         startArrowhead: DEFAULT_ARROWHEAD_START,
         endArrowhead: DEFAULT_ARROWHEAD_END,
         opacity: DEFAULT_OPACITY,
-        blur: DEFAULT_BLUR,
     },
     state: {
         contextMenuVisible: false,

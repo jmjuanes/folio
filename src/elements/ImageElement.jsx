@@ -6,7 +6,7 @@ export const ImageElement = props => {
     const dataUrl = assets[props.assetId]?.dataUrl || "";
 
     return (
-        <g opacity={props.opacity} style={{filter: `blur(${props.blur}px)`}}>
+        <g opacity={props.opacity}>
             <image
                 data-element={props.id}
                 x={Math.min(props.x1, props.x2)}
