@@ -1,5 +1,5 @@
 import {fileSave} from "browser-fs-access";
-import {CANVAS_ROLES, EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING} from "./constants.js";
+import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING} from "./constants.js";
 import {FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
 import {getRectangleBounds} from "./utils/math.js";
 
@@ -33,7 +33,9 @@ const blobToDataUrl = blob => {
 };
 
 const importFontsFromCss = cssText => {
-    const output = {css: cssText};
+    const output = {
+        css: cssText,
+    };
     const fontFilesToImport = cssText.match(/https:\/\/[^)]+/g);
     const fontFilesPromises = fontFilesToImport.map(fileUrl => {
         return fetch(fileUrl)
@@ -86,7 +88,7 @@ const getSvgImage = options => {
         // 4. Set internal styles
         style.textContent = fontsCss;
         // 5. Set textures
-        defs.innerHTML = document.querySelector(`defs[data-role="${CANVAS_ROLES.TEXTURES}"]`)?.innerHTML || "";
+        // defs.innerHTML = document.querySelector(`defs[data-role="${CANVAS_ROLES.TEXTURES}"]`)?.innerHTML || "";
         // 6. Set group attributes
         group.setAttribute("transform", `translate(${padding - bounds.x1} ${padding - bounds.y1})`);
         // 7. Append elements into  group
