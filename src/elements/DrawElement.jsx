@@ -35,21 +35,23 @@ export const DrawElement = props => {
         [points.length, strokeWidth, props.strokeStyle],
     );
     return (
-        <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL})`}>
+        <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity}>
             <g transform={`scale(${width/props.drawWidth} ${height/props.drawHeight})`}>
-                <path
-                    data-element={props.id}
-                    d={path}
-                    fill="none"
-                    stroke={props.strokeColor ?? COLORS.BLACK}
-                    strokeWidth={strokeWidth}
-                    strokeOpacity={props.strokeOpacity}
-                    strokeDasharray={strokeDasharray}
-                    strokeDashoffset={strokeDashoffset}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    onPointerDown={props.onPointerDown}
-                />
+                <g filter={`url(#${TEXTURES.PENCIL})`}>
+                    <path
+                        data-element={props.id}
+                        d={path}
+                        fill="none"
+                        stroke={props.strokeColor ?? COLORS.BLACK}
+                        strokeWidth={strokeWidth}
+                        strokeOpacity={props.strokeOpacity}
+                        strokeDasharray={strokeDasharray}
+                        strokeDashoffset={strokeDashoffset}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        onPointerDown={props.onPointerDown}
+                    />
+                </g>
             </g>
             <rect
                 data-element={props.id}

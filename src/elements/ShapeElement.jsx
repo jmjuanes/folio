@@ -1,5 +1,5 @@
 import React from "react";
-import {STROKES, SHAPES, COLORS, TEXTURES} from "../constants.js";
+import {STROKES, SHAPES, COLORS, TEXTURES, NONE, TRANSPARENT} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
 
 // Simple line for shapes
@@ -224,55 +224,57 @@ export const ShapeElement = props => {
     const strokeColor = props.strokeColor ?? COLORS.BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     return (
-        <g transform={`translate(${x},${y})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL})`}>
-            {props.shape === SHAPES.RECTANGLE && (
-                <RectangleShape
-                    width={width}
-                    height={height}
-                    fillColor={fillColor}
-                    fillOpacity={props.fillOpacity}
-                    strokeWidth={strokeWidth}
-                    strokeColor={strokeColor}
-                    strokeStyle={props.strokeStyle}
-                    strokeOpacity={props.strokeOpacity}
-                />
-            )}
-            {props.shape === SHAPES.ELLIPSE && (
-                <EllipseShape
-                    width={width}
-                    height={height}
-                    fillColor={fillColor}
-                    fillOpacity={props.fillOpacity}
-                    strokeWidth={strokeWidth}
-                    strokeColor={strokeColor}
-                    strokeStyle={props.strokeStyle}
-                    strokeOpacity={props.strokeOpacity}
-                />
-            )}
-            {props.shape === SHAPES.TRIANGLE && (
-                <TriangleShape
-                    width={width}
-                    height={height}
-                    fillColor={fillColor}
-                    fillOpacity={props.fillOpacity}
-                    strokeWidth={strokeWidth}
-                    strokeColor={strokeColor}
-                    strokeStyle={props.strokeStyle}
-                    strokeOpacity={props.strokeOpacity}
-                />
-            )}
-            {props.shape === SHAPES.DIAMOND && (
-                <DiamondShape
-                    width={width}
-                    height={height}
-                    fillColor={fillColor}
-                    fillOpacity={props.fillOpacity}
-                    strokeWidth={strokeWidth}
-                    strokeColor={strokeColor}
-                    strokeStyle={props.strokeStyle}
-                    strokeOpacity={props.strokeOpacity}
-                />
-            )}
+        <g transform={`translate(${x},${y})`} opacity={props.opacity}>
+            <g filter={`url(#${TEXTURES.PENCIL})`}>
+                {props.shape === SHAPES.RECTANGLE && (
+                    <RectangleShape
+                        width={width}
+                        height={height}
+                        fillColor={fillColor}
+                        fillOpacity={props.fillOpacity}
+                        strokeWidth={strokeWidth}
+                        strokeColor={strokeColor}
+                        strokeStyle={props.strokeStyle}
+                        strokeOpacity={props.strokeOpacity}
+                    />
+                )}
+                {props.shape === SHAPES.ELLIPSE && (
+                    <EllipseShape
+                        width={width}
+                        height={height}
+                        fillColor={fillColor}
+                        fillOpacity={props.fillOpacity}
+                        strokeWidth={strokeWidth}
+                        strokeColor={strokeColor}
+                        strokeStyle={props.strokeStyle}
+                        strokeOpacity={props.strokeOpacity}
+                    />
+                )}
+                {props.shape === SHAPES.TRIANGLE && (
+                    <TriangleShape
+                        width={width}
+                        height={height}
+                        fillColor={fillColor}
+                        fillOpacity={props.fillOpacity}
+                        strokeWidth={strokeWidth}
+                        strokeColor={strokeColor}
+                        strokeStyle={props.strokeStyle}
+                        strokeOpacity={props.strokeOpacity}
+                    />
+                )}
+                {props.shape === SHAPES.DIAMOND && (
+                    <DiamondShape
+                        width={width}
+                        height={height}
+                        fillColor={fillColor}
+                        fillOpacity={props.fillOpacity}
+                        strokeWidth={strokeWidth}
+                        strokeColor={strokeColor}
+                        strokeStyle={props.strokeStyle}
+                        strokeOpacity={props.strokeOpacity}
+                    />
+                )}
+            </g>
             <rect
                 data-element={props.id}
                 x="0"
@@ -280,8 +282,8 @@ export const ShapeElement = props => {
                 width={Math.max(1, width)}
                 height={Math.max(1, height)}
                 rx="0"
-                fill="transparent"
-                stroke="none"
+                fill={TRANSPARENT}
+                stroke={NONE}
                 onPointerDown={props.onPointerDown}
                 onDoubleClick={props.onDoubleClick}
             />

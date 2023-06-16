@@ -39,8 +39,13 @@ export const TextElement = props => {
         opacity: props.opacity,
     };
 
+    // Positions for the foreignObject to contain the text or the input
+    const foreignX = (-1) * width / 2;
+    const foreignY = (-1) * props.textHeight / 2;
+    const foreignWidth = Math.max(width, GRID_SIZE);
+
     return (
-        <g transform={`translate(${x} ${y})`} filter={`url(#${TEXTURES.PENCIL})`}>
+        <g transform={`translate(${x} ${y})`}>
             {!props.embedded && (!!props.creating || props.editing) && (
                 <rect
                     x={(-1) * width / 2}
@@ -55,18 +60,17 @@ export const TextElement = props => {
                     rx={props.editing ? "8" : "0"}
                 />
             )}
-            <foreignObject
-                x={(-1) * width / 2}
-                y={(-1) * props.textHeight / 2}
-                width={Math.max(width, GRID_SIZE)}
-                height={props.textHeight}
-            >
-                {props.text && !props.editing && (
-                    <div style={previewStyles}>
-                        {props.text}
-                    </div>
-                )}
-                {props.editing && (
+            {props.text && !props.editing && (
+                <g filter={`url(#${TEXTURES.PENCIL})`}>
+                    <foreignObject x={foreignX} y={foreignY} width={foreignWidth} height={props.textHeight}>
+                        <div style={previewStyles}>
+                            {props.text}
+                        </div>
+                    </foreignObject>
+                </g>
+            )}
+            {props.editing && (
+                <foreignObject x={foreignX} y={foreignY} width={foreignWidth} height={props.textHeight}>
                     <textarea
                         ref={inputRef}
                         wrap="off"
@@ -111,8 +115,8 @@ export const TextElement = props => {
                             }
                         }}
                     />
-                )}
-            </foreignObject>
+                </foreignObject>
+            )}
             {!props.editing && (
                 <rect
                     data-element={props.id}

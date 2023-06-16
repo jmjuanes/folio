@@ -1,5 +1,5 @@
 import React from "react";
-import {STROKES, ARROWHEADS, COLORS, TEXTURES} from "../constants.js";
+import {STROKES, ARROWHEADS, COLORS, TEXTURES, NONE, TRANSPARENT} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../utils/math.js";
 
 const Arrowhead = props => {
@@ -46,7 +46,7 @@ const Arrowhead = props => {
         <path
             data-element={props.id}
             d={commands.join("")}
-            fill="transparent"
+            fill={TRANSPARENT}
             stroke={props.strokeColor}
             strokeWidth={props.strokeWidth}
             strokeLinecap="round"
@@ -68,61 +68,63 @@ export const ArrowElement = props => {
             if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
                 return getBalancedDash(length, strokeWidth, strokeStyle);
             }
-            return ["none", "none"];
+            return [NONE, NONE];
         },
         [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
     );
     return (
-        <g transform={`translate(${x},${y})`} opacity={props.opacity} filter={`url(#${TEXTURES.PENCIL})`}>
-            <rect
-                x={-strokeWidth}
-                y={-strokeWidth}
-                width={Math.abs(props.x1 - props.x2) + 2 * strokeWidth}
-                height={Math.abs(props.y1 - props.y2) + 2 * strokeWidth}
-                fill="none"
-                stroke="none"
-            />
-            <line
-                data-element={props.id}
-                x1={props.x1 - x}
-                y1={props.y1 - y}
-                x2={props.x2 - x}
-                y2={props.y2 - y}
-                fill="none"
-                stroke={strokeColor}
-                strokeWidth={strokeWidth}
-                strokeDasharray={strokeDasharray}
-                strokeDashoffset={strokeDashoffset}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                onPointerDown={props.onPointerDown}
-            />
-            {props.startArrowhead !== ARROWHEADS.NONE && (
-                <Arrowhead
-                    id={props.id}
-                    type={props.startArrowhead}
-                    x={props.x1 - x}
-                    y={props.y1 - y}
+        <g transform={`translate(${x},${y})`} opacity={props.opacity}>
+            <g filter={`url(#${TEXTURES.PENCIL})`}>
+                <rect
+                    x={-strokeWidth}
+                    y={-strokeWidth}
+                    width={Math.abs(props.x1 - props.x2) + 2 * strokeWidth}
+                    height={Math.abs(props.y1 - props.y2) + 2 * strokeWidth}
+                    fill={NONE}
+                    stroke={NONE}
+                />
+                <line
+                    data-element={props.id}
+                    x1={props.x1 - x}
+                    y1={props.y1 - y}
                     x2={props.x2 - x}
                     y2={props.y2 - y}
+                    fill={NONE}
+                    stroke={strokeColor}
                     strokeWidth={strokeWidth}
-                    strokeColor={strokeColor}
+                    strokeDasharray={strokeDasharray}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     onPointerDown={props.onPointerDown}
                 />
-            )}
-            {props.endArrowhead !== ARROWHEADS.NONE && (
-                <Arrowhead
-                    id={props.id}
-                    type={props.endArrowhead}
-                    x={props.x2 - x}
-                    y={props.y2 - y}
-                    x2={props.x1 - x}
-                    y2={props.y1 - y}
-                    strokeWidth={strokeWidth}
-                    strokeColor={strokeColor}
-                    onPointerDown={props.onPointerDown}
-                />
-            )}
+                {props.startArrowhead !== ARROWHEADS.NONE && (
+                    <Arrowhead
+                        id={props.id}
+                        type={props.startArrowhead}
+                        x={props.x1 - x}
+                        y={props.y1 - y}
+                        x2={props.x2 - x}
+                        y2={props.y2 - y}
+                        strokeWidth={strokeWidth}
+                        strokeColor={strokeColor}
+                        onPointerDown={props.onPointerDown}
+                    />
+                )}
+                {props.endArrowhead !== ARROWHEADS.NONE && (
+                    <Arrowhead
+                        id={props.id}
+                        type={props.endArrowhead}
+                        x={props.x2 - x}
+                        y={props.y2 - y}
+                        x2={props.x1 - x}
+                        y2={props.y1 - y}
+                        strokeWidth={strokeWidth}
+                        strokeColor={strokeColor}
+                        onPointerDown={props.onPointerDown}
+                    />
+                )}
+            </g>
         </g>
     );
 };
