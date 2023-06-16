@@ -314,9 +314,3 @@ export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
 export const TEXTURES = {
     PENCIL: "pencilTexture",
 };
-
-// Canvas roles
-export const CANVAS_ROLES = {
-    MAIN: "folio_canvas_main",
-    TEXTURES: "folio_canvas_textures",
-};
