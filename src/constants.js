@@ -5,6 +5,12 @@ export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platfor
 export const PI = Math.PI;
 export const EPSILON = 1e-6;
 
+export const POLYGON = {
+    RECTANGLE: "rectangle",
+    DIAMOND: "diamong",
+    TRIANGLE: "triangle",
+};
+
 export const NONE = "none";
 export const TRANSPARENT = "transparent";
 export const WHITE = "#ffffff";
