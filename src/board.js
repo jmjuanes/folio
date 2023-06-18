@@ -360,7 +360,7 @@ export const createBoard = props => ({
     },
     addText(text, tx = null, ty = null) {
         this.clearSelectedElements();
-        const target = document.querySelector(`svg[data-id="${this.id}"]`);
+        const target = document.querySelector(`[data-id="${this.id}"]`);
         const size = target?.getBoundingClientRect?.() || {};
         const x = tx ?? (this.translateX + (size.width || 0)/ 2);
         const y = ty ?? (this.translateY + (size.height || 0) / 2);
@@ -394,7 +394,7 @@ export const createBoard = props => ({
     addImage(image, tx = null, ty = null) {
         this.clearSelectedElements();
         return loadImage(image).then(img => {
-            const target = document.querySelector(`svg[data-id="${this.id}"]`);
+            const target = document.querySelector(`[data-id="${this.id}"]`);
             const size = target?.getBoundingClientRect?.() || {};
             const x = tx ?? (this.translateX + (size.width || 0)/ 2);
             const y = ty ?? (this.translateY + (size.height || 0) / 2);
@@ -562,7 +562,7 @@ export const createBoard = props => ({
     setZoom(value) {
         const prevZoom = this.zoom;
         const nextZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, value));
-        const target = document.querySelector(`svg[data-id="${this.id}"]`);
+        const target = document.querySelector(`[data-id="${this.id}"]`);
         const size = target?.getBoundingClientRect?.() || {};
         this.translateX = Math.floor(this.translateX + (size.width || 0) * (prevZoom - nextZoom) / 2);
         this.translateY = Math.floor(this.translateY + (size.height || 0) * (prevZoom - nextZoom) / 2);

@@ -1,5 +1,6 @@
 import React from "react";
 import {CURSORS, HANDLERS, PRIMARY, WHITE} from "../constants.js";
+import {SvgContainer} from "./SvgContainer.jsx";
 
 export const NodeHandlers = props => {
     const radius = props.radius / props.zoom;
@@ -209,7 +210,7 @@ CornerHandlers.defaultProps = {
 };
 
 export const Handlers = props => (
-    <React.Fragment>
+    <SvgContainer>
         {props.edgeHandlers && (
             <EdgeHandlers
                 position={props.position}
@@ -231,7 +232,7 @@ export const Handlers = props => (
                 onPointerDown={props.onPointerDown}
             />
         )}
-    </React.Fragment>
+    </SvgContainer>
 );
 
 Handlers.defaultProps = {

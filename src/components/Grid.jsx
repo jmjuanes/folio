@@ -1,20 +1,16 @@
 import React from "react";
 import {GRID_SIZE} from "../constants.js";
+import {SvgContainer} from "./SvgContainer.jsx";
 
 export const Grid = props => {
     const translateX = props.translateX / props.zoom;
     const translateY = props.translateY / props.zoom;
-    const x = (translateX % props.size) - translateX - props.size / 2;
-    const y = (translateY % props.size) - translateY - props.size / 2;
+    const x= (translateX % props.size) - translateX - (props.size / 2);
+    const y= (translateY % props.size) - translateY - (props.size / 2);
     return (
-        <g transform={`translate(${x} ${y})`}>
+        <SvgContainer>
             <defs>
-                <pattern
-                    id="grid"
-                    width={props.size}
-                    height={props.size}
-                    patternUnits="userSpaceOnUse"
-                >
+                <pattern id="grid" width={props.size} height={props.size} patternUnits="userSpaceOnUse">
                     <circle
                         cx={props.size / 2}
                         cy={props.size / 2}
@@ -24,19 +20,18 @@ export const Grid = props => {
                     />
                 </pattern>
             </defs>
-            <rect
-                x="0"
-                y="0"
-                width={(props.width / props.zoom) + (props.size / 2)}
-                height={(props.height / props.zoom) + (props.size / 2)}
-                fill="url(#grid)"
-            />
-        </g>
+            <g transform={`translate(${x},${y})`}>
+                <rect
+                    width={(props.width + props.size) / props.zoom}
+                    height={(props.height  + props.size) / props.zoom}
+                    fill="url(#grid)"
+                />
+            </g>
+        </SvgContainer>
     );
 };
 
 Grid.defaultProps = {
-    id: "grid-pattern",
     width: 0,
     height: 0,
     translateX: 0,

@@ -30,6 +30,7 @@ import {TextElement} from "./TextElement.jsx";
 import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
 import {measureText} from "../utils/math.js";
+import {SvgContainer} from "../components/SvgContainer.jsx";
 
 const isCornerHandler = handler => {
     return handler.startsWith("corner");
@@ -39,15 +40,23 @@ const isEdgeHandler = handler => {
     return handler.startsWith("edge");
 };
 
+const ElementContainer = props => (
+    <SvgContainer>
+        <g data-role="element" data-element={props.id}>
+            {props.children}
+        </g>
+    </SvgContainer>
+);
+
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
         edgeHandlers: true,
         cornerHandlers: true,
         render: props => (
-            <React.Fragment>
+            <ElementContainer id={props.id}>
                 <ShapeElement {...props} />
                 <TextElement embedded={true} {...props} />
-            </React.Fragment>
+            </ElementContainer>
         ),
         initialize: values => ({
             opacity: values?.opacity ?? DEFAULT_OPACITY,
@@ -82,7 +91,11 @@ export const elementsConfig = {
     },
     [ELEMENTS.ARROW]: {
         nodeHandlers: true,
-        render: props => <ArrowElement {...props} />,
+        render: props => (
+            <ElementContainer id={props.id}>
+                <ArrowElement {...props} />
+            </ElementContainer>
+        ),
         initialize: values => ({
             opacity: values?.opacity ?? DEFAULT_OPACITY,
             startArrowhead: values?.startArrowhead || DEFAULT_ARROWHEAD_START,
@@ -95,7 +108,11 @@ export const elementsConfig = {
     [ELEMENTS.TEXT]: {
         edgeHandlers: true,
         cornerHandlers: true,
-        render: props => <TextElement {...props} />,
+        render: props => (
+            <ElementContainer id={props.id}>
+                <TextElement {...props} />
+            </ElementContainer>
+        ),
         initialize: values => {
             // We need to measure the height of an empty text to calculate the height of the element
             const textSize = values?.textSize ?? DEFAULT_TEXT_SIZE;
@@ -137,7 +154,7 @@ export const elementsConfig = {
             if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
                 const width = Math.abs(element.x2 - element.x1);
                 const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
-
+                // Apply changes to element
                 element.textWidth = textWidth;
                 element.textHeight = textHeight;
                 element.y2 = element.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
@@ -181,7 +198,11 @@ export const elementsConfig = {
     [ELEMENTS.DRAW]: {
         edgeHandlers: true,
         cornerHandlers: true,
-        render: props => <DrawElement {...props} />,
+        render: props => (
+            <ElementContainer id={props.id}>
+                <DrawElement {...props} />
+            </ElementContainer>    
+        ),
         initialize: values => ({
             opacity: values?.opacity ?? DEFAULT_OPACITY,
             points: [],
@@ -231,7 +252,11 @@ export const elementsConfig = {
     [ELEMENTS.IMAGE]: {
         edgeHandlers: true,
         cornerHandlers: true,
-        render: props => <ImageElement {...props} />,
+        render: props => (
+            <ElementContainer id={props.id}>
+                <ImageElement {...props} />
+            </ElementContainer>
+        ),
         initialize: values => ({
             assetId: "",
             opacity: values?.opacity ?? DEFAULT_OPACITY,
@@ -267,4 +292,8 @@ export const createElement = elementType => {
         locked: false,
         group: null,
     };
+};
+
+export const exportElementSvg = elementId => {
+    return document.querySelector(`g[data-element="${elementId}"]`)?.cloneNode?.(true);
 };
