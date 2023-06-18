@@ -67,6 +67,6 @@ export const usePencilEffect = () => {
     return {PencilEffectContext, WithPencilEffect};
 };
 
-export const exportPencilEffectFilter = () => {
-    return document.querySelector(`defs[data-filter="${PENCIL_FILTER}"]`)?.innerHTML || "";
+export const exportPencilEffectSvgFilter = () => {
+    return document.querySelector(`defs[data-filter="${PENCIL_FILTER}"] filter`)?.cloneNode?.(true);
 };
