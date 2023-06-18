@@ -1,10 +1,8 @@
 import React from "react";
 import classNames from "classnames";
 
-import {ELEMENTS, ZOOM_MIN, ZOOM_MAX, ACTIONS} from "../constants.js";
+import {ELEMENTS, ACTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
-import {UndoIcon, RedoIcon} from "./Icons.jsx";
-import {ZoomInIcon, ZoomOutIcon} from "./Icons.jsx";
 import {HandGrabIcon, PointerIcon, SquareIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
 import {PenIcon, ImageIcon} from "./Icons.jsx";
 import {EraseIcon, LockIcon, UnlockIcon} from "./Icons.jsx";
@@ -113,6 +111,12 @@ export const ToolsPanel = props => {
                 onClick={() => props.onToolClick(ELEMENTS.TEXT)}
             />
             <PanelButton
+                text="Draw"
+                icon={(<PenIcon />)}
+                active={board.activeTool === ELEMENTS.DRAW}
+                onClick={() => props.onToolClick(ELEMENTS.DRAW)}
+            />
+            <PanelButton
                 text="Image"
                 icon={(<ImageIcon />)}
                 active={board.activeTool === ELEMENTS.IMAGE}
@@ -120,15 +124,9 @@ export const ToolsPanel = props => {
             />
             <PanelSeparator />
             <PanelButton
-                text="Draw"
-                icon={(<PenIcon />)}
-                active={board.activeTool === ELEMENTS.DRAW}
-                onClick={() => props.onToolClick(ELEMENTS.DRAW)}
-            />
-            <PanelButton
                 text="Erase"
                 icon={(<EraseIcon />)}
-                active={props.activeAction === ACTIONS.ERASE}
+                active={board.activeAction === ACTIONS.ERASE}
                 onClick={props.onEraseClick}
             />
         </Panel>
