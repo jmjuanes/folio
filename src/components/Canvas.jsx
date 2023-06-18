@@ -244,11 +244,7 @@ export const Canvas = props => {
                         };
                         return (
                             <div key={element.id} style={style}>
-                                <SvgContainer>
-                                    <g data-element={element.id}>
-                                        {content}
-                                    </g>
-                                </SvgContainer>
+                                {content}
                             </div>
                         );
                     })}
