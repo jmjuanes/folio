@@ -1,6 +1,7 @@
 import React from "react";
-import {STROKES, SHAPES, COLORS, TEXTURES, NONE, TRANSPARENT} from "../constants.js";
+import {STROKES, SHAPES, COLORS, NONE, TRANSPARENT} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
+import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
 
 // Simple line for shapes
 const SimpleLine = props => {
@@ -216,6 +217,7 @@ const TriangleShape = props => (
 );
 
 export const ShapeElement = props => {
+    const {WithPencilEffect} = usePencilEffect();
     const x = Math.min(props.x1, props.x2);
     const y = Math.min(props.y1, props.y2);
     const width = Math.abs(props.x2 - props.x1);
@@ -225,7 +227,7 @@ export const ShapeElement = props => {
     const strokeWidth = props.strokeWidth ?? 0;
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>
-            <g filter={`url(#${TEXTURES.PENCIL})`}>
+            <WithPencilEffect>
                 {props.shape === SHAPES.RECTANGLE && (
                     <RectangleShape
                         width={width}
@@ -274,7 +276,7 @@ export const ShapeElement = props => {
                         strokeOpacity={props.strokeOpacity}
                     />
                 )}
-            </g>
+            </WithPencilEffect>
             <rect
                 data-element={props.id}
                 x="0"

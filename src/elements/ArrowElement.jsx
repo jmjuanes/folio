@@ -1,6 +1,7 @@
 import React from "react";
-import {STROKES, ARROWHEADS, COLORS, TEXTURES, NONE, TRANSPARENT} from "../constants.js";
+import {STROKES, ARROWHEADS, COLORS, NONE, TRANSPARENT} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../utils/math.js";
+import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
 
 const Arrowhead = props => {
     const size = props.strokeWidth * 2 + 4;
@@ -57,6 +58,7 @@ const Arrowhead = props => {
 };
 
 export const ArrowElement = props => {
+    const {WithPencilEffect} = usePencilEffect();
     const x = Math.min(props.x1, props.x2);
     const y = Math.min(props.y1, props.y2);
     const strokeColor = props.strokeColor ?? COLORS.BLACK;
@@ -74,7 +76,7 @@ export const ArrowElement = props => {
     );
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>
-            <g filter={`url(#${TEXTURES.PENCIL})`}>
+            <WithPencilEffect>
                 <rect
                     x={-strokeWidth}
                     y={-strokeWidth}
@@ -124,7 +126,7 @@ export const ArrowElement = props => {
                         onPointerDown={props.onPointerDown}
                     />
                 )}
-            </g>
+            </WithPencilEffect>
         </g>
     );
 };

@@ -1,6 +1,7 @@
 import React from "react";
-import {COLORS, STROKES, TEXTURES} from "../constants.js";
+import {COLORS, STROKES, NONE, TRANSPARENT} from "../constants.js";
 import {getPointsCenter, getBalancedDash, getPointsDistance} from "../utils/math.js";
+import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
 
 const getPath = points => {
     let lastPoint = points[0];
@@ -18,6 +19,7 @@ const getPath = points => {
 };
 
 export const DrawElement = props => {
+    const {WithPencilEffect} = usePencilEffect();
     const width = Math.abs(props.x2 - props.x1);
     const height = Math.abs(props.y2 - props.y1);
     const points = props.points || [];
@@ -30,18 +32,18 @@ export const DrawElement = props => {
             if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
                 return getBalancedDash(length, strokeWidth, strokeStyle);
             }
-            return ["none", "none"];
+            return [NONE, NONE];
         },
         [points.length, strokeWidth, props.strokeStyle],
     );
     return (
         <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity}>
             <g transform={`scale(${width/props.drawWidth} ${height/props.drawHeight})`}>
-                <g filter={`url(#${TEXTURES.PENCIL})`}>
+                <WithPencilEffect>
                     <path
                         data-element={props.id}
                         d={path}
-                        fill="none"
+                        fill={NONE}
                         stroke={props.strokeColor ?? COLORS.BLACK}
                         strokeWidth={strokeWidth}
                         strokeOpacity={props.strokeOpacity}
@@ -51,7 +53,7 @@ export const DrawElement = props => {
                         strokeLinejoin="round"
                         onPointerDown={props.onPointerDown}
                     />
-                </g>
+                </WithPencilEffect>
             </g>
             <rect
                 data-element={props.id}
@@ -59,8 +61,8 @@ export const DrawElement = props => {
                 y="0"
                 width={Math.abs(props.x2 - props.x1)}
                 height={Math.abs(props.y2 - props.y1)}
-                fill="transparent"
-                stroke="none"
+                fill={TRANSPARENT}
+                stroke={NONE}
                 onPointerDown={props.onPointerDown}
             />
         </g>
