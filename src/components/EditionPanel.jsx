@@ -4,14 +4,16 @@ import {COLORS, FIELDS} from "../constants.js";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
 import {STROKES, STROKE_WIDTHS} from "../constants.js";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
-import {SHAPES} from "../constants.js";
+import {SHAPES, FILL_STYLES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
 import {FORM_OPTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {Form} from "./Form.jsx";
+import {BanIcon} from "./Icons.jsx";
 import {CircleSolidIcon, CircleDashedIcon, CircleDottedIcon} from "./Icons.jsx";
 import {SquareIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
 import {ArrowheadNoneIcon, ArrowheadArrowIcon, ArrowheadTriangleIcon, ArrowheadSquareIcon, ArrowheadCircleIcon} from "./Icons.jsx";
+import {SquareSolidIcon, SquareHatchIcon} from "./Icons.jsx";
 // import {FillIcon, StrokeIcon, TextIcon} from "./Icons.jsx";
 // import {SunIcon, ShapesIcon, PlusIcon, MinusIcon} from "./Icons.jsx";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "./Icons.jsx";
@@ -42,10 +44,19 @@ const allOptions = {
         // icon: (<FillIcon />),
         test: FIELDS.FILL_COLOR,
         items: {
-            fillColor: {
+            [FIELDS.FILL_COLOR]: {
                 type: FORM_OPTIONS.COLOR,
                 title: "Fill Color",
                 values: Object.values(COLORS),
+            },
+            [FIELDS.FILL_STYLE]: {
+                type: FORM_OPTIONS.SELECT,
+                title: "Fill Style",
+                values: [
+                    {value: FILL_STYLES.NONE, icon: BanIcon()},
+                    {value: FILL_STYLES.HATCH, icon: SquareHatchIcon()},
+                    {value: FILL_STYLES.SOLID, icon: SquareSolidIcon()},
+                ],
             },
         },
     },
@@ -73,9 +84,9 @@ const allOptions = {
                 type: FORM_OPTIONS.SELECT,
                 title: "Stroke Style",
                 values: [
-                    {value: STROKES.SOLID, icon: CircleSolidIcon()},
-                    {value: STROKES.DASHED, icon: CircleDashedIcon()},
                     {value: STROKES.DOTTED, icon: CircleDottedIcon()},
+                    {value: STROKES.DASHED, icon: CircleDashedIcon()},
+                    {value: STROKES.SOLID, icon: CircleSolidIcon()},
                 ],
             },
         },
