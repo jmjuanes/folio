@@ -9,6 +9,7 @@ import {
     ZOOM_MIN,
     ZOOM_STEP,
     DEFAULT_FILL_COLOR,
+    DEFAULT_FILL_STYLE,
     DEFAULT_STROKE_COLOR,
     DEFAULT_STROKE_STYLE,
     DEFAULT_STROKE_WIDTH,
@@ -61,6 +62,7 @@ export const createBoard = props => ({
     erase: null,
     defaults: {
         fillColor: DEFAULT_FILL_COLOR,
+        fillStyle: DEFAULT_FILL_STYLE,
         strokeWidth: DEFAULT_STROKE_WIDTH,
         strokeColor: DEFAULT_STROKE_COLOR,
         strokeStyle: DEFAULT_STROKE_STYLE,

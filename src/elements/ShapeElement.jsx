@@ -1,9 +1,41 @@
 import React from "react";
-import {STROKES, SHAPES, COLORS, NONE, TRANSPARENT} from "../constants.js";
+import {STROKES, SHAPES, COLORS, NONE, TRANSPARENT, FILL_STYLES} from "../constants.js";
+import {HATCH_ANGLE, HATCH_GAP} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
+import {getPolygonPath, getPolygonHatchPath, getEllipseHatchPath} from "../utils/paths.js";
 import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
 
-// Simple line for shapes
+const HatchFill = props => {
+    const lines = React.useMemo(
+        () => {
+            const center = [props.width / 2, props.height / 2];
+            const gap = HATCH_GAP * props.strokeWidth;
+            if (props.type === SHAPES.ELLIPSE) {
+                return getEllipseHatchPath(props.width, props.height, center, HATCH_ANGLE, gap);
+            }
+            else {
+                return getPolygonHatchPath(props.path, center, HATCH_ANGLE, gap);
+            }
+        },
+        [props.type, props.width, props.height, props.strokeWidth],
+    );
+    return (
+        <React.Fragment>
+            {lines.map((line, index) => (
+                <path
+                    key={index}
+                    d={`M${line[0][0]},${line[0][1]}L${line[1][0]},${line[1][1]}`}
+                    fill={NONE}
+                    stroke={props.strokeColor}
+                    strokeWidth={props.strokeWidth}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            ))}
+        </React.Fragment>
+    );
+};
+
 const SimpleLine = props => {
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
@@ -37,60 +69,6 @@ const SimpleLine = props => {
     );
 };
 
-const RectangleShape = props => (
-    <React.Fragment>
-        <rect
-            x={0}
-            y={0}
-            width={props.width}
-            height={props.height}
-            fill={props.fillColor}
-            fillOpacity={props.fillOpacity}
-            stroke="none"
-        />
-        <SimpleLine
-            x1={0}
-            y1={0}
-            x2={props.width}
-            y2={0}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-        <SimpleLine
-            x1={props.width}
-            y1={0}
-            x2={props.width}
-            y2={props.height}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-        <SimpleLine
-            x1={0}
-            y1={0}
-            x2={0}
-            y2={props.height}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-        <SimpleLine
-            x1={0}
-            y1={props.height}
-            x2={props.width}
-            y2={props.height}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-    </React.Fragment>
-);
-
 const EllipseShape = props => {
     const rx = props.width / 2;
     const ry = props.height / 2;
@@ -106,115 +84,93 @@ const EllipseShape = props => {
         [rx, ry, props.strokeWidth, props.strokeStyle],
     );
     return (
-        <ellipse
-            cx={rx}
-            cy={ry}
-            rx={rx}
-            ry={ry}
-            fill={props.fillColor}
-            fillOpacity={props.fillOpacity}
-            stroke={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeOpacity={props.strokeOpacity}
-            strokeDasharray={strokeDasharray}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
+        <React.Fragment>
+            {props.fillColor !== TRANSPARENT && (
+                <React.Fragment>
+                    {props.fillStyle === FILL_STYLES.HATCH && (
+                        <HatchFill
+                            type={SHAPES.ELLIPSE}
+                            width={props.width}
+                            height={props.height}
+                            strokeColor={props.fillColor}
+                            strokeWidth={props.strokeWidth / 2}
+                        />
+                    )}
+                    {props.fillStyle === FILL_STYLES.SOLID && (
+                        <ellipse
+                            cx={rx}
+                            cy={ry}
+                            rx={rx}
+                            ry={ry}
+                            fill={props.fillColor}
+                            stroke={NONE}
+                        />
+                    )}
+                </React.Fragment>
+            )}
+            <ellipse
+                cx={rx}
+                cy={ry}
+                rx={rx}
+                ry={ry}
+                fill={NONE}
+                stroke={props.strokeColor}
+                strokeWidth={props.strokeWidth}
+                strokeOpacity={props.strokeOpacity}
+                strokeDasharray={strokeDasharray}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </React.Fragment>
     );
 };
 
-const DiamondShape = props => (
-    <React.Fragment>
-        <polygon
-            points={`${props.width/2},0 ${props.width},${props.height/2} ${props.width/2},${props.height} 0,${props.height/2}`}
-            fill={props.fillColor}
-            fillOpacity={props.fillOpacity}
-            stroke="none"
-        />
-        <SimpleLine
-            x1={props.width / 2}
-            y1={0}
-            x2={props.width}
-            y2={props.height / 2}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-        <SimpleLine
-            x1={props.width}
-            y1={props.height / 2}
-            x2={props.width / 2}
-            y2={props.height}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-        <SimpleLine
-            x1={props.width / 2}
-            y1={0}
-            x2={0}
-            y2={props.height / 2}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-        <SimpleLine
-            x1={0}
-            y1={props.height / 2}
-            x2={props.width / 2}
-            y2={props.height}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-    </React.Fragment>
-);
+const PolygonShape = props => {
+    const polygonPath = React.useMemo(
+        () => getPolygonPath(props.type, props.width, props.height),
+        [props.type, props.width, props.height],
+    );
 
-const TriangleShape = props => (
-    <React.Fragment>
-        <polygon
-            points={`0,${props.height} ${props.width/2},0 ${props.width},${props.height}`}
-            fill={props.fillColor}
-            fillOpacity={props.fillOpacity}
-            stroke="none"
-        />
-        <SimpleLine
-            x1={props.width / 2}
-            y1={0}
-            x2={props.width}
-            y2={props.height}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-        <SimpleLine
-            x1={props.width / 2}
-            y1={0}
-            x2={0}
-            y2={props.height}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-        <SimpleLine
-            x1={0}
-            y1={props.height}
-            x2={props.width}
-            y2={props.height}
-            strokeColor={props.strokeColor}
-            strokeWidth={props.strokeWidth}
-            strokeStyle={props.strokeStyle}
-            strokeOpacity={props.strokeOpacity}
-        />
-    </React.Fragment>
-);
+    return (
+        <React.Fragment>
+            {props.fillColor !== TRANSPARENT && (
+                <React.Fragment>
+                    {props.fillStyle === FILL_STYLES.HATCH && (
+                        <HatchFill
+                            type={props.type}
+                            path={polygonPath}
+                            width={props.width}
+                            height={props.height}
+                            strokeColor={props.fillColor}
+                            strokeWidth={props.strokeWidth / 2}
+                        />
+                    )}
+                    {props.fillStyle === FILL_STYLES.SOLID && (
+                        <polygon
+                            points={polygonPath.map(p => `${p[0]},${p[1]}`).join(" ")}
+                            fill={props.fillColor}
+                            stroke={NONE}
+                        />
+                    )}
+                </React.Fragment>
+            )}
+            {polygonPath.map((path, index) => (
+                <SimpleLine
+                    key={index}
+                    x1={path[0][0]}
+                    y1={path[0][1]}
+                    x2={path[1][0]}
+                    y2={path[1][1]}
+                    strokeColor={props.strokeColor}
+                    strokeWidth={props.strokeWidth}
+                    strokeStyle={props.strokeStyle}
+                    strokeOpacity={props.strokeOpacity}
+                />
+            ))}
+        </React.Fragment>
+    );
+};
 
 export const ShapeElement = props => {
     const {WithPencilEffect} = usePencilEffect();
@@ -228,12 +184,13 @@ export const ShapeElement = props => {
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>
             <WithPencilEffect>
-                {props.shape === SHAPES.RECTANGLE && (
-                    <RectangleShape
+                {props.shape !== SHAPES.ELLIPSE && (
+                    <PolygonShape
+                        type={props.shape}
                         width={width}
                         height={height}
+                        fillStyle={props.fillStyle}
                         fillColor={fillColor}
-                        fillOpacity={props.fillOpacity}
                         strokeWidth={strokeWidth}
                         strokeColor={strokeColor}
                         strokeStyle={props.strokeStyle}
@@ -244,32 +201,8 @@ export const ShapeElement = props => {
                     <EllipseShape
                         width={width}
                         height={height}
+                        fillStyle={props.fillStyle}
                         fillColor={fillColor}
-                        fillOpacity={props.fillOpacity}
-                        strokeWidth={strokeWidth}
-                        strokeColor={strokeColor}
-                        strokeStyle={props.strokeStyle}
-                        strokeOpacity={props.strokeOpacity}
-                    />
-                )}
-                {props.shape === SHAPES.TRIANGLE && (
-                    <TriangleShape
-                        width={width}
-                        height={height}
-                        fillColor={fillColor}
-                        fillOpacity={props.fillOpacity}
-                        strokeWidth={strokeWidth}
-                        strokeColor={strokeColor}
-                        strokeStyle={props.strokeStyle}
-                        strokeOpacity={props.strokeOpacity}
-                    />
-                )}
-                {props.shape === SHAPES.DIAMOND && (
-                    <DiamondShape
-                        width={width}
-                        height={height}
-                        fillColor={fillColor}
-                        fillOpacity={props.fillOpacity}
                         strokeWidth={strokeWidth}
                         strokeColor={strokeColor}
                         strokeStyle={props.strokeStyle}

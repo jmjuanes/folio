@@ -5,6 +5,12 @@ export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platfor
 export const PI = Math.PI;
 export const EPSILON = 1e-6;
 
+export const POLYGON = {
+    RECTANGLE: "rectangle",
+    DIAMOND: "diamond",
+    TRIANGLE: "triangle",
+};
+
 export const NONE = "none";
 export const TRANSPARENT = "transparent";
 export const WHITE = "#ffffff";
@@ -91,6 +97,10 @@ export const OPACITY_MAX = 1;
 export const DRAWING_THRESHOLD = 3;
 export const DRAWING_OFFSET = 10;
 
+// Hatch fill constants
+export const HATCH_ANGLE = PI / 4;
+export const HATCH_GAP = 4;
+
 // Text box constants
 export const TEXT_BOX_MIN_WIDTH = 400;
 
@@ -175,12 +185,19 @@ export const COLORS = {
     // GRAPEFRUIT:  "#D94452", // "#eb5463",
 };
 
+// Fill styles
+export const FILL_STYLES = {
+    NONE: "none",
+    HATCH: "hatch",
+    SOLID: "solid",
+};
+
 // Common stroke widths
 export const STROKE_WIDTHS = {
     SMALL: 2,
     MEDIUM: 4,
-    LARGE: 8,
-    XLARGE: 16,
+    LARGE: 6,
+    XLARGE: 8,
 };
 
 // Common text sizes
@@ -213,6 +230,7 @@ export const STROKES = {
 // Default values for style attributes of elements
 export const DEFAULT_FILL_COLOR = TRANSPARENT;
 export const DEFAULT_FILL_OPACITY = OPACITY_DEFAULT;
+export const DEFAULT_FILL_STYLE = FILL_STYLES.SOLID;
 export const DEFAULT_STROKE_COLOR = BLACK;
 export const DEFAULT_STROKE_WIDTH = STROKE_WIDTHS.MEDIUM;
 export const DEFAULT_STROKE_OPACITY = OPACITY_DEFAULT;
@@ -229,6 +247,7 @@ export const DEFAULT_OPACITY = OPACITY_DEFAULT;
 // Fields in elements
 export const FIELDS = {
     FILL_COLOR: "fillColor",
+    FILL_STYLE: "fillStyle",
     STROKE_COLOR: "strokeColor",
     TEXT_COLOR: "textColor",
     SHAPE: "shape",
@@ -241,6 +260,7 @@ export const FIELDS = {
 // Only maintained for the migration script
 export const DEPRECATED_FIELDS = {
     BLUR: "blur",
+    FILL_OPACITY: "fillOpacity",
 };
 
 export const KEYS = {

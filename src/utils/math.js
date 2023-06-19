@@ -119,7 +119,7 @@ export const distanceToSegment = (p, p1, p2) => {
     return Math.min.apply(null, d);
 };
 
-// Path simplification based on the Ramer–Douglas–Peucker algorithm
+// Path simplification based on the Ramer-Douglas-Peucker algorithm
 export const simplifyPath = (points, tolerance) => {
     if (points.length <= 2) {
         return points;
@@ -143,4 +143,21 @@ export const simplifyPath = (points, tolerance) => {
         points[0],
         points[points.length - 1],
     ];
+};
+
+// Rotate the provided points list
+export const rotatePoints = (points, center, angle) => {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    return (points || []).map(point => {
+        return [
+            ((point[0] - center[0]) * cos) - ((point[1] - center[1]) * sin) + center[0],
+            ((point[0] - center[0]) * sin) + ((point[1] - center[1]) * cos) + center[1],
+        ];
+    });
+};
+  
+// Rotate the provided lines list
+export const rotateLines = (lines, center, angle) => {
+    return (lines || []).map(points => rotatePoints(points, center, angle));
 };
