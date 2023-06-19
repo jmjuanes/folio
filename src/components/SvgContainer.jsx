@@ -7,10 +7,12 @@ export const SvgContainer = props => (
 );
 
 SvgContainer.defaultProps = {
-    width: "1",
-    height: "1",
+    width: "1px",
+    height: "1px",
     style: {
         position: "absolute",
         overflow: "visible",
+        top: "-1px",
+        left: "-1px",
     },
 };
