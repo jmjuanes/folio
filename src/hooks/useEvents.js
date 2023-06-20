@@ -412,8 +412,8 @@ export const useEvents = callbacks => {
                         elements: selectedElements.map(el => {
                             const prev1 = el[`${dir}1`];
                             const prev2 = el[`${dir}2`];
-                            el[`${dir}1`] = event.shiftKey ? getPosition(prev1 + sign * GRID_SIZE) : prev1 + sign;
-                            el[`${dir}2`] = event.shiftKey ? getPosition(prev2 + sign * GRID_SIZE) : prev2 + sign;
+                            el[`${dir}1`] = event.shiftKey ? prev1 + sign : getPosition(prev1 + sign * GRID_SIZE);
+                            el[`${dir}2`] = event.shiftKey ? prev2 + sign : getPosition(prev2 + sign * GRID_SIZE);
                             return {
                                 id: el.id,
                                 prevValues: {
