@@ -85,7 +85,7 @@ const EllipseShape = props => {
     );
     return (
         <React.Fragment>
-            {props.fillColor !== TRANSPARENT && (
+            {props.fillColor !== TRANSPARENT && props.width > 1 && props.height > 1 && (
                 <React.Fragment>
                     {props.fillStyle === FILL_STYLES.HATCH && (
                         <HatchFill
@@ -134,7 +134,7 @@ const PolygonShape = props => {
 
     return (
         <React.Fragment>
-            {props.fillColor !== TRANSPARENT && (
+            {props.fillColor !== TRANSPARENT && props.width > 1 && props.height > 1 && (
                 <React.Fragment>
                     {props.fillStyle === FILL_STYLES.HATCH && (
                         <HatchFill
