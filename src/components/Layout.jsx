@@ -82,6 +82,7 @@ export const Layout = props => {
                         top: "5rem",
                         left: "1rem",
                         bottom: "6.5rem",
+                        pointerEvents: "none",
                     }}
                     onChange={() => {
                         board.update();

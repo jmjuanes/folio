@@ -219,7 +219,7 @@ export const EditionPanel = props => {
 
     return (
         <div className={props.className} style={props.style}>
-            <div className="bg-white border border-gray-300 w-48 rounded-xl shadow-md overflow-y-auto scrollbar maxh-full">
+            <div className="bg-white border border-gray-300 w-56 rounded-xl shadow-md overflow-y-auto scrollbar maxh-full" style={{pointerEvents: "all"}}>
                 {visibleOptions.map(key => (
                     <React.Fragment key={key}>
                         <div className="first:hidden w-full h-px bg-gray-300" />
