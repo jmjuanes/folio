@@ -1,5 +1,5 @@
 import React from "react";
-import {COLORS, STROKES, NONE, TRANSPARENT} from "../constants.js";
+import {COLORS, STROKES, NONE, TRANSPARENT, GRID_SIZE} from "../constants.js";
 import {getPointsCenter, getBalancedDash, getPointsDistance} from "../utils/math.js";
 import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
 
@@ -40,6 +40,14 @@ export const DrawElement = props => {
         <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity}>
             <g transform={`scale(${width/props.drawWidth} ${height/props.drawHeight})`}>
                 <WithPencilEffect>
+                    <rect
+                        x={-GRID_SIZE / 2}
+                        y={-GRID_SIZE / 2}
+                        width={Math.abs(props.x2 - props.x1) + GRID_SIZE}
+                        height={Math.abs(props.y2 - props.y1) + GRID_SIZE}
+                        fill={NONE}
+                        stroke={NONE}
+                    />
                     <path
                         data-element={props.id}
                         d={path}
