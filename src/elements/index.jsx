@@ -163,6 +163,7 @@ export const elementsConfig = {
             }
         },
         onResize: (element, snapshot, event) => {
+            const updatedFields = ["textSize", "textWidth", "textHeight"];
             const handler = event.handler || "";
             const width = Math.abs(element.x2 - element.x1);
             const height = Math.abs(element.y2 - element.y1);
@@ -178,8 +179,15 @@ export const elementsConfig = {
                     element.textHeight = size[1];
                     textSize = textSize + TEXT_SIZE_STEP;
                 }
-                // Return updated keys
-                return ["textSize", "textWidth", "textHeight"];
+                // Terrible hack to prevent having 0px text elements
+                if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                    element.y2 = element.y1 + Math.max(height, element.textHeight, GRID_SIZE);
+                    updatedFields.push("y2");
+                }
+                else {
+                    element.y1 = element.y2 - Math.max(height, element.textHeight, GRID_SIZE);
+                    updatedFields.push("y1");
+                }
             }
             else if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
                 const sizes = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
@@ -187,9 +195,20 @@ export const elementsConfig = {
                 element.textHeight = sizes[1];
                 element.y1 = snapshot.y1;
                 element.y2 = element.y1 + Math.ceil(sizes[1] / GRID_SIZE) * GRID_SIZE;
-                // Return updated keys
-                return ["textWidth", "textHeight", "y1", "y2"];
+                updatedFields.push("y1");
+                updatedFields.push("y2");
             }
+            // Terrible hack to prevent having 0px text elements
+            if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                element.x1 = Math.min(element.x1, element.x2 - element.textWidth);
+                updatedFields.push("x1");
+            }
+            else if (handler === HANDLERS.EDGE_RIGHT || handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                element.x2 = Math.max(element.x2, element.x1 + element.textWidth);
+                updatedFields.push("x2");
+            }
+            // Return updated fields
+            return updatedFields;
         },
         utils: {
             measureText: (text, textSize, textFont, maxWidth) => {
