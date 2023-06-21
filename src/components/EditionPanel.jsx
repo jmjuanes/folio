@@ -9,13 +9,10 @@ import {ARROWHEADS} from "../constants.js";
 import {FORM_OPTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {Form} from "./Form.jsx";
-import {BanIcon} from "./Icons.jsx";
 import {CircleSolidIcon, CircleDashedIcon, CircleDottedIcon} from "./Icons.jsx";
+import {CircleSolidFillIcon, CircleHatchFillIcon} from "./Icons.jsx";
 import {SquareIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
 import {ArrowheadNoneIcon, ArrowheadArrowIcon, ArrowheadTriangleIcon, ArrowheadSquareIcon, ArrowheadCircleIcon} from "./Icons.jsx";
-import {SquareSolidIcon, SquareHatchIcon} from "./Icons.jsx";
-// import {FillIcon, StrokeIcon, TextIcon} from "./Icons.jsx";
-// import {SunIcon, ShapesIcon, PlusIcon, MinusIcon} from "./Icons.jsx";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "./Icons.jsx";
 import {elementsConfig} from "../elements/index.jsx";
 
@@ -53,9 +50,9 @@ const allOptions = {
                 type: FORM_OPTIONS.SELECT,
                 title: "Fill Style",
                 values: [
-                    {value: FILL_STYLES.NONE, icon: BanIcon()},
-                    {value: FILL_STYLES.HATCH, icon: SquareHatchIcon()},
-                    {value: FILL_STYLES.SOLID, icon: SquareSolidIcon()},
+                    {value: FILL_STYLES.NONE, icon: CircleSolidIcon()},
+                    {value: FILL_STYLES.HATCH, icon: CircleHatchFillIcon()},
+                    {value: FILL_STYLES.SOLID, icon: CircleSolidFillIcon()},
                 ],
             },
         },

@@ -50,12 +50,6 @@ export const ArrowheadSegmentIcon = () => (
     </SvgIcon>
 );
 
-export const BanIcon = () => (
-    <SvgIcon title="Ban">
-        <path d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12ZM6 6L18 18" />
-    </SvgIcon>
-);
-
 export const BarsIcon = () => (
     <SvgIcon title="Bars">
         <path d="M4 6L20 6M4 12L20 12M4 18L20 18" />
@@ -95,6 +89,19 @@ export const CircleDashedIcon = () => (
 export const CircleDottedIcon = () => (
     <SvgIcon title="CircleDotted">
         <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2.5" strokeDasharray="1.25 5" strokeLinecap="round" />
+    </SvgIcon>
+);
+
+export const CircleSolidFillIcon = () => (
+    <SvgIcon title="CircleSolidFill">
+        <circle cx="12" cy="12" r="10" fill="currentColor" stroke="currentColor" strokeWidth="2" />
+    </SvgIcon>
+);
+
+export const CircleHatchFillIcon = () => (
+    <SvgIcon title="CircleHatchFill">
+        <path d="M12 3L3 12M21 12L12 21M16 5L5 16M19 8L8 19" />
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" />
     </SvgIcon>
 );
 
@@ -233,19 +240,6 @@ export const ShapesIcon = () => (
 export const SquareIcon = () => (
     <SvgIcon title="Square">
         <path d="M4 7C4 7 4 4 7 4L17 4C20 4 20 7 20 7L20 17C20 17 20 20 17 20L7 20C4 20 4 17 4 17L4 7Z" />
-    </SvgIcon>
-);
-
-export const SquareSolidIcon = () => (
-    <SvgIcon title="SquareSolid">
-        <path fill="currentColor" opacity="0.75" d="M4 7C4 7 4 4 7 4L17 4C20 4 20 7 20 7L20 17C20 17 20 20 17 20L7 20C4 20 4 17 4 17L4 7Z" />
-        <path d="M4 7C4 7 4 4 7 4L17 4C20 4 20 7 20 7L20 17C20 17 20 20 17 20L7 20C4 20 4 17 4 17L4 7Z" />
-    </SvgIcon>
-);
-
-export const SquareHatchIcon = () => (
-    <SvgIcon title="SquareHatch">
-        <path d="M4 7C4 7 4 4 7 4L17 4C20 4 20 7 20 7L20 17C20 17 20 20 17 20L7 20C4 20 4 17 4 17L4 7ZM4 17L17 4M4 11L11 4M7 20L20 7M13 20L20 13" />
     </SvgIcon>
 );
 
