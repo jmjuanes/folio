@@ -107,6 +107,7 @@ const allOptions = {
                 type: FORM_OPTIONS.SELECT,
                 title: "Text Size",
                 values: [
+                    {value: TEXT_SIZES.XSMALL, text: "XS"},
                     {value: TEXT_SIZES.SMALL, text: "S"},
                     {value: TEXT_SIZES.MEDIUM, text: "M"},
                     {value: TEXT_SIZES.LARGE, text: "L"},

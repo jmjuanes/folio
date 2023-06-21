@@ -202,6 +202,7 @@ export const STROKE_WIDTHS = {
 
 // Common text sizes
 export const TEXT_SIZES = {
+    XSMALL: 8,
     SMALL: 16,
     MEDIUM: 24,
     LARGE: 40,
