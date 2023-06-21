@@ -1,6 +1,3 @@
-// TODO: we need to remove this import and add a new styles.css file
-import "lowcss/dist/low.css";
-
 // Export constans
 export {VERSION} from "./constants.js";
 

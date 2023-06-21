@@ -2,12 +2,12 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const package = require("../package.json");
+const package = require("./package.json");
 
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: path.join(__dirname, "index.jsx"),
+    entry: path.join(__dirname, "src", "apps", "demo.jsx"),
     output: {
         path: path.join(__dirname, "www"),
         publicPath: "./",
@@ -28,18 +28,12 @@ module.exports = {
             writeToDisk: true,
         },
     },
-    resolve: {
-        alias: {
-            folio: path.resolve(__dirname, "../src/index.jsx"),
-        },
-    },
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    __dirname,
-                    path.resolve(__dirname, "../src"),
+                    path.join(__dirname, "src"),
                 ],
                 exclude: /(node_modules|bower_components)/,
                 loader: "babel-loader",
@@ -84,7 +78,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             inject: true,
-            template: path.join(__dirname, "index.html"),
+            template: path.join(__dirname, "src", "index.html"),
             minify: true,
         }),
     ],

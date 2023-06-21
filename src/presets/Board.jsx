@@ -5,14 +5,12 @@ import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
 import {Layout} from "../components/Layout.jsx";
 import {Renderer} from "../components/Renderer.jsx";
 import {ContextMenu} from "../components/ContextMenu.jsx";
-import {Welcome} from "../components/Welcome.jsx";
 import {Menu} from "../components/Menu.jsx";
 import {ExportDialog} from "../components/ExportDialog.jsx";
 
 const InnerBoard = props => {
     const {showConfirm} = useConfirm();
     const board = useBoard();
-    const [welcomeVisible, setWelcomeVisible] = React.useState(props.showWelcome && (board.elements.length === 0));
     const [exportVisible, setExportVisible] = React.useState(false);
 
     // Handle board reset
@@ -74,13 +72,6 @@ const InnerBoard = props => {
                 )}
                 onChange={props.onChange}
             />
-            {welcomeVisible && (
-                <Welcome
-                    version={process.env.VERSION}
-                    onClose={() => setWelcomeVisible(false)}
-                    onLoad={props.onLoad}
-                />
-            )}
             {exportVisible && (
                 <ExportDialog
                     onClose={() => setExportVisible(false)}
@@ -110,7 +101,6 @@ Board.defaultProps = {
     onSave: null,
     onLoad: null,
     onResetBoard: null,
-    showWelcome: true,
     showExport: true,
     showLinks: true,
     showLoad: true,

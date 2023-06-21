@@ -1,10 +1,15 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
-import classNames from "classnames";
 import * as idb from "idb-keyval";
-import {VERSION} from "folio";
-import {migrate, loadFromJson, saveAsJson} from "folio";
-import {Board} from "folio";
+
+import {VERSION} from "../constants.js";
+import {migrate} from "../migrate.js";
+import {loadFromJson, saveAsJson} from "../json.js";
+import {Board} from "../presets/Board.jsx";
+import {Welcome} from "../components/Welcome.jsx";
+
+// TODO: we need to remove this import and add a new styles.css file
+import "lowcss/dist/low.css";
 
 // Store keys for IDB
 const STORE_KEYS = {
@@ -33,7 +38,6 @@ const initializeStore = async () => {
             await idb.set(STORE_KEYS.DATA, data, store);
             await idb.del(STORE_KEYS.STATE, store);
         }
-
         // Check if we need to perform an upgrade to the new version of folio
         const currentVersion = await idb.get(STORE_KEYS.VERSION, store);
         if (currentVersion !== VERSION) {
@@ -46,7 +50,6 @@ const initializeStore = async () => {
             await idb.set(STORE_KEYS.VERSION, VERSION, store);
         }
     }
-
     // Store initialized
     return true;
 };
@@ -54,18 +57,13 @@ const initializeStore = async () => {
 const App = props => {
     const [state, setState] = React.useState({});
     const [welcomeVisible, setWelcomeVisible] = React.useState(true);
-    const classList = classNames({
-        "fixed top-0 left-0 h-full w-full": true,
-        "bg-white text-base text-gray-700": true,
-        // "blur-md": loadingVisible,
-    });
 
     // Debounce the data saving to store
     React.useEffect(() => {
         const callback = () => {
             state.createdAt && idb.set(STORE_KEYS.DATA, state, store);
         };
-        const handler = setTimeout(() => callback(), props.delaySave);
+        const handler = setTimeout(() => callback(), 250);
 
         return () => clearTimeout(handler);
     }, [state]);
@@ -106,7 +104,7 @@ const App = props => {
     };
 
     return (
-        <div className={classList}>
+        <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-gray-700">
             <Board
                 key={state.createdAt ?? ""}
                 initialData={state}
@@ -114,7 +112,6 @@ const App = props => {
                     {url: process.env.URL_REPOSITORY, text: "About Folio"},
                     {url: process.env.URL_ISSUES, text: "Report a bug"},
                 ]}
-                showWelcome={welcomeVisible}
                 onChange={newState => {
                     setState(prevState => ({
                         ...prevState,
@@ -126,15 +123,15 @@ const App = props => {
                 onLoad={() => handleFileLoad()}
                 onResetBoard={() => setState({createdAt: Date.now()})}
             />
+            {welcomeVisible && (
+                <Welcome
+                    version={process.env.VERSION}
+                    onLoad={() => handleFileLoad()}
+                    onClose={() => setWelcomeVisible(false)}
+                />
+            )}
         </div>
     );
 };
 
-App.defaultProps = {
-    delaySave: 250,
-};
-
-const root = document.getElementById("root");
-
-// Mount app
-createRoot(root).render(<App />);
+createRoot(document.getElementById("root")).render(<App />);
