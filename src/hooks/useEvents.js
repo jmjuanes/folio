@@ -25,6 +25,23 @@ export const useEvents = callbacks => {
             return board.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
         };
 
+        // Remove the current text element
+        const removeTextElement = element => {
+            // Check if this element has been just created
+            if (board.history[0]?.type === CHANGES.CREATE && board.history[0]?.elements?.[0]?.id === element.id) {
+                // Just remove this history entry and filter elements
+                board.history.shift();
+                board.elements = board.elements.filter(el => el.id !== element.id);
+            }
+            else {
+                // Just register an element remove action 
+                board.removeElements([element]);
+            }
+            callbacks?.onChange?.({
+                elements: board.elements,
+            });
+        };
+
         // Internal variables
         let snapshot = [];
         let isDragged = false, isResized = false, isPrevSelected = false;
@@ -33,6 +50,11 @@ export const useEvents = callbacks => {
         events.current = {
             onPointCanvas: () => {
                 if (board.activeAction === ACTIONS.EDIT) {
+                    if (board.activeElement?.editing) {
+                        if (board.activeElement.type === ELEMENTS.TEXT && !board.activeElement.text) {
+                            removeTextElement(board.activeElement);
+                        }
+                    }
                     board.setAction(null);
                 }
                 if (board.activeGroup) {
@@ -78,6 +100,11 @@ export const useEvents = callbacks => {
                 isResized = false;
                 // First we need to check if we are in a edit action
                 if (board.activeAction === ACTIONS.EDIT) {
+                    if (board.activeElement?.editing) {
+                        if (board.activeElement.type === ELEMENTS.TEXT && !board.activeElement.text) {
+                            removeTextElement(board.activeElement);
+                        }
+                    }
                     board.setAction(null);
                 }
                 if (board.activeTool) {
@@ -356,8 +383,12 @@ export const useEvents = callbacks => {
                 if (isInputTarget(event)) {
                     if (board.activeAction === ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
                         event.preventDefault();
+                        if (board.activeElement?.editing) {
+                            if (board.activeElement.type === ELEMENTS.TEXT && !board.activeElement.text) {
+                                removeTextElement(board.activeElement);
+                            }
+                        }
                         board.setAction(null);
-                        board.activeElement = null;
                         board.update();
                     }
                 }
