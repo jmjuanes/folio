@@ -1,4 +1,4 @@
-# Deploy Folio to GitHub pages
+# Deploy Folio
 name: Deploy Folio
 
 on:
@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  deploy-demo:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -32,10 +32,9 @@ jobs:
           node-version: 16
       - uses: actions/configure-pages@v1
       - run: yarn install
-      - run: yarn run build:app
-      # Folio app is available in ./app/www folder
+      - run: yarn run build:demo
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: app/www
+          path: www
       - uses: actions/deploy-pages@v1
         id: deployment
