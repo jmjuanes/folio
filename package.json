@@ -7,22 +7,21 @@
     "repository": "https://github.com/jmjuanes/folio",
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
-    "workspaces": [
-        "app"
-    ],
     "scripts": {
-        "build": "yarn build:app",
-        "build:app": "yarn workspace app build",
-        "serve": "yarn run start:app",
-        "start:app": "yarn workspace app serve",
+        "build": "yarn clean && yarn build:demo",
+        "build:demo": "cross-env NODE_ENV=production webpack build",
+        "serve": "yarn clean && yarn start:demo",
+        "start:demo": "webpack serve",
         "clean": "rm -rf ./www",
         "test": "jest"
     },
     "dependencies": {
         "browser-fs-access": "^0.33.1",
         "classnames": "^2.3.2",
+        "idb-keyval": "^6.2.0",
         "lowcss": "^0.12.0",
         "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "uid": "^2.0.2"
     },
     "devDependencies": {
@@ -32,11 +31,19 @@
         "@babel/preset-env": "^7.18.10",
         "@babel/preset-react": "^7.18.6",
         "babel-jest": "^28.1.3",
+        "babel-loader": "^9.1.2",
+        "copy-webpack-plugin": "^11.0.0",
         "cross-env": "^7.0.3",
+        "css-loader": "^6.7.3",
+        "html-webpack-plugin": "^5.5.0",
         "jest": "^28.1.3",
         "jest-environment-jsdom": "^28.1.3",
+        "mini-css-extract-plugin": "^2.7.2",
         "react": "^18.2.0",
-        "react-test-renderer": "^18.2.0"
+        "react-test-renderer": "^18.2.0",
+        "webpack": "^5.72.1",
+        "webpack-cli": "^4.9.2",
+        "webpack-dev-server": "^4.11.1"
     },
     "license": "MIT",
     "jest": {
