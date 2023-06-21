@@ -1,4 +1,4 @@
-export const VERSION = "5";
+export const VERSION = "6";
 
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
@@ -245,6 +245,12 @@ export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
 export const DEFAULT_ARROWHEAD_END = ARROWHEADS.ARROW;
 export const DEFAULT_OPACITY = OPACITY_DEFAULT;
 
+// TODO: move all DEFAULT_* to DEFAULTS object
+export const DEFAULTS = {
+    FILL_STYLE: FILL_STYLES.SOLID,
+    OPACITY: OPACITY_DEFAULT,
+};
+
 // Fields in elements
 export const FIELDS = {
     FILL_COLOR: "fillColor",
@@ -262,6 +268,8 @@ export const FIELDS = {
 export const DEPRECATED_FIELDS = {
     BLUR: "blur",
     FILL_OPACITY: "fillOpacity",
+    STROKE_OPACITY: "strokeOpacity",
+    GROUP: "group",
 };
 
 export const KEYS = {

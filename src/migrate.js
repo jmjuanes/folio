@@ -1,5 +1,5 @@
 import {ELEMENTS, VERSION} from "./constants.js";
-import {FIELDS, OPACITY_DEFAULT} from "./constants.js";
+import {FIELDS, DEPRECATED_FIELDS, DEFAULTS} from "./constants.js";
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map(element => {
@@ -28,10 +28,19 @@ export const migrateElements = (elements, version) => {
             case "4":
                 // deprecated group, fillOpacity and strokeOpacity fields
                 // new fields: opacity
-                element[FIELDS.OPACITY] = OPACITY_DEFAULT;
-                delete element.group;
-                delete element.fillOpacity;
-                delete element.strokeOpacity;
+                element[FIELDS.OPACITY] = DEFAULTS.OPACITY;
+                delete element[DEPRECATED_FIELDS.GROUP];
+                delete element[DEPRECATED_FIELDS.FILL_OPACITY];
+                delete element[DEPRECATED_FIELDS.STROKE_OPACITY];
+            case "5":
+                // Make sure that 'blur' field is removed, as this field has been deprecated
+                if (typeof element[DEPRECATED_FIELDS.BLUR] !== "undefined") {
+                    delete element[DEPRECATED_FIELDS.BLUR];
+                }
+                // Added new fillStyle field to shape elements
+                if (element.type === ELEMENTS.SHAPE) {
+                    element[FIELDS.FILL_STYLE] = DEFAULTS.FILL_STYLE;
+                }
         }
         return element;
     });
