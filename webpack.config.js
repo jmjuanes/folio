@@ -7,7 +7,7 @@ const package = require("./package.json");
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: path.join(__dirname, "src", "apps", "demo.jsx"),
+    entry: path.join(__dirname, "src", "index.jsx"),
     output: {
         path: path.join(__dirname, "www"),
         publicPath: "./",
