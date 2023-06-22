@@ -2,17 +2,11 @@ import React from "react";
 import classNames from "classnames";
 
 import {DropletIcon} from "./Icons.jsx";
-
-const transparentImage = window.encodeURIComponent([
-    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="#fdfdfd">`,
-    `<rect x="0" y="0" width="8" height="8" fill="#cacacc" />`,
-    `<rect x="8" y="8" width="8" height="8" fill="#cacacc" />`,
-    `</svg>`,
-].join(""));
+import transparentBg from "../assets/transparent.svg";
 
 const getStyleForColor = color => ({
     backgroundColor: color !== "transparent" ? color : null,
-    backgroundImage: color === "transparent" ? `url('data:image/svg+xml;utf-8,${transparentImage}')` : null,
+    backgroundImage: color === "transparent" ? `url('${transparentBg}')` : null,
     backgroundSize: "10px 10px",
     backgroundRepeat: "repeat",
     // minWidth: "1.5rem",

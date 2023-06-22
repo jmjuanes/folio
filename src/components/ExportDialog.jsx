@@ -8,11 +8,19 @@ import {Form} from "./Form.jsx";
 import {ImageIcon, CloseIcon, DownloadIcon, ClipboardIcon} from "./Icons.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
+import transparentBg from "../assets/transparent.svg";
+
 const formOptions = {
     includeBackground: {
         type: "checkbox",
         title: "Include background",
     },
+};
+
+const previewStyle = {
+    backgroundImage: `url('${transparentBg}')`,
+    backgroundSize: "10px 10px",
+    backgroundRepeat: "repeat",
 };
 
 export const ExportDialog = props => {
@@ -50,19 +58,19 @@ export const ExportDialog = props => {
                 </div>
             </div>
             <div className="select-none mb-4 border border-gray-300">
-                <div className="flex items-center justify-center h-48">
-                    {!!preview && (
+                {!!preview && (
+                    <div className="flex items-center justify-center h-48" style={previewStyle}>
                         <img src={preview} className="maxh-48" />
-                    )}
-                    {!preview && (
-                        <React.Fragment>
-                            <div className="flex text-lg text-gray-400">
-                                <ImageIcon />
-                            </div>
-                            <span className="text-xs text-gray-400">Generating preview...</span>
-                        </React.Fragment>
-                    )}
-                </div>
+                    </div>
+                )}
+                {!preview && (
+                    <div className="flex items-center justify-center h-48">
+                        <div className="flex text-lg text-gray-400">
+                            <ImageIcon />
+                        </div>
+                        <span className="text-xs text-gray-400">Generating preview...</span>
+                    </div>
+                )}
             </div>
             <div className="mb-8">
                 <Form
