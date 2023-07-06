@@ -143,17 +143,17 @@ export const HANDLERS = {
 
 // Default font faces
 export const FONT_FACES = {
+    DRAW: "Caveat Brush, cursive",
     SANS: "Roboto, sans-serif",
     SERIF: "Roboto Slab, serif",
-    DRAW: "Caveat, cursive",
     MONO: "Roboto Mono, monospace",
 };
 
 // Fonts sources
 export const FONT_SOURCES = {
+    DRAW: "https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap",
     SANS: "https://fonts.googleapis.com/css2?family=Roboto&display=swap",
     SERIF: "https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap",
-    DRAW: "https://fonts.googleapis.com/css2?family=Caveat&display=swap",
     MONO: "https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap",
 };
 
@@ -236,7 +236,7 @@ export const DEFAULT_STROKE_COLOR = BLACK;
 export const DEFAULT_STROKE_WIDTH = STROKE_WIDTHS.MEDIUM;
 export const DEFAULT_STROKE_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
-export const DEFAULT_TEXT_FONT = FONT_FACES.SANS;
+export const DEFAULT_TEXT_FONT = FONT_FACES.DRAW;
 export const DEFAULT_TEXT_SIZE = TEXT_SIZES.MEDIUM;
 export const DEFAULT_TEXT_COLOR = BLACK;
 export const DEFAULT_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
@@ -248,6 +248,7 @@ export const DEFAULT_OPACITY = OPACITY_DEFAULT;
 // TODO: move all DEFAULT_* to DEFAULTS object
 export const DEFAULTS = {
     FILL_STYLE: FILL_STYLES.SOLID,
+    TEXT_FONT: FONT_FACES.DRAW,
     OPACITY: OPACITY_DEFAULT,
 };
 
@@ -257,6 +258,7 @@ export const FIELDS = {
     FILL_STYLE: "fillStyle",
     STROKE_COLOR: "strokeColor",
     TEXT_COLOR: "textColor",
+    TEXT_FONT: "textFont",
     SHAPE: "shape",
     START_ARROWHEAD: "startArrowhead",
     END_ARROWHEAD: "endArrowhead",
