@@ -1,5 +1,5 @@
 import {ELEMENTS, VERSION} from "./constants.js";
-import {FIELDS, DEPRECATED_FIELDS, DEFAULTS} from "./constants.js";
+import {FIELDS, DEPRECATED_FIELDS, DEFAULTS, FONT_FACES} from "./constants.js";
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map(element => {
@@ -40,6 +40,11 @@ export const migrateElements = (elements, version) => {
                 // Added new fillStyle field to shape elements
                 if (element.type === ELEMENTS.SHAPE) {
                     element[FIELDS.FILL_STYLE] = DEFAULTS.FILL_STYLE;
+                }
+            case "6":
+                // Migrate 'Caveat' font to 'Caveat Brush'
+                if (typeof element[FIELDS.TEXT_FONT] === "string" && element[FIELDS.TEXT_FONT].startsWith("Caveat")) {
+                    element[FIELDS.TEXT_FONT] = FONT_FACES.DRAW;
                 }
         }
         return element;

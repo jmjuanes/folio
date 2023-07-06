@@ -1,4 +1,4 @@
-export const VERSION = "6";
+export const VERSION = "7";
 
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
