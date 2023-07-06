@@ -25,6 +25,7 @@ const previewStyle = {
 
 export const ExportDialog = props => {
     const board = useBoard();
+    const [copiedToClipboard, setCopiedToClipboard] = React.useState(false);
     const [preview, setPreview] = React.useState(null);
     const [options, setOptions] = React.useState({
         includeBackground: true,
@@ -89,10 +90,13 @@ export const ExportDialog = props => {
                     onClick={() => exportToFile(getExportOptions())}
                 />
                 <SecondaryButton
-                    text="Copy to clipboard"
+                    text={copiedToClipboard ? "Copied!" : "Copy to clipboard"}
                     icon={(<ClipboardIcon />)}
                     fullWidth={true}
-                    onClick={() => exportToClipboard(getExportOptions())}
+                    onClick={() => {
+                        setCopiedToClipboard(true);
+                        exportToClipboard(getExportOptions());
+                    }}
                 />
             </div>
         </Modal>
