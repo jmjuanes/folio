@@ -24,8 +24,9 @@ import {
     DEFAULT_OPACITY,
     STATES,
     PASTE_OFFSET,
+    FIELDS,
 } from "./constants.js";
-import {getElementConfig} from "./elements/index.jsx";
+import {getElementConfig, createElement as createNewElement} from "./elements/index.jsx";
 import {getRectangleBounds} from "./utils/math.js";
 import {loadImage} from "./utils/image.js";
 import {getTextFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
@@ -229,18 +230,8 @@ export const createBoard = props => ({
     },
     createElement(type) {
         return {
-            type: type,
-            id: generateRandomId(),
-            x1: 0,
-            y1: 0,
-            x2: 0,
-            y2: 0,
-            minWidth: 1,
-            minHeight: 1,
-            selected: false,
-            creating: false,
-            editing: false,
-            locked: false,
+            ...createNewElement(type),
+            [FIELDS.ORDER]: this.elements.length,
         };
     },
     getElements() {
@@ -252,20 +243,27 @@ export const createBoard = props => ({
     },
     addElements(elements) {
         if (elements && elements.length > 0) {
+            const numElements = this.elements.length;
             // 1. Register element create in the history
             this.addHistory({
                 type: CHANGES.CREATE,
-                elements: elements.map(element => ({
+                elements: elements.map((element, index) => ({
                     id: element.id,
                     prevValues: null,
                     newValues: {
                         ...element,
                         selected: false,
+                        [FIELDS.ORDER]: numElements + index,
                     },
                 })),
             });
             // 2. Add new elements
-            elements.forEach(element => this.elements.push(element));
+            elements.forEach((element, index) => {
+                this.elements.push({
+                    ...element,
+                    [FIELDS.ORDER]: numElements + index,
+                });
+            });
         }
     },
     removeElements(elements) {
@@ -287,6 +285,10 @@ export const createBoard = props => ({
             const elementsToRemove = new Set(elements.map(element => element.id));
             this.elements = this.elements.filter(element => {
                 return !elementsToRemove.has(element.id);
+            });
+            // 3. Reset elements order
+            this.elements.forEach((element, index) => {
+                element[FIELDS.ORDER] = index;
             });
         }
     },
@@ -327,7 +329,8 @@ export const createBoard = props => ({
         this.clearSelectedElements();
         // 1. Process new elements
         const groups = new Map();
-        const newElements = elements.map(element => {
+        const numElements = this.elements.length;
+        const newElements = elements.map((element, index) => {
             // 1.1. Check if this element is part of a group
             if (elements.length > 1 && !!element.group && !groups.has(element.group)) {
                 groups.set(element.group, generateRandomId());
@@ -342,6 +345,7 @@ export const createBoard = props => ({
                 y2: element.y2 + dy,
                 selected: true,
                 group: this.activeGroup || groups.get(element.group) || null,
+                [FIELDS.ORDER]: numElements + index,
             };
         });
         // 2. insert new elements
@@ -502,7 +506,10 @@ export const createBoard = props => ({
                 const removeElements = new Set(entry.elements.map(el => el.id));
                 this.elements = this.elements.filter(el => !removeElements.has(el.id));
             } else if (entry.type === CHANGES.REMOVE) {
-                entry.elements.forEach(el => this.elements.unshift({...el.prevValues}));
+                // We need to restore elements in the current order
+                entry.elements.forEach(el => {
+                    this.elements.splice(el.prevValues[FIELDS.ORDER], 0, {...el.prevValues});
+                });
             } else if (entry.type === CHANGES.UPDATE) {
                 entry.elements.forEach(item => {
                     // 1. Update element values
@@ -513,6 +520,10 @@ export const createBoard = props => ({
                     getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
+            // Reset elements order
+            this.elements.forEach((element, index) => {
+                element[FIELDS.ORDER] = index;
+            });
             this.historyIndex = this.historyIndex + 1;
             this.activeGroup = null;
             this.setAction(null);
@@ -528,7 +539,9 @@ export const createBoard = props => ({
             this.historyIndex = this.historyIndex - 1;
             const entry = this.history[this.historyIndex];
             if (entry.type === CHANGES.CREATE) {
-                entry.elements.forEach(el => this.elements.unshift({...el.newValues}));
+                entry.elements.forEach(el => {
+                    this.elements.splice(el.newValues[FIELDS.ORDER], 0, {...el.newValues});
+                });
             } else if (entry.type === CHANGES.REMOVE) {
                 const removeElements = new Set(entry.elements.map(el => el.id));
                 this.elements = this.elements.filter(el => !removeElements.has(el.id));
@@ -542,6 +555,10 @@ export const createBoard = props => ({
                     getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
+            // Reset elements order
+            this.elements.forEach((element, index) => {
+                element[FIELDS.ORDER] = index;
+            });
             this.activeGroup = null;
             this.setAction(null);
             this.elements.forEach(el => {
