@@ -24,7 +24,8 @@ import {
     DRAWING_OFFSET,
     EPSILON,
     TEXT_BOX_MIN_WIDTH,
-} from "../constants";
+    FIELDS,
+} from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
 import {TextElement} from "./TextElement.jsx";
@@ -312,6 +313,7 @@ export const createElement = elementType => {
         editing: false,
         locked: false,
         group: null,
+        [FIELDS.ORDER]: 0,
     };
 };
 
