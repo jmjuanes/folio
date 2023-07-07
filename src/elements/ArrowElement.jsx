@@ -74,6 +74,24 @@ export const ArrowElement = props => {
         },
         [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
     );
+    const selectionPath = React.useMemo(
+        () => {
+            const commands = [];
+            const hsize = Math.max(strokeWidth, 1) + 4;
+            const length = Math.sqrt(Math.pow(props.y2 - props.y1, 2) + Math.pow(props.x2 - props.x1, 2));
+            const hip = Math.sqrt(length * length + hsize * hsize);
+            const angle = Math.atan2(props.y1 - props.y2, props.x1 - props.x2);
+            const angle2 = Math.atan(hsize / length);
+            commands.push(`M${props.x1 - x},${props.y1 - y}`);
+            commands.push(`L${props.x1 - x - hsize * Math.sin(angle)},${props.y1 - y + hsize * Math.cos(angle)}`);
+            commands.push(`L${props.x1 - x - hip * Math.cos(angle - angle2)},${props.y1 - y + hip * Math.sin(angle2 - angle)}`);
+            commands.push(`L${props.x1 - x - hip * Math.cos(angle + angle2)},${props.y1 - y - hip * Math.sin(angle2 + angle)}`);
+            commands.push(`L${props.x1 - x + hsize * Math.sin(angle)},${props.y1 - y - hsize * Math.cos(angle)}`);
+            commands.push("Z");
+            return commands.join(" ");
+        },
+        [strokeWidth, props.x1, props.y1, props.x2, props.y2],
+    );
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>
             <WithPencilEffect>
@@ -127,6 +145,13 @@ export const ArrowElement = props => {
                     />
                 )}
             </WithPencilEffect>
+            <path 
+                data-element={props.id}
+                d={selectionPath}
+                fill={TRANSPARENT}
+                stroke={NONE}
+                onPointerDown={props.onPointerDown}
+            />
         </g>
     );
 };
