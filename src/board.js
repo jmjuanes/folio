@@ -363,6 +363,55 @@ export const createBoard = props => ({
             })),
         });
     },
+    changeElementsOrder(elements, sign) {
+        const changedElements = new Set();
+        const prevElementPosition = new Map();
+        // 1. Fix order position of elements using the sign
+        (elements || [])
+            .sort((a, b) => sign * (b[FIELDS.ORDER] - a[FIELDS.ORDER]))
+            .filter(el => {
+                return sign > 0 ? el[FIELDS.ORDER] < this.elements.length - 1 : el[FIELDS.ORDER] > 0;
+            })
+            .forEach(element => {
+                // 1.1. Get the new position of the element
+                const newPosition = element[FIELDS.ORDER] + sign;
+                const nextElement = this.elements[newPosition];
+                // 1.2. First register the previous position of the elements
+                if (!changedElements.has(element.id)) {
+                    prevElementPosition.set(element.id, element[FIELDS.ORDER]);
+                }
+                if (!changedElements.has(nextElement.id)) {
+                    prevElementPosition.set(nextElement.id, nextElement[FIELDS.ORDER]);
+                }
+                // 1.3. Set the new position
+                element[FIELDS.ORDER] = newPosition;
+                nextElement[FIELDS.ORDER] = newPosition - sign;
+                // 1.4. Sort elements by order
+                this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+                // 1.5. Set both elements as changed
+                changedElements.add(element.id);
+                changedElements.add(nextElement.id);
+            });
+        // 2. Register history change
+        this.addHistory({
+            type: CHANGES.UPDATE,
+            elements: Array.from(changedElements).map(id => ({
+                id: id,
+                prevValues: {
+                    [FIELDS.ORDER]: prevElementPosition.get(id),
+                },
+                newValues: {
+                    [FIELDS.ORDER]: this.elements.find(el => el.id === id)[FIELDS.ORDER],
+                },
+            })),
+        });
+    },
+    bringElementsForward(elements) {
+        return this.changeElementsOrder(elements, +1);
+    },
+    sendElementsBackward(elements) {
+        return this.changeElementsOrder(elements, -1);
+    },
     addText(text, tx = null, ty = null) {
         this.clearSelectedElements();
         const target = document.querySelector(`[data-id="${this.id}"]`);
@@ -468,6 +517,12 @@ export const createBoard = props => ({
     },
     updateSelectedElements(key, value) {
         return this.updateElements(this.getSelectedElements(), [key], [value], false);
+    },
+    sendSelectedElementsBackward() {
+        return this.sendElementsBackward(this.getSelectedElements());
+    },
+    bringSelectedElementsForward() {
+        return this.bringElementsForward(this.getSelectedElements());
     },
     getHistory() {
         return [...this.history];
