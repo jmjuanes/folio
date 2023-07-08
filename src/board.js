@@ -26,7 +26,7 @@ import {
     PASTE_OFFSET,
     FIELDS,
 } from "./constants.js";
-import {getElementConfig, createElement as createNewElement} from "./elements/index.jsx";
+import {getElementConfig, createNewElement} from "./elements/index.jsx";
 import {getRectangleBounds} from "./utils/math.js";
 import {loadImage} from "./utils/image.js";
 import {getTextFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
@@ -244,7 +244,11 @@ export const createBoard = props => ({
     addElements(elements) {
         if (elements && elements.length > 0) {
             const numElements = this.elements.length;
-            // 1. Register element create in the history
+            // 1. Fix elements positions
+            elements.forEach((element, index) => {
+                element[FIELDS.ORDER] = numElements + index;
+            });
+            // 2. Register element create in the history
             this.addHistory({
                 type: CHANGES.CREATE,
                 elements: elements.map((element, index) => ({
@@ -253,17 +257,11 @@ export const createBoard = props => ({
                     newValues: {
                         ...element,
                         selected: false,
-                        [FIELDS.ORDER]: numElements + index,
                     },
                 })),
             });
-            // 2. Add new elements
-            elements.forEach((element, index) => {
-                this.elements.push({
-                    ...element,
-                    [FIELDS.ORDER]: numElements + index,
-                });
-            });
+            // 3. Add new elements
+            elements.forEach(element => this.elements.push(element));
         }
     },
     removeElements(elements) {

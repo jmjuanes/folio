@@ -317,6 +317,10 @@ export const createElement = elementType => {
     };
 };
 
+export const createNewElement = elementType => {
+    return createElement(elementType);
+};
+
 export const exportElementSvg = elementId => {
     return document.querySelector(`g[data-element="${elementId}"]`)?.cloneNode?.(true);
 };
