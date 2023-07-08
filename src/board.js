@@ -573,10 +573,8 @@ export const createBoard = props => ({
                     getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
-            // Reset elements order
-            this.elements.forEach((element, index) => {
-                element[FIELDS.ORDER] = index;
-            });
+            // Sort elements by order
+            this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
             this.historyIndex = this.historyIndex + 1;
             this.activeGroup = null;
             this.setAction(null);
@@ -608,10 +606,8 @@ export const createBoard = props => ({
                     getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
-            // Reset elements order
-            this.elements.forEach((element, index) => {
-                element[FIELDS.ORDER] = index;
-            });
+            // sort elements by order
+            this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
             this.activeGroup = null;
             this.setAction(null);
             this.elements.forEach(el => {
