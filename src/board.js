@@ -24,8 +24,9 @@ import {
     DEFAULT_OPACITY,
     STATES,
     PASTE_OFFSET,
+    FIELDS,
 } from "./constants.js";
-import {getElementConfig} from "./elements/index.jsx";
+import {getElementConfig, createNewElement} from "./elements/index.jsx";
 import {getRectangleBounds} from "./utils/math.js";
 import {loadImage} from "./utils/image.js";
 import {getTextFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
@@ -229,18 +230,8 @@ export const createBoard = props => ({
     },
     createElement(type) {
         return {
-            type: type,
-            id: generateRandomId(),
-            x1: 0,
-            y1: 0,
-            x2: 0,
-            y2: 0,
-            minWidth: 1,
-            minHeight: 1,
-            selected: false,
-            creating: false,
-            editing: false,
-            locked: false,
+            ...createNewElement(type),
+            [FIELDS.ORDER]: this.elements.length,
         };
     },
     getElements() {
@@ -252,10 +243,15 @@ export const createBoard = props => ({
     },
     addElements(elements) {
         if (elements && elements.length > 0) {
-            // 1. Register element create in the history
+            const numElements = this.elements.length;
+            // 1. Fix elements positions
+            elements.forEach((element, index) => {
+                element[FIELDS.ORDER] = numElements + index;
+            });
+            // 2. Register element create in the history
             this.addHistory({
                 type: CHANGES.CREATE,
-                elements: elements.map(element => ({
+                elements: elements.map((element, index) => ({
                     id: element.id,
                     prevValues: null,
                     newValues: {
@@ -264,7 +260,7 @@ export const createBoard = props => ({
                     },
                 })),
             });
-            // 2. Add new elements
+            // 3. Add new elements
             elements.forEach(element => this.elements.push(element));
         }
     },
@@ -287,6 +283,10 @@ export const createBoard = props => ({
             const elementsToRemove = new Set(elements.map(element => element.id));
             this.elements = this.elements.filter(element => {
                 return !elementsToRemove.has(element.id);
+            });
+            // 3. Reset elements order
+            this.elements.forEach((element, index) => {
+                element[FIELDS.ORDER] = index;
             });
         }
     },
@@ -327,7 +327,8 @@ export const createBoard = props => ({
         this.clearSelectedElements();
         // 1. Process new elements
         const groups = new Map();
-        const newElements = elements.map(element => {
+        const numElements = this.elements.length;
+        const newElements = elements.map((element, index) => {
             // 1.1. Check if this element is part of a group
             if (elements.length > 1 && !!element.group && !groups.has(element.group)) {
                 groups.set(element.group, generateRandomId());
@@ -342,6 +343,7 @@ export const createBoard = props => ({
                 y2: element.y2 + dy,
                 selected: true,
                 group: this.activeGroup || groups.get(element.group) || null,
+                [FIELDS.ORDER]: numElements + index,
             };
         });
         // 2. insert new elements
@@ -358,6 +360,79 @@ export const createBoard = props => ({
                 },
             })),
         });
+    },
+    changeElementsOrder(elements, sign, absolute) {
+        const changedElements = new Set();
+        const prevElementsPosition = new Map();
+        const nextElementsPosition = new Map();
+        const length = this.elements.length;
+        // 1. Save current elements position
+        this.elements.forEach(element => {
+            prevElementsPosition.set(element.id, element[FIELDS.ORDER]);
+        });
+        // 2. Fix order position of elements using the sign
+        (elements || [])
+            .sort((a, b) => sign * (b[FIELDS.ORDER] - a[FIELDS.ORDER]))
+            .filter(el => {
+                return absolute || (sign > 0 ? el[FIELDS.ORDER] < length - 1 : el[FIELDS.ORDER] > 0);
+            })
+            .forEach(element => {
+                // move all elements to front or back
+                if (absolute) {
+                    element[FIELDS.ORDER] = element[FIELDS.ORDER] + 10 * sign * length;
+                }
+                // move only individual elements
+                else {
+                    // 2.1. Get the new position of the element
+                    const newPosition = element[FIELDS.ORDER] + sign;
+                    const nextElement = this.elements[newPosition];
+                    // 2.2. Set the new position
+                    element[FIELDS.ORDER] = newPosition;
+                    nextElement[FIELDS.ORDER] = newPosition - sign;
+                    // 2.3. Sort elements by order
+                    this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+                    // 2.4. Set both elements as changed
+                    changedElements.add(element.id);
+                    changedElements.add(nextElement.id);
+                }
+            });
+        // 3. Fix order in case of moving all elements to front or back
+        if (absolute) {
+            this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+            this.elements.forEach((element, index) => {
+                element[FIELDS.ORDER] = index;
+                changedElements.add(element.id);
+            });
+        }
+        // 4. Get new positions
+        this.elements.forEach(element => {
+            nextElementsPosition.set(element.id, element[FIELDS.ORDER]);
+        });
+        // 5. Register history change
+        this.addHistory({
+            type: CHANGES.UPDATE,
+            elements: Array.from(changedElements).map(id => ({
+                id: id,
+                prevValues: {
+                    [FIELDS.ORDER]: prevElementsPosition.get(id),
+                },
+                newValues: {
+                    [FIELDS.ORDER]: nextElementsPosition.get(id),
+                },
+            })),
+        });
+    },
+    bringElementsForward(elements) {
+        return this.changeElementsOrder(elements, +1, false);
+    },
+    sendElementsBackward(elements) {
+        return this.changeElementsOrder(elements, -1, false);
+    },
+    bringElementsToFront(elements) {
+        return this.changeElementsOrder(elements, +1, true);
+    },
+    sendElementsToBack(elements) {
+        return this.changeElementsOrder(elements, -1, true);
     },
     addText(text, tx = null, ty = null) {
         this.clearSelectedElements();
@@ -465,6 +540,18 @@ export const createBoard = props => ({
     updateSelectedElements(key, value) {
         return this.updateElements(this.getSelectedElements(), [key], [value], false);
     },
+    sendSelectedElementsBackward() {
+        return this.sendElementsBackward(this.getSelectedElements());
+    },
+    bringSelectedElementsForward() {
+        return this.bringElementsForward(this.getSelectedElements());
+    },
+    bringSelectedElementsToFront() {
+        return this.bringElementsToFront(this.getSelectedElements());
+    },
+    sendSelectedElementsToBack() {
+        return this.sendElementsToBack(this.getSelectedElements());
+    },
     getHistory() {
         return [...this.history];
     },
@@ -502,7 +589,10 @@ export const createBoard = props => ({
                 const removeElements = new Set(entry.elements.map(el => el.id));
                 this.elements = this.elements.filter(el => !removeElements.has(el.id));
             } else if (entry.type === CHANGES.REMOVE) {
-                entry.elements.forEach(el => this.elements.unshift({...el.prevValues}));
+                // We need to restore elements in the current order
+                entry.elements.forEach(el => {
+                    this.elements.splice(el.prevValues[FIELDS.ORDER], 0, {...el.prevValues});
+                });
             } else if (entry.type === CHANGES.UPDATE) {
                 entry.elements.forEach(item => {
                     // 1. Update element values
@@ -513,6 +603,8 @@ export const createBoard = props => ({
                     getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
+            // Sort elements by order
+            this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
             this.historyIndex = this.historyIndex + 1;
             this.activeGroup = null;
             this.setAction(null);
@@ -528,7 +620,9 @@ export const createBoard = props => ({
             this.historyIndex = this.historyIndex - 1;
             const entry = this.history[this.historyIndex];
             if (entry.type === CHANGES.CREATE) {
-                entry.elements.forEach(el => this.elements.unshift({...el.newValues}));
+                entry.elements.forEach(el => {
+                    this.elements.splice(el.newValues[FIELDS.ORDER], 0, {...el.newValues});
+                });
             } else if (entry.type === CHANGES.REMOVE) {
                 const removeElements = new Set(entry.elements.map(el => el.id));
                 this.elements = this.elements.filter(el => !removeElements.has(el.id));
@@ -542,6 +636,8 @@ export const createBoard = props => ({
                     getElementConfig(element)?.onUpdate?.(element, changedKeys);
                 });
             }
+            // sort elements by order
+            this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
             this.activeGroup = null;
             this.setAction(null);
             this.elements.forEach(el => {

@@ -263,6 +263,7 @@ export const FIELDS = {
     START_ARROWHEAD: "startArrowhead",
     END_ARROWHEAD: "endArrowhead",
     OPACITY: "opacity",
+    ORDER: "order",
 };
 
 // Deprecated fields

@@ -68,6 +68,47 @@ export const ContextMenu = props => {
                         });
                     }}
                 />
+                {selectedElements.length > 0 && (
+                    <React.Fragment>
+                        <Separator />
+                        <Item
+                            text="Send backward"
+                            onClick={() => {
+                                board.sendSelectedElementsBackward();
+                                props.onChange?.(board.export());
+                                board.state.contextMenuVisible = false;
+                                board.update();
+                            }}
+                        />
+                        <Item
+                            text="Bring forward"
+                            onClick={() => {
+                                board.bringSelectedElementsForward();
+                                props.onChange?.(board.export());
+                                board.state.contextMenuVisible = false;
+                                board.update();
+                            }}
+                        />
+                        <Item
+                            text="Send to back"
+                            onClick={() => {
+                                board.sendSelectedElementsToBack();
+                                props.onChange?.(board.export());
+                                board.state.contextMenuVisible = false;
+                                board.update();
+                            }}
+                        />
+                        <Item
+                            text="Bring to front"
+                            onClick={() => {
+                                board.bringSelectedElementsToFront();
+                                props.onChange?.(board.export());
+                                board.state.contextMenuVisible = false;
+                                board.update();
+                            }}
+                        />
+                    </React.Fragment>
+                )}
                 {board.elements.length > 0 && (
                     <React.Fragment>
                         <Separator />
