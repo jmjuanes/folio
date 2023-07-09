@@ -146,11 +146,16 @@ export const Canvas = props => {
         const handleKeyUp = event => props?.onKeyUp?.(event);
         const handlePaste = event => props?.onPaste?.(event);
         const handleResize = event => {
+            const eventInfo = {
+                nativeEvent: event,
+            };
             if (canvasRef.current) {
                 const size = canvasRef.current.getBoundingClientRect();
                 setCanvasSize([size.width, size.height]);
+                eventInfo.canvasWidth = size.width;
+                eventInfo.canvasHeight = size.height;
             }
-            props?.onResize?.(event);
+            props?.onResize?.(eventInfo);
         };
         // const handleWheel = event => {
         //     event.preventDefault();
