@@ -1,9 +1,10 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
 
-import {ELEMENTS, FILE_EXTENSIONS, ACTIONS} from "../constants.js";
+import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";
+import {NewEditionPanel} from "./NewEditionPanel.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../utils/blob.js";
 import {Zooming} from "./Zooming.jsx";
@@ -76,7 +77,7 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {props.showEdition && (selectedElements.length > 0 || board.activeTool) && (
+            {false && props.showEdition && (selectedElements.length > 0 || board.activeTool) && (
                 <EditionPanel
                     style={{
                         top: "5rem",
@@ -92,6 +93,18 @@ export const Layout = props => {
                     }}
                 />
             )}
+            {props.showEdition && board.currentState === STATES.IDLE && selectedElements.length > 0 && (
+                <NewEditionPanel
+                    key={selectedElements.length}
+                    onChange={() => {
+                        board.update();
+                        props.onChange?.({
+                            elements: board.elements,
+                        });
+                    }}
+                />
+            )}
+
             {props.showHeader && (
                 <React.Fragment>
                     <div className="absolute top-0 left-0 pt-4 pl-4 z-7">
