@@ -515,6 +515,12 @@ export const useEvents = callbacks => {
                     }
                 }
             },
+            onResize: event => {
+                if (event?.canvasWidth && event?.canvasHeight) {
+                    board.state.canvasWidth = event.canvasWidth;
+                    board.state.canvasHeight = event.canvasHeight;
+                }
+            },
         };
     }
 

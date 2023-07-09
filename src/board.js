@@ -80,6 +80,8 @@ export const createBoard = props => ({
         contextMenuVisible: false,
         contextMenuX: 0,
         contextMenuY: 0,
+        canvasWidth: 0,
+        canvasHeight: 0,
     },
 
     update() {
@@ -436,10 +438,8 @@ export const createBoard = props => ({
     },
     addText(text, tx = null, ty = null) {
         this.clearSelectedElements();
-        const target = document.querySelector(`[data-id="${this.id}"]`);
-        const size = target?.getBoundingClientRect?.() || {};
-        const x = tx ?? (this.translateX + (size.width || 0)/ 2);
-        const y = ty ?? (this.translateY + (size.height || 0) / 2);
+        const x = tx ?? (this.translateX + this.state.canvasWidth / 2);
+        const y = ty ?? (this.translateY + this.state.canvasHeight / 2);
         const element = this.createElement(ELEMENTS.TEXT);
         const elementConfig = getElementConfig(element);
 
@@ -470,10 +470,8 @@ export const createBoard = props => ({
     addImage(image, tx = null, ty = null) {
         this.clearSelectedElements();
         return loadImage(image).then(img => {
-            const target = document.querySelector(`[data-id="${this.id}"]`);
-            const size = target?.getBoundingClientRect?.() || {};
-            const x = tx ?? (this.translateX + (size.width || 0)/ 2);
-            const y = ty ?? (this.translateY + (size.height || 0) / 2);
+            const x = tx ?? (this.translateX + this.state.canvasWidth / 2);
+            const y = ty ?? (this.translateY + this.state.canvasHeight / 2);
             const element = this.createElement(ELEMENTS.IMAGE);
             const elementConfig = getElementConfig(element);
             Object.assign(element, {
@@ -659,10 +657,8 @@ export const createBoard = props => ({
     setZoom(value) {
         const prevZoom = this.zoom;
         const nextZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, value));
-        const target = document.querySelector(`[data-id="${this.id}"]`);
-        const size = target?.getBoundingClientRect?.() || {};
-        this.translateX = Math.floor(this.translateX + (size.width || 0) * (prevZoom - nextZoom) / 2);
-        this.translateY = Math.floor(this.translateY + (size.height || 0) * (prevZoom - nextZoom) / 2);
+        this.translateX = Math.floor(this.translateX + this.state.canvasWidth * (prevZoom - nextZoom) / 2);
+        this.translateY = Math.floor(this.translateY + this.state.canvasHeight * (prevZoom - nextZoom) / 2);
         this.zoom = nextZoom;
         this.state.contextMenuVisible = false;
         this.update();
