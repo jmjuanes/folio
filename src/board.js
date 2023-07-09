@@ -361,10 +361,11 @@ export const createBoard = props => ({
             })),
         });
     },
-    changeElementsOrder(elements, sign) {
+    changeElementsOrder(elements, sign, absolute) {
         const changedElements = new Set();
         const prevElementsPosition = new Map();
         const nextElementsPosition = new Map();
+        const length = this.elements.length;
         // 1. Save current elements position
         this.elements.forEach(element => {
             prevElementsPosition.set(element.id, element[FIELDS.ORDER]);
@@ -373,21 +374,36 @@ export const createBoard = props => ({
         (elements || [])
             .sort((a, b) => sign * (b[FIELDS.ORDER] - a[FIELDS.ORDER]))
             .filter(el => {
-                return sign > 0 ? el[FIELDS.ORDER] < this.elements.length - 1 : el[FIELDS.ORDER] > 0;
+                return absolute || (sign > 0 ? el[FIELDS.ORDER] < length - 1 : el[FIELDS.ORDER] > 0);
             })
             .forEach(element => {
-                // 2.1. Get the new position of the element
-                const newPosition = element[FIELDS.ORDER] + sign;
-                const nextElement = this.elements[newPosition];
-                // 2.2. Set the new position
-                element[FIELDS.ORDER] = newPosition;
-                nextElement[FIELDS.ORDER] = newPosition - sign;
-                // 2.3. Sort elements by order
-                this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
-                // 2.4. Set both elements as changed
-                changedElements.add(element.id);
-                changedElements.add(nextElement.id);
+                // move all elements to front or back
+                if (absolute) {
+                    element[FIELDS.ORDER] = element[FIELDS.ORDER] + 10 * sign * length;
+                }
+                // move only individual elements
+                else {
+                    // 2.1. Get the new position of the element
+                    const newPosition = element[FIELDS.ORDER] + sign;
+                    const nextElement = this.elements[newPosition];
+                    // 2.2. Set the new position
+                    element[FIELDS.ORDER] = newPosition;
+                    nextElement[FIELDS.ORDER] = newPosition - sign;
+                    // 2.3. Sort elements by order
+                    this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+                    // 2.4. Set both elements as changed
+                    changedElements.add(element.id);
+                    changedElements.add(nextElement.id);
+                }
             });
+        // 3. Fix order in case of moving all elements to front or back
+        if (absolute) {
+            this.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+            this.elements.forEach((element, index) => {
+                element[FIELDS.ORDER] = index;
+                changedElements.add(element.id);
+            });
+        }
         // 4. Get new positions
         this.elements.forEach(element => {
             nextElementsPosition.set(element.id, element[FIELDS.ORDER]);
@@ -407,10 +423,16 @@ export const createBoard = props => ({
         });
     },
     bringElementsForward(elements) {
-        return this.changeElementsOrder(elements, +1);
+        return this.changeElementsOrder(elements, +1, false);
     },
     sendElementsBackward(elements) {
-        return this.changeElementsOrder(elements, -1);
+        return this.changeElementsOrder(elements, -1, false);
+    },
+    bringElementsToFront(elements) {
+        return this.changeElementsOrder(elements, +1, true);
+    },
+    sendElementsToBack(elements) {
+        return this.changeElementsOrder(elements, -1, true);
     },
     addText(text, tx = null, ty = null) {
         this.clearSelectedElements();
@@ -523,6 +545,12 @@ export const createBoard = props => ({
     },
     bringSelectedElementsForward() {
         return this.bringElementsForward(this.getSelectedElements());
+    },
+    bringSelectedElementsToFront() {
+        return this.bringElementsToFront(this.getSelectedElements());
+    },
+    sendSelectedElementsToBack() {
+        return this.sendElementsToBack(this.getSelectedElements());
     },
     getHistory() {
         return [...this.history];

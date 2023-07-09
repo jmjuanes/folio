@@ -89,6 +89,24 @@ export const ContextMenu = props => {
                                 board.update();
                             }}
                         />
+                        <Item
+                            text="Send to back"
+                            onClick={() => {
+                                board.sendSelectedElementsToBack();
+                                props.onChange?.(board.export());
+                                board.state.contextMenuVisible = false;
+                                board.update();
+                            }}
+                        />
+                        <Item
+                            text="Bring to front"
+                            onClick={() => {
+                                board.bringSelectedElementsToFront();
+                                props.onChange?.(board.export());
+                                board.state.contextMenuVisible = false;
+                                board.update();
+                            }}
+                        />
                     </React.Fragment>
                 )}
                 {board.elements.length > 0 && (
