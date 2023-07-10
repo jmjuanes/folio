@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 
-import {FORM_OPTIONS} from "../constants.js";
+import {FORM_OPTIONS, THEMES} from "../constants.js";
 import {ColorPicker} from "./ColorPicker.jsx";
 import {SquareIcon, CheckSquareIcon} from "./Icons.jsx";
 
@@ -21,10 +21,13 @@ const optionTypes = {
                 <div
                     key={font}
                     className={classNames({
-                        "flex justify-center items-center": true,
-                        "rounded-md h-8 text-sm border border-gray-300": true,
-                        "bg-gray-800 text-white": font === props.value,
-                        "hover:bg-gray-200 cursor-pointer": font !== props.value,
+                        "flex justify-center items-center rounded-md h-8 text-sm border": true,
+                        "border-gray-300": props.theme === THEMES.LIGHT,
+                        "border-gray-600": props.theme === THEMES.DARK,
+                        "bg-gray-800 text-white": props.theme === THEMES.LIGHT && font === props.value,
+                        "bg-white text-gray-900": props.theme === THEMES.DARK && font === props.value,
+                        "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && font !== props.value,
+                        "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && font !== props.value,
                     })}
                     style={{
                         fontFamily: font,
@@ -40,10 +43,13 @@ const optionTypes = {
         <div className={`grid grid-cols-${props.grid || "5"} gap-1 w-full`}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
-                    "flex flex-col justify-center items-center": true,
-                    "rounded-md h-8 border border-gray-300": true,
-                    "bg-gray-800 text-white": item.value === props.value,
-                    "hover:bg-gray-200 cursor-pointer": item.value !== props.value,
+                    "flex flex-col justify-center items-center rounded-md h-8 border": true,
+                    "border-gray-300": props.theme === THEMES.LIGHT,
+                    "border-gray-600": props.theme === THEMES.DARK,
+                    "bg-gray-800 text-white": props.theme === THEMES.LIGHT && item.value === props.value,
+                    "bg-white text-gray-900": props.theme === THEMES.DARK && item.value === props.value,
+                    "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && item.value !== props.value,
+                    "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && item.value !== props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -116,23 +122,29 @@ const optionTypes = {
     ),
 };
 
-export const Option = props => (
-    <div className="text-gray-700">
-        {(!optionsWithInlineTitle.has(props.type)) && props.title && (
-            <div className="text-xs mb-2 select-none">
-                {props.title}
+export const Option = props => {
+    const optionClassList = classNames({
+        "text-gray-700": props.theme === THEMES.LIGHT,
+        "text-white o-90": props.theme === THEMES.DARK,
+    });
+    return (
+        <div className={optionClassList}>
+            {(!optionsWithInlineTitle.has(props.type)) && props.title && (
+                <div className="text-xs mb-2 select-none">
+                    {props.title}
+                </div>
+            )}
+            <div className="block">
+                {optionTypes[props.type](props)}
             </div>
-        )}
-        <div className="block">
-            {optionTypes[props.type](props)}
+            {!!props.helper && (
+                <div className="text-gray-400 text-2xs mt-0 select-none">
+                    {props.helper}
+                </div>
+            )}
         </div>
-        {!!props.helper && (
-            <div className="text-gray-400 text-2xs mt-0 select-none">
-                {props.helper}
-            </div>
-        )}
-    </div>
-);
+    );
+};
 
 // TODO: check the visible field of each item to decide if item should be visible
 const getVisibleItems = (items, data) => {
@@ -148,6 +160,7 @@ export const Form = props => (
                 key: key,
                 field: key,
                 value: props.data?.[key] ?? null,
+                theme: props.theme,
                 onChange: value => props.onChange?.(key, value),
             });
         })}
@@ -159,5 +172,6 @@ Form.defaultProps = {
     data: {},
     items: {},
     style: {},
+    theme: THEMES.LIGHT,
     onChange: null,
 };
