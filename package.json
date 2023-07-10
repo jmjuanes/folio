@@ -16,6 +16,7 @@
         "test": "jest"
     },
     "dependencies": {
+        "@josemi-icons/react": "^0.1.0",
         "browser-fs-access": "^0.33.1",
         "classnames": "^2.3.2",
         "idb-keyval": "^6.2.0",
