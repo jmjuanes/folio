@@ -1,14 +1,16 @@
 import React from "react";
 import classNames from "classnames";
 
+import {ChevronDownIcon} from "@josemi-icons/react";
+import {TrashIcon} from "@josemi-icons/react";
 
-import {COLORS, FIELDS} from "../constants.js";
+import {FORM_OPTIONS, FIELDS, THEMES} from "../constants.js";
+import {COLORS} from "../constants.js";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
 import {STROKES, STROKE_WIDTHS} from "../constants.js";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
 import {SHAPES, FILL_STYLES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
-import {FORM_OPTIONS} from "../constants.js";
 
 import {Form} from "./Form.jsx";
 
@@ -42,15 +44,26 @@ const arrowheadValues = [
 ];
 
 const allSections = {
+    [SECTIONS.SHAPE]: {
+        test: FIELDS.SHAPE,
+        icon: (<ShapesIcon />),
+        items: {
+            [FIELDS.SHAPE]: {
+                // title: "Shape",
+                type: FORM_OPTIONS.SELECT,
+                values: [
+                    {value: SHAPES.RECTANGLE, icon: SquareIcon()},
+                    {value: SHAPES.ELLIPSE, icon: CircleIcon()},
+                    {value: SHAPES.DIAMOND, icon: DiamondIcon()},
+                    {value: SHAPES.TRIANGLE, icon: TriangleIcon()},
+                ],
+            },
+        },
+    },
     [SECTIONS.FILL]: {
         icon: (<FillIcon />),
         test: FIELDS.FILL_COLOR,
         items: {
-            [FIELDS.FILL_COLOR]: {
-                title: "Fill color",
-                type: FORM_OPTIONS.COLOR,
-                values: Object.values(COLORS),
-            },
             [FIELDS.FILL_STYLE]: {
                 title: "Fill style",
                 type: FORM_OPTIONS.SELECT,
@@ -60,12 +73,26 @@ const allSections = {
                     {value: FILL_STYLES.SOLID, icon: CircleSolidFillIcon()},
                 ],
             },
+            [FIELDS.FILL_COLOR]: {
+                title: "Fill color",
+                type: FORM_OPTIONS.COLOR,
+                values: Object.values(COLORS),
+            },
         },
     },
     [SECTIONS.STROKE]: {
         icon: (<StrokeIcon />),
         test: FIELDS.STROKE_COLOR,
         items: {
+            strokeStyle: {
+                title: "Stroke style",
+                type: FORM_OPTIONS.SELECT,
+                values: [
+                    {value: STROKES.DOTTED, icon: CircleDottedIcon()},
+                    {value: STROKES.DASHED, icon: CircleDashedIcon()},
+                    {value: STROKES.SOLID, icon: CircleSolidIcon()},
+                ],
+            },
             strokeColor: {
                 title: "Stroke color",
                 type: FORM_OPTIONS.COLOR,
@@ -79,15 +106,6 @@ const allSections = {
                     {value: STROKE_WIDTHS.MEDIUM, text: "M"},
                     {value: STROKE_WIDTHS.LARGE, text: "L"},
                     {value: STROKE_WIDTHS.XLARGE, text: "XL"},
-                ],
-            },
-            strokeStyle: {
-                title: "Stroke style",
-                type: FORM_OPTIONS.SELECT,
-                values: [
-                    {value: STROKES.DOTTED, icon: CircleDottedIcon()},
-                    {value: STROKES.DASHED, icon: CircleDashedIcon()},
-                    {value: STROKES.SOLID, icon: CircleSolidIcon()},
                 ],
             },
         },
@@ -145,21 +163,6 @@ const allSections = {
             },
         },
     },
-    [SECTIONS.SHAPE]: {
-        test: FIELDS.SHAPE,
-        icon: (<ShapesIcon />),
-        items: {
-            [FIELDS.SHAPE]: {
-                type: FORM_OPTIONS.SELECT,
-                values: [
-                    {value: SHAPES.RECTANGLE, icon: SquareIcon()},
-                    {value: SHAPES.ELLIPSE, icon: CircleIcon()},
-                    {value: SHAPES.DIAMOND, icon: DiamondIcon()},
-                    {value: SHAPES.TRIANGLE, icon: TriangleIcon()},
-                ],
-            },
-        },
-    },
     [SECTIONS.EFFECTS]: {
         icon: (<SunIcon />),
         test: FIELDS.OPACITY,
@@ -184,17 +187,38 @@ const useValues = selection => {
     return selection.reduce((prev, item) => ({...prev, ...item}), {});
 };
 
+const ButtonsWrapper = props => {
+    const classList = classNames({
+        "rounded-lg shadow-md flex items-center gap-1 relative p-1": true,
+        "bg-gray-900 text-white": props.theme === THEMES.DARK,
+        "bg-white text-gray-900 border border-gray-300": props.theme === THEMES.LIGHT,
+    });
+    return (
+        <div className={classList}>
+            {props.children}
+        </div>
+    );
+};
+
 const Button = props => {
     const classList = classNames(props.className, {
-        "rounded-md flex justify-center items-center flex p-3": true,
-        "hover:bg-gray-800 cursor-pointer": !props.active,
-        "bg-gray-800 cursor-pointer": props.active,
+        "rounded-md flex justify-center items-center flex gap-0 p-3 cursor-pointer": true,
+        "px-2": props.showChevron,
+        "text-white hover:bg-gray-800": props.theme === THEMES.DARK && !props.active,
+        "text-white bg-gray-800": props.theme === THEMES.DARK && props.active,
+        "text-gray-900 hover:bg-gray-100": props.theme === THEMES.LIGHT && !props.active,
+        "text-gray-900 bg-gray-200": props.theme === THEMES.LIGHT && props.active,
     });
     return (
         <div className={classList} style={props.style} onClick={props.onClick}>
-            <div className="text-lg text-white flex items-center">
+            <div className="text-lg flex items-center">
                 {props.icon}
             </div>
+            {props.showChevron && (
+                <div className="text-xs flex items-center">
+                    <ChevronDownIcon />
+                </div>
+            )}
         </div>
     );
 };
@@ -204,25 +228,42 @@ Button.defaultProps = {
     style: null,
     icon: null,
     active: false,
+    theme: THEMES.LIGHT,
+    showChevron: false,
     onClick: null,
 };
 
 // Active section wrapper
 const ActiveSectionWrapper = props => {
     const classList = classNames({
-        "absolute": true,
-        "top-full mt-1": props.position === "bottom",
-        "top-0 mb-1": props.position === "top",
+        "absolute left-half p-3 rounded-lg w-56 shadow-md": true,
+        "top-full mt-2": !props.alignToTop,
+        "bottom-full mb-2": props.alignToTop,
+        "bg-white border border-gray-300": props.theme === THEMES.LIGHT,
+        "bg-gray-900": props.theme === THEMES.DARK,
     });
-    const style = {
-        "transform": props.position === "top" ? "translateY(-100%)" : "",
-    };
     return (
-        <div className={classList} style={style}>
-            <div className="p-3 bg-white rounded-md w-48 shadow-md border border-gray-300">
-                {props.children}
-            </div>
+        <div className={classList} style={{transform: "translateX(-50%)"}}>
+            <Form
+                className="flex flex-col gap-2"
+                theme={props.theme}
+                data={props.values}
+                items={props.items}
+                onChange={props.onChange}
+            />
         </div>
+    );
+};
+
+// Separator for buttons
+const Separator = props => {
+    const classList = classNames({
+        "w-px h-10": true,
+        "bg-gray-200": props.theme === THEMES.LIGHT,
+        "bg-white o-20": props.theme === THEMES.DARK,
+    });
+    return (
+        <div className={classList} />
     );
 };
 
@@ -233,6 +274,20 @@ export const NewEditionPanel = props => {
     const values = useValues(selectedElements);
     const keys = Object.keys(values);
     const bounds = getRectangleBounds(selectedElements);
+    // Get visible sections
+    const visibleSections = React.useMemo(
+        () => {
+            // If no keys are available, we will display all availabe options in this category
+            if (keys.length === 0) {
+                return Object.keys(allSections);
+            }
+            // Filter options
+            return Object.keys(allSections).filter(option => {
+                return typeof values[allSections[option].test] !== "undefined";
+            });
+        },
+        [keys.length],
+    );
     // Calculate position of the edition panel
     const x = board.translateX + (board.zoom * (bounds.x1 + bounds.x2) / 2)
     const y = board.translateY + (board.zoom * (bounds.y1 + bounds.y2) / 2);
@@ -252,24 +307,13 @@ export const NewEditionPanel = props => {
         left: x,
         transform: "translateX(-50%) translateY(-100%)",
     };
-    const sectionPosition = style.top > board.state.canvasHeight / 2 ? "top" : "bottom";
-    const visibleSections = React.useMemo(
-        () => {
-            // If no keys are available, we will display all availabe options in this category
-            if (keys.length === 0) {
-                return Object.keys(allSections);
-            }
-            // Filter options
-            return Object.keys(allSections).filter(option => {
-                return typeof values[allSections[option].test] !== "undefined";
-            });
-        },
-        [keys.length],
-    );
     // Handle selection change
     const handleChange = (key, value) => {
         board.updateElements(selectedElements, [key], [value], true);
-        props?.onChange?.();
+        board.update();
+        props?.onChange?.({
+            elements: board.elements,
+        });
     };
     // Handle active section change
     const handleSectionChange = newSection => {
@@ -280,32 +324,44 @@ export const NewEditionPanel = props => {
     // Render new edition panel
     return (
         <div className="absolute z-4" style={style}>
-            <div className="bg-gray-900 text-white rounded-md shadow-md flex items-center relative">
+            <ButtonsWrapper theme={props.theme}>
                 {visibleSections.map(key => (
-                    <Button
-                        key={key}
-                        active={activeSection === key}
-                        icon={allSections[key].icon}
-                        onClick={() => handleSectionChange(key)}
-                    />
-                ))}
-                {activeSection && (
-                    <ActiveSectionWrapper position={sectionPosition}>
-                        <Form
-                            className="flex flex-col gap-2"
-                            key={activeSection}
-                            data={values || {}}
-                            items={allSections[activeSection].items}
-                            onChange={handleChange}
+                    <div className="relative" key={key}>
+                        <Button
+                            theme={props.theme}
+                            active={activeSection === key}
+                            icon={allSections[key].icon}
+                            showChevron={true}
+                            onClick={() => handleSectionChange(key)}
                         />
-                    </ActiveSectionWrapper>
-                )}
-            </div>
+                        {activeSection === key && (
+                            <ActiveSectionWrapper
+                                key={activeSection}
+                                theme={props.theme}
+                                alignToTop={style.top > board.state.canvasHeight / 2}
+                                values={values || {}}
+                                items={allSections[activeSection].items}
+                                onChange={handleChange}
+                            />
+                        )}
+                    </div>
+                ))}
+                <Separator theme={props.theme} />
+                <Button
+                    icon={(<TrashIcon />)}
+                    onClick={() => {
+                        board.remove();
+                        props?.onChange?.(board.export());
+                        board.update();
+                    }}
+                />
+            </ButtonsWrapper>
         </div>
     );
 };
 
 NewEditionPanel.defaultProps = {
-    offset: 16,
-    margin: 64,
+    theme: THEMES.LIGHT,
+    offset: 24,
+    onChange: null,
 };
