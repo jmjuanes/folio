@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 
-import {DropletIcon} from "./Icons.jsx";
+import {THEMES} from "../constants.js";
 import transparentBg from "../assets/transparent.svg";
 
 const getStyleForColor = color => ({
@@ -23,17 +23,15 @@ const validateColor = value => {
 export const ColorPicker = props => {
     const inputRef = React.useRef(null);
     const pickerRef = React.useRef(null);
-    const [colorPaletteVisible, setColorPaletteVisible] = React.useState(false);
-    
-    const handleColorPaletteClick = () => {
-        return setColorPaletteVisible(!colorPaletteVisible);
-    };
-
     return (
         <div className="flex flex-col gap-2 w-full">
             <div className="flex items-center w-full">
                 <div
-                    className="flex rounded-md h-8 w-8 border border-gray-300 mr-1"
+                    className={classNames({
+                        "flex rounded-md h-8 w-8 mr-1": true,
+                        "border border-gray-300": props.theme === THEMES.LIGHT,
+                        "border border-gray-700": props.theme === THEMES.DARK,
+                    })}
                     style={{
                         ...getStyleForColor(props.value),
                         minWidth: "2rem",
@@ -60,7 +58,11 @@ export const ColorPicker = props => {
                 <input
                     ref={inputRef}
                     type="text"
-                    className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border border-gray-300 text-xs"
+                    className={classNames({
+                        "w-full px-2 py-0 h-8 bg-white rounded-md outline-0 text-xs text-gray-800": true,
+                        "border border-gray-300": props.theme === THEMES.LIGHT,
+                        "border border-gray-700": props.theme === THEMES.DARK,
+                    })}
                     defaultValue={props.value}
                     style={{
                         fontFamily: "monospace",
@@ -71,26 +73,17 @@ export const ColorPicker = props => {
                         }
                     }}
                 />
-                {props.collapseColorPalette && (
-                    <div
-                        className={classNames({
-                            "flex items-center px-1 py-2 rounded-md border border-gray-300 ml-1": true,
-                            "hover:bg-gray-200 cursor-pointer": !colorPaletteVisible,
-                            "bg-gray-800 text-white cursor-pointer": colorPaletteVisible,
-                        })}
-                        title="Expand/Collapse color palette"
-                        onClick={handleColorPaletteClick}
-                    >
-                        <DropletIcon />
-                    </div>
-                )}
             </div>
-            {props.values?.length > 0 && (colorPaletteVisible || !props.collapseColorPalette) && (
+            {props.values?.length > 0 && (
                 <div className="grid gap-1 grid-cols-6 w-full">
                     {props.values.map(color => (
                         <div
                             key={color}
-                            className="flex w-full h-6 rounded cursor-pointer border border-gray-300"
+                            className={classNames({
+                                "flex w-full h-6 rounded-md cursor-pointer": true,
+                                "border border-gray-300": props.theme === THEMES.LIGHT,
+                                "border border-gray-700": props.theme === THEMES.DARK,
+                            })}
                             style={getStyleForColor(color)}
                             onClick={() => {
                                 inputRef.current.value = color;
@@ -107,6 +100,6 @@ export const ColorPicker = props => {
 ColorPicker.defaultProps = {
     value: "",
     values: [],
+    theme: THEMES.LIGHT,
     onChange: null,
-    collapseColorPalette: true,
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
 
-import {ELEMENTS, FILE_EXTENSIONS, ACTIONS} from "../constants.js";
+import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
@@ -76,20 +76,10 @@ export const Layout = props => {
                     }}
                 />
             )}
-            {props.showEdition && (selectedElements.length > 0 || board.activeTool) && (
+            {props.showEdition && board.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <EditionPanel
-                    style={{
-                        top: "5rem",
-                        left: "1rem",
-                        bottom: "6.5rem",
-                        pointerEvents: "none",
-                    }}
-                    onChange={() => {
-                        board.update();
-                        props.onChange?.({
-                            elements: board.elements,
-                        });
-                    }}
+                    key={selectedElements.length}
+                    onChange={props.onChange}
                 />
             )}
             {props.showHeader && (
