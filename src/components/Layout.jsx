@@ -96,12 +96,7 @@ export const Layout = props => {
             {props.showEdition && board.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <NewEditionPanel
                     key={selectedElements.length}
-                    onChange={() => {
-                        board.update();
-                        props.onChange?.({
-                            elements: board.elements,
-                        });
-                    }}
+                    onChange={props.onChange}
                 />
             )}
 
