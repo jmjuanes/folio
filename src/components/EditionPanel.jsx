@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 
 import {ChevronDownIcon} from "@josemi-icons/react";
-import {TrashIcon} from "@josemi-icons/react";
+import {TrashIcon, BanIcon} from "@josemi-icons/react";
 
 import {FORM_OPTIONS, FIELDS, THEMES} from "../constants.js";
 import {COLORS} from "../constants.js";
@@ -16,7 +16,7 @@ import {Form} from "./Form.jsx";
 
 import {FillIcon, StrokeIcon, TextIcon, ShapesIcon, SunIcon} from "./Icons.jsx";
 import {CircleSolidIcon, CircleDashedIcon, CircleDottedIcon} from "./Icons.jsx";
-import {CircleSolidFillIcon, CircleHatchFillIcon} from "./Icons.jsx";
+import {CircleSolidFillIcon, CircleHatchFillIcon, CircleSemiFillIcon} from "./Icons.jsx";
 import {SquareIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
 import {ArrowheadNoneIcon, ArrowheadArrowIcon, ArrowheadTriangleIcon, ArrowheadSquareIcon, ArrowheadCircleIcon} from "./Icons.jsx";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "./Icons.jsx";
@@ -65,16 +65,15 @@ const allSections = {
         test: FIELDS.FILL_COLOR,
         items: {
             [FIELDS.FILL_STYLE]: {
-                title: "Fill style",
-                type: FORM_OPTIONS.SELECT,
+                type: FORM_OPTIONS.LABELED_SELECT,
                 values: [
-                    {value: FILL_STYLES.NONE, icon: CircleSolidIcon()},
-                    {value: FILL_STYLES.HATCH, icon: CircleHatchFillIcon()},
-                    {value: FILL_STYLES.SOLID, icon: CircleSolidFillIcon()},
+                    {value: FILL_STYLES.NONE, icon: BanIcon()},
+                    {value: FILL_STYLES.HATCH, icon: CircleHatchFillIcon(), label: "Hatch"},
+                    {value: FILL_STYLES.TRANSPARENT, icon: CircleSemiFillIcon(), label: "Semi"},
+                    {value: FILL_STYLES.SOLID, icon: CircleSolidFillIcon(), label: "Solid"},
                 ],
             },
             [FIELDS.FILL_COLOR]: {
-                title: "Fill color",
                 type: FORM_OPTIONS.COLOR,
                 values: Object.values(COLORS),
             },
@@ -85,21 +84,19 @@ const allSections = {
         test: FIELDS.STROKE_COLOR,
         items: {
             strokeStyle: {
-                title: "Stroke style",
-                type: FORM_OPTIONS.SELECT,
+                type: FORM_OPTIONS.LABELED_SELECT,
                 values: [
-                    {value: STROKES.DOTTED, icon: CircleDottedIcon()},
-                    {value: STROKES.DASHED, icon: CircleDashedIcon()},
-                    {value: STROKES.SOLID, icon: CircleSolidIcon()},
+                    {value: STROKES.NONE, icon: BanIcon()},
+                    {value: STROKES.DOTTED, icon: CircleDottedIcon(), label: "Dots"},
+                    {value: STROKES.DASHED, icon: CircleDashedIcon(), label: "Dash"},
+                    {value: STROKES.SOLID, icon: CircleSolidIcon(), label: "Solid"},
                 ],
             },
             strokeColor: {
-                title: "Stroke color",
                 type: FORM_OPTIONS.COLOR,
                 values: Object.values(COLORS),
             },
             strokeWidth: {
-                title: "Stroke width",
                 type: FORM_OPTIONS.SELECT,
                 values: [
                     {value: STROKE_WIDTHS.SMALL, text: "S"},
@@ -115,17 +112,14 @@ const allSections = {
         test: FIELDS.TEXT_COLOR,
         items: {
             textColor: {
-                title: "Text color",
                 type: FORM_OPTIONS.COLOR,
                 values: Object.values(COLORS),
             },
             textFont: {
-                title: "Text font",
                 type: FORM_OPTIONS.FONT,
                 values: Object.values(FONT_FACES),
             },
             textSize: {
-                title: "Text size",
                 type: FORM_OPTIONS.SELECT,
                 values: [
                     {value: TEXT_SIZES.XSMALL, text: "XS"},
@@ -136,7 +130,6 @@ const allSections = {
                 ],
             },
             textAlign: {
-                title: "Text align",
                 type: FORM_OPTIONS.SELECT,
                 values: [
                     {value: TEXT_ALIGNS.LEFT, icon: TextLeftIcon()},

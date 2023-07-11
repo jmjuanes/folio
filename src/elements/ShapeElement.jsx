@@ -1,5 +1,6 @@
 import React from "react";
 import {STROKES, SHAPES, COLORS, NONE, TRANSPARENT, FILL_STYLES} from "../constants.js";
+import {OPACITY_HALF, OPACITY_NONE, OPACITY_FULL} from "../constants.js";
 import {HATCH_ANGLE, HATCH_GAP} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
 import {getPolygonPath, getPolygonHatchPath, getEllipseHatchPath} from "../utils/paths.js";
@@ -37,6 +38,7 @@ const HatchFill = props => {
 };
 
 const SimpleLine = props => {
+    const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
             const strokeStyle = props.strokeStyle;
@@ -60,7 +62,7 @@ const SimpleLine = props => {
             fill="none"
             stroke={props.strokeColor}
             strokeWidth={props.strokeWidth}
-            strokeOpacity={props.strokeOpacity}
+            strokeOpacity={strokeOpacity}
             strokeDasharray={strokeDasharray}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
@@ -72,6 +74,7 @@ const SimpleLine = props => {
 const EllipseShape = props => {
     const rx = props.width / 2;
     const ry = props.height / 2;
+    const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
             const length = getEllipsePerimeter(rx, ry);
@@ -96,7 +99,7 @@ const EllipseShape = props => {
                             strokeWidth={props.strokeWidth / 2}
                         />
                     )}
-                    {props.fillStyle === FILL_STYLES.SOLID && (
+                    {(props.fillStyle === FILL_STYLES.SOLID || props.fillStyle === FILL_STYLES.TRANSPARENT) && (
                         <ellipse
                             cx={rx}
                             cy={ry}
@@ -104,6 +107,7 @@ const EllipseShape = props => {
                             ry={ry}
                             fill={props.fillColor}
                             stroke={NONE}
+                            opacity={props.fillStyle === FILL_STYLES.TRANSPARENT ? OPACITY_HALF : 1}
                         />
                     )}
                 </React.Fragment>
@@ -116,7 +120,7 @@ const EllipseShape = props => {
                 fill={NONE}
                 stroke={props.strokeColor}
                 strokeWidth={props.strokeWidth}
-                strokeOpacity={props.strokeOpacity}
+                strokeOpacity={strokeOpacity}
                 strokeDasharray={strokeDasharray}
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
@@ -127,6 +131,7 @@ const EllipseShape = props => {
 };
 
 const PolygonShape = props => {
+    const polygonOpacity = props.fillStyle === FILL_STYLES.TRANSPARENT ? OPACITY_HALF : OPACITY_FULL;
     const polygonPath = React.useMemo(
         () => getPolygonPath(props.type, props.width, props.height),
         [props.type, props.width, props.height],
@@ -146,11 +151,12 @@ const PolygonShape = props => {
                             strokeWidth={props.strokeWidth / 2}
                         />
                     )}
-                    {props.fillStyle === FILL_STYLES.SOLID && (
+                    {(props.fillStyle === FILL_STYLES.SOLID || props.fillStyle === FILL_STYLES.TRANSPARENT) && (
                         <polygon
                             points={polygonPath.map(p => `${p[0]},${p[1]}`).join(" ")}
                             fill={props.fillColor}
                             stroke={NONE}
+                            opacity={polygonOpacity}
                         />
                     )}
                 </React.Fragment>
@@ -165,7 +171,6 @@ const PolygonShape = props => {
                     strokeColor={props.strokeColor}
                     strokeWidth={props.strokeWidth}
                     strokeStyle={props.strokeStyle}
-                    strokeOpacity={props.strokeOpacity}
                 />
             ))}
         </React.Fragment>
@@ -194,7 +199,6 @@ export const ShapeElement = props => {
                         strokeWidth={strokeWidth}
                         strokeColor={strokeColor}
                         strokeStyle={props.strokeStyle}
-                        strokeOpacity={props.strokeOpacity}
                     />
                 )}
                 {props.shape === SHAPES.ELLIPSE && (
@@ -206,7 +210,6 @@ export const ShapeElement = props => {
                         strokeWidth={strokeWidth}
                         strokeColor={strokeColor}
                         strokeStyle={props.strokeStyle}
-                        strokeOpacity={props.strokeOpacity}
                     />
                 )}
             </WithPencilEffect>

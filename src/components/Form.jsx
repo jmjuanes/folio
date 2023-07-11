@@ -9,6 +9,7 @@ const optionsWithInlineTitle = new Set([
     FORM_OPTIONS.CHECKBOX,
     FORM_OPTIONS.PIXELS,
     FORM_OPTIONS.RANGE,
+    FORM_OPTIONS.SEPARATOR,
 ]);
 
 const optionTypes = {
@@ -21,11 +22,9 @@ const optionTypes = {
                 <div
                     key={font}
                     className={classNames({
-                        "flex justify-center items-center rounded-md h-8 text-sm border": true,
-                        "border-gray-300": props.theme === THEMES.LIGHT,
-                        "border-gray-600": props.theme === THEMES.DARK,
-                        "bg-gray-800 text-white": props.theme === THEMES.LIGHT && font === props.value,
-                        "bg-white text-gray-900": props.theme === THEMES.DARK && font === props.value,
+                        "flex justify-center items-center rounded-md h-8 text-sm": true,
+                        "bg-gray-300": props.theme === THEMES.LIGHT && font === props.value,
+                        "bg-gray-600": props.theme === THEMES.DARK && font === props.value,
                         "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && font !== props.value,
                         "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && font !== props.value,
                     })}
@@ -43,11 +42,9 @@ const optionTypes = {
         <div className={`grid grid-cols-${props.grid || "5"} gap-1 w-full`}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
-                    "flex flex-col justify-center items-center rounded-md h-8 border": true,
-                    "border-gray-300": props.theme === THEMES.LIGHT,
-                    "border-gray-600": props.theme === THEMES.DARK,
-                    "bg-gray-800 text-white": props.theme === THEMES.LIGHT && item.value === props.value,
-                    "bg-white text-gray-900": props.theme === THEMES.DARK && item.value === props.value,
+                    "flex flex-col justify-center items-center rounded-md h-8": true,
+                    "bg-gray-300": props.theme === THEMES.LIGHT && item.value === props.value,
+                    "bg-gray-600": props.theme === THEMES.DARK && item.value === props.value,
                     "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && item.value !== props.value,
                     "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && item.value !== props.value,
                 });
@@ -61,6 +58,31 @@ const optionTypes = {
                         {!!item.text && (
                             <div className={classNames("flex items-center", item.textClass)}>
                                 <span className="font-bold text-sm">{item.text}</span>
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    ),
+    [FORM_OPTIONS.LABELED_SELECT]: props => (
+        <div className="flex flex-nowrap gap-1 w-full">
+            {(props.values || []).map(item => {
+                const itemClass = classNames({
+                    "flex flex-nowrap justify-center gap-1 items-center grow rounded-md h-8 px-1": true,
+                    "bg-gray-300": props.theme === THEMES.LIGHT && item.value === props.value,
+                    "bg-gray-600": props.theme === THEMES.DARK && item.value === props.value,
+                    "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && item.value !== props.value,
+                    "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && item.value !== props.value,
+                });
+                return (
+                    <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
+                        <div className={classNames("flex items-center", item.iconClass)}>
+                            {item.icon}
+                        </div>
+                        {!!item.label && (
+                            <div className={classNames("flex items-center", item.labelClass)}>
+                                <span className="text-2xs">{item.label}</span>
                             </div>
                         )}
                     </div>
@@ -120,6 +142,9 @@ const optionTypes = {
             </div>
         </div>
     ),
+    [FORM_OPTIONS.SEPARATOR]: () => (
+        <div className="w-full h-px bg-gray-200" />
+    ),
 };
 
 export const Option = props => {
@@ -129,7 +154,7 @@ export const Option = props => {
     });
     return (
         <div className={optionClassList}>
-            {(!optionsWithInlineTitle.has(props.type)) && props.title && (
+            {(!optionsWithInlineTitle.has(props.type)) && !!props.title && (
                 <div className="text-xs mb-2 select-none">
                     {props.title}
                 </div>

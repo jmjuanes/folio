@@ -93,6 +93,10 @@ export const OPACITY_STEP = 0.1;
 export const OPACITY_MIN = 0;
 export const OPACITY_MAX = 1;
 
+export const OPACITY_HALF = 0.5;
+export const OPACITY_NONE = 0;
+export const OPACITY_FULL = 1;
+
 // Drawing constants
 export const DRAWING_THRESHOLD = 3;
 export const DRAWING_OFFSET = 10;
@@ -189,6 +193,7 @@ export const COLORS = {
 export const FILL_STYLES = {
     NONE: "none",
     HATCH: "hatch",
+    TRANSPARENT: "transparent",
     SOLID: "solid",
 };
 
@@ -223,6 +228,7 @@ export const TEXT_ALIGNS = {
 
 // Allowed stroke styles
 export const STROKES = {
+    NONE: "none",
     SOLID: "solid",
     DASHED: "dashed",
     DOTTED: "dotted",
@@ -293,10 +299,12 @@ export const KEYS = {
 export const FORM_OPTIONS = {
     COLOR: "color",
     SELECT: "select",
+    LABELED_SELECT: "labeledSelect",
     FONT: "font",
     RANGE: "range",
     CHECKBOX: "checkbox",
     PIXELS: "pixels",
+    SEPARATOR: "separator",
 };
 
 export const THEMES = {

@@ -1,5 +1,6 @@
 import React from "react";
 import {COLORS, STROKES, NONE, TRANSPARENT, GRID_SIZE} from "../constants.js";
+import {OPACITY_FULL, OPACITY_NONE} from "../constants.js";
 import {getPointsCenter, getBalancedDash, getPointsDistance} from "../utils/math.js";
 import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
 
@@ -25,11 +26,12 @@ export const DrawElement = props => {
     const points = props.points || [];
     const strokeWidth = props.strokeWidth ?? 0;
     const path = React.useMemo(() => getPath(points), [points.length, props.creating]);
+    const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
             const strokeStyle = props.strokeStyle;
-            const length = getPointsDistance(...points);
             if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
+                const length = getPointsDistance(...points);
                 return getBalancedDash(length, strokeWidth, strokeStyle);
             }
             return [NONE, NONE];
@@ -54,7 +56,7 @@ export const DrawElement = props => {
                         fill={NONE}
                         stroke={props.strokeColor ?? COLORS.BLACK}
                         strokeWidth={strokeWidth}
-                        strokeOpacity={props.strokeOpacity}
+                        strokeOpacity={strokeOpacity}
                         strokeDasharray={strokeDasharray}
                         strokeDashoffset={strokeDashoffset}
                         strokeLinecap="round"

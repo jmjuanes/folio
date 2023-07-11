@@ -1,5 +1,6 @@
 import React from "react";
 import {STROKES, ARROWHEADS, COLORS, NONE, TRANSPARENT} from "../constants.js";
+import {OPACITY_FULL, OPACITY_NONE} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../utils/math.js";
 import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
 
@@ -50,6 +51,7 @@ const Arrowhead = props => {
             fill={TRANSPARENT}
             stroke={props.strokeColor}
             strokeWidth={props.strokeWidth}
+            strokeOpacity={props.strokeOpacity}
             strokeLinecap="round"
             strokeLinejoin="round"
             onPointerDown={props.onPointerDown}
@@ -63,11 +65,12 @@ export const ArrowElement = props => {
     const y = Math.min(props.y1, props.y2);
     const strokeColor = props.strokeColor ?? COLORS.BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
+    const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
     const [strokeDasharray, strokeDashoffset] = React.useMemo(
         () => {
-            const length = getPointsDistance([props.x1, props.y1], [props.x2, props.y2]);
             const strokeStyle = props.strokeStyle;
             if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
+                const length = getPointsDistance([props.x1, props.y1], [props.x2, props.y2]);
                 return getBalancedDash(length, strokeWidth, strokeStyle);
             }
             return [NONE, NONE];
@@ -116,6 +119,7 @@ export const ArrowElement = props => {
                     strokeDashoffset={strokeDashoffset}
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    strokeOpacity={strokeOpacity}
                     onPointerDown={props.onPointerDown}
                 />
                 {props.startArrowhead !== ARROWHEADS.NONE && (
@@ -128,6 +132,7 @@ export const ArrowElement = props => {
                         y2={props.y2 - y}
                         strokeWidth={strokeWidth}
                         strokeColor={strokeColor}
+                        strokeOpacity={strokeOpacity}
                         onPointerDown={props.onPointerDown}
                     />
                 )}
@@ -141,6 +146,7 @@ export const ArrowElement = props => {
                         y2={props.y1 - y}
                         strokeWidth={strokeWidth}
                         strokeColor={strokeColor}
+                        strokeOpacity={strokeOpacity}
                         onPointerDown={props.onPointerDown}
                     />
                 )}
