@@ -78,7 +78,7 @@ export const Layout = props => {
             )}
             {props.showEdition && board.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <EditionPanel
-                    key={selectedElements.length}
+                    key={selectedElements.map(el => el.id).join("-")}
                     onChange={props.onChange}
                 />
             )}
