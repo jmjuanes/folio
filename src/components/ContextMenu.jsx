@@ -18,8 +18,13 @@ export const ContextMenu = props => {
     const selectedElements = board.getSelectedElements();
     const x = board.state.contextMenuX;
     const y = board.state.contextMenuY;
+    const style = {
+        top: y,
+        left: x,
+        transform: y > board.state.canvasHeight / 2 ? "translateY(-100%)" : "",
+    };
     return (
-        <div className="absolute" style={{top: y, left: x}}>
+        <div className="absolute z-10" style={style}>
             <div className="bg-white shadow-md w-40 p-3 rounded-lg flex flex-col gap-0 border border-gray-300">
                 {selectedElements.length > 0 && (
                     <React.Fragment>
