@@ -12,6 +12,8 @@ import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
 import {SHAPES, FILL_STYLES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
 
+import {DEFAULT_FILL_COLOR_PALETTE, DEFAULT_STROKE_COLOR_PALETTE, DEFAULT_TEXT_COLOR_PALETTE} from "../colors.js";
+
 import {Form} from "./Form.jsx";
 
 import {FillIcon, StrokeIcon, TextIcon, ShapesIcon, SunIcon} from "./Icons.jsx";
@@ -75,7 +77,7 @@ const allSections = {
             },
             [FIELDS.FILL_COLOR]: {
                 type: FORM_OPTIONS.COLOR,
-                values: Object.values(COLORS),
+                values: DEFAULT_FILL_COLOR_PALETTE,
             },
         },
     },
@@ -94,7 +96,7 @@ const allSections = {
             },
             strokeColor: {
                 type: FORM_OPTIONS.COLOR,
-                values: Object.values(COLORS),
+                values: DEFAULT_STROKE_COLOR_PALETTE,
             },
             strokeWidth: {
                 type: FORM_OPTIONS.SELECT,
@@ -113,7 +115,7 @@ const allSections = {
         items: {
             textColor: {
                 type: FORM_OPTIONS.COLOR,
-                values: Object.values(COLORS),
+                values: DEFAULT_TEXT_COLOR_PALETTE,
             },
             textFont: {
                 type: FORM_OPTIONS.FONT,
