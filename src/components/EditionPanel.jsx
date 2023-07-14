@@ -12,9 +12,9 @@ import {SHAPES, FILL_STYLES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
 
 import {
-    DEFAULT_FILL_COLOR_PALETTE,
-    DEFAULT_STROKE_COLOR_PALETTE,
-    DEFAULT_TEXT_COLOR_PALETTE,
+    FILL_COLOR_PALETTE,
+    STROKE_COLOR_PALETTE,
+    TEXT_COLOR_PALETTE,
 } from "../colors.js";
 
 import {Form} from "./Form.jsx";
@@ -81,7 +81,7 @@ const allSections = {
             [FIELDS.FILL_COLOR]: {
                 title: "Fill color",
                 type: FORM_OPTIONS.COLOR,
-                values: DEFAULT_FILL_COLOR_PALETTE,
+                values: FILL_COLOR_PALETTE,
             },
         },
     },
@@ -102,7 +102,7 @@ const allSections = {
             strokeColor: {
                 title: "Stroke color",
                 type: FORM_OPTIONS.COLOR,
-                values: DEFAULT_STROKE_COLOR_PALETTE,
+                values: STROKE_COLOR_PALETTE,
             },
             strokeWidth: {
                 title: "Stroke width",
@@ -123,7 +123,7 @@ const allSections = {
             textColor: {
                 title: "Text color",
                 type: FORM_OPTIONS.COLOR,
-                values: DEFAULT_TEXT_COLOR_PALETTE,
+                values: TEXT_COLOR_PALETTE,
             },
             textFont: {
                 title: "Font family",

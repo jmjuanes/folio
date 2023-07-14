@@ -1,6 +1,6 @@
 import React from "react";
 import {measureText} from "../utils/math.js";
-import {COLORS, FONT_FACES, GRID_SIZE, TEXT_ALIGNS} from "../constants.js";
+import {BLACK, FONT_FACES, GRID_SIZE, TEXT_ALIGNS} from "../constants.js";
 
 const stopEventPropagation = event => {
     event?.stopPropagation?.();
@@ -15,7 +15,7 @@ export const TextElement = props => {
     const height = Math.abs(props.y2 - props.y1);
     const textSize = props.textSize ?? 0;
     const textFont = props.textFont ?? FONT_FACES.SANS;
-    const textColor = props.textColor ?? COLORS.BLACK;
+    const textColor = props.textColor ?? BLACK;
 
     // First time editing --> focus on input
     React.useEffect(() => {

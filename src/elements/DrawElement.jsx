@@ -1,5 +1,5 @@
 import React from "react";
-import {COLORS, STROKES, NONE, TRANSPARENT, GRID_SIZE} from "../constants.js";
+import {STROKES, NONE, BLACK, TRANSPARENT, GRID_SIZE} from "../constants.js";
 import {OPACITY_FULL, OPACITY_NONE} from "../constants.js";
 import {getPointsCenter, getBalancedDash, getPointsDistance} from "../utils/math.js";
 import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
@@ -54,7 +54,7 @@ export const DrawElement = props => {
                         data-element={props.id}
                         d={path}
                         fill={NONE}
-                        stroke={props.strokeColor ?? COLORS.BLACK}
+                        stroke={props.strokeColor ?? BLACK}
                         strokeWidth={strokeWidth}
                         strokeOpacity={strokeOpacity}
                         strokeDasharray={strokeDasharray}
