@@ -1,5 +1,5 @@
 import React from "react";
-import {STROKES, ARROWHEADS, COLORS, NONE, TRANSPARENT} from "../constants.js";
+import {STROKES, ARROWHEADS, BLACK, NONE, TRANSPARENT} from "../constants.js";
 import {OPACITY_FULL, OPACITY_NONE} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../utils/math.js";
 import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
@@ -63,7 +63,7 @@ export const ArrowElement = props => {
     const {WithPencilEffect} = usePencilEffect();
     const x = Math.min(props.x1, props.x2);
     const y = Math.min(props.y1, props.y2);
-    const strokeColor = props.strokeColor ?? COLORS.BLACK;
+    const strokeColor = props.strokeColor ?? BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
     const [strokeDasharray, strokeDashoffset] = React.useMemo(

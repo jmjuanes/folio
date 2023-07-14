@@ -155,7 +155,7 @@ export const Option = props => {
     return (
         <div className={optionClassList}>
             {(!optionsWithInlineTitle.has(props.type)) && !!props.title && (
-                <div className="text-xs mb-2 select-none">
+                <div className="text-xs mb-1 select-none">
                     {props.title}
                 </div>
             )}

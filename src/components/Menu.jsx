@@ -1,6 +1,6 @@
 import React from "react";
 
-import {BACKGROUND_COLORS} from "../constants.js";
+import {BACKGROUND_COLOR_PALETTE} from "../colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {SecondaryButton} from "./Button.jsx";
 import {ColorPicker} from "./ColorPicker.jsx";
@@ -69,7 +69,7 @@ export const Menu = props => {
                         <DropdownGroup title="Background" />
                         <ColorPicker
                             value={board.background}
-                            values={Object.values(BACKGROUND_COLORS)}
+                            values={Object.values(BACKGROUND_COLOR_PALETTE)}
                             collapseColorPalette={false}
                             onChange={newBackground => {
                                 board.background = newBackground;

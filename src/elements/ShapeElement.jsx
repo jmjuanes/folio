@@ -1,5 +1,5 @@
 import React from "react";
-import {STROKES, SHAPES, COLORS, NONE, TRANSPARENT, FILL_STYLES} from "../constants.js";
+import {STROKES, SHAPES, BLACK, NONE, TRANSPARENT, FILL_STYLES} from "../constants.js";
 import {OPACITY_HALF, OPACITY_NONE, OPACITY_FULL} from "../constants.js";
 import {HATCH_ANGLE, HATCH_GAP} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
@@ -183,8 +183,8 @@ export const ShapeElement = props => {
     const y = Math.min(props.y1, props.y2);
     const width = Math.abs(props.x2 - props.x1);
     const height = Math.abs(props.y2 - props.y1);
-    const fillColor = props.fillColor ?? COLORS.TRANSPARENT;
-    const strokeColor = props.strokeColor ?? COLORS.BLACK;
+    const fillColor = props.fillColor ?? TRANSPARENT;
+    const strokeColor = props.strokeColor ?? BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>

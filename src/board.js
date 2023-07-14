@@ -1,6 +1,5 @@
 import {uid} from "uid/secure";
 import {
-    BACKGROUND_COLORS,
     CHANGES,
     ELEMENTS,
     GRID_SIZE,
@@ -26,6 +25,7 @@ import {
     PASTE_OFFSET,
     FIELDS,
 } from "./constants.js";
+import {BACKGROUND_COLOR_PALETTE} from "./colors.js";
 import {getElementConfig, createNewElement} from "./elements/index.jsx";
 import {getRectangleBounds} from "./utils/math.js";
 import {loadImage} from "./utils/image.js";
@@ -57,7 +57,7 @@ export const createBoard = props => ({
     translateX: 0,
     translateY: 0,
     grid: props.data?.grid ?? false,
-    background: props.data?.background || BACKGROUND_COLORS.GRAY,
+    background: props.data?.background || BACKGROUND_COLOR_PALETTE.gray,
     lockTool: false,
     selection: null,
     erase: null,
