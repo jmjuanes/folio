@@ -2,38 +2,23 @@ import React from "react";
 import classNames from "classnames";
 
 import {THEMES} from "../constants.js";
-import transparentBg from "../assets/transparent.svg";
-
-const getStyleForColor = color => ({
-    backgroundColor: color !== "transparent" ? color : null,
-    backgroundImage: color === "transparent" ? `url('${transparentBg}')` : null,
-    backgroundSize: "10px 10px",
-    backgroundRepeat: "repeat",
-    // minWidth: "1.5rem",
-});
-
-const isValidHexColor = value => {
-    return value.startsWith("#") && (value.length === 7 || value.length === 9);
-};
-
-const validateColor = value => {
-    return value && (value === "transparent" || isValidHexColor(value));
-};
+import {isValidHexColor} from "../colors.js";
 
 export const ColorPicker = props => {
     const inputRef = React.useRef(null);
     const pickerRef = React.useRef(null);
     return (
-        <div className="flex flex-col gap-2 w-full">
+        <div data-testid="colorpicker" className="flex flex-col gap-2 w-full">
             <div className="flex items-center w-full">
                 <div
+                    data-testid="colorpicker:preview"
                     className={classNames({
                         "flex rounded-md h-8 w-8 mr-1": true,
                         "border border-gray-300": props.theme === THEMES.LIGHT,
                         "border border-gray-700": props.theme === THEMES.DARK,
                     })}
                     style={{
-                        ...getStyleForColor(props.value),
+                        backgroundColor: props.value,
                         minWidth: "2rem",
                         cursor: "pointer",
                     }}
@@ -43,6 +28,7 @@ export const ColorPicker = props => {
                     }}
                 />
                 <input
+                    data-testid="colorpicker:pick"
                     ref={pickerRef}
                     type="color"
                     defaultValue={props.value}
@@ -56,6 +42,7 @@ export const ColorPicker = props => {
                     }}
                 />
                 <input
+                    data-testid="colorpicker:input"
                     ref={inputRef}
                     type="text"
                     className={classNames({
@@ -68,23 +55,26 @@ export const ColorPicker = props => {
                         fontFamily: "monospace",
                     }}
                     onChange={event => {
-                        if (validateColor(event.target.value)) {
+                        if (isValidHexColor(event.target.value)) {
                             props.onChange(event.target.value);
                         }
                     }}
                 />
             </div>
             {props.values?.length > 0 && (
-                <div className="grid gap-1 grid-cols-6 w-full">
+                <div data-testid="colorpicker:palette" className="grid gap-1 grid-cols-6 w-full">
                     {props.values.map(color => (
                         <div
                             key={color}
+                            data-testid={"color:" + color}
                             className={classNames({
                                 "flex w-full h-6 rounded-md cursor-pointer": true,
                                 "border border-gray-300": props.theme === THEMES.LIGHT,
                                 "border border-gray-700": props.theme === THEMES.DARK,
                             })}
-                            style={getStyleForColor(color)}
+                            style={{
+                                backgroundColor: color,
+                            }}
                             onClick={() => {
                                 inputRef.current.value = color;
                                 props.onChange(color);
