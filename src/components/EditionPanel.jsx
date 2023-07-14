@@ -5,14 +5,17 @@ import {ChevronDownIcon} from "@josemi-icons/react";
 import {TrashIcon, BanIcon} from "@josemi-icons/react";
 
 import {FORM_OPTIONS, FIELDS, THEMES} from "../constants.js";
-import {COLORS} from "../constants.js";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
 import {STROKES, STROKE_WIDTHS} from "../constants.js";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
 import {SHAPES, FILL_STYLES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
 
-import {DEFAULT_FILL_COLOR_PALETTE, DEFAULT_STROKE_COLOR_PALETTE, DEFAULT_TEXT_COLOR_PALETTE} from "../colors.js";
+import {
+    DEFAULT_FILL_COLOR_PALETTE,
+    DEFAULT_STROKE_COLOR_PALETTE,
+    DEFAULT_TEXT_COLOR_PALETTE,
+} from "../colors.js";
 
 import {Form} from "./Form.jsx";
 
@@ -51,7 +54,6 @@ const allSections = {
         icon: (<ShapesIcon />),
         items: {
             [FIELDS.SHAPE]: {
-                // title: "Shape",
                 type: FORM_OPTIONS.SELECT,
                 values: [
                     {value: SHAPES.RECTANGLE, icon: SquareIcon()},
@@ -67,6 +69,7 @@ const allSections = {
         test: FIELDS.FILL_COLOR,
         items: {
             [FIELDS.FILL_STYLE]: {
+                title: "Fill style",
                 type: FORM_OPTIONS.LABELED_SELECT,
                 values: [
                     {value: FILL_STYLES.NONE, icon: BanIcon()},
@@ -76,6 +79,7 @@ const allSections = {
                 ],
             },
             [FIELDS.FILL_COLOR]: {
+                title: "Fill color",
                 type: FORM_OPTIONS.COLOR,
                 values: DEFAULT_FILL_COLOR_PALETTE,
             },
@@ -86,6 +90,7 @@ const allSections = {
         test: FIELDS.STROKE_COLOR,
         items: {
             strokeStyle: {
+                title: "Stroke style",
                 type: FORM_OPTIONS.LABELED_SELECT,
                 values: [
                     {value: STROKES.NONE, icon: BanIcon()},
@@ -95,10 +100,12 @@ const allSections = {
                 ],
             },
             strokeColor: {
+                title: "Stroke color",
                 type: FORM_OPTIONS.COLOR,
                 values: DEFAULT_STROKE_COLOR_PALETTE,
             },
             strokeWidth: {
+                title: "Stroke width",
                 type: FORM_OPTIONS.SELECT,
                 values: [
                     {value: STROKE_WIDTHS.SMALL, text: "S"},
@@ -114,14 +121,17 @@ const allSections = {
         test: FIELDS.TEXT_COLOR,
         items: {
             textColor: {
+                title: "Text color",
                 type: FORM_OPTIONS.COLOR,
                 values: DEFAULT_TEXT_COLOR_PALETTE,
             },
             textFont: {
+                title: "Font family",
                 type: FORM_OPTIONS.FONT,
                 values: Object.values(FONT_FACES),
             },
             textSize: {
+                title: "Font size",
                 type: FORM_OPTIONS.SELECT,
                 values: [
                     {value: TEXT_SIZES.XSMALL, text: "XS"},
@@ -132,6 +142,7 @@ const allSections = {
                 ],
             },
             textAlign: {
+                title: "Text align",
                 type: FORM_OPTIONS.SELECT,
                 values: [
                     {value: TEXT_ALIGNS.LEFT, icon: TextLeftIcon()},
@@ -240,7 +251,7 @@ const ActiveSectionWrapper = props => {
     return (
         <div className={classList} style={{transform: "translateX(-50%)"}}>
             <Form
-                className="flex flex-col gap-2"
+                className="flex flex-col gap-3"
                 theme={props.theme}
                 data={props.values}
                 items={props.items}
