@@ -1,7 +1,4 @@
-// Global colors
-export const TRANSPARENT = "transparent";
-export const WHITE = "#fff";
-export const BLACK = "#000";
+import {WHITE, BLACK} from "./constants.js";
 
 export const DEFAULT_FILL_COLOR_SHADE = 1;
 export const DEFAULT_STROKE_COLOR_SHADE = 3;
@@ -47,8 +44,16 @@ const generateColorPalette = shade => {
 };
 
 // Default color palettes
-export const DEFAULT_FILL_COLOR_PALETTE = generateColorPalette(DEFAULT_FILL_COLOR_SHADE);
-export const DEFAULT_STROKE_COLOR_PALETTE = generateColorPalette(DEFAULT_STROKE_COLOR_SHADE);
-export const DEFAULT_TEXT_COLOR_PALETTE = generateColorPalette(DEFAULT_TEXT_COLOR_SHADE);
+export const FILL_COLOR_PALETTE = generateColorPalette(DEFAULT_FILL_COLOR_SHADE);
+export const STROKE_COLOR_PALETTE = generateColorPalette(DEFAULT_STROKE_COLOR_SHADE);
+export const TEXT_COLOR_PALETTE = generateColorPalette(DEFAULT_TEXT_COLOR_SHADE);
 
-
+// Background color palette
+export const BACKGROUND_COLOR_PALETTE = {
+    white: WHITE,
+    gray: "#fafafa",
+    blue: "#e9f4fb",
+    green: "#eafaf1",
+    yellow: "#fef9e7",
+    red: "#fceae8",
+};
