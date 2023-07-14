@@ -161,34 +161,6 @@ export const FONT_SOURCES = {
     MONO: "https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap",
 };
 
-// Default background colors
-export const BACKGROUND_COLORS = {
-    WHITE: "#ffffff",
-    GRAY: "#fafafa",
-    BLUE: "#e9f4fb",
-    GREEN: "#eafaf1",
-    YELLOW: "#fef9e7",
-    RED: "#fceae8",
-};
-
-// Default colors
-export const COLORS = {
-    TRANSPARENT: TRANSPARENT,
-    WHITE:       "#FFFFFF",
-    BLACK:       "#000000",
-    LIGHT_GRAY:  "#CAD0D7", // "#e4e8eb",
-    DARK_GRAY:   "#424852", // "#636c77",
-    PINK_ROSE:   "#D56FAC", // "#eb86be",
-    LAVENDER:    "#9579DA", // "#ac92ea",
-    BLUE_JEANS:  "#4A88DA", // "#5e9cea",
-    // AQUA:        "#3AADD9", // "#4fc0e8",
-    MINT:        "#35BA9B", // "#46ceac",
-    GRASS:       "#89C053", // "#9ed26a",
-    SUNFLOWER:   "#F5B945", // "#fdcd56",
-    BITTERSWEET: "#E8553E", // "#fa6c51",
-    // GRAPEFRUIT:  "#D94452", // "#eb5463",
-};
-
 // Fill styles
 export const FILL_STYLES = {
     NONE: "none",
