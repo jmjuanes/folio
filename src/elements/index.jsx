@@ -52,6 +52,16 @@ const ElementContainer = props => (
     </SvgContainer>
 );
 
+// Tiny utility to prevent having empty fill styles
+const checkFillStyleValue = initialValue => {
+    return initialValue === FILL_STYLES.NONE ? FILL_STYLES.SOLID : initialValue;
+};
+
+// Tiny utility to prevent having empty strokes
+const checkStrokeStyleValue = initialValue => {
+    return initialValue === STROKES.NONE ? STROKES.SOLID : initialValue;
+};
+
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
         edgeHandlers: true,
@@ -63,16 +73,11 @@ export const elementsConfig = {
             </ElementContainer>
         ),
         initialize: values => {
-            let fillStyle = values?.fillStyle ?? DEFAULT_FILL_STYLE;
-            // const strokeStyle = values?.strokeStyle ?? DEFAULT_STROKE_STYLE;
-            if (fillStyle === FILL_STYLES.NONE) {
-                fillStyle = FILL_STYLES.SOLID;
-            }
             return {
                 opacity: DEFAULT_OPACITY,
                 shape: values.shape || DEFAULT_SHAPE,
                 fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
-                fillStyle: fillStyle,
+                fillStyle: checkFillStyleValue(values?.fillStyle ?? DEFAULT_FILL_STYLE),
                 strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
                 strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
                 strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
@@ -109,17 +114,13 @@ export const elementsConfig = {
             </ElementContainer>
         ),
         initialize: values => {
-            let strokeStyle = values?.strokeStyle ?? DEFAULT_STROKE_STYLE;
-            if (strokeStyle === STROKES.NONE) {
-                strokeStyle = STROKES.SOLID;
-            }
             return {
                 opacity: DEFAULT_OPACITY,
                 startArrowhead: values?.startArrowhead || DEFAULT_ARROWHEAD_START,
                 endArrowhead: values?.endArrowhead || DEFAULT_ARROWHEAD_END,
                 strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
                 strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
-                strokeStyle: strokeStyle,
+                strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULT_STROKE_STYLE),
             };
         },
     },
@@ -241,16 +242,12 @@ export const elementsConfig = {
             </ElementContainer>    
         ),
         initialize: values => {
-            let strokeStyle = values?.strokeStyle ?? DEFAULT_STROKE_STYLE;
-            if (strokeStyle === STROKES.NONE) {
-                strokeStyle = STROKES.SOLID;
-            }
             return {
                 opacity: DEFAULT_OPACITY,
                 points: [],
                 strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
                 strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
-                strokeStyle: strokeStyle,
+                strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULT_STROKE_STYLE),
                 drawWidth: 0,
                 drawHeight: 0,
             };

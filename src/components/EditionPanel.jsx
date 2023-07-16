@@ -92,6 +92,9 @@ const allSections = {
             strokeStyle: {
                 title: "Stroke style",
                 type: FORM_OPTIONS.LABELED_SELECT,
+                isVisible: (value, currentValue, data) => {
+                    return value !== STROKES.NONE || typeof data[FIELDS.FILL_STYLE] !== "undefined";
+                },
                 values: [
                     {value: STROKES.NONE, icon: BanIcon()},
                     {value: STROKES.DOTTED, icon: CircleDottedIcon(), label: "Dots"},

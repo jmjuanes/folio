@@ -13,12 +13,21 @@ const optionsWithInlineTitle = new Set([
 ]);
 
 // Tiny utility to check if a value is active
-const isActive = (value, currentValue, isValidFn, data) => {
+const checkIsActive = (value, currentValue, isActiveFn, data) => {
     if (typeof isValidFn === "function") {
         return isValidFn(value, currentValue, data);
     }
     // Other case, just check if value is the current value
     return value === currentValue;
+};
+
+// Tiny utility to check if a value is visible
+const checkIsVisible = (value, currentValue, isVisibleFn, data) => {
+    if (typeof isVisibleFn === "function") {
+        return !!isVisibleFn(value, currentValue, data);
+    }
+    // By default, item is visible
+    return true;
 };
 
 const optionTypes = {
@@ -50,7 +59,7 @@ const optionTypes = {
     [FORM_OPTIONS.SELECT]: props => (
         <div className={props.className || "grid grid-cols-5 gap-1 w-full"}>
             {(props.values || []).map(item => {
-                const active = isActive(item.value, props.value, props.isActive, props.data);
+                const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = classNames({
                     "flex flex-col justify-center items-center rounded-md h-8 grow": true,
                     "bg-gray-300": props.theme === THEMES.LIGHT && active,
@@ -100,6 +109,9 @@ const optionTypes = {
     [FORM_OPTIONS.LABELED_SELECT]: props => (
         <div className="flex flex-nowrap gap-1 w-full">
             {(props.values || []).map(item => {
+                if (!checkIsVisible(item.value, props.value, props.isVisible, props.data)) {
+                    return null;
+                }
                 const itemClass = classNames({
                     "flex flex-nowrap justify-center gap-1 items-center grow rounded-md h-8 px-1": true,
                     "bg-gray-300": props.theme === THEMES.LIGHT && item.value === props.value,
