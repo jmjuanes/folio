@@ -2,7 +2,7 @@ import React from "react";
 import {STROKES, NONE, BLACK, TRANSPARENT, GRID_SIZE} from "../constants.js";
 import {OPACITY_FULL, OPACITY_NONE} from "../constants.js";
 import {getPointsCenter, getBalancedDash, getPointsDistance} from "../utils/math.js";
-import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
+import {WithPencilEffect} from "../contexts/PencilEffectContext.jsx";
 
 const getPath = points => {
     let lastPoint = points[0];
@@ -20,7 +20,6 @@ const getPath = points => {
 };
 
 export const DrawElement = props => {
-    const {WithPencilEffect} = usePencilEffect();
     const width = Math.abs(props.x2 - props.x1);
     const height = Math.abs(props.y2 - props.y1);
     const points = props.points || [];

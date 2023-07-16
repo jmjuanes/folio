@@ -29,6 +29,7 @@ export const saveAsJson = options => {
         }, {}),
         background: options?.background || BACKGROUND_COLOR_PALETTE.gray,
         grid: !!options?.grid,
+        pencilEffect: !!options?.pencilEffect,
         attributes: options?.attributes || {},
     };
     const data = JSON.stringify(exportData, null, "    ");
@@ -63,5 +64,6 @@ export const loadFromJson = async () => {
         background: data.background || BACKGROUND_COLOR_PALETTE.gray,
         grid: !!data.grid,
         attributes: data.attributes || {},
+        pencilEffect: !!data.pencilEffect,
     };
 };

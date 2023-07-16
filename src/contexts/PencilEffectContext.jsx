@@ -1,11 +1,13 @@
 import React from "react";
 
-const PENCIL_FILTER = "pencilEffect";
+const FILTER = "pencilEffectFilter";
+export const PencilEffectContext = React.createContext(false);
 
-const PencilEffectContext = React.memo(props => (
-    <defs data-filter={PENCIL_FILTER}>
+// Component for creating the pencil effect
+export const PencilEffectFilter = React.memo(() => (
+    <defs data-filter={FILTER}>
         {/* Pencil texture */}
-        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id={PENCIL_FILTER}>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id={FILTER}>
             <feColorMatrix
                 type="matrix"
                 values="0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 -0.25 1"
@@ -57,16 +59,31 @@ const PencilEffectContext = React.memo(props => (
     </defs>
 ));
 
-const WithPencilEffect = props => (
-    <g filter={`url(#${PENCIL_FILTER})`}>
-        {props.children}
-    </g>
-);
-
-export const usePencilEffect = () => {
-    return {PencilEffectContext, WithPencilEffect};
+// Pencil effect provider
+export const PencilEffectProvider = props => {
+    return (
+        <PencilEffectContext.Provider value={props.active}>
+            {props.children}
+        </PencilEffectContext.Provider>
+    );
 };
 
+// Apply pencil effect to the provided children elements if enabled
+export const WithPencilEffect = props => {
+    const active = React.useContext(PencilEffectContext);
+    // If pencil effect is not active, just return the children nodes
+    if (active === false) {
+        return props.children;
+    }
+    // Wrap children into a group element with the pencil effect
+    return (
+        <g filter={`url(#${FILTER})`}>
+            {props.children}
+        </g>
+    );
+};
+
+// Export filter node
 export const exportPencilEffectSvgFilter = () => {
-    return document.querySelector(`defs[data-filter="${PENCIL_FILTER}"] filter`)?.cloneNode?.(true);
+    return document.querySelector(`defs[data-filter="${FILTER}"] filter`)?.cloneNode?.(true);
 };

@@ -4,7 +4,7 @@ import {OPACITY_HALF, OPACITY_NONE, OPACITY_FULL} from "../constants.js";
 import {HATCH_ANGLE, HATCH_GAP} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
 import {getPolygonPath, getPolygonHatchPath, getEllipseHatchPath} from "../utils/paths.js";
-import {usePencilEffect} from "../hooks/usePencilEffect.jsx";
+import {WithPencilEffect} from "../contexts/PencilEffectContext.jsx";
 
 const HatchFill = props => {
     const lines = React.useMemo(
@@ -178,7 +178,6 @@ const PolygonShape = props => {
 };
 
 export const ShapeElement = props => {
-    const {WithPencilEffect} = usePencilEffect();
     const x = Math.min(props.x1, props.x2);
     const y = Math.min(props.y1, props.y2);
     const width = Math.abs(props.x2 - props.x1);

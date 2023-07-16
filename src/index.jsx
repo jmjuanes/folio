@@ -85,6 +85,7 @@ const App = props => {
             assets: state.assets || {},
             grid: !!state.grid,
             background: state.background || null,
+            pencilEffect: !!state.pencilEffect,
         });
     };
 

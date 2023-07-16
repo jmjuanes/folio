@@ -1,4 +1,5 @@
 import React from "react";
+import {DrawingIcon} from "@josemi-icons/react";
 
 import {BACKGROUND_COLOR_PALETTE} from "../colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
@@ -58,6 +59,18 @@ export const Menu = props => {
                                 board.update();
                                 props.onChange?.({
                                     grid: board.grid,
+                                });
+                            }}
+                        />
+                        <DropdownCheckItem
+                            active={board.pencilEffect}
+                            icon={(<DrawingIcon />)}
+                            text="Pencil Effect (beta)"
+                            onClick={() => {
+                                board.pencilEffect = !board.pencilEffect;
+                                board.update();
+                                props.onChange?.({
+                                    pencilEffect: board.pencilEffect,
                                 });
                             }}
                         />
