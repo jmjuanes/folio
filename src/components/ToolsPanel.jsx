@@ -46,6 +46,9 @@ const tools = {
             [FIELDS.END_ARROWHEAD]: {
                 type: FORM_OPTIONS.SELECT,
                 className: "flex flex-nowrap w-24 gap-1",
+                isActive: (value, currentValue, data) => {
+                    return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
+                },
                 values: [
                     {value: ARROWHEADS.NONE, icon: <LineIcon />},
                     {value: ARROWHEADS.ARROW, icon: <ArrowIcon />},
