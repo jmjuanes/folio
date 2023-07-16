@@ -196,6 +196,12 @@ export const ImageIcon = () => (
     </SvgIcon>
 );
 
+export const LineIcon = () => (
+    <SvgIcon title="Line">
+        <path d="M6 18L18 6" />
+    </SvgIcon>
+);
+
 export const LockIcon = () => (
     <SvgIcon title="Lock">
         <path d="M9 11L9 6C9 6 9 3 12 3C15 3 15 6 15 6L15 11M8 11C5 11 5 14 5 14L5 18C5 18 5 21 8 21L16 21C19 21 19 18 19 18L19 14C19 14 19 11 16 11L8 11ZM12 17L12 16" />
@@ -313,6 +319,18 @@ export const UndoIcon = () => (
 export const UnlockIcon = () => (
     <SvgIcon title="Unlock">
         <path d="M9 7L9 6C9 6 9 3 12 3C15 3 15 6 15 6L15 11M8 11C5 11 5 14 5 14L5 18C5 18 5 21 8 21L16 21C19 21 19 18 19 18L19 14C19 14 19 11 16 11L8 11ZM12 17L12 16" />
+    </SvgIcon>
+);
+
+export const WidthLargeIcon = () => (
+    <SvgIcon title="WidthLarge">
+        <circle cx="12" cy="12" r="10" fill="currentColor" stroke="currentColor" strokeWidth="2" />
+    </SvgIcon>
+);
+
+export const WidthSmallIcon = () => (
+    <SvgIcon title="WidthLarge">
+        <circle cx="12" cy="12" r="4" fill="currentColor" stroke="currentColor" strokeWidth="2" />
     </SvgIcon>
 );
 
