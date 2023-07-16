@@ -1,22 +1,153 @@
 import React from "react";
 import classNames from "classnames";
 
-import {ELEMENTS, ACTIONS} from "../constants.js";
-import {useBoard} from "../contexts/BoardContext.jsx";
-import {HandGrabIcon, PointerIcon, SquareIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
+import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
+import {SHAPES, ARROWHEADS, STROKE_WIDTHS, TEXT_SIZES} from "../constants.js";
+import {
+    FILL_COLOR_PICK,
+    STROKE_COLOR_PICK,
+    TEXT_COLOR_PICK,
+} from "../colors.js";
+import {HandGrabIcon, PointerIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
 import {PenIcon, ImageIcon} from "./Icons.jsx";
 import {EraseIcon, LockIcon, UnlockIcon} from "./Icons.jsx";
+import {SquareIcon, CircleIcon, TriangleIcon} from "./Icons.jsx";
+import {LineIcon} from "./Icons.jsx";
+import {WidthLargeIcon, WidthSmallIcon} from "./Icons.jsx";
+import {Form} from "./Form.jsx";
+import {useBoard} from "../contexts/BoardContext.jsx";
+import {useForceUpdate} from "../hooks/useForceUpdate.js";
+
+const tools = {
+    [ELEMENTS.SHAPE]: {
+        icon: (<SquareIcon />),
+        text: "Shape",
+        quickPicks: {
+            [FIELDS.SHAPE]: {
+                type: FORM_OPTIONS.SELECT,
+                className: "flex flex-nowrap w-32 gap-1",
+                values: [
+                    {value: SHAPES.RECTANGLE, icon: <SquareIcon />},
+                    {value: SHAPES.ELLIPSE, icon: <CircleIcon />},
+                    {value: SHAPES.TRIANGLE, icon: <TriangleIcon />},
+                ],
+            },
+            [FIELDS.FILL_COLOR]: {
+                type: FORM_OPTIONS.COLOR_SELECT,
+                className: "flex flex-nowrap w-48 gap-1",
+                values: FILL_COLOR_PICK,
+            },
+        },
+    },
+    [ELEMENTS.ARROW]: {
+        icon: (<ArrowIcon />),
+        text: "Arrow",
+        quickPicks: {
+            [FIELDS.END_ARROWHEAD]: {
+                type: FORM_OPTIONS.SELECT,
+                className: "flex flex-nowrap w-24 gap-1",
+                values: [
+                    {value: ARROWHEADS.NONE, icon: <LineIcon />},
+                    {value: ARROWHEADS.ARROW, icon: <ArrowIcon />},
+                ],
+            },
+            [FIELDS.STROKE_WIDTH]: {
+                type: FORM_OPTIONS.SELECT,
+                className: "flex flex-nowrap w-24 gap-1",
+                values: [
+                    {value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon />},
+                    {value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon />},
+                ],
+            },
+            [FIELDS.STROKE_COLOR]: {
+                type: FORM_OPTIONS.COLOR_SELECT,
+                className: "flex flex-nowrap w-48 gap-1",
+                values: STROKE_COLOR_PICK,
+            },
+        },
+        onQuickPickChange: (defaults, field, value) => {
+            // Make sure that we remove the start arrowhead value
+            if (field === FIELDS.END_ARROWHEAD) {
+                defaults[FIELDS.START_ARROWHEAD] = ARROWHEADS.NONE;
+            }
+        },
+    },
+    [ELEMENTS.TEXT]: {
+        icon: (<TextIcon />),
+        text: "Text",
+        quickPicks: {
+            // [FIELDS.TEXT_SIZE]: {
+            //     type: FORM_OPTIONS.SELECT,
+            //     className: "flex flex-nowrap w-24 gap-1",
+            //     values: [
+            //         {value: TEXT_SIZES.MEDIUM, icon: <WidthSmallIcon />},
+            //         {value: TEXT_SIZES.XLARGE, icon: <WidthLargeIcon />},
+            //     ],
+            // },
+            [FIELDS.TEXT_COLOR]: {
+                type: FORM_OPTIONS.COLOR_SELECT,
+                className: "flex flex-nowrap w-48 gap-1",
+                values: TEXT_COLOR_PICK,
+            },
+        },
+    },
+    [ELEMENTS.DRAW]: {
+        icon: (<PenIcon />),
+        text: "Draw",
+        quickPicks: {
+            [FIELDS.STROKE_WIDTH]: {
+                type: FORM_OPTIONS.SELECT,
+                className: "flex flex-nowrap w-24 gap-1",
+                values: [
+                    {value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon />},
+                    {value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon />},
+                ],
+            },
+            [FIELDS.STROKE_COLOR]: {
+                type: FORM_OPTIONS.COLOR_SELECT,
+                className: "flex flex-nowrap w-48 gap-1",
+                values: STROKE_COLOR_PICK,
+            },
+        },
+    },
+    [ELEMENTS.IMAGE]: {
+        icon: (<ImageIcon />),
+        text: "Image",
+        quickPicks: null,
+    },
+};
+
+const PickPanel = props => {
+    const classList = classNames({
+        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-4": true,
+        "bg-white border border-gray-300": true, // props.theme === THEMES.LIGHT,
+        // "bg-gray-900": props.theme === THEMES.DARK,
+    });
+    const style = {
+        transform: "translateX(-50%)",
+    };
+    return (
+        <div className={classList} style={style} data-testid="pickpanel">
+            <Form
+                className="flex flex-row gap-4"
+                data={props.values}
+                items={props.items}
+                onChange={props.onChange}
+            />
+        </div>
+    );
+};
 
 const Panel = props => {
     const panelWrapperClass = classNames(props.className, "absolute z-5 select-none");
     const panelContentClass = classNames({
         "border border-gray-300": true,
         "rounded-xl shadow-md items-center bg-white flex gap-2 p-2": true,
-        "flex-col": props.direction === "col",
+        // "flex-col": props.direction === "col",
     });
 
     return (
-        <div className={panelWrapperClass} style={props.style}>
+        <div className={panelWrapperClass} style={props.style} data-testid="toolspanel">
             <div className={panelContentClass}>
                 {props.children}
             </div>
@@ -38,7 +169,7 @@ const PanelButton = props => {
         "text-gray-500 cursor-not-allowed o-60": !props.active && props.disabled,
     });
     return (
-        <div className={classList} onClick={props.onClick}>
+        <div className={classList} onClick={props.onClick} data-testid={props.testid}>
             {props.icon && (
                 <div className="text-xl flex items-center">
                     {props.icon}
@@ -54,6 +185,7 @@ const PanelButton = props => {
 };
 
 PanelButton.defaultProps = {
+    testid: "",
     className: "rounded-lg",
     text: null,
     icon: null,
@@ -67,10 +199,12 @@ const PanelSeparator = () => (
 
 // Tools Panel component
 export const ToolsPanel = props => {
+    const update = useForceUpdate();
     const board = useBoard();
     return (
-        <Panel direction="row" className={props.className} style={props.style}>
+        <Panel className={props.className} style={props.style}>
             <PanelButton
+                testid="lock"
                 className="w-8 rounded-full"
                 icon={(board.lockTool ? <LockIcon /> : <UnlockIcon />)}
                 active={board.lockTool}
@@ -79,12 +213,14 @@ export const ToolsPanel = props => {
             <PanelSeparator />
             {/* Actions */}
             <PanelButton
+                testid="drag"
                 text="Drag"
                 icon={(<HandGrabIcon />)}
                 active={board.activeAction === ACTIONS.MOVE}
                 onClick={props.onMoveClick}
             />
             <PanelButton
+                testid="select"
                 text="Select"
                 icon={(<PointerIcon />)}
                 active={!board.activeTool && board.activeAction !== ACTIONS.MOVE && board.activeAction !== ACTIONS.ERASE}
@@ -92,38 +228,34 @@ export const ToolsPanel = props => {
             />
             <PanelSeparator />
             {/* Available tools */}
-            <PanelButton
-                text="Shape"
-                icon={(<SquareIcon />)}
-                active={board.activeTool === ELEMENTS.SHAPE}
-                onClick={() => props.onToolClick(ELEMENTS.SHAPE)}
-            />
-            <PanelButton
-                text="Arrow"
-                icon={(<ArrowIcon />)}
-                active={board.activeTool === ELEMENTS.ARROW}
-                onClick={() => props.onToolClick(ELEMENTS.ARROW)}
-            />
-            <PanelButton
-                text="Text"
-                icon={(<TextIcon />)}
-                active={board.activeTool === ELEMENTS.TEXT}
-                onClick={() => props.onToolClick(ELEMENTS.TEXT)}
-            />
-            <PanelButton
-                text="Draw"
-                icon={(<PenIcon />)}
-                active={board.activeTool === ELEMENTS.DRAW}
-                onClick={() => props.onToolClick(ELEMENTS.DRAW)}
-            />
-            <PanelButton
-                text="Image"
-                icon={(<ImageIcon />)}
-                active={board.activeTool === ELEMENTS.IMAGE}
-                onClick={() => props.onToolClick(ELEMENTS.IMAGE)}
-            />
+            {Object.keys(tools).map(key => (
+                <div key={key} className="flex relative">
+                    <PanelButton
+                        testid={key}
+                        text={tools[key].text}
+                        icon={tools[key].icon}
+                        active={board.activeTool === key}
+                        onClick={() => props.onToolClick(key)}
+                    />
+                    {tools[key].quickPicks && key === board.activeTool && (
+                        <PickPanel
+                            values={board.defaults}
+                            items={tools[key].quickPicks}
+                            onChange={(field, value) => {
+                                board.defaults[field] = value;
+                                if (typeof tools[key].onQuickPickChange === "function") {
+                                    tools[key].onQuickPickChange(board.defaults, field, value);
+                                }
+                                // Force and update of the component
+                                update();
+                            }}
+                        />
+                    )}
+                </div>
+            ))}
             <PanelSeparator />
             <PanelButton
+                testid="erase"
                 text="Erase"
                 icon={(<EraseIcon />)}
                 active={board.activeAction === ACTIONS.ERASE}
