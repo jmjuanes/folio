@@ -132,9 +132,12 @@ const PickPanel = props => {
     return (
         <div className={classList} style={style} data-testid="pickpanel">
             <Form
-                className="flex flex-row gap-4"
+                className="flex flex-row gap-2"
                 data={props.values}
                 items={props.items}
+                separator={(
+                    <div className="w-px h-6 bg-gray-300" />
+                )}
                 onChange={props.onChange}
             />
         </div>
