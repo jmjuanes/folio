@@ -207,7 +207,7 @@ export const STROKES = {
 };
 
 // Default values for style attributes of elements
-export const DEFAULT_FILL_COLOR = TRANSPARENT;
+export const DEFAULT_FILL_COLOR = WHITE;
 export const DEFAULT_FILL_OPACITY = OPACITY_DEFAULT;
 export const DEFAULT_FILL_STYLE = FILL_STYLES.SOLID;
 export const DEFAULT_STROKE_COLOR = BLACK;

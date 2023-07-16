@@ -25,6 +25,8 @@ import {
     EPSILON,
     TEXT_BOX_MIN_WIDTH,
     FIELDS,
+    FILL_STYLES,
+    STROKES,
 } from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
@@ -60,22 +62,29 @@ export const elementsConfig = {
                 <TextElement embedded={true} {...props} />
             </ElementContainer>
         ),
-        initialize: values => ({
-            opacity: values?.opacity ?? DEFAULT_OPACITY,
-            shape: values.shape || DEFAULT_SHAPE,
-            fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
-            fillStyle: values?.fillStyle ?? DEFAULT_FILL_STYLE,
-            strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
-            strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
-            strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
-            text: "",
-            textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
-            textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
-            textSize: values?.textSize ?? DEFAULT_TEXT_SIZE,
-            textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
-            textWidth: GRID_SIZE,
-            textHeight: GRID_SIZE,
-        }),
+        initialize: values => {
+            let fillStyle = values?.fillStyle ?? DEFAULT_FILL_STYLE;
+            // const strokeStyle = values?.strokeStyle ?? DEFAULT_STROKE_STYLE;
+            if (fillStyle === FILL_STYLES.NONE) {
+                fillStyle = FILL_STYLES.SOLID;
+            }
+            return {
+                opacity: DEFAULT_OPACITY,
+                shape: values.shape || DEFAULT_SHAPE,
+                fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
+                fillStyle: fillStyle,
+                strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
+                strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
+                strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
+                text: "",
+                textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
+                textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
+                textSize: values?.textSize ?? DEFAULT_TEXT_SIZE,
+                textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
+                textWidth: GRID_SIZE,
+                textHeight: GRID_SIZE,
+            };
+        },
         onCreateEnd: element => {
             Object.assign(element, {
                 x1: Math.min(element.x1, element.x2),
@@ -99,14 +108,20 @@ export const elementsConfig = {
                 <ArrowElement {...props} />
             </ElementContainer>
         ),
-        initialize: values => ({
-            opacity: values?.opacity ?? DEFAULT_OPACITY,
-            startArrowhead: values?.startArrowhead || DEFAULT_ARROWHEAD_START,
-            endArrowhead: values?.endArrowhead || DEFAULT_ARROWHEAD_END,
-            strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
-            strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
-            strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
-        }),
+        initialize: values => {
+            let strokeStyle = values?.strokeStyle ?? DEFAULT_STROKE_STYLE;
+            if (strokeStyle === STROKES.NONE) {
+                strokeStyle = STROKES.SOLID;
+            }
+            return {
+                opacity: DEFAULT_OPACITY,
+                startArrowhead: values?.startArrowhead || DEFAULT_ARROWHEAD_START,
+                endArrowhead: values?.endArrowhead || DEFAULT_ARROWHEAD_END,
+                strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
+                strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
+                strokeStyle: strokeStyle,
+            };
+        },
     },
     [ELEMENTS.TEXT]: {
         edgeHandlers: true,
@@ -122,7 +137,7 @@ export const elementsConfig = {
             const textFont = values?.textFont ?? DEFAULT_TEXT_FONT;
             const [textWidth, textHeight] = measureText(" ", textSize, textFont);
             return ({
-                opacity: values?.opacity ?? DEFAULT_OPACITY,
+                opacity: DEFAULT_OPACITY,
                 text: "",
                 textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
                 textFont: textFont,
@@ -225,15 +240,21 @@ export const elementsConfig = {
                 <DrawElement {...props} />
             </ElementContainer>    
         ),
-        initialize: values => ({
-            opacity: values?.opacity ?? DEFAULT_OPACITY,
-            points: [],
-            strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
-            strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
-            strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
-            drawWidth: 0,
-            drawHeight: 0,
-        }),
+        initialize: values => {
+            let strokeStyle = values?.strokeStyle ?? DEFAULT_STROKE_STYLE;
+            if (strokeStyle === STROKES.NONE) {
+                strokeStyle = STROKES.SOLID;
+            }
+            return {
+                opacity: DEFAULT_OPACITY,
+                points: [],
+                strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
+                strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
+                strokeStyle: strokeStyle,
+                drawWidth: 0,
+                drawHeight: 0,
+            };
+        },
         onCreateStart: (element, event) => {
             element.points.push([event.originalX - element.x1, event.originalY - element.y1]);
         },
@@ -279,9 +300,9 @@ export const elementsConfig = {
                 <ImageElement {...props} />
             </ElementContainer>
         ),
-        initialize: values => ({
+        initialize: () => ({
             assetId: "",
-            opacity: values?.opacity ?? DEFAULT_OPACITY,
+            opacity: DEFAULT_OPACITY,
             imageWidth: 0,
             imageHeight: 0,
         }),
