@@ -39,10 +39,10 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.SELECT]: props => (
-        <div className={`grid grid-cols-${props.grid || "5"} gap-1 w-full`}>
+        <div className={props.className || "grid grid-cols-5 gap-1 w-full"}>
             {(props.values || []).map(item => {
                 const itemClass = classNames({
-                    "flex flex-col justify-center items-center rounded-md h-8": true,
+                    "flex flex-col justify-center items-center rounded-md h-8 grow": true,
                     "bg-gray-300": props.theme === THEMES.LIGHT && item.value === props.value,
                     "bg-gray-600": props.theme === THEMES.DARK && item.value === props.value,
                     "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && item.value !== props.value,
@@ -63,6 +63,28 @@ const optionTypes = {
                     </div>
                 );
             })}
+        </div>
+    ),
+    [FORM_OPTIONS.COLOR_SELECT]: props => (
+        <div className={props.className || "grid grid-cols-5 gap-1 w-full"}>
+            {(props.values || []).map(value => (
+                <div
+                    key={value}
+                    className={classNames({
+                        "flex flex-col justify-center items-center rounded-md h-8 grow border": true,
+                        "border-gray-300": props.theme === THEMES.LIGHT && value === props.value,
+                        // "border-gray-300": props.theme === THEMES.DARK && value === props.value,
+                        "border-gray-300 o-50 hover:o-100 cursor-pointer": props.theme === THEMES.LIGHT && value !== props.value,
+                        // "o-30 hover:o-50 cursor-pointer": props.theme === THEMES.DARK && value !== props.value,
+                    })}
+                    style={{
+                        backgroundColor: value,
+                    }}
+                    onClick={() => {
+                        return props.onChange(value);
+                    }}
+                />
+            ))}
         </div>
     ),
     [FORM_OPTIONS.LABELED_SELECT]: props => (
