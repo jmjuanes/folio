@@ -210,18 +210,24 @@ const getVisibleItems = (items, data) => {
 
 export const Form = props => (
     <div className={props.className} style={props.style}>
-        {getVisibleItems(props.items, props.data).map(key => {
-            const item = props.items[key];
-            return React.createElement(Option, {
-                ...item,
-                key: key,
-                field: key,
-                value: props.data?.[key] ?? null,
-                data: props.data,
-                theme: props.theme,
-                onChange: value => props.onChange?.(key, value),
-            });
-        })}
+        {getVisibleItems(props.items, props.data).map(key => (
+            <React.Fragment>
+                <Option
+                    {...props.items[key]}
+                    key={key}
+                    field={key}
+                    value={props.data?.[key] ?? null}
+                    data={props.data ?? {}}
+                    theme={props.theme}
+                    onChange={value => props.onChange?.(key, value)}
+                />
+                {props.separator && (
+                    <div className="last:hidden flex items-center justify-center">
+                        {props.separator}
+                    </div>
+                )}
+            </React.Fragment>
+        ))}
     </div>
 );
 
@@ -231,5 +237,6 @@ Form.defaultProps = {
     items: {},
     style: {},
     theme: THEMES.LIGHT,
+    separator: null,
     onChange: null,
 };
