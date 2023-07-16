@@ -43,10 +43,21 @@ const generateColorPalette = shade => {
     });
 };
 
+const generateColorPick = shade => {
+    return ["black", "blue", "green", "yellow", "red"].map(color => {
+        return pickColor(color, shade);
+    });
+};
+
 // Default color palettes
 export const FILL_COLOR_PALETTE = generateColorPalette(DEFAULT_FILL_COLOR_SHADE);
 export const STROKE_COLOR_PALETTE = generateColorPalette(DEFAULT_STROKE_COLOR_SHADE);
 export const TEXT_COLOR_PALETTE = generateColorPalette(DEFAULT_TEXT_COLOR_SHADE);
+
+// Default quick picks
+export const FILL_COLOR_PICK = generateColorPick(DEFAULT_FILL_COLOR_SHADE);
+export const STROKE_COLOR_PICK = generateColorPick(DEFAULT_STROKE_COLOR_SHADE);
+export const TEXT_COLOR_PICK = generateColorPick(DEFAULT_TEXT_COLOR_SHADE);
 
 // Background color palette
 export const BACKGROUND_COLOR_PALETTE = {
