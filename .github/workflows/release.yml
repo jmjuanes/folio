@@ -1,0 +1,20 @@
+name: Release
+
+## This workflow is limited only when a new tag is created
+on:
+  push:
+    tags: ["*"]
+
+## Set permissions to the github token
+## https://github.com/softprops/action-gh-release#permissions 
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: ${{ github.repository == 'jmjuanes/folio' }}
+    runs-on: ubuntu-latest
+    name: Release
+    steps:
+      - uses: softprops/action-gh-release@v1
+ 
