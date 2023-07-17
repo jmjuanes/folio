@@ -223,7 +223,7 @@ const getVisibleItems = (items, data) => {
 export const Form = props => (
     <div className={props.className} style={props.style}>
         {getVisibleItems(props.items, props.data).map(key => (
-            <React.Fragment>
+            <React.Fragment key={key}>
                 <Option
                     {...props.items[key]}
                     key={key}

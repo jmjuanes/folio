@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 
 import {ChevronDownIcon} from "@josemi-icons/react";
-import {TrashIcon, BanIcon} from "@josemi-icons/react";
+import {TrashIcon, BanIcon, CopyIcon} from "@josemi-icons/react";
 
 import {FORM_OPTIONS, FIELDS, THEMES} from "../constants.js";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
@@ -25,6 +25,8 @@ import {CircleSolidFillIcon, CircleHatchFillIcon, CircleSemiFillIcon} from "./Ic
 import {SquareIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
 import {ArrowheadNoneIcon, ArrowheadArrowIcon, ArrowheadTriangleIcon, ArrowheadSquareIcon, ArrowheadCircleIcon} from "./Icons.jsx";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "./Icons.jsx";
+import {DotsVerticalIcon} from "./Icons.jsx";
+import {BringForwardIcon, BringFrontIcon, SendBackIcon, SendBackwardIcon} from "./Icons.jsx";
 
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {getRectangleBounds} from "../utils/math.js";
@@ -37,6 +39,17 @@ const SECTIONS = {
     EFFECTS: "effects",
     ARROWHEADS: "arrowheads",
     SHAPE: "shape",
+    ACTIONS: "actions",
+};
+
+// Available actions
+const ACTIONS = {
+    REMOVE: "action:remove",
+    DUPLICATE: "action:duplicate",
+    BRING_FRONT: "layer:bringFront",
+    BRING_FORWARD: "layer:bringForward",
+    SEND_BACK: "layer:sendBack",
+    SEND_BACKWARD: "layer:sendBackward",
 };
 
 const arrowheadValues = [
@@ -52,6 +65,7 @@ const allSections = {
     [SECTIONS.SHAPE]: {
         test: FIELDS.SHAPE,
         icon: (<ShapesIcon />),
+        showChevron: true,
         items: {
             [FIELDS.SHAPE]: {
                 type: FORM_OPTIONS.SELECT,
@@ -67,6 +81,7 @@ const allSections = {
     [SECTIONS.FILL]: {
         icon: (<FillIcon />),
         test: FIELDS.FILL_COLOR,
+        showChevron: true,
         items: {
             [FIELDS.FILL_STYLE]: {
                 title: "Fill style",
@@ -88,6 +103,7 @@ const allSections = {
     [SECTIONS.STROKE]: {
         icon: (<StrokeIcon />),
         test: FIELDS.STROKE_COLOR,
+        showChevron: true,
         items: {
             strokeStyle: {
                 title: "Stroke style",
@@ -122,6 +138,7 @@ const allSections = {
     [SECTIONS.TEXT]: {
         icon: (<TextIcon />),
         test: FIELDS.TEXT_COLOR,
+        showChevron: true,
         items: {
             textColor: {
                 title: "Text color",
@@ -159,6 +176,7 @@ const allSections = {
     [SECTIONS.ARROWHEADS]: {
         test: FIELDS.START_ARROWHEAD,
         icon: (<ArrowheadArrowIcon />),
+        showChevron: true,
         items: {
             [FIELDS.START_ARROWHEAD]: {
                 title: "Start arrowhead",
@@ -175,6 +193,7 @@ const allSections = {
     [SECTIONS.EFFECTS]: {
         icon: (<SunIcon />),
         test: FIELDS.OPACITY,
+        showChevron: true,
         items: {
             [FIELDS.OPACITY]: {
                 type: FORM_OPTIONS.RANGE,
@@ -182,6 +201,35 @@ const allSections = {
                 minValue: OPACITY_MIN,
                 maxValue: OPACITY_MAX,
                 step: OPACITY_STEP,
+            },
+        },
+    },
+    [SECTIONS.ACTIONS]: {
+        icon: (<DotsVerticalIcon />),
+        test: FIELDS.OPACITY,
+        className: "w-40",
+        separator: true,
+        showChevron: false,
+        items: {
+            layers: {
+                type: FORM_OPTIONS.SELECT,
+                title: "Layers",
+                className: "grid grid-cols-4 gap-1 w-full",
+                values: [
+                    {value: ACTIONS.SEND_BACK, icon: SendBackIcon()},
+                    {value: ACTIONS.SEND_BACKWARD, icon: SendBackwardIcon()},
+                    {value: ACTIONS.BRING_FORWARD, icon: BringForwardIcon()},
+                    {value: ACTIONS.BRING_FRONT, icon: BringFrontIcon()},
+                ],
+            },
+            actions: {
+                type: FORM_OPTIONS.SELECT,
+                title: "Actions",
+                className: "grid grid-cols-4 gap-1 w-full",
+                values: [
+                    {value: ACTIONS.DUPLICATE, icon: CopyIcon()},
+                    {value: ACTIONS.REMOVE, icon: TrashIcon()},
+                ],
             },
         },
     },
@@ -244,8 +292,8 @@ Button.defaultProps = {
 
 // Active section wrapper
 const ActiveSectionWrapper = props => {
-    const classList = classNames({
-        "absolute left-half p-3 rounded-lg w-56 shadow-md": true,
+    const classList = classNames(props.className, {
+        "absolute left-half p-3 rounded-lg shadow-md": true,
         "top-full mt-2": !props.alignToTop,
         "bottom-full mb-2": props.alignToTop,
         "bg-white border border-gray-300": props.theme === THEMES.LIGHT,
@@ -262,6 +310,10 @@ const ActiveSectionWrapper = props => {
             />
         </div>
     );
+};
+
+ActiveSectionWrapper.defaultProps = {
+    className: "w-56",
 };
 
 // Separator for buttons
@@ -318,11 +370,38 @@ export const EditionPanel = props => {
     };
     // Handle selection change
     const handleChange = (key, value) => {
-        board.updateElements(selectedElements, [key], [value], true);
+        if (activeSection === SECTIONS.ACTIONS) {
+            switch (value) {
+                case ACTIONS.REMOVE:
+                    board.remove();
+                    break;
+                case ACTIONS.DUPLICATE:
+                    board.duplicate();
+                    break;
+                case ACTIONS.SEND_BACK:
+                    board.sendSelectedElementsToBack();
+                    break;
+                case ACTIONS.SEND_BACKWARD:
+                    board.sendSelectedElementsBackward();
+                    break;
+                case ACTIONS.BRING_FORWARD:
+                    board.bringSelectedElementsForward();
+                    break;
+                case ACTIONS.BRING_FRONT:
+                    board.bringSelectedElementsToFront();
+                    break;
+            }
+            // Handle change
+            props?.onChange?.(board.export());
+        }
+        else {
+            board.updateElements(selectedElements, [key], [value], true);
+            props?.onChange?.({
+                elements: board.elements,
+            });
+        }
+        // Force an update
         board.update();
-        props?.onChange?.({
-            elements: board.elements,
-        });
     };
     // Handle active section change
     const handleSectionChange = newSection => {
@@ -335,35 +414,32 @@ export const EditionPanel = props => {
         <div className="absolute z-4" style={style}>
             <ButtonsWrapper theme={props.theme}>
                 {visibleSections.map(key => (
-                    <div className="relative" key={key}>
-                        <Button
-                            theme={props.theme}
-                            active={activeSection === key}
-                            icon={allSections[key].icon}
-                            showChevron={true}
-                            onClick={() => handleSectionChange(key)}
-                        />
-                        {activeSection === key && (
-                            <ActiveSectionWrapper
-                                key={activeSection}
-                                theme={props.theme}
-                                alignToTop={style.top > board.state.canvasHeight / 2}
-                                values={values || {}}
-                                items={allSections[activeSection].items}
-                                onChange={handleChange}
-                            />
+                    <React.Fragment key={key}>
+                        {allSections[key].separator && (
+                            <Separator theme={props.theme} />
                         )}
-                    </div>
+                        <div className="relative" key={key}>
+                            <Button
+                                theme={props.theme}
+                                active={activeSection === key}
+                                icon={allSections[key].icon}
+                                showChevron={allSections[key].showChevron}
+                                onClick={() => handleSectionChange(key)}
+                            />
+                            {activeSection === key && (
+                                <ActiveSectionWrapper
+                                    key={activeSection}
+                                    theme={props.theme}
+                                    className={allSections[activeSection].className}
+                                    alignToTop={style.top > board.state.canvasHeight / 2}
+                                    values={values || {}}
+                                    items={allSections[activeSection].items}
+                                    onChange={handleChange}
+                                />
+                            )}
+                        </div>
+                    </React.Fragment>
                 ))}
-                <Separator theme={props.theme} />
-                <Button
-                    icon={(<TrashIcon />)}
-                    onClick={() => {
-                        board.remove();
-                        props?.onChange?.(board.export());
-                        board.update();
-                    }}
-                />
             </ButtonsWrapper>
         </div>
     );

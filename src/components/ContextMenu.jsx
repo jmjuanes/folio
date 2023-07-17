@@ -94,6 +94,7 @@ export const ContextMenu = props => {
                                 board.update();
                             }}
                         />
+                        {/*
                         <Item
                             text="Send to back"
                             onClick={() => {
@@ -112,6 +113,7 @@ export const ContextMenu = props => {
                                 board.update();
                             }}
                         />
+                        */}
                     </React.Fragment>
                 )}
                 {board.elements.length > 0 && (

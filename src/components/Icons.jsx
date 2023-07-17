@@ -136,6 +136,12 @@ export const DiamondIcon = () => (
     </SvgIcon>
 );
 
+export const DotsVerticalIcon = () => (
+    <SvgIcon title="DotsVertical">
+        <path d="M11 5C11 4.44772 11.4477 4 12 4C12.5523 4 13 4.44772 13 5C13 5.55228 12.5523 6 12 6C11.4477 6 11 5.55228 11 5ZM11 19C11 18.4477 11.4477 18 12 18C12.5523 18 13 18.4477 13 19C13 19.5523 12.5523 20 12 20C11.4477 20 11 19.5523 11 19ZM11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12Z" />
+    </SvgIcon>
+);
+
 export const DownloadIcon = () => (
     <SvgIcon title="Download">
         <path d="M4 15L4 17C4 17 4 20 7 20L17 20C20 20 20 17 20 17L20 15M12 4L12 15M9 13L12 16L15 13" />
@@ -343,5 +349,29 @@ export const ZoomInIcon = () => (
 export const ZoomOutIcon = () => (
     <SvgIcon title="ZoomOut">
         <path d="M4 11C4 7.13401 7.13401 4 11 4C14.866 4 18 7.13401 18 11C18 14.866 14.866 18 11 18C7.13401 18 4 14.866 4 11ZM16 16L20 20M8 11L14 11" />
+    </SvgIcon>
+);
+
+export const BringForwardIcon = () => (
+    <SvgIcon title="BringForward">
+        <path d="M4 6C4 6 4 4 6 4L13 4C15 4 15 6 15 6L15 12C15 12 15 14 13 14L6 14C4 14 4 12 4 12L4 6ZM9 14L9 18C9 18 9 20 11 20L18 20C20 20 20 18 20 18L20 12C20 12 20 10 18 10L15 10M5 13L13 5M9 14L15 8M4 9L9 4" />
+    </SvgIcon>
+);
+
+export const BringFrontIcon = () => (
+    <SvgIcon title="BringFront">
+        <path d="M8 16L16 8M12 7L7 12M17 12L12 17M7 9L7 15C7 15 7 17 9 17L15 17C17 17 17 15 17 15L17 9C17 9 17 7 15 7L9 7C7 7 7 9 7 9ZM7.05113 11L6 11C4 11 4 9 4 9L4 6C4 6 4 4 6 4L10 4C12 4 12 6 12 6L12 7.00051M17.0794 13L18 13C20 13 20 15 20 15L20 18C20 18 20 20 18 20L14 20C12 20 12 18 12 18L12 17.0288" />
+    </SvgIcon>
+);
+
+export const SendBackwardIcon = () => (
+    <SvgIcon title="SendBackward">
+        <path d="M4 6C4 6 4 4 6 4L13 4C15 4 15 6 15 6L15 12C15 12 15 14 13 14L6 14C4 14 4 12 4 12L4 6ZM9 14L9 18C9 18 9 20 11 20L18 20C20 20 20 18 20 18L20 12C20 12 20 10 18 10L15 10M10 19L18 11M14 20L20 14" />
+    </SvgIcon>
+);
+
+export const SendBackIcon = () => (
+    <SvgIcon title="SendBack">
+        <path d="M4 6C4 6 4 4 6 4L10 4C12 4 12 6 12 6L12 9C12 9 12 11 10 11L6 11C4 11 4 9 4 9L4 6ZM12 15C12 15 12 13 14 13L18 13C20 13 20 15 20 15L20 18C20 18 20 20 18 20L14 20C12 20 12 18 12 18L12 15ZM8 16L16 8M17 12.0229L17 9C17 9 17 7 15 7L13 7.0229M7 11L7 15C7 15 7 17 9 17L12 17" />
     </SvgIcon>
 );
