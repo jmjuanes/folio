@@ -133,7 +133,7 @@ export const useEvents = callbacks => {
                     // Save a snapshot of the current selection for calculating the correct element position
                     snapshot = board.snapshotSelectedElements();
                 }
-                else if (!board.activeAction || board.activeAction === ACTIONS.SELECT) {
+                else if (!board.activeAction || board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT) {
                     board.activeAction = board.activeAction || ACTIONS.SELECT;
                     board.selection = {
                         x1: event.originalX,
@@ -247,7 +247,7 @@ export const useEvents = callbacks => {
                         }
                     }
                 }
-                else if (board.activeAction === ACTIONS.SELECT) {
+                else if (board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT) {
                     board.currentState = STATES.BRUSHING;
                     board.selection.x2 = event.currentX;
                     board.selection.y2 = event.currentY;
@@ -355,6 +355,9 @@ export const useEvents = callbacks => {
                         y2: Math.max(selection.y1, selection.y2),
                     });
                 }
+                else if (board.activeAction === ACTIONS.SCREENSHOT) {
+                    callbacks?.onScreenshot?.({...board.selection});
+                }
                 board.activeAction = null;
                 board.selection = null;
                 board.update();
@@ -421,6 +424,9 @@ export const useEvents = callbacks => {
                 }
                 // Check ESCAPE key
                 else if (event.key === KEYS.ESCAPE) {
+                    if (board.activeAction === ACTIONS.SCREENSHOT) {
+                        board.activeAction = null;
+                    }
                     // Check for active group enabled --> exit group edition
                     // if (board.activeGroup) {
                     //     board.activeGroup = null;

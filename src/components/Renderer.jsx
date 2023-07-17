@@ -15,6 +15,7 @@ export const Renderer = props => {
     const board = useBoard();
     const events = useEvents({
         onChange: props.onChange,
+        onScreenshot: props.onScreenshot,
     });
     const cursor = useCursor();
     const bounds = useBounds();
@@ -42,7 +43,7 @@ export const Renderer = props => {
             brush={board.selection}
             brushFillColor={SELECTION_FILL_COLOR}
             brushStrokeColor={SELECTION_STROKE_COLOR}
-            showBrush={board.activeAction === ACTIONS.SELECT}
+            showBrush={board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT}
             pointer={board.erase}
             showPointer={board.activeAction === ACTIONS.ERASE}
             showGrid={board.grid}

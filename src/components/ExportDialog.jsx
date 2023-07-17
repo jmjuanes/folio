@@ -36,7 +36,8 @@ export const ExportDialog = props => {
             elements: board.elements,
             format: format || EXPORT_FORMATS.PNG,
             background: options.includeBackground ? board.background : "transparent",
-            padding: EXPORT_PADDING,
+            padding: !!props.cropRegion ? 0 : EXPORT_PADDING,
+            crop: props.cropRegion,
         };
     };
     // Handle preview update when an option is changed
@@ -105,5 +106,6 @@ export const ExportDialog = props => {
 
 ExportDialog.defaultProps = {
     width: "20rem",
+    cropRegion: null,
     onClose: null,
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
+import {CameraIcon} from "@josemi-icons/react";
 
 import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {ToolsPanel} from "./ToolsPanel.jsx";
@@ -8,10 +9,12 @@ import {useBoard} from "../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../utils/blob.js";
 import {Zooming} from "./Zooming.jsx";
 import {History} from "./History.jsx";
+import {SecondaryButton} from "./Button.jsx";
 
 export const Layout = props => {
     const board = useBoard();
     const selectedElements = board.getSelectedElements();
+    const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
     const handleImageLoad = () => {
         const options = {
             description: "Folio Board",
@@ -40,10 +43,9 @@ export const Layout = props => {
 
     return (
         <React.Fragment>
-            {props.showTools && (
+            {props.showTools && !isScreenshot && (
                 <ToolsPanel
                     style={{
-                        // top: `calc(1rem + ${props.showHeader ? props.headerHeight : "0px"})`,
                         bottom: "1rem",
                         left: "50%",
                         transform: "translateX(-50%)",
@@ -82,7 +84,7 @@ export const Layout = props => {
                     onChange={props.onChange}
                 />
             )}
-            {props.showHeader && (
+            {props.showHeader && !isScreenshot && (
                 <React.Fragment>
                     <div className="absolute top-0 left-0 pt-4 pl-4 z-7">
                         <div className="flex gap-2">
@@ -91,6 +93,17 @@ export const Layout = props => {
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7">
                         <div className="flex gap-2">
+                            {props.showScreenshot && (
+                                <SecondaryButton
+                                    icon={(<CameraIcon />)}
+                                    disabled={board.elements.length === 0}
+                                    onClick={() => {
+                                        board.setTool(null);
+                                        board.setAction(ACTIONS.SCREENSHOT);
+                                        board.update();
+                                    }}
+                                />
+                            )}
                             {props.showHistory && (
                                 <History
                                     onUndoClick={() => {
@@ -118,7 +131,7 @@ export const Layout = props => {
                     </div>
                 </React.Fragment>
             )}
-            {props.showFooter && (
+            {props.showFooter && !isScreenshot && (
                 <div className="absolute bottom-0 left-0 pb-4 px-4 z-7 w-full">
                     {props.footerContent}
                 </div>
@@ -131,6 +144,7 @@ Layout.defaultProps = {
     showHeader: false,
     showFooter: false,
     showZoom: true,
+    showScreenshot: true,
     showHistory: true,
     showTools: true,
     showEdition: true,

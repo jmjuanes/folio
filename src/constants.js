@@ -296,6 +296,7 @@ export const ACTIONS = {
     RESIZE: "actionresize",
     EDIT: "action:edit",
     ERASE: "action:erase",
+    SCREENSHOT: "action:screenshot",
 };
 
 export const CHANGES = {

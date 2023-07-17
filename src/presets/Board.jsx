@@ -12,6 +12,7 @@ const InnerBoard = props => {
     const {showConfirm} = useConfirm();
     const board = useBoard();
     const [exportVisible, setExportVisible] = React.useState(false);
+    const [screenshotRegion, setScreenshotRegion] = React.useState(null);
 
     // Handle board reset
     const handleResetBoard = () => {
@@ -33,9 +34,17 @@ const InnerBoard = props => {
         // Just call the onLoad listener
         props.onLoad?.();
     };
+    // Handle screenshot
+    const handleScreenshot = region => {
+        setScreenshotRegion(region);
+        setExportVisible(true);
+    };
     return (
         <div className="relative overflow-hidden h-full w-full select-none">
-            <Renderer onChange={props.onChange} />
+            <Renderer
+                onChange={props.onChange}
+                onScreenshot={handleScreenshot}
+            />
             {board.state.contextMenuVisible && (
                 <ContextMenu onChange={props.onChange} />
             )}
@@ -74,7 +83,11 @@ const InnerBoard = props => {
             />
             {exportVisible && (
                 <ExportDialog
-                    onClose={() => setExportVisible(false)}
+                    cropRegion={screenshotRegion}
+                    onClose={() => {
+                        setExportVisible(false);
+                        setScreenshotRegion(null);
+                    }}
                 />
             )}
         </div>
