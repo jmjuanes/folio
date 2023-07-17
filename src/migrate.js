@@ -1,8 +1,12 @@
 import {ELEMENTS, VERSION} from "./constants.js";
-import {FIELDS, DEPRECATED_FIELDS, DEFAULTS, FONT_FACES} from "./constants.js";
+import {FIELDS, DEPRECATED_FIELDS, DEFAULTS} from "./constants.js";
+import {FILL_STYLES} from "./constants.js";
+import {STROKES} from "./constants.js";
+import {FONT_FACES} from "./constants.js";
+import {TRANSPARENT, BLACK} from "./constants.js";
 
 export const migrateElements = (elements, version) => {
-    return (elements || []).map(element => {
+    return (elements || []).map((element, index) => {
         switch (version) {
             case "2":
                 // - the minWidth and minHeight attributes of the text element are deprecated
@@ -45,6 +49,28 @@ export const migrateElements = (elements, version) => {
                 // Migrate 'Caveat' font to 'Caveat Brush'
                 if (typeof element[FIELDS.TEXT_FONT] === "string" && element[FIELDS.TEXT_FONT].startsWith("Caveat")) {
                     element[FIELDS.TEXT_FONT] = FONT_FACES.DRAW;
+                }
+            case "7":
+                // Add new 'order' field to all elements
+                element[FIELDS.ORDER] = index;
+                // Transparent colors in fill or stroke should be converted to fill or stroke style
+                if (element.type === ELEMENTS.SHAPE) {
+                    if (element[FIELDS.FILL_COLOR] === TRANSPARENT) {
+                        element[FIELDS.FILL_COLOR] = BLACK;
+                        element[FIELDS.FILL_STYLE] = FILL_STYLES.NONE;
+                    }
+                    if (element[FIELDS.STROKE_COLOR] === TRANSPARENT) {
+                        element[FIELDS.STROKE_COLOR] = BLACK;
+                        element[FIELDS.STROKE_STYLE] = STROKES.NONE;
+                    }
+                    // Prevent having elements with fill and stroke none
+                    if (element[FIELDS.FILL_STYLE] === FILL_STYLES.NONE && element[FIELDS.STROKE_STYLE] === STROKES.NONE) {
+                        element[FIELDS.STROKE_STYLE] = STROKES.SOLID;
+                    }
+                }
+                // Remove the transparent color in stroke
+                else if (element[FIELDS.STROKE_COLOR] === TRANSPARENT) {
+                    element[FIELDS.STROKE_COLOR] = BLACK;
                 }
         }
         return element;
