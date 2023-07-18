@@ -1,6 +1,6 @@
 import React from "react";
 
-import {EXPORT_FORMATS, EXPORT_PADDING} from "../constants.js";
+import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "../constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../export.js";
 import {Modal} from "./Modal.jsx";
 import {SecondaryButton} from "./Button.jsx";
@@ -35,7 +35,7 @@ export const ExportDialog = props => {
         return {
             elements: board.elements,
             format: format || EXPORT_FORMATS.PNG,
-            background: options.includeBackground ? board.background : "transparent",
+            background: options.includeBackground ? board.background : TRANSPARENT,
             padding: !!props.cropRegion ? 0 : EXPORT_PADDING,
             crop: props.cropRegion,
         };

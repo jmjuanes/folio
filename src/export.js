@@ -1,5 +1,5 @@
 import {fileSave} from "browser-fs-access";
-import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING} from "./constants.js";
+import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING, TRANSPARENT} from "./constants.js";
 import {FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
 import {getRectangleBounds} from "./utils/math.js";
 import {exportPencilEffectSvgFilter} from "./contexts/PencilEffectContext.jsx";
@@ -138,8 +138,10 @@ const getPngImage = options => {
                 canvas.height = img.height;
             }
             const ctx = canvas.getContext("2d");
-            // ctx.fillStyle = "white";
-            // ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (options.background !== TRANSPARENT) {
+                ctx.fillStyle = options.background;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
             ctx.drawImage(img, x, y);
             canvas.toBlob(resolve);
         });
