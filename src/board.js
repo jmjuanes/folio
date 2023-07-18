@@ -294,11 +294,20 @@ export const createBoard = props => ({
         }
     },
     updateElements(elements, keys, values, groupChanges = true) {
-        if (elements && elements.length > 0) {
-            // 0. Get elements to update
-            const elementsToChange = elements.filter(el => {
-                return keys.every(key => typeof el[key] !== "undefined");
+        // 0. Get elements to update
+        const elementsToChange = (elements || []).filter(el => {
+            return keys.every(key => {
+                if (typeof el[key] !== "undefined") {
+                    const isValueAllowed = getElementConfig(el)?.isValueAllowed;
+                    if (typeof isValueAllowed !== "function" || values.every(v => isValueAllowed(key, v))) {
+                        return true;
+                    }
+                }
+                // Default: not allowed to change
+                return false;
             });
+        });
+        if (elementsToChange.length > 0) {
             // 1. Register element update in the history
             this.addHistory({
                 type: CHANGES.UPDATE,

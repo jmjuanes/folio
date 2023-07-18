@@ -4,19 +4,7 @@ import {
     ELEMENTS,
     HANDLERS,
     GRID_SIZE,
-    DEFAULT_ARROWHEAD_END,
-    DEFAULT_ARROWHEAD_START,
-    DEFAULT_FILL_COLOR,
-    DEFAULT_FILL_STYLE,
-    DEFAULT_SHAPE,
-    DEFAULT_STROKE_COLOR,
-    DEFAULT_STROKE_STYLE,
-    DEFAULT_STROKE_WIDTH,
-    DEFAULT_TEXT_COLOR,
-    DEFAULT_TEXT_FONT,
-    DEFAULT_TEXT_SIZE,
-    DEFAULT_TEXT_ALIGN,
-    DEFAULT_OPACITY,
+    DEFAULTS,
     DRAWING_THRESHOLD,
     TEXT_SIZE_MIN,
     TEXT_SIZE_STEP,
@@ -74,18 +62,18 @@ export const elementsConfig = {
         ),
         initialize: values => {
             return {
-                opacity: DEFAULT_OPACITY,
-                shape: values.shape || DEFAULT_SHAPE,
-                fillColor: values?.fillColor ?? DEFAULT_FILL_COLOR,
-                fillStyle: checkFillStyleValue(values?.fillStyle ?? DEFAULT_FILL_STYLE),
-                strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
-                strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
-                strokeStyle: values?.strokeStyle ?? DEFAULT_STROKE_STYLE,
+                opacity: DEFAULTS.OPACITY,
+                shape: values.shape || DEFAULTS.SHAPE,
+                fillColor: values?.fillColor ?? DEFAULTS.FILL_COLOR,
+                fillStyle: checkFillStyleValue(values?.fillStyle ?? DEFAULTS.FILL_STYLE),
+                strokeColor: values?.strokeColor ?? DEFAULTS.STROKE_COLOR,
+                strokeWidth: values?.strokeWidth ?? DEFAULTS.STROKE_WIDTH,
+                strokeStyle: values?.strokeStyle ?? DEFAULTS.STROKE_STYLE,
                 text: "",
-                textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
-                textFont: values?.textFont ?? DEFAULT_TEXT_FONT,
-                textSize: values?.textSize ?? DEFAULT_TEXT_SIZE,
-                textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
+                textColor: values?.textColor ?? DEFAULTS.TEXT_COLOR,
+                textFont: values?.textFont ?? DEFAULTS.TEXT_FONT,
+                textSize: values?.textSize ?? DEFAULTS.TEXT_SIZE,
+                textAlign: values?.textAlign ?? DEFAULTS.TEXT_ALIGN,
                 textWidth: GRID_SIZE,
                 textHeight: GRID_SIZE,
             };
@@ -115,13 +103,16 @@ export const elementsConfig = {
         ),
         initialize: values => {
             return {
-                opacity: DEFAULT_OPACITY,
-                startArrowhead: values?.startArrowhead || DEFAULT_ARROWHEAD_START,
-                endArrowhead: values?.endArrowhead || DEFAULT_ARROWHEAD_END,
-                strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
-                strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
-                strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULT_STROKE_STYLE),
+                opacity: DEFAULTS.OPACITY,
+                startArrowhead: values?.startArrowhead || DEFAULTS.ARROWHEAD_START,
+                endArrowhead: values?.endArrowhead || DEFAULTS.ARROWHEAD_END,
+                strokeColor: values?.strokeColor ?? DEFAULTS.STROKE_COLOR,
+                strokeWidth: values?.strokeWidth ?? DEFAULTS.STROKE_WIDTH,
+                strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULTS.STROKE_STYLE),
             };
+        },
+        isValueAllowed: (key, value) => {
+            return !(key === FIELDS.STROKE_STYLE && value === STROKES.NONE);
         },
     },
     [ELEMENTS.TEXT]: {
@@ -134,16 +125,16 @@ export const elementsConfig = {
         ),
         initialize: values => {
             // We need to measure the height of an empty text to calculate the height of the element
-            const textSize = values?.textSize ?? DEFAULT_TEXT_SIZE;
-            const textFont = values?.textFont ?? DEFAULT_TEXT_FONT;
+            const textSize = values?.textSize ?? DEFAULTS.TEXT_SIZE;
+            const textFont = values?.textFont ?? DEFAULTS.TEXT_FONT;
             const [textWidth, textHeight] = measureText(" ", textSize, textFont);
             return ({
-                opacity: DEFAULT_OPACITY,
+                opacity: DEFAULTS.OPACITY,
                 text: "",
-                textColor: values?.textColor ?? DEFAULT_TEXT_COLOR,
+                textColor: values?.textColor ?? DEFAULTS.TEXT_COLOR,
                 textFont: textFont,
                 textSize: textSize,
-                textAlign: values?.textAlign ?? DEFAULT_TEXT_ALIGN,
+                textAlign: values?.textAlign ?? DEFAULTS.TEXT_ALIGN,
                 textWidth: GRID_SIZE,
                 textHeight: textHeight, // Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE,
             });
@@ -243,14 +234,17 @@ export const elementsConfig = {
         ),
         initialize: values => {
             return {
-                opacity: DEFAULT_OPACITY,
+                opacity: DEFAULTS.OPACITY,
                 points: [],
-                strokeColor: values?.strokeColor ?? DEFAULT_STROKE_COLOR,
-                strokeWidth: values?.strokeWidth ?? DEFAULT_STROKE_WIDTH,
-                strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULT_STROKE_STYLE),
+                strokeColor: values?.strokeColor ?? DEFAULTS.STROKE_COLOR,
+                strokeWidth: values?.strokeWidth ?? DEFAULTS.STROKE_WIDTH,
+                strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULTS.STROKE_STYLE),
                 drawWidth: 0,
                 drawHeight: 0,
             };
+        },
+        isValueAllowed: (key, value) => {
+            return !(key === FIELDS.STROKE_STYLE && value === STROKES.NONE);
         },
         onCreateStart: (element, event) => {
             element.points.push([event.originalX - element.x1, event.originalY - element.y1]);
@@ -299,7 +293,7 @@ export const elementsConfig = {
         ),
         initialize: () => ({
             assetId: "",
-            opacity: DEFAULT_OPACITY,
+            opacity: DEFAULTS.OPACITY,
             imageWidth: 0,
             imageHeight: 0,
         }),
