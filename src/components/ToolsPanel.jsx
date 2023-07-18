@@ -2,12 +2,8 @@ import React from "react";
 import classNames from "classnames";
 
 import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
-import {SHAPES, ARROWHEADS, STROKE_WIDTHS, TEXT_SIZES} from "../constants.js";
-import {
-    FILL_COLOR_PICK,
-    STROKE_COLOR_PICK,
-    TEXT_COLOR_PICK,
-} from "../colors.js";
+import {SHAPES, ARROWHEADS, STROKE_WIDTHS} from "../constants.js";
+import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../colors.js";
 import {HandGrabIcon, PointerIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
 import {PenIcon, ImageIcon} from "./Icons.jsx";
 import {EraseIcon, LockIcon, UnlockIcon} from "./Icons.jsx";
@@ -32,10 +28,10 @@ const tools = {
                     {value: SHAPES.TRIANGLE, icon: <TriangleIcon />},
                 ],
             },
-            [FIELDS.FILL_COLOR]: {
+            [FIELDS.STROKE_COLOR]: {
                 type: FORM_OPTIONS.COLOR_SELECT,
                 className: "flex flex-nowrap w-48 gap-1",
-                values: FILL_COLOR_PICK,
+                values: STROKE_COLOR_PICK,
             },
         },
     },

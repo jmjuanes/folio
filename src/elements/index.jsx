@@ -40,11 +40,6 @@ const ElementContainer = props => (
     </SvgContainer>
 );
 
-// Tiny utility to prevent having empty fill styles
-const checkFillStyleValue = initialValue => {
-    return initialValue === FILL_STYLES.NONE ? FILL_STYLES.SOLID : initialValue;
-};
-
 // Tiny utility to prevent having empty strokes
 const checkStrokeStyleValue = initialValue => {
     return initialValue === STROKES.NONE ? STROKES.SOLID : initialValue;
@@ -61,14 +56,20 @@ export const elementsConfig = {
             </ElementContainer>
         ),
         initialize: values => {
+            // Prevent drawing a shape with stroke and fill styles as none
+            let strokeStyle = values?.strokeStyle ?? DEFAULTS.STROKE_STYLE;
+            if (values?.fillStyle === FILL_STYLES.NONE && values?.strokeStyle === STROKES.NONE) { 
+                strokeStyle = DEFAULTS.STROKE_STYLE;
+            }
+            // Return 
             return {
                 opacity: DEFAULTS.OPACITY,
                 shape: values.shape || DEFAULTS.SHAPE,
                 fillColor: values?.fillColor ?? DEFAULTS.FILL_COLOR,
-                fillStyle: checkFillStyleValue(values?.fillStyle ?? DEFAULTS.FILL_STYLE),
+                fillStyle: values?.fillStyle ?? DEFAULTS.FILL_STYLE,
                 strokeColor: values?.strokeColor ?? DEFAULTS.STROKE_COLOR,
                 strokeWidth: values?.strokeWidth ?? DEFAULTS.STROKE_WIDTH,
-                strokeStyle: values?.strokeStyle ?? DEFAULTS.STROKE_STYLE,
+                strokeStyle: strokeStyle, // values?.strokeStyle ?? DEFAULTS.STROKE_STYLE,
                 text: "",
                 textColor: values?.textColor ?? DEFAULTS.TEXT_COLOR,
                 textFont: values?.textFont ?? DEFAULTS.TEXT_FONT,
