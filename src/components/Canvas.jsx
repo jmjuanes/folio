@@ -52,11 +52,11 @@ export const Canvas = props => {
         // const source = event.nativeEvent?.target?.dataset?.type || null;
         const {top, left} = canvasRef.current.getBoundingClientRect();
         const eventInfo = {
+            drag: false,
             originalX: (event.nativeEvent.clientX - left - props.translateX) / props.zoom,
             originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             originalEvent: event.nativeEvent,
-            // prevEvent: null,
         };
 
         if (source && event.nativeEvent.target?.dataset?.[source]) {
@@ -76,6 +76,7 @@ export const Canvas = props => {
             clearLongPressTimer();
             event.preventDefault();
             props.onPointerMove?.(Object.assign(eventInfo, {
+                drag: true,
                 currentEvent: event,
                 currentX: (event.clientX - left - props.translateX) / props.zoom,
                 currentY: (event.clientY - top - props.translateY) / props.zoom,
@@ -84,7 +85,6 @@ export const Canvas = props => {
                 // prevDx: eventInfo.prevEvent ? ((eventInfo.prevEvent.clientX - eventInfo.originalEvent.clientX) / props.zoom) : 0,
                 // prevDy: eventInfo.prevEvent ? ((eventInfo.prevEvent.clientY - eventInfo.originalEvent.clientY) / props.zoom) : 0,
             }));
-            // eventInfo.prevEvent = event;
         };
 
         // Handle pointer up

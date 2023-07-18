@@ -15,6 +15,9 @@ import {
     FIELDS,
     FILL_STYLES,
     STROKES,
+    SHAPE_MIN_WIDTH,
+    SHAPE_MIN_HEIGHT,
+    EVENT_TYPES,
 } from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
@@ -79,7 +82,13 @@ export const elementsConfig = {
                 textHeight: GRID_SIZE,
             };
         },
-        onCreateEnd: element => {
+        onCreateEnd: (element, event) => {
+            // Prevent drawing 0-sized shapes
+            if (!event.drag) {
+                element.x2 = element.x1 + SHAPE_MIN_WIDTH;
+                element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
+            }
+            // Update position of shape element
             Object.assign(element, {
                 x1: Math.min(element.x1, element.x2),
                 y1: Math.min(element.y1, element.y2),

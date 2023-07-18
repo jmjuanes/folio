@@ -108,6 +108,10 @@ export const HATCH_GAP = 4;
 // Text box constants
 export const TEXT_BOX_MIN_WIDTH = 400;
 
+// Shapes constants
+export const SHAPE_MIN_WIDTH = 150;
+export const SHAPE_MIN_HEIGHT = 150;
+
 export const MIME_TYPES = {
     FOLIO: "application/vnd.folio+json",
     JSON: "application/json",
@@ -207,23 +211,6 @@ export const STROKES = {
 };
 
 // Default values for style attributes of elements
-export const DEFAULT_FILL_COLOR = WHITE;
-export const DEFAULT_FILL_OPACITY = OPACITY_DEFAULT;
-export const DEFAULT_FILL_STYLE = FILL_STYLES.SOLID;
-export const DEFAULT_STROKE_COLOR = BLACK;
-export const DEFAULT_STROKE_WIDTH = STROKE_WIDTHS.MEDIUM;
-export const DEFAULT_STROKE_OPACITY = OPACITY_DEFAULT;
-export const DEFAULT_STROKE_STYLE = STROKES.SOLID;
-export const DEFAULT_TEXT_FONT = FONT_FACES.DRAW;
-export const DEFAULT_TEXT_SIZE = TEXT_SIZES.MEDIUM;
-export const DEFAULT_TEXT_COLOR = BLACK;
-export const DEFAULT_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
-export const DEFAULT_SHAPE = SHAPES.RECTANGLE;
-export const DEFAULT_ARROWHEAD_START = ARROWHEADS.NONE;
-export const DEFAULT_ARROWHEAD_END = ARROWHEADS.ARROW;
-export const DEFAULT_OPACITY = OPACITY_DEFAULT;
-
-// TODO: move all DEFAULT_* to DEFAULTS object
 export const DEFAULTS = {
     FILL_COLOR: WHITE,
     FILL_STYLE: FILL_STYLES.SOLID,
