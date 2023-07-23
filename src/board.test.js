@@ -64,6 +64,18 @@ describe("board", () => {
             });
         });
 
+        it("should keep order when all selected elements are already in front", () => {
+            const elements = [
+                board.elements[2],
+                board.elements[3],
+            ];
+            board.bringElementsForward(elements);
+
+            board.elements.forEach(el => {
+                expect(el.order).toEqual(el.initialOrder);
+            });
+        });
+
         it("should send a single element backward", () => {
             const element = board.elements[2];
             const expectedOrder = ["el0", "el2", "el1", "el3"];
@@ -90,6 +102,18 @@ describe("board", () => {
             board.elements.forEach((el, index) => {
                 expect(el.order).toEqual(index);
                 expect(el.id).toEqual(expectedOrder[index]);
+            });
+        });
+
+        it("should keep order when all selected elements are already in back", () => {
+            const elements = [
+                board.elements[0],
+                board.elements[1],
+            ];
+            board.sendElementsBackward(elements);
+
+            board.elements.forEach(el => {
+                expect(el.order).toEqual(el.initialOrder);
             });
         });
 
