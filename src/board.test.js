@@ -25,7 +25,7 @@ describe("board", () => {
         });
     });
 
-    describe("order", () => {
+    describe("layers", () => {
         beforeEach(() => {
             board.elements = [
                 {id: "el0", initialOrder: 0, order: 0, selected: false},
@@ -53,6 +53,23 @@ describe("board", () => {
                 board.elements[2],
             ];
             const expectedOrder = ["el0", "el3", "el1", "el2"];
+            board.bringElementsForward(elements);
+
+            elements.forEach(el => {
+                expect(el.order).toEqual(el.initialOrder + 1);
+            });
+            board.elements.forEach((el, index) => {
+                expect(el.order).toEqual(index);
+                expect(el.id).toEqual(expectedOrder[index]);
+            });
+        });
+
+        it("should bring a non-consecutive selection forward", () => {
+            const elements = [
+                board.elements[0],
+                board.elements[2],
+            ];
+            const expectedOrder = ["el1", "el0", "el3", "el2"];
             board.bringElementsForward(elements);
 
             elements.forEach(el => {
@@ -94,6 +111,23 @@ describe("board", () => {
                 board.elements[2],
             ];
             const expectedOrder = ["el1", "el2", "el0", "el3"];
+            board.sendElementsBackward(elements);
+
+            elements.forEach(el => {
+                expect(el.order).toEqual(el.initialOrder - 1);
+            });
+            board.elements.forEach((el, index) => {
+                expect(el.order).toEqual(index);
+                expect(el.id).toEqual(expectedOrder[index]);
+            });
+        });
+
+        it("should send a non-consecutive selection backward", () => {
+            const elements = [
+                board.elements[1],
+                board.elements[3],
+            ];
+            const expectedOrder = ["el1", "el0", "el3", "el2"];
             board.sendElementsBackward(elements);
 
             elements.forEach(el => {
