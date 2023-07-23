@@ -373,8 +373,8 @@ export const createBoard = props => ({
         // 2. Fix order position of elements using the sign
         (elements || [])
             .sort((a, b) => sign * (b[FIELDS.ORDER] - a[FIELDS.ORDER]))
-            .filter(el => {
-                return absolute || (sign > 0 ? el[FIELDS.ORDER] < length - 1 : el[FIELDS.ORDER] > 0);
+            .filter((el, index) => {
+                return absolute || (sign > 0 ? el[FIELDS.ORDER] < length - 1 - index : el[FIELDS.ORDER] > index);
             })
             .forEach(element => {
                 // move all elements to front or back
