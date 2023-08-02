@@ -25,6 +25,7 @@ const previewStyle = {
 
 export const ExportDialog = props => {
     const board = useBoard();
+    const copiedToClipboardTimer = React.useRef(null);
     const [copiedToClipboard, setCopiedToClipboard] = React.useState(false);
     const [preview, setPreview] = React.useState(null);
     const [options, setOptions] = React.useState({
@@ -51,18 +52,33 @@ export const ExportDialog = props => {
         },
         [options.includeBackground],
     );
+    // On unmount export dialog --> reset copied to clipboard timer
+    React.useEffect(
+        () => {
+            return () => {
+                if (copiedToClipboardTimer.current) {
+                    clearTimeout(copiedToClipboardTimer.current);
+                }
+            };
+        },
+        [],
+    );
     return (
         <Modal maxWidth={props.width}>
             <div className="flex items-center justify-between mb-8">
                 <div className="font-bold text-lg">Export image</div>
-                <div className="flex items-center cursor-pointer text-2xl text-gray-500 hover:text-gray-700" onClick={props.onClose}>
+                <div data-testid="export-close" className="flex items-center cursor-pointer text-2xl text-gray-500 hover:text-gray-700" onClick={props.onClose}>
                     <CloseIcon />
                 </div>
             </div>
-            <div className="select-none mb-4 border border-gray-300">
+            <div data-testid="export-preview" className="select-none mb-4 border border-gray-300">
                 {!!preview && (
                     <div className="flex items-center justify-center h-48" style={previewStyle}>
-                        <img src={preview} className="maxh-48" />
+                        <img
+                            data-testid="export-preview-image"
+                            src={preview}
+                            className="maxh-48"
+                        />
                     </div>
                 )}
                 {!preview && (
@@ -85,18 +101,32 @@ export const ExportDialog = props => {
             </div>
             <div className="flex gap-2 w-full flex-col">
                 <SecondaryButton
+                    testid="export-btn-download"
                     text="Download PNG"
                     icon={(<DownloadIcon />)}
                     fullWidth={true}
                     onClick={() => exportToFile(getExportOptions())}
                 />
                 <SecondaryButton
+                    testid="export-btn-clipboard"
                     text={copiedToClipboard ? "Copied!" : "Copy to clipboard"}
                     icon={(<ClipboardIcon />)}
                     fullWidth={true}
                     onClick={() => {
+                        // First check if there is an active timer
+                        if (copiedToClipboardTimer.current) {
+                            setTimeout(copiedToClipboardTimer.current);
+                        }
                         setCopiedToClipboard(true);
                         exportToClipboard(getExportOptions());
+                        // Delay reseting the current timer
+                        copiedToClipboardTimer.current = setTimeout(
+                            () => {
+                                setCopiedToClipboard(false);
+                                copiedToClipboardTimer.current = null;
+                            },
+                            props.copiedToClipboardMessageDelay,
+                        );
                     }}
                 />
             </div>
@@ -106,6 +136,7 @@ export const ExportDialog = props => {
 
 ExportDialog.defaultProps = {
     width: "20rem",
+    copiedToClipboardMessageDelay: 2000,
     cropRegion: null,
     onClose: null,
 };
