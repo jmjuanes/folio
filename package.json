@@ -1,6 +1,6 @@
 {
     "name": "folio",
-    "version": "0.9.2",
+    "version": "0.9.3",
     "description": "A minimalistic digital whiteboard for sketching and prototyping",
     "private": true,
     "homepage": "https://www.josemi.xyz/folio",
@@ -10,8 +10,7 @@
     "scripts": {
         "build": "yarn clean && yarn build:demo",
         "build:demo": "cross-env NODE_ENV=production webpack build",
-        "serve": "yarn clean && yarn start:demo",
-        "start:demo": "webpack serve",
+        "dev": "yarn clean && webpack serve",
         "clean": "rm -rf ./www",
         "test": "jest"
     },
