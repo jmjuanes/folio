@@ -9,16 +9,15 @@ export const Button = props => {
         "o-70 cursor-not-allowed": props.disabled,
         "w-full": props.fullWidth,
     });
-
     return (
-        <div className={classList} onClick={props.onClick} style={props.style}>
+        <div data-testid={props.testid} className={classList} onClick={props.onClick} style={props.style}>
             {!!props.icon && (
-                <div className={classNames(props.iconClassName, "flex items-center")} data-test="icon">
+                <div className={classNames(props.iconClassName, "flex items-center")} data-testid="btn-icon">
                     {props.icon}
                 </div>
             )}
             {!!props.text && (
-                <div className={props.textClassName} data-test="text">
+                <div className={props.textClassName} data-testid="btn-text">
                     {props.text}
                 </div>
             )}
@@ -27,6 +26,7 @@ export const Button = props => {
 };
 
 Button.defaultProps = {
+    testid: "btn",
     className: "",
     text: "",
     textClassName: "",
@@ -40,6 +40,7 @@ Button.defaultProps = {
 
 export const PrimaryButton = props => (
     <Button
+        testid="btn-primary"
         className="bg-gray-800 hover:bg-gray-900 text-white"
         textClassName="text-sm"
         iconClassName="text-xl"
@@ -49,6 +50,7 @@ export const PrimaryButton = props => (
 
 export const SecondaryButton = props => (
     <Button
+        testid="btn-secondary"
         className="bg-white hover:bg-gray-100 border border-gray-300"
         textClassName="text-sm"
         iconClassName="text-xl"

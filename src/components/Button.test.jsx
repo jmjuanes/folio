@@ -1,18 +1,34 @@
-import TestRenderer from "react-test-renderer";
+import {fireEvent, render, screen, act} from "@testing-library/react";
 import {Button} from "./Button.jsx";
 
 describe("Button", () => {
     it("should render", () => {
-        const testRenderer = TestRenderer.create(<Button />);
-
-        expect(testRenderer.toJSON()).toMatchSnapshot();
+        render(<Button />);
+        expect(screen.getByTestId("btn")).toBeDefined();
     });
 
-    it("should render button text and icon", () => {
-        const testRenderer = TestRenderer.create(<Button text="TEXT" icon="ICON" />);
-        const testInstance = testRenderer.root;
+    it("should render button text if provided", () => {
+        render(<Button text="BTN_TEXT" />);
+        expect(screen.getByTestId("btn-text").textContent).toEqual("BTN_TEXT");
+    });
 
-        expect(testInstance.findByProps({"data-test":"icon"}).children[0]).toBe("ICON");
-        expect(testInstance.findByProps({"data-test":"text"}).children[0]).toBe("TEXT");
+    it("should render button icon if provided", () => {
+        render(<Button icon="BTN_ICON" />);
+        expect(screen.getByTestId("btn-icon").textContent).toEqual("BTN_ICON");
+    });
+
+    it("should do not render button text container if no text is provided", () => {
+        render(<Button />);
+        expect(screen.queryByTestId("btn-text")).toBeNull();
+    });
+
+    it("should execute the provided function on click", () => {
+        const handleClick = jest.fn();
+
+        render(<Button onClick={handleClick} />);
+        act(() => {
+            fireEvent.click(screen.getByTestId("btn"));
+        });
+        expect(handleClick).toHaveBeenCalled();
     });
 });
