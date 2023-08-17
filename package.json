@@ -8,8 +8,8 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "scripts": {
-        "build": "yarn clean && yarn build:demo",
-        "build:demo": "cross-env NODE_ENV=production webpack build",
+        "build": "yarn clean && yarn build:app",
+        "build:app": "cross-env NODE_ENV=production webpack build",
         "dev": "yarn clean && webpack serve",
         "clean": "rm -rf ./www",
         "test": "jest"
