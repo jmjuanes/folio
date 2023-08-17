@@ -7,7 +7,7 @@ const package = require("./package.json");
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: path.join(__dirname, "src", "index.jsx"),
+    entry: path.join(__dirname, "index.jsx"),
     output: {
         path: path.join(__dirname, "www"),
         publicPath: "./",
@@ -33,9 +33,9 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    path.join(__dirname, "src"),
+                    __dirname,
                 ],
-                exclude: /(node_modules|bower_components)/,
+                exclude: /(node_modules|www)/,
                 loader: "babel-loader",
                 options: {
                     presets: [
@@ -77,9 +77,8 @@ module.exports = {
             "process.env.URL_HOMEPAGE": JSON.stringify(package.homepage),
         }),
         new HtmlWebpackPlugin({
+            template: path.join(__dirname, "index.html"),
             inject: true,
-            template: path.join(__dirname, "src", "index.html"),
-            minify: true,
         }),
     ],
 };
