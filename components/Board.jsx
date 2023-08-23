@@ -1,14 +1,13 @@
 import React from "react";
+import {useBoard} from "../contexts/BoardContext.jsx";
+import {useConfirm} from "../contexts/ConfirmContext.jsx";
+import {Layout} from "./Layout.jsx";
+import {Renderer} from "./Renderer.jsx";
+import {ContextMenu} from "./ContextMenu.jsx";
+import {Menu} from "./Menu.jsx";
+import {ExportDialog} from "./ExportDialog.jsx";
 
-import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
-import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
-import {Layout} from "../components/Layout.jsx";
-import {Renderer} from "../components/Renderer.jsx";
-import {ContextMenu} from "../components/ContextMenu.jsx";
-import {Menu} from "../components/Menu.jsx";
-import {ExportDialog} from "../components/ExportDialog.jsx";
-
-const InnerBoard = props => {
+export const Board = props => {
     const {showConfirm} = useConfirm();
     const board = useBoard();
     const [exportVisible, setExportVisible] = React.useState(false);
@@ -94,19 +93,7 @@ const InnerBoard = props => {
     );
 };
 
-export const Board = props => (
-    <ConfirmProvider>
-        <BoardProvider
-            initialData={props.initialData}
-            render={() => ((
-                <InnerBoard {...props} />
-            ))}
-        />
-    </ConfirmProvider>
-);
-
 Board.defaultProps = {
-    initialData: {},
     links: [],
     headerLeftContent: null,
     headerRightContent: null,
