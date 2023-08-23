@@ -1,5 +1,5 @@
 import React from "react";
-import {DrawingIcon} from "./Icons.jsx";
+import {DrawingIcon} from "@josemi-icons/react";
 
 export const Loading = () => (
     <div className="fixed w-full h-full top-0 left-0 z-10">
