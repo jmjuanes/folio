@@ -1,18 +1,17 @@
 import React from "react";
-import {useBoard} from "../contexts/BoardContext.jsx";
-import {useConfirm} from "../contexts/ConfirmContext.jsx";
+import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
+import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
 import {Layout} from "./Layout.jsx";
 import {Renderer} from "./Renderer.jsx";
 import {ContextMenu} from "./ContextMenu.jsx";
 import {Menu} from "./Menu.jsx";
 import {ExportDialog} from "./ExportDialog.jsx";
 
-export const Board = props => {
+const InnerBoard = React.forwardRef((props, ref) => {
     const {showConfirm} = useConfirm();
     const board = useBoard();
     const [exportVisible, setExportVisible] = React.useState(false);
     const [screenshotRegion, setScreenshotRegion] = React.useState(null);
-
     // Handle board reset
     const handleResetBoard = () => {
         return showConfirm({
@@ -91,9 +90,19 @@ export const Board = props => {
             )}
         </div>
     );
-};
+});
+
+// Export board component
+export const Board = React.forwardRef((props, ref) => (
+    <BoardProvider initialData={props.initialData} render={() => (
+        <ConfirmProvider>
+            <InnerBoard ref={ref} {...props} />
+        </ConfirmProvider>
+    )} />
+));
 
 Board.defaultProps = {
+    initialData: null,
     links: [],
     headerLeftContent: null,
     headerRightContent: null,
