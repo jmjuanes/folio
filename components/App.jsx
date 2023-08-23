@@ -54,11 +54,15 @@ export const App = () => {
         const boardId = currentPath.replace("#board/", "").trim();
         return (
             <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-gray-700">
-                <BoardProvider key={boardId} id={boardId} render={() => (
-                    <ConfirmProvider>
-                        <BoardWrapper id={boardId} />
-                    </ConfirmProvider>
-                )} />
+                <BoardProvider
+                    key={boardId}
+                    initialData={() => client.getBoard(boardId)}
+                    render={() => (
+                        <ConfirmProvider>
+                            <BoardWrapper id={boardId} />
+                        </ConfirmProvider>
+                    )}
+                />
             </div>
         );
     }
