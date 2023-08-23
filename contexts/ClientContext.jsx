@@ -2,7 +2,7 @@ import React from "react";
 import {uid} from "uid/secure";
 import * as idb from "idb-keyval";
 import {VERSION} from "../constants.js";
-import {migrate} from "../migrate.js";
+import {migrate} from "../board/migrate.js";
 import {Loading} from "../components/Loading.jsx";
 import {useDelay} from "../hooks/index.js";
 

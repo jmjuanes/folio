@@ -1,6 +1,6 @@
-import {createBoard} from "./board.js";
+import {createBoard} from "./create.js";
 
-jest.mock("./elements/index.jsx", () => ({
+jest.mock("../elements/index.jsx", () => ({
     getElementConfig: () => null,
     createNewElement: () => ({
         id: ""

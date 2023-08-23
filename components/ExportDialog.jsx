@@ -1,7 +1,7 @@
 import React from "react";
 
 import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "../constants.js";
-import {exportToDataURL, exportToFile, exportToClipboard} from "../export.js";
+import {exportToDataURL, exportToFile, exportToClipboard} from "../board/export.js";
 import {Modal} from "./Modal.jsx";
 import {SecondaryButton} from "./Button.jsx";
 import {Form} from "./Form.jsx";

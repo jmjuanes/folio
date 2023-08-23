@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
 import {SHAPES, ARROWHEADS, STROKE_WIDTHS} from "../constants.js";
-import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../colors.js";
+import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
 import {HandGrabIcon, PointerIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
 import {PenIcon, ImageIcon} from "./Icons.jsx";
 import {EraseIcon, LockIcon, UnlockIcon} from "./Icons.jsx";

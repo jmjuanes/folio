@@ -1,9 +1,9 @@
-import {ELEMENTS, VERSION} from "./constants.js";
-import {FIELDS, DEPRECATED_FIELDS, DEFAULTS} from "./constants.js";
-import {FILL_STYLES} from "./constants.js";
-import {STROKES} from "./constants.js";
-import {FONT_FACES} from "./constants.js";
-import {TRANSPARENT, BLACK} from "./constants.js";
+import {ELEMENTS, VERSION} from "../constants.js";
+import {FIELDS, DEPRECATED_FIELDS, DEFAULTS} from "../constants.js";
+import {FILL_STYLES} from "../constants.js";
+import {STROKES} from "../constants.js";
+import {FONT_FACES} from "../constants.js";
+import {TRANSPARENT, BLACK} from "../constants.js";
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map((element, index) => {

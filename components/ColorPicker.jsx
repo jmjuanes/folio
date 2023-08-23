@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 
 import {THEMES} from "../constants.js";
-import {isValidHexColor} from "../colors.js";
+import {isValidHexColor} from "../utils/colors.js";
 
 export const ColorPicker = props => {
     const inputRef = React.useRef(null);

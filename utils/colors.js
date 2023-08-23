@@ -1,4 +1,4 @@
-import {WHITE, BLACK} from "./constants.js";
+import {WHITE, BLACK} from "../constants.js";
 
 export const DEFAULT_FILL_COLOR_SHADE = 1;
 export const DEFAULT_STROKE_COLOR_SHADE = 3;

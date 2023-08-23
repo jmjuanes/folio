@@ -1,7 +1,7 @@
 import React from "react";
 import {DrawingIcon} from "@josemi-icons/react";
 
-import {BACKGROUND_COLOR_PALETTE} from "../colors.js";
+import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {SecondaryButton} from "./Button.jsx";
 import {ColorPicker} from "./ColorPicker.jsx";

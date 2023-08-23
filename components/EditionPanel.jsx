@@ -10,12 +10,7 @@ import {STROKES, STROKE_WIDTHS} from "../constants.js";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
 import {SHAPES, FILL_STYLES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
-
-import {
-    FILL_COLOR_PALETTE,
-    STROKE_COLOR_PALETTE,
-    TEXT_COLOR_PALETTE,
-} from "../colors.js";
+import {FILL_COLOR_PALETTE, STROKE_COLOR_PALETTE, TEXT_COLOR_PALETTE} from "../utils/colors.js";
 
 import {Form} from "./Form.jsx";
 

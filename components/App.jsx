@@ -1,5 +1,5 @@
 import React from "react";
-import {saveAsJson} from "../json.js";
+import {saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useRouter} from "../contexts/RouterContext.jsx";
 import {Board} from "./Board.jsx";

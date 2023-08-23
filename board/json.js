@@ -1,6 +1,6 @@
 import {fileOpen, fileSave} from "browser-fs-access";
-import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "./constants.js";
-import {BACKGROUND_COLOR_PALETTE} from "./colors.js";
+import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "../constants.js";
+import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {migrateAssets, migrateElements} from "./migrate.js";
 
 // Read from blob as text

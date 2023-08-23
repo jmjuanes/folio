@@ -12,13 +12,13 @@ import {
     STATES,
     PASTE_OFFSET,
     FIELDS,
-} from "./constants.js";
-import {BACKGROUND_COLOR_PALETTE} from "./colors.js";
-import {getElementConfig, createNewElement} from "./elements/index.jsx";
-import {getRectangleBounds} from "./utils/math.js";
-import {loadImage} from "./utils/image.js";
-import {getTextFromClipboard, copyTextToClipboard} from "./utils/clipboard.js";
-import {getTextFromClipboardItem, getBlobFromClipboardItem} from "./utils/clipboard.js";
+} from "../constants.js";
+import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
+import {getElementConfig, createNewElement} from "../elements/index.jsx";
+import {getRectangleBounds} from "../utils/math.js";
+import {loadImage} from "../utils/image.js";
+import {getTextFromClipboard, copyTextToClipboard} from "../utils/clipboard.js";
+import {getTextFromClipboardItem, getBlobFromClipboardItem} from "../utils/clipboard.js";
 
 const generateRandomId = () => uid(20);
 

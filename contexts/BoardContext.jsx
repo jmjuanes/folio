@@ -1,5 +1,5 @@
 import React from "react";
-import {createBoard} from "../board.js";
+import {createBoard} from "../board/create.js";
 import {useForceUpdate} from "../hooks/useForceUpdate.js";
 import {Loading} from "../components/Loading.jsx";
 import {useDelay} from "../hooks/index.js";

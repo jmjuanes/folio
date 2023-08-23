@@ -6,7 +6,7 @@ jest.mock("../contexts/BoardContext.jsx", () => ({
         elements: [],
     })),
 }));
-jest.mock("../export.js", () => ({
+jest.mock("../board/export.js", () => ({
     exportToDataURL: jest.fn(() => Promise.resolve("DATA_URL")),
     exportToFile: jest.fn(),
     exportToClipboard: jest.fn(),

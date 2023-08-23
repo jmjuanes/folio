@@ -1,9 +1,9 @@
 import {fileSave} from "browser-fs-access";
-import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING, TRANSPARENT} from "./constants.js";
-import {FILE_EXTENSIONS, FONT_SOURCES} from "./constants.js";
-import {getRectangleBounds} from "./utils/math.js";
-import {exportPencilEffectSvgFilter} from "./contexts/PencilEffectContext.jsx";
-import {exportElementSvg} from "./elements/index.jsx";
+import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING, TRANSPARENT} from "../constants.js";
+import {FILE_EXTENSIONS, FONT_SOURCES} from "../constants.js";
+import {getRectangleBounds} from "../utils/math.js";
+import {exportPencilEffectSvgFilter} from "../contexts/PencilEffectContext.jsx";
+import {exportElementSvg} from "../elements/index.jsx";
 
 // Append a new DOM node element
 const appendChildNode = (parent, newNode) => {
