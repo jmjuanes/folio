@@ -6,7 +6,7 @@
     <br />
     <p align="center">
         A minimalistic and infinite whiteboard.<br />
-        Sketch and prototype with total freedom.
+        Sketch, Prototype, and Design with total freedom.
     </p>
 </p>
 <br />
