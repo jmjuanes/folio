@@ -1,7 +1,7 @@
 import React from "react";
+import classNames from "classnames";
 import {fileOpen} from "browser-fs-access";
 import {CameraIcon} from "@josemi-icons/react";
-
 import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";
@@ -89,6 +89,26 @@ export const Layout = props => {
                     <div className="absolute top-0 left-0 pt-4 pl-4 z-7">
                         <div className="flex gap-2">
                             {props.headerLeftContent}
+                            {props.showTitle && (
+                                <div className="flex items-center mx-2">
+                                    <input
+                                        type="text"
+                                        defaultValue={title}
+                                        className={classNames({
+                                            "outline-none px-0 rounded-none border-b-2 border-dashed": true,
+                                            "bg-transparent font-bold text-xl": true,
+                                            "border-gray-700 text-gray-900": true,
+                                        })}
+                                        placeholder="Untitled"
+                                        onChange={event => {
+                                            board.title = event.target?.value || "Untitled";
+                                            props?.onChange?.({
+                                                title: board.title,
+                                            });
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7">
@@ -143,6 +163,7 @@ export const Layout = props => {
 Layout.defaultProps = {
     showHeader: false,
     showFooter: false,
+    showTitle: false,
     showZoom: true,
     showScreenshot: true,
     showHistory: true,
