@@ -1,6 +1,14 @@
-# Folio
+<p align="center">
+    <a href="https://github.com/jmjuanes/folio">
+        <img src="assets/logo.svg" alt="Folio" width="80px">
+    </a>
+    <br />
+    <p align="center">
+        A minimalistic digital whiteboard<br />for sketching and prototyping.
+    </p>
+</p>
+<br />
 
-> A minimalistic digital whiteboard for sketching and prototyping.
 
 ## Try it now
 
