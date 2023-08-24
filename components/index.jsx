@@ -14,4 +14,3 @@ export * from "./ContextMenu.jsx";
 export * from "./Layout.jsx";
 export * from "./Menu.jsx";
 export * from "./Renderer.jsx";
-export * from "./Welcome.jsx";
