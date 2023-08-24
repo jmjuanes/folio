@@ -27,7 +27,7 @@ const BoardWrapper = props => {
     const {redirect} = useRouter();
     const [state, setState] = React.useState({});
     // Use a debounce function to handle state changes
-    useDebounce([state?.updatedAt], 250, () => {
+    useDebounce(250, [state?.updatedAt], () => {
         if (state?.updatedAt) {
             client.updateBoard(props.id, state).then(() => {
                 // TODO: show board updated message
