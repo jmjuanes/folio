@@ -1,6 +1,6 @@
 import React from "react";
 import {createBoard} from "../board/create.js";
-import {useForceUpdate} from "../hooks/useForceUpdate.js";
+import {useForceUpdate} from "../hooks/index.js";
 import {Loading} from "../components/Loading.jsx";
 import {useDelay} from "../hooks/index.js";
 
@@ -27,7 +27,7 @@ export const useBoard = () => {
 };
 
 export const BoardProvider = props => {
-    const forceUpdate = useForceUpdate();
+    const forceUpdate = useForceUpdate()[1];
     const board = React.useRef(null);
     // Import board data
     useDelay(props.delay, () => {

@@ -24,3 +24,8 @@ export const useDebounce = (ms, callback) => {
         timer.current = setTimeout(() => callback(args), ms);
     };
 };
+
+// Force an update hook
+export const useForceUpdate = () => {
+    return React.useReducer(x => x + 1, 0);
+};
