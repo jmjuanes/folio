@@ -12,7 +12,7 @@ import {LineIcon} from "./Icons.jsx";
 import {WidthLargeIcon, WidthSmallIcon} from "./Icons.jsx";
 import {Form} from "./Form.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
-import {useForceUpdate} from "../hooks/useForceUpdate.js";
+import {useForceUpdate} from "../hooks/index.js";
 
 const tools = {
     [ELEMENTS.SHAPE]: {
@@ -201,7 +201,7 @@ const PanelSeparator = () => (
 
 // Tools Panel component
 export const ToolsPanel = props => {
-    const update = useForceUpdate();
+    const update = useForceUpdate()[1];
     const board = useBoard();
     return (
         <Panel className={props.className} style={props.style}>

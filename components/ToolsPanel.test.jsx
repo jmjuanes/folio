@@ -9,8 +9,8 @@ jest.mock("../contexts/BoardContext.jsx", () => ({
     })),
 }));
 
-jest.mock("../hooks/useForceUpdate.js", () => ({
-    useForceUpdate: jest.fn(() => jest.fn()),
+jest.mock("../hooks/index.js", () => ({
+    useForceUpdate: jest.fn(() => ([null, jest.fn()])),
 }));
 
 describe("ToolsPanel", () => {
