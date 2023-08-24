@@ -5,8 +5,8 @@
     </a>
     <br />
     <p align="center">
-        A minimalistic digital whiteboard.<br />
-        Ideal for fast sketching and prototyping.
+        A minimalistic and infinite whiteboard.<br />
+        Sketch and prototype with total freedom.
     </p>
 </p>
 <br />
@@ -15,6 +15,14 @@
 ## Try it now
 
 Go to [josemi.xyz/folio](https://www.josemi.xyz/folio) for start sketching.
+
+## Note: Folio is still a Work in Progress
+
+We're excited to share our drawing application with you, but please be aware that it's currently in active development. While the app is fully functional and offers a range of features, we're continuously working to enhance and expand its capabilities.
+
+You might encounter occasional bugs or experience features that are still being refined. We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
+
+We encourage you to share your thoughts, suggestions, and any issues you encounter.
 
 ## Features
 
