@@ -2,7 +2,6 @@ import React from "react";
 import {STROKES, ARROWHEADS, BLACK, NONE, TRANSPARENT} from "../constants.js";
 import {OPACITY_FULL, OPACITY_NONE} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../utils/math.js";
-import {WithPencilEffect} from "../contexts/PencilEffectContext.jsx";
 
 const Arrowhead = props => {
     const size = props.strokeWidth * 2 + 4;
@@ -96,60 +95,58 @@ export const ArrowElement = props => {
     );
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>
-            <WithPencilEffect>
-                <rect
-                    x={-strokeWidth}
-                    y={-strokeWidth}
-                    width={Math.abs(props.x1 - props.x2) + 2 * strokeWidth}
-                    height={Math.abs(props.y1 - props.y2) + 2 * strokeWidth}
-                    fill={NONE}
-                    stroke={NONE}
-                />
-                <line
-                    data-element={props.id}
-                    x1={props.x1 - x}
-                    y1={props.y1 - y}
+            <rect
+                x={-strokeWidth}
+                y={-strokeWidth}
+                width={Math.abs(props.x1 - props.x2) + 2 * strokeWidth}
+                height={Math.abs(props.y1 - props.y2) + 2 * strokeWidth}
+                fill={NONE}
+                stroke={NONE}
+            />
+            <line
+                data-element={props.id}
+                x1={props.x1 - x}
+                y1={props.y1 - y}
+                x2={props.x2 - x}
+                y2={props.y2 - y}
+                fill={NONE}
+                stroke={strokeColor}
+                strokeWidth={strokeWidth}
+                strokeDasharray={strokeDasharray}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeOpacity={strokeOpacity}
+                onPointerDown={props.onPointerDown}
+            />
+            {props.startArrowhead !== ARROWHEADS.NONE && (
+                <Arrowhead
+                    id={props.id}
+                    type={props.startArrowhead}
+                    x={props.x1 - x}
+                    y={props.y1 - y}
                     x2={props.x2 - x}
                     y2={props.y2 - y}
-                    fill={NONE}
-                    stroke={strokeColor}
                     strokeWidth={strokeWidth}
-                    strokeDasharray={strokeDasharray}
-                    strokeDashoffset={strokeDashoffset}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    strokeColor={strokeColor}
                     strokeOpacity={strokeOpacity}
                     onPointerDown={props.onPointerDown}
                 />
-                {props.startArrowhead !== ARROWHEADS.NONE && (
-                    <Arrowhead
-                        id={props.id}
-                        type={props.startArrowhead}
-                        x={props.x1 - x}
-                        y={props.y1 - y}
-                        x2={props.x2 - x}
-                        y2={props.y2 - y}
-                        strokeWidth={strokeWidth}
-                        strokeColor={strokeColor}
-                        strokeOpacity={strokeOpacity}
-                        onPointerDown={props.onPointerDown}
-                    />
-                )}
-                {props.endArrowhead !== ARROWHEADS.NONE && (
-                    <Arrowhead
-                        id={props.id}
-                        type={props.endArrowhead}
-                        x={props.x2 - x}
-                        y={props.y2 - y}
-                        x2={props.x1 - x}
-                        y2={props.y1 - y}
-                        strokeWidth={strokeWidth}
-                        strokeColor={strokeColor}
-                        strokeOpacity={strokeOpacity}
-                        onPointerDown={props.onPointerDown}
-                    />
-                )}
-            </WithPencilEffect>
+            )}
+            {props.endArrowhead !== ARROWHEADS.NONE && (
+                <Arrowhead
+                    id={props.id}
+                    type={props.endArrowhead}
+                    x={props.x2 - x}
+                    y={props.y2 - y}
+                    x2={props.x1 - x}
+                    y2={props.y1 - y}
+                    strokeWidth={strokeWidth}
+                    strokeColor={strokeColor}
+                    strokeOpacity={strokeOpacity}
+                    onPointerDown={props.onPointerDown}
+                />
+            )}
             <path 
                 data-element={props.id}
                 d={selectionPath}

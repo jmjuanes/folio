@@ -45,7 +45,6 @@ export const createBoard = props => ({
     translateX: 0,
     translateY: 0,
     grid: props.data?.grid ?? false,
-    pencilEffect: props.data?.pencilEffect ?? false,
     background: props.data?.background || BACKGROUND_COLOR_PALETTE.gray,
     lockTool: false,
     selection: null,

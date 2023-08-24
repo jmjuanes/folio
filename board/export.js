@@ -2,7 +2,6 @@ import {fileSave} from "browser-fs-access";
 import {EXPORT_FORMATS, EXPORT_OFFSET, EXPORT_PADDING, TRANSPARENT} from "../constants.js";
 import {FILE_EXTENSIONS, FONT_SOURCES} from "../constants.js";
 import {getRectangleBounds} from "../utils/math.js";
-import {exportPencilEffectSvgFilter} from "../contexts/PencilEffectContext.jsx";
 import {exportElementSvg} from "../elements/index.jsx";
 
 // Append a new DOM node element
@@ -76,7 +75,6 @@ const getFonts = (fonts, embedFonts) => {
 // Get image in SVG
 const getSvgImage = options => {
     const elements = options?.elements || [];
-    const pencilEffect = options?.pencilEffect ?? true;
     const padding = options?.padding ?? EXPORT_PADDING;
     const fonts = options?.fonts || Object.values(FONT_SOURCES);
     return getFonts(fonts, !!options.embedFonts).then(fontsCss => {
@@ -97,17 +95,13 @@ const getSvgImage = options => {
         svg.style.backgroundColor = options?.background || "#fff";
         // 4. Set internal styles
         style.textContent = fontsCss;
-        // 5. Set effects
-        if (pencilEffect) {
-            appendChildNode(defs, exportPencilEffectSvgFilter());
-        }
-        // 6. Set group attributes
+        // 5. Set group attributes
         group.setAttribute("transform", `translate(${padding - bounds.x1} ${padding - bounds.y1})`);
-        // 7. Append elements into  group
+        // 6. Append elements into  group
         elements.forEach(element => {
             appendChildNode(group, exportElementSvg(element.id));
         });
-        // 8. return SVG
+        // 7. return SVG
         const content = (new XMLSerializer()).serializeToString(svg);
         return new Blob([content], {
             type: "image/svg+xml;charset=utf-8",

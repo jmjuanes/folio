@@ -27,7 +27,6 @@ export const Renderer = props => {
             elements={board.elements}
             assets={board.assets}
             backgroundColor={board.background}
-            pencilEffect={board.pencilEffect}
             cursor={cursor}
             translateX={board.translateX}
             translateY={board.translateY}

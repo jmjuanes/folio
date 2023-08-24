@@ -62,18 +62,6 @@ export const Menu = props => {
                                 });
                             }}
                         />
-                        <DropdownCheckItem
-                            active={board.pencilEffect}
-                            icon={(<DrawingIcon />)}
-                            text="Pencil Effect (beta)"
-                            onClick={() => {
-                                board.pencilEffect = !board.pencilEffect;
-                                board.update();
-                                props.onChange?.({
-                                    pencilEffect: board.pencilEffect,
-                                });
-                            }}
-                        />
                     </React.Fragment>
                 )}
                 {props.showChangeBackground && (

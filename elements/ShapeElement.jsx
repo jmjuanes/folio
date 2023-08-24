@@ -4,7 +4,6 @@ import {OPACITY_HALF, OPACITY_NONE, OPACITY_FULL} from "../constants.js";
 import {HATCH_ANGLE, HATCH_GAP} from "../constants.js";
 import {getBalancedDash, getEllipsePerimeter, getPointsDistance} from "../utils/math.js";
 import {getPolygonPath, getPolygonHatchPath, getEllipseHatchPath} from "../utils/paths.js";
-import {WithPencilEffect} from "../contexts/PencilEffectContext.jsx";
 
 const HatchFill = props => {
     const lines = React.useMemo(
@@ -187,31 +186,29 @@ export const ShapeElement = props => {
     const strokeWidth = props.strokeWidth ?? 0;
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>
-            <WithPencilEffect>
-                {props.shape !== SHAPES.ELLIPSE && (
-                    <PolygonShape
-                        type={props.shape}
-                        width={width}
-                        height={height}
-                        fillStyle={props.fillStyle}
-                        fillColor={fillColor}
-                        strokeWidth={strokeWidth}
-                        strokeColor={strokeColor}
-                        strokeStyle={props.strokeStyle}
-                    />
-                )}
-                {props.shape === SHAPES.ELLIPSE && (
-                    <EllipseShape
-                        width={width}
-                        height={height}
-                        fillStyle={props.fillStyle}
-                        fillColor={fillColor}
-                        strokeWidth={strokeWidth}
-                        strokeColor={strokeColor}
-                        strokeStyle={props.strokeStyle}
-                    />
-                )}
-            </WithPencilEffect>
+            {props.shape !== SHAPES.ELLIPSE && (
+                <PolygonShape
+                    type={props.shape}
+                    width={width}
+                    height={height}
+                    fillStyle={props.fillStyle}
+                    fillColor={fillColor}
+                    strokeWidth={strokeWidth}
+                    strokeColor={strokeColor}
+                    strokeStyle={props.strokeStyle}
+                />
+            )}
+            {props.shape === SHAPES.ELLIPSE && (
+                <EllipseShape
+                    width={width}
+                    height={height}
+                    fillStyle={props.fillStyle}
+                    fillColor={fillColor}
+                    strokeWidth={strokeWidth}
+                    strokeColor={strokeColor}
+                    strokeStyle={props.strokeStyle}
+                />
+            )}
             <rect
                 data-element={props.id}
                 x="0"

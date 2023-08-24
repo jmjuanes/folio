@@ -2,7 +2,6 @@ import React from "react";
 import {STROKES, NONE, BLACK, TRANSPARENT, GRID_SIZE} from "../constants.js";
 import {OPACITY_FULL, OPACITY_NONE} from "../constants.js";
 import {getPointsCenter, getBalancedDash, getPointsDistance} from "../utils/math.js";
-import {WithPencilEffect} from "../contexts/PencilEffectContext.jsx";
 
 const getPath = points => {
     let lastPoint = points[0];
@@ -40,29 +39,27 @@ export const DrawElement = props => {
     return (
         <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity}>
             <g transform={`scale(${width/props.drawWidth} ${height/props.drawHeight})`}>
-                <WithPencilEffect>
-                    <rect
-                        x={-GRID_SIZE / 2}
-                        y={-GRID_SIZE / 2}
-                        width={Math.abs(props.x2 - props.x1) + GRID_SIZE}
-                        height={Math.abs(props.y2 - props.y1) + GRID_SIZE}
-                        fill={NONE}
-                        stroke={NONE}
-                    />
-                    <path
-                        data-element={props.id}
-                        d={path}
-                        fill={NONE}
-                        stroke={props.strokeColor ?? BLACK}
-                        strokeWidth={strokeWidth}
-                        strokeOpacity={strokeOpacity}
-                        strokeDasharray={strokeDasharray}
-                        strokeDashoffset={strokeDashoffset}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        onPointerDown={props.onPointerDown}
-                    />
-                </WithPencilEffect>
+                <rect
+                    x={-GRID_SIZE / 2}
+                    y={-GRID_SIZE / 2}
+                    width={Math.abs(props.x2 - props.x1) + GRID_SIZE}
+                    height={Math.abs(props.y2 - props.y1) + GRID_SIZE}
+                    fill={NONE}
+                    stroke={NONE}
+                />
+                <path
+                    data-element={props.id}
+                    d={path}
+                    fill={NONE}
+                    stroke={props.strokeColor ?? BLACK}
+                    strokeWidth={strokeWidth}
+                    strokeOpacity={strokeOpacity}
+                    strokeDasharray={strokeDasharray}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    onPointerDown={props.onPointerDown}
+                />
             </g>
             <rect
                 data-element={props.id}
