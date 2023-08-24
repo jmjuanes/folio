@@ -25,12 +25,14 @@ const FolioLogo = props => (
 const BoardWrapper = props => {
     const client = useClient();
     const {redirect} = useRouter();
-    const state = React.useRef({});
+    const [state, setState] = React.useState({});
     // Use a debounce function to handle state changes
-    const saveBoard = useDebounce(250, () => {
-        client.updateBoard(props.id, state.current).then(() => {
-            // TODO: show board updated message
-        });
+    useDebounce([state?.updatedAt], 250, () => {
+        if (state?.updatedAt) {
+            client.updateBoard(props.id, state).then(() => {
+                // TODO: show board updated message
+            });
+        }
     });
     return (
         <Board
@@ -47,12 +49,11 @@ const BoardWrapper = props => {
             )}
             showLoad={false}
             onChange={newState => {
-                state.current = {
-                    ...state.current,
+                return setState(prevState => ({
+                    ...prevState,
                     ...newState,
                     updatedAt: Date.now(),
-                };
-                saveBoard();
+                }));
             }}
             onSave={() => {
                 client.getBoard(props.id).then(data => {
