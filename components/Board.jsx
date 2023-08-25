@@ -48,6 +48,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
             )}
             <Layout
                 showHeader={true}
+                showTitle={true}
                 headerLeftContent={(
                     <React.Fragment>
                         <Menu

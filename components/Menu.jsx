@@ -1,6 +1,4 @@
 import React from "react";
-import {DrawingIcon} from "@josemi-icons/react";
-
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {SecondaryButton} from "./Button.jsx";
@@ -13,8 +11,20 @@ export const Menu = props => {
     const board = useBoard();
     return (
         <div className="flex relative group" tabIndex="0">
+            {/*
+            <div className="cursor-pointer flex items-center bg-gray-900 rounded-lg px-3 py-2 shadow-sm">
+                <div className="flex items-center text-2xl text-white mr-3">
+                    <BarsIcon />
+                </div>
+                <div className="flex items-center select-none font-crimson text-3xl leading-none">
+                    <span className="font-black text-white leading-none">Folio.</span>
+                </div>
+            </div>
+            */}
             <SecondaryButton
                 icon={(<BarsIcon />)}
+                text="Folio."
+                textClassName="font-crimson text-2xl leading-none font-black tracking-tight"
             />
             <Dropdown className="hidden group-focus-within:block top-full left-0">
                 <DropdownGroup title="Actions" />

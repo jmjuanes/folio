@@ -93,10 +93,10 @@ export const Layout = props => {
                                 <div className="flex items-center mx-2">
                                     <input
                                         type="text"
-                                        defaultValue={title}
+                                        defaultValue={board.title}
                                         className={classNames({
-                                            "outline-none px-0 rounded-none border-b-2 border-dashed": true,
-                                            "bg-transparent font-bold text-xl": true,
+                                            "outline-none px-0 py-1 rounded-none border-b-2 border-dashed": true,
+                                            "bg-transparent font-bold text-lg": true,
                                             "border-gray-700 text-gray-900": true,
                                         })}
                                         placeholder="Untitled"
