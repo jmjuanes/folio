@@ -1,5 +1,5 @@
 import React from "react";
-import {DrawingIcon} from "@josemi-icons/react";
+import {ChevronLeftIcon} from "@josemi-icons/react";
 import {saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useRouter} from "../contexts/RouterContext.jsx";
@@ -7,30 +7,21 @@ import {useConfirm} from "../contexts/ConfirmContext.jsx";
 import {Board} from "./Board.jsx";
 import {BoardList} from "./BoardList.jsx";
 import {BoardCreate} from "./BoardCreate.jsx";
+import {SecondaryButton} from "./Button.jsx";
 import {useDebounce, useForceUpdate} from "../hooks/index.js";
-
-// Folio logo
-const FolioLogo = props => (
-    <div className="cursor-pointer flex items-center gap-2 bg-gray-900 rounded-lg px-3 shadow-sm" onClick={props.onClick}>
-        <div className="flex items-center text-2xl text-white">
-            <DrawingIcon />
-        </div>
-        <div className="flex items-center select-none font-crimson text-3xl leading-none">
-            <span className="font-black text-white">Folio.</span>
-        </div>
-    </div>
-);
 
 // Board wrapper
 const BoardWrapper = props => {
     const client = useClient();
     const {redirect} = useRouter();
-    const state = React.useRef({});
+    const [state, setState] = React.useState({});
     // Use a debounce function to handle state changes
-    const saveBoard = useDebounce(250, () => {
-        client.updateBoard(props.id, state.current).then(() => {
-            // TODO: show board updated message
-        });
+    useDebounce(250, [state?.updatedAt], () => {
+        if (state?.updatedAt) {
+            client.updateBoard(props.id, state).then(() => {
+                // TODO: show board updated message
+            });
+        }
     });
     return (
         <Board
@@ -42,17 +33,19 @@ const BoardWrapper = props => {
             ]}
             headerLeftContent={(
                 <div className="flex order-first">
-                    <FolioLogo onClick={() => redirect("")} />
+                    <SecondaryButton
+                        icon={(<ChevronLeftIcon />)}
+                        onClick={() => redirect("")}
+                    />
                 </div>
             )}
             showLoad={false}
             onChange={newState => {
-                state.current = {
-                    ...state.current,
+                return setState(prevState => ({
+                    ...prevState,
                     ...newState,
                     updatedAt: Date.now(),
-                };
-                saveBoard();
+                }));
             }}
             onSave={() => {
                 client.getBoard(props.id).then(data => {

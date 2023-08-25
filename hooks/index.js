@@ -13,16 +13,13 @@ export const useDelay = (ms, callback) => {
 };
 
 // Debounce the execution of the provided function
-export const useDebounce = (ms, callback) => {
-    const timer = React.useRef(null);
-    return (args) => {
-        // First check to clear the current timeout
-        if (timer.current !== null) {
-            clearTimeout(timer.current);
-        }
-        // Register the new timeout
-        timer.current = setTimeout(() => callback(args), ms);
-    };
+export const useDebounce = (ms, deps, callback) => {
+    React.useEffect(() => {
+        const timer = setTimeout(() => callback(), ms);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, deps);
 };
 
 // Force an update hook

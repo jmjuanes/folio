@@ -1,7 +1,7 @@
 import React from "react";
+import classNames from "classnames";
 import {fileOpen} from "browser-fs-access";
 import {CameraIcon} from "@josemi-icons/react";
-
 import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";

@@ -25,6 +25,7 @@ const generateRandomId = () => uid(20);
 // Create a new board instance
 export const createBoard = props => ({
     id: generateRandomId(),
+    title: props.data?.title || "Untitled",
     elements: (props.data?.elements || []).map(element => ({
         ...element,
         selected: false,

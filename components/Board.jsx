@@ -48,6 +48,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
             )}
             <Layout
                 showHeader={true}
+                showTitle={true}
                 headerLeftContent={(
                     <React.Fragment>
                         <Menu
@@ -59,6 +60,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                             showChangeBackground={props.showChangeBackground}
                             showSettings={props.showSettings}
                             showExport={props.showExport}
+                            showTitle={props.showTitle}
                             onChange={props.onChange}
                             onSave={props.onSave}
                             onLoad={handleLoad}
@@ -114,6 +116,7 @@ Board.defaultProps = {
     showLinks: true,
     showLoad: true,
     showSave: true,
+    showTitle: true,
     showResetBoard: true,
     showSettings: true,
     showChangeBackground: true,
