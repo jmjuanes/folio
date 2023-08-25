@@ -68,3 +68,12 @@ export const BACKGROUND_COLOR_PALETTE = {
     yellow: "#fef9e7",
     red: "#fceae8",
 };
+
+// Sticky note color palette
+export const NOTE_COLOR_PALETTE = {
+    gray: "#fafafa",
+    blue: "#e9f4fb",
+    green: "#eafaf1",
+    yellow: "#fef9e7",
+    red: "#fceae8",
+};

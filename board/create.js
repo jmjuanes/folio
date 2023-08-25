@@ -13,7 +13,7 @@ import {
     PASTE_OFFSET,
     FIELDS,
 } from "../constants.js";
-import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
+import {BACKGROUND_COLOR_PALETTE, NOTE_COLOR_PALETTE} from "../utils/colors.js";
 import {getElementConfig, createNewElement} from "../elements/index.jsx";
 import {getRectangleBounds} from "../utils/math.js";
 import {loadImage} from "../utils/image.js";
@@ -64,6 +64,7 @@ export const createBoard = props => ({
         startArrowhead: DEFAULTS.ARROWHEAD_START,
         endArrowhead: DEFAULTS.ARROWHEAD_END,
         opacity: DEFAULTS.OPACITY,
+        [FIELDS.NOTE_COLOR]: NOTE_COLOR_PALETTE.yellow,
     },
     state: {
         contextMenuVisible: false,

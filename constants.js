@@ -60,6 +60,7 @@ export const ELEMENTS = {
     IMAGE: "image",
     TEXT: "text",
     DRAW: "draw",
+    NOTE: "note",
 };
 
 export const SHAPES = {
@@ -225,6 +226,7 @@ export const DEFAULTS = {
     ARROWHEAD_START: ARROWHEADS.NONE,
     ARROWHEAD_END: ARROWHEADS.ARROW,
     OPACITY: OPACITY_DEFAULT,
+    NOTE_COLOR: WHITE,
 };
 
 // Fields in elements
@@ -242,6 +244,7 @@ export const FIELDS = {
     END_ARROWHEAD: "endArrowhead",
     OPACITY: "opacity",
     ORDER: "order",
+    NOTE_COLOR: "noteColor",
 };
 
 // Deprecated fields
@@ -323,3 +326,6 @@ export const SELECTION_STROKE_COLOR = PRIMARY;
 // Select bounds constants
 export const SELECT_BOUNDS_FILL_COLOR = NONE;
 export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
+
+// Sticky notes constants
+export const NOTE_SHADOW_OFFSET = 10;

@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-
+import {NoteIcon} from "@josemi-icons/react";
 import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
 import {SHAPES, ARROWHEADS, STROKE_WIDTHS} from "../constants.js";
 import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
@@ -108,6 +108,11 @@ const tools = {
                 values: STROKE_COLOR_PICK,
             },
         },
+    },
+    [ELEMENTS.NOTE]: {
+        icon: (<NoteIcon />),
+        text: "Note",
+        quickPicks: null,
     },
     [ELEMENTS.IMAGE]: {
         icon: (<ImageIcon />),

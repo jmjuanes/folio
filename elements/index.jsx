@@ -17,13 +17,14 @@ import {
     STROKES,
     SHAPE_MIN_WIDTH,
     SHAPE_MIN_HEIGHT,
-    EVENT_TYPES,
+    BLACK,
 } from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
 import {TextElement} from "./TextElement.jsx";
 import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
+import {NoteElement} from "./NoteElement.jsx";
 import {measureText} from "../utils/math.js";
 import {SvgContainer} from "../components/SvgContainer.jsx";
 
@@ -307,6 +308,51 @@ export const elementsConfig = {
             imageWidth: 0,
             imageHeight: 0,
         }),
+    },
+    [ELEMENTS.NOTE]: {
+        edgeHandlers: true,
+        cornerHandlers: true,
+        render: props => (
+            <ElementContainer id={props.id}>
+                <NoteElement {...props} />
+                <TextElement
+                    embedded={false}
+                    {...props}
+                    textColor={BLACK}
+                />
+            </ElementContainer>
+        ),
+        initialize: values => ({
+            [FIELDS.NOTE_COLOR]: values?.[FIELDS.NOTE_COLOR] ?? DEFAULTS.NOTE_COLOR,
+            text: "",
+            textColor: values?.textColor ?? DEFAULTS.TEXT_COLOR,
+            textFont: values?.textFont ?? DEFAULTS.TEXT_FONT,
+            textSize: values?.textSize ?? DEFAULTS.TEXT_SIZE,
+            textAlign: values?.textAlign ?? DEFAULTS.TEXT_ALIGN,
+            textWidth: GRID_SIZE,
+            textHeight: GRID_SIZE,
+        }),
+        onCreateEnd: (element, event) => {
+            // Prevent drawing 0-sized shapes
+            if (!event.drag) {
+                element.x2 = element.x1 + SHAPE_MIN_WIDTH;
+                element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
+            }
+            // Update position of shape element
+            Object.assign(element, {
+                x1: Math.min(element.x1, element.x2),
+                y1: Math.min(element.y1, element.y2),
+                x2: Math.max(element.x1, element.x2),
+                y2: Math.max(element.y1, element.y2),
+            });
+        },
+        // onUpdate: (element, changedKeys) => {
+        //     if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
+        //         const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont);
+        //         element.textWidth = textWidth;
+        //         element.textHeight = textHeight;
+        //     }
+        // },
     },
 };
 
