@@ -17,6 +17,8 @@ import {
     STROKES,
     SHAPE_MIN_WIDTH,
     SHAPE_MIN_HEIGHT,
+    NOTE_MIN_WIDTH,
+    NOTE_MIN_HEIGHT,
     BLACK,
 } from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
@@ -325,18 +327,14 @@ export const elementsConfig = {
         initialize: values => ({
             [FIELDS.NOTE_COLOR]: values?.[FIELDS.NOTE_COLOR] ?? DEFAULTS.NOTE_COLOR,
             text: "",
-            textColor: values?.textColor ?? DEFAULTS.TEXT_COLOR,
-            textFont: values?.textFont ?? DEFAULTS.TEXT_FONT,
-            textSize: values?.textSize ?? DEFAULTS.TEXT_SIZE,
-            textAlign: values?.textAlign ?? DEFAULTS.TEXT_ALIGN,
             textWidth: GRID_SIZE,
             textHeight: GRID_SIZE,
         }),
         onCreateEnd: (element, event) => {
             // Prevent drawing 0-sized shapes
             if (!event.drag) {
-                element.x2 = element.x1 + SHAPE_MIN_WIDTH;
-                element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
+                element.x2 = element.x1 + NOTE_MIN_WIDTH;
+                element.y2 = element.y1 + NOTE_MIN_HEIGHT;
             }
             // Update position of shape element
             Object.assign(element, {

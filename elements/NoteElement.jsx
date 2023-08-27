@@ -1,6 +1,5 @@
 import React from "react";
 import {FIELDS, NONE, TRANSPARENT} from "../constants.js";
-import {NOTE_SHADOW_OFFSET} from "../constants.js";
 
 export const NoteElement = props => {
     const x = Math.min(props.x1, props.x2);

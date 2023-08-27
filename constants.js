@@ -328,4 +328,5 @@ export const SELECT_BOUNDS_FILL_COLOR = NONE;
 export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
 
 // Sticky notes constants
-export const NOTE_SHADOW_OFFSET = 10;
+export const NOTE_MIN_WIDTH = 240;
+export const NOTE_MIN_HEIGHT = 240;
