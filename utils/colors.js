@@ -71,9 +71,10 @@ export const BACKGROUND_COLOR_PALETTE = {
 
 // Sticky note color palette
 export const NOTE_COLOR_PALETTE = {
-    gray: "#fafafa",
-    blue: "#e9f4fb",
-    green: "#eafaf1",
-    yellow: "#fef9e7",
-    red: "#fceae8",
+    yellow: "#f5d22b",
+    orange: "#ff9e4a",
+    green: "#cbdf58",
+    blue: "#a7cdf5",
+    pink: "#ea95bc",
+    violet: "#c7a3d3",
 };
