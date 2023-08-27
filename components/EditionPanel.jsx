@@ -215,7 +215,7 @@ const allSections = {
     },
     [SECTIONS.ACTIONS]: {
         icon: (<DotsVerticalIcon />),
-        test: FIELDS.OPACITY,
+        test: FIELDS.ORDER,
         className: "w-40",
         separator: true,
         showChevron: false,
