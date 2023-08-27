@@ -20,19 +20,11 @@ export const NoteElement = props => {
                 fill={props[FIELDS.NOTE_COLOR]}
                 stroke={NONE}
                 style={{
-                    boxShadow: "3px 5px 2px rgb(0,0,0,0.4)",
-                    // filter: "drop-shadow(0 0.25rem 1rem -0.125rem rgba(0, 0, 0, 0.15))",
+                    webkitFilter: "drop-shadow(rgba(0, 0, 0, 0.4) 6px 6px 10px)",
+                    filter: "drop-shadow(rgba(0, 0, 0, 0.4) 6px 6px 10px)",
                 }}
                 onPointerDown={props.onPointerDown}
                 onDoubleClick={props.onDoubleClick}
-            />
-            <rect
-                x="0"
-                y="0"
-                width={Math.max(1, width) + NOTE_SHADOW_OFFSET}
-                height={Math.max(1, height) + NOTE_SHADOW_OFFSET}
-                fill={TRANSPARENT}
-                STROKE={NONE}
             />
         </g>
     );
