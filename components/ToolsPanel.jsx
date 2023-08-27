@@ -4,6 +4,7 @@ import {NoteIcon} from "@josemi-icons/react";
 import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
 import {SHAPES, ARROWHEADS, STROKE_WIDTHS} from "../constants.js";
 import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
+import {NOTE_COLOR_PALETTE} from "../utils/colors.js";
 import {HandGrabIcon, PointerIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
 import {PenIcon, ImageIcon} from "./Icons.jsx";
 import {EraseIcon, LockIcon, UnlockIcon} from "./Icons.jsx";
@@ -112,7 +113,13 @@ const tools = {
     [ELEMENTS.NOTE]: {
         icon: (<NoteIcon />),
         text: "Note",
-        quickPicks: null,
+        quickPicks: {
+            [FIELDS.NOTE_COLOR]: {
+                type: FORM_OPTIONS.COLOR_SELECT,
+                className: "flex flex-nowrap w-56 gap-1",
+                values: NOTE_COLOR_PALETTE,
+            },
+        },
     },
     [ELEMENTS.IMAGE]: {
         icon: (<ImageIcon />),

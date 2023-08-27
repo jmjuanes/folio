@@ -70,11 +70,11 @@ export const BACKGROUND_COLOR_PALETTE = {
 };
 
 // Sticky note color palette
-export const NOTE_COLOR_PALETTE = {
+export const NOTE_COLOR_PALETTE = Object.values({
     yellow: "#f5d22b",
     orange: "#ff9e4a",
     green: "#cbdf58",
     blue: "#a7cdf5",
     pink: "#ea95bc",
     violet: "#c7a3d3",
-};
+});

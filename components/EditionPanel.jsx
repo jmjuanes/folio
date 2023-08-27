@@ -66,7 +66,7 @@ const allSections = {
             [FIELDS.NOTE_COLOR]: {
                 title: null,
                 type: FORM_OPTIONS.COLOR,
-                values: Object.values(NOTE_COLOR_PALETTE),
+                values: NOTE_COLOR_PALETTE,
                 showInput: false,
             },
         },
