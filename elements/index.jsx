@@ -19,7 +19,9 @@ import {
     SHAPE_MIN_HEIGHT,
     NOTE_MIN_WIDTH,
     NOTE_MIN_HEIGHT,
-    BLACK,
+    NOTE_TEXT_FONT,
+    NOTE_TEXT_ALIGN,
+    NOTE_TEXT_COLOR,
 } from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
@@ -318,17 +320,19 @@ export const elementsConfig = {
             <ElementContainer id={props.id}>
                 <NoteElement {...props} />
                 <TextElement
-                    embedded={false}
                     {...props}
-                    textColor={BLACK}
+                    textFont={NOTE_TEXT_FONT}
+                    textAlign={NOTE_TEXT_ALIGN}
+                    textColor={NOTE_TEXT_COLOR}
                 />
             </ElementContainer>
         ),
         initialize: values => ({
             [FIELDS.NOTE_COLOR]: values?.[FIELDS.NOTE_COLOR] ?? DEFAULTS.NOTE_COLOR,
-            text: "",
-            textWidth: GRID_SIZE,
-            textHeight: GRID_SIZE,
+            [FIELDS.TEXT]: "",
+            [FIELDS.TEXT_SIZE]: 0,
+            [FIELDS.TEXT_WIDTH]: GRID_SIZE,
+            [FIELDS.TEXT_HEIGHT]: GRID_SIZE,
         }),
         onCreateEnd: (element, event) => {
             // Prevent drawing 0-sized shapes

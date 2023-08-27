@@ -1,5 +1,6 @@
 import React from "react";
-import {FIELDS, NONE, TRANSPARENT} from "../constants.js";
+import {FIELDS, NONE} from "../constants.js";
+import {NOTE_TEXT_COLOR, NOTE_TEXT_FONT} from "../constants.js";
 
 export const NoteElement = props => {
     const x = Math.min(props.x1, props.x2);

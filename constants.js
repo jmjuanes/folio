@@ -236,6 +236,9 @@ export const FIELDS = {
     STROKE_COLOR: "strokeColor",
     STROKE_WIDTH: "strokeWidth",
     STROKE_STYLE: "strokeStyle",
+    TEXT: "text",
+    TEXT_WIDTH: "textWidth",
+    TEXT_HEIGHT: "textHeight",
     TEXT_COLOR: "textColor",
     TEXT_FONT: "textFont",
     TEXT_SIZE: "textSize",
@@ -330,3 +333,6 @@ export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
 // Sticky notes constants
 export const NOTE_MIN_WIDTH = 240;
 export const NOTE_MIN_HEIGHT = 240;
+export const NOTE_TEXT_FONT = FONT_FACES.SANS;
+export const NOTE_TEXT_COLOR = BLACK;
+export const NOTE_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
