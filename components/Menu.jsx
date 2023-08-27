@@ -121,7 +121,7 @@ export const Menu = props => {
                             type="text"
                             defaultValue={board.title}
                             className={classNames({
-                                "outline-none bg-transparent font-black text-lg leading-none": true,
+                                "outline-none bg-transparent font-bold text-lg leading-none": true,
                                 "h-10 w-64 pl-8 pr-2 py-0 rounded-md": true,
                                 "text-gray-600 hover:bg-gray-200 focus:bg-gray-200 focus:text-gray-800": true,
                             })}
