@@ -1,8 +1,8 @@
 import React from "react";
 import classNames from "classnames";
-
 import {ChevronDownIcon} from "@josemi-icons/react";
 import {TrashIcon, BanIcon, CopyIcon} from "@josemi-icons/react";
+import {NoteIcon} from "@josemi-icons/react";
 
 import {FORM_OPTIONS, FIELDS, THEMES} from "../constants.js";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
@@ -10,7 +10,7 @@ import {STROKES, STROKE_WIDTHS} from "../constants.js";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
 import {SHAPES, FILL_STYLES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
-import {FILL_COLOR_PALETTE, STROKE_COLOR_PALETTE, TEXT_COLOR_PALETTE} from "../utils/colors.js";
+import {FILL_COLOR_PALETTE, STROKE_COLOR_PALETTE, TEXT_COLOR_PALETTE, NOTE_COLOR_PALETTE} from "../utils/colors.js";
 
 import {Form} from "./Form.jsx";
 
@@ -28,6 +28,7 @@ import {getRectangleBounds} from "../utils/math.js";
 
 // Available sections
 const SECTIONS = {
+    NOTE: "note",
     FILL: "fill",
     STROKE: "stroke",
     TEXT: "text",
@@ -57,6 +58,19 @@ const arrowheadValues = [
 ];
 
 const allSections = {
+    [SECTIONS.NOTE]: {
+        test: FIELDS.NOTE_COLOR,
+        icon: (<NoteIcon />),
+        showChevron: true,
+        items: {
+            [FIELDS.NOTE_COLOR]: {
+                title: null,
+                type: FORM_OPTIONS.COLOR,
+                values: Object.values(NOTE_COLOR_PALETTE),
+                showInput: false,
+            },
+        },
+    },
     [SECTIONS.SHAPE]: {
         test: FIELDS.SHAPE,
         icon: (<ShapesIcon />),
