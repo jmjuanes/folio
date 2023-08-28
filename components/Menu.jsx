@@ -111,18 +111,13 @@ export const Menu = props => {
             {props.showTitle && (
                 <React.Fragment>
                     <Separator />
-                    <div className="flex items-center relative">
-                        <div className="absolute top-0 flex items-center gap-2 h-10 ml-2">
-                            <div className="flex items-center text-xl o-70">
-                                <FileIcon />
-                            </div>
-                        </div>
+                    <div className="flex items-center">
                         <input
                             type="text"
                             defaultValue={board.title}
                             className={classNames({
                                 "outline-none bg-transparent font-bold text-lg leading-none": true,
-                                "h-10 w-64 pl-8 pr-2 py-0 rounded-md": true,
+                                "h-10 w-64 px-2 py-0 rounded-md": true,
                                 "text-gray-600 hover:bg-gray-200 focus:bg-gray-200 focus:text-gray-800": true,
                             })}
                             placeholder="Untitled"
