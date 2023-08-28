@@ -64,7 +64,6 @@ const allSections = {
         showChevron: true,
         items: {
             [FIELDS.NOTE_COLOR]: {
-                title: null,
                 type: FORM_OPTIONS.COLOR,
                 values: NOTE_COLOR_PALETTE,
                 showInput: false,
@@ -146,20 +145,21 @@ const allSections = {
     },
     [SECTIONS.TEXT]: {
         icon: (<TextIcon />),
-        test: FIELDS.TEXT_COLOR,
+        test: FIELDS.TEXT,
         showChevron: true,
         items: {
-            textColor: {
+            [FIELDS.TEXT_COLOR]: {
                 title: "Text color",
                 type: FORM_OPTIONS.COLOR,
                 values: TEXT_COLOR_PALETTE,
+                test: data => typeof data[FIELDS.TEXT_COLOR] !== "undefined",
             },
-            textFont: {
+            [FIELDS.TEXT_FONT]: {
                 title: "Font family",
                 type: FORM_OPTIONS.FONT,
                 values: Object.values(FONT_FACES),
             },
-            textSize: {
+            [FIELDS.TEXT_SIZE]: {
                 title: "Font size",
                 type: FORM_OPTIONS.SELECT,
                 values: [
@@ -170,7 +170,7 @@ const allSections = {
                     {value: TEXT_SIZES.XLARGE, text: "XL"},
                 ],
             },
-            textAlign: {
+            [FIELDS.TEXT_ALIGN]: {
                 title: "Text align",
                 type: FORM_OPTIONS.SELECT,
                 values: [
@@ -179,6 +179,7 @@ const allSections = {
                     {value: TEXT_ALIGNS.RIGHT, icon: TextRightIcon()},
                     {value: TEXT_ALIGNS.JUSTIFY, icon: TextJustifyIcon()},
                 ],
+                test: data => typeof data[FIELDS.TEXT_ALIGN] !== "undefined",
             },
         },
     },
