@@ -1,6 +1,5 @@
 import React from "react";
 import {FIELDS, NONE} from "../constants.js";
-import {NOTE_TEXT_COLOR, NOTE_TEXT_FONT} from "../constants.js";
 
 export const NoteElement = props => {
     const x = Math.min(props.x1, props.x2);
@@ -20,7 +19,7 @@ export const NoteElement = props => {
                 fill={props[FIELDS.NOTE_COLOR]}
                 stroke={NONE}
                 style={{
-                    webkitFilter: "drop-shadow(rgba(0, 0, 0, 0.4) 6px 6px 10px)",
+                    WebkitFilter: "drop-shadow(rgba(0, 0, 0, 0.4) 6px 6px 10px)",
                     filter: "drop-shadow(rgba(0, 0, 0, 0.4) 6px 6px 10px)",
                 }}
                 onPointerDown={props.onPointerDown}
