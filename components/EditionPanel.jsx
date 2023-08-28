@@ -1,8 +1,8 @@
 import React from "react";
 import classNames from "classnames";
-
 import {ChevronDownIcon} from "@josemi-icons/react";
 import {TrashIcon, BanIcon, CopyIcon} from "@josemi-icons/react";
+import {NoteIcon} from "@josemi-icons/react";
 
 import {FORM_OPTIONS, FIELDS, THEMES} from "../constants.js";
 import {TEXT_SIZES, FONT_FACES, TEXT_ALIGNS} from "../constants.js";
@@ -10,7 +10,7 @@ import {STROKES, STROKE_WIDTHS} from "../constants.js";
 import {OPACITY_MIN, OPACITY_MAX, OPACITY_STEP} from "../constants.js";
 import {SHAPES, FILL_STYLES} from "../constants.js";
 import {ARROWHEADS} from "../constants.js";
-import {FILL_COLOR_PALETTE, STROKE_COLOR_PALETTE, TEXT_COLOR_PALETTE} from "../utils/colors.js";
+import {FILL_COLOR_PALETTE, STROKE_COLOR_PALETTE, TEXT_COLOR_PALETTE, NOTE_COLOR_PALETTE} from "../utils/colors.js";
 
 import {Form} from "./Form.jsx";
 
@@ -28,6 +28,7 @@ import {getRectangleBounds} from "../utils/math.js";
 
 // Available sections
 const SECTIONS = {
+    NOTE: "note",
     FILL: "fill",
     STROKE: "stroke",
     TEXT: "text",
@@ -57,6 +58,18 @@ const arrowheadValues = [
 ];
 
 const allSections = {
+    [SECTIONS.NOTE]: {
+        test: FIELDS.NOTE_COLOR,
+        icon: (<NoteIcon />),
+        showChevron: true,
+        items: {
+            [FIELDS.NOTE_COLOR]: {
+                type: FORM_OPTIONS.COLOR,
+                values: NOTE_COLOR_PALETTE,
+                showInput: false,
+            },
+        },
+    },
     [SECTIONS.SHAPE]: {
         test: FIELDS.SHAPE,
         icon: (<ShapesIcon />),
@@ -132,20 +145,21 @@ const allSections = {
     },
     [SECTIONS.TEXT]: {
         icon: (<TextIcon />),
-        test: FIELDS.TEXT_COLOR,
+        test: FIELDS.TEXT,
         showChevron: true,
         items: {
-            textColor: {
+            [FIELDS.TEXT_COLOR]: {
                 title: "Text color",
                 type: FORM_OPTIONS.COLOR,
                 values: TEXT_COLOR_PALETTE,
+                test: data => typeof data[FIELDS.TEXT_COLOR] !== "undefined",
             },
-            textFont: {
+            [FIELDS.TEXT_FONT]: {
                 title: "Font family",
                 type: FORM_OPTIONS.FONT,
                 values: Object.values(FONT_FACES),
             },
-            textSize: {
+            [FIELDS.TEXT_SIZE]: {
                 title: "Font size",
                 type: FORM_OPTIONS.SELECT,
                 values: [
@@ -156,7 +170,7 @@ const allSections = {
                     {value: TEXT_SIZES.XLARGE, text: "XL"},
                 ],
             },
-            textAlign: {
+            [FIELDS.TEXT_ALIGN]: {
                 title: "Text align",
                 type: FORM_OPTIONS.SELECT,
                 values: [
@@ -165,6 +179,7 @@ const allSections = {
                     {value: TEXT_ALIGNS.RIGHT, icon: TextRightIcon()},
                     {value: TEXT_ALIGNS.JUSTIFY, icon: TextJustifyIcon()},
                 ],
+                test: data => typeof data[FIELDS.TEXT_ALIGN] !== "undefined",
             },
         },
     },
@@ -201,7 +216,7 @@ const allSections = {
     },
     [SECTIONS.ACTIONS]: {
         icon: (<DotsVerticalIcon />),
-        test: FIELDS.OPACITY,
+        test: FIELDS.ORDER,
         className: "w-40",
         separator: true,
         showChevron: false,

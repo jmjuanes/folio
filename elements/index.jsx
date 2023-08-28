@@ -17,13 +17,18 @@ import {
     STROKES,
     SHAPE_MIN_WIDTH,
     SHAPE_MIN_HEIGHT,
-    EVENT_TYPES,
+    NOTE_MIN_WIDTH,
+    NOTE_MIN_HEIGHT,
+    NOTE_TEXT_ALIGN,
+    NOTE_TEXT_COLOR,
+    NOTE_PADDING,
 } from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
 import {TextElement} from "./TextElement.jsx";
 import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
+import {NoteElement} from "./NoteElement.jsx";
 import {measureText} from "../utils/math.js";
 import {SvgContainer} from "../components/SvgContainer.jsx";
 
@@ -307,6 +312,59 @@ export const elementsConfig = {
             imageWidth: 0,
             imageHeight: 0,
         }),
+    },
+    [ELEMENTS.NOTE]: {
+        edgeHandlers: true,
+        cornerHandlers: true,
+        render: props => (
+            <ElementContainer id={props.id}>
+                <NoteElement {...props} />
+                <TextElement
+                    {...props}
+                    embedded={true}
+                    verticalAlign="top"
+                    padding={NOTE_PADDING}
+                    textAlign={NOTE_TEXT_ALIGN}
+                    textColor={NOTE_TEXT_COLOR}
+                />
+            </ElementContainer>
+        ),
+        initialize: values => ({
+            [FIELDS.NOTE_COLOR]: values?.[FIELDS.NOTE_COLOR] ?? DEFAULTS.NOTE_COLOR,
+            [FIELDS.TEXT]: "",
+            [FIELDS.TEXT_SIZE]: values?.[FIELDS.TEXT_SIZE] ?? DEFAULTS.TEXT_SIZE,
+            [FIELDS.TEXT_FONT]: values?.[FIELDS.TEXT_FONT] ?? DEFAULTS.TEXT_FONT,
+            [FIELDS.TEXT_WIDTH]: GRID_SIZE,
+            [FIELDS.TEXT_HEIGHT]: GRID_SIZE,
+        }),
+        onCreateEnd: (element, event) => {
+            // Prevent drawing 0-sized shapes
+            if (!event.drag) {
+                element.x2 = element.x1 + NOTE_MIN_WIDTH;
+                element.y2 = element.y1 + NOTE_MIN_HEIGHT;
+            }
+            // Update position of shape element
+            Object.assign(element, {
+                x1: Math.min(element.x1, element.x2),
+                y1: Math.min(element.y1, element.y2),
+                x2: Math.max(element.x1, element.x2),
+                y2: Math.max(element.y1, element.y2),
+            });
+        },
+        onUpdate: (element, changedKeys) => {
+            if (changedKeys.has(FIELDS.TEXT) || changedKeys.has(FIELDS.TEXT_SIZE) || changedKeys.has(FIELDS.TEXT_FONT)) {
+                const maxWidth = Math.abs(element.x2 - element.x1) - 2 * NOTE_PADDING;
+                const [textWidth, textHeight] = measureText(element[FIELDS.TEXT] || " ", element[FIELDS.TEXT_SIZE], element[FIELDS.TEXT_FONT], maxWidth);
+                console.log("NOTE_SIZE", [textWidth, textHeight]);
+                element[FIELDS.TEXT_WIDTH] = textWidth;
+                element[FIELDS.TEXT_HEIGHT] = textHeight;
+                // Check if we have to update the note height to keep all content inside
+                const height = Math.abs(element.y2 - element.y1) - (2 * NOTE_PADDING);
+                if (height < textHeight) {
+                    element.y2 = element.y1 + textHeight + (2 * NOTE_PADDING);
+                }
+            }
+        },
     },
 };
 

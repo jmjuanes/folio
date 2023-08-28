@@ -217,7 +217,14 @@ export const Option = props => {
 
 // TODO: check the visible field of each item to decide if item should be visible
 const getVisibleItems = (items, data) => {
-    return Object.keys(items || {});
+    return Object.keys(items || {})
+        .filter(key => {
+            const item = items[key];
+            if (typeof item.test === "function") {
+                return !!item.test(data);
+            }
+            return true;
+        });
 };
 
 export const Form = props => (
