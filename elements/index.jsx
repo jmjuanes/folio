@@ -19,9 +19,9 @@ import {
     SHAPE_MIN_HEIGHT,
     NOTE_MIN_WIDTH,
     NOTE_MIN_HEIGHT,
-    NOTE_TEXT_FONT,
     NOTE_TEXT_ALIGN,
     NOTE_TEXT_COLOR,
+    NOTE_PADDING,
 } from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
@@ -321,7 +321,9 @@ export const elementsConfig = {
                 <NoteElement {...props} />
                 <TextElement
                     {...props}
-                    textFont={NOTE_TEXT_FONT}
+                    embedded={true}
+                    verticalAlign="top"
+                    padding={NOTE_PADDING}
                     textAlign={NOTE_TEXT_ALIGN}
                     textColor={NOTE_TEXT_COLOR}
                 />
@@ -330,7 +332,8 @@ export const elementsConfig = {
         initialize: values => ({
             [FIELDS.NOTE_COLOR]: values?.[FIELDS.NOTE_COLOR] ?? DEFAULTS.NOTE_COLOR,
             [FIELDS.TEXT]: "",
-            [FIELDS.TEXT_SIZE]: 0,
+            [FIELDS.TEXT_SIZE]: values?.[FIELDS.TEXT_SIZE] ?? DEFAULTS.TEXT_SIZE,
+            [FIELDS.TEXT_FONT]: values?.[FIELDS.TEXT_FONT] ?? DEFAULTS.TEXT_FONT,
             [FIELDS.TEXT_WIDTH]: GRID_SIZE,
             [FIELDS.TEXT_HEIGHT]: GRID_SIZE,
         }),
@@ -348,13 +351,20 @@ export const elementsConfig = {
                 y2: Math.max(element.y1, element.y2),
             });
         },
-        // onUpdate: (element, changedKeys) => {
-        //     if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
-        //         const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont);
-        //         element.textWidth = textWidth;
-        //         element.textHeight = textHeight;
-        //     }
-        // },
+        onUpdate: (element, changedKeys) => {
+            if (changedKeys.has(FIELDS.TEXT) || changedKeys.has(FIELDS.TEXT_SIZE) || changedKeys.has(FIELDS.TEXT_FONT)) {
+                const maxWidth = Math.abs(element.x2 - element.x1) - 2 * NOTE_PADDING;
+                const [textWidth, textHeight] = measureText(element[FIELDS.TEXT] || " ", element[FIELDS.TEXT_SIZE], element[FIELDS.TEXT_FONT], maxWidth);
+                console.log("NOTE_SIZE", [textWidth, textHeight]);
+                element[FIELDS.TEXT_WIDTH] = textWidth;
+                element[FIELDS.TEXT_HEIGHT] = textHeight;
+                // Check if we have to update the note height to keep all content inside
+                const height = Math.abs(element.y2 - element.y1) - (2 * NOTE_PADDING);
+                if (height < textHeight) {
+                    element.y2 = element.y1 + textHeight + (2 * NOTE_PADDING);
+                }
+            }
+        },
     },
 };
 
