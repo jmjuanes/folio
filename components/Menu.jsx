@@ -81,7 +81,7 @@ export const Menu = props => {
                             <DropdownGroup title="Background" />
                             <ColorPicker
                                 value={board.background}
-                                values={Object.values(BACKGROUND_COLOR_PALETTE)}
+                                values={BACKGROUND_COLOR_PALETTE}
                                 collapseColorPalette={false}
                                 onChange={newBackground => {
                                     board.background = newBackground;

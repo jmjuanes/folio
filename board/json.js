@@ -1,6 +1,6 @@
 import {fileOpen, fileSave} from "browser-fs-access";
 import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "../constants.js";
-import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
+import {BACKGROUND_COLORS} from "../utils/colors.js";
 import {migrateAssets, migrateElements} from "./migrate.js";
 
 // Read from blob as text
@@ -27,7 +27,7 @@ export const saveAsJson = options => {
             }
             return assets;
         }, {}),
-        background: options?.background || BACKGROUND_COLOR_PALETTE.gray,
+        background: options?.background || BACKGROUND_COLORS.gray,
         grid: !!options?.grid,
         attributes: options?.attributes || {},
     };
@@ -60,7 +60,7 @@ export const loadFromJson = async () => {
         version: VERSION,
         elements: migrateElements(data.elements, data.version),
         assets: migrateAssets(data.assets, data.version),
-        background: data.background || BACKGROUND_COLOR_PALETTE.gray,
+        background: data.background || BACKGROUND_COLORS.gray,
         grid: !!data.grid,
         attributes: data.attributes || {},
     };

@@ -1,3 +1,5 @@
+import {STICKYNOTE_COLORS} from "./utils/colors.js";
+
 export const VERSION = "8";
 
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
@@ -226,7 +228,7 @@ export const DEFAULTS = {
     ARROWHEAD_START: ARROWHEADS.NONE,
     ARROWHEAD_END: ARROWHEADS.ARROW,
     OPACITY: OPACITY_DEFAULT,
-    NOTE_COLOR: WHITE,
+    NOTE_COLOR: STICKYNOTE_COLORS.yellow,
 };
 
 // Fields in elements
@@ -242,6 +244,7 @@ export const FIELDS = {
     TEXT_COLOR: "textColor",
     TEXT_FONT: "textFont",
     TEXT_SIZE: "textSize",
+    TEXT_ALIGN: "textAlign",
     SHAPE: "shape",
     START_ARROWHEAD: "startArrowhead",
     END_ARROWHEAD: "endArrowhead",
@@ -333,6 +336,6 @@ export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
 // Sticky notes constants
 export const NOTE_MIN_WIDTH = 240;
 export const NOTE_MIN_HEIGHT = 240;
-export const NOTE_TEXT_FONT = FONT_FACES.SANS;
 export const NOTE_TEXT_COLOR = BLACK;
-export const NOTE_TEXT_ALIGN = TEXT_ALIGNS.CENTER;
+export const NOTE_TEXT_ALIGN = TEXT_ALIGNS.LEFT;
+export const NOTE_PADDING = 24;

@@ -1,5 +1,3 @@
-import {WHITE, BLACK} from "../constants.js";
-
 export const DEFAULT_FILL_COLOR_SHADE = 1;
 export const DEFAULT_STROKE_COLOR_SHADE = 3;
 export const DEFAULT_TEXT_COLOR_SHADE = 4;
@@ -16,8 +14,8 @@ const colorsFromList = list => {
 // Global colors
 export const COLORS = {
     // Basic colors
-    white: WHITE,
-    black: BLACK,
+    white: "#ffffff",
+    black: "#000000",
     // Colors with shades
     gray: colorsFromList("e2e6e9-b7bdc1-8c9499-616b71-364149"),
     cyan: colorsFromList("8cdcf2-6ad2ef-47c7eb-2fb7dd-17a7cf"),
@@ -31,9 +29,29 @@ export const COLORS = {
     red: colorsFromList("f68888-f36565-f04242-e22a2a-d41111"),
 };
 
+// Special colors for note elements
+export const STICKYNOTE_COLORS = {
+    yellow: "#f5d22b",
+    orange: "#ff9e4a",
+    green: "#cbdf58",
+    blue: "#a7cdf5",
+    pink: "#ea95bc",
+    violet: "#c7a3d3",
+};
+
+// Special colors for background
+export const BACKGROUND_COLORS = {
+    white: "#ffffff",
+    gray: "#fafafa",
+    blue: "#e9f4fb",
+    green: "#eafaf1",
+    yellow: "#fef9e7",
+    red: "#fceae8",
+};
+
 // Pick a color from the color palette
 export const pickColor = (name, shade = 0) => {
-    return (Array.isArray(COLORS[name]) ? COLORS[name][shade] : COLORS[name]) || BLACK;
+    return (Array.isArray(COLORS[name]) ? COLORS[name][shade] : COLORS[name]) || COLORS.black;
 };
 
 // Generate a color palette from specified color shade
@@ -60,21 +78,8 @@ export const STROKE_COLOR_PICK = generateColorPick(DEFAULT_STROKE_COLOR_SHADE);
 export const TEXT_COLOR_PICK = generateColorPick(DEFAULT_TEXT_COLOR_SHADE);
 
 // Background color palette
-export const BACKGROUND_COLOR_PALETTE = {
-    white: WHITE,
-    gray: "#fafafa",
-    blue: "#e9f4fb",
-    green: "#eafaf1",
-    yellow: "#fef9e7",
-    red: "#fceae8",
-};
+export const BACKGROUND_COLOR_PALETTE = Object.values(BACKGROUND_COLORS);
 
 // Sticky note color palette
-export const NOTE_COLOR_PALETTE = Object.values({
-    yellow: "#f5d22b",
-    orange: "#ff9e4a",
-    green: "#cbdf58",
-    blue: "#a7cdf5",
-    pink: "#ea95bc",
-    violet: "#c7a3d3",
-});
+export const NOTE_COLOR_PALETTE = Object.values(STICKYNOTE_COLORS);
+export const NOTE_COlOR_PICK = Object.values(STICKYNOTE_COLORS);
