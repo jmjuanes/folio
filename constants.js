@@ -114,6 +114,7 @@ export const TEXT_BOX_MIN_WIDTH = 400;
 // Shapes constants
 export const SHAPE_MIN_WIDTH = 150;
 export const SHAPE_MIN_HEIGHT = 150;
+export const SHAPE_PADDING = 12;
 
 export const MIME_TYPES = {
     FOLIO: "application/vnd.folio+json",

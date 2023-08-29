@@ -17,6 +17,7 @@ import {
     STROKES,
     SHAPE_MIN_WIDTH,
     SHAPE_MIN_HEIGHT,
+    SHAPE_PADDING,
     NOTE_MIN_WIDTH,
     NOTE_MIN_HEIGHT,
     NOTE_TEXT_ALIGN,
@@ -60,7 +61,11 @@ export const elementsConfig = {
         render: props => (
             <ElementContainer id={props.id}>
                 <ShapeElement {...props} />
-                <TextElement embedded={true} {...props} />
+                <TextElement
+                    {...props}
+                    embedded={true}
+                    padding={SHAPE_PADDING}
+                />
             </ElementContainer>
         ),
         initialize: values => {
