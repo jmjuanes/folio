@@ -17,14 +17,14 @@ const Separator = () => (
 export const Menu = props => {
     const board = useBoard();
     return (
-        <div className="flex gap-2 border border-gray-300 p-1 rounded-lg bg-white">
-            <div className="flex relative group h-10" tabIndex="0">
+        <div className="flex gap-1 border border-gray-300 p-1 rounded-lg bg-white">
+            <div className="flex relative group" tabIndex="0">
                 <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 group-focus-within:bg-gray-200 rounded-md py-1 px-2">
-                    <div className="flex items-center text-2xl">
+                    <div className="flex items-center text-2xl text-gray-900">
                         <DrawingIcon />
                     </div>
                     <div className="flex items-center select-none font-crimson text-3xl leading-none">
-                        <span className="font-black leading-none">Folio.</span>
+                        <span className="font-black leading-none text-gray-900">Folio.</span>
                     </div>
                 </div>
                 <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2">
@@ -108,26 +108,11 @@ export const Menu = props => {
                     )}
                 </Dropdown>
             </div>
-            {props.showTitle && (
+            {props.showTitle && board.title && (
                 <React.Fragment>
                     <Separator />
-                    <div className="flex items-center">
-                        <input
-                            type="text"
-                            defaultValue={board.title}
-                            className={classNames({
-                                "outline-none bg-transparent font-bold text-lg leading-none": true,
-                                "h-10 w-64 px-2 py-0 rounded-md": true,
-                                "text-gray-600 hover:bg-gray-200 focus:bg-gray-200 focus:text-gray-800": true,
-                            })}
-                            placeholder="Untitled"
-                            onChange={event => {
-                                board.title = event.target?.value || "Untitled";
-                                props?.onChange?.({
-                                    title: board.title,
-                                });
-                            }}
-                        />
+                    <div className="flex items-center px-2 hover:bg-gray-100 rounded-md">
+                        <span className="font-bold">{board.title}</span>
                     </div>
                 </React.Fragment>
             )}
