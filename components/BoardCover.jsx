@@ -8,7 +8,7 @@ export const BoardCover = props => {
         borderBottomRightRadius: "1rem",
     };
     return (
-        <div className="">
+        <div className="cursor-pointer" onClick={props.onClick}>
             <div className="relative h-32 w-48 shadow-lg overflow-hidden" style={coverStyle}>
                 <div
                     data-testid="board-cover-lateral"
@@ -33,4 +33,5 @@ export const BoardCover = props => {
 
 BoardCover.defaultProps = {
     color: COVER_COLORS.charcoal,
+    onClick: null,
 };
