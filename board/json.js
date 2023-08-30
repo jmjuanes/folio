@@ -1,7 +1,7 @@
 import {fileOpen, fileSave} from "browser-fs-access";
 import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "../constants.js";
-import {BACKGROUND_COLORS} from "../utils/colors.js";
-import {migrateAssets, migrateElements} from "./migrate.js";
+import {BACKGROUND_COLORS, COVER_COLORS} from "../utils/colors.js";
+import {migrate} from "./migrate.js";
 
 // Read from blob as text
 const readBlobAsText = blob => {
@@ -13,29 +13,34 @@ const readBlobAsText = blob => {
     }));
 };
 
-export const saveAsJson = options => {
-    const elements = options?.elements || [];
+export const saveAsJson = data => {
+    const elements = data?.elements || [];
     const exportData = {
         type: MIME_TYPES.FOLIO,
-        source: "",
+        source: null,
         version: VERSION,
+        title: data?.title || "Untitled",
+        createdAt: data?.createdAt,
+        updatedAt: data?.updatedAt,
+        coverColor: data?.coverColor ?? COVER_COLORS.charcoal,
+        coverImage: data?.coverImage,
         elements: elements,
         assets: elements.reduce((assets, element) => {
             // Copy only assets in the elements list
-            if (element.assetId && options?.assets?.[element.assetId]) {
-                assets[element.assetId] = options.assets[element.assetId];
+            if (element.assetId && data?.assets?.[element.assetId]) {
+                assets[element.assetId] = data.assets[element.assetId];
             }
             return assets;
         }, {}),
-        background: options?.background || BACKGROUND_COLORS.gray,
-        grid: !!options?.grid,
-        attributes: options?.attributes || {},
+        background: data?.background ?? BACKGROUND_COLORS.gray,
+        grid: !!data?.grid,
     };
-    const data = JSON.stringify(exportData, null, "    ");
-    const blob = new Blob([data], {type: MIME_TYPES.FOLIO});
+    const dataStr = JSON.stringify(exportData, null, "    ");
+    const blob = new Blob([dataStr], {type: MIME_TYPES.FOLIO});
+    const name = (data.title || "untitled").trim().toLowerCase().replace(/ /g, "");
     return fileSave(blob, {
         description: "Folio Export",
-        fileName: `${options.name || "untitled"}${FILE_EXTENSIONS.FOLIO}`,
+        fileName: name + FILE_EXTENSIONS.FOLIO,
         extensions: [
             FILE_EXTENSIONS.FOLIO,
         ],
@@ -56,12 +61,5 @@ export const loadFromJson = async () => {
     }
     // Load data from blob
     const data = JSON.parse(await readBlobAsText(blob));
-    return {
-        version: VERSION,
-        elements: migrateElements(data.elements, data.version),
-        assets: migrateAssets(data.assets, data.version),
-        background: data.background || BACKGROUND_COLORS.gray,
-        grid: !!data.grid,
-        attributes: data.attributes || {},
-    };
+    return migrate(data, data?.version);
 };
