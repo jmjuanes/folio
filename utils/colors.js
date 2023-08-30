@@ -7,6 +7,13 @@ export const isValidHexColor = value => {
     return value && value.startsWith("#") && (value.length === 4 || value.length === 7 || value.length === 9);
 };
 
+// Generate a darker or lighten version of the specified color
+export const colorShade = (color, amount) => {
+    return "#" + color.replace(/^#/, "").replace(/../g, color => {
+        return Math.max(Math.min(255, parseInt(color, 16) + amount), 0).toString(16).padStart(2, "0");
+    });
+};
+
 const colorsFromList = list => {
     return list.split("-").map(color => "#" + color);
 };
@@ -47,6 +54,17 @@ export const BACKGROUND_COLORS = {
     green: "#eafaf1",
     yellow: "#fef9e7",
     red: "#fceae8",
+};
+
+// Special colors for board covers
+export const COVER_COLORS = {
+    charcoal: "#314d63",
+    chineseViolet: "#78586f",
+    celeste: "#b2e8e8",
+    cambridgeBlue: "#8fb9ab",
+    sunglow: "#ffcb47",
+    salmon: "#f08976",
+    brunswickGreen: "#2f4c42",
 };
 
 // Pick a color from the color palette
