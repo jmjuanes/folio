@@ -7,7 +7,7 @@ export const Loading = () => (
             <div className="font-black text-6xl text-gray-900 font-crimson tracking-tight leading-none">
                 <span>Folio.</span>
             </div>
-            <div className="flex mt-2">
+            <div className="hidden mt-2">
                 <div className="flex animation-spin text-gray-500">
                     <LoaderIcon />
                 </div>
