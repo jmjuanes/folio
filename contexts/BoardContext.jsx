@@ -31,14 +31,17 @@ export const BoardProvider = props => {
     const board = React.useRef(null);
     // Import board data
     useDelay(props.delay, () => {
-        // TODO: we need to catch error or check if returned data is valid
-        loadBoardData(props.initialData).then(boardData => {
-            board.current = createBoard({
-                data: boardData,
-                onUpdate: forceUpdate,
+        loadBoardData(props.initialData)
+            .then(boardData => {
+                board.current = createBoard({
+                    data: boardData,
+                    onUpdate: forceUpdate,
+                });
+                forceUpdate();
+            })
+            .catch(error => {
+                props?.onError?.(error);
             });
-            forceUpdate();
-        });
     });
     // If no board data has been provided, display a loading screen
     if (!board.current) {
@@ -57,4 +60,5 @@ BoardProvider.defaultProps = {
     initialData: null,
     delay: 1000,
     render: null,
+    onError: null,
 };

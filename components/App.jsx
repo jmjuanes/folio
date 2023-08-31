@@ -1,5 +1,4 @@
 import React from "react";
-import {ChevronLeftIcon} from "@josemi-icons/react";
 import {saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useRouter} from "../contexts/RouterContext.jsx";
@@ -7,7 +6,7 @@ import {useConfirm} from "../contexts/ConfirmContext.jsx";
 import {Board} from "./Board.jsx";
 import {BoardList} from "./BoardList.jsx";
 import {BoardCreate} from "./BoardCreate.jsx";
-import {SecondaryButton} from "./Button.jsx";
+import {Button} from "./Button.jsx";
 import {useDebounce, useForceUpdate} from "../hooks/index.js";
 
 // Board wrapper
@@ -15,6 +14,7 @@ const BoardWrapper = props => {
     const client = useClient();
     const {redirect} = useRouter();
     const [state, setState] = React.useState({});
+    const [error, setError] = React.useState(false);
     // Use a debounce function to handle state changes
     useDebounce(250, [state?.updatedAt], () => {
         if (state?.updatedAt) {
@@ -23,6 +23,31 @@ const BoardWrapper = props => {
             });
         }
     });
+    // Display an error message f something went wrong importing board data
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-full w-full">
+                <div className="flex flex-col items-center px-8 w-full maxw-4xl">
+                    <div className="text-6xl text-gray-900 text-center">
+                        <strong className="font-black">Hmm, something went wrong...</strong>
+                    </div>
+                    <div className="mt-4 text-center">
+                        <div>We were not able to load the content of board <b>'{props.id}'</b>.</div>
+                        <div>Please try again or contact us if the problem persists.</div>
+                    </div>
+                    <div className="flex mt-8 select-none">
+                        <Button
+                            className="text-white font-bold bg-gray-900 hover:bg-gray-800 rounded-full px-4"
+                            text="Return to Home"
+                            onClick={() => {
+                                return redirect("");
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
     return (
         <Board
             key={props.id}
@@ -31,14 +56,6 @@ const BoardWrapper = props => {
                 {url: process.env.URL_REPOSITORY, text: "About Folio"},
                 {url: process.env.URL_ISSUES, text: "Report a bug"},
             ]}
-            headerLeftContent={(
-                <div className="flex order-first">
-                    <SecondaryButton
-                        icon={(<ChevronLeftIcon />)}
-                        onClick={() => redirect("")}
-                    />
-                </div>
-            )}
             showLoad={false}
             onChange={newState => {
                 return setState(prevState => ({
@@ -52,6 +69,8 @@ const BoardWrapper = props => {
                     return saveAsJson(data);
                 });
             }}
+            onLogo={() => redirect("")}
+            onError={() => setError(true)}
         />
     );
 };
@@ -105,7 +124,7 @@ export const App = () => {
                 />
             </div>
             {/* Footer section */}
-            <div className="w-full mt-20 mb-20">
+            <div className="w-full pt-20 pb-20">
                 <div className="w-full h-px bg-gray-200 mb-16" />
                 <div className="flex flex-col items-center">
                     <div className="text-sm mb-2">
