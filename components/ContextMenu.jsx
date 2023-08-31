@@ -10,7 +10,7 @@ const Item = props => (
 );
 
 const Separator = () => (
-    <div className="bg-gray-200 h-px w-full my-2" />
+    <div className="bg-gray-200 h-px w-full my-1" />
 );
 
 export const ContextMenu = props => {
@@ -25,7 +25,7 @@ export const ContextMenu = props => {
     };
     return (
         <div className="absolute z-10" style={style}>
-            <div className="bg-white shadow-md w-40 p-3 rounded-lg flex flex-col gap-0 border border-gray-300">
+            <div className="bg-white shadow-md w-40 p-1 rounded-lg flex flex-col gap-0 border border-gray-300">
                 {selectedElements.length > 0 && (
                     <React.Fragment>
                         <Item
