@@ -1,4 +1,6 @@
 import React from "react";
+import classNames from "classnames";
+import {DrawingIcon} from "@josemi-icons/react";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
 import {Layout} from "./Layout.jsx";
@@ -6,6 +8,12 @@ import {Renderer} from "./Renderer.jsx";
 import {ContextMenu} from "./ContextMenu.jsx";
 import {Menu} from "./Menu.jsx";
 import {ExportDialog} from "./ExportDialog.jsx";
+
+const HeaderSeparator = () => (
+    <div className="first:hidden flex items-center">
+        <div className="w-px h-8 bg-gray-300" />
+    </div>
+);
 
 const InnerBoard = React.forwardRef((props, ref) => {
     const {showConfirm} = useConfirm();
@@ -51,26 +59,66 @@ const InnerBoard = React.forwardRef((props, ref) => {
                 showTitle={true}
                 headerLeftContent={(
                     <React.Fragment>
-                        <Menu
-                            links={props.links}
-                            showLinks={props.showLinks}
-                            showLoad={props.showLoad}
-                            showSave={props.showSave}
-                            showResetBoard={props.showResetBoard}
-                            showChangeBackground={props.showChangeBackground}
-                            showSettings={props.showSettings}
-                            showExport={props.showExport}
-                            showTitle={props.showTitle}
-                            onChange={props.onChange}
-                            onSave={props.onSave}
-                            onLoad={handleLoad}
-                            onResetBoard={handleResetBoard}
-                            onExport={() => {
-                                if (board.elements.length > 0) {
-                                    setExportVisible(true);
-                                }
-                            }}
-                        />
+                        <div className="flex gap-1 border border-gray-300 p-1 rounded-lg bg-white">
+                            {props.showLogo && (
+                                <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 rounded-md py-1 px-2" onClick={props.onLogo}>
+                                    <div className="flex items-center text-2xl text-gray-900">
+                                        <DrawingIcon />
+                                    </div>
+                                    <div className="flex items-center select-none font-crimson text-3xl leading-none">
+                                        <span className="font-black leading-none text-gray-900">Folio.</span>
+                                    </div>
+                                </div>
+                            )}
+                            {props.showMenu && (
+                                <React.Fragment>
+                                    <HeaderSeparator />
+                                    <Menu
+                                        links={props.links}
+                                        showLinks={props.showLinks}
+                                        showLoad={props.showLoad}
+                                        showSave={props.showSave}
+                                        showResetBoard={props.showResetBoard}
+                                        showChangeBackground={props.showChangeBackground}
+                                        showSettings={props.showSettings}
+                                        showExport={props.showExport}
+                                        showTitle={props.showTitle}
+                                        onChange={props.onChange}
+                                        onSave={props.onSave}
+                                        onLoad={handleLoad}
+                                        onResetBoard={handleResetBoard}
+                                        onExport={() => {
+                                            if (board.elements.length > 0) {
+                                                setExportVisible(true);
+                                            }
+                                        }}
+                                    />
+                                </React.Fragment>
+                            )}
+                            {props.showTitle && (
+                                <React.Fragment>
+                                    <HeaderSeparator />
+                                    <div className="flex items-center">
+                                        <input
+                                            type="text"
+                                            defaultValue={board.title}
+                                            className={classNames({
+                                                "outline-none bg-transparent font-bold leading-none": true,
+                                                "w-56 px-2 py-2 rounded-md": true,
+                                                "text-gray-600 hover:bg-gray-200 focus:bg-gray-200 focus:text-gray-800": true,
+                                            })}
+                                            placeholder="Untitled"
+                                            onChange={event => {
+                                                board.title = event.target?.value || "Untitled";
+                                                props?.onChange?.({
+                                                    title: board.title,
+                                                });
+                                            }}
+                                        />
+                                    </div>
+                                </React.Fragment>
+                            )}
+                        </div>
                         {props.headerLeftContent}
                     </React.Fragment>
                 )}
@@ -96,11 +144,15 @@ const InnerBoard = React.forwardRef((props, ref) => {
 
 // Export board component
 export const Board = React.forwardRef((props, ref) => (
-    <BoardProvider initialData={props.initialData} render={() => (
-        <ConfirmProvider>
-            <InnerBoard ref={ref} {...props} />
-        </ConfirmProvider>
-    )} />
+    <BoardProvider
+        initialData={props.initialData}
+        onError={props.onError}
+        render={() => (
+            <ConfirmProvider>
+                <InnerBoard ref={ref} {...props} />
+            </ConfirmProvider>
+        )}
+    />
 ));
 
 Board.defaultProps = {
@@ -112,10 +164,14 @@ Board.defaultProps = {
     onSave: null,
     onLoad: null,
     onResetBoard: null,
+    onLogo: null,
+    onError: null,
     showExport: true,
     showLinks: true,
     showLoad: true,
     showSave: true,
+    showLogo: true,
+    showMenu: true,
     showTitle: true,
     showResetBoard: true,
     showSettings: true,
