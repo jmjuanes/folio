@@ -4,6 +4,7 @@ import {FILL_STYLES} from "../constants.js";
 import {STROKES} from "../constants.js";
 import {FONT_FACES} from "../constants.js";
 import {TRANSPARENT, BLACK} from "../constants.js";
+import {BACKGROUND_COLORS, COVER_COLORS} from "../utils/colors.js";
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map((element, index) => {
@@ -84,7 +85,16 @@ export const migrateAssets = (assets, version) => {
 export const migrate = (data, version = "2") => {
     return {
         version: VERSION,
+        source: data?.source || null,
+        title: data?.title || "Untitled",
+        createdAt: data?.createdAt ?? Date.now(),
+        updatedAt: data?.updatedAt ?? Date.now(),
+        coverColor: data?.coverColor ?? COVER_COLORS.charcoal,
+        coverImage: null,
         elements: migrateElements(data.elements, data.version || version),
         assets: migrateAssets(data.assets, data.version || version),
+        background: data.background ?? BACKGROUND_COLORS.gray,
+        grid: !!data?.grid,
+        // attributes: data?.attributes || {},
     };
 };

@@ -40,7 +40,10 @@ const localClient = {
                     boards.push({
                         id: cursor.key,
                         title: cursor.value?.title || "untitled",
+                        createdAt: cursor.value?.createdAt,
                         updatedAt: cursor.value?.updatedAt,
+                        coverColor: cursor.value?.coverColor,
+                        coverImage: cursor.value?.coverImage,
                     });
                     return cursor.continue();
                 }

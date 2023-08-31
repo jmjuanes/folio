@@ -2,6 +2,7 @@ import React from "react";
 import {DrawingIcon, FilePlusIcon} from "@josemi-icons/react";
 import {ImageSlashIcon, EditIcon, DotsVerticalIcon, TrashIcon} from "@josemi-icons/react";
 import {Dropdown, DropdownItem} from "./Dropdown.jsx";
+import {BoardCover} from "./BoardCover.jsx";
 import {useDelay} from "../hooks/index.js";
 
 const BoardEmpty = props => (
@@ -25,25 +26,13 @@ const BoardEmpty = props => (
     </div>
 );
 
-const BoardCreateItem = props => (
-    <div className="w-full flex flex-col items-center justify-center border-2 border-dashed border-gray-200 hover:bg-gray-100 rounded-xl" onClick={props.onClick}>
-        <div className="flex text-6xl text-gray-400 mb-2">
-            <FilePlusIcon />
-        </div>
-        <div className="text-center text-gray-400 text-xs">
-            <strong>Create new</strong>
-        </div>
-    </div>
-);
-
 const BoardItem = props => (
     <div className="w-full">
-        <div className="cursor-pointer" onClick={props.onClick}>
-            <div className="rounded-lg bg-gray-100 text-gray-400 text-xl text-white flex justify-center">
-                <div className="flex justify-center items-center h-32">
-                    <ImageSlashIcon />
-                </div>
-            </div>
+        <div className="group flex items-center justify-center w-full h-40">
+            <BoardCover
+                color={props.coverColor}
+                onClick={props.onClick}
+            />
         </div>
         <div className="flex items-center justify-between flex-nowrap mt-2">
             <div className="flex items-center gap-1 cursor-pointer" onClick={props.onClick}>
@@ -52,7 +41,7 @@ const BoardItem = props => (
                 </div>
             </div>
             <div className="flex relative group" tabIndex="0">
-                <div className="flex group-focus-within:bg-gray-200 rounded-md p-1 cursor-pointer">
+                <div className="flex hover:bg-gray-200 group-focus-within:bg-gray-200 rounded-md p-1 cursor-pointer">
                     <DotsVerticalIcon />
                 </div>
                 <Dropdown className="hidden group-focus-within:block absolute top-full right-0 mt-1 z-5">
@@ -113,7 +102,16 @@ export const BoardList = props => {
             {(boards && boards.length > 0) && (
                 <div className="grid grid-cols-4 gap-4">
                     {props.showCreate && (
-                        <BoardCreateItem onClick={props.onCreate} />
+                        <div className="flex cursor-pointer" onClick={props.onCreate}>
+                            <div className="w-full flex flex-col items-center justify-center border-2 border-dashed border-gray-200 hover:bg-gray-100 rounded-xl">
+                                <div className="flex text-6xl text-gray-400 mb-2">
+                                    <FilePlusIcon />
+                                </div>
+                                <div className="text-center text-gray-400 text-xs">
+                                    <strong>Create new</strong>
+                                </div>
+                            </div>
+                        </div>
                     )}
                     {boards.map(board => (
                         <BoardItem
@@ -121,6 +119,7 @@ export const BoardList = props => {
                             id={board.id}
                             title={board.title}
                             updatedAt={board.updatedAt}
+                            coverColor={board.coverColor}
                             onClick={() => props.onBoardClick?.(board.id)}
                             onDelete={() => props.onBoardDelete?.(board.id)}
                         />
