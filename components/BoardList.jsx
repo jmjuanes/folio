@@ -1,12 +1,12 @@
 import React from "react";
-import {DownloadIcon, DrawingIcon, FilePlusIcon, PlusIcon, UploadIcon} from "@josemi-icons/react";
+import {CopyIcon, DownloadIcon, DrawingIcon, FilePlusIcon, PlusCircleIcon, PlusIcon, UploadIcon} from "@josemi-icons/react";
 import {EditIcon, DotsVerticalIcon, TrashIcon} from "@josemi-icons/react";
 import {Dropdown, DropdownItem, DropdownSeparator} from "./Dropdown.jsx";
 import {BoardCover} from "./BoardCover.jsx";
 import {useDelay} from "../hooks/index.js";
 
 const BoardEmpty = props => (
-    <div className="border-2 border-dashed border-gray-200 w-full rounded-xl">
+    <div className="select-none border-2 border-dashed border-gray-200 w-full rounded-xl">
         <div className="w-full py-16 flex flex-col items-center">
             <div className="flex text-7xl text-gray-900">
                 <DrawingIcon />
@@ -22,12 +22,17 @@ const BoardEmpty = props => (
                     <strong className="text-sm">Create a new board</strong>
                 </div>
             </div>
+            <div className="mt-1">
+                <div className="text-center hover:underline cursor-pointer" onClick={props.onLoad}>
+                    <span className="text-xs text-gray-600">Or import from local...</span>
+                </div>
+            </div>
         </div>
     </div>
 );
 
 const BoardItem = props => (
-    <div className="w-full">
+    <div className="w-full select-none">
         <div className="group flex items-center justify-center w-full h-40">
             <BoardCover
                 color={props.coverColor}
@@ -49,6 +54,11 @@ const BoardItem = props => (
                         icon={<DownloadIcon />}
                         text="Save as..."
                         onClick={props.onSave}
+                    />
+                    <DropdownItem
+                        icon={(<CopyIcon />)}
+                        text="Make a copy"
+                        onClick={props.onDuplicate}
                     />
                     <DropdownSeparator />
                     <DropdownItem
@@ -87,30 +97,16 @@ export const BoardList = props => {
                         <div className="font-crimson text-5xl font-black leading-none tracking-tight">
                             <span>{props.title}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1 rounded-md hover:bg-gray-200 cursor-pointer p-2" onClick={props.onCreate}>
-                                <div className="flex items-center text-lg">
-                                    <PlusIcon />
-                                </div>
-                                <div className="text-sm">Create</div>
-                            </div>
-                            <div className="flex items-center gap-1 rounded-md hover:bg-gray-200 cursor-pointer p-2" onClick={props.onLoad}>
-                                <div className="flex items-center text-lg">
-                                    <UploadIcon />
-                                </div>
-                                <div className="text-sm">Import</div>
-                            </div>
-                        </div>
                     </div>
                     <div className="w-full h-px bg-gray-300 mt-2" />
                 </div>
             )}
             {/* No data to display... yet */}
             {!boards && (
-                <div className="grid grid-cols-4 gap-8">
+                <div className="grid grid-cols-4 gap-8 select-none">
                     {[1,2,3,4].map(key => (
                         <div key={key} className="w-full animation-pulse">
-                            <div className="w-full h-24 bg-gray-300 rounded-lg" />
+                            <div className="w-full h-32 bg-gray-300 rounded-lg" />
                             <div className="w-full h-8 bg-gray-300 rounded-lg mt-4" />
                         </div>
                     ))}
@@ -118,19 +114,22 @@ export const BoardList = props => {
             )}
             {/* Render no boards data available */}
             {(boards && boards?.length === 0) && (
-                <BoardEmpty onCreate={props.onCreate} />
+                <BoardEmpty
+                    onCreate={props.onCreate}
+                    onLoad={props.onLoad}
+                />
             )}
             {/* Render boards items */}
             {(boards && boards.length > 0) && (
                 <div className="grid grid-cols-4 gap-8">
                     {props.showCreate && (
-                        <div className="flex cursor-pointer" onClick={props.onCreate}>
-                            <div className="w-full flex flex-col items-center justify-center border-2 border-dashed border-gray-200 hover:bg-gray-100 rounded-xl">
-                                <div className="flex text-6xl text-gray-400 mb-2">
-                                    <FilePlusIcon />
+                        <div className="flex cursor-pointer select-none" onClick={props.onCreate}>
+                            <div className="w-full flex flex-col items-center justify-center bg-gray-900 hover:bg-gray-800 rounded-xl">
+                                <div className="flex text-7xl text-white mb-2">
+                                    <PlusCircleIcon />
                                 </div>
-                                <div className="text-center text-gray-400 text-xs">
-                                    <strong>Create new</strong>
+                                <div className="text-center text-gray-300 text-sm">
+                                    <strong>New Board</strong>
                                 </div>
                             </div>
                         </div>
@@ -145,6 +144,7 @@ export const BoardList = props => {
                             onClick={() => props.onBoardClick?.(board.id)}
                             onSave={() => props.onBoardSave?.(board.id)}
                             onDelete={() => props.onBoardDelete?.(board.id)}
+                            onDuplicate={() => props.onBoardDuplicate?.(board.id)}
                         />
                     ))}
                 </div>
@@ -163,4 +163,5 @@ BoardList.defaultProps = {
     onBoardClick: null,
     onBoardSave: null,
     onBoardDelete: null,
+    onBoardDuplicate: null,
 };
