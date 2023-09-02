@@ -1,7 +1,7 @@
 import React from "react";
-import {DrawingIcon, FilePlusIcon} from "@josemi-icons/react";
-import {ImageSlashIcon, EditIcon, DotsVerticalIcon, TrashIcon} from "@josemi-icons/react";
-import {Dropdown, DropdownItem} from "./Dropdown.jsx";
+import {DownloadIcon, DrawingIcon, FilePlusIcon, PlusIcon, UploadIcon} from "@josemi-icons/react";
+import {EditIcon, DotsVerticalIcon, TrashIcon} from "@josemi-icons/react";
+import {Dropdown, DropdownItem, DropdownSeparator} from "./Dropdown.jsx";
 import {BoardCover} from "./BoardCover.jsx";
 import {useDelay} from "../hooks/index.js";
 
@@ -46,6 +46,12 @@ const BoardItem = props => (
                 </div>
                 <Dropdown className="hidden group-focus-within:block absolute top-full right-0 mt-1 z-5">
                     <DropdownItem
+                        icon={<DownloadIcon />}
+                        text="Save as..."
+                        onClick={props.onSave}
+                    />
+                    <DropdownSeparator />
+                    <DropdownItem
                         icon={<TrashIcon />}
                         text="Delete..."
                         onClick={props.onDelete}
@@ -77,15 +83,31 @@ export const BoardList = props => {
         <div className="w-full">
             {props.title && (
                 <div className="mb-6">
-                    <div className="font-crimson text-5xl font-black leading-none tracking-tight">
-                        <span>{props.title}</span>
+                    <div className="flex justify-between items-center">
+                        <div className="font-crimson text-5xl font-black leading-none tracking-tight">
+                            <span>{props.title}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1 rounded-md hover:bg-gray-200 cursor-pointer p-2" onClick={props.onCreate}>
+                                <div className="flex items-center text-lg">
+                                    <PlusIcon />
+                                </div>
+                                <div className="text-sm">Create</div>
+                            </div>
+                            <div className="flex items-center gap-1 rounded-md hover:bg-gray-200 cursor-pointer p-2" onClick={props.onLoad}>
+                                <div className="flex items-center text-lg">
+                                    <UploadIcon />
+                                </div>
+                                <div className="text-sm">Import</div>
+                            </div>
+                        </div>
                     </div>
                     <div className="w-full h-px bg-gray-300 mt-2" />
                 </div>
             )}
             {/* No data to display... yet */}
             {!boards && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-8">
                     {[1,2,3,4].map(key => (
                         <div key={key} className="w-full animation-pulse">
                             <div className="w-full h-24 bg-gray-300 rounded-lg" />
@@ -100,7 +122,7 @@ export const BoardList = props => {
             )}
             {/* Render boards items */}
             {(boards && boards.length > 0) && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-8">
                     {props.showCreate && (
                         <div className="flex cursor-pointer" onClick={props.onCreate}>
                             <div className="w-full flex flex-col items-center justify-center border-2 border-dashed border-gray-200 hover:bg-gray-100 rounded-xl">
@@ -121,6 +143,7 @@ export const BoardList = props => {
                             updatedAt={board.updatedAt}
                             coverColor={board.coverColor}
                             onClick={() => props.onBoardClick?.(board.id)}
+                            onSave={() => props.onBoardSave?.(board.id)}
                             onDelete={() => props.onBoardDelete?.(board.id)}
                         />
                     ))}
@@ -136,6 +159,8 @@ BoardList.defaultProps = {
     loadItems: null,
     showCreate: true,
     onCreate: null,
+    onLoad: null,
     onBoardClick: null,
+    onBoardSave: null,
     onBoardDelete: null,
 };

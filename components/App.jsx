@@ -1,5 +1,5 @@
 import React from "react";
-import {saveAsJson} from "../board/json.js";
+import {loadFromJson, saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useRouter} from "../contexts/RouterContext.jsx";
 import {useConfirm} from "../contexts/ConfirmContext.jsx";
@@ -65,9 +65,9 @@ const BoardWrapper = props => {
                 }));
             }}
             onSave={() => {
-                client.getBoard(props.id).then(data => {
-                    return saveAsJson(data);
-                });
+                client.getBoard(props.id)
+                    .then(data => saveAsJson(data))
+                    .catch(error => console.error(error));
             }}
             onLogo={() => redirect("")}
             onError={() => setError(true)}
@@ -92,7 +92,7 @@ export const App = () => {
     }
     // Other case, render welcome page
     return (
-        <div className="w-full maxw-5xl mx-auto px-6">
+        <div className="w-full maxw-6xl mx-auto px-6">
             <div className="mt-24 animation-fadein">
                 <div className="font-crimson font-black text-9xl leading-none tracking-tight">
                     <span>Folio.</span>
@@ -107,8 +107,21 @@ export const App = () => {
                     title="Your boards"
                     loadItems={() => client.getUserBoards()}
                     onCreate={() => setBoardCreateVisible(true)}
+                    onLoad={() => {
+                        loadFromJson()
+                            .then(data => client.addBoard(data))
+                            .then(response => {
+                                redirect(`board/${response.id}`);
+                            })
+                            .catch(error => console.error(error));
+                    }}
                     onBoardClick={boardId => {
                         return redirect(`board/${boardId}`);
+                    }}
+                    onBoardSave={boardId => {
+                        client.getBoard(boardId)
+                            .then(data => saveAsJson(data))
+                            .catch(error => console.error(error));
                     }}
                     onBoardDelete={boardId => {
                         return showConfirm({
