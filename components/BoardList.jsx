@@ -24,7 +24,7 @@ const BoardEmpty = props => (
             </div>
             <div className="mt-1">
                 <div className="text-center hover:underline cursor-pointer" onClick={props.onLoad}>
-                    <span className="text-xs text-gray-600">Or import from local...</span>
+                    <span className="text-xs text-gray-600">Or import from a local file...</span>
                 </div>
             </div>
         </div>
@@ -149,6 +149,19 @@ export const BoardList = props => {
                     ))}
                 </div>
             )}
+            {/* Render import board */}
+            {(props.showLoad && !!boards && boards.length > 0) && (
+                <div className="mt-12 flex justify-center select-none">
+                    <div className="flex items-center rounded-lg px-3 py-2 hover:bg-gray-200 cursor-pointer" onClick={props.onLoad}>
+                        <div className="flex items-center text-sm text-gray-500 mr-1">
+                            <UploadIcon />
+                        </div>
+                        <div className="text-xs text-gray-500">
+                            <span>You can also import a board from a local file...</span>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -158,6 +171,7 @@ BoardList.defaultProps = {
     title: "",
     loadItems: null,
     showCreate: true,
+    showLoad: true,
     onCreate: null,
     onLoad: null,
     onBoardClick: null,
