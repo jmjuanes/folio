@@ -124,15 +124,34 @@ export const App = () => {
                             .catch(error => console.error(error));
                     }}
                     onBoardDelete={boardId => {
-                        return showConfirm({
+                        showConfirm({
                             title: "Delete board",
                             message: "Are you sure? This action can not be undone.",
                             callback: () => {
-                                client.deleteBoard(boardId).then(() => {
-                                    forceUpdate();
-                                });
+                                client.deleteBoard(boardId)
+                                    .then(() => {
+                                        // TODO: display a confirmation message
+                                        forceUpdate();
+                                    })
+                                    .catch(error => console.error(error));
                             },
                         });
+                    }}
+                    onBoardDuplicate={boardId => {
+                        client.getBoard(boardId)
+                            .then(data => {
+                                return client.addBoard({
+                                    ...data,
+                                    title: `${data.title} - Copy`,
+                                    createdAt: Date.now(),
+                                    updatedAt: Date.now(),
+                                });
+                            })
+                            .then(() => {
+                                // TODO: display confirmation message
+                                forceUpdate();
+                            })
+                            .catch(error => console.error(error));
                     }}
                 />
             </div>
@@ -154,10 +173,12 @@ export const App = () => {
             {boardCreateVisible && (
                 <BoardCreate
                     onSubmit={data => {
-                        return client.addBoard(data).then(response => {
-                            redirect(`board/${response.id}`);
-                            setBoardCreateVisible(false);
-                        });
+                        client.addBoard(data)
+                            .then(response => {
+                                redirect(`board/${response.id}`);
+                                setBoardCreateVisible(false);
+                            })
+                            .catch(error => console.error(error));
                     }}
                     onCancel={() => setBoardCreateVisible(false)}
                 />
