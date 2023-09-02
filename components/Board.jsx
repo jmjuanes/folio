@@ -7,6 +7,7 @@ import {Layout} from "./Layout.jsx";
 import {Renderer} from "./Renderer.jsx";
 import {ContextMenu} from "./ContextMenu.jsx";
 import {Menu} from "./Menu.jsx";
+import {Title} from "./Title.jsx";
 import {ExportDialog} from "./ExportDialog.jsx";
 
 const HeaderSeparator = () => (
@@ -98,24 +99,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                             {props.showTitle && (
                                 <React.Fragment>
                                     <HeaderSeparator />
-                                    <div className="flex items-center">
-                                        <input
-                                            type="text"
-                                            defaultValue={board.title}
-                                            className={classNames({
-                                                "outline-none bg-transparent font-bold leading-none": true,
-                                                "w-56 px-2 py-2 rounded-md": true,
-                                                "text-gray-600 hover:bg-gray-200 focus:bg-gray-200 focus:text-gray-800": true,
-                                            })}
-                                            placeholder="Untitled"
-                                            onChange={event => {
-                                                board.title = event.target?.value || "Untitled";
-                                                props?.onChange?.({
-                                                    title: board.title,
-                                                });
-                                            }}
-                                        />
-                                    </div>
+                                    <Title onChange={props.onChange} />
                                 </React.Fragment>
                             )}
                         </div>
