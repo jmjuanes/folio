@@ -1,6 +1,6 @@
 import React from "react";
-import {CopyIcon, DownloadIcon, DrawingIcon, FilePlusIcon, PlusCircleIcon, PlusIcon, UploadIcon} from "@josemi-icons/react";
-import {EditIcon, DotsVerticalIcon, TrashIcon} from "@josemi-icons/react";
+import {DownloadIcon, DrawingIcon, PlusCircleIcon, UploadIcon} from "@josemi-icons/react";
+import {EditIcon, DotsVerticalIcon, TrashIcon, CopyIcon} from "@josemi-icons/react";
 import {Dropdown, DropdownItem, DropdownSeparator} from "./Dropdown.jsx";
 import {BoardCover} from "./BoardCover.jsx";
 import {useDelay} from "../hooks/index.js";
