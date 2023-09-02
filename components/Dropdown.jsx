@@ -93,7 +93,7 @@ DropdownCheckItem.defaultProps = {
 
 export const Dropdown = props => (
     <div className={classNames(props.className, "absolute mt-1")}>
-        <div className="bg-white shadow-md w-56 p-1 rounded-lg flex flex-col gap-0">
+        <div className="bg-white shadow-md w-56 p-1 rounded-lg flex flex-col gap-0 border border-gray-300">
             {props.children}
         </div>
     </div>
