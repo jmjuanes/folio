@@ -26,7 +26,7 @@ export const BoardCreate = props => {
                 </div>
             </div>
             <div className="w-full maxw-xl">
-                <div className="font-crimson font-black text-7xl text-gray-900 select-none">
+                <div className="font-crimson font-black text-7xl text-gray-900 select-none tracking-tight">
                     <span>New Board</span>
                 </div>
                 {/* Board title */}
