@@ -10,8 +10,14 @@ const previewStyle = {
 };
 
 export const Title = props => {
+    const inputRef = React.useRef();
     const board = useBoard();
     const [editing, setEditing] = React.useState(false);
+    React.useEffect(() => {
+        if (editing && inputRef?.current) {
+            inputRef.current.focus();
+        }
+    }, [editing]);
     return (
         <div className="flex items-center">
             {!editing && (
@@ -23,6 +29,7 @@ export const Title = props => {
             )}
             {editing && (
                 <input
+                    ref={inputRef}
                     type="text"
                     defaultValue={board.title}
                     className={classNames({
