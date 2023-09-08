@@ -41,7 +41,7 @@ const optionTypes = {
                     key={font}
                     className={classNames({
                         "flex justify-center items-center rounded-md h-8 text-sm": true,
-                        "bg-gray-300": props.theme === THEMES.LIGHT && font === props.value,
+                        "bg-gray-900 text-white": props.theme === THEMES.LIGHT && font === props.value,
                         "bg-gray-600": props.theme === THEMES.DARK && font === props.value,
                         "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && font !== props.value,
                         "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && font !== props.value,
@@ -62,7 +62,7 @@ const optionTypes = {
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = classNames({
                     "flex flex-col justify-center items-center rounded-md h-8 grow": true,
-                    "bg-gray-300": props.theme === THEMES.LIGHT && active,
+                    "bg-gray-900 text-white": props.theme === THEMES.LIGHT && active,
                     "bg-gray-600": props.theme === THEMES.DARK && active,
                     "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && !active,
                     "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && !active,
@@ -114,10 +114,10 @@ const optionTypes = {
                 }
                 const itemClass = classNames({
                     "flex flex-nowrap justify-center gap-1 items-center grow rounded-md h-8 px-1": true,
-                    "bg-gray-300": props.theme === THEMES.LIGHT && item.value === props.value,
-                    "bg-gray-600": props.theme === THEMES.DARK && item.value === props.value,
+                    "bg-gray-900 text-white": props.theme === THEMES.LIGHT && item.value === props.value,
+                    // "bg-gray-600": props.theme === THEMES.DARK && item.value === props.value,
                     "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && item.value !== props.value,
-                    "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && item.value !== props.value,
+                    // "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && item.value !== props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -187,7 +187,7 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.SEPARATOR]: () => (
-        <div className="w-full h-px bg-gray-200" />
+        <div className="w-full h-px bg-gray-500" />
     ),
 };
 

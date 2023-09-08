@@ -1,5 +1,5 @@
 import React from "react";
-import {BarsIcon} from "@josemi-icons/react";
+import {BarsIcon, CameraIcon} from "@josemi-icons/react";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {ColorPicker} from "./ColorPicker.jsx";
@@ -11,8 +11,8 @@ export const Menu = props => {
     const board = useBoard();
     return (
         <div className="flex relative group" tabIndex="0">
-            <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 group-focus-within:bg-gray-200 rounded-md py-1 px-2">
-                <div className="flex items-center text-2xl text-gray-900">
+            <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 group-focus-within:bg-gray-900 rounded-md py-1 px-2">
+                <div className="flex items-center text-2xl text-gray-900 group-focus-within:text-white">
                     <BarsIcon />
                 </div>
             </div>
@@ -36,6 +36,14 @@ export const Menu = props => {
                         icon={(<ImageIcon />)}
                         text="Export image..."
                         onClick={props.onExport}
+                    />
+                )}
+                {props.showScreenshot && (
+                    <DropdownItem
+                        icon={(<CameraIcon />)}
+                        text="Take screenshot..."
+                        disabled={board.elements.length === 0}
+                        onClick={props.onScreenshot}
                     />
                 )}
                 {props.showResetBoard && (
@@ -109,9 +117,11 @@ Menu.defaultProps = {
     showChangeBackground: true,
     showLinks: true,
     showExport: true,
+    showScreenshot: true,
     onChange: null,
     onSave: null,
     onResetBoard: null,
     onLoad: null,
     onExport: null,
+    onScreenshot: null,
 };

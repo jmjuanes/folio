@@ -1,6 +1,5 @@
 import React from "react";
-import classNames from "classnames";
-import {DrawingIcon} from "@josemi-icons/react";
+import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
 import {Layout} from "./Layout.jsx";
@@ -12,7 +11,7 @@ import {ExportDialog} from "./ExportDialog.jsx";
 
 const HeaderSeparator = () => (
     <div className="first:hidden flex items-center">
-        <div className="w-px h-8 bg-gray-300" />
+        <div className="h-8 border-l-2 border-gray-600" />
     </div>
 );
 
@@ -41,16 +40,14 @@ const InnerBoard = React.forwardRef((props, ref) => {
         // Just call the onLoad listener
         props.onLoad?.();
     };
-    // Handle screenshot
-    const handleScreenshot = region => {
-        setScreenshotRegion(region);
-        setExportVisible(true);
-    };
     return (
         <div className="relative overflow-hidden h-full w-full select-none">
             <Renderer
                 onChange={props.onChange}
-                onScreenshot={handleScreenshot}
+                onScreenshot={region => {
+                    setScreenshotRegion(region);
+                    setExportVisible(true);
+                }}
             />
             {board.state.contextMenuVisible && (
                 <ContextMenu onChange={props.onChange} />
@@ -60,17 +57,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                 showTitle={true}
                 headerLeftContent={(
                     <React.Fragment>
-                        <div className="flex gap-1 border border-gray-300 p-1 rounded-lg bg-white">
-                            {props.showLogo && (
-                                <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 rounded-md py-1 px-2" onClick={props.onLogo}>
-                                    <div className="flex items-center text-2xl text-gray-900">
-                                        <DrawingIcon />
-                                    </div>
-                                    <div className="flex items-center select-none font-crimson text-3xl leading-none">
-                                        <span className="font-black leading-none text-gray-900">Folio.</span>
-                                    </div>
-                                </div>
-                            )}
+                        <div className="flex gap-1 border-2 border-gray-900 p-1 rounded-lg bg-white shadow-md">
                             {props.showMenu && (
                                 <React.Fragment>
                                     <HeaderSeparator />
@@ -83,7 +70,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                         showChangeBackground={props.showChangeBackground}
                                         showSettings={props.showSettings}
                                         showExport={props.showExport}
-                                        showTitle={props.showTitle}
+                                        showScreenshot={props.showScreenshot}
                                         onChange={props.onChange}
                                         onSave={props.onSave}
                                         onLoad={handleLoad}
@@ -92,6 +79,11 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                             if (board.elements.length > 0) {
                                                 setExportVisible(true);
                                             }
+                                        }}
+                                        onScreenshot={() => {
+                                            board.setTool(null);
+                                            board.setAction(ACTIONS.SCREENSHOT);
+                                            board.update();
                                         }}
                                     />
                                 </React.Fragment>
@@ -148,16 +140,15 @@ Board.defaultProps = {
     onSave: null,
     onLoad: null,
     onResetBoard: null,
-    onLogo: null,
     onError: null,
     showExport: true,
     showLinks: true,
     showLoad: true,
     showSave: true,
-    showLogo: true,
     showMenu: true,
     showTitle: true,
     showResetBoard: true,
     showSettings: true,
     showChangeBackground: true,
+    showScreenshot: true,
 };

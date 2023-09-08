@@ -131,7 +131,7 @@ const tools = {
 const PickPanel = props => {
     const classList = classNames({
         "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-4": true,
-        "bg-white border border-gray-300": true, // props.theme === THEMES.LIGHT,
+        "bg-white border-2 border-gray-900": true, // props.theme === THEMES.LIGHT,
         // "bg-gray-900": props.theme === THEMES.DARK,
     });
     const style = {
@@ -144,7 +144,7 @@ const PickPanel = props => {
                 data={props.values}
                 items={props.items}
                 separator={(
-                    <div className="w-px h-6 bg-gray-300" />
+                    <div className="border-l-2 border-gray-600 h-6" />
                 )}
                 onChange={props.onChange}
             />
@@ -155,8 +155,8 @@ const PickPanel = props => {
 const Panel = props => {
     const panelWrapperClass = classNames(props.className, "absolute z-5 select-none");
     const panelContentClass = classNames({
-        "border border-gray-300": true,
-        "rounded-xl shadow-md items-center bg-white flex gap-2 p-2": true,
+        "border-2 border-gray-900": true,
+        "rounded-xl shadow-md items-center bg-white flex gap-2 p-1": true,
         // "flex-col": props.direction === "col",
     });
 
@@ -208,7 +208,7 @@ PanelButton.defaultProps = {
 };
 
 const PanelSeparator = () => (
-    <div className="bg-gray-300 w-px h-12" />
+    <div className="bg-gray-500 w-px h-12" />
 );
 
 // Tools Panel component

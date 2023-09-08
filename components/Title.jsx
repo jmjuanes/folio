@@ -4,6 +4,7 @@ import {useBoard} from "../contexts/BoardContext.jsx";
 
 const previewStyle = {
     maxWidth: "13rem",
+    minWidth: "13rem",
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
@@ -21,8 +22,8 @@ export const Title = props => {
     return (
         <div className="flex items-center">
             {!editing && (
-                <div className="leading-tight px-2 py-2 rounded-md hover:bg-gray-200" onClick={() => setEditing(true)}>
-                    <div className="w-full font-bold text-gray-600" style={previewStyle}>
+                <div className="cursor-pointer leading-tight px-2 py-2 rounded-md hover:bg-gray-200" onClick={() => setEditing(true)}>
+                    <div className="w-full font-bold text-gray-900" style={previewStyle}>
                         <strong>{board.title}</strong>
                     </div>
                 </div>
@@ -35,12 +36,12 @@ export const Title = props => {
                     className={classNames({
                         "outline-none font-bold leading-none": true,
                         "w-56 px-2 py-2 rounded-md": true,
-                        "text-gray-800 bg-gray-200": true,
+                        "text-white bg-gray-900": true,
                     })}
                     placeholder="Untitled"
                     onKeyUp={event => (event.key === "Enter") && setEditing(false)}
                     onChange={event => {
-                        board.title = event.target?.value || "Untitled";
+                        board.title = (event.target?.value || "Untitled").trim();
                         props?.onChange?.({
                             title: board.title,
                         });

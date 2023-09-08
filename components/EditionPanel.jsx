@@ -257,8 +257,8 @@ const useValues = selection => {
 const ButtonsWrapper = props => {
     const classList = classNames({
         "rounded-lg shadow-md flex items-center gap-1 relative p-1": true,
-        "bg-gray-900 text-white": props.theme === THEMES.DARK,
-        "bg-white text-gray-900 border border-gray-300": props.theme === THEMES.LIGHT,
+        // "bg-gray-900 text-white": props.theme === THEMES.DARK,
+        "bg-white text-gray-900 border-2 border-gray-900": props.theme === THEMES.LIGHT,
     });
     return (
         <div className={classList}>
@@ -271,10 +271,10 @@ const Button = props => {
     const classList = classNames(props.className, {
         "rounded-md flex justify-center items-center flex gap-0 p-3 cursor-pointer": true,
         "px-2": props.showChevron,
-        "text-white hover:bg-gray-800": props.theme === THEMES.DARK && !props.active,
-        "text-white bg-gray-800": props.theme === THEMES.DARK && props.active,
-        "text-gray-900 hover:bg-gray-100": props.theme === THEMES.LIGHT && !props.active,
-        "text-gray-900 bg-gray-200": props.theme === THEMES.LIGHT && props.active,
+        // "text-white hover:bg-gray-800": props.theme === THEMES.DARK && !props.active,
+        // "text-white bg-gray-800": props.theme === THEMES.DARK && props.active,
+        "text-gray-900 hover:bg-gray-200": props.theme === THEMES.LIGHT && !props.active,
+        "text-white bg-gray-900": props.theme === THEMES.LIGHT && props.active,
     });
     return (
         <div className={classList} style={props.style} onClick={props.onClick}>
@@ -306,8 +306,8 @@ const ActiveSectionWrapper = props => {
         "absolute left-half p-3 rounded-lg shadow-md": true,
         "top-full mt-2": !props.alignToTop,
         "bottom-full mb-2": props.alignToTop,
-        "bg-white border border-gray-300": props.theme === THEMES.LIGHT,
-        "bg-gray-900": props.theme === THEMES.DARK,
+        "bg-white border border-gray-900": props.theme === THEMES.LIGHT,
+        // "bg-gray-900": props.theme === THEMES.DARK,
     });
     return (
         <div className={classList} style={{transform: "translateX(-50%)"}}>
@@ -330,7 +330,7 @@ ActiveSectionWrapper.defaultProps = {
 const Separator = props => {
     const classList = classNames({
         "w-px h-10": true,
-        "bg-gray-200": props.theme === THEMES.LIGHT,
+        "bg-gray-500": props.theme === THEMES.LIGHT,
         "bg-white o-20": props.theme === THEMES.DARK,
     });
     return (
