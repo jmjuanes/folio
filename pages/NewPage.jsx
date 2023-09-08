@@ -1,31 +1,39 @@
 import React from "react";
-import {CloseIcon} from "@josemi-icons/react";
-import {PrimaryButton} from "./Button.jsx";
-import {COVER_COLORS} from "../utils/colors.js";
 import classNames from "classnames";
+import {CloseIcon} from "@josemi-icons/react";
+import {PrimaryButton} from "../components/Button.jsx";
+import {useClient} from "../contexts/ClientContext.jsx";
+import {useRouter} from "../contexts/RouterContext.jsx";
+import {COVER_COLORS} from "../utils/colors.js";
 
-export const BoardCreate = props => {
+export const NewPage = () => {
+    const {redirect} = useRouter();
+    const client = useClient();
     const [title, setTitle] = React.useState("");
     const [color, setColor] = React.useState("");
     const handleSubmit = () => {
         if (title && title.length > 0 && color) {
-            return props.onSubmit({
+            const boardData = {
                 title: title,
                 coverColor: color,
                 coverImage: null,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
-            });
+            };
+            client.addBoard(boardData)
+                .then(response => redirect(`board/${response.id}`))
+                .catch(error => console.error(error));
         }
     };
+
     return (
-        <div className="fixed top-0 left-0 w-full h-full bg-white flex items-center justify-center">
-            <div className="absolute top-0 right-0 mt-12 mr-12 select-none">
-                <div className="flex text-7xl text-gray-500 hover:text-gray-900 cursor-pointer" onClick={props.onCancel}>
+        <div className="w-full minh-screen bg-white flex items-center justify-center">
+            <a href="#" className="no-underline fixed top-0 right-0 mt-12 mr-12 select-none">
+                <div className="flex text-7xl text-gray-900 hover:text-gray-800 cursor-pointer">
                     <CloseIcon />
                 </div>
-            </div>
-            <div className="w-full maxw-xl">
+            </a>
+            <div className="w-full maxw-xl py-32">
                 <div className="font-crimson font-black text-7xl text-gray-900 select-none tracking-tight">
                     <span>New Board</span>
                 </div>
@@ -83,9 +91,4 @@ export const BoardCreate = props => {
             </div>
         </div>
     );
-};
-
-BoardCreate.defaultProps = {
-    onSubmit: null,
-    onCancel: null,
 };
