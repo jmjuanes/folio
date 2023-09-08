@@ -6,11 +6,38 @@ const RouterContext = React.createContext("");
 export const useRouter = () => {
     const currentPath = React.useContext(RouterContext);
     return {
-        currentPath: currentPath,
+        currentPath: currentPath || "#",
         redirect: newPath => {
             window.location.hash = newPath;
         },
     };
+};
+
+export const Route = props => {
+    const {currentPath} = useRouter();
+    // Check if the current path matches the provided regex
+    if (props.test.test(currentPath)) {
+        return props.render();
+    }
+    // Other case, return nothing
+    return null;
+};
+
+export const Switch = props => {
+    const {currentPath} = useRouter();
+    let matchFound = false;
+    let element = null;
+    React.Children.forEach(props.children, child => {
+        if (!matchFound && React.isValidElement(child)) {
+            // Save this element --> If no route matches, we will render the last child automatically
+            element = child;
+            if (child.props.test) {
+                matchFound = child.props.test === "*" || child.props.test.test(currentPath);
+            }
+        }
+    });
+    // Return the element 
+    return element?.props?.render?.() || null;
 };
 
 // Export router provider
