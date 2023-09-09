@@ -1,6 +1,10 @@
 import {create} from "react-test-renderer";
 import {Modal} from "./Modal.jsx";
 
+jest.mock("@josemi-icons/react", () => ({
+    CloseIcon: jest.fn(() => "CLOSE_ICON"),
+}));
+
 describe("Modal", () => {
     it("should render", () => {
         const testRenderer = create(<Modal>Content</Modal>);
