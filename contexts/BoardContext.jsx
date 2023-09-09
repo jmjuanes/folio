@@ -26,6 +26,12 @@ export const useBoard = () => {
     return React.useContext(BoardContext);
 };
 
+export const withBoard = fn => {
+    return props => {
+        return fn(props, useBoard());
+    };
+};
+
 export const BoardProvider = props => {
     const forceUpdate = useForceUpdate()[1];
     const board = React.useRef(null);

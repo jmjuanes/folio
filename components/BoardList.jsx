@@ -1,8 +1,7 @@
 import React from "react";
-import {DownloadIcon, DrawingIcon, PlusCircleIcon, UploadIcon} from "@josemi-icons/react";
+import {DownloadIcon, DrawingIcon, ImageSlashIcon, renderIcon} from "@josemi-icons/react";
 import {EditIcon, DotsVerticalIcon, TrashIcon, CopyIcon} from "@josemi-icons/react";
 import {Dropdown, DropdownItem, DropdownSeparator} from "./Dropdown.jsx";
-import {BoardCover} from "./BoardCover.jsx";
 import {useDelay} from "../hooks/index.js";
 
 const BoardEmpty = props => (
@@ -32,22 +31,13 @@ const BoardEmpty = props => (
 );
 
 const BoardItem = props => (
-    <div className="w-full select-none">
-        <div className="group flex items-center justify-center w-full h-40">
-            <BoardCover
-                color={props.coverColor}
-                onClick={props.onClick}
-            />
-        </div>
-        <div className="flex items-center justify-between flex-nowrap mt-2">
-            <div className="flex items-center gap-1 cursor-pointer" onClick={props.onClick}>
-                <div className="flex font-bold">
-                    <span>{props.title || "untitled"}</span>
-                </div>
-            </div>
+    <div className="w-full select-none relative">
+        <div className="absolute top-0 right-0 mt-1 mr-1">
             <div className="flex relative group" tabIndex="0">
-                <div className="flex hover:bg-gray-200 group-focus-within:bg-gray-200 rounded-md p-1 cursor-pointer">
-                    <DotsVerticalIcon />
+                <div className="flex bg-white hover:bg-gray-200 group-focus-within:bg-gray-900 rounded-full p-2 cursor-pointer">
+                    <div className="flex group-focus-within:text-white">
+                        <DotsVerticalIcon />
+                    </div>
                 </div>
                 <Dropdown className="hidden group-focus-within:block absolute top-full right-0 mt-1 z-5">
                     <DropdownItem
@@ -69,7 +59,19 @@ const BoardItem = props => (
                 </Dropdown>
             </div>
         </div>
-        <div className="flex flex-nowrap gap-3">
+        <div className="w-full cursor-pointer" onClick={props.onClick}>
+            <div className="w-full h-32 rounded-lg border-2 border-gray-900 flex items-center justify-center">
+                <div className="text-gray-700 text-5xl flex">
+                    <ImageSlashIcon />
+                </div>
+            </div>
+        </div>
+        <div className="flex items-center justify-between flex-nowrap mt-2">
+            <div className="cursor-pointer text-center w-full" onClick={props.onClick}>
+                <span className="font-bold">{props.title || "untitled"}</span>
+            </div>
+        </div>
+        <div className="flex flex-nowrap gap-3 justify-center">
             <div className="flex items-center gap-1 text-gray-500">
                 <div className="text-xs flex items-center">
                     <EditIcon />
@@ -82,23 +84,51 @@ const BoardItem = props => (
     </div>
 );
 
+const BoardActionButton = props => (
+    <div className="cursor-pointer" onClick={props.onClick}>
+        <div className="rounded-md hover:bg-gray-200 text-gray-600 flex items-center gap-1 p-2">
+            <div className="text-lg flex">
+                {renderIcon(props.icon)}
+            </div>
+            <div className="text-xs font-bold">
+                <span>{props.text}</span>
+            </div>
+        </div>
+    </div>
+);
+
 export const BoardList = props => {
     const [boards, setBoards] = React.useState(null);
     useDelay(props.delay, () => {
-        return props.loadItems().then(items => {
+        return props.data().then(items => {
             setBoards(items);
         });
     });
     return (
         <div className="w-full">
             {props.title && (
-                <div className="mb-6">
-                    <div className="flex justify-between items-center">
-                        <div className="font-crimson text-5xl font-black leading-none tracking-tight">
-                            <span>{props.title}</span>
-                        </div>
+                <div className="flex justify-between items-center mb-8 select-none">
+                    <div className="font-crimson text-5xl font-black leading-none tracking-tight">
+                        <span>{props.title}</span>
                     </div>
-                    <div className="w-full h-px bg-gray-300 mt-2" />
+                    {(boards && boards.length > 0) && (
+                        <div className="flex items-center gap-2">
+                            {props.showCreate && (
+                                <BoardActionButton
+                                    text="Create Board"
+                                    icon="file-plus"
+                                    onClick={props.onCreate}
+                                />
+                            )}
+                            {props.showLoad && (
+                                <BoardActionButton
+                                    text="Import Board"
+                                    icon="upload"
+                                    onClick={props.onLoad}
+                                />
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
             {/* No data to display... yet */}
@@ -122,18 +152,6 @@ export const BoardList = props => {
             {/* Render boards items */}
             {(boards && boards.length > 0) && (
                 <div className="grid grid-cols-4 gap-8">
-                    {props.showCreate && (
-                        <div className="flex cursor-pointer select-none" onClick={props.onCreate}>
-                            <div className="w-full flex flex-col items-center justify-center bg-gray-900 hover:bg-gray-800 rounded-xl">
-                                <div className="flex text-7xl text-white mb-2">
-                                    <PlusCircleIcon />
-                                </div>
-                                <div className="text-center text-gray-300 text-sm">
-                                    <strong>New Board</strong>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                     {boards.map(board => (
                         <BoardItem
                             key={board.id}
@@ -149,27 +167,14 @@ export const BoardList = props => {
                     ))}
                 </div>
             )}
-            {/* Render import board */}
-            {(props.showLoad && !!boards && boards.length > 0) && (
-                <div className="mt-12 flex justify-center select-none">
-                    <div className="flex items-center rounded-lg px-3 py-2 hover:bg-gray-200 cursor-pointer" onClick={props.onLoad}>
-                        <div className="flex items-center text-sm text-gray-500 mr-1">
-                            <UploadIcon />
-                        </div>
-                        <div className="text-xs text-gray-500">
-                            <span>You can also import a board from a local file...</span>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
 
 BoardList.defaultProps = {
     delay: 1000,
+    data: null,
     title: "",
-    loadItems: null,
     showCreate: true,
     showLoad: true,
     onCreate: null,

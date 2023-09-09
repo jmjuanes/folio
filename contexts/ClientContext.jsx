@@ -114,5 +114,5 @@ export const ClientProvider = props => {
 };
 
 ClientProvider.defaultProps = {
-    delay: 1,
+    delay: 1000,
 };

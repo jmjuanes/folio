@@ -11,8 +11,8 @@ export const Menu = props => {
     const board = useBoard();
     return (
         <div className="flex relative group" tabIndex="0">
-            <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 group-focus-within:bg-gray-200 rounded-md py-1 px-2">
-                <div className="flex items-center text-2xl text-gray-900">
+            <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 group-focus-within:bg-gray-900 rounded-md py-1 px-2">
+                <div className="flex items-center text-2xl text-gray-900 group-focus-within:text-white">
                     <BarsIcon />
                 </div>
             </div>
@@ -35,6 +35,7 @@ export const Menu = props => {
                     <DropdownItem
                         icon={(<ImageIcon />)}
                         text="Export image..."
+                        disabled={board.elements.length === 0}
                         onClick={props.onExport}
                     />
                 )}
@@ -109,9 +110,11 @@ Menu.defaultProps = {
     showChangeBackground: true,
     showLinks: true,
     showExport: true,
+    showScreenshot: true,
     onChange: null,
     onSave: null,
     onResetBoard: null,
     onLoad: null,
     onExport: null,
+    onScreenshot: null,
 };

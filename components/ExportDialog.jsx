@@ -66,12 +66,14 @@ export const ExportDialog = props => {
     return (
         <Modal maxWidth={props.width}>
             <div className="flex items-center justify-between mb-8">
-                <div className="font-bold text-lg">Export image</div>
-                <div data-testid="export-close" className="flex items-center cursor-pointer text-2xl text-gray-500 hover:text-gray-700" onClick={props.onClose}>
-                    <CloseIcon />
+                <div className="font-bold text-2xl">Export image</div>
+                <div data-testid="export-close" className="flex items-center cursor-pointer" onClick={props.onClose}>
+                    <div className="flex text-4xl text-gray-900 hover:text-gray-800">
+                        <CloseIcon />
+                    </div>
                 </div>
             </div>
-            <div data-testid="export-preview" className="select-none mb-4 border border-gray-300">
+            <div data-testid="export-preview" className="select-none mb-4 rounded border-2 border-gray-900">
                 {!!preview && (
                     <div className="flex items-center justify-center h-48" style={previewStyle}>
                         <img
@@ -135,7 +137,7 @@ export const ExportDialog = props => {
 };
 
 ExportDialog.defaultProps = {
-    width: "20rem",
+    width: "22rem",
     copiedToClipboardMessageDelay: 2000,
     cropRegion: null,
     onClose: null,

@@ -1,20 +1,14 @@
 import React from "react";
-import classNames from "classnames";
-import {DrawingIcon} from "@josemi-icons/react";
+import {ACTIONS} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
+import {HeaderContainer, HeaderButton, HeaderSeparator} from "./HeaderCommons.jsx";
 import {Layout} from "./Layout.jsx";
 import {Renderer} from "./Renderer.jsx";
 import {ContextMenu} from "./ContextMenu.jsx";
 import {Menu} from "./Menu.jsx";
 import {Title} from "./Title.jsx";
 import {ExportDialog} from "./ExportDialog.jsx";
-
-const HeaderSeparator = () => (
-    <div className="first:hidden flex items-center">
-        <div className="w-px h-8 bg-gray-300" />
-    </div>
-);
 
 const InnerBoard = React.forwardRef((props, ref) => {
     const {showConfirm} = useConfirm();
@@ -41,16 +35,14 @@ const InnerBoard = React.forwardRef((props, ref) => {
         // Just call the onLoad listener
         props.onLoad?.();
     };
-    // Handle screenshot
-    const handleScreenshot = region => {
-        setScreenshotRegion(region);
-        setExportVisible(true);
-    };
     return (
         <div className="relative overflow-hidden h-full w-full select-none">
             <Renderer
                 onChange={props.onChange}
-                onScreenshot={handleScreenshot}
+                onScreenshot={region => {
+                    setScreenshotRegion(region);
+                    setExportVisible(true);
+                }}
             />
             {board.state.contextMenuVisible && (
                 <ContextMenu onChange={props.onChange} />
@@ -60,41 +52,23 @@ const InnerBoard = React.forwardRef((props, ref) => {
                 showTitle={true}
                 headerLeftContent={(
                     <React.Fragment>
-                        <div className="flex gap-1 border border-gray-300 p-1 rounded-lg bg-white">
-                            {props.showLogo && (
-                                <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 rounded-md py-1 px-2" onClick={props.onLogo}>
-                                    <div className="flex items-center text-2xl text-gray-900">
-                                        <DrawingIcon />
-                                    </div>
-                                    <div className="flex items-center select-none font-crimson text-3xl leading-none">
-                                        <span className="font-black leading-none text-gray-900">Folio.</span>
-                                    </div>
-                                </div>
-                            )}
+                        <HeaderContainer>
                             {props.showMenu && (
-                                <React.Fragment>
-                                    <HeaderSeparator />
-                                    <Menu
-                                        links={props.links}
-                                        showLinks={props.showLinks}
-                                        showLoad={props.showLoad}
-                                        showSave={props.showSave}
-                                        showResetBoard={props.showResetBoard}
-                                        showChangeBackground={props.showChangeBackground}
-                                        showSettings={props.showSettings}
-                                        showExport={props.showExport}
-                                        showTitle={props.showTitle}
-                                        onChange={props.onChange}
-                                        onSave={props.onSave}
-                                        onLoad={handleLoad}
-                                        onResetBoard={handleResetBoard}
-                                        onExport={() => {
-                                            if (board.elements.length > 0) {
-                                                setExportVisible(true);
-                                            }
-                                        }}
-                                    />
-                                </React.Fragment>
+                                <Menu
+                                    links={props.links}
+                                    showLinks={props.showLinks}
+                                    showLoad={props.showLoad}
+                                    showSave={props.showSave}
+                                    showResetBoard={props.showResetBoard}
+                                    showChangeBackground={props.showChangeBackground}
+                                    showSettings={props.showSettings}
+                                    showExport={props.showExport}
+                                    onChange={props.onChange}
+                                    onSave={props.onSave}
+                                    onLoad={handleLoad}
+                                    onResetBoard={handleResetBoard}
+                                    onExport={() => setExportVisible(true)}
+                                />
                             )}
                             {props.showTitle && (
                                 <React.Fragment>
@@ -102,7 +76,21 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                     <Title onChange={props.onChange} />
                                 </React.Fragment>
                             )}
-                        </div>
+                            {props.showScreenshot && (
+                                <React.Fragment>
+                                    <HeaderSeparator />
+                                    <HeaderButton
+                                        icon="camera"
+                                        disabled={board.elements.length === 0}
+                                        onClick={() => {
+                                            board.setTool(null);
+                                            board.setAction(ACTIONS.SCREENSHOT);
+                                            board.update();
+                                        }}
+                                    />
+                                </React.Fragment>
+                            )}
+                        </HeaderContainer>
                         {props.headerLeftContent}
                     </React.Fragment>
                 )}
@@ -148,16 +136,15 @@ Board.defaultProps = {
     onSave: null,
     onLoad: null,
     onResetBoard: null,
-    onLogo: null,
     onError: null,
     showExport: true,
     showLinks: true,
     showLoad: true,
     showSave: true,
-    showLogo: true,
     showMenu: true,
     showTitle: true,
     showResetBoard: true,
     showSettings: true,
     showChangeBackground: true,
+    showScreenshot: true,
 };
