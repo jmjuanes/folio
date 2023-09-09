@@ -18,7 +18,7 @@ export const Button = props => {
             )}
             {!!props.text && (
                 <div className={props.textClassName} data-testid="btn-text">
-                    {props.text}
+                    <strong>{props.text}</strong>
                 </div>
             )}
         </div>
@@ -51,7 +51,7 @@ export const PrimaryButton = props => (
 export const SecondaryButton = props => (
     <Button
         testid="btn-secondary"
-        className="bg-white hover:bg-gray-100 border border-gray-300"
+        className="bg-white hover:bg-gray-900 hover:text-white border-2 border-gray-900"
         textClassName="text-sm"
         iconClassName="text-xl"
         {...props}
