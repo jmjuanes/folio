@@ -1,7 +1,5 @@
 import React from "react";
-import classNames from "classnames";
 import {fileOpen} from "browser-fs-access";
-import {CameraIcon} from "@josemi-icons/react";
 import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";
@@ -9,7 +7,6 @@ import {useBoard} from "../contexts/BoardContext.jsx";
 import {blobToDataUrl} from "../utils/blob.js";
 import {Zooming} from "./Zooming.jsx";
 import {History} from "./History.jsx";
-import {SecondaryButton} from "./Button.jsx";
 
 export const Layout = props => {
     const board = useBoard();
@@ -93,17 +90,6 @@ export const Layout = props => {
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7">
                         <div className="flex gap-2">
-                            {props.showScreenshot && (
-                                <SecondaryButton
-                                    icon={(<CameraIcon />)}
-                                    disabled={board.elements.length === 0}
-                                    onClick={() => {
-                                        board.setTool(null);
-                                        board.setAction(ACTIONS.SCREENSHOT);
-                                        board.update();
-                                    }}
-                                />
-                            )}
                             {props.showHistory && (
                                 <History
                                     onUndoClick={() => {
@@ -144,7 +130,6 @@ Layout.defaultProps = {
     showHeader: false,
     showFooter: false,
     showZoom: true,
-    showScreenshot: true,
     showHistory: true,
     showTools: true,
     showEdition: true,

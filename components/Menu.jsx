@@ -1,5 +1,5 @@
 import React from "react";
-import {BarsIcon, CameraIcon} from "@josemi-icons/react";
+import {BarsIcon} from "@josemi-icons/react";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {ColorPicker} from "./ColorPicker.jsx";
@@ -35,15 +35,8 @@ export const Menu = props => {
                     <DropdownItem
                         icon={(<ImageIcon />)}
                         text="Export image..."
-                        onClick={props.onExport}
-                    />
-                )}
-                {props.showScreenshot && (
-                    <DropdownItem
-                        icon={(<CameraIcon />)}
-                        text="Take screenshot..."
                         disabled={board.elements.length === 0}
-                        onClick={props.onScreenshot}
+                        onClick={props.onExport}
                     />
                 )}
                 {props.showResetBoard && (
