@@ -1,6 +1,6 @@
 import {fileOpen, fileSave} from "browser-fs-access";
 import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "../constants.js";
-import {BACKGROUND_COLORS, COVER_COLORS} from "../utils/colors.js";
+import {BACKGROUND_COLORS} from "../utils/colors.js";
 import {migrate} from "./migrate.js";
 
 // Read from blob as text
@@ -20,10 +20,9 @@ export const saveAsJson = data => {
         source: null,
         version: VERSION,
         title: data?.title || "Untitled",
+        thumbnail: null,
         createdAt: data?.createdAt,
         updatedAt: data?.updatedAt,
-        coverColor: data?.coverColor ?? COVER_COLORS.charcoal,
-        coverImage: data?.coverImage,
         elements: elements,
         assets: elements.reduce((assets, element) => {
             // Copy only assets in the elements list

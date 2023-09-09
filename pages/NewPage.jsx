@@ -1,22 +1,17 @@
 import React from "react";
-import classNames from "classnames";
 import {CloseIcon} from "@josemi-icons/react";
 import {PrimaryButton} from "../components/Button.jsx";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useRouter} from "../contexts/RouterContext.jsx";
-import {COVER_COLORS} from "../utils/colors.js";
 
 export const NewPage = () => {
     const {redirect} = useRouter();
     const client = useClient();
     const [title, setTitle] = React.useState("");
-    const [color, setColor] = React.useState("");
     const handleSubmit = () => {
-        if (title && title.length > 0 && color) {
+        if (title && title.length > 0) {
             const boardData = {
                 title: title,
-                coverColor: color,
-                coverImage: null,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
             };
@@ -40,7 +35,7 @@ export const NewPage = () => {
                 {/* Board title */}
                 <div className="mt-10">
                     <div className="text-lg text-gray-600 mb-3 select-none">
-                        First, let's start giving a name to your new board:
+                        <span>Start giving a name to your new board:</span>
                     </div>
                     <input
                         type="text"
@@ -49,35 +44,8 @@ export const NewPage = () => {
                         onChange={event => setTitle(event?.target?.value || "")}
                     />
                 </div>
-                {/* Board cover color */}
-                <div className={title ? "o-100" : "o-10"}>
-                    <div className="mt-10 select-none">
-                        <div className="text-lg text-gray-600 mb-3 select-none">
-                            Great! Now, let's choose a color for the board cover:
-                        </div>
-                    </div>
-                    <div className="mt-4 w-full flex flex-nowrap justify-between">
-                        {Object.entries(COVER_COLORS).map(([colorKey, colorValue]) => (
-                            <div className="flex flex-col items-center gap-3 h-24" key={colorKey}>
-                                <div
-                                    className={classNames({
-                                        "cursor-pointer w-16 h-16 rounded-full": true,
-                                        "o-50 hover:o-100": color !== colorValue,
-                                    })}
-                                    style={{
-                                        backgroundColor: colorValue,
-                                    }}
-                                    onClick={() => setColor(colorValue)}
-                                />
-                                <div className="text-center text-2xs text-gray-500 capitalize">
-                                    <span>{colorKey.replace(/([A-Z])/g, " $1")}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
                 {/* Submit button */}
-                <div className={title && color ? "o-100" : "o-10"}>
+                <div className={title ? "o-100" : "o-10"}>
                     <div className="flex w-full mt-20">
                         <PrimaryButton
                             text="Create Board"

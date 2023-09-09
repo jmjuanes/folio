@@ -56,17 +56,6 @@ export const BACKGROUND_COLORS = {
     red: "#fceae8",
 };
 
-// Special colors for board covers
-export const COVER_COLORS = {
-    charcoal: "#314d63",
-    chineseViolet: "#78586f",
-    celeste: "#b2e8e8",
-    cambridgeBlue: "#8fb9ab",
-    sunglow: "#ffcb47",
-    salmon: "#f08976",
-    brunswickGreen: "#2f4c42",
-};
-
 // Pick a color from the color palette
 export const pickColor = (name, shade = 0) => {
     return (Array.isArray(COLORS[name]) ? COLORS[name][shade] : COLORS[name]) || COLORS.black;

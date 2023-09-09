@@ -158,7 +158,6 @@ export const BoardList = props => {
                             id={board.id}
                             title={board.title}
                             updatedAt={board.updatedAt}
-                            coverColor={board.coverColor}
                             onClick={() => props.onBoardClick?.(board.id)}
                             onSave={() => props.onBoardSave?.(board.id)}
                             onDelete={() => props.onBoardDelete?.(board.id)}
