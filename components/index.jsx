@@ -11,6 +11,5 @@ export * from "./Canvas.jsx";
 
 // Export layout components
 export * from "./ContextMenu.jsx";
-export * from "./Layout.jsx";
 export * from "./Menu.jsx";
 export * from "./Renderer.jsx";
