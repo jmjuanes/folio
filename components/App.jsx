@@ -50,7 +50,9 @@ export const App = () => (
                         </a>
                         <div className="bg-gray-300 w-full h-px" />
                         <NavigationItem path="#" text="Home" icon="home" />
+                        {/*
                         <NavigationItem path="#settings" text="Settings" icon="cog" />
+                        */}
                     </div>
                 </div>
                 <div className="w-full maxw-7xl mx-auto px-8 minh-0">
