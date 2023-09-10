@@ -27,7 +27,13 @@ const InnerBoard = React.forwardRef((props, ref) => {
         return showConfirm({
             title: "Clear board",
             message: "This will clear the whole board. Do you want to continue?",
-            callback: () => props.onResetBoard?.(),
+            callback: () => {
+                board.clear();
+                props?.onChange?.({
+                    elements: board.elements,
+                    assets: board.assets,
+                });
+            },
         });
     };
     // Handle load
@@ -221,7 +227,6 @@ Board.defaultProps = {
     onChange: null,
     onSave: null,
     onLoad: null,
-    onResetBoard: null,
     onError: null,
     showExport: true,
     showLinks: true,

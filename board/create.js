@@ -77,6 +77,11 @@ export const createBoard = props => ({
     update() {
         return props?.onUpdate?.();
     },
+    clear() {
+        this.elements = [];
+        this.assets = {};
+        this.clearHistory();
+    },
     export(elementsToExport) {
         const elements = elementsToExport || this.elements;
         return {
