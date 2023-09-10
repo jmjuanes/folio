@@ -5,7 +5,6 @@ import {ClientProvider} from "./contexts/ClientContext.jsx";
 import {ConfirmProvider} from "./contexts/ConfirmContext.jsx";
 import {App} from "./components/App.jsx";
 
-// TODO: we need to remove this import and add a new styles.css file
 import "lowcss/dist/low.css";
 
 // Mount app component
