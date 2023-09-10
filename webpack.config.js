@@ -23,6 +23,15 @@ module.exports = {
         hot: false,
         static: {
             directory: path.join(__dirname, "www"),
+            staticOptions: {
+                extensions: ["html"],
+            },
+        },
+        historyApiFallback: {
+            rewrites: [
+                {from: /^\/$/, to: "app.html"},
+                {from: /^\/index.html$/, to: "app.html"},
+            ],
         },
         devMiddleware: {
             writeToDisk: true,
@@ -78,6 +87,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "index.html"),
+            filename: "app.html",
             inject: true,
         }),
     ],
