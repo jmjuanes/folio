@@ -2,13 +2,14 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const package = require("./package.json");
 
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: path.join(__dirname, "index.jsx"),
+    entry: {
+        app: path.join(__dirname, "index.jsx"),
+    },
     output: {
         path: path.join(__dirname, "www"),
         publicPath: "./",
@@ -69,9 +70,6 @@ module.exports = {
             {
                 test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
                 type: "asset/resource",
-                // generator: {
-                //     filename: "fonts/[hash][ext][query]",
-                // },
             },
         ],
     },
@@ -88,13 +86,8 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "index.html"),
-            filename: "app.html",
+            filename: "[name].html",
             inject: true,
-        }),
-        new CopyWebpackPlugin({
-            patterns: [
-                path.join(__dirname, "node_modules", "lowcss", "dist/low.css"),
-            ],
         }),
     ],
 };
