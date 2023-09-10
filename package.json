@@ -11,6 +11,7 @@
         "build": "yarn clean && yarn build:app && yarn build:static",
         "build:app": "cross-env NODE_ENV=production webpack build",
         "build:static": "cp static/** ./www/",
+        "postbuild:static": "cp ./node_modules/lowcss/dist/low.css www/",
         "clean": "rm -rf ./www",
         "dev": "yarn clean && webpack serve",
         "serve": "serve ./www",
