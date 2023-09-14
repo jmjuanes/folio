@@ -10,15 +10,16 @@
     "scripts": {
         "build": "yarn clean && yarn build:app && yarn build:static",
         "build:app": "cross-env NODE_ENV=production webpack build",
-        "build:static": "cp static/** ./www/",
-        "postbuild:static": "cp ./node_modules/lowcss/dist/low.css www/",
-        "clean": "rm -rf ./www",
+        "build:static": "cp static/** www/",
+        "postbuild:static": "cp node_modules/lowcss/dist/low.css www/ && cp node_modules/@josemi-icons/svg/sprite.svg www/",
+        "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
-        "serve": "serve ./www",
+        "serve": "serve www",
         "test": "jest"
     },
     "dependencies": {
-        "@josemi-icons/react": "^0.3.2",
+        "@josemi-icons/react": "^0.4.0",
+        "@josemi-icons/svg": "^0.4.0",
         "browser-fs-access": "^0.33.1",
         "classnames": "^2.3.2",
         "idb-keyval": "^6.2.0",
