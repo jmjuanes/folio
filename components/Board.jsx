@@ -1,5 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
+import {BarsIcon, CameraIcon} from "@josemi-icons/react";
 import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
@@ -13,15 +14,23 @@ import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";
 import {Zooming} from "./Zooming.jsx";
 import {History} from "./History.jsx";
+import {HintMessage, HINT_POSITION_BOTTOM, HINT_POSITION_TOP} from "./HintMessage.jsx";
 import {blobToDataUrl} from "../utils/blob.js";
 
 const InnerBoard = React.forwardRef((props, ref) => {
     const {showConfirm} = useConfirm();
     const board = useBoard();
+    const [hintVisible, setHintVisible] = React.useState(board.elements.length === 0);
     const [exportVisible, setExportVisible] = React.useState(false);
     const [screenshotRegion, setScreenshotRegion] = React.useState(null);
     const selectedElements = board.getSelectedElements();
     const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
+    // Effect to disable the visibility of the hint message
+    React.useEffect(() => {
+        if (board.elements.length > 0 && hintVisible) {
+            setHintVisible(false);
+        }
+    }, [board.elements.length]);
     // Handle board reset
     const handleResetBoard = () => {
         return showConfirm({
@@ -82,39 +91,44 @@ const InnerBoard = React.forwardRef((props, ref) => {
                 <ContextMenu onChange={props.onChange} />
             )}
             {props.showTools && !isScreenshot && (
-                <ToolsPanel
-                    style={{
-                        bottom: "1rem",
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                    }}
-                    onMoveClick={() => {
-                        board.setTool(null);
-                        board.setAction(ACTIONS.MOVE);
-                        board.update();
-                    }}
-                    onEraseClick={() => {
-                        board.setTool(null);
-                        board.setAction(ACTIONS.ERASE);
-                        board.update();
-                    }}
-                    onSelectionClick={() => {
-                        board.setTool(null);
-                        board.update();
-                    }}
-                    onToolClick={tool => {
-                        // Special action if the image tool is activated
-                        if (tool === ELEMENTS.IMAGE) {
-                            return handleImageLoad();
-                        }
-                        board.setTool(tool);
-                        board.update();
-                    }}
-                    onLockToolClick={() => {
-                        board.lockTool = !board.lockTool;
-                        board.update();
-                    }}
-                />
+                <div className="absolute z-5" style={{bottom:"1rem",left:"50%",transform:"translateX(-50%)"}}>
+                    <ToolsPanel
+                        onMoveClick={() => {
+                            board.setTool(null);
+                            board.setAction(ACTIONS.MOVE);
+                            board.update();
+                        }}
+                        onEraseClick={() => {
+                            board.setTool(null);
+                            board.setAction(ACTIONS.ERASE);
+                            board.update();
+                        }}
+                        onSelectionClick={() => {
+                            board.setTool(null);
+                            board.update();
+                        }}
+                        onToolClick={tool => {
+                            // Special action if the image tool is activated
+                            if (tool === ELEMENTS.IMAGE) {
+                                return handleImageLoad();
+                            }
+                            board.setTool(tool);
+                            board.update();
+                        }}
+                        onLockToolClick={() => {
+                            board.lockTool = !board.lockTool;
+                            board.update();
+                        }}
+                    />
+                    {(hintVisible && !board.activeTool) && (
+                        <HintMessage
+                            position={HINT_POSITION_TOP}
+                            title="Tools Panel"
+                            contentClassName="w-48 text-center"
+                            content="All the available tools. Pick one and start drawing!"
+                        />
+                    )}
+                </div>
             )}
             {props.showEdition && board.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <EditionPanel
@@ -163,31 +177,70 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                     />
                                 </React.Fragment>
                             )}
+                            {(hintVisible && !board.activeTool) && (
+                                <HintMessage position={HINT_POSITION_BOTTOM} title="Menu Panel" contentClassName="w-64">
+                                    <div className="w-full mt-1">
+                                        <div className="mb-2 text-center">Manage and configure your board.</div>
+                                        {props.showMenu && (
+                                            <div className="flex justify-center items-center gap-2 mb-1">
+                                                <div className="flex text-lg"><BarsIcon /></div>
+                                                <div className="">Export, save, preferences...</div>
+                                            </div>
+                                        )}
+                                        {props.showScreenshot && (
+                                            <div className="flex justify-center items-center gap-2 mb-1">
+                                                <div className="flex text-lg"><CameraIcon /></div>
+                                                <div className="">Take a screenshot</div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </HintMessage>
+                            )}
                         </HeaderContainer>
                         {props.headerLeftContent}
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
                         {props.showHistory && (
-                            <History
-                                onUndoClick={() => {
-                                    board.undo();
-                                    props.onChange?.({
-                                        elements: board.elements,
-                                    });
-                                }}
-                                onRedoClick={() => {
-                                    board.redo();
-                                    props.onChange?.({
-                                        elements: board.elements,
-                                    });
-                                }}
-                            />
+                            <div className="flex relative">
+                                <History
+                                    onUndoClick={() => {
+                                        board.undo();
+                                        props.onChange?.({
+                                            elements: board.elements,
+                                        });
+                                    }}
+                                    onRedoClick={() => {
+                                        board.redo();
+                                        props.onChange?.({
+                                            elements: board.elements,
+                                        });
+                                    }}
+                                />
+                                {(hintVisible && !board.activeTool) && (
+                                    <HintMessage
+                                        position={HINT_POSITION_BOTTOM}
+                                        title="History"
+                                        contentClassName="w-32 text-center"
+                                        content="Undo and redo changes."
+                                    />
+                                )}
+                            </div>
                         )}
                         {props.showZoom && (
-                            <Zooming
-                                onZoomInClick={() => board.zoomIn()}
-                                onZoomOutClick={() => board.zoomOut()}
-                            />
+                            <div className="flex relative">
+                                <Zooming
+                                    onZoomInClick={() => board.zoomIn()}
+                                    onZoomOutClick={() => board.zoomOut()}
+                                />
+                                {(hintVisible && !board.activeTool) && (
+                                    <HintMessage
+                                        position={HINT_POSITION_BOTTOM}
+                                        title="Zoom"
+                                        contentClassName="w-32 text-center"
+                                        content="Apply zoom to the board."
+                                    />
+                                )}
+                            </div>
                         )}
                         {props.headerRightContent}
                     </div>
