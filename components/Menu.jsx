@@ -43,6 +43,7 @@ export const Menu = props => {
                     <DropdownItem
                         icon={(<TrashIcon />)}
                         text="Reset the board"
+                        disabled={board.elements.length === 0}
                         onClick={props.onResetBoard}
                     />
                 )}
