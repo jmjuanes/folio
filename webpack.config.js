@@ -4,23 +4,26 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const package = require("./package.json");
 
+
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
     entry: {
         app: path.join(__dirname, "index.jsx"),
+        lite: path.join(__dirname, "lite.jsx"),
     },
     output: {
         path: path.join(__dirname, "www"),
         publicPath: "./",
-        filename: "[contenthash].js",
+        filename: "[name].[contenthash].js",
+        // chunkFilename: "[name].[contenthash].chunk.js",
         assetModuleFilename: "assets/[hash][ext][query]",
     },
-    optimization: {
-        splitChunks: {
-            chunks: "all",
-        },
-    },
+    // optimization: {
+    //     splitChunks: {
+    //         chunks: "all",
+    //     },
+    // },
     devServer: {
         hot: false,
         static: {
@@ -74,6 +77,7 @@ module.exports = {
         ],
     },
     plugins: [
+        new webpack.ProgressPlugin(),
         new MiniCssExtractPlugin({
             filename: "[contenthash].css",
             chunkFilename: "[id].css",
@@ -87,7 +91,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "index.html"),
             filename: "[name].html",
-            inject: true,
+            inject: false,
+            minify: true,
         }),
     ],
 };

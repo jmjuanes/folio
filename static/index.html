@@ -25,7 +25,7 @@
                 </div>
             </a>
             <div class="flex items-center">
-                <a href="./app" class="flex items-center px-4 py-2 rounded-full bg-gray-900 hover:bg-gray-800 no-underline">
+                <a href="" data-role="launcher-btn" class="cursor-pointer flex items-center px-4 py-2 rounded-full bg-gray-900 hover:bg-gray-800 no-underline">
                     <strong class="text-md text-white">Try Folio</strong>
                 </a>
             </div>
@@ -46,8 +46,11 @@
                 <span>Sketch, design, and prototype with unparalleled freedom.</span>
             </div>
             <div class="flex mt-10">
-                <a href="./app" class="flex items-center px-6 py-4 rounded-full border-6 border-gray-900 hover:bg-gray-900 hover:text-white no-underline cursor-pointer">
+                <a href="" data-role="launcher-btn" class="flex items-center gap-2 px-6 py-4 rounded-full border-6 border-gray-900 hover:bg-gray-900 hover:text-white no-underline cursor-pointer">
                     <strong class="text-2xl">Start Sketching</strong>
+                    <div class="flex items-center">
+                        <svg class="w-10 h-10"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                    </div>
                 </a>
             </div>
         </div>
@@ -56,7 +59,10 @@
             <div class="w-full maxw-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
                 <!--Privacy -->
                 <div class="w-full maxw-xl">
-                    <div class="mb-2 text-lg font-bold">
+                    <div class="flex text-white mb-4">
+                        <svg class="w-48 h-48"><use xlink:href="sprite.svg#shield-check"></use></svg>
+                    </div>
+                    <div class="mb-2 text-lg font-bold o-80">
                         <span>Privacy First.</span>
                     </div>
                     <div class="font-crimson text-6xl md:text-7xl leading-none tracking-tight">
@@ -69,7 +75,10 @@
                 </div>
                 <!-- Infinite canvas -->
                 <div class="w-full maxw-xl">
-                    <div class="mb-2 text-lg font-bold">
+                    <div class="flex text-white mb-4">
+                        <svg class="w-48 h-48"><use xlink:href="sprite.svg#arrows-maximize"></use></svg>
+                    </div>
+                    <div class="mb-2 text-lg font-bold o-80">
                         <span>Sketch without constraints.</span>
                     </div>
                     <div class="font-crimson text-6xl md:text-7xl leading-none tracking-tight">
@@ -120,5 +129,6 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript" src="./launcher.js"></script>
 </body>
 </html>
