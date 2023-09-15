@@ -141,64 +141,66 @@ const InnerBoard = React.forwardRef((props, ref) => {
             {props.showHeader && !isScreenshot && (
                 <React.Fragment>
                     <div className="absolute top-0 left-0 pt-4 pl-4 z-7 flex gap-2">
-                        <HeaderContainer>
-                            {props.showMenu && (
-                                <Menu
-                                    links={props.links}
-                                    showLinks={props.showLinks}
-                                    showLoad={props.showLoad}
-                                    showSave={props.showSave}
-                                    showResetBoard={props.showResetBoard}
-                                    showChangeBackground={props.showChangeBackground}
-                                    showSettings={props.showSettings}
-                                    showExport={props.showExport}
-                                    onChange={props.onChange}
-                                    onSave={props.onSave}
-                                    onLoad={handleLoad}
-                                    onResetBoard={handleResetBoard}
-                                    onExport={() => setExportVisible(true)}
-                                />
-                            )}
-                            {props.showTitle && (
-                                <React.Fragment>
-                                    <HeaderSeparator />
-                                    <Title onChange={props.onChange} />
-                                </React.Fragment>
-                            )}
-                            {props.showScreenshot && (
-                                <React.Fragment>
-                                    <HeaderSeparator />
-                                    <HeaderButton
-                                        icon="camera"
-                                        disabled={board.elements.length === 0}
-                                        onClick={() => {
-                                            board.setTool(null);
-                                            board.setAction(ACTIONS.SCREENSHOT);
-                                            board.update();
-                                        }}
+                        <div className="relative flex gap-2">
+                            <HeaderContainer>
+                                {props.showMenu && (
+                                    <Menu
+                                        links={props.links}
+                                        showLinks={props.showLinks}
+                                        showLoad={props.showLoad}
+                                        showSave={props.showSave}
+                                        showResetBoard={props.showResetBoard}
+                                        showChangeBackground={props.showChangeBackground}
+                                        showSettings={props.showSettings}
+                                        showExport={props.showExport}
+                                        onChange={props.onChange}
+                                        onSave={props.onSave}
+                                        onLoad={handleLoad}
+                                        onResetBoard={handleResetBoard}
+                                        onExport={() => setExportVisible(true)}
                                     />
-                                </React.Fragment>
-                            )}
-                            {(welcomeHintVisible && !board.activeTool) && (
-                                <WelcomeHint position="bottom" title="Menu Panel" contentClassName="w-64">
-                                    <div className="w-full mt-1">
-                                        <div className="mb-2 text-center">Manage and configure your board.</div>
-                                        {props.showMenu && (
-                                            <div className="flex justify-center items-center gap-2 mb-1">
-                                                <div className="flex text-lg"><BarsIcon /></div>
-                                                <div className="">Export, save, preferences...</div>
-                                            </div>
-                                        )}
-                                        {props.showScreenshot && (
-                                            <div className="flex justify-center items-center gap-2 mb-1">
-                                                <div className="flex text-lg"><CameraIcon /></div>
-                                                <div className="">Take a screenshot</div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </WelcomeHint>
-                            )}
-                        </HeaderContainer>
+                                )}
+                                {props.showTitle && (
+                                    <React.Fragment>
+                                        <HeaderSeparator />
+                                        <Title onChange={props.onChange} />
+                                    </React.Fragment>
+                                )}
+                                {props.showScreenshot && (
+                                    <React.Fragment>
+                                        <HeaderSeparator />
+                                        <HeaderButton
+                                            icon="camera"
+                                            disabled={board.elements.length === 0}
+                                            onClick={() => {
+                                                board.setTool(null);
+                                                board.setAction(ACTIONS.SCREENSHOT);
+                                                board.update();
+                                            }}
+                                        />
+                                    </React.Fragment>
+                                )}
+                                {(welcomeHintVisible && !board.activeTool) && (
+                                    <WelcomeHint position="bottom" title="Menu Panel" contentClassName="w-64">
+                                        <div className="w-full mt-1">
+                                            <div className="mb-2 text-center">Manage and configure your board.</div>
+                                            {props.showMenu && (
+                                                <div className="flex justify-center items-center gap-2 mb-1">
+                                                    <div className="flex text-lg"><BarsIcon /></div>
+                                                    <div className="">Export, save, preferences...</div>
+                                                </div>
+                                            )}
+                                            {props.showScreenshot && (
+                                                <div className="flex justify-center items-center gap-2 mb-1">
+                                                    <div className="flex text-lg"><CameraIcon /></div>
+                                                    <div className="">Take a screenshot</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </WelcomeHint>
+                                )}
+                            </HeaderContainer>
+                        </div>
                         {props.headerLeftContent}
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
