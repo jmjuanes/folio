@@ -14,21 +14,23 @@ import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";
 import {Zooming} from "./Zooming.jsx";
 import {History} from "./History.jsx";
-import {HintMessage, HINT_POSITION_BOTTOM, HINT_POSITION_TOP} from "./HintMessage.jsx";
+import {WelcomeHint} from "./WelcomeHint.jsx";
 import {blobToDataUrl} from "../utils/blob.js";
 
 const InnerBoard = React.forwardRef((props, ref) => {
     const {showConfirm} = useConfirm();
     const board = useBoard();
-    const [hintVisible, setHintVisible] = React.useState(board.elements.length === 0);
+    const [welcomeHintVisible, setWelcomeHintVisible] = React.useState(() => {
+        return props.showWelcomeHint && board.elements.length === 0;
+    });
     const [exportVisible, setExportVisible] = React.useState(false);
     const [screenshotRegion, setScreenshotRegion] = React.useState(null);
     const selectedElements = board.getSelectedElements();
     const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
-    // Effect to disable the visibility of the hint message
+    // Effect to disable the visibility of the welcome elements
     React.useEffect(() => {
-        if (board.elements.length > 0 && hintVisible) {
-            setHintVisible(false);
+        if (board.elements.length > 0 && welcomeHintVisible) {
+            setWelcomeHintVisible(false);
         }
     }, [board.elements.length]);
     // Handle board reset
@@ -120,9 +122,9 @@ const InnerBoard = React.forwardRef((props, ref) => {
                             board.update();
                         }}
                     />
-                    {(hintVisible && !board.activeTool) && (
-                        <HintMessage
-                            position={HINT_POSITION_TOP}
+                    {(welcomeHintVisible && !board.activeTool) && (
+                        <WelcomeHint
+                            position="top"
                             title="Tools Panel"
                             contentClassName="w-48 text-center"
                             content="All the available tools. Pick one and start drawing!"
@@ -177,8 +179,8 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                     />
                                 </React.Fragment>
                             )}
-                            {(hintVisible && !board.activeTool) && (
-                                <HintMessage position={HINT_POSITION_BOTTOM} title="Menu Panel" contentClassName="w-64">
+                            {(welcomeHintVisible && !board.activeTool) && (
+                                <WelcomeHint position="bottom" title="Menu Panel" contentClassName="w-64">
                                     <div className="w-full mt-1">
                                         <div className="mb-2 text-center">Manage and configure your board.</div>
                                         {props.showMenu && (
@@ -194,7 +196,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                             </div>
                                         )}
                                     </div>
-                                </HintMessage>
+                                </WelcomeHint>
                             )}
                         </HeaderContainer>
                         {props.headerLeftContent}
@@ -216,9 +218,9 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                         });
                                     }}
                                 />
-                                {(hintVisible && !board.activeTool) && (
-                                    <HintMessage
-                                        position={HINT_POSITION_BOTTOM}
+                                {(welcomeHintVisible && !board.activeTool) && (
+                                    <WelcomeHint
+                                        position="bottom"
                                         title="History"
                                         contentClassName="w-32 text-center"
                                         content="Undo and redo changes."
@@ -232,9 +234,9 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                     onZoomInClick={() => board.zoomIn()}
                                     onZoomOutClick={() => board.zoomOut()}
                                 />
-                                {(hintVisible && !board.activeTool) && (
-                                    <HintMessage
-                                        position={HINT_POSITION_BOTTOM}
+                                {(welcomeHintVisible && !board.activeTool) && (
+                                    <WelcomeHint
+                                        position="bottom"
                                         title="Zoom"
                                         contentClassName="w-32 text-center"
                                         content="Apply zoom to the board."
@@ -297,4 +299,5 @@ Board.defaultProps = {
     showEdition: true,
     showHeader: true,
     // showFooter: false,
+    showWelcomeHint: true,
 };

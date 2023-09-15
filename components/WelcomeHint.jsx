@@ -2,15 +2,15 @@ import React from "react";
 import classnames from "classnames";
 import {ArrowUpIcon, ArrowDownIcon} from "@josemi-icons/react";
 
-export const HINT_POSITION_TOP = "position:top";
-export const HINT_POSITION_BOTTOM = "position:bottom";
+export const HINT_POSITION_TOP = "top";
+export const HINT_POSITION_BOTTOM = "bottom";
 
 const defaultStyle = {
     pointerEvents: "none",
     transform: "translateX(-50%)",
 };
 
-export const HintMessage = props => {
+export const WelcomeHint = props => {
     const classList = classnames(props.className, {
         "absolute z-1 text-gray-500 animation-fadein": true,
         "bottom-full left-half mb-2": props.position === HINT_POSITION_TOP,
@@ -38,7 +38,7 @@ export const HintMessage = props => {
 
 };
 
-HintMessage.defaultProps = {
+WelcomeHint.defaultProps = {
     className: "",
     contentClassName: "w-48",
     position: HINT_POSITION_TOP,
