@@ -7,9 +7,17 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@900&display=swap">
     <title>Folio</title>
+    <% for (let i = 0; i < htmlWebpackPlugin.files.js.length; i++) { %>
+    <% if (htmlWebpackPlugin.files.js[i].includes(htmlWebpackPlugin.options.filename.split(".")[0])) { %>
+    <script defer src="<%= htmlWebpackPlugin.files.js[i] %>"></script>
+    <% } %>
+    <% } %>
+    <% for (let i = 0; i < htmlWebpackPlugin.files.css.length; i++) { %>
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[i] %>" />
+    <% } %>
 </head>
 <body class="m-0 p-0 font-inter">
-    <div id="root" class="hidden md:block"></div>
+    <div id="root" class="hidden md:block minh-screen"></div>
     <div class="flex items-center justify-center fixed md:hidden top-0 left-0 w-full h-full">
         <div class="p-4 select-none">
             <div class="text-lg font-bold">Folio is not optimized for this device :(</div>
