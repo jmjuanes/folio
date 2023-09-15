@@ -152,29 +152,6 @@ const PickPanel = props => {
     );
 };
 
-const Panel = props => {
-    const panelWrapperClass = classNames(props.className, "absolute z-5 select-none");
-    const panelContentClass = classNames({
-        "border-2 border-gray-900": true,
-        "rounded-xl shadow-md items-center bg-white flex gap-2 p-1": true,
-        // "flex-col": props.direction === "col",
-    });
-
-    return (
-        <div className={panelWrapperClass} style={props.style} data-testid="toolspanel">
-            <div className={panelContentClass}>
-                {props.children}
-            </div>
-        </div>
-    );
-};
-
-Panel.defaultProps = {
-    className: "",
-    style: {},
-    direction: "row",
-};
-
 const PanelButton = props => {
     const classList = classNames(props.className, {
         "flex flex-col justify-center items-center flex px-4 py-2 gap-1": true,
@@ -216,7 +193,7 @@ export const ToolsPanel = props => {
     const update = useForceUpdate()[1];
     const board = useBoard();
     return (
-        <Panel className={props.className} style={props.style}>
+        <div data-testid="toolspanel" className="border-2 border-gray-900 rounded-xl shadow-md items-center bg-white flex gap-2 p-1 select-none">
             <PanelButton
                 testid="lock"
                 className="w-8 rounded-full"
@@ -275,13 +252,11 @@ export const ToolsPanel = props => {
                 active={board.activeAction === ACTIONS.ERASE}
                 onClick={props.onEraseClick}
             />
-        </Panel>
+        </div>
     );
 };
 
 ToolsPanel.defaultProps = {
-    className: "", 
-    style: {},
     onMoveClick: null,
     onSelectionClick: null,
     onEraseClick: null,

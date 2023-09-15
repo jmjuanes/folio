@@ -1,5 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
+import {BarsIcon, CameraIcon} from "@josemi-icons/react";
 import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
@@ -13,15 +14,25 @@ import {ToolsPanel} from "./ToolsPanel.jsx";
 import {EditionPanel} from "./EditionPanel.jsx";
 import {Zooming} from "./Zooming.jsx";
 import {History} from "./History.jsx";
+import {WelcomeHint} from "./WelcomeHint.jsx";
 import {blobToDataUrl} from "../utils/blob.js";
 
 const InnerBoard = React.forwardRef((props, ref) => {
     const {showConfirm} = useConfirm();
     const board = useBoard();
+    const [welcomeHintVisible, setWelcomeHintVisible] = React.useState(() => {
+        return props.showWelcomeHint && board.elements.length === 0;
+    });
     const [exportVisible, setExportVisible] = React.useState(false);
     const [screenshotRegion, setScreenshotRegion] = React.useState(null);
     const selectedElements = board.getSelectedElements();
     const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
+    // Effect to disable the visibility of the welcome elements
+    React.useEffect(() => {
+        if (board.elements.length > 0 && welcomeHintVisible) {
+            setWelcomeHintVisible(false);
+        }
+    }, [board.elements.length]);
     // Handle board reset
     const handleResetBoard = () => {
         return showConfirm({
@@ -82,39 +93,44 @@ const InnerBoard = React.forwardRef((props, ref) => {
                 <ContextMenu onChange={props.onChange} />
             )}
             {props.showTools && !isScreenshot && (
-                <ToolsPanel
-                    style={{
-                        bottom: "1rem",
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                    }}
-                    onMoveClick={() => {
-                        board.setTool(null);
-                        board.setAction(ACTIONS.MOVE);
-                        board.update();
-                    }}
-                    onEraseClick={() => {
-                        board.setTool(null);
-                        board.setAction(ACTIONS.ERASE);
-                        board.update();
-                    }}
-                    onSelectionClick={() => {
-                        board.setTool(null);
-                        board.update();
-                    }}
-                    onToolClick={tool => {
-                        // Special action if the image tool is activated
-                        if (tool === ELEMENTS.IMAGE) {
-                            return handleImageLoad();
-                        }
-                        board.setTool(tool);
-                        board.update();
-                    }}
-                    onLockToolClick={() => {
-                        board.lockTool = !board.lockTool;
-                        board.update();
-                    }}
-                />
+                <div className="absolute z-5" style={{bottom:"1rem",left:"50%",transform:"translateX(-50%)"}}>
+                    <ToolsPanel
+                        onMoveClick={() => {
+                            board.setTool(null);
+                            board.setAction(ACTIONS.MOVE);
+                            board.update();
+                        }}
+                        onEraseClick={() => {
+                            board.setTool(null);
+                            board.setAction(ACTIONS.ERASE);
+                            board.update();
+                        }}
+                        onSelectionClick={() => {
+                            board.setTool(null);
+                            board.update();
+                        }}
+                        onToolClick={tool => {
+                            // Special action if the image tool is activated
+                            if (tool === ELEMENTS.IMAGE) {
+                                return handleImageLoad();
+                            }
+                            board.setTool(tool);
+                            board.update();
+                        }}
+                        onLockToolClick={() => {
+                            board.lockTool = !board.lockTool;
+                            board.update();
+                        }}
+                    />
+                    {(welcomeHintVisible && !board.activeTool) && (
+                        <WelcomeHint
+                            position="top"
+                            title="Tools Panel"
+                            contentClassName="w-48 text-center"
+                            content="All the available tools. Pick one and start drawing!"
+                        />
+                    )}
+                </div>
             )}
             {props.showEdition && board.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <EditionPanel
@@ -125,69 +141,110 @@ const InnerBoard = React.forwardRef((props, ref) => {
             {props.showHeader && !isScreenshot && (
                 <React.Fragment>
                     <div className="absolute top-0 left-0 pt-4 pl-4 z-7 flex gap-2">
-                        <HeaderContainer>
-                            {props.showMenu && (
-                                <Menu
-                                    links={props.links}
-                                    showLinks={props.showLinks}
-                                    showLoad={props.showLoad}
-                                    showSave={props.showSave}
-                                    showResetBoard={props.showResetBoard}
-                                    showChangeBackground={props.showChangeBackground}
-                                    showSettings={props.showSettings}
-                                    showExport={props.showExport}
-                                    onChange={props.onChange}
-                                    onSave={props.onSave}
-                                    onLoad={handleLoad}
-                                    onResetBoard={handleResetBoard}
-                                    onExport={() => setExportVisible(true)}
-                                />
-                            )}
-                            {props.showTitle && (
-                                <React.Fragment>
-                                    <HeaderSeparator />
-                                    <Title onChange={props.onChange} />
-                                </React.Fragment>
-                            )}
-                            {props.showScreenshot && (
-                                <React.Fragment>
-                                    <HeaderSeparator />
-                                    <HeaderButton
-                                        icon="camera"
-                                        disabled={board.elements.length === 0}
-                                        onClick={() => {
-                                            board.setTool(null);
-                                            board.setAction(ACTIONS.SCREENSHOT);
-                                            board.update();
-                                        }}
+                        <div className="relative flex gap-2">
+                            <HeaderContainer>
+                                {props.showMenu && (
+                                    <Menu
+                                        links={props.links}
+                                        showLinks={props.showLinks}
+                                        showLoad={props.showLoad}
+                                        showSave={props.showSave}
+                                        showResetBoard={props.showResetBoard}
+                                        showChangeBackground={props.showChangeBackground}
+                                        showSettings={props.showSettings}
+                                        showExport={props.showExport}
+                                        onChange={props.onChange}
+                                        onSave={props.onSave}
+                                        onLoad={handleLoad}
+                                        onResetBoard={handleResetBoard}
+                                        onExport={() => setExportVisible(true)}
                                     />
-                                </React.Fragment>
-                            )}
-                        </HeaderContainer>
+                                )}
+                                {props.showTitle && (
+                                    <React.Fragment>
+                                        <HeaderSeparator />
+                                        <Title onChange={props.onChange} />
+                                    </React.Fragment>
+                                )}
+                                {props.showScreenshot && (
+                                    <React.Fragment>
+                                        <HeaderSeparator />
+                                        <HeaderButton
+                                            icon="camera"
+                                            disabled={board.elements.length === 0}
+                                            onClick={() => {
+                                                board.setTool(null);
+                                                board.setAction(ACTIONS.SCREENSHOT);
+                                                board.update();
+                                            }}
+                                        />
+                                    </React.Fragment>
+                                )}
+                                {(welcomeHintVisible && !board.activeTool) && (
+                                    <WelcomeHint position="bottom" title="Menu Panel" contentClassName="w-64">
+                                        <div className="w-full mt-1">
+                                            <div className="mb-2 text-center">Manage and configure your board.</div>
+                                            {props.showMenu && (
+                                                <div className="flex justify-center items-center gap-2 mb-1">
+                                                    <div className="flex text-lg"><BarsIcon /></div>
+                                                    <div className="">Export, save, preferences...</div>
+                                                </div>
+                                            )}
+                                            {props.showScreenshot && (
+                                                <div className="flex justify-center items-center gap-2 mb-1">
+                                                    <div className="flex text-lg"><CameraIcon /></div>
+                                                    <div className="">Take a screenshot</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </WelcomeHint>
+                                )}
+                            </HeaderContainer>
+                        </div>
                         {props.headerLeftContent}
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
                         {props.showHistory && (
-                            <History
-                                onUndoClick={() => {
-                                    board.undo();
-                                    props.onChange?.({
-                                        elements: board.elements,
-                                    });
-                                }}
-                                onRedoClick={() => {
-                                    board.redo();
-                                    props.onChange?.({
-                                        elements: board.elements,
-                                    });
-                                }}
-                            />
+                            <div className="flex relative">
+                                <History
+                                    onUndoClick={() => {
+                                        board.undo();
+                                        props.onChange?.({
+                                            elements: board.elements,
+                                        });
+                                    }}
+                                    onRedoClick={() => {
+                                        board.redo();
+                                        props.onChange?.({
+                                            elements: board.elements,
+                                        });
+                                    }}
+                                />
+                                {(welcomeHintVisible && !board.activeTool) && (
+                                    <WelcomeHint
+                                        position="bottom"
+                                        title="History"
+                                        contentClassName="w-32 text-center"
+                                        content="Undo and redo changes."
+                                    />
+                                )}
+                            </div>
                         )}
                         {props.showZoom && (
-                            <Zooming
-                                onZoomInClick={() => board.zoomIn()}
-                                onZoomOutClick={() => board.zoomOut()}
-                            />
+                            <div className="flex relative">
+                                <Zooming
+                                    onZoomInClick={() => board.zoomIn()}
+                                    onZoomOutClick={() => board.zoomOut()}
+                                />
+                                {(welcomeHintVisible && !board.activeTool) && (
+                                    <WelcomeHint
+                                        position="bottom"
+                                        title="Zoom"
+                                        contentClassName="w-32 text-center"
+                                        content="Apply zoom to the board."
+                                    />
+                                )}
+                            </div>
                         )}
                         {props.headerRightContent}
                     </div>
@@ -244,4 +301,5 @@ Board.defaultProps = {
     showEdition: true,
     showHeader: true,
     // showFooter: false,
+    showWelcomeHint: true,
 };
