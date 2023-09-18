@@ -24,6 +24,16 @@
                     <span>Folio.</span>
                 </div>
             </a>
+            <div class="hidden md:flex justify-center items-center text-lg">
+                <div class="flex items-center gap-2 rounded-full border-4 border-gray-900 p-1">
+                    <a href="#features" class="block px-4 py-1 rounded-xl hover:bg-gray-900 hover:text-white">
+                        <strong>Features</strong>
+                    </a>
+                    <a href="#apps" class="block px-4 py-1 rounded-xl hover:bg-gray-900 hover:text-white">
+                        <strong>Our Apps</strong>
+                    </a>
+                </div>
+            </div>
             <div class="flex items-center">
                 <a href="" data-role="launcher-btn" class="cursor-pointer flex items-center px-4 py-2 rounded-full bg-gray-900 hover:bg-gray-800 no-underline">
                     <strong class="text-md text-white">Try Folio</strong>
@@ -56,12 +66,10 @@
         </div>
         <!-- Features -->
         <div class="py-24 md:py-40 w-full bg-black text-white">
+            <a href="#features" name="features" class=""></a>
             <div class="w-full maxw-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
                 <!--Privacy -->
-                <div class="w-full maxw-xl">
-                    <div class="flex text-white mb-4">
-                        <svg class="w-48 h-48"><use xlink:href="sprite.svg#shield-check"></use></svg>
-                    </div>
+                <div class="w-full maxw-xl mb-12">
                     <div class="mb-2 text-lg font-bold o-80">
                         <span>Privacy First.</span>
                     </div>
@@ -74,10 +82,7 @@
                     </div>
                 </div>
                 <!-- Infinite canvas -->
-                <div class="w-full maxw-xl">
-                    <div class="flex text-white mb-4">
-                        <svg class="w-48 h-48"><use xlink:href="sprite.svg#arrows-maximize"></use></svg>
-                    </div>
+                <div class="w-full maxw-xl mb-12">
                     <div class="mb-2 text-lg font-bold o-80">
                         <span>Sketch without constraints.</span>
                     </div>
@@ -90,9 +95,133 @@
                 </div>
             </div>
         </div>
-        <!-- Infinite Canvas -->
-        <div class="py-24 md:py-40 w-full hidden">
+        <!-- Products -->
+        <div class="py-24 md:py-40 w-full">
+            <a href="#apps" name="apps" class=""></a>
             <div class="w-full maxw-7xl mx-auto px-8">
+                <div class="font-crimson text-center text-6xl md:text-7xl leading-none tracking-tight mb-24">
+                    <span>Choose the <u>Folio</u> that fits you.</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
+                    <!-- Folio Lite description -->
+                    <div class="w-full">
+                        <div class="border-4 border-gray-900 w-full p-8 rounded-xl">
+                            <div class="font-crimson text-center text-6xl md:text-7xl leading-none tracking-tight mt-8 mb-4">
+                                <span>Folio<span class="o-80">Lite</span></span>
+                            </div>
+                            <div class="text-lg text-center mb-16">
+                                <span>Ideal for <b>fast whiteboarding</b> and <b>single-focused tasks</b>.</span>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex flex-row items-center gap-2 mb-2">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                    <div class="font-bold">Privacy-First Storage</div>
+                                </div>
+                                <div class="text-sm o-80">
+                                    <span>Folio Lite follows a privacy-first approach by relying on local storage for user data. </span>
+                                    <span>Your work remains safe and local, ensuring your privacy is maintained.</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex flex-row items-center gap-2 mb-2">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                    <div class="font-bold">Limited to a single board</div>
+                                </div>
+                                <div class="text-sm o-80">
+                                    <span>Limited to a single board. Folio Lite encourages a focused approach, ensuring you concentrate on one task or project at a time.</span>
+                                </div>
+                            </div>
+                            <div class="mb-8">
+                                <div class="flex flex-row items-center gap-2 mb-2">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                    <div class="font-bold">Limited set of tools</div>
+                                </div>
+                                <div class="text-sm o-80">
+                                    <span>Includes a subset of tools, streamlined for simplicity and ease of use. </span>
+                                    <span>While it provides essential tools for drawing, it may not have the full range of options available in Folio.</span>
+                                </div>
+                            </div>
+                            <a href="./lite" class="no-underline group text-gray-900">
+                                <div class="flex items-center justify-center gap-2 border-4 border-gray-900 group-hover:bg-gray-900 group-hover:text-white px-3 py-2 rounded-xl">
+                                    <div class="font-bold">Start with Folio Lite</div>
+                                    <div class="flex text-xl">
+                                        <svg width="1em" height="1em"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Folio (Basic) description -->
+                    <div class="w-full">
+                        <div class="border-4 border-gray-900 w-full p-8 rounded-xl">
+                            <div class="font-crimson text-center text-6xl md:text-7xl leading-none tracking-tight mb-4 mt-8">
+                                <span>Folio</span>
+                            </div>
+                            <div class="text-lg text-center mb-16">
+                                <span>A complete <b>whiteboarding experience</b> with support for <b>multiple boards</b>.</span>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex flex-row items-center gap-2 mb-2">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                    <div class="font-bold">Privacy-First Storage</div>
+                                </div>
+                                <div class="text-sm o-80">
+                                    <span>Folio also prioritizes user privacy by utilizing local storage for saving user data. </span>
+                                    <span>This means your artwork and projects are securely stored on your device, enhancing data privacy and security.</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex flex-row items-center gap-2 mb-2">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                    <div class="font-bold">Multiple boards</div>
+                                </div>
+                                <div class="text-sm o-80">
+                                    <span>You can create and manage multiple boards in Folio, allowing you to organize your projects and artwork efficiently.</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex flex-row items-center gap-2 mb-2">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                    <div class="font-bold">Comprehensive set of drawing tools</div>
+                                </div>
+                                <div class="text-sm o-80">
+                                    <span>Folio provides the full set of drawing tools.</span>
+                                </div>
+                            </div>
+                            <div class="mb-8">
+                                <div class="flex flex-row items-center gap-2 mb-2">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                    <div class="font-bold">Libraries (coming soon)</div>
+                                </div>
+                                <div class="text-sm o-80">
+                                    <span>Use libraries to store assets and custom drawings, and use them across your boards in Folio.</span>
+                                </div>
+                            </div>
+                            <a href="./app" class="no-underline group text-gray-900">
+                                <div class="flex items-center justify-center gap-2 border-4 border-gray-900 group-hover:bg-gray-900 group-hover:text-white px-3 py-2 rounded-xl">
+                                    <div class="font-bold">Start with Folio</div>
+                                    <div class="flex text-xl">
+                                        <svg width="1em" height="1em"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- Work in progress warning -->
