@@ -37,7 +37,7 @@ export const HomePage = props => {
                     key={updateKey}
                     title="Your boards"
                     data={() => client.getUserBoards()}
-                    onCreate={() => redirect("#new")}
+                    onCreate={props.onCreate}
                     onLoad={() => {
                         loadFromJson()
                             .then(data => client.addBoard(data))
