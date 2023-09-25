@@ -340,3 +340,9 @@ export const NOTE_MIN_HEIGHT = 240;
 export const NOTE_TEXT_COLOR = BLACK;
 export const NOTE_TEXT_ALIGN = TEXT_ALIGNS.LEFT;
 export const NOTE_PADDING = 24;
+
+// Laser pointer constants
+export const POINTER_COLOR = "#e01010";
+export const POINTER_WIDTH = "8px";
+export const POINTER_DELAY = 200;
+export const POINTER_INTERVAL_DELAY = 50;
