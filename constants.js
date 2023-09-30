@@ -343,6 +343,7 @@ export const NOTE_PADDING = 24;
 
 // Laser pointer constants
 export const POINTER_COLOR = "#e01010";
-export const POINTER_WIDTH = 8;
-export const POINTER_DELAY = 1000;
+export const POINTER_WIDTH = 10;
+export const POINTER_DELAY = 750;
 export const POINTER_INTERVAL_DELAY = 50;
+export const POINTER_TENSION = 0.5 * 12;
