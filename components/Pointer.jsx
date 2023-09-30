@@ -1,34 +1,54 @@
 import React from "react";
 import {CURSORS, NONE, POINTER_COLOR, POINTER_DELAY, POINTER_INTERVAL_DELAY, POINTER_WIDTH, TRANSPARENT} from "../constants";
+import {POINTER_TENSION} from "../constants.js";
 import {SvgContainer} from "./SvgContainer.jsx";
 import {stopEventPropagation} from "../utils/events.js";
-import {getPointsCenter, hypotenuse} from "../utils/math.js";
+import {hypotenuse} from "../utils/math.js";
 
 const createInterval = (ms, listener) => setInterval(listener, ms);
 
 const LaserBrush = props => {
+    const points = props.points;
     const steps = [];
-    let lastPoint = props.points[0];
+    const tension = POINTER_TENSION;
+    let x0 = null, y0 = null;
+    let x1 = null, y1 = null;
+    let x2 = null, y2 = null;
     let lastLength = 0;
-    for (let i = 1; i < props.points.length; i++) {
-        const point = props.points[i];
-        const center = getPointsCenter([lastPoint.x, lastPoint.y], [point.x, point.y]);
-        const length = hypotenuse(lastPoint.x - point.x, lastPoint.y - point.y);
-        steps.push({
-            length: lastLength + length,
-            path: `M${lastPoint.x},${lastPoint.y}Q${lastPoint.x},${lastPoint.y} ${center[0]},${center[1]}L${point.x},${point.y}`,
-        });
-        lastPoint = point;
-        lastLength = lastLength + length;
+    for (let i = 0; i <= points.length; i++) {
+        const point = points[i] || points[i - 1];
+        if (i === 0) {
+            x2 = point.x;
+            y2 = point.y;
+        }
+        else if (i > 1) {
+            // Calculate the length between these points
+            const length = hypotenuse(x2 - x1, y2 - y1);
+            // First control point
+            const c1x = (-x0 + tension * x1 + x2) / tension;
+            const c1y = (-y0 + tension * y1 + y2) / tension;
+            // Second control point
+            const c2x = (x1 + tension * x2 - point.x) / tension;
+            const c2y = (y1 + tension * y2 - point.y) / tension;
+            // Build the bezier curve
+            steps.push({
+                length: lastLength + length,
+                path: `M${x1},${y1} C${c1x},${c1y} ${c2x},${c2y} ${x2},${y2}`,
+            });
+            lastLength = lastLength + length;
+        }
+        // Update points
+        x0 = x1, y0 = y1;
+        x1 = x2, y1 = y2;
+        x2 = point.x, y2 = point.y;
     }
-    // Calculate the total length of the path
     return steps.map((step, index) => (
         <path
             key={index}
             d={step.path}
             fill={NONE}
             stroke={props.color}
-            strokeWidth={props.width * (0.5 + 0.5 * (step.length / lastLength))}
+            strokeWidth={props.width * (0.3 + 0.7 * (step.length / lastLength))}
             strokeLinecap="round"
             strokeLinejoin="round"
         />
@@ -80,7 +100,7 @@ export const Pointer = props => {
     return (
         <div style={props.style} onPointerDown={stopEventPropagation} onPointerMove={handlePointerMove}>
             <SvgContainer>
-                {points.length > 0 && (
+                {points.length > 2 && (
                     <LaserBrush
                         points={points}
                         color={props.color}
