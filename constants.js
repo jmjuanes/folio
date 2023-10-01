@@ -304,6 +304,7 @@ export const ACTIONS = {
     EDIT: "action:edit",
     ERASE: "action:erase",
     SCREENSHOT: "action:screenshot",
+    POINTER: "action:pointer",
 };
 
 export const CHANGES = {

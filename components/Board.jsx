@@ -90,13 +90,20 @@ const InnerBoard = React.forwardRef((props, ref) => {
                     setExportVisible(true);
                 }}
             />
-            <Pointer />
+            {board.activeAction === ACTIONS.POINTER && (
+                <Pointer />
+            )}
             {board.state.contextMenuVisible && (
                 <ContextMenu onChange={props.onChange} />
             )}
             {props.showTools && !isScreenshot && (
                 <div className="absolute z-5" style={{bottom:"1rem",left:"50%",transform:"translateX(-50%)"}}>
                     <ToolsPanel
+                        onPointerClick={() => {
+                            board.setTool(null);
+                            board.setAction(ACTIONS.POINTER);
+                            board.update();
+                        }}
                         onMoveClick={() => {
                             board.setTool(null);
                             board.setAction(ACTIONS.MOVE);
