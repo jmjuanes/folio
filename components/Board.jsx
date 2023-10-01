@@ -6,6 +6,7 @@ import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
 import {HeaderContainer, HeaderButton, HeaderSeparator} from "./HeaderCommons.jsx";
 import {Renderer} from "./Renderer.jsx";
+import {Pointer} from "./Pointer.jsx";
 import {ContextMenu} from "./ContextMenu.jsx";
 import {Menu} from "./Menu.jsx";
 import {Title} from "./Title.jsx";
@@ -89,12 +90,20 @@ const InnerBoard = React.forwardRef((props, ref) => {
                     setExportVisible(true);
                 }}
             />
+            {board.activeAction === ACTIONS.POINTER && (
+                <Pointer />
+            )}
             {board.state.contextMenuVisible && (
                 <ContextMenu onChange={props.onChange} />
             )}
             {props.showTools && !isScreenshot && (
                 <div className="absolute z-5" style={{bottom:"1rem",left:"50%",transform:"translateX(-50%)"}}>
                     <ToolsPanel
+                        onPointerClick={() => {
+                            board.setTool(null);
+                            board.setAction(ACTIONS.POINTER);
+                            board.update();
+                        }}
                         onMoveClick={() => {
                             board.setTool(null);
                             board.setAction(ACTIONS.MOVE);

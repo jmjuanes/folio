@@ -202,6 +202,12 @@ export const ImageIcon = () => (
     </SvgIcon>
 );
 
+export const LaserPointerIcon = () => (
+    <SvgIcon title="Laser Pointer">
+        <path d="M2 19L7 14L10 17L5 22L2 19ZM18 2L18 10M14 6L22 6M15 3L21 9M21 3L17 7M15 9L15 9M13 11L13 11M10 16L8 14L9 13L11 15L10 16M11 13L10 14" />
+    </SvgIcon>
+);
+
 export const LineIcon = () => (
     <SvgIcon title="Line">
         <path d="M6 18L18 6" />

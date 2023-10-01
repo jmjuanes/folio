@@ -304,6 +304,7 @@ export const ACTIONS = {
     EDIT: "action:edit",
     ERASE: "action:erase",
     SCREENSHOT: "action:screenshot",
+    POINTER: "action:pointer",
 };
 
 export const CHANGES = {
@@ -340,3 +341,10 @@ export const NOTE_MIN_HEIGHT = 240;
 export const NOTE_TEXT_COLOR = BLACK;
 export const NOTE_TEXT_ALIGN = TEXT_ALIGNS.LEFT;
 export const NOTE_PADDING = 24;
+
+// Laser pointer constants
+export const POINTER_COLOR = "#e01010";
+export const POINTER_WIDTH = 10;
+export const POINTER_DELAY = 750;
+export const POINTER_INTERVAL_DELAY = 50;
+export const POINTER_TENSION = 0.5 * 12;
