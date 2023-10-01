@@ -252,6 +252,8 @@ export const FIELDS = {
     OPACITY: "opacity",
     ORDER: "order",
     NOTE_COLOR: "noteColor",
+    NOTE_HEAD_TEXT: "noteHeadText",
+    NOTE_BODY_TEXT: "noteBodyText",
 };
 
 // Deprecated fields
