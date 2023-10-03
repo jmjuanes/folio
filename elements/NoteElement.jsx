@@ -1,11 +1,11 @@
 import React from "react";
-import {FIELDS, NONE} from "../constants.js";
+import {FIELDS, NONE, NOTE_MIN_HEIGHT, NOTE_MIN_WIDTH} from "../constants.js";
 
 export const NoteElement = props => {
-    const x = Math.min(props.x1, props.x2);
-    const y = Math.min(props.y1, props.y2);
-    const width = Math.abs(props.x2 - props.x1);
-    const height = Math.abs(props.y2 - props.y1);
+    const x = props.creating ? props.x1 - NOTE_MIN_WIDTH / 2 : Math.min(props.x1, props.x2);
+    const y = props.creating ? props.y1 - NOTE_MIN_HEIGHT / 2 : Math.min(props.y1, props.y2);
+    const width  = props.creating ? NOTE_MIN_WIDTH : Math.abs(props.x2 - props.x1);
+    const height = props.creating ? NOTE_MIN_HEIGHT : Math.abs(props.y2 - props.y1);
     const opacity = props.creating ? "0.7" : "1.0";
     return (
         <g transform={`translate(${x},${y})`} opacity={opacity}>

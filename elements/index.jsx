@@ -342,13 +342,15 @@ export const elementsConfig = {
             [FIELDS.TEXT_WIDTH]: GRID_SIZE,
             [FIELDS.TEXT_HEIGHT]: GRID_SIZE,
         }),
-        onCreateStart: element => {
-            element.x2 = element.x1 + NOTE_MIN_WIDTH;
-            element.y2 = element.y1 + NOTE_MIN_HEIGHT;
-        },
         onCreateMove: element => {
-            element.x2 = element.x1 + NOTE_MIN_WIDTH;
-            element.y2 = element.y1 + NOTE_MIN_HEIGHT;
+            element.x1 = element.x2; //  - NOTE_MIN_WIDTH;
+            element.y1 = element.y2; //  - NOTE_MIN_HEIGHT;
+        },
+        onCreateEnd: element => {
+            element.x1 = element.x1 - NOTE_MIN_WIDTH / 2;
+            element.x2 = element.x2 + NOTE_MIN_WIDTH / 2;
+            element.y1 = element.y1 - NOTE_MIN_HEIGHT / 2;
+            element.y2 = element.y2 + NOTE_MIN_HEIGHT / 2;
         },
         // onCreateEnd: (element, event) => {
         //     // Prevent drawing 0-sized shapes
