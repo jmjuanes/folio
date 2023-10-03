@@ -11,6 +11,7 @@ import {EraseIcon, LockIcon, UnlockIcon} from "./Icons.jsx";
 import {SquareIcon, CircleIcon, TriangleIcon} from "./Icons.jsx";
 import {LineIcon} from "./Icons.jsx";
 import {WidthLargeIcon, WidthSmallIcon} from "./Icons.jsx";
+import {LaserPointerIcon} from "./Icons.jsx";
 import {Form} from "./Form.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {useForceUpdate} from "../hooks/index.js";
@@ -188,6 +189,10 @@ const PanelSeparator = () => (
     <div className="bg-gray-500 w-px h-12" />
 );
 
+const isSelectEnabled = a => {
+    return a !== ACTIONS.MOVE && a !== ACTIONS.ERASE && a !== ACTIONS.POINTER;
+};
+
 // Tools Panel component
 export const ToolsPanel = props => {
     const update = useForceUpdate()[1];
@@ -204,6 +209,13 @@ export const ToolsPanel = props => {
             <PanelSeparator />
             {/* Actions */}
             <PanelButton
+                testid="pointer"
+                text="Pointer"
+                icon={(<LaserPointerIcon />)}
+                active={board.activeAction === ACTIONS.POINTER}
+                onClick={props.onPointerClick}
+            />
+            <PanelButton
                 testid="drag"
                 text="Drag"
                 icon={(<HandGrabIcon />)}
@@ -214,7 +226,7 @@ export const ToolsPanel = props => {
                 testid="select"
                 text="Select"
                 icon={(<PointerIcon />)}
-                active={!board.activeTool && board.activeAction !== ACTIONS.MOVE && board.activeAction !== ACTIONS.ERASE}
+                active={!board.activeTool && isSelectEnabled(board.activeAction)}
                 onClick={props.onSelectionClick}
             />
             <PanelSeparator />
@@ -259,6 +271,7 @@ export const ToolsPanel = props => {
 ToolsPanel.defaultProps = {
     onMoveClick: null,
     onSelectionClick: null,
+    onPointerClick: null,
     onEraseClick: null,
     onToolClick: null,
     onLockToolClick: null,

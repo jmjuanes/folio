@@ -1,10 +1,15 @@
+// Calculate the hipotenuse
+export const hypotenuse = (x, y) => {
+    return Math.sqrt(x * x + y * y);
+};
+
 // Calculate the distance between the provided list of points
 export const getPointsDistance = (...points) => {
     let length = 0;
     for (let i = 1; i < points.length; i++) {
         const x = points[i][0] - points[i-1][0];
         const y = points[i][1] - points[i-1][1];
-        length = length + Math.sqrt(x * x + y * y);
+        length = length + hypotenuse(x, y);
     }
     return length;
 };
