@@ -43,7 +43,7 @@ export const NoteElement = props => {
                     textSize={NOTE_TEXT_SIZE}
                     onChange={event => {
                         const text = event.target.value || "";
-                        const textHeight = measureText(text || " ", NOTE_TEXT_SIZE, NOTE_TEXT_FONT, width + "px")[1];
+                        const textHeight = measureText(text || " ", NOTE_TEXT_SIZE, NOTE_TEXT_FONT, (NOTE_MIN_WIDTH - 2 * NOTE_PADDING) + "px")[1];
                         const keys = [FIELDS.NOTE_TEXT, FIELDS.NOTE_HEIGHT, "y2"];
                         const values = [text, textHeight, props.y1 + Math.max(NOTE_MIN_HEIGHT, textHeight + 2 * NOTE_PADDING)];
                         return props.onChange?.(keys, values);
