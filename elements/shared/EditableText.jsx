@@ -1,7 +1,8 @@
 import React from "react";
 import {stopEventPropagation} from "../../utils/events.js";
 
-export const EditableText = React.forwardRef((props, ref) => {
+export const EditableText = props => {
+    const input = React.useRef(null);
     const width = Math.max(1, props.width);
     const height = Math.max(1, props.height);
     const previewStyles = {
@@ -18,6 +19,14 @@ export const EditableText = React.forwardRef((props, ref) => {
         opacity: props.opacity,
         overflow: "hidden",
     };
+
+    // Enable autofocus when element changes to editable
+    React.useEffect(() => {
+        if (props.editing && input.current && props.autofocus) {
+            input.current.focus();
+        }
+    }, [props.editing]);
+
     return (
         <foreignObject x={props.x} y={props.y} width={width} height={height}>
             {!props.editing && (
@@ -27,7 +36,7 @@ export const EditableText = React.forwardRef((props, ref) => {
             )}
             {props.editing && (
                 <textarea
-                    ref={ref}
+                    ref={input}
                     wrap="off"
                     defaultValue={props.text || ""}
                     style={{
@@ -61,4 +70,8 @@ export const EditableText = React.forwardRef((props, ref) => {
             )}
         </foreignObject>
     );
-});
+};
+
+EditableText.defaultProps = {
+    autofocus: false,
+};

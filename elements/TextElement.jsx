@@ -4,7 +4,6 @@ import {BLACK, FONT_FACES, GRID_SIZE, TEXT_ALIGNS} from "../constants.js";
 import {EditableText} from "./shared/EditableText.jsx";
 
 export const TextElement = props => {
-    const inputRef = React.useRef(null);
     const padding = props.padding ?? 0;
     const x = (props.x1 + props.x2) / 2;
     const y = (props.y1 + props.y2) / 2;
@@ -13,13 +12,6 @@ export const TextElement = props => {
     const textSize = props.textSize ?? 0;
     const textFont = props.textFont ?? FONT_FACES.SANS;
     const textColor = props.textColor ?? BLACK;
-
-    // First time editing --> focus on input
-    React.useEffect(() => {
-        if (props.editing && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [props.editing]);
 
     return (
         <g transform={`translate(${x} ${y})`}>
@@ -38,8 +30,8 @@ export const TextElement = props => {
                 />
             )}
             <EditableText
-                ref={inputRef}
                 editing={props.editing}
+                autofocus={true}
                 x={(-1) * width / 2}
                 y={Math.max(-height / 2, (-1) * (props.verticalAlign === "top" ? height : props.textHeight) / 2)}
                 width={width}
