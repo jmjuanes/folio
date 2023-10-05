@@ -31,7 +31,7 @@ export const EditableText = props => {
         <foreignObject x={props.x} y={props.y} width={width} height={height}>
             {!props.editing && (
                 <div style={previewStyles}>
-                    {props.text}
+                    {(!props.text && props.placeholder) ? (<span style={{opacity:"0.5"}}>{props.placeholder}</span>) : props.text}
                 </div>
             )}
             {props.editing && (
@@ -74,4 +74,5 @@ export const EditableText = props => {
 
 EditableText.defaultProps = {
     autofocus: false,
+    placeholder: "",
 };
