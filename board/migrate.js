@@ -3,8 +3,10 @@ import {FIELDS, DEPRECATED_FIELDS, DEFAULTS} from "../constants.js";
 import {FILL_STYLES} from "../constants.js";
 import {STROKES} from "../constants.js";
 import {FONT_FACES} from "../constants.js";
+import {NOTE_MIN_WIDTH, NOTE_MIN_HEIGHT, NOTE_PADDING, NOTE_TEXT_FONT, NOTE_TEXT_SIZE} from "../constants.js";
 import {TRANSPARENT, BLACK} from "../constants.js";
 import {BACKGROUND_COLORS} from "../utils/colors.js";
+import {measureText} from "../utils/math.js";
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map((element, index) => {
@@ -72,6 +74,17 @@ export const migrateElements = (elements, version) => {
                 // Remove the transparent color in stroke
                 else if (element[FIELDS.STROKE_COLOR] === TRANSPARENT) {
                     element[FIELDS.STROKE_COLOR] = BLACK;
+                }
+            case "8":
+                // Migrate note elements to new fields
+                if (element.type === ELEMENTS.NOTE) {
+                    element[FIELDS.NOTE_TEXT] = element.text || "";
+                    element[FIELDS.NOTE_HEIGHT] = measureText(element.text || " ", NOTE_TEXT_SIZE, NOTE_TEXT_FONT, (NOTE_MIN_WIDTH - 2 * NOTE_PADDING) + "px")[1];
+                    element.x2 = element.x1 + NOTE_MIN_WIDTH;
+                    element.y2 = element.y1 + Math.max(NOTE_MIN_HEIGHT, element[FIELDS.NOTE_HEIGHT] + 2 * NOTE_PADDING);
+                    delete element.text;
+                    delete element.textWidth;
+                    delete element.textHeight;
                 }
         }
         return element;
