@@ -253,7 +253,6 @@ export const FIELDS = {
     ORDER: "order",
     NOTE_COLOR: "noteColor",
     NOTE_TEXT: "noteText",
-    NOTE_HEIGHT: "noteHeight",
 };
 
 // Deprecated fields

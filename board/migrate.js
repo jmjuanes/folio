@@ -78,10 +78,10 @@ export const migrateElements = (elements, version) => {
             case "8":
                 // Migrate note elements to new fields
                 if (element.type === ELEMENTS.NOTE) {
+                    const textHeight = measureText(element.text || " ", NOTE_TEXT_SIZE, NOTE_TEXT_FONT, (NOTE_MIN_WIDTH - 2 * NOTE_PADDING) + "px")[1];
                     element[FIELDS.NOTE_TEXT] = element.text || "";
-                    element[FIELDS.NOTE_HEIGHT] = measureText(element.text || " ", NOTE_TEXT_SIZE, NOTE_TEXT_FONT, (NOTE_MIN_WIDTH - 2 * NOTE_PADDING) + "px")[1];
                     element.x2 = element.x1 + NOTE_MIN_WIDTH;
-                    element.y2 = element.y1 + Math.max(NOTE_MIN_HEIGHT, element[FIELDS.NOTE_HEIGHT] + 2 * NOTE_PADDING);
+                    element.y2 = element.y1 + Math.max(NOTE_MIN_HEIGHT, textHeight + 2 * NOTE_PADDING);
                     delete element.text;
                     delete element.textWidth;
                     delete element.textHeight;

@@ -324,7 +324,6 @@ export const elementsConfig = {
         initialize: values => ({
             [FIELDS.NOTE_COLOR]: values?.[FIELDS.NOTE_COLOR] ?? DEFAULTS.NOTE_COLOR,
             [FIELDS.NOTE_TEXT]: "",
-            [FIELDS.NOTE_HEIGHT]: 0,
         }),
         onCreateMove: element => {
             element.x1 = element.x2;

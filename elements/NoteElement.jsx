@@ -34,8 +34,8 @@ export const NoteElement = props => {
                     autofocus={true}
                     x={NOTE_PADDING}
                     y={NOTE_PADDING}
-                    width={NOTE_MIN_WIDTH - 2 * NOTE_PADDING}
-                    height={Math.max(NOTE_MIN_HEIGHT - 2 * NOTE_PADDING, props[FIELDS.NOTE_HEIGHT])}
+                    width={width - 2 * NOTE_PADDING}
+                    height={height - 2 * NOTE_PADDING}
                     text={props[FIELDS.NOTE_TEXT] || ""}
                     textColor={NOTE_TEXT_COLOR}
                     textFont={NOTE_TEXT_FONT}
@@ -44,8 +44,8 @@ export const NoteElement = props => {
                     onChange={event => {
                         const text = event.target.value || "";
                         const textHeight = measureText(text || " ", NOTE_TEXT_SIZE, NOTE_TEXT_FONT, (NOTE_MIN_WIDTH - 2 * NOTE_PADDING) + "px")[1];
-                        const keys = [FIELDS.NOTE_TEXT, FIELDS.NOTE_HEIGHT, "y2"];
-                        const values = [text, textHeight, props.y1 + Math.max(NOTE_MIN_HEIGHT, textHeight + 2 * NOTE_PADDING)];
+                        const keys = [FIELDS.NOTE_TEXT, "y2"];
+                        const values = [text, props.y1 + Math.max(NOTE_MIN_HEIGHT, textHeight + 2 * NOTE_PADDING)];
                         return props.onChange?.(keys, values);
                     }}
                 />
