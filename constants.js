@@ -1,6 +1,6 @@
 import {STICKYNOTE_COLORS} from "./utils/colors.js";
 
-export const VERSION = "8";
+export const VERSION = "9";
 
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
@@ -252,6 +252,7 @@ export const FIELDS = {
     OPACITY: "opacity",
     ORDER: "order",
     NOTE_COLOR: "noteColor",
+    NOTE_TEXT: "noteText",
 };
 
 // Deprecated fields
@@ -336,11 +337,14 @@ export const SELECT_BOUNDS_FILL_COLOR = NONE;
 export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
 
 // Sticky notes constants
-export const NOTE_MIN_WIDTH = 240;
-export const NOTE_MIN_HEIGHT = 240;
+export const NOTE_MIN_WIDTH = 280;
+export const NOTE_MIN_HEIGHT = 280;
 export const NOTE_TEXT_COLOR = BLACK;
 export const NOTE_TEXT_ALIGN = TEXT_ALIGNS.LEFT;
-export const NOTE_PADDING = 24;
+export const NOTE_TEXT_SIZE = TEXT_SIZES.MEDIUM;
+export const NOTE_TEXT_FONT = FONT_FACES.DRAW;
+export const NOTE_PADDING = 16;
+export const NOTE_PLACEHOLDER = "Type something...";
 
 // Laser pointer constants
 export const POINTER_COLOR = "#e01010";
