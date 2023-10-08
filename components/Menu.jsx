@@ -1,11 +1,12 @@
 import React from "react";
-import {BarsIcon} from "@josemi-icons/react";
+import {BarsIcon, PresentationIcon} from "@josemi-icons/react";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {ColorPicker} from "./ColorPicker.jsx";
 import {Dropdown, DropdownSeparator, DropdownGroup} from "./Dropdown.jsx";
 import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "./Dropdown.jsx";
 import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "./Icons.jsx";
+import { ACTIONS, MODES } from "../constants.js";
 
 export const Menu = props => {
     const board = useBoard();
@@ -63,6 +64,16 @@ export const Menu = props => {
                                 });
                             }}
                         />
+                        <DropdownCheckItem
+                            active={board.activeMode === MODES.PRESENTATION}
+                            icon={(<PresentationIcon />)}
+                            text="Presentation mode"
+                            onClick={() => {
+                                board.activeMode = board.activeMode === MODES.PRESENTATION ? null : MODES.PRESENTATION; 
+                                board.setAction(ACTIONS.MOVE);
+                                board.update();
+                            }}
+                        />
                     </React.Fragment>
                 )}
                 {props.showChangeBackground && (
@@ -111,7 +122,6 @@ Menu.defaultProps = {
     showChangeBackground: true,
     showLinks: true,
     showExport: true,
-    showScreenshot: true,
     onChange: null,
     onSave: null,
     onResetBoard: null,
