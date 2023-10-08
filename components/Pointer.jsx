@@ -1,4 +1,5 @@
 import React from "react";
+import {EVENTS} from "../constants.js";
 import {CURSORS, NONE, POINTER_COLOR, POINTER_DELAY, POINTER_INTERVAL_DELAY, POINTER_WIDTH, TRANSPARENT} from "../constants";
 import {POINTER_TENSION} from "../constants.js";
 import {SvgContainer} from "./SvgContainer.jsx";
@@ -87,19 +88,29 @@ export const Pointer = props => {
             };
         }
     }, [points.length > 0]);
-    // Handle pointer move
-    const handlePointerMove = event => {
-        return setPoints(prevPoints => {
-            lastPoint.current = {
-                x: event.nativeEvent.clientX, // - left,
-                y: event.nativeEvent.clientY, // - top,
-                time: Date.now(),
-            };
-            return [...prevPoints, lastPoint.current];
-        });
+    // Handle pointer down
+    const handlePointerDown = event => {
+        const target = event.target;
+        const handlePointerMove = e => {
+            return setPoints(prevPoints => {
+                lastPoint.current = {
+                    x: e.clientX, // - left,
+                    y: e.clientY, // - top,
+                    time: Date.now(),
+                };
+                return [...prevPoints, lastPoint.current];
+            });
+        };
+        const handlePointerUp = () => {
+            target.removeEventListener(EVENTS.POINTER_MOVE, handlePointerMove);
+            target.removeEventListener(EVENTS.POINTER_UP, handlePointerUp);
+        };
+        // Register events listeners
+        target.addEventListener(EVENTS.POINTER_MOVE, handlePointerMove);
+        target.addEventListener(EVENTS.POINTER_UP, handlePointerUp);
     };
     return (
-        <div style={props.style} onPointerDown={stopEventPropagation} onPointerMove={handlePointerMove}>
+        <div style={props.style} onPointerDown={handlePointerDown}>
             <SvgContainer>
                 {points.length > 2 && (
                     <LaserBrush
