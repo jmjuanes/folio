@@ -40,7 +40,6 @@ export const createBoard = props => ({
     currentState: STATES.IDLE,
     activeAction: null,
     activeTool: null,
-    activeMode: null,
     activeElement: null,
     activeGroup: null,
     zoom: ZOOM_DEFAULT,
@@ -73,6 +72,7 @@ export const createBoard = props => ({
         contextMenuY: 0,
         canvasWidth: 0,
         canvasHeight: 0,
+        presentationMode: false,
     },
 
     update() {

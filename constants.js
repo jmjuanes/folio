@@ -308,10 +308,6 @@ export const ACTIONS = {
     POINTER: "action:pointer",
 };
 
-export const MODES = {
-    PRESENTATION: "mode:presentation",
-};
-
 export const CHANGES = {
     CREATE: "change:create",
     UPDATE: "change:update",

@@ -1,7 +1,7 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
 import {BarsIcon, CameraIcon} from "@josemi-icons/react";
-import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES, MODES} from "../constants.js";
+import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "../constants.js";
 import {BoardProvider, useBoard} from "../contexts/BoardContext.jsx";
 import {ConfirmProvider, useConfirm} from "../contexts/ConfirmContext.jsx";
 import {HeaderContainer, HeaderButton, HeaderSeparator} from "./HeaderCommons.jsx";
@@ -28,7 +28,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
     const [screenshotRegion, setScreenshotRegion] = React.useState(null);
     const selectedElements = board.getSelectedElements();
     const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
-    const isPresentation = board.activeMode === MODES.PRESENTATION;
+    const isPresentation = !!board.state.presentationMode;
     // Effect to disable the visibility of the welcome elements
     React.useEffect(() => {
         if (board.elements.length > 0 && welcomeHintVisible) {
