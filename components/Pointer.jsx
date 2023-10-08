@@ -48,7 +48,6 @@ const LaserBrush = props => {
             key={index}
             d={step.path}
             fill={NONE}
-            opacity={0.3 + 0.7 * (step.length / lastLength)}
             stroke={props.color}
             strokeWidth={props.width * (0.3 + 0.7 * (step.length / lastLength))}
             strokeLinecap={"butt"}
