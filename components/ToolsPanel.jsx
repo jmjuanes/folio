@@ -199,14 +199,18 @@ export const ToolsPanel = props => {
     const board = useBoard();
     return (
         <div data-testid="toolspanel" className="border-2 border-gray-900 rounded-xl shadow-md items-center bg-white flex gap-2 p-1 select-none">
-            <PanelButton
-                testid="lock"
-                className="w-8 rounded-full"
-                icon={(board.lockTool ? <LockIcon /> : <UnlockIcon />)}
-                active={board.lockTool}
-                onClick={props.onLockToolClick}
-            />
-            <PanelSeparator />
+            {props.showLock && (
+                <React.Fragment>
+                    <PanelButton
+                        testid="lock"
+                        className="w-8 rounded-full"
+                        icon={(board.lockTool ? <LockIcon /> : <UnlockIcon />)}
+                        active={board.lockTool}
+                        onClick={props.onLockToolClick}
+                    />
+                    <PanelSeparator />
+                </React.Fragment>
+            )}
             {/* Actions */}
             <PanelButton
                 testid="pointer"
@@ -222,53 +226,62 @@ export const ToolsPanel = props => {
                 active={board.activeAction === ACTIONS.MOVE}
                 onClick={props.onMoveClick}
             />
-            <PanelButton
-                testid="select"
-                text="Select"
-                icon={(<PointerIcon />)}
-                active={!board.activeTool && isSelectEnabled(board.activeAction)}
-                onClick={props.onSelectionClick}
-            />
-            <PanelSeparator />
-            {/* Available tools */}
-            {Object.keys(tools).map(key => (
-                <div key={key} className="flex relative">
+            {props.showSelect && (
+                <PanelButton
+                    testid="select"
+                    text="Select"
+                    icon={(<PointerIcon />)}
+                    active={!board.activeTool && isSelectEnabled(board.activeAction)}
+                    onClick={props.onSelectionClick}
+                />
+            )}
+            {props.showTools && (
+                <React.Fragment>
+                    <PanelSeparator />
+                    {/* Available tools */}
+                    {Object.keys(tools).map(key => (
+                        <div key={key} className="flex relative">
+                            <PanelButton
+                                testid={key}
+                                text={tools[key].text}
+                                icon={tools[key].icon}
+                                active={board.activeTool === key}
+                                onClick={() => props.onToolClick(key)}
+                            />
+                            {tools[key].quickPicks && key === board.activeTool && (
+                                <PickPanel
+                                    values={board.defaults}
+                                    items={tools[key].quickPicks}
+                                    onChange={(field, value) => {
+                                        board.defaults[field] = value;
+                                        if (typeof tools[key].onQuickPickChange === "function") {
+                                            tools[key].onQuickPickChange(board.defaults, field, value);
+                                        }
+                                        // Force and update of the component
+                                        update();
+                                    }}
+                                />
+                            )}
+                        </div>
+                    ))}
+                    <PanelSeparator />
                     <PanelButton
-                        testid={key}
-                        text={tools[key].text}
-                        icon={tools[key].icon}
-                        active={board.activeTool === key}
-                        onClick={() => props.onToolClick(key)}
+                        testid="erase"
+                        text="Erase"
+                        icon={(<EraseIcon />)}
+                        active={board.activeAction === ACTIONS.ERASE}
+                        onClick={props.onEraseClick}
                     />
-                    {tools[key].quickPicks && key === board.activeTool && (
-                        <PickPanel
-                            values={board.defaults}
-                            items={tools[key].quickPicks}
-                            onChange={(field, value) => {
-                                board.defaults[field] = value;
-                                if (typeof tools[key].onQuickPickChange === "function") {
-                                    tools[key].onQuickPickChange(board.defaults, field, value);
-                                }
-                                // Force and update of the component
-                                update();
-                            }}
-                        />
-                    )}
-                </div>
-            ))}
-            <PanelSeparator />
-            <PanelButton
-                testid="erase"
-                text="Erase"
-                icon={(<EraseIcon />)}
-                active={board.activeAction === ACTIONS.ERASE}
-                onClick={props.onEraseClick}
-            />
+                </React.Fragment>
+            )}
         </div>
     );
 };
 
 ToolsPanel.defaultProps = {
+    showTools: true,
+    showLock: true,
+    showSelect: true,
     onMoveClick: null,
     onSelectionClick: null,
     onPointerClick: null,

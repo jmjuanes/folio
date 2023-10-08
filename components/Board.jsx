@@ -28,6 +28,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
     const [screenshotRegion, setScreenshotRegion] = React.useState(null);
     const selectedElements = board.getSelectedElements();
     const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
+    const isPresentation = !!board.state.presentationMode;
     // Effect to disable the visibility of the welcome elements
     React.useEffect(() => {
         if (board.elements.length > 0 && welcomeHintVisible) {
@@ -93,12 +94,15 @@ const InnerBoard = React.forwardRef((props, ref) => {
             {board.activeAction === ACTIONS.POINTER && (
                 <Pointer />
             )}
-            {board.state.contextMenuVisible && (
+            {(board.state.contextMenuVisible && !isPresentation) &&  (
                 <ContextMenu onChange={props.onChange} />
             )}
             {props.showTools && !isScreenshot && (
                 <div className="absolute z-5" style={{bottom:"1rem",left:"50%",transform:"translateX(-50%)"}}>
                     <ToolsPanel
+                        showSelect={!isPresentation}
+                        showTools={!isPresentation}
+                        showLock={!isPresentation}
                         onPointerClick={() => {
                             board.setTool(null);
                             board.setAction(ACTIONS.POINTER);
@@ -131,7 +135,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                             board.update();
                         }}
                     />
-                    {(welcomeHintVisible && !board.activeTool) && (
+                    {(welcomeHintVisible && !board.activeTool && !isPresentation) && (
                         <WelcomeHint
                             position="top"
                             title="Tools Panel"
@@ -172,10 +176,13 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                 {props.showTitle && (
                                     <React.Fragment>
                                         <HeaderSeparator />
-                                        <Title onChange={props.onChange} />
+                                        <Title
+                                            editable={!isPresentation}
+                                            onChange={props.onChange}
+                                        />
                                     </React.Fragment>
                                 )}
-                                {props.showScreenshot && (
+                                {props.showScreenshot && !isPresentation && (
                                     <React.Fragment>
                                         <HeaderSeparator />
                                         <HeaderButton
@@ -189,7 +196,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                         />
                                     </React.Fragment>
                                 )}
-                                {(welcomeHintVisible && !board.activeTool) && (
+                                {(welcomeHintVisible && !board.activeTool && !isPresentation) && (
                                     <WelcomeHint position="bottom" title="Menu Panel" contentClassName="w-64">
                                         <div className="w-full mt-1">
                                             <div className="mb-2 text-center">Manage and configure your board.</div>
@@ -213,7 +220,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                         {props.headerLeftContent}
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
-                        {props.showHistory && (
+                        {props.showHistory && !isPresentation && (
                             <div className="flex relative">
                                 <History
                                     onUndoClick={() => {
@@ -245,7 +252,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                     onZoomInClick={() => board.zoomIn()}
                                     onZoomOutClick={() => board.zoomOut()}
                                 />
-                                {(welcomeHintVisible && !board.activeTool) && (
+                                {(welcomeHintVisible && !board.activeTool && !isPresentation) && (
                                     <WelcomeHint
                                         position="bottom"
                                         title="Zoom"

@@ -72,6 +72,7 @@ export const createBoard = props => ({
         contextMenuY: 0,
         canvasWidth: 0,
         canvasHeight: 0,
+        presentationMode: false,
     },
 
     update() {
