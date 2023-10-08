@@ -14,6 +14,13 @@ export const Title = props => {
     const inputRef = React.useRef();
     const board = useBoard();
     const [editing, setEditing] = React.useState(false);
+    const previewClass = classNames({
+        "cursor-pointer leading-tight px-2 py-2 rounded-md": true,
+        "hover:bg-gray-200": props.editable,
+    });
+    const handleClick = () => {
+        props.editable && setEditing(true);
+    };
     React.useEffect(() => {
         if (editing && inputRef?.current) {
             inputRef.current.focus();
@@ -22,7 +29,7 @@ export const Title = props => {
     return (
         <div className="flex items-center">
             {!editing && (
-                <div className="cursor-pointer leading-tight px-2 py-2 rounded-md hover:bg-gray-200" onClick={() => setEditing(true)}>
+                <div className={previewClass} onClick={handleClick}>
                     <div className="w-full font-bold text-gray-900" style={previewStyle}>
                         <strong>{board.title}</strong>
                     </div>
@@ -54,5 +61,6 @@ export const Title = props => {
 };
 
 Title.defaultProps = {
+    editable: true,
     onChange: null,
 };
