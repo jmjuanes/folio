@@ -7,7 +7,7 @@ export const useHandlers = () => {
     const action = board.activeAction;
     if (!board.activeTool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
         const selectedElements = board.elements.filter(el => el.selected);
-        if (selectedElements.length === 1) {
+        if (selectedElements.length === 1 && !selectedElements[0].locked) {
             const config = getElementConfig(selectedElements[0]);
             return {
                 x1: selectedElements[0].x1,

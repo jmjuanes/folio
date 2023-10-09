@@ -251,6 +251,7 @@ export const FIELDS = {
     END_ARROWHEAD: "endArrowhead",
     OPACITY: "opacity",
     ORDER: "order",
+    LOCKED: "locked",
     NOTE_COLOR: "noteColor",
     NOTE_TEXT: "noteText",
 };

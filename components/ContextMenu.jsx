@@ -37,6 +37,26 @@ export const ContextMenu = props => {
                                 board.update();
                             }}
                         />
+                        {selectedElements.some(el => !el.locked) && (
+                            <Item
+                                text="Lock"
+                                onClick={() => {
+                                    board.lockElements(selectedElements);
+                                    props.onChange?.(board.export());
+                                    board.update();
+                                }}
+                            />
+                        )}
+                        {selectedElements.some(el => el.locked) && (
+                            <Item
+                                text="Unlock"
+                                onClick={() => {
+                                    board.unlockElements(selectedElements);
+                                    props.onChange?.(board.export());
+                                    board.update();
+                                }}
+                            />
+                        )}
                         <Separator />
                     </React.Fragment>
                 )} 
