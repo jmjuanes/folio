@@ -23,7 +23,8 @@ export const useBounds = () => {
         //     });
         // }
         // Generate bounds for selected elements
-        if (selectedElements.length > 1) {
+        const length = selectedElements.length;
+        if (length > 1 || (length === 1 && selectedElements[0].locked)) {
             return getRectangleBounds(selectedElements);
         }
     }

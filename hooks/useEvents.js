@@ -98,6 +98,7 @@ export const useEvents = callbacks => {
             onPointerDown: event => {
                 isDragged = false;
                 isResized = false;
+                const selectedElements = board.getSelectedElements();
                 // First we need to check if we are in a edit action
                 if (board.activeAction === ACTIONS.EDIT) {
                     if (board.activeElement?.editing) {
@@ -126,12 +127,14 @@ export const useEvents = callbacks => {
                     board.clearSelectedElements();
                     board.addElements([element]);
                 }
-                else if (board.getSelectedElements().length > 0) {
-                    if (!board.activeAction) {
-                        board.activeAction = ACTIONS.TRANSLATE;
+                else if (selectedElements.length > 0) {
+                    if (!selectedElements.some(el => el.locked)) {
+                        if (!board.activeAction) {
+                            board.activeAction = ACTIONS.TRANSLATE;
+                        }
+                        // Save a snapshot of the current selection for calculating the correct element position
+                        snapshot = board.snapshotSelectedElements();
                     }
-                    // Save a snapshot of the current selection for calculating the correct element position
-                    snapshot = board.snapshotSelectedElements();
                 }
                 else if (!board.activeAction || board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT) {
                     board.activeAction = board.activeAction || ACTIONS.SELECT;
@@ -366,13 +369,12 @@ export const useEvents = callbacks => {
                 if (!board.activeAction && !board.activeTool) {
                     // board.clearSelectedElements();
                     const element = board.getElement(event.element);
-                    if (!board.activeGroup && element.group) {
-                        board.activeGroup = element.group;
-                        board.clearSelectedElements();
-                        element.selected = true; // Mark this element as selected
-                    }
-                    // TODO: we need to check if this element is editable
-                    else if (element) {
+                    // if (!board.activeGroup && element.group) {
+                    //     board.activeGroup = element.group;
+                    //     board.clearSelectedElements();
+                    //     element.selected = true; // Mark this element as selected
+                    // }
+                    if (element && !element.locked) {
                         board.activeElement = element;
                         board.activeElement.editing = true;
                         board.activeAction = ACTIONS.EDIT;
