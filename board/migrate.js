@@ -86,6 +86,8 @@ export const migrateElements = (elements, version) => {
                     delete element.textWidth;
                     delete element.textHeight;
                 }
+                // New locked field
+                element[FIELDS.LOCKED] = element[FIELDS.LOCKED] || false;
         }
         return element;
     });
