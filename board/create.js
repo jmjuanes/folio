@@ -441,6 +441,44 @@ export const createBoard = props => ({
     sendElementsToBack(elements) {
         return this.changeElementsOrder(elements, -1, true);
     },
+    lockElements(elements) {
+        // 1. Get elements to lock
+        const elementsToUpdate = elements.filter(el => !el.locked);
+        // 2. Register history change
+        this.addHistory({
+            type: CHANGES.UPDATE,
+            elements: elementsToUpdate.map(element => ({
+                id: element.id,
+                prevValues: {
+                    [FIELDS.LOCKED]: false,
+                },
+                newValues: {
+                    [FIELDS.LOCKED]: true,
+                },
+            })),
+        });
+        // 3. Lock all provided elements
+        elementsToUpdate.forEach(element => element[FIELDS.LOCKED] = true);
+    },
+    unlockElements(elements) {
+        // 1. Get elements to unlock
+        const elementsToUpdate = elements.filter(el => el.locked);
+        // 2. Register history change
+        this.addHistory({
+            type: CHANGES.UPDATE,
+            elements: elementsToUpdate.map(element => ({
+                id: element.id,
+                prevValues: {
+                    [FIELDS.LOCKED]: true,
+                },
+                newValues: {
+                    [FIELDS.LOCKED]: false,
+                },
+            })),
+        });
+        // 3. Unlock all provided elements
+        elementsToUpdate.forEach(element => element[FIELDS.LOCKED] = false);
+    },
     addText(text, tx = null, ty = null) {
         this.clearSelectedElements();
         const x = tx ?? (this.translateX + this.state.canvasWidth / 2);
@@ -510,25 +548,27 @@ export const createBoard = props => ({
         return this.elements.forEach(el => el.selected = false);
     },
     setSelectedElements(selection) {
-        const selectedGroups = new Set();
+        // const selectedGroups = new Set();
         this.elements.forEach(element => {
             element.selected = false;
-            if (element.x1 < selection.x2 && selection.x1 < element.x2) {
-                if (element.y1 < selection.y2 && selection.y1 < element.y2) {
-                    element.selected = true;
-                    // Check if this element has a group for adding this element to the selected groups list
-                    if (!this.activeGroup && element.group) {
-                        selectedGroups.add(element.group);
+            if (!element.locked) {
+                if (element.x1 < selection.x2 && selection.x1 < element.x2) {
+                    if (element.y1 < selection.y2 && selection.y1 < element.y2) {
+                        element.selected = true;
+                        // Check if this element has a group for adding this element to the selected groups list
+                        // if (!this.activeGroup && element.group) {
+                        //     selectedGroups.add(element.group);
+                        // }
                     }
                 }
             }
         });
         // Select other elements in the group
-        this.elements.forEach(element => {
-            if (element.group && selectedGroups.has(element.group)) {
-                element.selected = true;
-            }
-        })
+        // this.elements.forEach(element => {
+        //     if (element.group && selectedGroups.has(element.group)) {
+        //         element.selected = true;
+        //     }
+        // })
     },
     removeSelectedElements() {
         this.removeElements(this.getSelectedElements());
