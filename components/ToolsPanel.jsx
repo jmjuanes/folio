@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {ChevronUpIcon, NoteIcon} from "@josemi-icons/react";
+import {NoteIcon, ToolsIcon} from "@josemi-icons/react";
 import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
 import {SHAPES, ARROWHEADS, STROKE_WIDTHS} from "../constants.js";
 import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
@@ -269,7 +269,7 @@ export const ToolsPanel = props => {
                         <PanelButton
                             testid="more"
                             text="More"
-                            icon={(<ChevronUpIcon />)}
+                            icon={(<ToolsIcon />)}
                         />
                         <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-3">
                             <DropdownItem

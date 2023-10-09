@@ -3,7 +3,7 @@ import {ToolsPanel} from "./ToolsPanel.jsx";
 
 jest.mock("@josemi-icons/react", () => ({
     NoteIcon: jest.fn(() => "NOTE_ICON"),
-    ChevronUpIcon: jest.fn(() => "CHEVRON_UP_ICON"),
+    ToolsIcon: jest.fn(() => "TOOLS_ICON"),
 }));
 
 jest.mock("../contexts/BoardContext.jsx", () => ({
