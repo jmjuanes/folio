@@ -361,8 +361,7 @@ export const createElement = elementType => {
         selected: false,
         creating: false,
         editing: false,
-        locked: false,
-        group: null,
+        [FIELDS.LOCKED]: false,
         [FIELDS.ORDER]: 0,
     };
 };
