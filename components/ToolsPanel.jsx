@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {NoteIcon} from "@josemi-icons/react";
+import {ChevronUpIcon, NoteIcon} from "@josemi-icons/react";
 import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
 import {SHAPES, ARROWHEADS, STROKE_WIDTHS} from "../constants.js";
 import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
@@ -13,6 +13,7 @@ import {LineIcon} from "./Icons.jsx";
 import {WidthLargeIcon, WidthSmallIcon} from "./Icons.jsx";
 import {LaserPointerIcon} from "./Icons.jsx";
 import {Form} from "./Form.jsx";
+import {Dropdown, DropdownItem} from "./Dropdown.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {useForceUpdate} from "../hooks/index.js";
 
@@ -131,8 +132,8 @@ const tools = {
 
 const PickPanel = props => {
     const classList = classNames({
-        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-4": true,
-        "bg-white border-2 border-gray-900": true, // props.theme === THEMES.LIGHT,
+        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
+        "bg-white border-1 border-gray-900": true, // props.theme === THEMES.LIGHT,
         // "bg-gray-900": props.theme === THEMES.DARK,
     });
     const style = {
@@ -264,14 +265,21 @@ export const ToolsPanel = props => {
                             )}
                         </div>
                     ))}
-                    <PanelSeparator />
-                    <PanelButton
-                        testid="erase"
-                        text="Erase"
-                        icon={(<EraseIcon />)}
-                        active={board.activeAction === ACTIONS.ERASE}
-                        onClick={props.onEraseClick}
-                    />
+                    <div className="relative group" tabIndex="0">
+                        <PanelButton
+                            testid="more"
+                            text="More"
+                            icon={(<ChevronUpIcon />)}
+                        />
+                        <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-3">
+                            <DropdownItem
+                                icon={(<EraseIcon />)}
+                                text="Erase"
+                                active={board.activeAction === ACTIONS.ERASE}
+                                onClick={props.onEraseClick}
+                            />
+                        </Dropdown>
+                    </div>
                 </React.Fragment>
             )}
         </div>
