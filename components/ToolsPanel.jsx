@@ -213,13 +213,15 @@ export const ToolsPanel = props => {
                 </React.Fragment>
             )}
             {/* Actions */}
-            <PanelButton
-                testid="pointer"
-                text="Pointer"
-                icon={(<LaserPointerIcon />)}
-                active={board.activeAction === ACTIONS.POINTER}
-                onClick={props.onPointerClick}
-            />
+            {props.showPointer && (
+                <PanelButton
+                    testid="pointer"
+                    text="Pointer"
+                    icon={(<LaserPointerIcon />)}
+                    active={board.activeAction === ACTIONS.POINTER}
+                    onClick={props.onPointerClick}
+                />
+            )}
             <PanelButton
                 testid="drag"
                 text="Drag"
@@ -288,6 +290,7 @@ export const ToolsPanel = props => {
 
 ToolsPanel.defaultProps = {
     showTools: true,
+    showPointer: false,
     showLock: true,
     showSelect: true,
     onMoveClick: null,

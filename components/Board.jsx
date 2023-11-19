@@ -97,7 +97,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
             {(board.state.contextMenuVisible && !isPresentation) &&  (
                 <ContextMenu onChange={props.onChange} />
             )}
-            {props.showTools && !isScreenshot && (
+            {props.showTools && !isScreenshot && !isPresentation && (
                 <div className="absolute z-5" style={{bottom:"1rem",left:"50%",transform:"translateX(-50%)"}}>
                     <ToolsPanel
                         showSelect={!isPresentation}
