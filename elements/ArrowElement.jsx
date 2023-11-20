@@ -2,6 +2,7 @@ import React from "react";
 import {STROKES, ARROWHEADS, BLACK, NONE, TRANSPARENT} from "../constants.js";
 import {OPACITY_FULL, OPACITY_NONE} from "../constants.js";
 import {getBalancedDash, getPointsDistance} from "../utils/math.js";
+import {getCurvePath} from "../utils/paths.js";
 
 const Arrowhead = props => {
     const size = props.strokeWidth * 2 + 4;
@@ -75,6 +76,19 @@ export const ArrowElement = props => {
         },
         [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
     );
+    const arrowPath = React.useMemo(
+        () => {
+            const points = [
+                [props.x1 - x, props.y1 - y],
+                [props.x2 - x, props.y2 - y],
+            ];
+            if (typeof props.xCenter === "number") {
+                points.splice(1, 0, [props.xCenter - x, props.yCenter - y]);
+            }
+            return getCurvePath(points);
+        },
+        [props.x1, props.y1, props.xCenter, props.yCenter, props.x2, props.y2],
+    );
     const selectionPath = React.useMemo(
         () => {
             const commands = [];
@@ -103,12 +117,9 @@ export const ArrowElement = props => {
                 fill={NONE}
                 stroke={NONE}
             />
-            <line
+            <path
                 data-element={props.id}
-                x1={props.x1 - x}
-                y1={props.y1 - y}
-                x2={props.x2 - x}
-                y2={props.y2 - y}
+                d={arrowPath}
                 fill={NONE}
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
