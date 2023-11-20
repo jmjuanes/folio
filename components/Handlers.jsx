@@ -26,6 +26,17 @@ export const NodeHandlers = props => {
                 onPointerDown={props.onPointerDown}
             />
             <circle
+                data-handler={HANDLERS.NODE_CENTER}
+                cx={props.position.xCenter}
+                cy={props.position.yCenter}
+                r={radius}
+                fill={props.fillColor}
+                style={{
+                    cursor: CURSORS.GRAB,
+                }}
+                onPointerDown={props.onPointerDown}
+            />
+            <circle
                 data-handler={HANDLERS.NODE_END}
                 cx={props.position.x2}
                 cy={props.position.y2}
