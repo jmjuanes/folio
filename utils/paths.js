@@ -77,3 +77,13 @@ export const getEllipseHatchPath = (width, height, center, angle, gap) => {
         })
         .filter(line => !!line);
 };
+
+// Get curve path
+export const getCurvePath = points => {
+    // Check for a simple line
+    if (points.length === 2) {
+        return `M${points[0][0]},${points[0][1]} L${points[1][0]},${points[1][1]}`;
+    }
+    // Generate curve using the three points
+    return "";
+};
