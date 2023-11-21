@@ -120,6 +120,8 @@ export const elementsConfig = {
         ),
         initialize: values => {
             return {
+                xCenter: null,
+                yCenter: null,
                 opacity: DEFAULTS.OPACITY,
                 startArrowhead: values?.startArrowhead || DEFAULTS.ARROWHEAD_START,
                 endArrowhead: values?.endArrowhead || DEFAULTS.ARROWHEAD_END,

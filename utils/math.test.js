@@ -3,6 +3,7 @@ import {
     getPointsDistance,
     getRectangleBounds,
     simplifyPath,
+    getPointDistanceToLine,
 } from "./math.js";
 
 describe("getPointsDistance", () => {
@@ -71,5 +72,13 @@ describe("simplifyPath", () => {
         expect(newPoints[2][1]).toBe(points[3][1]);
         expect(newPoints[3][0]).toBe(points[7][0]);
         expect(newPoints[3][1]).toBe(points[7][1]);
+    });
+});
+
+describe("getPointDistanceToLine", () => {
+    it("should return the distance of a point to the given line", () => {
+        const distance = getPointDistanceToLine([1, 4], [[2, 3], [5, 6]]);
+
+        expect(distance).toEqual(expect.closeTo(1.41421, 5));
     });
 });

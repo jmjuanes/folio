@@ -1,23 +1,62 @@
 import React from "react";
-import {CURSORS, HANDLERS, PRIMARY, WHITE} from "../constants.js";
+import {CURSORS, HANDLERS, NONE, PRIMARY, WHITE} from "../constants.js";
 import {SvgContainer} from "./SvgContainer.jsx";
+import {getCurvePath} from "../utils/paths.js";
+
+const getNodeCenter = pos => ([
+    typeof pos.xCenter === "number" ? pos.xCenter : (pos.x1 + pos.x2) / 2,
+    typeof pos.yCenter === "number" ? pos.yCenter : (pos.y1 + pos.y2) / 2,
+]);
+
+const getNodePath = (pos, center) => {
+    return getCurvePath([[pos.x1, pos.y1], [pos.x2, pos.y2]], center);
+};
 
 export const NodeHandlers = props => {
     const radius = props.radius / props.zoom;
     const strokeWidth = props.strokeWidth / props.zoom;
+    const center = getNodeCenter(props.position);
     return (
         <g stroke={props.strokeColor} strokeWidth={strokeWidth}>
-            <line
-                x1={props.position.x1}
-                y1={props.position.y1}
-                x2={props.position.x2}
-                y2={props.position.y2}
-                fill="none"
+            <path
+                d={getNodePath(props.position, center)}
+                fill={NONE}
             />
+            {typeof props.position.xCenter === "number" && (
+                <React.Fragment>
+                    <line
+                        x1={props.position.x1}
+                        y1={props.position.y1}
+                        x2={props.position.xCenter}
+                        y2={props.position.yCenter}
+                        fill={NONE}
+                        strokeDasharray="5,5"
+                    />
+                    <line
+                        x1={props.position.x2}
+                        y1={props.position.y2}
+                        x2={props.position.xCenter}
+                        y2={props.position.yCenter}
+                        fill={NONE}
+                        strokeDasharray="5,5"
+                    />
+                </React.Fragment>
+            )}
             <circle
                 data-handler={HANDLERS.NODE_START}
                 cx={props.position.x1}
                 cy={props.position.y1}
+                r={radius}
+                fill={props.fillColor}
+                style={{
+                    cursor: CURSORS.GRAB,
+                }}
+                onPointerDown={props.onPointerDown}
+            />
+            <circle
+                data-handler={HANDLERS.NODE_CENTER}
+                cx={center[0]}
+                cy={center[1]}
                 r={radius}
                 fill={props.fillColor}
                 style={{

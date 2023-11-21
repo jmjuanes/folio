@@ -14,6 +14,8 @@ export const useHandlers = () => {
                 x2: selectedElements[0].x2,
                 y1: selectedElements[0].y1,
                 y2: selectedElements[0].y2,
+                xCenter: selectedElements[0].xCenter ?? null,
+                yCenter: selectedElements[0].yCenter ?? null,
                 showEdgeHandlers: config.edgeHandlers,
                 showCornerHandlers: config.cornerHandlers,
                 showNodeHandlers: config.nodeHandlers,
