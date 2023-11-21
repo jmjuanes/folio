@@ -1,18 +1,38 @@
 import React from "react";
-import {CURSORS, HANDLERS, PRIMARY, WHITE} from "../constants.js";
+import {CURSORS, HANDLERS, NONE, PRIMARY, WHITE} from "../constants.js";
 import {SvgContainer} from "./SvgContainer.jsx";
+import {getCurvePath} from "../utils/paths.js";
+
+const useCurvePath = position => {
+    const points = [
+        [position.x1, position.y1],
+        [position.x2, position.y2],
+    ];
+    return getCurvePath(points, [position.xCenter, position.yCenter]);
+};
 
 export const NodeHandlers = props => {
     const radius = props.radius / props.zoom;
     const strokeWidth = props.strokeWidth / props.zoom;
+    const curvePath = useCurvePath(props.position);
     return (
         <g stroke={props.strokeColor} strokeWidth={strokeWidth}>
+            <path d={curvePath} fill={NONE} />
             <line
                 x1={props.position.x1}
                 y1={props.position.y1}
-                x2={props.position.x2}
-                y2={props.position.y2}
-                fill="none"
+                x2={props.position.xCenter}
+                y2={props.position.yCenter}
+                fill={NONE}
+                strokeDasharray="5,5"
+            />
+            <line
+                x1={props.position.x2}
+                y1={props.position.y2}
+                x2={props.position.xCenter}
+                y2={props.position.yCenter}
+                fill={NONE}
+                strokeDasharray="5,5"
             />
             <circle
                 data-handler={HANDLERS.NODE_START}
