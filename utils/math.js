@@ -19,6 +19,14 @@ export const getPointsCenter = (p1, p2) => {
     return [(p2[0] + p1[0]) / 2, (p2[1] + p1[1]) / 2];
 };
 
+// Calculate the distance of a point to a line
+export const getPointDistanceToLine = (point, line) => {
+    const x = line[1][0] - line[0][0];
+    const y = line[1][1] - line[0][1];
+    const a = (point[0] * y) - (point[1] * x) + (line[1][0] * line[0][1]) - (line[1][1] * line[0][0]);
+    return Math.abs(a) / hypotenuse(y, x);    
+};
+
 // Calculate the perimeter of an ellipse using Ramanujan approximation
 export const getEllipsePerimeter = (rx, ry) => {
     const lambda = Math.pow((rx - ry) / (rx + ry), 2);
