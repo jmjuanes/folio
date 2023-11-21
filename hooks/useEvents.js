@@ -1,19 +1,15 @@
 import React from "react";
-import {
-    ELEMENTS,
-    HANDLERS,
-    GRID_SIZE,
-    IS_DARWIN,
-    ACTIONS,
-    CHANGES,
-    KEYS,
-    STATES,
-} from "../constants.js";
+import {ELEMENTS, HANDLERS, GRID_SIZE, IS_DARWIN, ACTIONS, CHANGES, KEYS, STATES} from "../constants.js";
 import {getElementConfig} from "../elements/index.jsx";
-import {normalizeBounds} from "../utils/math.js";
+import {normalizeBounds, getPointDistanceToLine} from "../utils/math.js";
 import {isInputTarget} from "../utils/events.js";
 import {isArrowKey} from "../utils/keys.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
+
+// Utility function to check if we should reset the center handler
+const shouldResetCenterHandler = el => {
+    return getPointDistanceToLine([el.xCenter, el.yCenter], [[el.x1, el.y1], [el.x2, el.y2]]) < GRID_SIZE;
+};
 
 export const useEvents = callbacks => {
     const board = useBoard();
@@ -245,13 +241,18 @@ export const useEvents = callbacks => {
                         element.y1 = getPosition(snapshot[0].y1 + event.dy);
                     }
                     else if (event.handler === HANDLERS.NODE_CENTER) {
-                        // Make suer xCenter and yCenter points exist in snapshow
+                        // Make sure xCenter and yCenter points exist in snapshow
                         if (typeof snapshot[0].xCenter !== "number") {
                             snapshot[0].xCenter = (snapshot[0].x1 + snapshot[0].x2) / 2;
                             snapshot[0].yCenter = (snapshot[0].y1 + snapshot[0].y2) / 2;
                         }
                         element.xCenter = getPosition(snapshot[0].xCenter + event.dx);
                         element.yCenter = getPosition(snapshot[0].yCenter + event.dy);
+                        // Check to reset the position of the center
+                        if (shouldResetCenterHandler(element)) {
+                            element.xCenter = null;
+                            element.yCenter = null;
+                        }
                     }
                     else if (event.handler === HANDLERS.NODE_END) {
                         element.x2 = getPosition(snapshot[0].x2 + event.dx);
