@@ -2,11 +2,6 @@ import {ACTIONS} from "../constants.js";
 import {getElementConfig} from "../elements/index.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
-const getElementCenter = el => ({
-    xCenter: typeof el.xCenter === "number" ? el.xCenter : (el.x1 + el.x2) / 2,
-    yCenter: typeof el.yCenter === "number" ? el.yCenter : (el.y1 + el.y2) / 2,
-});
-
 export const useHandlers = () => {
     const board = useBoard();
     const action = board.activeAction;
@@ -19,7 +14,8 @@ export const useHandlers = () => {
                 x2: selectedElements[0].x2,
                 y1: selectedElements[0].y1,
                 y2: selectedElements[0].y2,
-                ...getElementCenter(selectedElements[0]),
+                xCenter: selectedElements[0].xCenter ?? null,
+                yCenter: selectedElements[0].yCenter ?? null,
                 showEdgeHandlers: config.edgeHandlers,
                 showCornerHandlers: config.cornerHandlers,
                 showNodeHandlers: config.nodeHandlers,
