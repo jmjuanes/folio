@@ -253,6 +253,9 @@ export const useEvents = callbacks => {
                             element.xCenter = null;
                             element.yCenter = null;
                         }
+                        // Register the xCenter and yCenter as updated keys
+                        updatedKeys.add("xCenter");
+                        updatedKeys.add("yCenter");
                     }
                     else if (event.handler === HANDLERS.NODE_END) {
                         element.x2 = getPosition(snapshot[0].x2 + event.dx);
