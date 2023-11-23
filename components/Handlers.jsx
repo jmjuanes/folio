@@ -1,86 +1,50 @@
 import React from "react";
-import {CURSORS, HANDLERS, NONE, PRIMARY, WHITE} from "../constants.js";
+import {CURSORS, HANDLERS, PRIMARY, WHITE} from "../constants.js";
 import {SvgContainer} from "./SvgContainer.jsx";
-import {getCurvePath} from "../utils/paths.js";
 
-const getNodeCenter = pos => ([
-    typeof pos.xCenter === "number" ? pos.xCenter : (pos.x1 + pos.x2) / 2,
-    typeof pos.yCenter === "number" ? pos.yCenter : (pos.y1 + pos.y2) / 2,
-]);
-
-const getNodePath = (pos, center) => {
-    return getCurvePath([[pos.x1, pos.y1], [pos.x2, pos.y2]], center);
+export const isCornerHandler = handler => {
+    return handler.startsWith("corner");
 };
 
-export const NodeHandlers = props => {
-    const radius = props.radius / props.zoom;
-    const strokeWidth = props.strokeWidth / props.zoom;
-    const center = getNodeCenter(props.position);
-    return (
-        <g stroke={props.strokeColor} strokeWidth={strokeWidth}>
-            <path
-                d={getNodePath(props.position, center)}
-                fill={NONE}
-            />
-            {typeof props.position.xCenter === "number" && (
-                <React.Fragment>
-                    <line
-                        x1={props.position.x1}
-                        y1={props.position.y1}
-                        x2={props.position.xCenter}
-                        y2={props.position.yCenter}
-                        fill={NONE}
-                        strokeDasharray="5,5"
-                    />
-                    <line
-                        x1={props.position.x2}
-                        y1={props.position.y2}
-                        x2={props.position.xCenter}
-                        y2={props.position.yCenter}
-                        fill={NONE}
-                        strokeDasharray="5,5"
-                    />
-                </React.Fragment>
-            )}
-            <circle
-                data-handler={HANDLERS.NODE_START}
-                cx={props.position.x1}
-                cy={props.position.y1}
-                r={radius}
-                fill={props.fillColor}
-                style={{
-                    cursor: CURSORS.GRAB,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-            <circle
-                data-handler={HANDLERS.NODE_CENTER}
-                cx={center[0]}
-                cy={center[1]}
-                r={radius}
-                fill={props.fillColor}
-                style={{
-                    cursor: CURSORS.GRAB,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-            <circle
-                data-handler={HANDLERS.NODE_END}
-                cx={props.position.x2}
-                cy={props.position.y2}
-                r={radius}
-                fill={props.fillColor}
-                style={{
-                    cursor: CURSORS.GRAB,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-        </g>
-    );
+export const isEdgeHandler = handler => {
+    return handler.startsWith("edge");
 };
 
-NodeHandlers.defaultProps = {
-    position: null,
+export const isNodeHandler = handler => {
+    return handler.startsWith("node");
+};
+
+const cursorsByHandlerType = {
+    [HANDLERS.EDGE_TOP]: CURSORS.RESIZE_NS,
+    [HANDLERS.EDGE_BOTTOM]: CURSORS.RESIZE_NS,
+    [HANDLERS.EDGE_LEFT]: CURSORS.RESIZE_EW,
+    [HANDLERS.EDGE_RIGHT]: CURSORS.RESIZE_EW,
+    [HANDLERS.CORNER_TOP_LEFT]: CURSORS.RESIZE_NWSE,
+    [HANDLERS.CORNER_BOTTOM_RIGHT]: CURSORS.RESIZE_NWSE,
+    [HANDLERS.CORNER_TOP_RIGHT]: CURSORS.RESIZE_NESW,
+    [HANDLERS.CORNER_BOTTOM_LEFT]: CURSORS.RESIZE_NESW,
+};
+
+export const NodeHandler = props => (
+    <circle
+        data-handler={props.type}
+        cx={props.x}
+        cy={props.y}
+        r={props.radius / props.zoom}
+        fill={props.fillColor}
+        stroke={props.strokeColor}
+        strokeWidth={props.strokeWidth / props.zoom}
+        style={{
+            cursor: CURSORS.GRAB,
+        }}
+        onPointerDown={props.onPointerDown}
+    />
+);
+
+NodeHandler.defaultProps = {
+    type: null,
+    x: 0,
+    y: 0,
     fillColor: WHITE,
     strokeColor: PRIMARY,
     strokeWidth: 2,
@@ -88,157 +52,28 @@ NodeHandlers.defaultProps = {
     zoom: 1,
 };
 
-export const EdgeHandlers = props => {
-    const width = Math.abs(props.position.x2 - props.position.x1);
-    const height = Math.abs(props.position.y2 - props.position.y1);
-    const size = props.size / props.zoom;
-    const strokeWidth = props.strokeWidth / props.zoom;
-    return (
-        <g fill="transparent">
-            <g stroke={props.strokeColor} strokeWidth={strokeWidth}>
-                <line
-                    x1={props.position.x1}
-                    x2={props.position.x2}
-                    y1={props.position.y1}
-                    y2={props.position.y1}
-                />
-                <line
-                    x1={props.position.x2}
-                    x2={props.position.x2}
-                    y1={props.position.y1}
-                    y2={props.position.y2}
-                />
-                <line
-                    x1={props.position.x1}
-                    x2={props.position.x2}
-                    y1={props.position.y2}
-                    y2={props.position.y2}
-                />
-                <line
-                    x1={props.position.x1}
-                    x2={props.position.x1}
-                    y1={props.position.y1}
-                    y2={props.position.y2}
-                />
-            </g>
-            <rect
-                data-handler={HANDLERS.EDGE_TOP}
-                x={props.position.x1}
-                y={props.position.y1 - size / 2}
-                width={width}
-                height={size}
-                style={{
-                    cursor: CURSORS.RESIZE_NS,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-            <rect
-                data-handler={HANDLERS.EDGE_BOTTOM}
-                x={props.position.x1}
-                y={props.position.y2}
-                width={width}
-                height={size}
-                style={{
-                    cursor: CURSORS.RESIZE_NS,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-            <rect
-                data-handler={HANDLERS.EDGE_LEFT}
-                x={props.position.x1 - size / 2}
-                y={props.position.y1}
-                width={size}
-                height={height}
-                style={{
-                    cursor: CURSORS.RESIZE_EW,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-            <rect
-                data-handler={HANDLERS.EDGE_RIGHT}
-                x={props.position.x2}
-                y={props.position.y1}
-                width={size}
-                height={height}
-                style={{
-                    cursor: CURSORS.RESIZE_EW,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-        </g>
-    );
-};
+export const ResizeHandler = props => (
+    <rect
+        data-handler={props.type}
+        x={props.x - (props.width / props.zoom) / 2}
+        y={props.y - (props.height / props.zoom) / 2}
+        width={props.width / props.zoom}
+        height={props.height / props.zoom}
+        rx={props.radius / props.zoom}
+        fill={props.fillColor}
+        stroke={props.strokeColor}
+        strokeWidth={props.strokeWidth / props.zoom}
+        style={{
+            cursor: cursorsByHandlerType[props.type],
+        }}
+        onPointerDown={props.onPointerDown}
+    />
+);
 
-EdgeHandlers.defaultProps = {
-    position: null,
-    strokeColor: PRIMARY,
-    strokeWidth: 2,
-    size: 12,
-    zoom: 1,
-    onPointerDown: null,
-};
-
-export const CornerHandlers = props => {
-    const width = props.width / props.zoom;
-    const height = props.height / props.zoom;
-    const radius = props.radius / props.zoom;
-    const strokeWidth = props.strokeWidth / props.zoom;
-    return (
-        <g fill={props.fillColor} stroke={props.strokeColor} strokeWidth={strokeWidth}>
-            <rect
-                data-handler={HANDLERS.CORNER_TOP_LEFT}
-                x={props.position.x1 - width / 2}
-                y={props.position.y1 - height / 2}
-                width={width}
-                height={height}
-                rx={radius}
-                style={{
-                    cursor: CURSORS.RESIZE_NWSE,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-            <rect
-                data-handler={HANDLERS.CORNER_TOP_RIGHT}
-                x={props.position.x2 - width / 2}
-                y={props.position.y1 - height / 2}
-                width={width}
-                height={height}
-                rx={radius}
-                style={{
-                    cursor: CURSORS.RESIZE_NESW,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-            <rect
-                data-handler={HANDLERS.CORNER_BOTTOM_RIGHT}
-                x={props.position.x2 - width / 2}
-                y={props.position.y2 - height / 2}
-                width={width}
-                height={height}
-                rx={radius}
-                style={{
-                    cursor: CURSORS.RESIZE_NWSE,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-            <rect
-                data-handler={HANDLERS.CORNER_BOTTOM_LEFT}
-                x={props.position.x1 - width / 2}
-                y={props.position.y2 - height / 2}
-                width={width}
-                height={height}
-                rx={radius}
-                style={{
-                    cursor: CURSORS.RESIZE_NESW,
-                }}
-                onPointerDown={props.onPointerDown}
-            />
-        </g>
-    );
-};
-
-CornerHandlers.defaultProps = {
-    position: null,
+ResizeHandler.defaultProps = {
+    type: null,
+    x: 0,
+    y: 0,
     fillColor: WHITE,
     strokeColor: PRIMARY,
     strokeWidth: 2,
@@ -250,35 +85,33 @@ CornerHandlers.defaultProps = {
 
 export const Handlers = props => (
     <SvgContainer>
-        {props.edgeHandlers && (
-            <EdgeHandlers
-                position={props.position}
-                zoom={props.zoom}
-                onPointerDown={props.onPointerDown}
-            />
-        )}
-        {props.cornerHandlers && (
-            <CornerHandlers
-                position={props.position}
-                zoom={props.zoom}
-                onPointerDown={props.onPointerDown}
-            />
-        )}
-        {props.nodeHandlers && (
-            <NodeHandlers
-                position={props.position}
-                zoom={props.zoom}
-                onPointerDown={props.onPointerDown}
-            />
-        )}
+        {(props.handlers || []).map(handler => (
+            <React.Fragment key={handler.id ?? handler.type}>
+                {(isCornerHandler(handler.type) || isEdgeHandler(handler.type)) && (
+                    <ResizeHandler
+                        type={handler.type}
+                        x={handler.x}
+                        y={handler.y}
+                        zoom={props.zoom}
+                        onPointerDown={props.onPointerDown}
+                    />
+                )}
+                {isNodeHandler(handler.type) && (
+                    <NodeHandler
+                        type={handler.type}
+                        x={handler.x}
+                        y={handler.y}
+                        zoom={props.zoom}
+                        onPointerDown={props.onPointerDown}
+                    />
+                )}
+            </React.Fragment>
+        ))}
     </SvgContainer>
 );
 
 Handlers.defaultProps = {
-    position: {},
-    edgeHandlers: false,
-    cornerHandlers: false,
-    nodeHandlers: false,
+    handlers: [],
     zoom: 1,
     onPointerDown: null,
 };

@@ -1,22 +1,16 @@
 import React from "react";
 import {ELEMENTS, HANDLERS, GRID_SIZE, IS_DARWIN, ACTIONS, CHANGES, KEYS, STATES} from "../constants.js";
 import {getElementConfig} from "../elements/index.jsx";
-import {normalizeBounds, getPointDistanceToLine} from "../utils/math.js";
+import {normalizeBounds} from "../utils/math.js";
 import {isInputTarget} from "../utils/events.js";
 import {isArrowKey} from "../utils/keys.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
-
-// Utility function to check if we should reset the center handler
-const shouldResetCenterHandler = el => {
-    return getPointDistanceToLine([el.xCenter, el.yCenter], [[el.x1, el.y1], [el.x2, el.y2]]) < GRID_SIZE;
-};
 
 export const useEvents = callbacks => {
     const board = useBoard();
     const events = React.useRef(null);
 
     if (!events.current) {
-        const updatedKeys = new Set();
         const getPosition = pos => {
             return board.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
         };
@@ -130,6 +124,14 @@ export const useEvents = callbacks => {
                         }
                         // Save a snapshot of the current selection for calculating the correct element position
                         snapshot = board.snapshotSelectedElements();
+                        // Check for calling the onResizeStart listener
+                        if (board.activeAction === ACTIONS.RESIZE && snapshot.length === 1) {
+                            const element = board.getElement(snapshot[0].id);
+                            const elementConfig = getElementConfig(element);
+                            if (typeof elementConfig.onResizeStart === "function") {
+                                elementConfig.onResizeStart(element, snapshot[0], event);
+                            }
+                        }
                     }
                 }
                 else if (!board.activeAction || board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT) {
@@ -195,12 +197,8 @@ export const useEvents = callbacks => {
                         element.y1 = getPosition(snapshot[index].y1 + event.dy);
                         element.x2 = element.x1 + (snapshot[index].x2 - snapshot[index].x1);
                         element.y2 = element.y1 + (snapshot[index].y2 - snapshot[index].y1);
-                        // Check for xCenter and yCenter values
-                        if (typeof element.xCenter === "number") {
-                            element.xCenter = element.x1 + (snapshot[index].xCenter - snapshot[index].x1);
-                            element.yCenter = element.y1 + (snapshot[index].yCenter - snapshot[index].y1);
-                        }
-                        // getElementConfig(element)?.onDrag?.(snapshot[index], event);
+                        // Execute the onDrag function
+                        getElementConfig(element)?.onDrag?.(element, snapshot[index], event);
                     });
                 }
                 else if (board.activeAction === ACTIONS.RESIZE) {
@@ -240,33 +238,12 @@ export const useEvents = callbacks => {
                         element.x1 = getPosition(snapshot[0].x1 + event.dx);
                         element.y1 = getPosition(snapshot[0].y1 + event.dy);
                     }
-                    else if (event.handler === HANDLERS.NODE_CENTER) {
-                        // Make sure xCenter and yCenter points exist in snapshow
-                        if (typeof snapshot[0].xCenter !== "number") {
-                            snapshot[0].xCenter = (snapshot[0].x1 + snapshot[0].x2) / 2;
-                            snapshot[0].yCenter = (snapshot[0].y1 + snapshot[0].y2) / 2;
-                        }
-                        element.xCenter = getPosition(snapshot[0].xCenter + event.dx);
-                        element.yCenter = getPosition(snapshot[0].yCenter + event.dy);
-                        // Check to reset the position of the center
-                        if (shouldResetCenterHandler(element)) {
-                            element.xCenter = null;
-                            element.yCenter = null;
-                        }
-                        // Register the xCenter and yCenter as updated keys
-                        updatedKeys.add("xCenter");
-                        updatedKeys.add("yCenter");
-                    }
                     else if (event.handler === HANDLERS.NODE_END) {
                         element.x2 = getPosition(snapshot[0].x2 + event.dx);
                         element.y2 = getPosition(snapshot[0].y2 + event.dy);
                     }
-                    if (elementConfig?.onResize) {
-                        const newKeys = elementConfig.onResize(element, snapshot[0], event, getPosition);
-                        if (newKeys && newKeys.length > 0) {
-                            newKeys.forEach(key => updatedKeys.add(key));
-                        }
-                    }
+                    // Execute onResize handler
+                    elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
                 }
                 else if (board.activeAction === ACTIONS.SELECT || board.activeAction === ACTIONS.SCREENSHOT) {
                     board.currentState = STATES.BRUSHING;
@@ -332,15 +309,32 @@ export const useEvents = callbacks => {
                 }
                 else if (board.activeAction === ACTIONS.TRANSLATE || board.activeAction === ACTIONS.RESIZE) {
                     if (isDragged || isResized) {
-                        const keys = ["x1", "x2", "y1", "y2"];
-                        updatedKeys.forEach(extraKey => keys.push(extraKey));
+                        if (board.activeAction === ACTIONS.RESIZE && snapshot.length === 1) {
+                            const element = board.getElement(snapshot[0].id);
+                            const elementConfig = getElementConfig(element);
+                            if (typeof elementConfig.onResizeEnd === "function") {
+                                elementConfig.onResizeEnd(element, snapshot[0], event);
+                            }
+                        }
                         board.addHistory({
                             type: CHANGES.UPDATE,
-                            elements: board.getSelectedElements().map((element, index) => ({
-                                id: element.id,
-                                prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
-                                newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
-                            })),
+                            elements: board.getSelectedElements().map((element, index) => {
+                                const updatedFields = new Set(["x1", "x2", "y1", "y2"]);
+                                // We need to check the fields that the element has updated internally
+                                const elementConfig = getElementConfig(element);
+                                if (typeof elementConfig.getUpdatedFields === "function") {
+                                    (elementConfig.getUpdatedFields(element, snapshot[index]) || []).forEach(key => {
+                                        updatedFields.add(key);
+                                    });
+                                }
+                                // Generate list of fields to update
+                                const keys = Array.from(updatedFields);
+                                return {
+                                    id: element.id,
+                                    prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
+                                    newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
+                                };
+                            }),
                         });
                         callbacks?.onChange?.({
                             elements: board.elements,
@@ -365,7 +359,6 @@ export const useEvents = callbacks => {
                     }
                     isDragged = false;
                     isResized = false;
-                    updatedKeys.clear();
                 }
                 else if (board.activeAction === ACTIONS.SELECT) {
                     const selection = board.selection;

@@ -1,8 +1,11 @@
 import {getRectangleBounds} from "../utils/math.js";
 import {ACTIONS} from "../constants.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
+import {getElementConfig} from "../elements/index.jsx";
+import {getRectanglePath} from "../utils/paths.js";
 
 export const useBounds = () => {
+    const bounds = [];
     const board = useBoard();
     const action = board.activeAction;
     if (!board.activeTool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
@@ -22,12 +25,21 @@ export const useBounds = () => {
         //         });
         //     });
         // }
-        // Generate bounds for selected elements
-        const length = selectedElements.length;
-        if (length > 1 || (length === 1 && selectedElements[0].locked)) {
-            return getRectangleBounds(selectedElements);
+        // Check if there is only one element in the selection
+        if (selectedElements.length === 1) {
+            const elementConfig = getElementConfig(selectedElements[0]);
+            if (typeof elementConfig.getBounds === "function") {
+                return elementConfig.getBounds(selectedElements[0]);
+            }
+        }
+        // Generate default bounds for selected elements
+        if (selectedElements.length > 0) {
+            const p = getRectangleBounds(selectedElements);
+            bounds.push({
+                path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
+            });
         }
     }
-    // No bounds available
-    return null;
+    // Return bounds
+    return bounds;
 };

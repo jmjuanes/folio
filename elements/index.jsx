@@ -1,26 +1,12 @@
 import React from "react";
 import {uid} from "uid/secure";
-import {
-    ELEMENTS,
-    HANDLERS,
-    GRID_SIZE,
-    DEFAULTS,
-    DRAWING_THRESHOLD,
-    TEXT_SIZE_MIN,
-    TEXT_SIZE_STEP,
-    TEXT_SIZE_MAX,
-    DRAWING_OFFSET,
-    EPSILON,
-    TEXT_BOX_MIN_WIDTH,
-    FIELDS,
-    FILL_STYLES,
-    STROKES,
-    SHAPE_MIN_WIDTH,
-    SHAPE_MIN_HEIGHT,
-    SHAPE_PADDING,
-    NOTE_MIN_WIDTH,
-    NOTE_MIN_HEIGHT,
-} from "../constants.js";
+import {HANDLERS} from "../constants.js";
+import {EPSILON} from "../constants.js";
+import {ELEMENTS, FIELDS, DEFAULTS, GRID_SIZE, FILL_STYLES, STROKES} from "../constants.js";
+import {DRAWING_THRESHOLD, DRAWING_OFFSET} from "../constants.js";
+import {TEXT_SIZE_MIN, TEXT_SIZE_STEP, TEXT_SIZE_MAX, TEXT_BOX_MIN_WIDTH} from "../constants.js";
+import {SHAPE_MIN_WIDTH, SHAPE_MIN_HEIGHT, SHAPE_PADDING} from "../constants.js";
+import {NOTE_MIN_WIDTH, NOTE_MIN_HEIGHT} from "../constants.js";
 import {ArrowElement} from "./ArrowElement.jsx";
 import {DrawElement} from "./DrawElement.jsx";
 import {TextElement} from "./TextElement.jsx";
@@ -28,15 +14,54 @@ import {ShapeElement} from "./ShapeElement.jsx";
 import {ImageElement} from "./ImageElement.jsx";
 import {NoteElement} from "./NoteElement.jsx";
 import {measureText} from "../utils/math.js";
+import {getPointDistanceToLine, getPointProjectionToLine} from "../utils/math.js";
+import {getCurvePath} from "../utils/paths.js";
 import {SvgContainer} from "../components/SvgContainer.jsx";
+import {isCornerHandler} from "../components/Handlers.jsx";
 
-const isCornerHandler = handler => {
-    return handler.startsWith("corner");
-};
-
-const isEdgeHandler = handler => {
-    return handler.startsWith("edge");
-};
+// Generate default handlers
+const getDefaultElementHandlers = element => ([
+    {
+        type: HANDLERS.EDGE_TOP,
+        x: (element.x1 + element.x2) / 2,
+        y: element.y1,
+    },
+    {
+        type: HANDLERS.EDGE_BOTTOM,
+        x: (element.x1 + element.x2) / 2,
+        y: element.y2,
+    },
+    {
+        type: HANDLERS.EDGE_LEFT,
+        x: element.x1,
+        y: (element.y1 + element.y2) / 2,
+    },
+    {
+        type: HANDLERS.EDGE_RIGHT,
+        x: element.x2,
+        y: (element.y1 + element.y2) / 2,
+    },
+    {
+        type: HANDLERS.CORNER_TOP_LEFT,
+        x: element.x1,
+        y: element.y1,
+    },
+    {
+        type: HANDLERS.CORNER_TOP_RIGHT,
+        x: element.x2,
+        y: element.y1,
+    },
+    {
+        type: HANDLERS.CORNER_BOTTOM_LEFT,
+        x: element.x1,
+        y: element.y2,
+    },
+    {
+        type: HANDLERS.CORNER_BOTTOM_RIGHT,
+        x: element.x2,
+        y: element.y2,
+    },
+]);
 
 const ElementContainer = props => (
     <SvgContainer>
@@ -53,8 +78,6 @@ const checkStrokeStyleValue = initialValue => {
 
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
-        edgeHandlers: true,
-        cornerHandlers: true,
         render: props => (
             <ElementContainer id={props.id}>
                 <ShapeElement {...props} />
@@ -65,6 +88,7 @@ export const elementsConfig = {
                 />
             </ElementContainer>
         ),
+        getHandlers: element => getDefaultElementHandlers(element),
         initialize: values => {
             // Prevent drawing a shape with stroke and fill styles as none
             let strokeStyle = values?.strokeStyle ?? DEFAULTS.STROKE_STYLE;
@@ -112,12 +136,52 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.ARROW]: {
-        nodeHandlers: true,
         render: props => (
             <ElementContainer id={props.id}>
                 <ArrowElement {...props} />
             </ElementContainer>
         ),
+        getHandlers: element => ([
+            {
+                type: HANDLERS.NODE_START,
+                x: element.x1,
+                y: element.y1,
+            },
+            {
+                type: HANDLERS.NODE_MIDDLE,
+                x: element.xCenter ?? ((element.x1 + element.x2) / 2),
+                y: element.yCenter ?? ((element.y1 + element.y2) / 2),
+            },
+            {
+                type: HANDLERS.NODE_END,
+                x: element.x2,
+                y: element.y2,
+            }
+        ]),
+        getBounds: element => {
+            const bounds = [];
+            const center = (typeof element.xCenter === "number") ? [element.xCenter, element.yCenter] : null;
+            // 1. Add default bound connecting the two nodes of the arrow
+            bounds.push({
+                path: getCurvePath([[element.x1, element.y1], [element.x2, element.y2]], center),
+            });
+            // 2. Add lines to connect the control point with the start and end nodes
+            if (center && !element.locked) {
+                bounds.push({
+                    path: getCurvePath([[element.x1, element.y1], [element.xCenter, element.yCenter]]),
+                    strokeDasharray: 5,
+                });
+                bounds.push({
+                    path: getCurvePath([[element.x2, element.y2], [element.xCenter, element.yCenter]]),
+                    strokeDasharray: 5,
+                });
+            }
+            // 3. Return bounds
+            return bounds;
+        },
+        getUpdatedFields: (element, snapshot) => {
+            return ["xCenter", "yCenter"];
+        },
         initialize: values => {
             return {
                 xCenter: null,
@@ -130,18 +194,59 @@ export const elementsConfig = {
                 strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULTS.STROKE_STYLE),
             };
         },
+        onResizeStart: (element, snapshot, event) => {
+            if (event.handler === HANDLERS.NODE_MIDDLE) {
+                if (typeof snapshot.xCenter !== "number") {
+                    snapshot.xCenter = (snapshot.x1 + snapshot.x2) / 2;
+                    snapshot.yCenter = (snapshot.y1 + snapshot.y2) / 2;
+                }
+            }
+        },
+        onResize: (element, snapshot, event, getPosition) => {
+            if (event.handler === HANDLERS.NODE_MIDDLE) {
+                const x = getPosition(snapshot.xCenter + event.dx);
+                const y = getPosition(snapshot.yCenter + event.dy);
+                // Check to reset the position of the center
+                if (getPointDistanceToLine([x, y], [[element.x1, element.y1], [element.x2, element.y2]]) < GRID_SIZE) {
+                    const p = getPointProjectionToLine([x, y], [[element.x1, element.y1], [element.x2, element.y2]]);
+                    element.xCenter = p[0];
+                    element.yCenter = p[1];
+                }
+                else {
+                    element.xCenter = x;
+                    element.yCenter = y;
+                }
+            }
+        },
+        onResizeEnd: (element, snapshot, event) => {
+            if (event.handler === HANDLERS.NODE_MIDDLE) {
+                const center = [element.xCenter, element.yCenter];
+                if (getPointDistanceToLine(center, [[element.x1, element.y1], [element.x2, element.y2]]) < GRID_SIZE) {
+                    element.xCenter = null;
+                    element.yCenter = null;
+                }
+            }
+        },
+        onDrag: (element, snapshot, event) => {
+            if (typeof element.xCenter === "number") {
+                element.xCenter = element.x1 + (snapshot.xCenter - snapshot.x1);
+                element.yCenter = element.y1 + (snapshot.yCenter - snapshot.y1);
+            }
+        },
         isValueAllowed: (key, value) => {
             return !(key === FIELDS.STROKE_STYLE && value === STROKES.NONE);
         },
     },
     [ELEMENTS.TEXT]: {
-        edgeHandlers: true,
-        cornerHandlers: true,
         render: props => (
             <ElementContainer id={props.id}>
                 <TextElement {...props} />
             </ElementContainer>
         ),
+        getHandlers: element => getDefaultElementHandlers(element),
+        getUpdatedFields: (element, snapshot) => {
+            return ["textSize", "textWidth", "textHeight"];
+        },
         initialize: values => {
             // We need to measure the height of an empty text to calculate the height of the element
             const textSize = values?.textSize ?? DEFAULTS.TEXT_SIZE;
@@ -190,7 +295,6 @@ export const elementsConfig = {
             }
         },
         onResize: (element, snapshot, event) => {
-            const updatedFields = ["textSize", "textWidth", "textHeight"];
             const handler = event.handler || "";
             const width = Math.abs(element.x2 - element.x1);
             const height = Math.abs(element.y2 - element.y1);
@@ -209,11 +313,9 @@ export const elementsConfig = {
                 // Terrible hack to prevent having 0px text elements
                 if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
                     element.y2 = element.y1 + Math.max(height, element.textHeight, GRID_SIZE);
-                    updatedFields.push("y2");
                 }
                 else {
                     element.y1 = element.y2 - Math.max(height, element.textHeight, GRID_SIZE);
-                    updatedFields.push("y1");
                 }
             }
             else if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
@@ -222,20 +324,14 @@ export const elementsConfig = {
                 element.textHeight = sizes[1];
                 element.y1 = snapshot.y1;
                 element.y2 = element.y1 + Math.ceil(sizes[1] / GRID_SIZE) * GRID_SIZE;
-                updatedFields.push("y1");
-                updatedFields.push("y2");
             }
             // Terrible hack to prevent having 0px text elements
             if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
                 element.x1 = Math.min(element.x1, element.x2 - element.textWidth);
-                updatedFields.push("x1");
             }
             else if (handler === HANDLERS.EDGE_RIGHT || handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
                 element.x2 = Math.max(element.x2, element.x1 + element.textWidth);
-                updatedFields.push("x2");
             }
-            // Return updated fields
-            return updatedFields;
         },
         utils: {
             measureText: (text, textSize, textFont, maxWidth) => {
@@ -244,13 +340,12 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.DRAW]: {
-        edgeHandlers: true,
-        cornerHandlers: true,
         render: props => (
             <ElementContainer id={props.id}>
                 <DrawElement {...props} />
             </ElementContainer>    
         ),
+        getHandlers: element => getDefaultElementHandlers(element),
         initialize: values => {
             return {
                 opacity: DEFAULTS.OPACITY,
@@ -303,13 +398,12 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.IMAGE]: {
-        edgeHandlers: true,
-        cornerHandlers: true,
         render: props => (
             <ElementContainer id={props.id}>
                 <ImageElement {...props} />
             </ElementContainer>
         ),
+        getHandlers: element => getDefaultElementHandlers(element),
         initialize: () => ({
             assetId: "",
             opacity: DEFAULTS.OPACITY,

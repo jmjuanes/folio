@@ -27,6 +27,14 @@ export const getPointDistanceToLine = (point, line) => {
     return Math.abs(a) / hypotenuse(y, x);    
 };
 
+// Get the projection of a point to a line
+export const getPointProjectionToLine = (point, line) => {
+    const ax = line[1][0] - line[0][0], ay = line[1][1] - line[0][1];
+    const bx = point[0] - line[0][0], by = point[1] - line[0][1];
+    const p = ((ax * bx) + (ay * by)) / ((ax * ax) + (ay * ay));
+    return [line[0][0] + p * ax, line[0][1] + p * ay];
+};
+
 // Calculate the perimeter of an ellipse using Ramanujan approximation
 export const getEllipsePerimeter = (rx, ry) => {
     const lambda = Math.pow((rx - ry) / (rx + ry), 2);

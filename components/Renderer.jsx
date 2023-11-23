@@ -36,9 +36,6 @@ export const Renderer = props => {
             boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
             showBounds={!!bounds}
             handlers={handlers}
-            showEdgeHandlers={handlers?.showEdgeHandlers}
-            showCornerHandlers={handlers?.showCornerHandlers}
-            showNodeHandlers={handlers?.showNodeHandlers}
             brush={board.selection}
             brushFillColor={SELECTION_FILL_COLOR}
             brushStrokeColor={SELECTION_STROKE_COLOR}

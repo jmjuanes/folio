@@ -151,7 +151,7 @@ export const HANDLERS = {
     CORNER_BOTTOM_RIGHT: "corner-bottom-right",
     NODE_START: "node-start",
     NODE_END: "node-end",
-    NODE_CENTER: "node-center",
+    NODE_MIDDLE: "node-middle",
 };
 
 // Default font faces

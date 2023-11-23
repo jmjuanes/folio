@@ -257,15 +257,16 @@ export const Canvas = props => {
                 </AssetsProvider>
                 {props.showBounds && props.bounds && (
                     <SvgContainer>
-                        <rect
-                            x={props.bounds.x1}
-                            y={props.bounds.y1}
-                            width={Math.abs(props.bounds.x2 - props.bounds.x1)}
-                            height={Math.abs(props.bounds.y2 - props.bounds.y1)}
-                            fill={props.boundsFillColor}
-                            stroke={props.boundsStrokeColor}
-                            strokeWidth={props.boundsStrokeWidth / props.zoom}
-                        />
+                        {(props.bounds || []).map((bound, index) => (
+                            <path
+                                key={index}
+                                d={bound.path ?? ""}
+                                fill={props.boundsFillColor}
+                                stroke={props.boundsStrokeColor}
+                                strokeWidth={props.boundsStrokeWidth / props.zoom}
+                                strokeDasharray={bound.strokeDasharray ?? null}
+                            />
+                        ))}
                     </SvgContainer>
                 )}
                 {props.showBrush && props.brush && (
@@ -285,10 +286,7 @@ export const Canvas = props => {
                 )}
                 {props.showHandlers && props.handlers && (
                     <Handlers
-                        position={props.handlers}
-                        edgeHandlers={props.showEdgeHandlers}
-                        cornerHandlers={props.showCornerHandlers}
-                        nodeHandlers={props.showNodeHandlers}
+                        handlers={props.handlers}
                         zoom={props.zoom}
                         onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
                     />
@@ -311,7 +309,7 @@ Canvas.defaultProps = {
     translateY: 0,
     zoom: 1,
     bounds: null,
-    boundsFillColor: TRANSPARENT,
+    boundsFillColor: NONE,
     boundsStrokeColor: NONE,
     boundsStrokeWidth: 2,
     handlers: null,
@@ -341,9 +339,6 @@ Canvas.defaultProps = {
     onWheel: null,
     showBounds: true,
     showHandlers: true,
-    showEdgeHandlers: false,
-    showCornerHandlers: false,
-    showNodeHandlers: false,
     showBrush: false,
     showGrid: true,
     showPointer: false,
