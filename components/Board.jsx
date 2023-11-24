@@ -177,15 +177,6 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                         onExport={() => setExportVisible(true)}
                                     />
                                 )}
-                                {props.showTitle && (
-                                    <React.Fragment>
-                                        <HeaderSeparator />
-                                        <Title
-                                            editable={!isPresentation}
-                                            onChange={props.onChange}
-                                        />
-                                    </React.Fragment>
-                                )}
                                 {props.showScreenshot && !isPresentation && (
                                     <React.Fragment>
                                         <HeaderSeparator />
@@ -223,6 +214,14 @@ const InnerBoard = React.forwardRef((props, ref) => {
                         </div>
                         {props.headerLeftContent}
                     </div>
+                    {props.showTitle && (
+                        <div className="absolute top-0 left-half pt-4 z-7 flex" style={{transform:"translateX(-50%)"}}>
+                            <Title
+                                editable={!isPresentation}
+                                onChange={props.onChange}
+                            />
+                        </div>
+                    )}
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
                         {props.showHistory && !isPresentation && (
                             <div className="flex relative">

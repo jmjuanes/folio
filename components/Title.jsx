@@ -3,8 +3,8 @@ import classNames from "classnames";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
 const previewStyle = {
-    maxWidth: "13rem",
-    minWidth: "13rem",
+    maxWidth: "16rem",
+    minWidth: "16rem",
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
@@ -27,10 +27,10 @@ export const Title = props => {
         }
     }, [editing]);
     return (
-        <div className="flex items-center">
+        <div className="flex items-center h-12">
             {!editing && (
                 <div className={previewClass} onClick={handleClick}>
-                    <div className="w-full font-bold text-gray-900" style={previewStyle}>
+                    <div className="w-full font-bold text-gray-900 text-center" style={previewStyle}>
                         <strong>{board.title}</strong>
                     </div>
                 </div>
@@ -41,8 +41,8 @@ export const Title = props => {
                     type="text"
                     defaultValue={board.title}
                     className={classNames({
-                        "outline-none font-bold leading-none": true,
-                        "w-56 px-2 py-2 rounded-md": true,
+                        "outline-none font-bold leading-none text-center": true,
+                        "w-64 px-2 py-2 rounded-md": true,
                         "text-white bg-gray-900": true,
                     })}
                     placeholder="Untitled"

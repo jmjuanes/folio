@@ -77,7 +77,7 @@ export const App = () => {
         <Switch>
             {/* Board route */}
             <Route test={/^#board\/(\w+)$/} render={() => (
-                <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-gray-700">
+                <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-neutral-800">
                     <BoardPage />
                 </div>
             )} />
