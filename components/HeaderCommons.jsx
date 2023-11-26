@@ -2,10 +2,6 @@ import React from "react";
 import {renderIcon} from "@josemi-icons/react";
 import classNames from "classnames";
 
-export const HeaderSeparator = () => (
-    <div className="w-px bg-gray-600" />
-);
-
 export const HeaderButton = props => {
     const classList = classNames(props.className || "", {
         "flex items-center p-3": true,
