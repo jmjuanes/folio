@@ -1,7 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {ChevronDownIcon} from "@josemi-icons/react";
-import {TrashIcon, BanIcon, CopyIcon} from "@josemi-icons/react";
+import {TrashIcon, BanIcon, CopyIcon, LockIcon, UnlockIcon} from "@josemi-icons/react";
 import {NoteIcon} from "@josemi-icons/react";
 
 import {FORM_OPTIONS, FIELDS, THEMES} from "../constants.js";
@@ -14,17 +13,15 @@ import {FILL_COLOR_PALETTE, STROKE_COLOR_PALETTE, TEXT_COLOR_PALETTE, NOTE_COLOR
 
 import {Form} from "./Form.jsx";
 
-import {FillIcon, StrokeIcon, TextIcon, ShapesIcon, SunIcon} from "./Icons.jsx";
+import {FillIcon, StrokeIcon, TextIcon} from "./Icons.jsx";
 import {CircleSolidIcon, CircleDashedIcon, CircleDottedIcon} from "./Icons.jsx";
 import {CircleSolidFillIcon, CircleHatchFillIcon, CircleSemiFillIcon} from "./Icons.jsx";
 import {SquareIcon, CircleIcon, TriangleIcon, DiamondIcon} from "./Icons.jsx";
 import {ArrowheadNoneIcon, ArrowheadArrowIcon, ArrowheadTriangleIcon, ArrowheadSquareIcon, ArrowheadCircleIcon} from "./Icons.jsx";
 import {TextCenterIcon, TextLeftIcon, TextRightIcon, TextJustifyIcon} from "./Icons.jsx";
-import {DotsVerticalIcon} from "./Icons.jsx";
 import {BringForwardIcon, BringFrontIcon, SendBackIcon, SendBackwardIcon} from "./Icons.jsx";
 
 import {useBoard} from "../contexts/BoardContext.jsx";
-import {getRectangleBounds} from "../utils/math.js";
 
 // Available sections
 const SECTIONS = {
@@ -42,6 +39,8 @@ const SECTIONS = {
 const ACTIONS = {
     REMOVE: "action:remove",
     DUPLICATE: "action:duplicate",
+    LOCK: "action:lock",
+    UNLOCK: "action:unlock",
     BRING_FRONT: "layer:bringFront",
     BRING_FORWARD: "layer:bringForward",
     SEND_BACK: "layer:sendBack",
@@ -57,32 +56,17 @@ const arrowheadValues = [
     // {value: ARROWHEADS.SEGMENT, icon: ArrowheadSegmentIcon()},
 ];
 
-const allSections = {
+// Style sections
+const styleSections = {
     [SECTIONS.NOTE]: {
         test: FIELDS.NOTE_COLOR,
         icon: (<NoteIcon />),
-        showChevron: true,
         items: {
             [FIELDS.NOTE_COLOR]: {
+                title: "Note color",
                 type: FORM_OPTIONS.COLOR,
                 values: NOTE_COLOR_PALETTE,
                 showInput: false,
-            },
-        },
-    },
-    [SECTIONS.SHAPE]: {
-        test: FIELDS.SHAPE,
-        icon: (<ShapesIcon />),
-        showChevron: true,
-        items: {
-            [FIELDS.SHAPE]: {
-                type: FORM_OPTIONS.SELECT,
-                values: [
-                    {value: SHAPES.RECTANGLE, icon: SquareIcon()},
-                    {value: SHAPES.ELLIPSE, icon: CircleIcon()},
-                    {value: SHAPES.DIAMOND, icon: DiamondIcon()},
-                    {value: SHAPES.TRIANGLE, icon: TriangleIcon()},
-                ],
             },
         },
     },
@@ -183,10 +167,27 @@ const allSections = {
             },
         },
     },
+};
+
+// Display sections
+const displaySections = {
+    [SECTIONS.SHAPE]: {
+        test: FIELDS.SHAPE,
+        items: {
+            [FIELDS.SHAPE]: {
+                title: "Shape",
+                type: FORM_OPTIONS.SELECT,
+                values: [
+                    {value: SHAPES.RECTANGLE, icon: SquareIcon()},
+                    {value: SHAPES.ELLIPSE, icon: CircleIcon()},
+                    {value: SHAPES.DIAMOND, icon: DiamondIcon()},
+                    {value: SHAPES.TRIANGLE, icon: TriangleIcon()},
+                ],
+            },
+        },
+    },
     [SECTIONS.ARROWHEADS]: {
         test: FIELDS.START_ARROWHEAD,
-        icon: (<ArrowheadArrowIcon />),
-        showChevron: true,
         items: {
             [FIELDS.START_ARROWHEAD]: {
                 title: "Start arrowhead",
@@ -201,9 +202,7 @@ const allSections = {
         },
     },
     [SECTIONS.EFFECTS]: {
-        icon: (<SunIcon />),
         test: FIELDS.OPACITY,
-        showChevron: true,
         items: {
             [FIELDS.OPACITY]: {
                 type: FORM_OPTIONS.RANGE,
@@ -215,11 +214,7 @@ const allSections = {
         },
     },
     [SECTIONS.ACTIONS]: {
-        icon: (<DotsVerticalIcon />),
         test: FIELDS.ORDER,
-        className: "w-40",
-        separator: true,
-        showChevron: false,
         items: {
             layers: {
                 type: FORM_OPTIONS.SELECT,
@@ -236,7 +231,22 @@ const allSections = {
                 type: FORM_OPTIONS.SELECT,
                 title: "Actions",
                 className: "grid grid-cols-4 gap-1 w-full",
+                isVisible: (field, value, data) => {
+                    if (field === ACTIONS.LOCK) {
+                        return !data[FIELDS.LOCKED];
+                    }
+                    else if (field === ACTIONS.UNLOCK) {
+                        return !!data[FIELDS.LOCKED];
+                    }
+                    // Field is visible
+                    return true;
+                },
+                isActive: (field, value, data) => {
+                    return field === ACTIONS.UNLOCK;
+                },
                 values: [
+                    {value: ACTIONS.LOCK, icon: UnlockIcon()},
+                    {value: ACTIONS.UNLOCK, icon: LockIcon()},
                     {value: ACTIONS.DUPLICATE, icon: CopyIcon()},
                     {value: ACTIONS.REMOVE, icon: TrashIcon()},
                 ],
@@ -254,88 +264,73 @@ const useValues = selection => {
     return selection.reduce((prev, item) => ({...prev, ...item}), {});
 };
 
-const ButtonsWrapper = props => {
-    const classList = classNames({
-        "rounded-lg shadow-md flex items-center gap-1 relative p-1": true,
-        // "bg-gray-900 text-white": props.theme === THEMES.DARK,
-        "bg-white text-gray-900 border-2 border-gray-900": props.theme === THEMES.LIGHT,
-    });
-    return (
-        <div className={classList}>
-            {props.children}
-        </div>
-    );
-};
+const TabsWrapper = props => (
+    <div className="flex gap-1 items-center flex-nowrap rounded-lg bg-neutral-100 p-1">
+        {props.children}
+    </div>
+);
 
-const Button = props => {
+const TabButton = props => {
     const classList = classNames(props.className, {
-        "rounded-md flex justify-center items-center flex gap-0 p-3 cursor-pointer": true,
-        "px-2": props.showChevron,
+        "rounded-md flex justify-center items-center flex gap-0 p-2 cursor-pointer w-full": true,
         // "text-white hover:bg-gray-800": props.theme === THEMES.DARK && !props.active,
         // "text-white bg-gray-800": props.theme === THEMES.DARK && props.active,
-        "text-gray-900 hover:bg-gray-200": props.theme === THEMES.LIGHT && !props.active,
-        "text-white bg-gray-900": props.theme === THEMES.LIGHT && props.active,
+        "text-neutral-800 hover:bg-neutral-200": props.theme === THEMES.LIGHT && !props.active,
+        "text-white bg-neutral-900": props.theme === THEMES.LIGHT && props.active,
     });
     return (
         <div className={classList} style={props.style} onClick={props.onClick}>
-            <div className="text-lg flex items-center">
+            <div className="flex items-center">
                 {props.icon}
             </div>
-            {props.showChevron && (
-                <div className="text-xs flex items-center">
-                    <ChevronDownIcon />
-                </div>
-            )}
         </div>
     );
 };
 
-Button.defaultProps = {
+TabButton.defaultProps = {
     className: "",
     style: null,
     icon: null,
     active: false,
     theme: THEMES.LIGHT,
-    showChevron: false,
     onClick: null,
 };
 
 // Active section wrapper
-const ActiveSectionWrapper = props => {
-    const classList = classNames(props.className, {
-        "absolute left-half p-3 rounded-lg shadow-md": true,
-        "top-full mt-2": !props.alignToTop,
-        "bottom-full mb-2": props.alignToTop,
-        "bg-white border border-gray-900": props.theme === THEMES.LIGHT,
-        // "bg-gray-900": props.theme === THEMES.DARK,
-    });
-    return (
-        <div className={classList} style={{transform: "translateX(-50%)"}}>
-            <Form
-                className="flex flex-col gap-3"
-                theme={props.theme}
-                data={props.values}
-                items={props.items}
-                onChange={props.onChange}
-            />
-        </div>
-    );
-};
-
-ActiveSectionWrapper.defaultProps = {
-    className: "w-56",
-};
+const ActiveSectionWrapper = props => (
+    <Form
+        className="flex flex-col gap-2"
+        theme={props.theme}
+        data={props.values}
+        items={props.items}
+        onChange={props.onChange}
+    />
+);
 
 // Separator for buttons
 const Separator = props => {
     const classList = classNames({
-        "w-px h-10": true,
-        "bg-gray-500": props.theme === THEMES.LIGHT,
+        "w-full h-px": true,
+        "bg-neutral-200": props.theme === THEMES.LIGHT,
         "bg-white o-20": props.theme === THEMES.DARK,
     });
     return (
         <div className={classList} />
     );
+};
+
+const EditionWrapper = props => (
+    <div className="w-56 border border-neutral-200 rounded-xl shadow-md bg-white p-2">
+        <div className="flex flex-col gap-2">
+            {props.children}
+        </div>
+    </div>
+);
+
+const getVisibleSections = (sections, values) => {
+    return Object.keys(sections).filter(option => {
+        return typeof values[sections[option].test] !== "undefined";
+    });
 };
 
 export const EditionPanel = props => {
@@ -344,43 +339,19 @@ export const EditionPanel = props => {
     const selectedElements = board.getSelectedElements();
     const values = useValues(selectedElements);
     const keys = Object.keys(values);
-    const bounds = getRectangleBounds(selectedElements);
     // Get visible sections
     const visibleSections = React.useMemo(
         () => {
-            // If no keys are available, we will display all availabe options in this category
-            if (keys.length === 0) {
-                return Object.keys(allSections);
-            }
-            // Filter options
-            return Object.keys(allSections).filter(option => {
-                return typeof values[allSections[option].test] !== "undefined";
-            });
+            return {
+                style: getVisibleSections(styleSections, values),
+                display: getVisibleSections(displaySections, values),
+            };
         },
         [keys.length],
     );
-    // Calculate position of the edition panel
-    const x = board.translateX + (board.zoom * (bounds.x1 + bounds.x2) / 2)
-    const y = board.translateY + (board.zoom * (bounds.y1 + bounds.y2) / 2);
-    const width = board.zoom * Math.abs(bounds.x2 - bounds.x1);
-    const height = board.zoom * Math.abs(bounds.y2 - bounds.y1);
-    // Check if element is outside the view zone
-    // TODO: enable this when wheel actions are enabled
-    // if (x + width / 2 < 0 || x - width / 2 > board.state.canvasWidth) {
-    //     return null;
-    // }
-    // if (y + height / 2 < 0 || y - height / 2 > board.state.canvasHeight) {
-    //     return null;
-    // }
-    // Initialize position of the edition panel
-    const style = {
-        top: y - props.offset - height / 2,
-        left: x,
-        transform: "translateX(-50%) translateY(-100%)",
-    };
     // Handle selection change
     const handleChange = (key, value) => {
-        if (activeSection === SECTIONS.ACTIONS) {
+        if (key === "actions" || key === "layers") {
             switch (value) {
                 case ACTIONS.REMOVE:
                     board.remove();
@@ -399,6 +370,12 @@ export const EditionPanel = props => {
                     break;
                 case ACTIONS.BRING_FRONT:
                     board.bringSelectedElementsToFront();
+                    break;
+                case ACTIONS.LOCK:
+                    board.lockElements(selectedElements);
+                    break;
+                case ACTIONS.UNLOCK:
+                    board.unlockElements(selectedElements);
                     break;
             }
             // Handle change
@@ -419,39 +396,49 @@ export const EditionPanel = props => {
             return prevSection === newSection ? "" : newSection;
         });
     };
-    // Render new edition panel
+    // Fix value of active section
+    const currentSection = activeSection || visibleSections.style[0];
     return (
-        <div className="absolute z-4" style={style}>
-            <ButtonsWrapper theme={props.theme}>
-                {visibleSections.map(key => (
-                    <React.Fragment key={key}>
-                        {allSections[key].separator && (
-                            <Separator theme={props.theme} />
-                        )}
-                        <div className="relative" key={key}>
-                            <Button
-                                theme={props.theme}
-                                active={activeSection === key}
-                                icon={allSections[key].icon}
-                                showChevron={allSections[key].showChevron}
-                                onClick={() => handleSectionChange(key)}
-                            />
-                            {activeSection === key && (
-                                <ActiveSectionWrapper
-                                    key={activeSection}
+        <EditionWrapper>
+            {visibleSections.style.length > 0 && (
+                <React.Fragment>
+                    {visibleSections.style.length > 1 && (
+                        <TabsWrapper>
+                            {visibleSections.style.map(key => (
+                                <TabButton
+                                    key={key}
                                     theme={props.theme}
-                                    className={allSections[activeSection].className}
-                                    alignToTop={style.top > board.state.canvasHeight / 2}
-                                    values={values || {}}
-                                    items={allSections[activeSection].items}
-                                    onChange={handleChange}
+                                    active={currentSection === key}
+                                    icon={styleSections[key].icon}
+                                    onClick={() => handleSectionChange(key)}
                                 />
-                            )}
-                        </div>
-                    </React.Fragment>
-                ))}
-            </ButtonsWrapper>
-        </div>
+                            ))}
+                        </TabsWrapper>
+                    )}
+                    <ActiveSectionWrapper
+                        key={currentSection}
+                        theme={props.theme}
+                        values={values || {}}
+                        items={styleSections[currentSection].items}
+                        onChange={handleChange}
+                    />
+                </React.Fragment>
+            )}
+            {visibleSections.display.map((key, index) => (
+                <React.Fragment key={key}>
+                    {(index > 0 || visibleSections.style.length > 0) && (
+                        <Separator theme={props.theme} />
+                    )}
+                    <ActiveSectionWrapper
+                        key={key}
+                        theme={props.theme}
+                        values={values || {}}
+                        items={displaySections[key].items}
+                        onChange={handleChange}
+                    />
+                </React.Fragment>
+            ))}
+        </EditionWrapper>
     );
 };
 
