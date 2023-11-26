@@ -148,10 +148,12 @@ const InnerBoard = React.forwardRef((props, ref) => {
             {props.showEdition && board.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
-                        <EditionPanel
-                            key={selectedElements.map(el => el.id).join("-")}
-                            onChange={props.onChange}
-                        />
+                        <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-6">
+                            <EditionPanel
+                                key={selectedElements.map(el => el.id).join("-")}
+                                onChange={props.onChange}
+                            />
+                        </div>
                     )}
                 </React.Fragment>
             )}
