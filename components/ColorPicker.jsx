@@ -15,8 +15,8 @@ export const ColorPicker = props => {
                         data-testid="colorpicker:preview"
                         className={classNames({
                             "flex rounded-md h-8 w-8 mr-1": true,
-                            "border border-gray-900": props.theme === THEMES.LIGHT,
-                            "border border-gray-700": props.theme === THEMES.DARK,
+                            "border border-neutral-200": props.theme === THEMES.LIGHT,
+                            // "border border-gray-700": props.theme === THEMES.DARK,
                         })}
                         style={{
                             backgroundColor: props.value,
@@ -47,9 +47,9 @@ export const ColorPicker = props => {
                         ref={inputRef}
                         type="text"
                         className={classNames({
-                            "w-full px-2 py-0 h-8 bg-white rounded-md outline-0 text-xs text-gray-800": true,
-                            "border border-gray-900": props.theme === THEMES.LIGHT,
-                            "border border-gray-700": props.theme === THEMES.DARK,
+                            "w-full px-2 py-0 h-8 rounded-md outline-0 text-xs border": true,
+                            "bg-white border-neutral-200 text-neutral-800": props.theme === THEMES.LIGHT,
+                            // "border border-gray-700": props.theme === THEMES.DARK,
                         })}
                         defaultValue={props.value}
                         style={{
@@ -71,8 +71,8 @@ export const ColorPicker = props => {
                             data-testid={"color:" + color}
                             className={classNames({
                                 "flex w-full h-6 rounded-md cursor-pointer": true,
-                                "border border-gray-900": props.theme === THEMES.LIGHT,
-                                "border border-gray-700": props.theme === THEMES.DARK,
+                                "border border-neutral-200": props.theme === THEMES.LIGHT,
+                                // "border border-gray-700": props.theme === THEMES.DARK,
                             })}
                             style={{
                                 backgroundColor: color,
