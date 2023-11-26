@@ -2,21 +2,20 @@ import React from "react";
 import classNames from "classnames";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
-const previewStyle = {
-    maxWidth: "13rem",
-    minWidth: "13rem",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-};
-
 export const Title = props => {
     const inputRef = React.useRef();
     const board = useBoard();
     const [editing, setEditing] = React.useState(false);
+    const containerClass = classNames({
+        "flex items-center h-10 mt-1 w-56 border-b-2 border-dashed": true,
+        "border-transparent": !props.editable,
+        "border-neutral-600": props.editable && !editing,
+        "border-neutral-900": props.editable && editing,
+    });
     const previewClass = classNames({
-        "cursor-pointer leading-tight px-2 py-2 rounded-md": true,
-        "hover:bg-gray-200": props.editable,
+        "leading-tight px-2 py-1 truncate text-center text-lg w-full": true,
+        "text-neutral-700": true,
+        "cursor-pointer hover:text-neutral-800": props.editable,
     });
     const handleClick = () => {
         props.editable && setEditing(true);
@@ -27,12 +26,10 @@ export const Title = props => {
         }
     }, [editing]);
     return (
-        <div className="flex items-center">
+        <div className={containerClass}>
             {!editing && (
                 <div className={previewClass} onClick={handleClick}>
-                    <div className="w-full font-bold text-gray-900" style={previewStyle}>
-                        <strong>{board.title}</strong>
-                    </div>
+                    <strong>{board.title}</strong>
                 </div>
             )}
             {editing && (
@@ -41,9 +38,9 @@ export const Title = props => {
                     type="text"
                     defaultValue={board.title}
                     className={classNames({
-                        "outline-none font-bold leading-none": true,
-                        "w-56 px-2 py-2 rounded-md": true,
-                        "text-white bg-gray-900": true,
+                        "outline-none font-bold leading-none text-center text-lg": true,
+                        "w-full px-2 py-1 rounded-none": true,
+                        "text-neutral-900 bg-transparent": true,
                     })}
                     placeholder="Untitled"
                     onKeyUp={event => (event.key === "Enter") && setEditing(false)}

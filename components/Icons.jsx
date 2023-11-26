@@ -166,12 +166,6 @@ export const ExternalLinkIcon = () => (
     </SvgIcon>
 );
 
-export const EraseIcon = () => (
-    <SvgIcon title="Erase">
-        <path d="M20 20L8 20L5 17C4 16 3 14 5 12L12 5C14 3 16 4 17 5L19 7C20 8 21 10 19 12L11 20M9 9L15 15" />
-    </SvgIcon>
-);
-
 export const FillIcon = () => (
     <SvgIcon title="Fill">
         <path d="M13 5L5 13C4 14 4 16 5 17L8 20C9 21 11 21 12 20L20 12L13 5ZM13 5L12 4C12 4 10 2 8 4C6 6 8 8 8 8L9 9M5 14L18 14M20 17L20 19C20 18 20 17 20 17Z" />
@@ -211,12 +205,6 @@ export const LaserPointerIcon = () => (
 export const LineIcon = () => (
     <SvgIcon title="Line">
         <path d="M6 18L18 6" />
-    </SvgIcon>
-);
-
-export const LockIcon = () => (
-    <SvgIcon title="Lock">
-        <path d="M9 11L9 6C9 6 9 3 12 3C15 3 15 6 15 6L15 11M8 11C5 11 5 14 5 14L5 18C5 18 5 21 8 21L16 21C19 21 19 18 19 18L19 14C19 14 19 11 16 11L8 11ZM12 17L12 16" />
     </SvgIcon>
 );
 
@@ -325,12 +313,6 @@ export const TriangleIcon = () => (
 export const UndoIcon = () => (
     <SvgIcon title="Undo">
         <path d="M9 16L17 16C17 16 21 16 21 12C21 8 17 8 17 8L4 8M7 11L3 8L7 5" />
-    </SvgIcon>
-);
-
-export const UnlockIcon = () => (
-    <SvgIcon title="Unlock">
-        <path d="M9 7L9 6C9 6 9 3 12 3C15 3 15 6 15 6L15 11M8 11C5 11 5 14 5 14L5 18C5 18 5 21 8 21L16 21C19 21 19 18 19 18L19 14C19 14 19 11 16 11L8 11ZM12 17L12 16" />
     </SvgIcon>
 );
 

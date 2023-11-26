@@ -1,17 +1,15 @@
 import React from "react";
 import classNames from "classnames";
+import {LockIcon, UnlockIcon} from "@josemi-icons/react";
 import {NoteIcon, ToolsIcon} from "@josemi-icons/react";
+import {EraseIcon, PenIcon, ImageIcon, TextIcon, PointerIcon, HandGrabIcon} from "@josemi-icons/react";
+import {SquareIcon, CircleIcon, TriangleIcon} from "@josemi-icons/react";
 import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
 import {SHAPES, ARROWHEADS, STROKE_WIDTHS} from "../constants.js";
 import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
 import {NOTE_COLOR_PALETTE} from "../utils/colors.js";
-import {HandGrabIcon, PointerIcon, ArrowIcon, TextIcon} from "./Icons.jsx";
-import {PenIcon, ImageIcon} from "./Icons.jsx";
-import {EraseIcon, LockIcon, UnlockIcon} from "./Icons.jsx";
-import {SquareIcon, CircleIcon, TriangleIcon} from "./Icons.jsx";
-import {LineIcon} from "./Icons.jsx";
+import {LaserPointerIcon, ArrowIcon, LineIcon} from "./Icons.jsx";
 import {WidthLargeIcon, WidthSmallIcon} from "./Icons.jsx";
-import {LaserPointerIcon} from "./Icons.jsx";
 import {Form} from "./Form.jsx";
 import {Dropdown, DropdownItem} from "./Dropdown.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
@@ -133,7 +131,7 @@ const tools = {
 const PickPanel = props => {
     const classList = classNames({
         "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
-        "bg-white border-1 border-gray-900": true, // props.theme === THEMES.LIGHT,
+        "bg-white border border-neutral-200": true, // props.theme === THEMES.LIGHT,
         // "bg-gray-900": props.theme === THEMES.DARK,
     });
     const style = {
@@ -146,7 +144,7 @@ const PickPanel = props => {
                 data={props.values}
                 items={props.items}
                 separator={(
-                    <div className="border-l-2 border-gray-600 h-6" />
+                    <div className="border-l-2 border-neutral-200 h-6" />
                 )}
                 onChange={props.onChange}
             />
@@ -157,9 +155,8 @@ const PickPanel = props => {
 const PanelButton = props => {
     const classList = classNames(props.className, {
         "flex flex-col justify-center items-center flex px-4 py-2 gap-1": true,
-        "text-gray-800 hover:bg-gray-800 hover:text-white cursor-pointer": !props.active && !props.disabled,
-        "bg-gray-800 text-white cursor-pointer": props.active && !props.disabled,
-        "text-gray-500 cursor-not-allowed o-60": !props.active && props.disabled,
+        "text-neutral-800 hover:bg-neutral-100 cursor-pointer": !props.active,
+        "bg-neutral-950 text-white cursor-pointer": props.active,
     });
     return (
         <div className={classList} onClick={props.onClick} data-testid={props.testid}>
@@ -183,11 +180,10 @@ PanelButton.defaultProps = {
     text: null,
     icon: null,
     active: false,
-    disabled: false,
 };
 
 const PanelSeparator = () => (
-    <div className="bg-gray-500 w-px h-12" />
+    <div className="bg-neutral-200 w-px h-12" />
 );
 
 const isSelectEnabled = a => {
@@ -199,7 +195,7 @@ export const ToolsPanel = props => {
     const update = useForceUpdate()[1];
     const board = useBoard();
     return (
-        <div data-testid="toolspanel" className="border-2 border-gray-900 rounded-xl shadow-md items-center bg-white flex gap-2 p-1 select-none">
+        <div data-testid="toolspanel" className="border border-neutral-200 rounded-xl shadow-md items-center bg-white flex gap-2 p-1 select-none">
             {props.showLock && (
                 <React.Fragment>
                     <PanelButton

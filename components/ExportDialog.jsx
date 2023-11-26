@@ -64,31 +64,25 @@ export const ExportDialog = props => {
         [],
     );
     return (
-        <Modal maxWidth={props.width}>
-            <div className="flex items-center justify-between mb-8">
-                <div className="font-bold text-2xl">Export image</div>
-                <div data-testid="export-close" className="flex items-center cursor-pointer" onClick={props.onClose}>
-                    <div className="flex text-4xl text-gray-900 hover:text-gray-800">
-                        <CloseIcon />
-                    </div>
-                </div>
-            </div>
-            <div data-testid="export-preview" className="select-none mb-4 rounded border-2 border-gray-900">
+        <Modal className="max-w-sm" title="Export Image" onClose={props.onClose}>
+            <div data-testid="export-preview" className="select-none mb-4 rounded border border-neutral-200">
                 {!!preview && (
                     <div className="flex items-center justify-center h-48" style={previewStyle}>
                         <img
                             data-testid="export-preview-image"
                             src={preview}
-                            className="maxh-48"
+                            className="max-h-48"
                         />
                     </div>
                 )}
                 {!preview && (
                     <div className="flex items-center justify-center h-48">
-                        <div className="flex text-lg text-gray-400">
+                        <div className="flex text-lg text-neutral-400">
                             <ImageIcon />
                         </div>
-                        <span className="text-xs text-gray-400">Generating preview...</span>
+                        <span className="text-xs text-neutral-400">
+                            Generating preview...
+                        </span>
                     </div>
                 )}
             </div>
@@ -137,7 +131,6 @@ export const ExportDialog = props => {
 };
 
 ExportDialog.defaultProps = {
-    width: "22rem",
     copiedToClipboardMessageDelay: 2000,
     cropRegion: null,
     onClose: null,

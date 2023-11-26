@@ -4,11 +4,11 @@ import classNames from "classnames";
 import {CheckIcon, ExternalLinkIcon} from "./Icons.jsx";
 
 export const DropdownSeparator = () => (
-    <div className="bg-gray-500 w-full h-px my-2" />
+    <div className="bg-neutral-200 w-full h-px my-2" />
 );
 
 export const DropdownGroup = props => (
-    <div className="text-xs mb-1 px-2 text-gray-800 select-none">
+    <div className="text-xs mb-1 px-2 text-neutral-600 select-none">
         {props.title}
     </div>
 );
@@ -16,9 +16,9 @@ export const DropdownGroup = props => (
 export const DropdownItem = props => {
     const classList = classNames({
         "flex items-center gap-2 rounded-md px-3 py-2 select-none": true,
-        "text-white bg-gray-900": props.active && !props.disabled,
-        "text-gray-900 hover:bg-gray-900 hover:text-white cursor-pointer": !props.active && !props.disabled,
-        "text-gray-900 o-80 cursor-not-allowed": props.disabled,
+        "bg-neutral-950 text-white": props.active && !props.disabled,
+        "hover:bg-neutral-100 cursor-pointer": !props.active && !props.disabled,
+        "o-70 cursor-not-allowed": props.disabled,
     });
     const handleClick = () => {
         if (!props.disabled && typeof props.onClick === "function") {
@@ -51,7 +51,7 @@ DropdownItem.defaultProps = {
 export const DropdownLinkItem = props => {
     const classList = classNames({
         "flex items-center gap-2 rounded-md px-3 py-2 select-none": true,
-        "hover:bg-gray-900 hover:text-white cursor-pointer no-underline": true,
+        "hover:bg-neutral-100 cursor-pointer no-underline": true,
     });
     return (
         <a className={classList} href={props.url} target="_blank">
@@ -71,7 +71,7 @@ DropdownLinkItem.defaultProps = {
 };
 
 export const DropdownCheckItem = props => (
-    <div className="flex items-center gap-2 rounded-md px-3 py-2 select-none hover:bg-gray-900 hover:text-white cursor-pointer" onClick={props.onClick}>
+    <div className="flex items-center gap-2 rounded-md px-3 py-2 select-none hover:bg-neutral-100 cursor-pointer" onClick={props.onClick}>
         <div className="flex text-lg items-center">
             {props.icon}
         </div>
@@ -95,7 +95,7 @@ DropdownCheckItem.defaultProps = {
 
 export const Dropdown = props => (
     <div className={classNames(props.className, "absolute mt-1 z-5")}>
-        <div className="bg-white shadow-md w-56 p-1 rounded-lg flex flex-col gap-0 border border-gray-900">
+        <div className="bg-white shadow-md w-56 p-1 rounded-lg flex flex-col gap-0 border border-neutral-200">
             {props.children}
         </div>
     </div>

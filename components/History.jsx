@@ -7,11 +7,13 @@ export const History = withBoard((props, board) => (
     <HeaderContainer>
         <HeaderButton
             icon="history-undo"
+            roundedEnd={false}
             disabled={board.isUndoDisabled()}
             onClick={props.onUndoClick}
         />
         <HeaderButton
             icon="history-redo"
+            roundedStart={false}
             disabled={board.isRedoDisabled()}
             onClick={props.onRedoClick}
         />

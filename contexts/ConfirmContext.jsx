@@ -49,16 +49,12 @@ export const ConfirmProvider = props => {
         <ConfirmContext.Provider value={{confirm, showConfirm, hideConfirm}}>
             {props.children}
             {confirm?.visible && (
-                <Modal maxWidth={props.width}>
-                    {!!confirm.title && (
-                        <div className="text-2xl mb-4 leading-normal">
-                            <strong>{confirm.title}</strong>
-                        </div>
-                    )}
-                    <div className="mb-8 leading-normal">{confirm.message}</div>
+                <Modal title={confirm.title} onClose={hideConfirm}>
+                    <div className="mb-6 leading-normal text-neutral-600">
+                        {confirm.message}
+                    </div>
                     <div className="flex gap-2 w-full flex-row-reverse">
                         <PrimaryButton
-                            fullWidth={true}
                             text={props.confirmText}
                             onClick={() => {
                                 confirm?.callback?.();
@@ -66,7 +62,6 @@ export const ConfirmProvider = props => {
                             }}
                         />
                         <SecondaryButton
-                            fullWidth={true}
                             text={props.cancelText}
                             onClick={() => hideConfirm()}
                         />
@@ -78,7 +73,6 @@ export const ConfirmProvider = props => {
 };
 
 ConfirmProvider.defaultProps = {
-    width: "500px",
     confirmText: "Confirm",
     cancelText: "Cancel",
 };

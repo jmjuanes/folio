@@ -7,6 +7,7 @@ export const Zooming = withBoard((props, board) => (
     <HeaderContainer>
         <HeaderButton
             icon="zoom-out"
+            roundedEnd={false}
             disabled={board.zoom <= ZOOM_MIN}
             onClick={props.onZoomOutClick}
         />
@@ -17,6 +18,7 @@ export const Zooming = withBoard((props, board) => (
         </div>
         <HeaderButton
             icon="zoom-in"
+            roundedStart={false}
             disabled={ZOOM_MAX <= board.zoom}
             onClick={props.onZoomInClick}
         />

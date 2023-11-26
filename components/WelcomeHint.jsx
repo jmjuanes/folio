@@ -12,7 +12,7 @@ const defaultStyle = {
 
 export const WelcomeHint = props => {
     const classList = classnames(props.className, {
-        "absolute z-1 text-gray-500 animation-fadein": true,
+        "absolute z-1 animation-fadein": true,
         "bottom-full left-half mb-2": props.position === HINT_POSITION_TOP,
         "top-full left-half mt-2": props.position === HINT_POSITION_BOTTOM,
     });
@@ -20,16 +20,20 @@ export const WelcomeHint = props => {
     return (
         <div className={classList} style={defaultStyle}>
             {props.position === HINT_POSITION_BOTTOM && (
-                <div className="flex justify-center text-gray-600 text-3xl mb-1 animation-pulse">
+                <div className="flex justify-center text-neutral-600 text-xl mb-1 animation-pulse">
                     <ArrowUpIcon />
                 </div>
             )}
             <div className={classnames(props.contentClassName, "flex flex-col items-center")}>
-                <div className="text-center font-bold">{props.title}</div>
-                <div className="text-sm">{props.content || props.children}</div>
+                <div className="text-center text-sm text-neutral-700">
+                    <strong>{props.title}</strong>
+                </div>
+                <div className="text-xs text-center text-neutral-500">
+                    {props.content || props.children}
+                </div>
             </div>
             {props.position === HINT_POSITION_TOP && (
-                <div className="flex justify-center text-gray-600 text-3xl mt-2 animation-pulse">
+                <div className="flex justify-center text-neutral-600 text-xl mt-2 animation-pulse">
                     <ArrowDownIcon />
                 </div>
             )}
