@@ -49,7 +49,7 @@ export const ConfirmProvider = props => {
         <ConfirmContext.Provider value={{confirm, showConfirm, hideConfirm}}>
             {props.children}
             {confirm?.visible && (
-                <Modal title={confirm.title} onClose={hideConfirm} maxWidth={props.width}>
+                <Modal title={confirm.title} onClose={hideConfirm}>
                     <div className="mb-6 leading-normal text-neutral-600">
                         {confirm.message}
                     </div>
@@ -73,7 +73,6 @@ export const ConfirmProvider = props => {
 };
 
 ConfirmProvider.defaultProps = {
-    width: "500px",
     confirmText: "Confirm",
     cancelText: "Cancel",
 };
