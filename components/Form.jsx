@@ -14,8 +14,8 @@ const optionsWithInlineTitle = new Set([
 
 // Tiny utility to check if a value is active
 const checkIsActive = (value, currentValue, isActiveFn, data) => {
-    if (typeof isValidFn === "function") {
-        return isValidFn(value, currentValue, data);
+    if (typeof isActiveFn === "function") {
+        return isActiveFn(value, currentValue, data);
     }
     // Other case, just check if value is the current value
     return value === currentValue;
@@ -59,24 +59,27 @@ const optionTypes = {
     [FORM_OPTIONS.SELECT]: props => (
         <div className={props.className || "grid grid-cols-5 gap-1 w-full"}>
             {(props.values || []).map(item => {
+                if (!checkIsVisible(item.value, props.value, props.isVisible, props.data)) {
+                    return null;
+                }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = classNames({
-                    "flex flex-col justify-center items-center rounded-md h-8 grow": true,
-                    "bg-gray-900 text-white": props.theme === THEMES.LIGHT && active,
-                    "bg-gray-600": props.theme === THEMES.DARK && active,
-                    "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && !active,
-                    "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && !active,
+                    "flex flex-col justify-center items-center rounded-md py-2 grow": true,
+                    "bg-neutral-900 text-white": props.theme === THEMES.LIGHT && active,
+                    "bg-neutral-100 hover:bg-neutral-200 cursor-pointer": props.theme === THEMES.LIGHT && !active,
+                    // "bg-gray-600": props.theme === THEMES.DARK && active,
+                    // "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && !active,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
                         {!!item.icon && (
-                            <div className={classNames("flex items-center text-xl", item.iconClass)}>
+                            <div className={classNames("flex items-center", item.iconClass)}>
                                 {item.icon}
                             </div>
                         )}
                         {!!item.text && (
                             <div className={classNames("flex items-center", item.textClass)}>
-                                <span className="font-bold text-sm">{item.text}</span>
+                                <span className="font-bold text-xs">{item.text}</span>
                             </div>
                         )}
                     </div>
@@ -193,8 +196,8 @@ const optionTypes = {
 
 export const Option = props => {
     const optionClassList = classNames({
-        "text-gray-700": props.theme === THEMES.LIGHT,
-        "text-white o-90": props.theme === THEMES.DARK,
+        "text-neutral-700": props.theme === THEMES.LIGHT,
+        // "text-white o-90": props.theme === THEMES.DARK,
     });
     return (
         <div className={optionClassList}>
@@ -207,7 +210,7 @@ export const Option = props => {
                 {optionTypes[props.type](props)}
             </div>
             {!!props.helper && (
-                <div className="text-gray-400 text-2xs mt-0 select-none">
+                <div className="text-neutral-400 text-2xs mt-0 select-none">
                     {props.helper}
                 </div>
             )}
