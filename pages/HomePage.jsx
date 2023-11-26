@@ -21,14 +21,16 @@ export const HomePage = props => {
                 </div>
             </div>
             <div className="w-full mt-8">
-                <div className="rounded-lg p-6 bg-gray-200 border-none border-gray-900 flex gap-4 select-none">
-                    <div className="flex text-gray-600 text-4xl animation-pulse">
+                <div className="rounded-md p-4 bg-white border border-neutral-200 flex gap-2 select-none">
+                    <div className="flex text-neutral-900 text-2xl animation-pulse">
                         <ExclamationTriangleIcon />
                     </div>
-                    <div className="text-gray-900">
-                        <div className="font-bold">Folio is still a Work in Progress</div>
-                        <div className="mt-1 w-full border-t-2 border-gray-900" />
-                        <div className="mt-3 text-sm">You might encounter occasional bugs or experience features that are still being refined. We appreciate your patience and understanding as we work to deliver the best possible drawing experience.</div>
+                    <div className="">
+                        <div className="text-neutral-900 font-bold mb-2">Folio is still a Work in Progress</div>
+                        <div className="text-sm text-neutral-700">
+                            You might encounter occasional bugs or experience features that are still being refined. 
+                            We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
+                        </div>
                     </div>
                 </div>
             </div>
