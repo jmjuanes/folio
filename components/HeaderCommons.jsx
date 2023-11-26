@@ -15,7 +15,7 @@ export const HeaderButton = props => {
         "cursor-not-allowed o-40": props.disabled,
     });
     const handleClick = () => {
-        return !props.disabled && props.onClick();
+        return !props.disabled && props?.onClick?.();
     };
     return (
         <div className={classList} onClick={handleClick}>
