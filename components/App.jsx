@@ -25,33 +25,17 @@ const NavigationItem = props => {
 };
 
 const AppLAyout = props => (
-    <div className="w-full flex gap-4 minh-0 animation-fadein">
-        <div className="w-24 h-screen minh-0 sticky top-0 flex flex-col gap-2 justify-between px-4 py-8 bg-black">
-            <div className="w-full flex flex-col gap-4">
-                <div className="flex justify-center cursor-pointer" onClick={props.onCreate}>
-                    <div className="rounded-full border-2 border-white hover:bg-white text-white hover:text-gray-900 p-3 flex items-center justify-center cursor-pointer">
-                        <div className="flex text-3xl">
-                            <PlusIcon />
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-gray-300 w-full h-px" />
-                <NavigationItem path="#" text="Home" icon="home" />
-                {/*
-                <NavigationItem path="#settings" text="Settings" icon="cog" />
-                */}
-            </div>
-        </div>
-        <div className="w-full maxw-7xl mx-auto px-8 minh-0">
+    <div className="w-full flex gap-4 min-h-0 animation-fadein">
+        <div className="w-full max-w-5xl mx-auto px-8 min-h-0">
             {props.children}
             {/* Footer section */}
             <div className="w-full pt-20 pb-20">
-                <div className="w-full border-t-2 border-gray-900 mb-16" />
+                <div className="w-full h-px bg-neutral-200 mb-8" />
                 <div className="flex flex-col">
                     <div className="text-sm mb-2">
                         <span><b>Folio</b> v{process.env.VERSION}</span>
                     </div>
-                    <div className="text-xs text-gray-600 mb-1">
+                    <div className="text-xs text-neutral-600 mb-1">
                         Designed by <a href="https://www.josemi.xyz" target="_blank" className="font-bold hover:underline">Josemi</a> in Valencia, Spain.
                     </div>
                 </div>
