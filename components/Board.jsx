@@ -98,7 +98,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                 <ContextMenu onChange={props.onChange} />
             )}
             {props.showTools && !isScreenshot && !isPresentation && (
-                <div className="absolute z-5" style={{bottom:"1rem",left:"50%",transform:"translateX(-50%)"}}>
+                <div className="absolute z-5 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
                     <ToolsPanel
                         showSelect={!isPresentation}
                         showTools={!isPresentation}
