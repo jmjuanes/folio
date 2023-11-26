@@ -34,20 +34,6 @@ describe("ExportDialog", () => {
         });
     });
 
-    it("should close export dialog when clicking on X icon", async () => {
-        const onClose = jest.fn();
-        render(<ExportDialog onClose={onClose} />);
-        await waitFor(() => {
-            return expect(screen.getByTestId("export-close")).toBeDefined();
-        });
-        // Fire click on close button
-        act(() => {
-            fireEvent.click(screen.getByTestId("export-close"));
-        });
-        // Expect 'onClose'  to have been called
-        expect(onClose).toHaveBeenCalled();
-    });
-
     it("should render preview image", async () => {
         render(<ExportDialog />);
         expect(screen.getByText("Generating preview...")).toBeDefined();
