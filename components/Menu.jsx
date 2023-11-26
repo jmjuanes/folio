@@ -1,5 +1,5 @@
 import React from "react";
-import {BarsIcon, PresentationIcon} from "@josemi-icons/react";
+import {PresentationIcon} from "@josemi-icons/react";
 import {ACTIONS} from "../constants.js";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
@@ -7,16 +7,18 @@ import {ColorPicker} from "./ColorPicker.jsx";
 import {Dropdown, DropdownSeparator, DropdownGroup} from "./Dropdown.jsx";
 import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "./Dropdown.jsx";
 import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "./Icons.jsx";
+import {HeaderButton, HeaderContainer} from "./HeaderCommons.jsx";
 
 export const Menu = props => {
     const board = useBoard();
     return (
         <div className="flex relative group" tabIndex="0">
-            <div className="cursor-pointer flex items-center gap-2 hover:bg-gray-200 group-focus-within:bg-gray-900 rounded-md py-1 px-2">
-                <div className="flex items-center text-2xl text-gray-900 group-focus-within:text-white">
-                    <BarsIcon />
-                </div>
-            </div>
+            <HeaderContainer>
+                <HeaderButton
+                    className="group-focus-within:bg-neutral-300"
+                    icon="bars"
+                />
+            </HeaderContainer>
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2">
                 {props.showLoad && (
                     <DropdownItem
