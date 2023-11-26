@@ -4,7 +4,7 @@ import classNames from "classnames";
 export const Button = props => {
     const classList = classNames(props.className, {
         "flex items-center justify-center gap-2 select-none": true,
-        "p-3 rounded-lg": true,
+        "p-3 rounded-md": true,
         "cursor-pointer": !props.disabled,
         "o-70 cursor-not-allowed": props.disabled,
         "w-full": props.fullWidth,
@@ -18,7 +18,7 @@ export const Button = props => {
             )}
             {!!props.text && (
                 <div className={props.textClassName} data-testid="btn-text">
-                    <strong>{props.text}</strong>
+                    <span>{props.text}</span>
                 </div>
             )}
         </div>
@@ -29,9 +29,9 @@ Button.defaultProps = {
     testid: "btn",
     className: "",
     text: "",
-    textClassName: "",
+    textClassName: "text-sm",
     icon: null,
-    iconClassName: "text-2xl",
+    iconClassName: "text-xl",
     disabled: false,
     fullWidth: false,
     style: null,
@@ -41,9 +41,7 @@ Button.defaultProps = {
 export const PrimaryButton = props => (
     <Button
         testid="btn-primary"
-        className="bg-gray-800 hover:bg-gray-900 text-white"
-        textClassName="text-sm"
-        iconClassName="text-xl"
+        className="bg-neutral-950 hover:bg-neutral-900 text-white"
         {...props}
     />
 );
@@ -51,9 +49,7 @@ export const PrimaryButton = props => (
 export const SecondaryButton = props => (
     <Button
         testid="btn-secondary"
-        className="bg-white hover:bg-gray-900 hover:text-white border-2 border-gray-900"
-        textClassName="text-sm"
-        iconClassName="text-xl"
+        className="bg-white text-neutral-900 hover:bg-neutral-200 border border-neutral-200"
         {...props}
     />
 );
