@@ -38,7 +38,7 @@ export const Title = props => {
                     type="text"
                     defaultValue={board.title}
                     className={classNames({
-                        "outline-none font-bold leading-none text-center text-lg": true,
+                        "outline-none font-bold leading-tight text-center text-lg": true,
                         "w-full px-2 py-1 rounded-none": true,
                         "text-neutral-900 bg-transparent": true,
                     })}
