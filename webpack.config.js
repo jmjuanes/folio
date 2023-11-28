@@ -63,6 +63,10 @@ module.exports = {
                 },
             },
             {
+                test: /\.mdx?$/,
+                loader: "@mdx-js/loader",
+            },
+            {
                 test: /\.css$/,
                 use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
