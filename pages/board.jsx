@@ -1,19 +1,41 @@
 import React from "react";
+import Rouct from "rouct";
 import {DrawingIcon} from "@josemi-icons/react";
 import {saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
-import {useRouter} from "../contexts/RouterContext.jsx";
 import {Board} from "../components/Board.jsx";
-import {Button} from "../components/Button.jsx";
+import {PrimaryButton} from "../components/Button.jsx";
 import {useDebounce} from "../hooks/index.js";
 
+// Display an error message
+const ErrorContent = props => (
+    <div className="flex justify-center items-center h-full w-full">
+        <div className="flex flex-col items-center px-8 w-full maxw-4xl">
+            <div className="text-6xl text-neutral-900 text-center">
+                <strong className="font-black">Hmm, something went wrong...</strong>
+            </div>
+            <div className="mt-4 text-center text-neutral-600">
+                <div>We were not able to load the content of board <b>'{props.id}'</b>.</div>
+                <div>Please try again or contact us if the problem persists.</div>
+            </div>
+            <div className="flex mt-8 select-none">
+                <PrimaryButton
+                    text="Return to Dashboard"
+                    onClick={() => {
+                        return Rouct.redirect("/dashboard");
+                    }}
+                />
+            </div>
+        </div>
+    </div>
+);
+
 // Board page
-export const BoardPage = () => {
+export default props => {
     const client = useClient();
     const {currentPath, redirect} = useRouter();
     const [state, setState] = React.useState({});
     const [error, setError] = React.useState(false);
-    const id = currentPath.replace("#board/", "").trim();
     // Use a debounce function to handle state changes
     useDebounce(250, [state?.updatedAt], () => {
         if (state?.updatedAt) {
@@ -22,35 +44,16 @@ export const BoardPage = () => {
             });
         }
     });
-    // Display an error message f something went wrong importing board data
-    if (error) {
+    // Display an error message if something went wrong importing board data
+    if (error || !props.id) {
         return (
-            <div className="flex justify-center items-center h-full w-full">
-                <div className="flex flex-col items-center px-8 w-full maxw-4xl">
-                    <div className="text-6xl text-gray-900 text-center">
-                        <strong className="font-black">Hmm, something went wrong...</strong>
-                    </div>
-                    <div className="mt-4 text-center">
-                        <div>We were not able to load the content of board <b>'{id}'</b>.</div>
-                        <div>Please try again or contact us if the problem persists.</div>
-                    </div>
-                    <div className="flex mt-8 select-none">
-                        <Button
-                            className="text-white font-bold bg-gray-900 hover:bg-gray-800 rounded-full px-4"
-                            text="Return to Home"
-                            onClick={() => {
-                                return redirect("");
-                            }}
-                        />
-                    </div>
-                </div>
-            </div>
+            <ErrorContent id={props.id} />
         );
     }
     return (
         <Board
-            key={id}
-            initialData={() => client.getBoard(id)}
+            key={props.id}
+            initialData={() => client.getBoard(props.id)}
             links={[
                 {url: process.env.URL_REPOSITORY, text: "About Folio"},
                 {url: process.env.URL_ISSUES, text: "Report a bug"},
