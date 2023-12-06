@@ -1,12 +1,12 @@
 import React from "react";
+import {Button} from "@josemi-ui/components";
+import {Dropdown, DropdownItem, DropdownSeparator} from "@josemi-ui/components";
 import {ExclamationTriangleIcon} from "@josemi-icons/react";
 import {DownloadIcon, DrawingIcon, ImageSlashIcon, renderIcon} from "@josemi-icons/react";
 import {DotsVerticalIcon, TrashIcon, CopyIcon} from "@josemi-icons/react";
 import {loadFromJson, saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useConfirm} from "../contexts/ConfirmContext.jsx";
-import {Dropdown, DropdownItem, DropdownSeparator} from "../components/Dropdown.jsx";
-import {PrimaryButton} from "../components/Button.jsx";
 import {useForceUpdate} from "../hooks/index.js";
 import {useDelay} from "../hooks/index.js";
 
@@ -16,18 +16,16 @@ const BoardEmpty = props => (
             <div className="flex text-7xl text-neutral-950">
                 <DrawingIcon />
             </div>
-            <div className="font-bold text-2xl text-neutral-900 mt-2">
+            <div className="font-black text-2xl text-neutral-900 mt-2">
                 <span>No boards yet...</span>
             </div>
             <div className="text-sm text-neutral-600">
                 Create your first board to start sketching.
             </div>
-            <div className="mt-6">
-                <PrimaryButton
-                    onClick={props.onCreate}
-                    text="Create a new board"
-                    textClassName="text-sm font-bold"
-                />
+            <div className="mt-4">
+                <Button variant="primary" onClick={props.onCreate}>
+                    <strong>Create a new board</strong>
+                </Button>
             </div>
             <div className="mt-1">
                 <div className="text-center hover:underline cursor-pointer" onClick={props.onLoad}>
@@ -47,7 +45,7 @@ const BoardItem = props => (
                         <DotsVerticalIcon />
                     </div>
                 </div>
-                <Dropdown className="hidden group-focus-within:block absolute top-full right-0 mt-1 z-5">
+                <Dropdown className="hidden group-focus-within:block top-full right-0 mt-1 z-5 w-40">
                     <DropdownItem
                         icon={<DownloadIcon />}
                         text="Save as..."
@@ -109,7 +107,7 @@ const BoardList = props => {
         <div className="w-full">
             {props.title && (
                 <div className="flex justify-between items-center mb-8 select-none">
-                    <div className="font-crimson text-5xl font-black leading-none tracking-tight">
+                    <div className="text-5xl font-black leading-none">
                         <span>{props.title}</span>
                     </div>
                     {(boards && boards.length > 0) && (
@@ -192,22 +190,15 @@ export default props => {
     const {showConfirm} = useConfirm();
     return (
         <div className="w-full">
-            <div className="mt-24 select-none">
-                <div className="font-crimson font-black text-9xl leading-none tracking-tight">
-                    <span>Folio.</span>
+            <div className="mt-4 rounded-md p-4 bg-white border border-neutral-200 flex gap-2 select-none">
+                <div className="flex text-neutral-900 text-2xl animation-pulse">
+                    <ExclamationTriangleIcon />
                 </div>
-            </div>
-            <div className="w-full mt-8">
-                <div className="rounded-md p-4 bg-white border border-neutral-200 flex gap-2 select-none">
-                    <div className="flex text-neutral-900 text-2xl animation-pulse">
-                        <ExclamationTriangleIcon />
-                    </div>
-                    <div className="">
-                        <div className="text-neutral-900 font-bold mb-2">Folio is still a Work in Progress</div>
-                        <div className="text-sm text-neutral-700">
-                            You might encounter occasional bugs or experience features that are still being refined. 
-                            We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
-                        </div>
+                <div className="">
+                    <div className="text-neutral-900 font-bold mb-2">Folio is still a Work in Progress</div>
+                    <div className="text-sm text-neutral-700">
+                        You might encounter occasional bugs or experience features that are still being refined. 
+                        We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
                     </div>
                 </div>
             </div>

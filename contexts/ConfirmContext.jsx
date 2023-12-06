@@ -1,7 +1,7 @@
 import React from "react";
-
-import {Modal} from "../components/Modal.jsx";
-import {PrimaryButton, SecondaryButton} from "../components/Button.jsx";
+import {Button, Overlay} from "@josemi-ui/components";
+import {Modal, ModalBody, ModalHeader, ModalFooter} from "@josemi-ui/components";
+import {ModalTitle, ModalClose} from "@josemi-ui/components";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
@@ -31,42 +31,45 @@ export const ConfirmProvider = props => {
     const [confirm, dispatch] = React.useReducer(confirmReducer, {
         visible: false,
     });
-
     const showConfirm = payload => {
         return dispatch({
             type: SHOW_CONFIRM,
             payload: payload,
         });
     };
-
     const hideConfirm = () => {
         return dispatch({
             type: HIDE_CONFIRM,
         })
     };
-
+    const submitConfirm = () => {
+        confirm?.callback?.();
+        hideConfirm();
+    };
     return (
         <ConfirmContext.Provider value={{confirm, showConfirm, hideConfirm}}>
             {props.children}
             {confirm?.visible && (
-                <Modal title={confirm.title} onClose={hideConfirm}>
-                    <div className="mb-6 leading-normal text-neutral-600">
-                        {confirm.message}
-                    </div>
-                    <div className="flex gap-2 w-full flex-row-reverse">
-                        <PrimaryButton
-                            text={props.confirmText}
-                            onClick={() => {
-                                confirm?.callback?.();
-                                hideConfirm();
-                            }}
-                        />
-                        <SecondaryButton
-                            text={props.cancelText}
-                            onClick={() => hideConfirm()}
-                        />
-                    </div>
-                </Modal>
+                <React.Fragment>
+                    <Overlay />
+                    <Modal className="max-w-md">
+                        <ModalHeader>
+                            <ModalTitle>{confirm.title}</ModalTitle>
+                            <ModalClose onClick={hideConfirm} />
+                        </ModalHeader>
+                        <ModalBody className="text-neutral-600 mb-4">
+                            {confirm.message}
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button variant="secondary" onClick={hideConfirm}>
+                                {props.cancelText}
+                            </Button>
+                            <Button variant="primary" onClick={submitConfirm}>
+                                {props.confirmText}
+                            </Button>
+                        </ModalFooter>
+                    </Modal>
+                </React.Fragment>
             )}
         </ConfirmContext.Provider>
     );
