@@ -4,17 +4,9 @@
     <meta charSet="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
     <meta name="description" content="Folio is a digital whiteboard for sketching and prototyping">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@700&display=swap">
     <title>Folio</title>
-    <% for (let i = 0; i < htmlWebpackPlugin.files.js.length; i++) { %>
-    <% if (htmlWebpackPlugin.files.js[i].includes(htmlWebpackPlugin.options.filename.split(".")[0])) { %>
-    <script defer src="<%= htmlWebpackPlugin.files.js[i] %>"></script>
-    <% } %>
-    <% } %>
-    <% for (let i = 0; i < htmlWebpackPlugin.files.css.length; i++) { %>
-    <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[i] %>" />
-    <% } %>
 </head>
 <body class="m-0 p-0 font-inter">
     <div id="root" class="hidden md:block minh-screen"></div>
