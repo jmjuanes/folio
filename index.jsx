@@ -15,7 +15,7 @@ import "lowcss/dist/low.css";
 const App = props => {
     const client = useClient();
     const handleOpen = id => {
-        return Rouct.redirect(`/board#id=${id}`);
+        return Rouct.redirect(`/board#${id}`);
     };
     const handleCreate = () => {
         const boardData = {
@@ -27,17 +27,24 @@ const App = props => {
             .then(response => handleOpen(response.id))
             .catch(error => console.error(error));
     };
+    const layoutProps = {
+        version: props.version,
+        onCreate: handleCreate,
+        onRedirect: Rouct.redirect,
+    };
     return (
         <Rouct.Router pathPrefix={props.pathPrefix} routing={Rouct.BrowserRouting}>
             <Rouct.Switch>
                 <Rouct.Route exact path="/board" render={request => (
-                    <BoardPage
-                        key={"board:" + request.query.id}
-                        id={request.query.id}
-                    />
+                    <div className="fixed top-0 left-0 h-full w-full bg-white text-neutral-700">
+                        <BoardPage
+                            key={"board:" + request.hash}
+                            id={(request.hash || "").replace(/^#/, "")}
+                        />
+                    </div>
                 )} />
                 <Rouct.Route exact path="*" render={() => (
-                    <Layout onCreate={handleCreate}>
+                    <Layout {...layoutProps}>
                         <Rouct.Switch>
                             <Rouct.Route exact path="/dashboard" render={() => (
                                 <DashboardPage
@@ -58,7 +65,10 @@ createRoot(document.getElementById("root")).render((
     <RouterProvider>
         <ClientProvider>
             <ConfirmProvider>
-                <App pathPrefix="/" />
+                <App
+                    pathPrefix="/"
+                    version={process.env.VERSION}
+                />
             </ConfirmProvider>
         </ClientProvider>
     </RouterProvider>
