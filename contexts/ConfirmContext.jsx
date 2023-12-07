@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Overlay} from "@josemi-ui/components";
-import {Modal, ModalBody, ModalHeader, ModalFooter} from "@josemi-ui/components";
-import {ModalTitle, ModalClose} from "@josemi-ui/components";
+import {Modal, ModalHeader, ModalBody, ModalFooter} from "@josemi-ui/components";
+import {ModalTitle, ModalClose, ModalDescription} from "@josemi-ui/components";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
@@ -57,8 +57,10 @@ export const ConfirmProvider = props => {
                             <ModalTitle>{confirm.title}</ModalTitle>
                             <ModalClose onClick={hideConfirm} />
                         </ModalHeader>
-                        <ModalBody className="text-neutral-600 mb-4">
-                            {confirm.message}
+                        <ModalBody>
+                            <ModalDescription>
+                                {confirm.message}
+                            </ModalDescription>
                         </ModalBody>
                         <ModalFooter>
                             <Button variant="secondary" onClick={hideConfirm}>
