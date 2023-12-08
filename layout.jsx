@@ -1,6 +1,6 @@
 const React = require("react");
 const {Container} = require("@josemi-ui/layout/cjs");
-const {Navbar, NavbarBrand, NavbarLink, NavbarAction, NavbarCollapse} = require("@josemi-ui/layout/cjs");
+const {Navbar, NavbarBrand, NavbarMenu, NavbarLink, NavbarAction, NavbarCollapse} = require("@josemi-ui/layout/cjs");
 const {Footer, FooterLink} = require("@josemi-ui/layout/cjs");
 
 const Layout = props => {
@@ -14,14 +14,16 @@ const Layout = props => {
         <React.Fragment>
             <Navbar className="max-w-7xl">
                 <NavbarBrand href="./" >folio.</NavbarBrand>
-                <NavbarCollapse>
-                    <NavbarLink href="./dashboard" onClick={handleRedirect}>
-                        <strong>Dashboard</strong>
-                    </NavbarLink>
-                </NavbarCollapse>
-                <NavbarAction onClick={props.onCreate}>
-                    <div className="font-bold">Create Board</div>
-                </NavbarAction>
+                <NavbarMenu>
+                    <NavbarCollapse>
+                        <NavbarLink href="./dashboard" onClick={handleRedirect}>
+                            <strong>Dashboard</strong>
+                        </NavbarLink>
+                    </NavbarCollapse>
+                    <NavbarAction onClick={props.onCreate}>
+                        <div className="font-bold">Create Board</div>
+                    </NavbarAction>
+                </NavbarMenu>
             </Navbar>
             <Container className="max-w-6xl">
                 {props.children}
