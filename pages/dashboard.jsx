@@ -189,17 +189,15 @@ export default props => {
     const [updateKey, forceUpdate] = useForceUpdate();
     const {showConfirm} = useConfirm();
     return (
-        <div className="w-full">
-            <div className="mt-4 rounded-md p-4 bg-white border border-neutral-200 flex gap-2 select-none">
-                <div className="flex text-neutral-900 text-2xl animation-pulse">
+        <div className="w-full mt-4">
+            <div className="rounded-md p-4 pl-12 bg-white border border-neutral-200 select-none relative text-neutral-900">
+                <div className="absolute top-0 left-0 mt-4 ml-4 flex text-lg animation-pulse">
                     <ExclamationTriangleIcon />
                 </div>
-                <div className="">
-                    <div className="text-neutral-900 font-bold mb-2">Folio is still a Work in Progress</div>
-                    <div className="text-sm text-neutral-700">
-                        You might encounter occasional bugs or experience features that are still being refined. 
-                        We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
-                    </div>
+                <div className="font-bold mb-2 leading-none">Folio is still a Work in Progress</div>
+                <div className="text-sm leading-snug">
+                    You might encounter occasional bugs or experience features that are still being refined. 
+                    We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
                 </div>
             </div>
             <div className="mt-12">
