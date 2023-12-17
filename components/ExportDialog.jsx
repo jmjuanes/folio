@@ -1,11 +1,12 @@
 import React from "react";
-
+import {Button} from "@josemi-ui/components";
+import {Overlay} from "@josemi-ui/components";
+import {Modal, ModalHeader, ModalBody} from "@josemi-ui/components";
+import {ModalTitle, ModalClose} from "@josemi-ui/components";
+import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
 import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "../constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../board/export.js";
-import {Modal} from "./Modal.jsx";
-import {SecondaryButton} from "./Button.jsx";
 import {Form} from "./Form.jsx";
-import {ImageIcon, CloseIcon, DownloadIcon, ClipboardIcon} from "./Icons.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
 import transparentBg from "../assets/transparent.svg";
@@ -22,6 +23,30 @@ const previewStyle = {
     backgroundSize: "10px 10px",
     backgroundRepeat: "repeat",
 };
+
+const ExportPreview = props => (
+    <div data-testid="export-preview" className="select-none mb-4 rounded border border-neutral-200">
+        {!!props.data && (
+            <div className="flex items-center justify-center h-48" style={previewStyle}>
+                <img
+                    data-testid="export-preview-image"
+                    src={props.data}
+                    className="max-h-48"
+                />
+            </div>
+        )}
+        {!props.data && (
+            <div className="flex items-center justify-center h-48">
+                <div className="flex text-lg text-neutral-400">
+                    <ImageIcon />
+                </div>
+                <span className="text-xs text-neutral-400">
+                    Generating preview...
+                </span>
+            </div>
+        )}
+    </div>
+);
 
 export const ExportDialog = props => {
     const board = useBoard();
@@ -63,70 +88,67 @@ export const ExportDialog = props => {
         },
         [],
     );
+    // Handle copy to clipboard
+    const handleCopyToClipboard = () => {
+        // First check if there is an active timer
+        if (copiedToClipboardTimer.current) {
+            setTimeout(copiedToClipboardTimer.current);
+        }
+        setCopiedToClipboard(true);
+        exportToClipboard(getExportOptions());
+        // Delay reseting the current timer
+        copiedToClipboardTimer.current = setTimeout(
+            () => {
+                setCopiedToClipboard(false);
+                copiedToClipboardTimer.current = null;
+            },
+            props.copiedToClipboardMessageDelay,
+        );
+    };
+    // Handle export to file
+    const handleExportToFile = () => {
+        return exportToFile(getExportOptions());
+    };
     return (
-        <Modal className="max-w-sm" title="Export Image" onClose={props.onClose}>
-            <div data-testid="export-preview" className="select-none mb-4 rounded border border-neutral-200">
-                {!!preview && (
-                    <div className="flex items-center justify-center h-48" style={previewStyle}>
-                        <img
-                            data-testid="export-preview-image"
-                            src={preview}
-                            className="max-h-48"
+        <React.Fragment>
+            <Overlay />
+            <Modal className="max-w-sm">
+                <ModalHeader className="mb-4">
+                    <ModalTitle>Export Image</ModalTitle>
+                    <ModalClose onClick={props.onClose} />
+                </ModalHeader>
+                <ModalBody>
+                    <ExportPreview data={preview} />
+                    <div className="mb-8">
+                        <Form
+                            data={options}
+                            items={formOptions}
+                            onChange={(key, value) => {
+                                setOptions(prevOptions => ({...prevOptions, [key]: value}));
+                            }}
                         />
                     </div>
-                )}
-                {!preview && (
-                    <div className="flex items-center justify-center h-48">
-                        <div className="flex text-lg text-neutral-400">
-                            <ImageIcon />
+                </ModalBody>
+                <div className="flex gap-2 w-full flex-col">
+                    <Button data-testid="export-btn-download" variant="secondary" className="w-full" onClick={handleExportToFile}>
+                        <div className="flex items-center text-lg">
+                            <DownloadIcon />
                         </div>
-                        <span className="text-xs text-neutral-400">
-                            Generating preview...
-                        </span>
-                    </div>
-                )}
-            </div>
-            <div className="mb-8">
-                <Form
-                    data={options}
-                    items={formOptions}
-                    onChange={(key, value) => {
-                        setOptions(prevOptions => ({...prevOptions, [key]: value}));
-                    }}
-                />
-            </div>
-            <div className="flex gap-2 w-full flex-col">
-                <SecondaryButton
-                    testid="export-btn-download"
-                    text="Download PNG"
-                    icon={(<DownloadIcon />)}
-                    fullWidth={true}
-                    onClick={() => exportToFile(getExportOptions())}
-                />
-                <SecondaryButton
-                    testid="export-btn-clipboard"
-                    text={copiedToClipboard ? "Copied!" : "Copy to clipboard"}
-                    icon={(<ClipboardIcon />)}
-                    fullWidth={true}
-                    onClick={() => {
-                        // First check if there is an active timer
-                        if (copiedToClipboardTimer.current) {
-                            setTimeout(copiedToClipboardTimer.current);
-                        }
-                        setCopiedToClipboard(true);
-                        exportToClipboard(getExportOptions());
-                        // Delay reseting the current timer
-                        copiedToClipboardTimer.current = setTimeout(
-                            () => {
-                                setCopiedToClipboard(false);
-                                copiedToClipboardTimer.current = null;
-                            },
-                            props.copiedToClipboardMessageDelay,
-                        );
-                    }}
-                />
-            </div>
-        </Modal>
+                        <div className="flex items-center">
+                            <span>Download PNG</span>
+                        </div>
+                    </Button>
+                    <Button data-testid="export-btn-clipboard" variant="secondary" className="w-full" onClick={handleCopyToClipboard}>
+                        <div className="flex items-center text-lg">
+                            <ClipboardIcon />
+                        </div>
+                        <div className="flex items-center">
+                            <span>{copiedToClipboard ? "Copied!" : "Copy to clipboard"}</span>
+                        </div>
+                    </Button>
+                </div>
+            </Modal>
+        </React.Fragment>
     );
 };
 
