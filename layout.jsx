@@ -1,7 +1,7 @@
 const React = require("react");
-const {Container} = require("@josemi-ui/layout/cjs");
-const {Navbar, NavbarBrand, NavbarMenu, NavbarLink, NavbarAction, NavbarCollapse} = require("@josemi-ui/layout/cjs");
-const {Footer, FooterLink} = require("@josemi-ui/layout/cjs");
+const {Container} = require("@josemi-ui/components/cjs");
+const {Navigation, NavigationMenu, NavigationCollapse} = require("@josemi-ui/components/cjs");
+const {NavigationBrand, NavigationLink, NavigationAction} = require("@josemi-ui/components/cjs");
 
 const Layout = props => {
     const handleRedirect = event => {
@@ -12,30 +12,31 @@ const Layout = props => {
     };
     return (
         <React.Fragment>
-            <Navbar className="max-w-7xl">
-                <NavbarBrand href="./" >folio.</NavbarBrand>
-                <NavbarMenu>
-                    <NavbarCollapse>
-                        <NavbarLink href="./dashboard" onClick={handleRedirect}>
+            <Navigation className="max-w-7xl">
+                <NavigationBrand href="./" >folio.</NavigationBrand>
+                <NavigationMenu>
+                    <NavigationCollapse>
+                        <NavigationLink href="./dashboard" onClick={handleRedirect}>
                             <strong>Dashboard</strong>
-                        </NavbarLink>
-                    </NavbarCollapse>
-                    <NavbarAction onClick={props.onCreate}>
+                        </NavigationLink>
+                    </NavigationCollapse>
+                    <NavigationAction onClick={props.onCreate}>
                         <div className="font-bold">Create Board</div>
-                    </NavbarAction>
-                </NavbarMenu>
-            </Navbar>
+                    </NavigationAction>
+                </NavigationMenu>
+            </Navigation>
             <Container className="max-w-6xl">
                 {props.children}
             </Container>
-            <Footer className="max-w-6xl mt-16">
-                <div className="mb-2 text-neutral-800">
+            <Container className="max-w-6xl mt-16 text-neutral-500">
+                <div className="bg-neutral-200 h-px mb-8" />
+                <div className="mb-2 text-neutral-800 text-sm">
                     <span><b>Folio</b> v{props.version}</span>
                 </div>
                 <div className="text-xs">
-                    Designed by <FooterLink href="https://www.josemi.xyz" target="_blank">Josemi</FooterLink> in Valencia, Spain.
+                    Designed by <a href="https://www.josemi.xyz" className="text-neutral-800" target="_blank">Josemi</a> in Valencia, Spain.
                 </div>
-            </Footer>
+            </Container>
         </React.Fragment>
     );
 };
