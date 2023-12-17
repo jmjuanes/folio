@@ -1,7 +1,6 @@
 // Export generic UI commons
 export * from "./Button.jsx";
 export * from "./ColorPicker.jsx";
-export * from "./Dropdown.jsx";
 export * from "./Form.jsx";
 export * from "./Icons.jsx";
 export * from "./Modal.jsx";
