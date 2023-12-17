@@ -15,13 +15,23 @@ jest.mock("../assets/transparent.svg", () => "TRANSPARENT_BG");
 jest.mock("./Modal.jsx", () => ({
     Modal: props => props.children,
 }));
-// Mock the button component to make it simple
-jest.mock("./Button.jsx", () => ({
-    SecondaryButton: props => (
-        <div data-testid={props.testid} onClick={props.onClick}>
-            {props.text}
-        </div>
+// Mock ui components
+jest.mock("@josemi-ui/components", () => ({
+    Button: ({children, ...props}) => (
+        <div {...props}>{children}</div>
     ),
+    Overlay: () => null,
+    Modal: props => props.children,
+    ModalHeader: () => null,
+    ModalTitle: jest.fn(),
+    ModalClose: jest.fn(),
+    ModalBody: props => props.children,
+}));
+// Mock icons
+jest.mock("@josemi-icons/react", () => ({
+    ImageIcon: jest.fn(() => "IMAGE_ICON"),
+    DownloadIcon: jest.fn(() => "DOWNLOAD_ICON"),
+    ClipboardIcon: jest.fn(() => "CLIPBOARD_ICON"),
 }));
 
 describe("ExportDialog", () => {
@@ -48,14 +58,14 @@ describe("ExportDialog", () => {
         render(<ExportDialog />);
         await waitFor(() => {
             expect(screen.getByTestId("export-btn-clipboard")).toBeDefined();
-            expect(screen.getByTestId("export-btn-clipboard").textContent).toEqual("Copy to clipboard");
+            expect(screen.getByTestId("export-btn-clipboard").textContent).toContain("Copy to clipboard");
         });
         // Fire click event in copy to clipboard button
         act(() => {
             fireEvent.click(screen.getByTestId("export-btn-clipboard"));
         });
         await waitFor(() => {
-            return expect(screen.getByTestId("export-btn-clipboard").textContent).toEqual("Copied!");
+            return expect(screen.getByTestId("export-btn-clipboard").textContent).toContain("Copied!");
         });
     });
 
@@ -63,17 +73,17 @@ describe("ExportDialog", () => {
         render(<ExportDialog copiedToClipboardMessageDelay={500} />);
         await waitFor(() => {
             expect(screen.getByTestId("export-btn-clipboard")).toBeDefined();
-            expect(screen.getByTestId("export-btn-clipboard").textContent).toEqual("Copy to clipboard");
+            expect(screen.getByTestId("export-btn-clipboard").textContent).toContain("Copy to clipboard");
         });
         // Fire click event in copy to clipboard button
         act(() => {
             fireEvent.click(screen.getByTestId("export-btn-clipboard"));
         });
         await waitFor(() => {
-            return expect(screen.getByTestId("export-btn-clipboard").textContent).toEqual("Copied!");
+            return expect(screen.getByTestId("export-btn-clipboard").textContent).toContain("Copied!");
         });
         await waitFor(() => {
-            return expect(screen.getByTestId("export-btn-clipboard").textContent).toEqual("Copy to clipboard");
+            return expect(screen.getByTestId("export-btn-clipboard").textContent).toContain("Copy to clipboard");
         });
     });
 });
