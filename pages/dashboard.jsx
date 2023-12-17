@@ -1,5 +1,6 @@
 import React from "react";
 import {Button} from "@josemi-ui/components";
+import {Alert, AlertIcon, AlertTitle, AlertDescription} from "@josemi-ui/components";
 import {Dropdown, DropdownItem, DropdownSeparator} from "@josemi-ui/components";
 import {ExclamationTriangleIcon} from "@josemi-icons/react";
 import {DownloadIcon, DrawingIcon, ImageSlashIcon, renderIcon} from "@josemi-icons/react";
@@ -190,16 +191,16 @@ export default props => {
     const {showConfirm} = useConfirm();
     return (
         <div className="w-full mt-4">
-            <div className="rounded-md p-4 pl-12 bg-white border border-neutral-200 select-none relative text-neutral-900">
-                <div className="absolute top-0 left-0 mt-4 ml-4 flex text-lg animation-pulse">
+            <Alert variant="default">
+                <AlertIcon className="text-lg animation-pulse">
                     <ExclamationTriangleIcon />
-                </div>
-                <div className="font-bold mb-2 leading-none">Folio is still a Work in Progress</div>
-                <div className="text-sm leading-snug">
+                </AlertIcon>
+                <AlertTitle>Folio is still a Work in Progress</AlertTitle>
+                <AlertDescription>
                     You might encounter occasional bugs or experience features that are still being refined. 
                     We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
-                </div>
-            </div>
+                </AlertDescription>
+            </Alert>
             <div className="mt-12">
                 <BoardList
                     key={updateKey}
