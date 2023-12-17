@@ -6,16 +6,15 @@ jest.mock("../contexts/BoardContext.jsx", () => ({
         elements: [],
     })),
 }));
+
 jest.mock("../board/export.js", () => ({
     exportToDataURL: jest.fn(() => Promise.resolve("DATA_URL")),
     exportToFile: jest.fn(),
     exportToClipboard: jest.fn(),
 }));
+
 jest.mock("../assets/transparent.svg", () => "TRANSPARENT_BG");
-jest.mock("./Modal.jsx", () => ({
-    Modal: props => props.children,
-}));
-// Mock ui components
+
 jest.mock("@josemi-ui/components", () => ({
     Button: ({children, ...props}) => (
         <div {...props}>{children}</div>
@@ -27,7 +26,7 @@ jest.mock("@josemi-ui/components", () => ({
     ModalClose: jest.fn(),
     ModalBody: props => props.children,
 }));
-// Mock icons
+
 jest.mock("@josemi-icons/react", () => ({
     ImageIcon: jest.fn(() => "IMAGE_ICON"),
     DownloadIcon: jest.fn(() => "DOWNLOAD_ICON"),
