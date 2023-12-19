@@ -1,7 +1,6 @@
 import React from "react";
 import Rouct from "rouct";
 import {createRoot} from "react-dom/client";
-import {RouterProvider} from "./contexts/RouterContext.jsx";
 import {ClientProvider, useClient} from "./contexts/ClientContext.jsx";
 import {ConfirmProvider} from "./contexts/ConfirmContext.jsx";
 
@@ -62,14 +61,12 @@ const App = props => {
 
 // Mount app component
 createRoot(document.getElementById("root")).render((
-    <RouterProvider>
-        <ClientProvider>
-            <ConfirmProvider>
-                <App
-                    pathPrefix="/"
-                    version={process.env.VERSION}
-                />
-            </ConfirmProvider>
-        </ClientProvider>
-    </RouterProvider>
+    <ClientProvider>
+        <ConfirmProvider>
+            <App
+                pathPrefix="/"
+                version={process.env.VERSION}
+            />
+        </ConfirmProvider>
+    </ClientProvider>
 ));
