@@ -5,6 +5,7 @@ import {HomeIcon} from "@josemi-icons/react";
 import {saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {Board} from "../components/Board.jsx";
+import {Loading} from "../components/Loading.jsx";
 import {useDebounce} from "../hooks/index.js";
 
 // Display an error message
@@ -48,6 +49,10 @@ export default props => {
             });
         }
     });
+    // Check if client is not ready
+    if (!client) {
+        return <Loading />;
+    }
     // Display an error message if something went wrong importing board data
     if (error || !props.id) {
         return (

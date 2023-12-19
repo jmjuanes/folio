@@ -3,7 +3,6 @@ import {uid} from "uid/secure";
 import * as idb from "idb-keyval";
 import {VERSION} from "../constants.js";
 import {migrate} from "../board/migrate.js";
-import {Loading} from "../components/Loading.jsx";
 import {useDelay} from "../hooks/index.js";
 
 // Store keys for IDB
@@ -13,7 +12,7 @@ const LEGACY_STORE_KEYS = {
 };
 
 const store = idb.createStore("folio", "folio-store");
-// const ClientContext = React.createContext(null);
+const ClientContext = React.createContext(false);
 
 // Local client instance
 const localClient = {
@@ -87,7 +86,7 @@ const localClient = {
 
 // Use client hook
 export const useClient = () => {
-    return localClient;
+    return React.useContext(ClientContext) && localClient;
 };
 
 // Client provider
@@ -98,17 +97,11 @@ export const ClientProvider = props => {
             return setClientReady(true);
         });
     });
-    // Check if client is not ready
-    if (!clientReady) {
-        return (
-            <Loading />
-        );
-    }
     // Render app content
     return (
-        <React.Fragment>
+        <ClientContext.Provider value={clientReady}>
             {props.children}
-        </React.Fragment>
+        </ClientContext.Provider>
     );
 };
 

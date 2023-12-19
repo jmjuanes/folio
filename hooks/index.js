@@ -5,6 +5,16 @@ export * from "./useCursor.js";
 export * from "./useEvents.js";
 export * from "./useHandlers.js";
 
+// Delay the execution of the provided effect event
+export const useDelayedEffect = (ms, deps, callback) => {
+    React.useEffect(() => {
+        const timer = setTimeout(callback, ms);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, deps);
+};
+
 // Delay the execution of the provided function when the component is mounted
 export const useDelay = (ms, callback) => {
     React.useEffect(() => {

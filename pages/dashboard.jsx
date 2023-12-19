@@ -9,7 +9,7 @@ import {loadFromJson, saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {useConfirm} from "../contexts/ConfirmContext.jsx";
 import {useForceUpdate} from "../hooks/index.js";
-import {useDelay} from "../hooks/index.js";
+import {useDelayedEffect} from "../hooks/index.js";
 
 const BoardEmpty = props => (
     <div className="select-none bg-neutral-100 w-full rounded-lg">
@@ -99,11 +99,11 @@ const BoardActionButton = props => (
 
 const BoardList = props => {
     const [boards, setBoards] = React.useState(null);
-    useDelay(props.delay, () => {
-        return props.data().then(items => {
-            setBoards(items);
-        });
+    // We use a delayed effect just for displaying the loading ui
+    useDelayedEffect(props.delay, [props.ready], () => {
+        props.ready && props.data().then(setBoards);
     });
+
     return (
         <div className="w-full">
             {props.title && (
@@ -206,6 +206,7 @@ export default props => {
                     key={updateKey}
                     title="Your boards"
                     data={() => client.getUserBoards()}
+                    ready={!!client}
                     onCreate={props.onCreate}
                     onLoad={() => {
                         loadFromJson()

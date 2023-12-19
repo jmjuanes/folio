@@ -33,28 +33,24 @@ const App = props => {
     };
     return (
         <Rouct.Router pathPrefix={props.pathPrefix} routing={Rouct.BrowserRouting}>
-            <Rouct.Switch>
-                <Rouct.Route exact path="/board" render={request => (
-                    <div className="fixed top-0 left-0 h-full w-full bg-white text-neutral-700">
-                        <BoardPage
-                            key={"board:" + request.hash}
-                            id={(request.hash || "").replace(/^#/, "")}
+            <Layout {...layoutProps}>
+                <Rouct.Switch>
+                    <Rouct.Route exact path="/board" render={request => (
+                        <div className="fixed top-0 left-0 h-full w-full bg-white text-neutral-700">
+                            <BoardPage
+                                key={"board:" + request.hash}
+                                id={(request.hash || "").replace(/^#/, "")}
+                            />
+                        </div>
+                    )} />
+                    <Rouct.Route exact path="/dashboard" render={() => (
+                        <DashboardPage
+                            onCreate={handleCreate}
+                            onOpen={handleOpen}
                         />
-                    </div>
-                )} />
-                <Rouct.Route exact path="*" render={() => (
-                    <Layout {...layoutProps}>
-                        <Rouct.Switch>
-                            <Rouct.Route exact path="/dashboard" render={() => (
-                                <DashboardPage
-                                    onCreate={handleCreate}
-                                    onOpen={handleOpen}
-                                />
-                            )} />
-                        </Rouct.Switch>
-                    </Layout>
-                )} />
-            </Rouct.Switch>
+                    )} />
+                </Rouct.Switch>
+            </Layout>
         </Rouct.Router>
     );
 };
