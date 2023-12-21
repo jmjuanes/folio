@@ -15,7 +15,7 @@ export const Menu = props => {
         <div className="flex relative group" tabIndex="0">
             <HeaderContainer>
                 <HeaderButton
-                    className="group-focus-within:bg-neutral-300"
+                    className="group-focus-within:bg-neutral-100"
                     icon="bars"
                 />
             </HeaderContainer>
