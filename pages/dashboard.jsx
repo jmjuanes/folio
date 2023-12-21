@@ -108,7 +108,7 @@ const BoardList = props => {
         <div className="w-full">
             {props.title && (
                 <div className="flex justify-between items-center mb-8 select-none">
-                    <div className="text-5xl font-black leading-none">
+                    <div className="text-4xl font-black leading-none">
                         <span>{props.title}</span>
                     </div>
                     {(boards && boards.length > 0) && (
