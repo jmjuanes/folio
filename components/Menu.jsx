@@ -1,11 +1,11 @@
 import React from "react";
 import {PresentationIcon} from "@josemi-icons/react";
+import {Dropdown, DropdownSeparator, DropdownGroup} from "@josemi-ui/components";
+import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "@josemi-ui/components";
 import {ACTIONS} from "../constants.js";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {ColorPicker} from "./ColorPicker.jsx";
-import {Dropdown, DropdownSeparator, DropdownGroup} from "./Dropdown.jsx";
-import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "./Dropdown.jsx";
 import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "./Icons.jsx";
 import {HeaderButton, HeaderContainer} from "./HeaderCommons.jsx";
 
@@ -15,11 +15,11 @@ export const Menu = props => {
         <div className="flex relative group" tabIndex="0">
             <HeaderContainer>
                 <HeaderButton
-                    className="group-focus-within:bg-neutral-300"
+                    className="group-focus-within:bg-neutral-100"
                     icon="bars"
                 />
             </HeaderContainer>
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2">
+            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56">
                 {props.showLoad && (
                     <DropdownItem
                         icon={(<FolderIcon />)}
@@ -53,9 +53,9 @@ export const Menu = props => {
                 {props.showSettings && (
                     <React.Fragment>
                         <DropdownSeparator />
-                        <DropdownGroup title="Preferences" />
+                        <DropdownGroup>Preferences</DropdownGroup>
                         <DropdownCheckItem
-                            active={board.grid}
+                            checked={board.grid}
                             icon={(<GridIcon />)}
                             text="Grid"
                             onClick={() => {
@@ -67,7 +67,7 @@ export const Menu = props => {
                             }}
                         />
                         <DropdownCheckItem
-                            active={board.state.presentationMode}
+                            checked={board.state.presentationMode}
                             icon={(<PresentationIcon />)}
                             text="Presentation mode"
                             onClick={() => {
@@ -82,7 +82,7 @@ export const Menu = props => {
                 {props.showChangeBackground && (
                     <React.Fragment>
                         <DropdownSeparator />
-                        <DropdownGroup title="Background" />
+                        <DropdownGroup>Background</DropdownGroup>
                         <div className="px-3">
                             <ColorPicker
                                 value={board.background}
@@ -102,7 +102,7 @@ export const Menu = props => {
                 {(props.showLinks && props.links?.length > 0) && (
                     <React.Fragment>
                         <DropdownSeparator />
-                        <DropdownGroup title="Links" />
+                        <DropdownGroup>Links</DropdownGroup>
                         {props.links.map(link => (
                             <DropdownLinkItem
                                 key={link.url}

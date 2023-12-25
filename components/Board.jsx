@@ -159,7 +159,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
             )}
             {props.showHeader && !isScreenshot && (
                 <React.Fragment>
-                    <div className="absolute top-0 left-0 pt-4 pl-6 z-7 flex gap-3">
+                    <div className="absolute top-0 left-0 pt-4 pl-6 z-7 flex gap-2">
                         {props.showMenu && (
                             <div className="relative flex">
                                 <Menu
@@ -210,7 +210,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                             />
                         </div>
                     )}
-                    <div className="absolute top-0 right-0 pt-4 pr-6 z-7 flex gap-3">
+                    <div className="absolute top-0 right-0 pt-4 pr-6 z-7 flex gap-2">
                         {props.showHistory && !isPresentation && (
                             <div className="flex relative">
                                 <History

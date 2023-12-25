@@ -7,7 +7,7 @@ export const HeaderButton = props => {
         "flex items-center p-3": true,
         "rounded-tl-lg rounded-bl-lg": props.roundedStart,
         "rounded-tr-lg rounded-br-lg": props.roundedEnd,
-        "cursor-pointer hover:bg-neutral-300 text-neutral-700": !props.disabled,
+        "cursor-pointer hover:bg-neutral-100 text-neutral-800": !props.disabled,
         "cursor-not-allowed o-40": props.disabled,
     });
     const handleClick = () => {
@@ -28,7 +28,7 @@ HeaderButton.defaultProps = {
 };
 
 export const HeaderContainer = props => (
-    <div className="flex gap-1 p-0 rounded-lg shadow-sm bg-neutral-200">
+    <div className="flex gap-1 p-0 rounded-lg shadow-sm bg-white border border-neutral-200">
         {props.children}
     </div>
 );

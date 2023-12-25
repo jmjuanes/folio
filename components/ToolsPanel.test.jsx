@@ -16,6 +16,10 @@ jest.mock("@josemi-icons/react", () => ({
     TriangleIcon: jest.fn(() => "TRIANGLE_ICON"),
     UnlockIcon: jest.fn(() => "UNLOCK_ICON"),
 }));
+jest.mock("@josemi-ui/components", () => ({
+    Dropdown: jest.fn(() => null),
+    DropdownCheckItem: jest.fn(() => null),
+}));
 
 jest.mock("../contexts/BoardContext.jsx", () => ({
     useBoard: jest.fn(() => ({

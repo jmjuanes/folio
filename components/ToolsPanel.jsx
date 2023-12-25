@@ -4,6 +4,7 @@ import {LockIcon, UnlockIcon} from "@josemi-icons/react";
 import {NoteIcon, ToolsIcon} from "@josemi-icons/react";
 import {EraseIcon, PenIcon, ImageIcon, TextIcon, PointerIcon, HandGrabIcon} from "@josemi-icons/react";
 import {SquareIcon, CircleIcon, TriangleIcon} from "@josemi-icons/react";
+import {Dropdown, DropdownCheckItem} from "@josemi-ui/components";
 import {ELEMENTS, ACTIONS, FIELDS, FORM_OPTIONS} from "../constants.js";
 import {SHAPES, ARROWHEADS, STROKE_WIDTHS} from "../constants.js";
 import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
@@ -11,7 +12,6 @@ import {NOTE_COLOR_PALETTE} from "../utils/colors.js";
 import {LaserPointerIcon, ArrowIcon, LineIcon} from "./Icons.jsx";
 import {WidthLargeIcon, WidthSmallIcon} from "./Icons.jsx";
 import {Form} from "./Form.jsx";
-import {Dropdown, DropdownItem} from "./Dropdown.jsx";
 import {useBoard} from "../contexts/BoardContext.jsx";
 import {useForceUpdate} from "../hooks/index.js";
 
@@ -269,11 +269,11 @@ export const ToolsPanel = props => {
                             text="More"
                             icon={(<ToolsIcon />)}
                         />
-                        <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-3">
-                            <DropdownItem
+                        <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-3 w-48">
+                            <DropdownCheckItem
                                 icon={(<EraseIcon />)}
                                 text="Erase"
-                                active={board.activeAction === ACTIONS.ERASE}
+                                checked={board.activeAction === ACTIONS.ERASE}
                                 onClick={props.onEraseClick}
                             />
                         </Dropdown>
