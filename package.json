@@ -8,17 +8,16 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "scripts": {
-        "build": "yarn clean && yarn build:app && yarn build:static",
+        "build": "yarn clean && yarn build:app && yarn build:pages",
         "build:app": "cross-env NODE_ENV=production webpack build",
-        "build:static": "cp static/** www/",
-        "postbuild:static": "cp node_modules/lowcss/dist/low.css www/ && cp node_modules/@josemi-icons/svg/sprite.svg www/",
+        "build:pages": "redocus --config redocus.config.js",
+        "postbuild:pages": "cp node_modules/lowcss/dist/low.css www/",
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
         "test": "jest"
     },
     "dependencies": {
         "@josemi-icons/react": "^0.5.1",
-        "@josemi-icons/svg": "^0.5.1",
         "@josemi-ui/components": "^0.2.0",
         "@mdx-js/mdx": "^3.0.0",
         "browser-fs-access": "^0.33.1",
