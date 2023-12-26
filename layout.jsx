@@ -28,13 +28,24 @@ const Layout = props => {
             <Container className="max-w-6xl">
                 {props.children}
             </Container>
-            <Container className="max-w-6xl mt-16 text-neutral-500">
+            <Container className="max-w-6xl mt-16 mb-20 text-neutral-500">
                 <div className="bg-neutral-200 h-px mb-8" />
-                <div className="mb-2 text-neutral-800 text-sm">
-                    <span><b>Folio</b> v{props.version}</span>
+                <div className="mb-1 text-neutral-500">
+                    <span><b className="text-neutral-950 font-black">folio.</b> <span className="text-xs">v{props.version}</span></span>
+                </div>
+                <div className="mb-2 flex items-center gap-2 text-sm">
+                    {props.footerLinks.map(link => (
+                        <a key={link.url} href={link.url} target={link.target} className="text-neutral-800">
+                            <strong>{link.text}</strong>
+                        </a>
+                    ))}
+                </div>
+                <div className="text-xs mb-1">
+                    Designed by <a href="https://www.josemi.xyz" className="text-neutral-800" target="_blank">Josemi</a> in Valencia, Spain. 
+                    Source code is available on <a href="https://github.com/jmjuanes/folio" className="text-neutral-800" target="_blank">GitHub</a>.
                 </div>
                 <div className="text-xs">
-                    Designed by <a href="https://www.josemi.xyz" className="text-neutral-800" target="_blank">Josemi</a> in Valencia, Spain.
+                    <span>This site does not track you.</span>
                 </div>
             </Container>
         </React.Fragment>
@@ -45,6 +56,10 @@ Layout.defaultProps = {
     version: "",
     onCreate: null,
     onRedirect: null,
+    footerLinks: [
+        {url: "./privacy", target: "_self", text: "Privacy"},
+        {url: "https://github.com/jmjuanes/folio/issues", target: "_blank", text: "Report a bug"},
+    ],
 };
 
 module.exports = Layout;
