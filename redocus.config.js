@@ -1,6 +1,7 @@
 const React = require("react");
 const {renderIcon} = require("@josemi-icons/react/cjs");
-const {Layout} = require("./layout.jsx");
+const {Button} = require("@josemi-ui/components/cjs");
+const Layout = require("./layout.jsx");
 const pkg = require("./package.json");
 
 const PageWrapper = props => (
@@ -42,6 +43,7 @@ module.exports = {
         url: "https://",
     },
     pageComponents: {
+        Button: Button,
         Icon: props => renderIcon(props.icon),
     },
     pageWrapper: PageWrapper,
