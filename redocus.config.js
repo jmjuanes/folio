@@ -23,7 +23,7 @@ const PageWrapper = props => (
             <style>{`.font-plex {font-family: IBM Plex Serif, serif;}`}</style>
         </head>
         <body className="bg-white m-0 p-0 font-inter text-neutral-800 leading-normal">
-            <Layout version={pkg.version}>
+            <Layout version={pkg.version} logged={false}>
                 {props.page.data.layout === "default" && (
                     <React.Fragment>
                         {props.element}

@@ -30,6 +30,7 @@ const App = props => {
         version: props.version,
         onCreate: handleCreate,
         onRedirect: Rouct.redirect,
+        logged: true,
     };
     return (
         <Rouct.Router pathPrefix={props.pathPrefix} routing={Rouct.BrowserRouting}>

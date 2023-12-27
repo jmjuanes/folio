@@ -15,14 +15,30 @@ const Layout = props => {
             <Navigation className="max-w-7xl">
                 <NavigationBrand href="./" >folio.</NavigationBrand>
                 <NavigationMenu>
-                    <NavigationCollapse>
-                        <NavigationLink href="./dashboard" onClick={handleRedirect}>
-                            <strong>Dashboard</strong>
-                        </NavigationLink>
-                    </NavigationCollapse>
-                    <NavigationAction onClick={props.onCreate}>
-                        <div className="font-bold">Create Board</div>
-                    </NavigationAction>
+                    {props.logged && (
+                        <React.Fragment>
+                            <NavigationCollapse>
+                                <NavigationLink href="./dashboard" onClick={handleRedirect}>
+                                    <strong>Dashboard</strong>
+                                </NavigationLink>
+                            </NavigationCollapse>
+                            <NavigationAction onClick={props.onCreate}>
+                                <div className="font-bold">Create Board</div>
+                            </NavigationAction>
+                        </React.Fragment>
+                    )}
+                    {!props.logged && (
+                        <React.Fragment>
+                            <NavigationCollapse>
+                                <NavigationLink href="./#features">
+                                    <strong>Features</strong>
+                                </NavigationLink>
+                            </NavigationCollapse>
+                            <NavigationAction href="./dashboard">
+                                <div className="font-bold">Try Folio</div>
+                            </NavigationAction>
+                        </React.Fragment>
+                    )}
                 </NavigationMenu>
             </Navigation>
             <Container className="max-w-6xl">
@@ -53,6 +69,7 @@ const Layout = props => {
 };
 
 Layout.defaultProps = {
+    logged: false,
     version: "",
     onCreate: null,
     onRedirect: null,
