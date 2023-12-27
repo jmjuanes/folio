@@ -22,11 +22,14 @@ features:
     <div className="flex">
         <Button as="a" href="./dashboard" className="">
             <strong className="text-lg">Start Sketching</strong>
+            <div className="flex items-center text-2xl">
+                <Icon icon="scribble" />
+            </div>
         </Button>
     </div>
 </div>
 
-<div className="pt-20 pb-24 w-full">
+<div className="pt-20 pb-10 w-full">
     <a href="#features" name="features" />
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
     {props.page.data.features.map(feature => (
@@ -34,10 +37,10 @@ features:
             <div className="text-7xl flex items-center mb-4 text-neutral-800">
                 <Icon icon={feature.icon} />
             </div>
-            <div className="mb-1 text-sm font-bold text-neutral-900">
+            <div className="mb-1 text-xs font-bold text-neutral-900">
                 <span>{feature.subtitle}</span>
             </div>
-            <div className="mb-2 font-plex text-4xl leading-none tracking-tight">
+            <div className="mb-3 font-plex text-3xl leading-none tracking-tight">
                 <span className="text-neutral-950">{feature.title}</span>
             </div>
             <div className="">{feature.description}</div>
