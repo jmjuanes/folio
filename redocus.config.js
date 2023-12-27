@@ -29,6 +29,17 @@ const PageWrapper = props => (
                         {props.element}
                     </React.Fragment>
                 )}
+                {props.page.data.layout === "legal" && (
+                    <div className="w-full max-w-4xl mx-auto pt-10">
+                        <h1 className="font-bold text-5xl leading-none mb-2">
+                            <span>{props.page.data.documentTitle}</span>
+                        </h1>
+                        <div className="mb-8 text-neutral-700">
+                            <span><b>Effective Date:</b> {props.page.data.documentUpdateDate}</span>
+                        </div>
+                        {props.element}
+                    </div>
+                )}
             </Layout>
         </body>
     </html>
@@ -45,6 +56,10 @@ module.exports = {
     pageComponents: {
         Button: Button,
         Icon: props => renderIcon(props.icon),
+        h2: props => <h2 className="mb-4 text-2xl font-bold leading-none mt-8">{props.children}</h2>,
+        ul: props => <ul className="mb-4">{props.children}</ul>,
+        li: props => <li className="list-inside mb-1">{props.children}</li>,
+        p: props => <p className="mb-4 text-justify">{props.children}</p>,
     },
     pageWrapper: PageWrapper,
 };
