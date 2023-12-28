@@ -12,24 +12,27 @@ features:
     icon: "drawing"
 ---
 
-<div className="w-full pt-12 pb-12">
+<div className="w-full pt-16 pb-12">
     <div className="font-plex font-black text-6xl md:text-7xl text-neutral-950 tracking-tight leading-tight mb-3">
         <span>From <u>Concept</u> to <u>Reality</u>.</span>
     </div>
-    <div className="w-full max-w-4xl text-2xl mb-6">
+    <div className="w-full text-2xl mb-6">
         <span>Folio is a minimalistic and infinite whiteboard app. Sketch, Prototype, and Design with total freedom and privacy.</span>
     </div>
-    <div className="flex">
+    <div className="flex mb-16">
         <Button as="a" href="./dashboard" className="">
             <strong className="text-lg">Start Sketching</strong>
             <div className="flex items-center text-2xl">
-                <Icon icon="scribble" />
+                <Icon icon="arrow-right" />
             </div>
         </Button>
     </div>
+    <div className="w-full">
+        <img src="./app-cover.jpg" width="100%" />
+    </div>
 </div>
 
-<div className="pt-20 pb-10 w-full">
+<div className="pt-10 pb-10 w-full">
     <a href="#features" name="features" />
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
     {props.page.data.features.map(feature => (
