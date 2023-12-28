@@ -33,7 +33,7 @@ features:
     <a href="#features" name="features" />
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
     {props.page.data.features.map(feature => (
-        <div className="w-full">
+        <div key={feature.title} className="w-full">
             <div className="text-7xl flex items-center mb-4 text-neutral-800">
                 <Icon icon={feature.icon} />
             </div>
