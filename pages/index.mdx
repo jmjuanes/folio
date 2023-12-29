@@ -1,0 +1,53 @@
+---
+layout: "default"
+title: "Minimal whiteboard for sketching and prototyping"
+features: 
+  - title: "Secure and Private."
+    subtitle: "Privacy First."
+    description: "We are committed to keeping your work private and secure. For that reason, Folio uses the local storage of your browser to ensure that your boards are accessible only to you. Sketch and create with confidence."
+    icon: "shield-check"
+  - title: "Boundless Canvas for Ideas."
+    subtitle: "Sketch without constraints."
+    description: "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, Folio provides limitless space for your creativity to flourish."
+    icon: "drawing"
+---
+
+<div className="w-full pt-16 pb-12">
+    <div className="font-plex font-black text-5xl md:text-6xl text-neutral-950 tracking-tight leading-tight mb-3">
+        <span>From <u>Concept</u> to <u>Reality</u>.</span>
+    </div>
+    <div className="w-full text-2xl mb-6">
+        <span>Folio is a minimalistic and infinite whiteboard app. Sketch, Prototype, and Design with total freedom and privacy.</span>
+    </div>
+    <div className="flex mb-16">
+        <Button as="a" href="./dashboard" className="">
+            <strong className="text-lg">Start Sketching</strong>
+            <div className="flex items-center text-2xl">
+                <Icon icon="arrow-right" />
+            </div>
+        </Button>
+    </div>
+    <div className="w-full">
+        <img src="./folio-app-cover.png" width="100%" className="shadow-lg rounded-lg" />
+    </div>
+</div>
+
+<div className="pt-10 pb-10 w-full">
+    <a href="#features" name="features" />
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
+    {props.page.data.features.map(feature => (
+        <div key={feature.title} className="w-full">
+            <div className="text-7xl flex items-center mb-4 text-neutral-800">
+                <Icon icon={feature.icon} />
+            </div>
+            <div className="mb-1 text-xs font-bold text-neutral-900">
+                <span>{feature.subtitle}</span>
+            </div>
+            <div className="mb-3 font-plex text-3xl leading-none tracking-tight">
+                <span className="text-neutral-950">{feature.title}</span>
+            </div>
+            <div className="">{feature.description}</div>
+        </div>
+    ))}
+    </div>
+</div>

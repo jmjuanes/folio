@@ -1,7 +1,7 @@
 import React from "react";
 import Rouct from "rouct";
 import {Button} from "@josemi-ui/components";
-import {HomeIcon} from "@josemi-icons/react";
+import {ArrowLeftIcon} from "@josemi-icons/react";
 import {saveAsJson} from "../board/json.js";
 import {useClient} from "../contexts/ClientContext.jsx";
 import {Board} from "../components/Board.jsx";
@@ -29,9 +29,9 @@ const ErrorContent = () => (
 );
 
 const GoBackButton = props => (
-    <div className="cursor-pointer order-first flex items-center bg-neutral-900 rounded-lg py-1 px-3 shadow-md" {...props}>
-        <div className="flex items-center text-xl text-white">
-            <HomeIcon />
+    <div className="cursor-pointer order-first flex items-center rounded-lg py-1 px-2 hover:bg-neutral-100" {...props}>
+        <div className="flex items-center text-xl text-neutral-900">
+            <ArrowLeftIcon />
         </div>
     </div>
 );
