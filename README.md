@@ -1,6 +1,11 @@
-![Folio header](./static/og.png)
+# Folio
 
 > A minimalistic and infinite whiteboard. Sketch, Prototype, and Design with total freedom.
+
+![](https://badgen.net/github/license/jmjuanes/folio?labelColor=1d2734&color=21bf81)
+![](https://badgen.net/badge/PRs/welcome/codecake?labelColor=1d2734&color=21bf81)
+
+[![Folio Cover](./assets/folio-github-cover.png)](https://www.josemi.xyz/folio)
 
 ## Try it now
 
