@@ -31,7 +31,7 @@ const PageWrapper = props => (
                 )}
                 {props.page.data.layout === "legal" && (
                     <div className="w-full max-w-3xl mx-auto pt-10">
-                        <h1 className="font-black text-5xl leading-none mb-2">
+                        <h1 className="font-black text-5xl leading-none mb-2 text-neutral-950">
                             <span>{props.page.data.documentTitle}</span>
                         </h1>
                         <div className="mb-8 text-neutral-700 text-sm">
@@ -56,7 +56,7 @@ module.exports = {
     pageComponents: {
         Button: Button,
         Icon: props => renderIcon(props.icon),
-        h3: props => <h3 className="mb-4 text-xl font-bold leading-none mt-8">{props.children}</h3>,
+        h3: props => <h3 className="mb-4 text-xl font-bold leading-none mt-8 text-neutral-950">{props.children}</h3>,
         ul: props => <ul className="mb-4">{props.children}</ul>,
         li: props => <li className="list-inside mb-1">{props.children}</li>,
         p: props => <p className="mb-4 text-justify">{props.children}</p>,

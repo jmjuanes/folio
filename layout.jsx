@@ -47,9 +47,9 @@ const Layout = props => {
             <Container className="max-w-6xl mt-16 mb-20 text-neutral-500">
                 <div className="bg-neutral-200 h-px mb-8" />
                 <div className="mb-1 text-neutral-500">
-                    <span><b className="text-neutral-950 font-black">folio.</b> <span className="text-xs">v{props.version}</span></span>
+                    <span><b className="text-neutral-950 font-black text-lg">folio.</b> <span className="text-xs">v{props.version}</span></span>
                 </div>
-                <div className="mb-2 flex items-center gap-2 text-sm">
+                <div className="mb-3 flex items-center gap-2 text-sm">
                     {props.footerLinks.map(link => (
                         <a key={link.url} href={link.url} target={link.target} className="text-neutral-800">
                             <strong>{link.text}</strong>

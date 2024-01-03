@@ -3,24 +3,32 @@ layout: "default"
 title: "Minimal whiteboard for sketching and prototyping"
 features: 
   - title: "Secure and Private."
-    subtitle: "Privacy First."
     description: "We are committed to keeping your work private and secure. For that reason, Folio uses the local storage of your browser to ensure that your boards are accessible only to you. Sketch and create with confidence."
     icon: "shield-check"
+    available: true
   - title: "Boundless Canvas for Ideas."
-    subtitle: "Sketch without constraints."
     description: "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, Folio provides limitless space for your creativity to flourish."
     icon: "drawing"
+    available: true
+  - title: "AI Powered previews"
+    description: "Folio seamlessly integrates with GPT-4, transforming your sketches into dynamic HTML previews."
+    icon: "brain-circuit"
+    available: false
+  - title: "Team Collaboration"
+    description: "Share your board effortlessly with your team, enabling real-time collaboration and turning ideas into collective masterpieces."
+    icon: "share"
+    available: false
 ---
 
-<div className="w-full pt-16 pb-12">
-    <div className="font-plex font-black text-5xl md:text-6xl text-neutral-950 tracking-tight leading-tight mb-3">
-        <span>From <u>Concept</u> to <u>Reality</u>.</span>
+<div className="w-full pt-12 pb-16">
+    <div className="font-plex font-black text-4xl md:text-6xl text-neutral-950 tracking-tight leading-none mb-4">
+        <span>From <u>concept</u> to <u>reality</u>.</span>
     </div>
-    <div className="w-full text-2xl mb-6">
-        <span>Folio is a minimalistic and infinite whiteboard app. Sketch, Prototype, and Design with total freedom and privacy.</span>
+    <div className="w-full max-w-4xl text-xl md:text-2xl mb-6">
+        <span>Folio is a minimalistic and infinite whiteboard app. Sketch, Prototype, and Design with total <b>freedom</b> and <b>privacy</b>.</span>
     </div>
     <div className="flex mb-16">
-        <Button as="a" href="./dashboard" className="">
+        <Button as="a" href="./dashboard" className="px-4">
             <strong className="text-lg">Start Sketching</strong>
             <div className="flex items-center text-2xl">
                 <Icon icon="arrow-right" />
@@ -32,22 +40,42 @@ features:
     </div>
 </div>
 
-<div className="pt-10 pb-10 w-full">
+<div className="h-px w-full bg-neutral-200" />
+
+<div className="pt-20 pb-10 w-full">
     <a href="#features" name="features" />
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
     {props.page.data.features.map(feature => (
-        <div key={feature.title} className="w-full">
-            <div className="text-7xl flex items-center mb-4 text-neutral-800">
+        <div key={feature.title} className="w-full md:mb-4">
+            <div className="text-4xl md:text-5xl flex items-center mb-4 text-neutral-800">
                 <Icon icon={feature.icon} />
             </div>
-            <div className="mb-1 text-xs font-bold text-neutral-900">
-                <span>{feature.subtitle}</span>
-            </div>
-            <div className="mb-3 font-plex text-3xl leading-none tracking-tight">
+            <div className="mb-3 font-plex text-2xl md:text-3xl leading-none tracking-tight">
                 <span className="text-neutral-950">{feature.title}</span>
             </div>
             <div className="">{feature.description}</div>
+            {!feature.available && (
+                <div className="mt-2 flex">
+                    <div className="px-3 py-1 rounded-full text-xs bg-neutral-100">
+                        <strong>Coming soon!</strong>
+                    </div>
+                </div>
+            )}
         </div>
     ))}
+    </div>
+</div>
+
+<div className="w-full flex flex-col md:flex-row gap-8 md:items-center pt-16 pb-16">
+    <div className="w-full flex justify-center md:justify-start">
+        <div className="font-plex font-black text-4xl md:text-5xl text-neutral-950 tracking-tight leading-none">Start <u>creating</u> with Folio.</div>
+    </div>
+    <div className="w-full flex flex-col items-center">
+        <Button as="a" href="./dashboard" className="px-4">
+            <strong className="text-lg">Get Started with Folio</strong>
+            <div className="flex items-center text-2xl">
+                <Icon icon="drawing" />
+            </div>
+        </Button>
     </div>
 </div>
