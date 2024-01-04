@@ -11,7 +11,7 @@ features:
     icon: "drawing"
     available: true
   - title: "AI Powered."
-    description: "Folio seamlessly integrates with GPT-4, transforming your sketches into dynamic HTML previews or generating an sketch from a text."
+    description: "Folio seamlessly integrates with GPT-4, transforming your sketches into dynamic HTML previews or generating a sketch from a text."
     icon: "brain-circuit"
     available: false
   - title: "Team Collaboration."
@@ -20,11 +20,18 @@ features:
     available: false
 ---
 
-<div className="w-full pt-12 pb-16 animation-fadein">
-    <div className="font-plex font-black text-4xl md:text-6xl text-neutral-950 tracking-tight leading-none mb-4">
+<div className="w-full pt-10 pb-20">
+    <div className="flex justify-start w-full mb-4">
+        <a className="inline-flex flex-nowrap items-center gap-2 rounded-lg bg-neutral-100 px-3 py-1 text-sm font-medium no-underline">
+            <span className="font-bold">🎉 Folio v0.13.0</span>
+            <span>-</span>
+            <span className="text-neutral-800">Redesigned Editor and Dashboard UI</span>
+        </a>
+    </div>
+    <div className="font-plex font-black text-6xl md:text-7xl text-neutral-950 tracking-tight leading-none mb-4">
         <span>From <u>concept</u> to <u>reality</u>.</span>
     </div>
-    <div className="w-full max-w-4xl text-xl md:text-2xl mb-6">
+    <div className="w-full max-w-4xl text-xl mb-8">
         <span>Folio is a minimalistic and infinite whiteboard app. Sketch, Prototype, and Design with total <b>freedom</b> and <b>privacy</b>.</span>
     </div>
     <div className="flex mb-16">
@@ -36,7 +43,7 @@ features:
         </Button>
     </div>
     <div className="w-full">
-        <img src="./folio-app-cover.png" width="100%" className="shadow-lg rounded-lg" />
+        <img src="./folio-github-cover.png" width="100%" className="shadow-lg rounded-lg" />
     </div>
 </div>
 
@@ -44,6 +51,12 @@ features:
 
 <div className="pt-20 pb-10 w-full">
     <a href="#features" name="features" />
+    <div className="font-plex font-black text-4xl md:text-5xl text-neutral-950 tracking-tight leading-tight mb-4">
+        <span>Discover the power of Folio.</span>
+    </div>
+    <div className="text-xl mb-16 w-full max-w-4xl">
+        <span>From seamless collaboration with your team to the magic of AI integration, <b>Folio</b> offers a suite of minimalist tools designed to elevate your sketching experience.</span>
+    </div>
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
     {props.page.data.features.map(feature => (
         <div key={feature.title} className="w-full md:mb-4">
@@ -66,16 +79,27 @@ features:
     </div>
 </div>
 
-<div className="w-full flex flex-col md:flex-row gap-8 md:items-center pt-16 pb-16">
-    <div className="w-full flex justify-center md:justify-start">
-        <div className="font-plex font-black text-4xl md:text-5xl text-neutral-950 tracking-tight leading-none">Start <u>creating</u> with Folio.</div>
+<div className="w-full pt-20 pb-20">
+    <div className="font-plex font-black text-4xl md:text-5xl text-center text-neutral-900 tracking-tight leading-tight mb-4">
+        <span>Start <u>creating</u> with Folio.</span>
     </div>
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full max-w-3xl mx-auto text-center text-lg mb-8">
+        <span>Join now to experience a minimalist whiteboard app that empowers your ideas. Get started in seconds!</span>
+    </div>
+    <div className="flex justify-center">
         <Button as="a" href="./dashboard" className="px-4">
             <strong className="text-lg">Get Started with Folio</strong>
             <div className="flex items-center text-2xl">
-                <Icon icon="drawing" />
+                <Icon icon="arrow-right" />
             </div>
         </Button>
     </div>
+</div>
+
+<div className="w-full bg-neutral-100 rounded-lg p-8 mt-10">
+    <div class="text-xl font-bold">
+        <span>Folio is still a Work in Progress</span>
+    </div>
+    <div class="mt-4">Please be aware that Folio is currently in active development. While the app is fully functional and offers a range of features, we are continuously working to enhance and expand its capabilities.</div>
+    <div class="mt-2">You might encounter occasional bugs or experience features that are still being refined. We appreciate your patience and understanding as we work to deliver the best possible drawing experience.</div>
 </div>

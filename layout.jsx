@@ -35,7 +35,7 @@ const Layout = props => {
                                 </NavigationLink>
                             </NavigationCollapse>
                             <NavigationAction href="./dashboard">
-                                <div className="font-bold">Try Folio</div>
+                                <div><b>Try Folio</b> - <i>for free!</i></div>
                             </NavigationAction>
                         </React.Fragment>
                     )}
