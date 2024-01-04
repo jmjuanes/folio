@@ -1,0 +1,25 @@
+---
+layout: "empty"
+title: "Not found"
+---
+
+<div className="flex items-center justify-center h-screen w-full">
+    <div>
+        <div className="text-xl mb-4">
+            <span><b>404</b> | not found</span>
+        </div>
+        <div className="text-sm text-gray-600 mb-8">
+            <span>It looks like you have followed a broken link or entered a URL that does not exist.</span>
+        </div>
+        <div className="flex flex-wrap gap-4 w-full">
+        {(props.site.notFoundPageLinks || []).map(link => (
+            <a key={link.url} href={link.url} target={link.target} className="no-underline hover:underline flex items-center gap-1 text-neutral-700 hover:text-neutral-900">
+                <div className="flex items-center text-lg">
+                    <Icon icon={link.icon || "arrow-up-right"} />
+                </div>
+                <div className="">{link.text}</div>
+            </a>
+        ))}
+        </div>
+    </div>
+</div>

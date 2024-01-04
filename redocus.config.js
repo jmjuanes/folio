@@ -23,24 +23,31 @@ const PageWrapper = props => (
             <style>{`.font-plex {font-family: IBM Plex Serif, serif;}`}</style>
         </head>
         <body className="bg-white m-0 p-0 font-inter text-neutral-800 leading-normal">
-            <Layout version={pkg.version} logged={false}>
-                {props.page.data.layout === "default" && (
-                    <React.Fragment>
-                        {props.element}
-                    </React.Fragment>
-                )}
-                {props.page.data.layout === "legal" && (
-                    <div className="w-full max-w-3xl mx-auto pt-10">
-                        <h1 className="font-black text-5xl leading-none mb-2 text-neutral-950">
-                            <span>{props.page.data.documentTitle}</span>
-                        </h1>
-                        <div className="mb-8 text-neutral-700 text-sm">
-                            <span><b>Effective Date:</b> {props.page.data.documentUpdateDate}</span>
+            {props.page.data.layout !== "empty" && (
+                <Layout version={pkg.version} logged={false}>
+                    {props.page.data.layout === "default" && (
+                        <React.Fragment>
+                            {props.element}
+                        </React.Fragment>
+                    )}
+                    {props.page.data.layout === "legal" && (
+                        <div className="w-full max-w-3xl mx-auto pt-10">
+                            <h1 className="font-black text-5xl leading-none mb-2 text-neutral-950">
+                                <span>{props.page.data.documentTitle}</span>
+                            </h1>
+                            <div className="mb-8 text-neutral-700 text-sm">
+                                <span><b>Effective Date:</b> {props.page.data.documentUpdateDate}</span>
+                            </div>
+                            {props.element}
                         </div>
-                        {props.element}
-                    </div>
-                )}
-            </Layout>
+                    )}
+                </Layout>
+            )}
+            {props.page.data.layout === "empty" && (
+                <React.Fragment>
+                    {props.element}
+                </React.Fragment>
+            )}
         </body>
     </html>
 );
@@ -51,7 +58,12 @@ module.exports = {
     siteMetadata: {
         title: "Folio",
         description: "Folio is a digital whiteboard for sketching and prototyping",
-        url: "https://",
+        url: "https://josemi.xyz/folio",
+        notFoundPageLinks: [
+            {url: "./", text: "Home", icon: "home"},
+            {url: pkg.repository, text: "Repository", target: "_blnak"},
+            {url: pkg.bugs, text: "Report a bug", target: "_blank"},
+        ],
     },
     pageComponents: {
         Button: Button,
