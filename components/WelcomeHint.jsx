@@ -25,7 +25,7 @@ export const WelcomeHint = props => {
                 </div>
             )}
             <div className={classnames(props.contentClassName, "flex flex-col items-center")}>
-                <div className="text-center text-sm text-neutral-700">
+                <div className="text-center text-sm text-neutral-600">
                     <strong>{props.title}</strong>
                 </div>
                 <div className="text-xs text-center text-neutral-500">
