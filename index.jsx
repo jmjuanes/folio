@@ -60,7 +60,7 @@ createRoot(document.getElementById("root")).render((
     <ClientProvider>
         <ConfirmProvider>
             <App
-                pathPrefix="/"
+                pathPrefix={process.env.PATH_PREFIX}
                 version={process.env.VERSION}
             />
         </ConfirmProvider>
