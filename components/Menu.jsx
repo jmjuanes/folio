@@ -19,7 +19,7 @@ export const Menu = props => {
                     icon="bars"
                 />
             </HeaderContainer>
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56">
+            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56 z-5">
                 {props.showLoad && (
                     <DropdownItem
                         icon={(<FolderIcon />)}
