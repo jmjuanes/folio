@@ -4,7 +4,7 @@ import {createRoot} from "react-dom/client";
 import {ClientProvider, useClient} from "./contexts/ClientContext.jsx";
 import {ConfirmProvider} from "./contexts/ConfirmContext.jsx";
 
-import Layout from "./layout.jsx";
+import Layout from "./layouts/app.jsx";
 import DashboardPage from "./pages/dashboard.jsx";
 import BoardPage from "./pages/board.jsx";
 
@@ -30,7 +30,6 @@ const App = props => {
         version: props.version,
         onCreate: handleCreate,
         onRedirect: Rouct.redirect,
-        logged: true,
     };
     return (
         <Rouct.Router pathPrefix={props.pathPrefix} routing={Rouct.BrowserRouting}>

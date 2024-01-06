@@ -4,6 +4,7 @@ import * as idb from "idb-keyval";
 import {VERSION} from "../constants.js";
 import {migrate} from "../board/migrate.js";
 import {useDelay} from "../hooks/index.js";
+import {Loading} from "../components/Loading.jsx";
 
 // Store keys for IDB
 const LEGACY_STORE_KEYS = {
@@ -97,6 +98,9 @@ export const ClientProvider = props => {
             return setClientReady(true);
         });
     });
+    if (!clientReady) {
+        return <Loading />;
+    }
     // Render app content
     return (
         <ClientContext.Provider value={clientReady}>

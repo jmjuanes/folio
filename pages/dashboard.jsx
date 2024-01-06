@@ -100,8 +100,8 @@ const BoardActionButton = props => (
 const BoardList = props => {
     const [boards, setBoards] = React.useState(null);
     // We use a delayed effect just for displaying the loading ui
-    useDelayedEffect(props.delay, [props.ready], () => {
-        props.ready && props.data().then(setBoards);
+    useDelayedEffect(props.delay, [], () => {
+        props.data().then(setBoards);
     });
 
     return (
@@ -206,7 +206,6 @@ export default props => {
                     key={updateKey}
                     title="Your boards"
                     data={() => client.getUserBoards()}
-                    ready={!!client}
                     onCreate={props.onCreate}
                     onLoad={() => {
                         loadFromJson()

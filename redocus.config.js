@@ -1,7 +1,7 @@
 const React = require("react");
 const {renderIcon} = require("@josemi-icons/react/cjs");
 const {Button} = require("@josemi-ui/components/cjs");
-const Layout = require("./layout.jsx");
+const Layout = require("./layouts/default.jsx");
 const pkg = require("./package.json");
 
 const PageWrapper = props => (
@@ -24,7 +24,7 @@ const PageWrapper = props => (
         </head>
         <body className="bg-white m-0 p-0 font-inter text-neutral-800 leading-normal">
             {props.page.data.layout !== "empty" && (
-                <Layout version={pkg.version} logged={false}>
+                <Layout version={pkg.version}>
                     {props.page.data.layout === "default" && (
                         <React.Fragment>
                             {props.element}

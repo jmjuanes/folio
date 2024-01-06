@@ -49,10 +49,6 @@ export default props => {
             });
         }
     });
-    // Check if client is not ready
-    if (!client) {
-        return <Loading />;
-    }
     // Display an error message if something went wrong importing board data
     if (error || !props.id) {
         return (
