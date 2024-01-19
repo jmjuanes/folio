@@ -1,68 +1,47 @@
 import React from "react";
-import Rouct from "rouct";
 import {createRoot} from "react-dom/client";
-import {ClientProvider, useClient} from "./contexts/ClientContext.jsx";
+import {ClientProvider} from "./contexts/ClientContext.jsx";
 import {ConfirmProvider} from "./contexts/ConfirmContext.jsx";
+import {RouterProvider, Route, Switch, useRouter} from "./contexts/router.jsx";
 
-import Layout from "./layouts/app.jsx";
-import DashboardPage from "./pages/dashboard.jsx";
-import BoardPage from "./pages/board.jsx";
+import DashboardPage from "./app/dashboard.jsx";
+import BoardPage from "./app/board.jsx";
 
 import "lowcss/dist/low.css";
 
-// Main app component
-const App = props => {
-    const client = useClient();
-    const handleOpen = id => {
-        return Rouct.redirect(`/board#${id}`);
-    };
-    const handleCreate = () => {
-        const boardData = {
-            title: "Untitled",
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-        };
-        client.addBoard(boardData)
-            .then(response => handleOpen(response.id))
-            .catch(error => console.error(error));
-    };
-    const layoutProps = {
-        version: props.version,
-        onCreate: handleCreate,
-        onRedirect: Rouct.redirect,
-    };
+export const App = () => {
+    const {currentPath} = useRouter();
     return (
-        <Rouct.Router pathPrefix={props.pathPrefix} routing={Rouct.BrowserRouting}>
-            <Layout {...layoutProps}>
-                <Rouct.Switch>
-                    <Rouct.Route exact path="/board" render={request => (
-                        <div className="fixed top-0 left-0 h-full w-full bg-white text-neutral-700">
-                            <BoardPage
-                                key={"board:" + request.hash}
-                                id={(request.hash || "").replace(/^#/, "")}
-                            />
-                        </div>
+        <Switch>
+            <Route test={/^#?board\/(\w+)$/} render={() => (
+                <div className="fixed top-0 left-0 h-full w-full bg-white text-neutral-700">
+                    <BoardPage
+                        key={currentPath}
+                        id={currentPath.replace("#board/", "").trim()}
+                    />
+                </div>
+            )} />
+            <Route test="*" render={() => (
+                <div className="w-full max-w-6xl mx-auto py-20">
+                    <div className="mb-8">
+                        <div className="font-black text-7xl">folio.</div>
+                    </div>
+                    <Route test={/^(#|#home)$/} render={() => (
+                        <DashboardPage />
                     )} />
-                    <Rouct.Route exact path="/dashboard" render={() => (
-                        <DashboardPage
-                            onCreate={handleCreate}
-                            onOpen={handleOpen}
-                        />
-                    )} />
-                </Rouct.Switch>
-            </Layout>
-        </Rouct.Router>
+                </div>
+            )} />
+        </Switch>
     );
 };
 
 // Mount app component
 createRoot(document.getElementById("root")).render((
-    <ClientProvider>
-        <ConfirmProvider>
-            <App
-                pathPrefix={process.env.PATH_PREFIX}
-                version={process.env.VERSION}
-            />
-        </ConfirmProvider>
-    </ClientProvider>
+    <RouterProvider>
+        <ClientProvider>
+            <ConfirmProvider>
+                <App version={process.env.VERSION} />
+            </ConfirmProvider>
+        </ClientProvider>
+    </RouterProvider>
 ));
