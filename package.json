@@ -22,12 +22,10 @@
         "@mdx-js/mdx": "^3.0.0",
         "browser-fs-access": "^0.33.1",
         "classnames": "^2.3.2",
-        "idb-keyval": "^6.2.0",
         "lowcss": "^0.19.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "redocus": "^0.1.1",
-        "rouct": "^0.6.0",
         "uid": "^2.0.2"
     },
     "devDependencies": {

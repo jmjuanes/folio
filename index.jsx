@@ -1,68 +1,71 @@
 import React from "react";
-import Rouct from "rouct";
 import {createRoot} from "react-dom/client";
-import {ClientProvider, useClient} from "./contexts/ClientContext.jsx";
-import {ConfirmProvider} from "./contexts/ConfirmContext.jsx";
+import {VERSION} from "./constants.js";
+import {loadFromJson, saveAsJson} from "./board/json.js";
+import {migrate} from "./board/migrate.js";
+import {useLocalStorage} from "./hooks/use-storage.js";
+import {renameItem} from "@lib/utils/storage.js";
+import {Board} from "@components/Board.jsx";
 
-import Layout from "./layouts/app.jsx";
-import DashboardPage from "./pages/dashboard.jsx";
-import BoardPage from "./pages/board.jsx";
+const STORE_KEY = "folio:data";
 
-import "lowcss/dist/low.css";
+const App = () => {
+    const [state, setState] = useLocalStorage(STORE_KEY, {
+        version: VERSION,
+        createdAt: Date.now(),
+    });
 
-// Main app component
-const App = props => {
-    const client = useClient();
-    const handleOpen = id => {
-        return Rouct.redirect(`/board#${id}`);
-    };
-    const handleCreate = () => {
-        const boardData = {
-            title: "Untitled",
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-        };
-        client.addBoard(boardData)
-            .then(response => handleOpen(response.id))
-            .catch(error => console.error(error));
-    };
-    const layoutProps = {
-        version: props.version,
-        onCreate: handleCreate,
-        onRedirect: Rouct.redirect,
-    };
+    // Hook to migrate data after initialization
+    React.useEffect(() => {
+        if (state.version && state.version !== VERSION) {
+            setState(migrate(state, state.version));
+        }
+    }, [state.version]);
+
     return (
-        <Rouct.Router pathPrefix={props.pathPrefix} routing={Rouct.BrowserRouting}>
-            <Layout {...layoutProps}>
-                <Rouct.Switch>
-                    <Rouct.Route exact path="/board" render={request => (
-                        <div className="fixed top-0 left-0 h-full w-full bg-white text-neutral-700">
-                            <BoardPage
-                                key={"board:" + request.hash}
-                                id={(request.hash || "").replace(/^#/, "")}
-                            />
-                        </div>
-                    )} />
-                    <Rouct.Route exact path="/dashboard" render={() => (
-                        <DashboardPage
-                            onCreate={handleCreate}
-                            onOpen={handleOpen}
-                        />
-                    )} />
-                </Rouct.Switch>
-            </Layout>
-        </Rouct.Router>
+        <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-gray-700">
+            <Board
+                key={(state?.version || "") + "." + (state?.createdAt || "")}
+                initialData={() => {
+                    return Promise.resolve(state);
+                }}
+                links={[
+                    {url: "./", text: "About Folio"},
+                    {url: process.env.URL_ISSUES, text: "Report a bug"},
+                ]}
+                showLoad={true}
+                showWelcomeHint={true}
+                onChange={newState => {
+                    return setState(prevState => ({
+                        ...prevState,
+                        ...newState,
+                        updatedAt: Date.now(),
+                    }));
+                }}
+                onSave={() => {
+                    saveAsJson(state)
+                        .then(() => console.log("Folio file saved"))
+                        .catch(error => console.error(error));
+                }}
+                onLoad={() => {
+                    loadFromJson()
+                        .then(data => {
+                            setState({
+                                ...data,
+                                createdAt: Date.now(),
+                            });
+                        })
+                        .catch(error => console.error(error));
+                }}
+            />
+        </div>
     );
 };
 
-// Mount app component
+// Temporal migration from 'folio-lite' storage key to 'folio:data'
+// This should removed in future releases
+renameItem("folio-lite", STORE_KEY);
+
 createRoot(document.getElementById("root")).render((
-    <ClientProvider>
-        <ConfirmProvider>
-            <App
-                pathPrefix={process.env.PATH_PREFIX}
-                version={process.env.VERSION}
-            />
-        </ConfirmProvider>
-    </ClientProvider>
+    <App version={process.env.VERSION} />
 ));
