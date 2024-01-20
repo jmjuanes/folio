@@ -1,7 +1,7 @@
 const path = require("node:path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const package = require("./package.json");
 
 module.exports = {
@@ -12,14 +12,20 @@ module.exports = {
         path: path.join(__dirname, "www"),
         publicPath: "./",
         filename: "[name].[contenthash].js",
-        // chunkFilename: "[name].[contenthash].chunk.js",
+        chunkFilename: "[name].[contenthash].chunk.js",
         assetModuleFilename: "assets/[hash][ext][query]",
     },
-    // optimization: {
-    //     splitChunks: {
-    //         chunks: "all",
-    //     },
-    // },
+    optimization: {
+        splitChunks: {
+            chunks: "all",
+        },
+    },
+    resolve: {
+        alias: {
+            "@components": path.resolve(__dirname, "./components"),
+            "@lib": path.resolve(__dirname, "./lib"),
+        },
+    },
     devServer: {
         hot: false,
         static: {
@@ -59,10 +65,6 @@ module.exports = {
                 },
             },
             {
-                test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader"],
-            },
-            {
                 test: /\.(png|jpg|jpeg|svg)$/,
                 type: "asset/resource",
             },
@@ -74,20 +76,21 @@ module.exports = {
     },
     plugins: [
         new webpack.ProgressPlugin(),
-        new MiniCssExtractPlugin({
-            filename: "[contenthash].css",
-            chunkFilename: "[id].css",
-        }),
         new webpack.DefinePlugin({
             "process.env.VERSION": JSON.stringify(package.version),
             "process.env.URL_REPOSITORY": JSON.stringify(package.repository),
             "process.env.URL_ISSUES": JSON.stringify(package.bugs),
             "process.env.URL_HOMEPAGE": JSON.stringify(package.homepage),
         }),
+        new CopyWebpackPlugin({
+            patterns: [
+                path.join(__dirname, "node_modules/lowcss/dist/low.css"),
+            ],
+        }),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "index.html"),
             filename: `app.html`,
-            minify: true,
+            // minify: true,
         }),
     ],
 };
