@@ -1,7 +1,7 @@
 import React from "react";
-import {PresentationIcon} from "@josemi-icons/react";
-import {Dropdown, DropdownSeparator, DropdownGroup} from "@josemi-ui/components";
-import {DropdownItem, DropdownCheckItem, DropdownLinkItem} from "@josemi-ui/components";
+import classnames from "classnames";
+import {PresentationIcon, ExternalLinkIcon} from "@josemi-icons/react";
+import {Dropdown} from "@josemi-ui/react";
 import {ACTIONS} from "../constants.js";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {useBoard} from "../contexts/BoardContext.jsx";
@@ -21,43 +21,55 @@ export const Menu = props => {
             </HeaderContainer>
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56 z-5">
                 {props.showLoad && (
-                    <DropdownItem
-                        icon={(<FolderIcon />)}
-                        text="Open..."
-                        onClick={props.onLoad}
-                    />
+                    <Dropdown.Item onClick={props.onLoad}>
+                        <Dropdown.Icon>
+                            <FolderIcon />
+                        </Dropdown.Icon>
+                        <span>Open...</span>
+                    </Dropdown.Item>
                 )}
                 {props.showSave && (
-                    <DropdownItem
-                        icon={(<DownloadIcon />)}
-                        text="Save as..."
-                        onClick={props.onSave}
-                    />
+                    <Dropdown.Item onClick={props.onSave}>
+                        <Dropdown.Icon>
+                            <DownloadIcon />
+                        </Dropdown.Icon>
+                        <span>Save as...</span>
+                    </Dropdown.Item>
                 )}
                 {props.showExport && (
-                    <DropdownItem
-                        icon={(<ImageIcon />)}
-                        text="Export image..."
+                    <Dropdown.Item
                         disabled={board.elements.length === 0}
+                        className={classnames({
+                            "pointer-events-none": board.elements.length === 0,
+                        })}
                         onClick={props.onExport}
-                    />
+                    >
+                        <Dropdown.Icon>
+                            <ImageIcon />
+                        </Dropdown.Icon>
+                        <span>Export image...</span>
+                    </Dropdown.Item>
                 )}
                 {props.showResetBoard && (
-                    <DropdownItem
-                        icon={(<TrashIcon />)}
-                        text="Reset the board"
+                    <Dropdown.Item
                         disabled={board.elements.length === 0}
+                        className={classnames({
+                            "pointer-events-none": board.elements.length === 0,
+                        })}
                         onClick={props.onResetBoard}
-                    />
+                    >
+                        <Dropdown.Icon>
+                            <TrashIcon />
+                        </Dropdown.Icon>
+                        <span>Reset the board</span>
+                    </Dropdown.Item>
                 )}
                 {props.showSettings && (
                     <React.Fragment>
-                        <DropdownSeparator />
-                        <DropdownGroup>Preferences</DropdownGroup>
-                        <DropdownCheckItem
+                        <Dropdown.Separator />
+                        <Dropdown.Group>Preferences</Dropdown.Group>
+                        <Dropdown.CheckItem
                             checked={board.grid}
-                            icon={(<GridIcon />)}
-                            text="Grid"
                             onClick={() => {
                                 board.grid = !board.grid;
                                 board.update();
@@ -65,24 +77,32 @@ export const Menu = props => {
                                     grid: board.grid,
                                 });
                             }}
-                        />
-                        <DropdownCheckItem
+                        >
+                            <Dropdown.Icon>
+                                <GridIcon />
+                            </Dropdown.Icon>
+                            <span>Grid</span>
+                        </Dropdown.CheckItem>
+                        <Dropdown.CheckItem
                             checked={board.state.presentationMode}
-                            icon={(<PresentationIcon />)}
-                            text="Presentation mode"
                             onClick={() => {
                                 board.state.presentationMode = !board.state.presentationMode;
                                 board.setTool(null);
                                 board.setAction(ACTIONS.MOVE);
                                 board.update();
                             }}
-                        />
+                        >
+                            <Dropdown.Icon>
+                                <PresentationIcon />
+                            </Dropdown.Icon>
+                            <span>Presentation mode</span>
+                        </Dropdown.CheckItem>
                     </React.Fragment>
                 )}
                 {props.showChangeBackground && (
                     <React.Fragment>
-                        <DropdownSeparator />
-                        <DropdownGroup>Background</DropdownGroup>
+                        <Dropdown.Separator />
+                        <Dropdown.Group>Background</Dropdown.Group>
                         <div className="px-3">
                             <ColorPicker
                                 value={board.background}
@@ -101,14 +121,20 @@ export const Menu = props => {
                 )}
                 {(props.showLinks && props.links?.length > 0) && (
                     <React.Fragment>
-                        <DropdownSeparator />
-                        <DropdownGroup>Links</DropdownGroup>
+                        <Dropdown.Separator />
+                        <Dropdown.Group>Links</Dropdown.Group>
                         {props.links.map(link => (
-                            <DropdownLinkItem
+                            <Dropdown.Item
                                 key={link.url}
-                                url={link.url}
-                                text={link.text}
-                            />
+                                as="a"
+                                href={link.url}
+                                target="_blank"
+                            >
+                                <Dropdown.Icon>
+                                    <ExternalLinkIcon />
+                                </Dropdown.Icon>
+                                <span>{link.text}</span>
+                            </Dropdown.Item>
                         ))}
                     </React.Fragment>
                 )}
