@@ -1,8 +1,5 @@
 import React from "react";
-import {Button} from "@josemi-ui/components";
-import {Overlay} from "@josemi-ui/components";
-import {Modal, ModalHeader, ModalBody} from "@josemi-ui/components";
-import {ModalTitle, ModalClose} from "@josemi-ui/components";
+import {Button, Centered, Overlay, Modal} from "@josemi-ui/react";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
 import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "../constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../board/export.js";
@@ -112,42 +109,59 @@ export const ExportDialog = props => {
     return (
         <React.Fragment>
             <Overlay />
-            <Modal className="max-w-sm">
-                <ModalHeader className="mb-4">
-                    <ModalTitle>Export Image</ModalTitle>
-                    <ModalClose onClick={props.onClose} />
-                </ModalHeader>
-                <ModalBody>
-                    <ExportPreview data={preview} />
-                    <div className="mb-8">
-                        <Form
-                            data={options}
-                            items={formOptions}
-                            onChange={(key, value) => {
-                                setOptions(prevOptions => ({...prevOptions, [key]: value}));
-                            }}
+            <Centered className="fixed z-10 h-full">
+                <Modal className="max-w-sm">
+                    <Modal.Header className="mb-4">
+                        <Modal.Title>Export Image</Modal.Title>
+                        <Modal.Close
+                            onClick={props.onClose}
                         />
+                    </Modal.Header>
+                    <Modal.Body>
+                        <ExportPreview
+                            data={preview}
+                        />
+                        <div className="mb-8">
+                            <Form
+                                data={options}
+                                items={formOptions}
+                                onChange={(key, value) => {
+                                    setOptions(prevOptions => ({
+                                        ...prevOptions,
+                                        [key]: value,
+                                    }));
+                                }}
+                            />
+                        </div>
+                    </Modal.Body>
+                    <div className="flex gap-2 w-full flex-col">
+                        <Button
+                            variant="secondary"
+                            className="w-full"
+                            onClick={handleExportToFile}
+                        >
+                            <div className="flex items-center text-lg">
+                                <DownloadIcon />
+                            </div>
+                            <div className="flex items-center">
+                                <span>Download PNG</span>
+                            </div>
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className="w-full"
+                            onClick={handleCopyToClipboard}
+                        >
+                            <div className="flex items-center text-lg">
+                                <ClipboardIcon />
+                            </div>
+                            <div className="flex items-center">
+                                <span>{copiedToClipboard ? "Copied!" : "Copy to clipboard"}</span>
+                            </div>
+                        </Button>
                     </div>
-                </ModalBody>
-                <div className="flex gap-2 w-full flex-col">
-                    <Button data-testid="export-btn-download" variant="secondary" className="w-full" onClick={handleExportToFile}>
-                        <div className="flex items-center text-lg">
-                            <DownloadIcon />
-                        </div>
-                        <div className="flex items-center">
-                            <span>Download PNG</span>
-                        </div>
-                    </Button>
-                    <Button data-testid="export-btn-clipboard" variant="secondary" className="w-full" onClick={handleCopyToClipboard}>
-                        <div className="flex items-center text-lg">
-                            <ClipboardIcon />
-                        </div>
-                        <div className="flex items-center">
-                            <span>{copiedToClipboard ? "Copied!" : "Copy to clipboard"}</span>
-                        </div>
-                    </Button>
-                </div>
-            </Modal>
+                </Modal>
+            </Centered>
         </React.Fragment>
     );
 };

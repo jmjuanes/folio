@@ -1,6 +1,5 @@
 import React from "react";
-import {ContextMenu as ContextMenuWrapper} from "@josemi-ui/components";
-import {ContextMenuItem, ContextMenuSeparator} from "@josemi-ui/components";
+import {ContextMenu as Menu} from "@josemi-ui/react";
 import {useBoard} from "../contexts/BoardContext.jsx";
 
 export const ContextMenu = props => {
@@ -73,45 +72,45 @@ export const ContextMenu = props => {
         board.update();
     };
     return (
-        <ContextMenuWrapper className="absolute z-10 w-40" style={style}>
+        <Menu className="absolute z-10 w-40" style={style}>
             {selectedElements.length > 0 && (
                 <React.Fragment>
-                    <ContextMenuItem onClick={handleDuplicate}>Duplicate</ContextMenuItem>
+                    <Menu.Item onClick={handleDuplicate}>Duplicate</Menu.Item>
                     {selectedElements.some(el => !el.locked) && (
-                        <ContextMenuItem onClick={handleLock}>Lock</ContextMenuItem>
+                        <Menu.Item onClick={handleLock}>Lock</Menu.Item>
                     )}
                     {selectedElements.some(el => el.locked) && (
-                        <ContextMenuItem onClick={handleUnlock}>Unlock</ContextMenuItem>
+                        <Menu.Item onClick={handleUnlock}>Unlock</Menu.Item>
                     )}
-                    <ContextMenuSeparator />
+                    <Menu.Separator />
                 </React.Fragment>
             )} 
             {selectedElements.length > 0 && (
                 <React.Fragment>
-                    <ContextMenuItem onClick={handleCut}>Cut</ContextMenuItem>
-                    <ContextMenuItem onClick={handleCopy}>Copy</ContextMenuItem>
+                    <Menu.Item onClick={handleCut}>Cut</Menu.Item>
+                    <Menu.Item onClick={handleCopy}>Copy</Menu.Item>
                 </React.Fragment>
             )}
-            <ContextMenuItem onClick={handlePaste}>Paste</ContextMenuItem>
+            <Menu.Item onClick={handlePaste}>Paste</Menu.Item>
             {selectedElements.length > 0 && (
                 <React.Fragment>
-                    <ContextMenuSeparator />
-                    <ContextMenuItem onClick={handleSendBackward}>Send backward</ContextMenuItem>
-                    <ContextMenuItem onClick={handleBringForward}>Bring forward</ContextMenuItem>
+                    <Menu.Separator />
+                    <Menu.Item onClick={handleSendBackward}>Send backward</Menu.Item>
+                    <Menu.Item onClick={handleBringForward}>Bring forward</Menu.Item>
                 </React.Fragment>
             )}
             {board.elements.length > 0 && (
                 <React.Fragment>
-                    <ContextMenuSeparator />
-                    <ContextMenuItem onClick={handleSelectAll}>Select all</ContextMenuItem>
+                    <Menu.Separator />
+                    <Menu.Item onClick={handleSelectAll}>Select all</Menu.Item>
                 </React.Fragment>
             )}
             {selectedElements.length > 0 && (
                 <React.Fragment>
-                    <ContextMenuSeparator />
-                    <ContextMenuItem onClick={handleDelete}>Delete</ContextMenuItem>
+                    <Menu.Separator />
+                    <Menu.Item onClick={handleDelete}>Delete</Menu.Item>
                 </React.Fragment>
             )} 
-        </ContextMenuWrapper>
+        </Menu>
     );
 };
