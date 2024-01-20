@@ -18,11 +18,11 @@
     },
     "dependencies": {
         "@josemi-icons/react": "^0.6.0",
-        "@josemi-ui/components": "^0.2.0",
+        "@josemi-ui/react": "^0.3.4",
         "@mdx-js/mdx": "^3.0.0",
         "browser-fs-access": "^0.33.1",
         "classnames": "^2.3.2",
-        "lowcss": "^0.19.1",
+        "lowcss": "^0.19.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "redocus": "^0.1.1",
