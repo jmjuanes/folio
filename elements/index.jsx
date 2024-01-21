@@ -1,23 +1,41 @@
 import React from "react";
 import {uid} from "uid/secure";
-import {HANDLERS} from "../constants.js";
-import {EPSILON} from "../constants.js";
-import {ELEMENTS, FIELDS, DEFAULTS, GRID_SIZE, FILL_STYLES, STROKES} from "../constants.js";
-import {DRAWING_THRESHOLD, DRAWING_OFFSET} from "../constants.js";
-import {TEXT_SIZE_MIN, TEXT_SIZE_STEP, TEXT_SIZE_MAX, TEXT_BOX_MIN_WIDTH} from "../constants.js";
-import {SHAPE_MIN_WIDTH, SHAPE_MIN_HEIGHT, SHAPE_PADDING} from "../constants.js";
-import {NOTE_MIN_WIDTH, NOTE_MIN_HEIGHT} from "../constants.js";
-import {ArrowElement} from "./ArrowElement.jsx";
-import {DrawElement} from "./DrawElement.jsx";
-import {TextElement} from "./TextElement.jsx";
-import {ShapeElement} from "./ShapeElement.jsx";
-import {ImageElement} from "./ImageElement.jsx";
-import {NoteElement} from "./NoteElement.jsx";
-import {measureText} from "../utils/math.js";
-import {getPointDistanceToLine, getPointProjectionToLine} from "../utils/math.js";
-import {getCurvePath} from "../utils/paths.js";
-import {SvgContainer} from "../components/SvgContainer.jsx";
-import {isCornerHandler} from "../components/Handlers.jsx";
+import {
+    HANDLERS,
+    EPSILON,
+    ELEMENTS,
+    FIELDS,
+    DEFAULTS,
+    GRID_SIZE,
+    FILL_STYLES,
+    STROKES,
+    DRAWING_THRESHOLD,
+    DRAWING_OFFSET,
+    TEXT_SIZE_MIN,
+    TEXT_SIZE_STEP,
+    TEXT_SIZE_MAX,
+    TEXT_BOX_MIN_WIDTH,
+    SHAPE_MIN_WIDTH,
+    SHAPE_MIN_HEIGHT,
+    SHAPE_PADDING,
+    NOTE_MIN_WIDTH,
+    NOTE_MIN_HEIGHT,
+} from "@lib/constants.js";
+import {
+    measureText,
+    getPointDistanceToLine,
+    getPointProjectionToLine,
+} from "@lib/utils/math.js";
+import {getCurvePath} from "@lib/utils/paths.js";
+import {SvgContainer} from "@components/commons/svg.jsx";
+import {isCornerHandler} from "@components/render/handlers.jsx";
+
+import {ArrowElement} from "./basic/arrow.jsx";
+import {DrawElement} from "./basic/draw.jsx";
+import {TextElement} from "./basic/text.jsx";
+import {ShapeElement} from "./basic/shape.jsx";
+import {ImageElement} from "./basic/image.jsx";
+import {NoteElement} from "./basic/note.jsx";
 
 // Generate default handlers
 const getDefaultElementHandlers = element => ([
