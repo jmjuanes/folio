@@ -9,9 +9,9 @@
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "scripts": {
         "build": "yarn clean && yarn build:app && yarn build:pages",
-        "build:app": "cross-env NODE_ENV=production PATH_PREFIX=/folio webpack build",
-        "build:pages": "redocus --config redocus.config.js",
-        "postbuild:pages": "cp node_modules/lowcss/dist/low.css www/ && cp assets/folio-github-cover.png www/",
+        "build:app": "cross-env NODE_ENV=production webpack build",
+        "build:pages": "yarn build:site",
+        "build:site": "redocus --config redocus.config.js",
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
         "test": "jest"
