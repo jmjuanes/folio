@@ -23,6 +23,8 @@ module.exports = {
     resolve: {
         alias: {
             "@components": path.resolve(__dirname, "./components"),
+            "@elements": path.resolve(__dirname, "./elements"),
+            "@hooks": path.resolve(__dirname, "./hooks"),
             "@lib": path.resolve(__dirname, "./lib"),
         },
     },
@@ -36,8 +38,8 @@ module.exports = {
         },
         historyApiFallback: {
             rewrites: [
-                {from: /^\/$/, to: "app.html"},
-                {from: /^\/index.html$/, to: "app.html"},
+                {from: /^\/$/, to: "index.html"},
+                {from: /^\/app.html$/, to: "index.html"},
             ],
         },
         devMiddleware: {
@@ -89,7 +91,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "index.html"),
-            filename: `app.html`,
+            filename: "index.html",
             // minify: true,
         }),
     ],

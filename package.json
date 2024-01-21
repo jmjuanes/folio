@@ -8,10 +8,9 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "scripts": {
-        "build": "yarn clean && yarn build:app && yarn build:pages",
+        "build": "yarn clean && yarn build:app",
         "build:app": "cross-env NODE_ENV=production webpack build",
-        "build:pages": "yarn build:site",
-        "build:site": "redocus --config redocus.config.js",
+        "build:docs": "redocus --config redocus.config.js",
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
         "test": "jest"
@@ -48,8 +47,5 @@
         "webpack-cli": "^5.1.4",
         "webpack-dev-server": "^4.11.1"
     },
-    "license": "MIT",
-    "jest": {
-        "testEnvironment": "jsdom"
-    }
+    "license": "MIT"
 }

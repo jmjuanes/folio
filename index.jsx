@@ -1,11 +1,11 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
-import {VERSION} from "./constants.js";
-import {loadFromJson, saveAsJson} from "./board/json.js";
-import {migrate} from "./board/migrate.js";
-import {useLocalStorage} from "./hooks/use-storage.js";
+import {VERSION} from "@lib/constants.js";
+import {loadFromJson, saveAsJson} from "@lib/json.js";
+import {migrate} from "@lib/migrate.js";
+import {useLocalStorage} from "@lib/hooks/use-storage.js";
 import {renameItem} from "@lib/utils/storage.js";
-import {Board} from "@components/Board.jsx";
+import {Board} from "@components/board.jsx";
 
 const STORE_KEY = "folio:data";
 
