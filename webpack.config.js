@@ -38,8 +38,8 @@ module.exports = {
         },
         historyApiFallback: {
             rewrites: [
-                {from: /^\/$/, to: "index.html"},
-                {from: /^\/app.html$/, to: "index.html"},
+                {from: /^\/$/, to: "app.html"},
+                {from: /^\/index.html$/, to: "app.html"},
             ],
         },
         devMiddleware: {
@@ -91,8 +91,8 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "index.html"),
-            filename: "index.html",
-            // minify: true,
+            filename: "app.html",
+            minify: true,
         }),
     ],
 };
