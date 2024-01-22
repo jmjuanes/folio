@@ -8,9 +8,9 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "scripts": {
-        "build": "yarn clean && yarn build:app && yarn build:public",
+        "build": "yarn clean && yarn build:app && yarn copy-assets",
         "build:app": "cross-env NODE_ENV=production webpack build",
-        "build:public": "cp -R public/. www/",
+        "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
         "test": "jest"
