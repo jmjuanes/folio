@@ -8,23 +8,22 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "scripts": {
-        "build": "yarn clean && yarn build:app",
+        "build": "yarn clean && yarn build:app && yarn build:public",
         "build:app": "cross-env NODE_ENV=production webpack build",
-        "build:docs": "redocus --config redocus.config.js",
+        "build:public": "cp -R public/. www/",
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
         "test": "jest"
     },
     "dependencies": {
         "@josemi-icons/react": "^0.6.0",
+        "@josemi-icons/svg": "^0.6.0",
         "@josemi-ui/react": "^0.3.4",
-        "@mdx-js/mdx": "^3.0.0",
         "browser-fs-access": "^0.35.0",
         "classnames": "^2.3.2",
         "lowcss": "^0.19.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "redocus": "^0.2.0",
         "uid": "^2.0.2"
     },
     "devDependencies": {
