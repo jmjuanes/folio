@@ -221,93 +221,95 @@ export const ToolsPanel = props => {
     const update = useForceUpdate()[1];
     const board = useBoard();
     return (
-        <div data-testid="toolspanel" className="border border-neutral-200 rounded-xl shadow-md items-center bg-white flex gap-2 p-1 select-none">
-            {props.showLock && (
-                <React.Fragment>
+        <div className="flex items-center gap-2 select-none">
+            <div className="border border-neutral-200 rounded-xl shadow-md items-center bg-white flex gap-2 p-1">
+                {/* Actions */}
+                {props.showPointer && (
                     <PanelButton
-                        testid="lock"
-                        className="w-8 rounded-full"
-                        icon={(board.lockTool ? <LockIcon /> : <UnlockIcon />)}
-                        active={board.lockTool}
-                        onClick={props.onLockToolClick}
+                        testid="pointer"
+                        text="Pointer"
+                        icon={(<LaserPointerIcon />)}
+                        active={board.activeAction === ACTIONS.POINTER}
+                        onClick={props.onPointerClick}
                     />
-                    <PanelSeparator />
-                </React.Fragment>
-            )}
-            {/* Actions */}
-            {props.showPointer && (
+                )}
                 <PanelButton
-                    testid="pointer"
-                    text="Pointer"
-                    icon={(<LaserPointerIcon />)}
-                    active={board.activeAction === ACTIONS.POINTER}
-                    onClick={props.onPointerClick}
+                    testid="drag"
+                    text="Drag"
+                    icon={(<HandGrabIcon />)}
+                    active={board.activeAction === ACTIONS.MOVE}
+                    onClick={props.onMoveClick}
                 />
-            )}
-            <PanelButton
-                testid="drag"
-                text="Drag"
-                icon={(<HandGrabIcon />)}
-                active={board.activeAction === ACTIONS.MOVE}
-                onClick={props.onMoveClick}
-            />
-            {props.showSelect && (
-                <PanelButton
-                    testid="select"
-                    text="Select"
-                    icon={(<PointerIcon />)}
-                    active={!board.activeTool && isSelectEnabled(board.activeAction)}
-                    onClick={props.onSelectionClick}
-                />
-            )}
-            {props.showTools && (
-                <React.Fragment>
-                    <PanelSeparator />
-                    {/* Available tools */}
-                    {Object.keys(tools).map(key => (
-                        <div key={key} className="flex relative">
-                            <PanelButton
-                                testid={key}
-                                text={tools[key].text}
-                                icon={tools[key].icon}
-                                active={board.activeTool === key}
-                                onClick={() => props.onToolClick(key)}
-                            />
-                            {tools[key].quickPicks && key === board.activeTool && (
-                                <PickPanel
-                                    values={board.defaults}
-                                    items={tools[key].quickPicks}
-                                    onChange={(field, value) => {
-                                        board.defaults[field] = value;
-                                        if (typeof tools[key].onQuickPickChange === "function") {
-                                            tools[key].onQuickPickChange(board.defaults, field, value);
-                                        }
-                                        // Force and update of the component
-                                        update();
-                                    }}
+                {props.showSelect && (
+                    <PanelButton
+                        testid="select"
+                        text="Select"
+                        icon={(<PointerIcon />)}
+                        active={!board.activeTool && isSelectEnabled(board.activeAction)}
+                        onClick={props.onSelectionClick}
+                    />
+                )}
+                {props.showTools && (
+                    <React.Fragment>
+                        <PanelSeparator />
+                        {/* Available tools */}
+                        {Object.keys(tools).map(key => (
+                            <div key={key} className="flex relative">
+                                <PanelButton
+                                    testid={key}
+                                    text={tools[key].text}
+                                    icon={tools[key].icon}
+                                    active={board.activeTool === key}
+                                    onClick={() => props.onToolClick(key)}
                                 />
-                            )}
+                                {tools[key].quickPicks && key === board.activeTool && (
+                                    <PickPanel
+                                        values={board.defaults}
+                                        items={tools[key].quickPicks}
+                                        onChange={(field, value) => {
+                                            board.defaults[field] = value;
+                                            if (typeof tools[key].onQuickPickChange === "function") {
+                                                tools[key].onQuickPickChange(board.defaults, field, value);
+                                            }
+                                            // Force and update of the component
+                                            update();
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        ))}
+                        <div className="relative group" tabIndex="0">
+                            <PanelButton
+                                testid="more"
+                                text="More"
+                                icon={(<ToolsIcon />)}
+                            />
+                            <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-3 w-48">
+                                <Dropdown.CheckItem
+                                    checked={board.activeAction === ACTIONS.ERASE}
+                                    onClick={props.onEraseClick}
+                                >
+                                    <Dropdown.Icon>
+                                        <EraseIcon />
+                                    </Dropdown.Icon>
+                                    <span>Erase</span>
+                                </Dropdown.CheckItem>
+                            </Dropdown>
                         </div>
-                    ))}
-                    <div className="relative group" tabIndex="0">
-                        <PanelButton
-                            testid="more"
-                            text="More"
-                            icon={(<ToolsIcon />)}
-                        />
-                        <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-3 w-48">
-                            <Dropdown.CheckItem
-                                checked={board.activeAction === ACTIONS.ERASE}
-                                onClick={props.onEraseClick}
-                            >
-                                <Dropdown.Icon>
-                                    <EraseIcon />
-                                </Dropdown.Icon>
-                                <span>Erase</span>
-                            </Dropdown.CheckItem>
-                        </Dropdown>
-                    </div>
-                </React.Fragment>
+                    </React.Fragment>
+                )}
+            </div>
+            {props.showLock && (
+                <div
+                    className={classNames({
+                        "flex items-center cursor-pointer text-lg rounded-full p-2": true,
+                        "bg-neutral-950 text-white": board.lockTool,
+                        "o-40 hover:o-100": !board.lockTool,
+                    })}
+                    onClick={props.onLockToolClick}
+                >
+                    {board.lockTool ? <LockIcon /> : <UnlockIcon />}
+                </div>
             )}
         </div>
     );
