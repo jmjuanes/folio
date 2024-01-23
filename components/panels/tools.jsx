@@ -211,7 +211,7 @@ export const ToolsPanel = props => {
     const update = useForceUpdate()[1];
     const board = useBoard();
     return (
-        <div className="flex items-center gap-2 select-none">
+        <div className="flex items-center relative select-none">
             <div className="border border-neutral-200 rounded-xl shadow-md items-center bg-white flex gap-2 p-1">
                 {/* Actions */}
                 {props.showPointer && (
@@ -301,7 +301,7 @@ export const ToolsPanel = props => {
             {props.showLock && (
                 <div
                     className={classNames({
-                        "flex items-center cursor-pointer text-lg rounded-full p-2": true,
+                        "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
                         "bg-neutral-950 text-white": board.lockTool,
                         "o-50 hover:o-100": !board.lockTool,
                     })}
