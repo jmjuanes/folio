@@ -14,6 +14,7 @@ import {
     SquareIcon,
     CircleIcon,
     TriangleIcon,
+    DotsVerticalIcon,
 } from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
 import {
@@ -136,17 +137,6 @@ const tools = {
             },
         },
     },
-    [ELEMENTS.NOTE]: {
-        icon: (<NoteIcon />),
-        text: "Note",
-        quickPicks: {
-            [FIELDS.NOTE_COLOR]: {
-                type: FORM_OPTIONS.COLOR_SELECT,
-                className: "flex flex-nowrap w-56 gap-1",
-                values: NOTE_COLOR_PALETTE,
-            },
-        },
-    },
     [ELEMENTS.IMAGE]: {
         icon: (<ImageIcon />),
         text: "Image",
@@ -180,7 +170,7 @@ const PickPanel = props => {
 
 const PanelButton = props => {
     const classList = classNames(props.className, {
-        "flex flex-col justify-center items-center flex px-4 py-2 gap-1": true,
+        "flex flex-col justify-center items-center flex px-4 py-2 gap-1 rounded-lg": true,
         "text-neutral-800 hover:bg-neutral-100 cursor-pointer": !props.active,
         "bg-neutral-950 text-white cursor-pointer": props.active,
     });
@@ -202,7 +192,7 @@ const PanelButton = props => {
 
 PanelButton.defaultProps = {
     testid: "",
-    className: "rounded-lg",
+    className: "",
     text: null,
     icon: null,
     active: false,
@@ -278,13 +268,22 @@ export const ToolsPanel = props => {
                                 )}
                             </div>
                         ))}
-                        <div className="relative group" tabIndex="0">
-                            <PanelButton
-                                testid="more"
-                                text="More"
-                                icon={(<ToolsIcon />)}
-                            />
-                            <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-3 w-48">
+                        <div className="flex self-stretch relative group" tabIndex="0">
+                            <div className="flex items-center hover:bg-neutral-100 group-focus-within:bg-neutral-100 cursor-pointer rounded-lg px-1">
+                                <div className="flex items-center text-xl">
+                                    <DotsVerticalIcon />
+                                </div>
+                            </div>
+                            <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-5">
+                                <Dropdown.CheckItem
+                                    checked={board.activeTool === ELEMENTS.NOTE}
+                                    onClick={() => props.onToolClick(ELEMENTS.NOTE)}
+                                >
+                                    <Dropdown.Icon>
+                                        <NoteIcon />
+                                    </Dropdown.Icon>
+                                    <span>Note</span>
+                                </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
                                     checked={board.activeAction === ACTIONS.ERASE}
                                     onClick={props.onEraseClick}
