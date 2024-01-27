@@ -1,7 +1,8 @@
 import React from "react";
+import {useUpdate, useMount} from "react-use";
+import {LoaderIcon} from "@josemi-icons/react";
+import {Centered} from "@josemi-ui/react";
 import {createBoard} from "@lib/board.js";
-import {useDelay, useForceUpdate} from "@lib/hooks/index.js";
-import {Loading} from "@components/loading.jsx";
 
 export const BoardContext = React.createContext({});
 
@@ -32,28 +33,39 @@ export const withBoard = fn => {
 };
 
 export const BoardProvider = props => {
-    const forceUpdate = useForceUpdate()[1];
+    const update = useUpdate();
     const board = React.useRef(null);
-    // Import board data
-    useDelay(props.delay, () => {
+
+    useMount(() => {
         loadBoardData(props.initialData)
             .then(boardData => {
                 board.current = createBoard({
                     data: boardData,
-                    onUpdate: forceUpdate,
+                    onUpdate: update,
                 });
-                forceUpdate();
+                update();
             })
             .catch(error => {
                 props?.onError?.(error);
             });
     });
+
     // If no board data has been provided, display a loading screen
     if (!board.current) {
         return (
-            <Loading />
+            <Centered className="h-full">
+                <div className="flex flex-col items-center gap-1">
+                    <div className="flex items-center text-2xl animation-spin">
+                        <LoaderIcon />
+                    </div>
+                    <div className="text-2xs text-neutral-400">
+                        <span>Loading board</span>
+                    </div>
+                </div>
+            </Centered>
         );
     }
+
     return (
         <BoardContext.Provider value={board.current}>
             {props.render()}
@@ -63,7 +75,6 @@ export const BoardProvider = props => {
 
 BoardProvider.defaultProps = {
     initialData: null,
-    delay: 1000,
     render: null,
     onError: null,
 };
