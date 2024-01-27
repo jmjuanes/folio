@@ -21,9 +21,11 @@
         "@josemi-ui/react": "^0.3.4",
         "browser-fs-access": "^0.35.0",
         "classnames": "^2.3.2",
+        "idb-keyval": "^6.2.1",
         "lowcss": "^0.19.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-use": "^17.5.0",
         "uid": "^2.0.2"
     },
     "devDependencies": {
