@@ -3,11 +3,11 @@ import {createRoot} from "react-dom/client";
 import {useDebounce, useHash, useToggle} from "react-use";
 import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {saveAsJson, loadFromJson} from "@lib/json.js";
-import {Board} from "@components/board.jsx";
-import Welcome from "@components/welcome.jsx";
-import Sidebar from "@components/sidebar.jsx";
 import {ClientProvider, useClient} from "@components/contexts/client.jsx";
 import {ConfirmProvider, useConfirm} from "@components/contexts/confirm.jsx";
+import {Board} from "@components/board.jsx";
+import {Welcome} from "@components/welcome.jsx";
+import {Sidebar} from "@components/sidebar.jsx";
 
 const App = () => {
     const client = useClient();

@@ -4,7 +4,7 @@ import {DrawingIcon, FolderIcon, FileIcon} from "@josemi-icons/react";
 import {Button, Centered} from "@josemi-ui/react";
 import {useClient} from "@components/contexts/client.jsx";
 
-export default props => {
+export const Welcome = props => {
     const client = useClient();
     const [boards, setBoars] = React.useState(null);
 

@@ -10,7 +10,7 @@ import {
 import {Dropdown} from "@josemi-ui/react";
 import {useClient} from "@components/contexts/client.jsx";
 
-export default React.forwardRef((props, ref) => {
+export const Sidebar = React.forwardRef((props, ref) => {
     const client = useClient();
     const [boards, setBoards] = React.useState(null);
 
