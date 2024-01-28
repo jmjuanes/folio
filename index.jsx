@@ -14,8 +14,8 @@ const App = () => {
     const [hash, redirect] = useHash();
     const {showConfirm} = useConfirm();
     const [state, setState] = React.useState({});
+    const [updateKey, incrementUpdateKey] = React.useReducer(x => (x + 1) % 100, 0);
     const [sidebarVisible, toggleSidebarVisible] = useToggle(true);
-    const sidebarRef = React.useRef(null);
     const hasChangedTitle = React.useRef(false);
     const id = (hash || "").replace(/^#/, ""); // Remove leading hash
 
@@ -50,16 +50,16 @@ const App = () => {
                         if (boardId === id) {
                             redirect("");
                         }
-                        // Update boards list in sidebar
-                        // If we have redirected to welcome, that is no need to force the update
-                        if (sidebarVisible && boardId !== id) {
-                            sidebarRef?.current.update();
+                        // Update boards list in sidebar and welcome
+                        // If we have redirected to welcome, there is no need to force the update
+                        if (boardId !== id) {
+                            incrementUpdateKey();
                         }
                     })
                     .catch(error => console.error(error));
             },
         });
-    }, [id, sidebarVisible]);
+    }, [id]);
 
     // Terrible hack to force updating saved state after each id change
     React.useEffect(() => setState({id: id}), [id]);
@@ -70,7 +70,7 @@ const App = () => {
             client.update(id, state).then(() => {
                 // Check if sidebar is visible for updating the boards list
                 if (sidebarVisible && hasChangedTitle.current) {
-                    sidebarRef.current.update();
+                    incrementUpdateKey();
                 }
                 // TODO: show confirmation message
                 hasChangedTitle.current = false;
@@ -82,8 +82,8 @@ const App = () => {
         <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-neutral-800 flex">
             {sidebarVisible && (
                 <Sidebar
-                    ref={sidebarRef}
                     currentId={id}
+                    updateKey={updateKey}
                     onBoardCreate={handleBoardCreate}
                     onBoardDelete={handleBoardDelete}
                     onBoardImport={handleBoardImport}
@@ -104,6 +104,7 @@ const App = () => {
             </div>
             {!id && (
                 <Welcome
+                    updateKey={updateKey}
                     onBoardCreate={handleBoardCreate}
                     onBoardImport={handleBoardImport}
                 />

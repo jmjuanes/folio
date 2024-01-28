@@ -1,5 +1,4 @@
 import React from "react";
-import {useMount} from "react-use";
 import {DrawingIcon, FolderIcon, FileIcon} from "@josemi-icons/react";
 import {Button, Centered} from "@josemi-ui/react";
 import {useClient} from "@components/contexts/client.jsx";
@@ -8,13 +7,17 @@ export const Welcome = props => {
     const client = useClient();
     const [boards, setBoars] = React.useState(null);
 
-    // Import list of recent boards
-    useMount(() => {
+    // Internal update method
+    const update = React.useCallback(() => {
         client.list()
             .then(boards => boards.sort((a, b) => b.updatedAt - a.updatedAt))
             .then(boards => boards.slice(0, 6))
             .then(setBoars);
     });
+
+    // When this component is mounted or the current id changes, import boards data
+    // We will also update the boards when the internal updateKey changes
+    React.useEffect(() => update(), [props.updateKey]);
 
     return (
         <Centered className="min-h-full bg-white">

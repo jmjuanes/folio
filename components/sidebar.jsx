@@ -11,7 +11,7 @@ import {
 import {Dropdown} from "@josemi-ui/react";
 import {useClient} from "@components/contexts/client.jsx";
 
-export const Sidebar = React.forwardRef((props, ref) => {
+export const Sidebar = props => {
     const client = useClient();
     const [boards, setBoards] = React.useState(null);
 
@@ -24,14 +24,9 @@ export const Sidebar = React.forwardRef((props, ref) => {
             });
     });
 
-    if (ref && typeof ref?.current !== "undefined") {
-        ref.current = {
-            update: update,
-        };
-    }
-
     // When this component is mounted or the current id changes, import boards data
-    React.useEffect(() => update(), [props.currentId]);
+    // We will also update the boards when the internal updateKey changes
+    React.useEffect(() => update(), [props.currentId, props.updateKey]);
 
     return (
         <div className="w-64 h-full bg-white shrink-0 flex flex-col justify-between border-r border-neutral-200">
@@ -116,4 +111,4 @@ export const Sidebar = React.forwardRef((props, ref) => {
             </div>
         </div>
     );
-});
+};
