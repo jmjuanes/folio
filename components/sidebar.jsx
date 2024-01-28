@@ -6,6 +6,7 @@ import {
     LogoutIcon,
     PlusIcon,
     UploadIcon,
+    DrawingIcon,
 } from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
 import {useClient} from "@components/contexts/client.jsx";
@@ -23,7 +24,6 @@ export const Sidebar = React.forwardRef((props, ref) => {
             });
     });
 
-    // Save interal api to this component
     if (ref && typeof ref?.current !== "undefined") {
         ref.current = {
             update: update,
@@ -94,6 +94,15 @@ export const Sidebar = React.forwardRef((props, ref) => {
                                 </div>
                             </a>
                         ))}
+                        {boards && boards.length === 0 && (
+                            <div className="border border-dashed border-neutral-200 rounded-lg p-4">
+                                <div className="flex items-center justify-center text-neutral-950 text-3xl mb-1">
+                                    <DrawingIcon />
+                                </div>
+                                <div className="text-center font-bold text-neutral-950 text-sm mb-1">No boards available</div> 
+                                <div className="text-center text-xs text-neutral-700">Your crated boards will be displayed here.</div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
