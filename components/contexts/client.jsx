@@ -38,4 +38,3 @@ export const ClientProvider = props => {
         </ClientContext.Provider>
     );
 };
-

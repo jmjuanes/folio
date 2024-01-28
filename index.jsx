@@ -1,37 +1,48 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {useDebounce, useHash, useToggle} from "react-use";
-import {SidebarLeftOpenIcon, SidebarLeftCloseIcon} from "@josemi-icons/react";
-import {VERSION} from "@lib/constants.js";
-import {loadFromJson, saveAsJson} from "@lib/json.js";
-import {migrate} from "@lib/migrate.js";
+import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
+import {saveAsJson, loadFromJson} from "@lib/json.js";
 import {Board} from "@components/board.jsx";
 import Welcome from "@components/welcome.jsx";
 import Sidebar from "@components/sidebar.jsx";
 import {ClientProvider, useClient} from "@components/contexts/client.jsx";
 import {ConfirmProvider, useConfirm} from "@components/contexts/confirm.jsx";
 
-const App = props => {
+const App = () => {
     const client = useClient();
     const [hash, redirect] = useHash();
     const {showConfirm} = useConfirm();
     const [state, setState] = React.useState({});
     const [sidebarVisible, toggleSidebarVisible] = useToggle(true);
-    const id = hash.replace(/^#/, "");
+    const sidebarRef = React.useRef(null);
+    const hasChangedTitle = React.useRef(false);
+    const id = (hash || "").replace(/^#/, ""); // Remove leading hash
 
-    // Handle board creation
-    // After creating the new board, we automatically open it using redirect method
+    // Handle board create.
     const handleBoardCreate = React.useCallback(() => {
-        client.add({}).then(boardId => redirect(boardId));
+        return client.add({})
+            .then(newBoardId => redirect(newBoardId));
     }, []);
 
-    // Hande board delete
+    // Handle board import
+    const handleBoardImport = React.useCallback(() => {
+        return loadFromJson()
+            .then(data => client.add(data || {}))
+            .then(boardId => redirect(boardId))
+            .catch(error => {
+                console.error(error);
+            });
+    }, []);
+    
+    // Handle board delete
+    // First it will display a confirmation dialog
     const handleBoardDelete = React.useCallback(boardId => {
         return showConfirm({
             title: "Delete board",
             message: "Are you sure? This action can not be undone.",
             callback: () => {
-                client.delete(boardId)
+                return client.delete(boardId)
                     .then(() => {
                         // TODO: display a confirmation message
                         // Check if the board that we are removing is the current visible board
@@ -39,25 +50,16 @@ const App = props => {
                         if (boardId === id) {
                             redirect("");
                         }
+                        // Update boards list in sidebar
+                        // If we have redirected to welcome, that is no need to force the update
+                        if (sidebarVisible && boardId !== id) {
+                            sidebarRef?.current.update();
+                        }
                     })
                     .catch(error => console.error(error));
             },
         });
-    }, [id]);
-
-    // Handle board import => import board data from JSON and save into the DB
-    // Then, redirect to the new url
-    const handleBoardImport = React.useCallback(() => {
-        return loadFromJson()
-            .then(data => client.add({
-                ...data,
-                createdAt: Date.now(),
-            }))
-            .then(boardId => redirect(boardId))
-            .catch(error => {
-                console.error(error);
-            });
-    });
+    }, [id, sidebarVisible]);
 
     // Terrible hack to force updating saved state after each id change
     React.useEffect(() => setState({id: id}), [id]);
@@ -66,7 +68,12 @@ const App = props => {
     useDebounce(() => {
         if (!!id && state?.updatedAt) {
             client.update(id, state).then(() => {
+                // Check if sidebar is visible for updating the boards list
+                if (sidebarVisible && hasChangedTitle.current) {
+                    sidebarRef.current.update();
+                }
                 // TODO: show confirmation message
+                hasChangedTitle.current = false;
             });
         }
     }, 250, [state?.updatedAt]);
@@ -75,17 +82,28 @@ const App = props => {
         <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-neutral-800 flex">
             {sidebarVisible && (
                 <Sidebar
-                    key={"sidebar:" + id}
+                    ref={sidebarRef}
                     currentId={id}
-                    loadBoards={() => client.list()}
                     onBoardCreate={handleBoardCreate}
-                    onBoardImport={handleBoardImport}
                     onBoardDelete={handleBoardDelete}
+                    onBoardImport={handleBoardImport}
                 />
             )}
+            <div className="relative h-full">
+                <div
+                    className="absolute left-0 top-half z-5 cursor-pointer"
+                    style={{
+                        transform: "translateY(-50%)",
+                    }}
+                    onClick={() => toggleSidebarVisible()}
+                >
+                    <div className="flex bg-neutral-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
+                        {sidebarVisible ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                    </div>
+                </div>
+            </div>
             {!id && (
                 <Welcome
-                    loadBoards={() => client.list()}
                     onBoardCreate={handleBoardCreate}
                     onBoardImport={handleBoardImport}
                 />
@@ -93,34 +111,29 @@ const App = props => {
             {(!!id && state?.id === id) && (
                 <Board
                     key={id}
-                    initialData={() => {
-                        return client.get(id);
-                    }}
+                    initialData={() => client.get(id)}
                     links={[
                         {url: "./", text: "About Folio"},
                         {url: process.env.URL_ISSUES, text: "Report a bug"},
                     ]}
-                    headerLeftContent={(
-                        <div
-                            className="cursor-pointer order-first flex items-center rounded-lg py-1 px-2 hover:bg-neutral-100 group"
-                            onClick={() => toggleSidebarVisible()}
-                        >
-                             <div className="flex items-center text-2xl text-neutral-700 group-hover:text-neutral-900">
-                                {sidebarVisible ? <SidebarLeftCloseIcon /> : <SidebarLeftOpenIcon />}
-                            </div>
-                        </div>
-                    )}
-                    showLoad={false}
+                    showLoad={true}
                     showWelcomeHint={true}
                     onChange={newState => {
+                        // Check if we have changed the title
+                        // This will force an update in the sidebar
+                        if (typeof newState.title === "string") {
+                            hasChangedTitle.current = true;
+                        }
                         return setState(prevState => ({
                             ...prevState,
                             ...newState,
                             updatedAt: Date.now(),
                         }));
                     }}
+                    onLoad={() => handleBoardImport()}
                     onSave={() => {
-                        saveAsJson(state)
+                        return client.get(id)
+                            .then(data => saveAsJson(data))
                             .then(() => console.log("Folio file saved"))
                             .catch(error => console.error(error));
                     }}
