@@ -28,9 +28,10 @@ export const Canvas = props => {
 
     const handleContextMenu = event => {
         event.preventDefault();
+        const {top, left} = canvasRef.current.getBoundingClientRect();
         props?.onContextMenu?.({
-            x: event.nativeEvent.clientX,
-            y: event.nativeEvent.clientY,
+            x: event.nativeEvent.clientX - left,
+            y: event.nativeEvent.clientY - top,
         });
         return false;
     };
