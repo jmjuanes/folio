@@ -4,9 +4,7 @@ import classNames from "classnames";
 
 export const HeaderButton = props => {
     const classList = classNames(props.className || "", {
-        "flex items-center p-3": true,
-        "rounded-tl-lg rounded-bl-lg": props.roundedStart,
-        "rounded-tr-lg rounded-br-lg": props.roundedEnd,
+        "flex items-center p-2 rounded-md": true,
         "cursor-pointer hover:bg-neutral-100 text-neutral-800": !props.disabled,
         "cursor-not-allowed o-40": props.disabled,
     });
@@ -22,13 +20,8 @@ export const HeaderButton = props => {
     );
 };
 
-HeaderButton.defaultProps = {
-    roundedStart: true,
-    roundedEnd: true,
-};
-
 export const HeaderContainer = props => (
-    <div className="flex gap-1 p-0 rounded-lg shadow-sm bg-white border border-neutral-200">
+    <div className="flex gap-1 p-1 rounded-lg shadow-sm bg-white border border-neutral-200">
         {props.children}
     </div>
 );

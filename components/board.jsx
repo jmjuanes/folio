@@ -1,5 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
+import {BarsIcon, CameraIcon} from "@josemi-icons/react";
 import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "@lib/constants.js";
 import {BoardProvider, useBoard} from "@components/contexts/board.jsx";
 import {ConfirmProvider, useConfirm} from "@components/contexts/confirm.jsx";
@@ -146,57 +147,62 @@ const InnerBoard = React.forwardRef((props, ref) => {
             )}
             {props.showHeader && !isScreenshot && (
                 <React.Fragment>
-                    <div className="absolute top-0 left-0 pt-4 pl-6 z-7 flex gap-2">
-                        {props.showMenu && (
-                            <div className="relative flex">
-                                <Menu
-                                    links={props.links}
-                                    showLinks={props.showLinks}
-                                    showLoad={props.showLoad}
-                                    showSave={props.showSave}
-                                    showResetBoard={props.showResetBoard}
-                                    showChangeBackground={props.showChangeBackground}
-                                    showSettings={props.showSettings}
-                                    showExport={props.showExport}
-                                    onChange={props.onChange}
-                                    onSave={props.onSave}
-                                    onLoad={props.onLoad}
-                                    onResetBoard={handleResetBoard}
-                                    onExport={() => setExportVisible(true)}
-                                />
-                            {(welcomeHintVisible && !board.activeTool && !isPresentation) && (
-                                <Hint
-                                    position="bottom"
-                                    title="Menu"
-                                    contentClassName="w-20"
-                                    content="Export, save, configure."
-                                />
-                            )}
-                            </div>
-                        )}
-                        {props.showScreenshot && !isPresentation && (
+                    <div className="absolute top-0 left-0 pt-4 pl-4 z-7 flex gap-2">
+                        <div className="relative flex">
                             <HeaderContainer>
-                                <HeaderButton
-                                    icon="camera"
-                                    disabled={board.elements.length === 0}
-                                    onClick={() => {
-                                        board.setTool(null);
-                                        board.setAction(ACTIONS.SCREENSHOT);
-                                        board.update();
-                                    }}
-                                />
+                                {props.showMenu && (
+                                    <Menu
+                                        links={props.links}
+                                        showLinks={props.showLinks}
+                                        showLoad={props.showLoad}
+                                        showSave={props.showSave}
+                                        showResetBoard={props.showResetBoard}
+                                        showChangeBackground={props.showChangeBackground}
+                                        showSettings={props.showSettings}
+                                        showExport={props.showExport}
+                                        onChange={props.onChange}
+                                        onSave={props.onSave}
+                                        onLoad={props.onLoad}
+                                        onResetBoard={handleResetBoard}
+                                        onExport={() => setExportVisible(true)}
+                                    />
+                                )}
+                                {props.showMenu && (props.showTitle || props.showScreenshot) && (
+                                    <div className="w-px bg-neutral-200" />
+                                )}
+                                {props.showTitle && (
+                                    <Title
+                                        editable={!isPresentation}
+                                        onChange={props.onChange}
+                                    />
+                                )}
+                                {props.showScreenshot && !isPresentation && (
+                                    <HeaderButton
+                                        icon="camera"
+                                        disabled={board.elements.length === 0}
+                                        onClick={() => {
+                                            board.setTool(null);
+                                            board.setAction(ACTIONS.SCREENSHOT);
+                                            board.update();
+                                        }}
+                                    />
+                                )}
                             </HeaderContainer>
-                        )}
+                            {(welcomeHintVisible && !board.activeTool && !isPresentation) && (
+                                <Hint position="bottom" title="Actions" contentClassName="w-48">
+                                    <div className="flex items-center justify-center gap-2">
+                                        <BarsIcon />
+                                        <span>Export, save, and configure.</span>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-2">
+                                        <CameraIcon />
+                                        <span>Take a screenshot.</span>
+                                    </div>
+                                </Hint>
+                            )}
+                        </div>
                         {props.headerLeftContent}
                     </div>
-                    {props.showTitle && (
-                        <div className="absolute top-0 left-half pt-4 z-7 flex" style={{transform:"translateX(-50%)"}}>
-                            <Title
-                                editable={!isPresentation}
-                                onChange={props.onChange}
-                            />
-                        </div>
-                    )}
                     <div className="absolute top-0 right-0 pt-4 pr-6 z-7 flex gap-2">
                         {props.showHistory && !isPresentation && (
                             <div className="flex relative">

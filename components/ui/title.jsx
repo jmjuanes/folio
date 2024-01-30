@@ -6,16 +6,9 @@ export const Title = props => {
     const inputRef = React.useRef();
     const board = useBoard();
     const [editing, setEditing] = React.useState(false);
-    const containerClass = classNames({
-        "flex items-center h-10 mt-1 w-56 border-b-2 border-dashed": true,
-        "border-transparent": !props.editable,
-        "border-neutral-600": props.editable && !editing,
-        "border-neutral-900": props.editable && editing,
-    });
     const previewClass = classNames({
-        "leading-tight px-2 py-1 truncate text-center text-lg w-full": true,
-        "text-neutral-700": true,
-        "cursor-pointer hover:text-neutral-800": props.editable,
+        "flex items-center leading-none p-2 truncate w-full text-neutral-800 rounded-md": true,
+        "cursor-pointer hover:bg-neutral-100": props.editable,
     });
     const handleClick = () => {
         props.editable && setEditing(true);
@@ -26,7 +19,7 @@ export const Title = props => {
         }
     }, [editing]);
     return (
-        <div className={containerClass}>
+        <div className="flex w-56">
             {!editing && (
                 <div className={previewClass} onClick={handleClick}>
                     <strong>{board.title}</strong>
@@ -37,11 +30,7 @@ export const Title = props => {
                     ref={inputRef}
                     type="text"
                     defaultValue={board.title}
-                    className={classNames({
-                        "outline-none font-bold leading-tight text-center text-lg": true,
-                        "w-full px-2 py-1 rounded-none": true,
-                        "text-neutral-900 bg-transparent": true,
-                    })}
+                    className="outline-none font-bold leading-none w-full p-2 rounded-md text-neutral-900 bg-neutral-100"
                     placeholder="Untitled"
                     onKeyUp={event => (event.key === "Enter") && setEditing(false)}
                     onChange={event => {
