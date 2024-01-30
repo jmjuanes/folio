@@ -48,18 +48,6 @@ const InnerBoard = React.forwardRef((props, ref) => {
             },
         });
     };
-    // Handle load
-    const handleLoad = () => {
-        if (board.elements.length > 0) {
-            return showConfirm({
-                title: "Load new board",
-                message: "Changes made in this board will be lost. Do you want to continue?",
-                callback: () => props.onLoad?.(),
-            });
-        }
-        // Just call the onLoad listener
-        props.onLoad?.();
-    };
     // Handle image load
     const handleImageLoad = () => {
         const options = {
@@ -172,7 +160,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                     showExport={props.showExport}
                                     onChange={props.onChange}
                                     onSave={props.onSave}
-                                    onLoad={handleLoad}
+                                    onLoad={props.onLoad}
                                     onResetBoard={handleResetBoard}
                                     onExport={() => setExportVisible(true)}
                                 />

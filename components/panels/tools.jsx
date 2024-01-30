@@ -1,10 +1,10 @@
 import React from "react";
 import classNames from "classnames";
+import {useUpdate} from "react-use";
 import {
     LockIcon,
     UnlockIcon,
     NoteIcon,
-    ToolsIcon,
     EraseIcon,
     PenIcon,
     ImageIcon,
@@ -40,7 +40,6 @@ import {
 } from "@components/icons.jsx";
 import {Form} from "@components/commons/form.jsx";
 import {useBoard} from "@components/contexts/board.jsx";
-import {useForceUpdate} from "@lib/hooks/index.js";
 
 const tools = {
     [ELEMENTS.SHAPE]: {
@@ -208,7 +207,7 @@ const isSelectEnabled = a => {
 
 // Tools Panel component
 export const ToolsPanel = props => {
-    const update = useForceUpdate()[1];
+    const update = useUpdate();
     const board = useBoard();
     return (
         <div className="flex items-center relative select-none">
