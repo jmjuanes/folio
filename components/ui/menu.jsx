@@ -6,19 +6,17 @@ import {ACTIONS} from "@lib/constants.js";
 import {BACKGROUND_COLOR_PALETTE} from "@lib/utils/colors.js";
 import {useBoard} from "@components/contexts/board.jsx";
 import {ColorPicker} from "@components/commons/color-picker.jsx";
-import {HeaderButton, HeaderContainer} from "@components/commons/header.jsx";
+import {HeaderButton} from "@components/commons/header.jsx";
 import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "@components/icons.jsx";
 
 export const Menu = props => {
     const board = useBoard();
     return (
         <div className="flex relative group" tabIndex="0">
-            <HeaderContainer>
-                <HeaderButton
-                    className="group-focus-within:bg-neutral-100"
-                    icon="bars"
-                />
-            </HeaderContainer>
+            <HeaderButton
+                className="group-focus-within:bg-neutral-100"
+                icon="bars"
+            />
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56 z-5">
                 {props.showLoad && (
                     <Dropdown.Item onClick={props.onLoad}>
@@ -67,7 +65,6 @@ export const Menu = props => {
                 {props.showSettings && (
                     <React.Fragment>
                         <Dropdown.Separator />
-                        <Dropdown.Group>Preferences</Dropdown.Group>
                         <Dropdown.CheckItem
                             checked={board.grid}
                             onClick={() => {
@@ -102,8 +99,8 @@ export const Menu = props => {
                 {props.showChangeBackground && (
                     <React.Fragment>
                         <Dropdown.Separator />
-                        <Dropdown.Group>Background</Dropdown.Group>
-                        <div className="px-3">
+                        <div className="text-xs px-2 pb-1 text-neutral-600 select-none">Background</div>
+                        <div className="px-2">
                             <ColorPicker
                                 value={board.background}
                                 values={BACKGROUND_COLOR_PALETTE}
@@ -122,7 +119,6 @@ export const Menu = props => {
                 {(props.showLinks && props.links?.length > 0) && (
                     <React.Fragment>
                         <Dropdown.Separator />
-                        <Dropdown.Group>Links</Dropdown.Group>
                         {props.links.map(link => (
                             <Dropdown.Item
                                 key={link.url}
