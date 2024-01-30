@@ -14,15 +14,32 @@ const App = () => {
     const [hash, redirect] = useHash();
     const {showConfirm} = useConfirm();
     const [state, setState] = React.useState({});
-    const [updateKey, incrementUpdateKey] = React.useReducer(x => (x + 1) % 100, 0);
-    const [sidebarVisible, toggleSidebarVisible] = useToggle(true);
+    const [boards, setBoards] = React.useState([]);
+    const [sidebarVisible, toggleSidebarVisible] = useToggle(false);
     const hasChangedTitle = React.useRef(false);
+    const hasBeenInitialized = React.useRef(false);
     const id = (hash || "").replace(/^#/, ""); // Remove leading hash
+
+    // Update boards list
+    // This method must be called after each update in the boards
+    const updateBoards = React.useCallback(() => {
+        return client.list()
+            .then(data => data.sort((a, b) => a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1))
+            .then(data => {
+                // Display the sidebar on init when there are boards
+                if (!hasBeenInitialized.current && data.length > 0) {
+                    toggleSidebarVisible(true);
+                }
+                // Save boards
+                setBoards(data);
+            });
+    }, []);
 
     // Handle board create.
     const handleBoardCreate = React.useCallback(() => {
         return client.add({})
-            .then(newBoardId => redirect(newBoardId));
+            .then(newBoardId => redirect(newBoardId))
+            .then(() => updateBoards());
     }, []);
 
     // Handle board import
@@ -30,6 +47,7 @@ const App = () => {
         return loadFromJson()
             .then(data => client.add(data || {}))
             .then(boardId => redirect(boardId))
+            .then(() => updateBoards())
             .catch(error => {
                 console.error(error);
             });
@@ -51,26 +69,33 @@ const App = () => {
                             redirect("");
                         }
                         // Update boards list in sidebar and welcome
-                        // If we have redirected to welcome, there is no need to force the update
-                        if (boardId !== id) {
-                            incrementUpdateKey();
-                        }
+                        updateBoards();
                     })
                     .catch(error => console.error(error));
             },
         });
     }, [id]);
 
-    // Terrible hack to force updating saved state after each id change
-    React.useEffect(() => setState({id: id}), [id]);
-    
+    // Hook to update current state abd boards list
+    React.useEffect(() => {
+        // Terrible hack to force updating saved state after each id change
+        // This will ensure that data of previous board is not saved on the current board
+        setState({id: id});
+
+        if (!hasBeenInitialized.current || id === "") {
+            updateBoards().then(() => {
+                hasBeenInitialized.current = true;
+            });
+        }
+    }, [id]);
+
     // Hook to save changes into storage
     useDebounce(() => {
         if (!!id && state?.updatedAt) {
             client.update(id, state).then(() => {
                 // Check if sidebar is visible for updating the boards list
                 if (sidebarVisible && hasChangedTitle.current) {
-                    incrementUpdateKey();
+                    updateBoards();
                 }
                 // TODO: show confirmation message
                 hasChangedTitle.current = false;
@@ -83,7 +108,7 @@ const App = () => {
             {sidebarVisible && (
                 <Sidebar
                     currentId={id}
-                    updateKey={updateKey}
+                    boards={boards}
                     onBoardCreate={handleBoardCreate}
                     onBoardDelete={handleBoardDelete}
                     onBoardImport={handleBoardImport}
@@ -104,7 +129,7 @@ const App = () => {
             </div>
             {!id && (
                 <Welcome
-                    updateKey={updateKey}
+                    boards={[...boards]}
                     onBoardCreate={handleBoardCreate}
                     onBoardImport={handleBoardImport}
                 />
