@@ -9,6 +9,10 @@ const assets = [
         to: "./index.html",
     },
     {
+        from: "public/privacy.html",
+        to: "./privacy.html",
+    },
+    {
         from: "public/404.html",
         to: "./404.html",
     },
