@@ -1,12 +1,21 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
+import {useUpdate} from "react-use";
 import {BarsIcon, CameraIcon} from "@josemi-icons/react";
-import {ELEMENTS, FILE_EXTENSIONS, ACTIONS, STATES} from "@lib/constants.js";
-import {BoardProvider, useBoard} from "@components/contexts/board.jsx";
-import {ConfirmProvider, useConfirm} from "@components/contexts/confirm.jsx";
+import {
+    ACTIONS,
+    ELEMENTS,
+    FILE_EXTENSIONS,
+    SELECT_BOUNDS_FILL_COLOR,
+    SELECT_BOUNDS_STROKE_COLOR,
+    SELECTION_FILL_COLOR,
+    SELECTION_STROKE_COLOR,
+    STATES,
+    ZOOM_DEFAULT,
+} from "@lib/constants.js";
 import {HeaderContainer, HeaderButton} from "@components/commons/header.jsx";
-import {Renderer} from "@components/render/renderer.jsx";
-import {Pointer} from "@components/render/pointer.jsx";
+import {Canvas} from "@components/canvas.jsx";
+// import {Pointer} from "@components/render/pointer.jsx";
 import {ContextMenu} from "@components/ui/context-menu.jsx";
 import {Menu} from "@components/ui/menu.jsx";
 import {Title} from "@components/ui/title.jsx";
@@ -17,59 +26,109 @@ import {ExportDialog} from "@components/dialogs/export.jsx";
 import {ToolsPanel} from "@components/panels/tools.jsx";
 import {EditionPanel} from "@components/panels/edition.jsx";
 import {blobToDataUrl} from "@lib/utils/blob.js";
+import {getHandlers} from "@lib/handlers.js";
+import {getBounds} from "@lib/bounds.js";
+import {sceneActions} from "@lib/scene.js";
+import {useScene} from "@hooks/use-scene.js";
 
-const InnerBoard = React.forwardRef((props, ref) => {
-    const {showConfirm} = useConfirm();
-    const board = useBoard();
+export const Board = props => {
+    const update = useUpdate();
     const [welcomeHintVisible, setWelcomeHintVisible] = React.useState(() => {
-        return props.showWelcomeHint && board.elements.length === 0;
+        return props.showWelcomeHint && (props?.initialData?.elements || []).length === 0;
     });
     const [exportVisible, setExportVisible] = React.useState(false);
     const [screenshotRegion, setScreenshotRegion] = React.useState(null);
-    const selectedElements = board.getSelectedElements();
-    const isScreenshot = board.activeAction === ACTIONS.SCREENSHOT;
-    const isPresentation = !!board.state.presentationMode;
+    const [contextMenu, setContextMenu] = React.useState({x: 0, y: 0, visible: false});
+    const scene = useScene(props.initialData);
+    const selectedElements = sceneActions.getSelection(scene);
+
+    // Initialize app state
+    const {current as state} = React.useRef({
+        current: STATES.IDLE,
+        action: null,
+        tool: null,
+        lockTool: false,
+        element: null,
+        zoom: ZOOM_DEFAULT,
+        translateX: 0,
+        translateY: 0,
+        grid: false,
+        selection: null,
+        erase: null,
+        contextMenuVisible: false,
+        contextMenuX: 0,
+        contextMenuY: 0,
+        canvasWidth: 0,
+        canvasHeight: 0,
+        presentation: false,
+    });
+
+    const isScreenshot = state.action === ACTIONS.SCREENSHOT;
+    const isPresentation = !!state.presentation;
+
+    const events = useEvents(scene, state, update, {
+        onChange: props.onChange,
+        onScreenshot: props.onScreenshot,
+    });
+    const cursor = useCursor();
+    const bounds = getBounds(selectedElements, );
+    const handlers = getHandlers(selectedElements, );
+
+    // Handle context menu
+    const handleContextMenu = React.useCallback(event => {
+        if ((!state.action || state.action === ACTIONS.SELECT || state.action === ACTIONS.TRANSLATE) && !state.tool) {
+            // board.currentState = STATES.IDLE;
+            // board.activeAction = null;
+            return setContextMenu({
+                visible: true,
+                ...event,
+            });
+        }
+    }, [state.action, state.tool]);
+
     // Effect to disable the visibility of the welcome elements
     React.useEffect(() => {
-        if (board.elements.length > 0 && welcomeHintVisible) {
+        if (scene.elements.length > 0 && welcomeHintVisible) {
             setWelcomeHintVisible(false);
         }
-    }, [board.elements.length]);
+    }, [scene.elements.length]);
+
     // Handle board reset
-    const handleResetBoard = () => {
-        return showConfirm({
-            title: "Clear board",
-            message: "This will clear the whole board. Do you want to continue?",
-            callback: () => {
-                board.clear();
-                props?.onChange?.({
-                    elements: board.elements,
-                    assets: board.assets,
-                });
-            },
-        });
-    };
+    // const handleResetBoard = () => {
+    //     return showConfirm({
+    //         title: "Clear board",
+    //         message: "This will clear the whole board. Do you want to continue?",
+    //         callback: () => {
+    //             board.clear();
+    //             props?.onChange?.({
+    //                 elements: board.elements,
+    //                 assets: board.assets,
+    //             });
+    //         },
+    //     });
+    // };
     // Handle image load
-    const handleImageLoad = () => {
-        const options = {
-            description: "Folio Board",
-            extensions: [
-                FILE_EXTENSIONS.PNG,
-                FILE_EXTENSIONS.JPG,
-            ],
-            multiple: false,
-        };
-        fileOpen(options)
-            .then(blob => blobToDataUrl(blob))
-            .then(data => board.addImage(data))
-            .then(() => {
-                props.onChange?.({
-                    elements: board.elements,
-                    assets: board.assets,
-                });
-            })
-            .catch(error => console.error(error));
-    };
+    // const handleImageLoad = () => {
+    //     const options = {
+    //         description: "Folio Board",
+    //         extensions: [
+    //             FILE_EXTENSIONS.PNG,
+    //             FILE_EXTENSIONS.JPG,
+    //         ],
+    //         multiple: false,
+    //     };
+    //     fileOpen(options)
+    //         .then(blob => blobToDataUrl(blob))
+    //         .then(data => board.addImage(data))
+    //         .then(() => {
+    //             props.onChange?.({
+    //                 elements: board.elements,
+    //                 assets: board.assets,
+    //             });
+    //         })
+    //         .catch(error => console.error(error));
+    // };
+
     return (
         <div className="relative overflow-hidden h-full w-full select-none">
             <Renderer
@@ -79,11 +138,38 @@ const InnerBoard = React.forwardRef((props, ref) => {
                     setExportVisible(true);
                 }}
             />
-            {board.activeAction === ACTIONS.POINTER && (
+            <Canvas
+                id={scene.id}
+                elements={scene.data.elements}
+                assets={scene.data.assets}
+                backgroundColor={scene.data.background}
+                cursor={cursor}
+                translateX={state.translateX}
+                translateY={state.translateY}
+                zoom={state.zoom}
+                bounds={bounds}
+                boundsFillColor={SELECT_BOUNDS_FILL_COLOR}
+                boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
+                showBounds={!!bounds}
+                handlers={handlers}
+                brush={state.selection}
+                brushFillColor={SELECTION_FILL_COLOR}
+                brushStrokeColor={SELECTION_STROKE_COLOR}
+                showBrush={state.action === ACTIONS.SELECT || state.action === ACTIONS.SCREENSHOT}
+                pointer={state.erase}
+                showPointer={state.action === ACTIONS.ERASE}
+                showGrid={state.grid}
+                {...events}
+                onContextMenu={handleContextMenu}
+            />
+
+            {state.action === ACTIONS.POINTER && (
                 <Pointer />
             )}
-            {(board.state.contextMenuVisible && !isPresentation) &&  (
-                <ContextMenu onChange={props.onChange} />
+            {(contextMenu.visible && !isPresentation) &&  (
+                <ContextMenu
+                    onChange={props.onChange}
+                />
             )}
             {props.showTools && !isScreenshot && !isPresentation && (
                 <div className="absolute z-5 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
@@ -123,7 +209,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                             board.update();
                         }}
                     />
-                    {(welcomeHintVisible && !board.activeTool && !isPresentation) && (
+                    {(welcomeHintVisible && !state.tool && !isPresentation) && (
                         <Hint
                             position="top"
                             title="Tools Panel"
@@ -133,7 +219,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                     )}
                 </div>
             )}
-            {props.showEdition && board.currentState === STATES.IDLE && selectedElements.length > 0 && (
+            {props.showEdition && state.current === STATES.IDLE && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
                         <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-6">
@@ -188,7 +274,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                     />
                                 )}
                             </HeaderContainer>
-                            {(welcomeHintVisible && !board.activeTool && !isPresentation) && (
+                            {(welcomeHintVisible && !state.tool && !isPresentation) && (
                                 <Hint position="bottom" title="Actions" contentClassName="w-48">
                                     <div className="flex items-center justify-center gap-2">
                                         <BarsIcon />
@@ -220,7 +306,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                         });
                                     }}
                                 />
-                                {(welcomeHintVisible && !board.activeTool) && (
+                                {(welcomeHintVisible && !state.tool) && (
                                     <Hint
                                         position="bottom"
                                         title="History"
@@ -236,7 +322,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
                                     onZoomInClick={() => board.zoomIn()}
                                     onZoomOutClick={() => board.zoomOut()}
                                 />
-                                {(welcomeHintVisible && !board.activeTool && !isPresentation) && (
+                                {(welcomeHintVisible && !state.tool && !isPresentation) && (
                                     <Hint
                                         position="bottom"
                                         title="Zoom"
@@ -261,20 +347,7 @@ const InnerBoard = React.forwardRef((props, ref) => {
             )}
         </div>
     );
-});
-
-// Export board component
-export const Board = React.forwardRef((props, ref) => (
-    <BoardProvider
-        initialData={props.initialData}
-        onError={props.onError}
-        render={() => (
-            <ConfirmProvider>
-                <InnerBoard ref={ref} {...props} />
-            </ConfirmProvider>
-        )}
-    />
-));
+};
 
 Board.defaultProps = {
     initialData: null,
@@ -284,7 +357,6 @@ Board.defaultProps = {
     onChange: null,
     onSave: null,
     onLoad: null,
-    onError: null,
     showExport: true,
     showLinks: true,
     showLoad: true,

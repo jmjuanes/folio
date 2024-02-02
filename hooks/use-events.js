@@ -13,10 +13,8 @@ import {normalizeBounds} from "@lib/utils/math.js";
 import {isInputTarget} from "@lib/utils/events.js";
 import {isArrowKey} from "@lib/utils/keys.js";
 import {getElementConfig} from "@elements/index.jsx";
-import {useBoard} from "@components/contexts/board.jsx";
 
-export const useEvents = callbacks => {
-    const board = useBoard();
+export const useEvents = (scene, state, update, callbacks) => {
     const events = React.useRef(null);
 
     if (!events.current) {
@@ -27,42 +25,40 @@ export const useEvents = callbacks => {
         // Remove the current text element
         const removeTextElement = element => {
             // Check if this element has been just created
-            if (board.history[0]?.type === CHANGES.CREATE && board.history[0]?.elements?.[0]?.id === element.id) {
+            if (scene.history[0]?.type === CHANGES.CREATE && scene.history[0]?.elements?.[0]?.id === element.id) {
                 // Just remove this history entry and filter elements
-                board.history.shift();
-                board.elements = board.elements.filter(el => el.id !== element.id);
+                scene.history.shift();
+                scene.elements = scene.elements.filter(el => el.id !== element.id);
             }
             else {
                 // Just register an element remove action 
-                board.removeElements([element]);
+                scene.removeElements([element]);
             }
             callbacks?.onChange?.({
-                elements: board.elements,
+                elements: scene.elements,
             });
         };
 
         // Internal variables
         let snapshot = [];
+        let activeElement = null;
         let isDragged = false, isResized = false, isPrevSelected = false;
         let lastTranslateX = 0, lastTranslateY = 0;
 
         events.current = {
             onPointCanvas: () => {
-                if (board.activeAction === ACTIONS.EDIT) {
-                    if (board.activeElement?.editing) {
-                        if (board.activeElement.type === ELEMENTS.TEXT && !board.activeElement.text) {
-                            removeTextElement(board.activeElement);
+                if (state.action === ACTIONS.EDIT) {
+                    if (activeElement?.editing) {
+                        if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
+                            removeTextElement(activeElement);
                         }
                     }
+                    activeElement = null;
                     board.setAction(null);
                 }
-                if (board.activeGroup) {
-                    board.activeGroup = null;
-                    board.update();
-                }
-                if (!board.activeTool) {
-                    board.clearSelectedElements();
-                    board.update();
+                if (!state.tool) {
+                    scene.clearSelectedElements();
+                    update();
                 }
             },
             onPointElement: event => {
