@@ -3,8 +3,9 @@ import {getRectangleBounds} from "@lib/utils/math.js";
 import {getRectanglePath} from "@lib/utils/paths.js";
 import {getElementConfig} from "@elements/index.jsx";
 
-export const getBounds = (selectedElements, tool, action) => {
+export const useBounds = (editor, selectedElements = []) => {
     const bounds = [];
+    const {action, tool} = editor.state;
     if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
         // const selectedElements = elements.filter(el => el.selected);
         // Generate bounds for active group

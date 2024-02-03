@@ -23,8 +23,8 @@ import {ExportDialog} from "@components/dialogs/export.jsx";
 import {ToolsPanel} from "@components/panels/tools.jsx";
 import {EditionPanel} from "@components/panels/edition.jsx";
 import {blobToDataUrl} from "@lib/utils/blob.js";
-import {getHandlers} from "@lib/handlers.js";
-import {getBounds} from "@lib/bounds.js";
+import {useHandlers} from "@hooks/use-handlers.js";
+import {useBounds} from "@hooks/use-bounds.js";
 import {sceneActions} from "@lib/scene.js";
 import {useScene} from "@hooks/use-scene.js";
 import {useEvents} from "@hooks/use-events.js";
@@ -55,9 +55,9 @@ export const Board = props => {
             setExportVisible(true);
         },
     });
-    const cursor = useCursor(editorState);
-    const bounds = getBounds(selectedElements, editor.state.tool, editor.state.action);
-    const handlers = getHandlers(selectedElements, editor.state.tool, editor.state.action);
+    const cursor = useCursor(editor);
+    const bounds = useBounds(editor, selectedElements);
+    const handlers = useHandlers(editor, selectedElements);
 
     // Handle context menu
     const handleContextMenu = React.useCallback(event => {
