@@ -2,7 +2,6 @@ import React from "react";
 import classnames from "classnames";
 import {PresentationIcon, ExternalLinkIcon} from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
-import {ACTIONS} from "@lib/constants.js";
 import {BACKGROUND_COLOR_PALETTE} from "@lib/utils/colors.js";
 import {ColorPicker} from "@components/commons/color-picker.jsx";
 import {HeaderButton} from "@components/commons/header.jsx";
