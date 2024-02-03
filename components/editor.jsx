@@ -1,5 +1,4 @@
 import React from "react";
-import {useUpdate} from "react-use";
 import {BarsIcon, CameraIcon} from "@josemi-icons/react";
 import {
     ACTIONS,
@@ -32,7 +31,6 @@ import {useCursor} from "@hooks/use-cursor.js";
 import {useEditor} from "@hooks/use-editor.js";
 
 export const Editor = props => {
-    const update = useUpdate();
     const [welcomeHintVisible, setWelcomeHintVisible] = React.useState(() => {
         return props.showWelcomeHint && (props?.initialData?.elements || []).length === 0;
     });
