@@ -31,7 +31,7 @@ import {useEvents} from "@hooks/use-events.js";
 import {useCursor} from "@hooks/use-cursor.js";
 import {useEditor} from "@hooks/use-editor.js";
 
-export const Board = props => {
+export const Editor = props => {
     const update = useUpdate();
     const [welcomeHintVisible, setWelcomeHintVisible] = React.useState(() => {
         return props.showWelcomeHint && (props?.initialData?.elements || []).length === 0;
@@ -452,7 +452,7 @@ export const Board = props => {
     );
 };
 
-Board.defaultProps = {
+Editor.defaultProps = {
     initialData: null,
     links: [],
     headerLeftContent: null,

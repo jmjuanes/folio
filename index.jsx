@@ -5,7 +5,7 @@ import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {saveAsJson, loadFromJson} from "@lib/json.js";
 import {ClientProvider, useClient} from "@components/contexts/client.jsx";
 import {ConfirmProvider, useConfirm} from "@components/contexts/confirm.jsx";
-import {Board} from "@components/board.jsx";
+import {Editor} from "@components/editor.jsx";
 import {Welcome} from "@components/welcome.jsx";
 import {Sidebar} from "@components/sidebar.jsx";
 
@@ -135,7 +135,7 @@ const App = () => {
                 />
             )}
             {(!!id && state?.id === id) && (
-                <Board
+                <Editor
                     key={id}
                     initialData={() => client.get(id)}
                     links={[
