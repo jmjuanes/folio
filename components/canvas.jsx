@@ -5,7 +5,7 @@ import {
     FONT_SOURCES,
     NONE,
 } from "@lib/constants.js";
-import {getElementConfig} from "@elements/index.jsx";
+import {renderElement} from "@components/elements/index.jsx";
 import {SvgContainer} from "@components/commons/svg.jsx";
 import {AssetsProvider} from "@contexts/assets.jsx";
 import {Handlers} from "@components/handlers.jsx";
@@ -238,7 +238,7 @@ export const Canvas = props => {
                 )}
                 <AssetsProvider value={props.assets || {}}>
                     {props.elements.map(element => {
-                        const content = getElementConfig(element).render({
+                        const content = renderElement(element, {
                             ...element,
                             onChange: (k, v) => {
                                 return props?.onElementChange?.(element.id, k, v);

@@ -6,7 +6,7 @@ import {
     TEXT_ALIGNS,
 } from "@lib/constants.js";
 import {measureText} from "@lib/utils/math.js";
-import {EditableText} from "../shared/editable-text.jsx";
+import {EditableText} from "./editable-text.jsx";
 
 export const TextElement = props => {
     const padding = props.padding ?? 0;

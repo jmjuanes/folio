@@ -8,9 +8,9 @@ import {
     OPACITY_FULL,
     OPACITY_NONE,
 } from "@lib/constants.js";
-import {Arrowhead} from "../shared/arrow-head.jsx";
 import {getBalancedDash, getPointsDistance} from "@lib/utils/math.js";
 import {getCurvePath} from "@lib/utils/paths.js";
+import {Arrowhead} from "./arrow-head.jsx";
 
 export const ArrowElement = props => {
     const x = Math.min(props.x1, props.x2);
