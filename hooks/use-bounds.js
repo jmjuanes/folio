@@ -1,7 +1,7 @@
 import {ACTIONS} from "@lib/constants.js";
 import {getRectangleBounds} from "@lib/utils/math.js";
 import {getRectanglePath} from "@lib/utils/paths.js";
-import {getElementConfig} from "@elements/index.jsx";
+import {getElementConfig} from "@lib/elements.js";
 
 export const useBounds = (editor, selectedElements = []) => {
     const bounds = [];

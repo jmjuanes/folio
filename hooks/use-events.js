@@ -12,7 +12,7 @@ import {
 import {normalizeBounds} from "@lib/utils/math.js";
 import {isInputTarget} from "@lib/utils/events.js";
 import {isArrowKey} from "@lib/utils/keys.js";
-import {getElementConfig} from "@elements/index.jsx";
+import {getElementConfig} from "@lib/elements.js";
 import {sceneActions} from "@lib/scene.js";
 
 export const useEvents = (scene, editor, callbacks) => {

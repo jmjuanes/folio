@@ -1,5 +1,5 @@
 import {ACTIONS} from "@lib/constants.js";
-import {getElementConfig} from "@elements/index.jsx";
+import {getElementConfig} from "@lib/elements.js";
 
 export const useHandlers = (editor, selectedElements = []) => {
     const {action, tool} = editor.state;
