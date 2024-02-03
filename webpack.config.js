@@ -23,7 +23,7 @@ module.exports = {
     resolve: {
         alias: {
             "@components": path.resolve(__dirname, "./components"),
-            "@elements": path.resolve(__dirname, "./elements"),
+            "@contexts": path.resolve(__dirname, "./contexts"),
             "@hooks": path.resolve(__dirname, "./hooks"),
             "@lib": path.resolve(__dirname, "./lib"),
         },
