@@ -1,5 +1,4 @@
 import React from "react";
-import {ZOOM_DEFAULT} from "@lib/constants.js";
 import {createScene} from "@lib/scene.js";
 
 export const useScene = (initialData, update) => {
