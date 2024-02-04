@@ -261,7 +261,7 @@ export const Editor = props => {
                                 {props.showScreenshot && !isPresentation && (
                                     <HeaderButton
                                         icon="camera"
-                                        disabled={editor.scene.elements.length === 0}
+                                        disabled={sceneActions.getElements(editor.scene).length === 0}
                                         onClick={() => {
                                             editor.setTool(null);
                                             editor.setAction(ACTIONS.SCREENSHOT);

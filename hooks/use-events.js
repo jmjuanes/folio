@@ -15,7 +15,7 @@ import {isArrowKey} from "@lib/utils/keys.js";
 import {getElementConfig} from "@lib/elements.js";
 import {sceneActions} from "@lib/scene.js";
 
-export const useEvents = (scene, editor, callbacks) => {
+export const useEvents = (editor, callbacks) => {
     const events = React.useRef(null);
 
     if (!events.current) {
@@ -26,17 +26,14 @@ export const useEvents = (scene, editor, callbacks) => {
         // Remove the current text element
         const removeTextElement = element => {
             // Check if this element has been just created
-            if (scene.history[0]?.type === CHANGES.CREATE && scene.history[0]?.elements?.[0]?.id === element.id) {
-                // Just remove this history entry and filter elements
-                scene.history.shift();
-                scene.elements = scene.elements.filter(el => el.id !== element.id);
+            // Just remove this history entry
+            const history = sceneActions.getHistory(editor.scene);
+            if (history[0]?.type === CHANGES.CREATE && history[0]?.elements?.[0]?.id === element.id) {
+                history.shift();
             }
-            else {
-                // Just register an element remove action 
-                sceneActions.removeElements(scene, [element]);
-            }
+            sceneActions.removeElements(editor.scene, [element]);
             callbacks?.onChange?.({
-                elements: scene.elements,
+                elements: editor.scene.elements,
             });
         };
 
@@ -55,16 +52,16 @@ export const useEvents = (scene, editor, callbacks) => {
                         }
                     }
                     activeElement = null;
-                    editor.actions.setAction(null);
+                    editor.setAction(null);
                 }
                 if (!editor.state.tool) {
-                    sceneActions.clearSelection(scene);
+                    sceneActions.clearSelection(editor.scene);
                     editor.update();
                 }
             },
             onPointElement: event => {
                 if (!editor.state.tool && !editor.state.action) {
-                    const element = sceneActions.getElement(scene, event.element);
+                    const element = sceneActions.getElement(editor.scene, event.element);
                     isPrevSelected = element.selected;
                     // Check to reset active group
                     // if (board.activeGroup && element.group !== board.activeGroup) {
@@ -73,11 +70,11 @@ export const useEvents = (scene, editor, callbacks) => {
                     //     });
                     //     board.activeGroup = null;
                     // }
-                    const inCurrentSelection = sceneActions
-                        .getSelection(scene)
-                        .some(el => el.id === element.id);
+                    const inCurrentSelection = sceneActions.getSelection(editor.scene).some(el => {
+                        return el.id === element.id;
+                    });
                     if (!inCurrentSelection && !event.shiftKey) {
-                        sceneActions.clearSelection(scene);
+                        sceneActions.clearSelection(editor.scene);
                     }
                     element.selected = true;
                     // if (!board.activeGroup && element.group) {
@@ -94,7 +91,7 @@ export const useEvents = (scene, editor, callbacks) => {
             onPointerDown: event => {
                 isDragged = false;
                 isResized = false;
-                const selectedElements = sceneActions.getSelection(scene);
+                const selectedElements = sceneActions.getSelection(editor.scene);
                 // First we need to check if we are in a edit action
                 if (editor.state.action === ACTIONS.EDIT) {
                     if (activeElement?.editing) {
@@ -102,11 +99,11 @@ export const useEvents = (scene, editor, callbacks) => {
                             removeTextElement(activeElement);
                         }
                     }
-                    editor.actions.setAction(null);
+                    editor.setAction(null);
                 }
                 if (editor.state.tool) {
                     editor.state.action = ACTIONS.CREATE;
-                    const element = sceneActions.createElement(scene, editor.state.tool);
+                    const element = sceneActions.createElement(editor.scene, editor.state.tool);
                     const elementConfig = getElementConfig(element);
                     // Override element attributes
                     Object.assign(element, {
@@ -120,8 +117,8 @@ export const useEvents = (scene, editor, callbacks) => {
                     elementConfig.onCreateStart?.(element, event),
                     activeElement = element; // Save element reference
                     // state.activeGroup = null; // Reset current group
-                    sceneActions.clearSelection(scene);
-                    sceneActions.addElements(scene, [element]);
+                    sceneActions.clearSelection(editor.scene);
+                    sceneActions.addElements(editor.scene, [element]);
                 }
                 else if (selectedElements.length > 0) {
                     if (!selectedElements.some(el => el.locked)) {
@@ -129,10 +126,10 @@ export const useEvents = (scene, editor, callbacks) => {
                             editor.state.action = ACTIONS.TRANSLATE;
                         }
                         // Save a snapshot of the current selection for calculating the correct element position
-                        snapshot = sceneActions.snapshotSelection(scene);
+                        snapshot = sceneActions.snapshotSelection(editor.scene);
                         // Check for calling the onResizeStart listener
                         if (editor.state.action === ACTIONS.RESIZE && snapshot.length === 1) {
-                            const element = sceneActions.getElement(scene, snapshot[0].id);
+                            const element = sceneActions.getElement(editor.scene, snapshot[0].id);
                             const elementConfig = getElementConfig(element);
                             if (typeof elementConfig.onResizeStart === "function") {
                                 elementConfig.onResizeStart(element, snapshot[0], event);
@@ -148,12 +145,12 @@ export const useEvents = (scene, editor, callbacks) => {
                         x2: event.originalX,
                         y2: event.originalY,
                     };
-                    sceneActions.clearSelection(scene);
+                    sceneActions.clearSelection(editor.scene);
                 }
                 // We need to update the last translated point before start moving the board
                 else if (editor.state.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.state.translateX;
-                    lastTranslateY = scene.state.translateY;
+                    lastTranslateX = editor.scene.translateX;
+                    lastTranslateY = editor.scene.translateY;
                 }
                 // else if (editor.state.action === ACTIONS.ERASE) {
                 //     editor.state.erase = {
@@ -168,14 +165,14 @@ export const useEvents = (scene, editor, callbacks) => {
             onPointerMove: event => {
                 if (editor.state.action === ACTIONS.MOVE) {
                     editor.state.current = STATES.DRAGGING;
-                    scene.state.translateX = Math.floor(lastTranslateX + event.dx * scene.state.zoom);
-                    scene.state.translateY = Math.floor(lastTranslateY + event.dy * scene.state.zoom);
+                    editor.scene.translateX = Math.floor(lastTranslateX + event.dx * editor.scene.zoom);
+                    editor.scene.translateY = Math.floor(lastTranslateY + event.dy * editor.scene.zoom);
                 }
                 else if (editor.state.action === ACTIONS.ERASE) {
                     editor.state.current = STATES.ERASING;
                     const x = event.originalX + event.dx;
                     const y = event.originalY + event.dy;
-                    scene.elements.forEach(element => {
+                    sceneActions.getElements(editor.scene).forEach(element => {
                         if (!element.erased) {
                             const b = element.type === ELEMENTS.ARROW ? normalizeBounds(element) : element;
                             if (b.x1 <= x && x <= b.x2 && b.y1 <= y && y <= b.y2) {
@@ -196,7 +193,7 @@ export const useEvents = (scene, editor, callbacks) => {
                 else if (editor.state.action === ACTIONS.TRANSLATE) {
                     editor.state.current = STATES.TRANSLATING;
                     isDragged = true;
-                    sceneActions.getSelection(scene).forEach((element, index) => {
+                    sceneActions.getSelection(editor.scene).forEach((element, index) => {
                         element.x1 = getPosition(snapshot[index].x1 + event.dx);
                         element.y1 = getPosition(snapshot[index].y1 + event.dy);
                         element.x2 = element.x1 + (snapshot[index].x2 - snapshot[index].x1);
@@ -208,7 +205,7 @@ export const useEvents = (scene, editor, callbacks) => {
                 else if (editor.state.action === ACTIONS.RESIZE) {
                     editor.state.current = STATES.RESIZING;
                     isResized = true;
-                    const element = sceneActions.getElement(scene, snapshot[0].id);
+                    const element = sceneActions.getElement(editor.scene, snapshot[0].id);
                     const elementConfig = getElementConfig(element);
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
                         element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2);
@@ -260,8 +257,8 @@ export const useEvents = (scene, editor, callbacks) => {
             onPointerUp: event => {
                 editor.state.current = STATES.IDLE;
                 if (editor.state.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.state.translateX;
-                    lastTranslateY = scene.state.translateY;
+                    lastTranslateX = editor.scene.translateX;
+                    lastTranslateY = editor.scene.translateY;
                     // callbacks?.onChange?.({
                     //     translateX: board.translateX,
                     //     translateY: board.translateY,
@@ -269,12 +266,9 @@ export const useEvents = (scene, editor, callbacks) => {
                     return editor.update();
                 }
                 else if (editor.state.action === ACTIONS.ERASE) {
-                    // board.erase = null;
-                    sceneActions.removeElements(scene, scene.elements.filter(el => el.erased));
-                    callbacks?.onChange?.({
-                        elements: scene.elements,
-                    });
-                    return editor.update();
+                    const erasedElements = sceneActions.getErasedElements(editor.scene);
+                    sceneActions.removeElements(editor.scene, erasedElements);
+                    return editor.dispatchChange();
                 }
                 else if (editor.state.action === ACTIONS.CREATE && activeElement) {
                     const element = activeElement;
@@ -291,12 +285,12 @@ export const useEvents = (scene, editor, callbacks) => {
                     }
                     // Call the element created listener
                     callbacks?.onChange?.({
-                        elements: scene.elements,
+                        elements: editor.scene.elements,
                     });
                     activeElement = null;
                     // Check if the tool is not the handdraw
                     // TODO: we need also to check if lock is enabled
-                    if (!editor.state.toolLock && editor.state.tool !== ELEMENTS.DRAW) {
+                    if (!editor.state.toolLocked && editor.state.tool !== ELEMENTS.DRAW) {
                         editor.state.tool = null;
                     }
                     else {
@@ -314,15 +308,16 @@ export const useEvents = (scene, editor, callbacks) => {
                 else if (editor.state.action === ACTIONS.TRANSLATE || editor.state.action === ACTIONS.RESIZE) {
                     if (isDragged || isResized) {
                         if (editor.state.action === ACTIONS.RESIZE && snapshot.length === 1) {
-                            const element = sceneActions.getElement(scene, snapshot[0].id);
+                            const element = sceneActions.getElement(editor.scene, snapshot[0].id);
                             const elementConfig = getElementConfig(element);
                             if (typeof elementConfig.onResizeEnd === "function") {
                                 elementConfig.onResizeEnd(element, snapshot[0], event);
                             }
                         }
-                        sceneActions.addHistory(scene, {
+                        const selectedElements = sceneActions.getSelection(editor.scene);
+                        sceneActions.addHistory(editor.scene, {
                             type: CHANGES.UPDATE,
-                            elements: sceneActions.getSelection(scene).map((element, index) => {
+                            elements: selectedElements.map((element, index) => {
                                 const updatedFields = new Set(["x1", "x2", "y1", "y2"]);
                                 // We need to check the fields that the element has updated internally
                                 const elementConfig = getElementConfig(element);
@@ -341,11 +336,11 @@ export const useEvents = (scene, editor, callbacks) => {
                             }),
                         });
                         callbacks?.onChange?.({
-                            elements: scene.elements,
+                            elements: editor.scene.elements,
                         });
                     }
                     else if (event.element) {
-                        const element = sceneActions.getElement(scene, event.element);
+                        const element = sceneActions.getElement(editor.scene, event.element);
                         if (!event.shiftKey) {
                             sceneActions.clearSelection(scene);
                             element.selected = true;
@@ -366,7 +361,7 @@ export const useEvents = (scene, editor, callbacks) => {
                 }
                 else if (editor.state.action === ACTIONS.SELECT) {
                     const selection = editor.state.selection;
-                    sceneActions.setSelection(scene, {
+                    sceneActions.setSelection(editor.scene, {
                         x1: Math.min(selection.x1, selection.x2),
                         x2: Math.max(selection.x1, selection.x2),
                         y1: Math.min(selection.y1, selection.y2),
@@ -385,7 +380,7 @@ export const useEvents = (scene, editor, callbacks) => {
             onDoubleClickElement: event => {
                 if (!editor.state.action && !editor.state.tool) {
                     // board.clearSelectedElements();
-                    const element = sceneActions.getElement(scene, event.element);
+                    const element = sceneActions.getElement(editor.scene, event.element);
                     // if (!board.activeGroup && element.group) {
                     //     board.activeGroup = element.group;
                     //     board.clearSelectedElements();
@@ -410,36 +405,31 @@ export const useEvents = (scene, editor, callbacks) => {
                                 removeTextElement(activeElement);
                             }
                         }
-                        editor.actions.setAction(null);
+                        editor.setAction(null);
                         editor.update();
                     }
                 }
                 else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                     event.preventDefault();
                     if (event.key === KEYS.X || event.key === KEYS.C) {
-                        editor.actions.copy();
+                        editor.copy();
                     }
                     // Check for backspace key or cut --> remove elements
                     if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
-                        sceneActions.removeSelection(scene);
+                        sceneActions.removeSelection(editor.scene);
                         callbacks?.onChange?.({
-                            elements: scene.elements,
-                            assets: scene.assets,
+                            elements: editor.scene.elements,
+                            assets: editor.scene.assets,
                         });
                     }
                     editor.update();
                 }
                 // Undo or redo key
                 else if (isCtrlKey && (event.key === KEYS.Z || event.key === KEYS.Y)) {
-                    editor.actions.setAction(null);
-                    sceneActions.clearSelection(scene);
+                    // editor.setAction(null);
+                    // sceneActions.clearSelection(editor.scene);
                     activeElement = null;
-                    event.key === KEYS.Z ? sceneActions.undo(scene) : sceneActions.redo(scene);
-                    callbacks?.onChange?.({
-                        elements: scene.elements,
-                        assets: scene.assets,
-                    });
-                    editor.update();
+                    event.key === KEYS.Z ? editor.undo() : editor.redo();
                 }
                 // Check ESCAPE key
                 else if (event.key === KEYS.ESCAPE) {
@@ -451,7 +441,7 @@ export const useEvents = (scene, editor, callbacks) => {
                     //     board.activeGroup = null;
                     // }
                     event.preventDefault();
-                    sceneActions.clearSelection(scene);
+                    sceneActions.clearSelection(editor.scene);
                     editor.update();
                 }
                 // Check for arrow keys --> move elements
@@ -460,8 +450,8 @@ export const useEvents = (scene, editor, callbacks) => {
                     // const step = event.shiftKey ? (props.gridSize || 10) : 1;
                     const dir = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
                     const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
-                    const selectedElements = sceneActions.getSelection(scene);
-                    sceneActions.addHistory(scene, {
+                    const selectedElements = sceneActions.getSelection(editor.scene);
+                    sceneActions.addHistory(editor.scene, {
                         type: CHANGES.UPDATE,
                         ids: selectedElements.map(el => el.id).join(","),
                         keys: `${dir}1,${dir}2`,
@@ -483,37 +473,22 @@ export const useEvents = (scene, editor, callbacks) => {
                             };
                         }),
                     });
-                    callbacks?.onChange?.({
-                        elements: scene.elements,
-                    });
-                    editor.update();
+                    editor.dispatchChange();
                 }
             },
             // onKeyUp: event => {},
             onPaste: event => {
-                if (isInputTarget(event)) {
-                    return null;
+                if (!isInputTarget(event)) {
+                    sceneActions.clearSelection(editor.scene);
+                    editor.paste(event);
                 }
-                sceneActions.clearSelection(scene);
-                // board.activeGroup = null;
-                editor.state.contextMenu = false;
-                editor.actions.paste(event).then(() => {
-                    editor.update();
-                    callbacks?.onChange?.({
-                        elements: scene.elements,
-                        assets: scene.assets,
-                    });
-                });
             },
             // onCopy: event => null,
             // onCut: event => null,
             onElementChange: (id, keys, values) => {
                 if (activeElement?.id === id && activeElement?.editing) {
-                    sceneActions.updateElements(scene, [activeElement], keys, values, true);
-                    callbacks?.onChange?.({
-                        elements: scene.elements,
-                    });
-                    editor.update();
+                    sceneActions.updateElements(editor.scene, [activeElement], keys, values, true);
+                    editor.dispatchChange();
                 }
             },
             // onWheel: event => {
@@ -533,8 +508,20 @@ export const useEvents = (scene, editor, callbacks) => {
             // },
             onResize: event => {
                 if (event?.canvasWidth && event?.canvasHeight) {
-                    scene.width = event.canvasWidth;
-                    scene.height = event.canvasHeight;
+                    editor.scene.width = event.canvasWidth;
+                    editor.scene.height = event.canvasHeight;
+                    editor.update();
+                }
+            },
+            onContextMenu: event => {
+                const {action, tool} = editor.state;
+                if ((!action || action === ACTIONS.SELECT || action === ACTIONS.TRANSLATE) && !tool) {
+                    editor.state.current = STATES.IDLE;
+                    editor.state.action = null;
+                    // Display context menu
+                    editor.state.contextMenu = true;
+                    editor.state.contextMenuLeft = event.x;
+                    editor.state.contextMenuTop = event.y;
                     editor.update();
                 }
             },

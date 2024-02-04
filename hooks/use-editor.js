@@ -242,12 +242,14 @@ export const useEditor = ({initialData, onChange}) => {
             // @description undo latest changes
             undo: () => {
                 sceneActions.undoHistory(editor.scene);
+                editor.setAction(null);
                 editor.dispatchChange();
             },
 
             // @description redo latest changes
             redo: () => {
                 sceneActions.redoHistory(editor.scene);
+                editor.setAction(null);
                 editor.dispatchChange();
             },
 
