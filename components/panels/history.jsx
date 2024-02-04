@@ -2,7 +2,7 @@ import React from "react";
 import {HeaderContainer, HeaderButton} from "@components/commons/header.jsx";
 
 // History panel component
-export const History = props => (
+export const HistoryPanel = props => (
     <HeaderContainer>
         <HeaderButton
             icon="history-undo"

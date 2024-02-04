@@ -16,11 +16,11 @@ import {ContextMenu} from "@components/ui/context-menu.jsx";
 import {Menu} from "@components/ui/menu.jsx";
 import {Title} from "@components/ui/title.jsx";
 import {Hint} from "@components/ui/hint.jsx";
-import {History} from "@components/ui/history.jsx";
 import {ExportDialog} from "@components/dialogs/export.jsx";
 import {ToolsPanel} from "@components/panels/tools.jsx";
 import {EditionPanel} from "@components/panels/edition.jsx";
 import {ZoomPanel} from "@components/panels/zoom.jsx";
+import {HistoryPanel} from "@components/panels/history.jsx";
 import {useConfirm} from "@contexts/confirm.jsx";
 import {blobToDataUrl} from "@lib/utils/blob.js";
 import {useHandlers} from "@hooks/use-handlers.js";
@@ -288,7 +288,7 @@ export const Editor = props => {
                     <div className="absolute top-0 right-0 pt-4 pr-6 z-7 flex gap-2">
                         {props.showHistory && !isPresentation && (
                             <div className="flex relative">
-                                <History
+                                <HistoryPanel
                                     undoDisabled={sceneActions.isUndoDisabled(editor.scene)}
                                     redoDisabled={sceneActions.isRedoDisabled(editor.scene)}
                                     onUndoClick={editor.undo}
