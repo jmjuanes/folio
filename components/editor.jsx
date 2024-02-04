@@ -21,6 +21,7 @@ import {History} from "@components/ui/history.jsx";
 import {ExportDialog} from "@components/dialogs/export.jsx";
 import {ToolsPanel} from "@components/panels/tools.jsx";
 import {EditionPanel} from "@components/panels/edition.jsx";
+import {useConfirm} from "@contexts/confirm.jsx";
 import {blobToDataUrl} from "@lib/utils/blob.js";
 import {useHandlers} from "@hooks/use-handlers.js";
 import {useBounds} from "@hooks/use-bounds.js";
@@ -31,6 +32,7 @@ import {useCursor} from "@hooks/use-cursor.js";
 import {useEditor} from "@hooks/use-editor.js";
 
 export const Editor = props => {
+    const {showConfirm} = useConfirm();
     const [welcomeHintVisible, setWelcomeHintVisible] = React.useState(() => {
         return props.showWelcomeHint && (props?.initialData?.elements || []).length === 0;
     });
@@ -86,40 +88,40 @@ export const Editor = props => {
     // }, [editorState.action, editorState.tool]);
 
     // Handle board reset
-    // const handleResetBoard = () => {
-    //     return showConfirm({
-    //         title: "Clear board",
-    //         message: "This will clear the whole board. Do you want to continue?",
-    //         callback: () => {
-    //             board.clear();
-    //             props?.onChange?.({
-    //                 elements: board.elements,
-    //                 assets: board.assets,
-    //             });
-    //         },
-    //     });
-    // };
+    const handleResetBoard = () => {
+        return showConfirm({
+            title: "Clear board",
+            message: "This will clear the whole board. Do you want to continue?",
+            callback: () => {
+                board.clear();
+                props?.onChange?.({
+                    elements: board.elements,
+                    assets: board.assets,
+                });
+            },
+        });
+    };
     // Handle image load
-    // const handleImageLoad = () => {
-    //     const options = {
-    //         description: "Folio Board",
-    //         extensions: [
-    //             FILE_EXTENSIONS.PNG,
-    //             FILE_EXTENSIONS.JPG,
-    //         ],
-    //         multiple: false,
-    //     };
-    //     fileOpen(options)
-    //         .then(blob => blobToDataUrl(blob))
-    //         .then(data => board.addImage(data))
-    //         .then(() => {
-    //             props.onChange?.({
-    //                 elements: board.elements,
-    //                 assets: board.assets,
-    //             });
-    //         })
-    //         .catch(error => console.error(error));
-    // };
+    const handleImageLoad = () => {
+        const options = {
+            description: "Folio Board",
+            extensions: [
+                FILE_EXTENSIONS.PNG,
+                FILE_EXTENSIONS.JPG,
+            ],
+            multiple: false,
+        };
+        fileOpen(options)
+            .then(blob => blobToDataUrl(blob))
+            .then(data => board.addImage(data))
+            .then(() => {
+                props.onChange?.({
+                    elements: board.elements,
+                    assets: board.assets,
+                });
+            })
+            .catch(error => console.error(error));
+    };
 
     return (
         <div className="relative overflow-hidden h-full w-full select-none">
@@ -234,9 +236,8 @@ export const Editor = props => {
             {props.showTools && !isScreenshot && !isPresentation && (
                 <div className="absolute z-5 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
                     <ToolsPanel
-                        action={editor.state.action}
-                        tool={editor.state.tool}
-                        toolLock={editor.state.toolLock}
+                        scene={scene}
+                        editor={editor}
                         showSelect={!isPresentation}
                         showTools={!isPresentation}
                         showLock={!isPresentation}
@@ -267,7 +268,7 @@ export const Editor = props => {
                             editor.actions.setTool(tool);
                             editor.update();
                         }}
-                        onLockToolClick={() => {
+                        onToolLockClick={() => {
                             editor.state.toolLock = !editor.state.toolLock;
                             update();
                         }}
@@ -288,6 +289,9 @@ export const Editor = props => {
                         <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-6">
                             <EditionPanel
                                 key={selectedElements.map(el => el.id).join("-")}
+                                selectedElements={selectedElements}
+                                scene={scene}
+                                editor={editor}
                                 onChange={props.onChange}
                             />
                         </div>

@@ -24,6 +24,7 @@ import {
     TEXT_COLOR_PALETTE,
     NOTE_COLOR_PALETTE,
 } from "@lib/utils/colors.js";
+import {sceneActions} from "@lib/scene.js";
 import {
     FillIcon,
     StrokeIcon,
@@ -53,7 +54,6 @@ import {
     SendBackwardIcon,
 } from "@components/icons.jsx";
 import {Form} from "@components/commons/form.jsx";
-import {useBoard} from "@components/contexts/board.jsx";
 
 // Available sections
 const SECTIONS = {
@@ -365,62 +365,59 @@ const getVisibleSections = (sections, values) => {
     });
 };
 
-export const EditionPanel = props => {
+export const EditionPanel = ({selectedElements, editor, scene, ...props}) => {
     const [activeSection, setActiveSection] = React.useState("");
-    const board = useBoard();
-    const selectedElements = board.getSelectedElements();
     const values = useValues(selectedElements);
     const keys = Object.keys(values);
     // Get visible sections
-    const visibleSections = React.useMemo(
-        () => {
-            return {
-                style: getVisibleSections(styleSections, values),
-                display: getVisibleSections(displaySections, values),
-            };
-        },
-        [keys.length],
-    );
+    const visibleSections = React.useMemo(() => {
+        return {
+            style: getVisibleSections(styleSections, values),
+            display: getVisibleSections(displaySections, values),
+        };
+    }, [keys.length]);
     // Handle selection change
     const handleChange = (key, value) => {
         if (key === "actions" || key === "layers") {
             switch (value) {
                 case ACTIONS.REMOVE:
-                    board.remove();
+                    sceneActions.removeElements(scene, selectedElements);
                     break;
                 case ACTIONS.DUPLICATE:
-                    board.duplicate();
+                    sceneActions.duplicateElements(scene, selectedElements);
                     break;
                 case ACTIONS.SEND_BACK:
-                    board.sendSelectedElementsToBack();
+                    sceneActions.sendElementsToBack(scene, selectedElements);
                     break;
                 case ACTIONS.SEND_BACKWARD:
-                    board.sendSelectedElementsBackward();
+                    sceneActions.sendElementsBackward(scene, selectedElements);
                     break;
                 case ACTIONS.BRING_FORWARD:
-                    board.bringSelectedElementsForward();
+                    sceneActions.bringElementsForward(scene, selectedElements);
                     break;
                 case ACTIONS.BRING_FRONT:
-                    board.bringSelectedElementsToFront();
+                    sceneActions.bringElementsToFront(scene, selectedElements);
                     break;
                 case ACTIONS.LOCK:
-                    board.lockElements(selectedElements);
+                    sceneActions.lockElements(scene, selectedElements);
                     break;
                 case ACTIONS.UNLOCK:
-                    board.unlockElements(selectedElements);
+                    sceneActions.unlockElements(scene, selectedElements);
                     break;
             }
             // Handle change
-            props?.onChange?.(board.export());
+            props?.onChange?.({
+                elements: scene.elements,
+            });
         }
         else {
-            board.updateElements(selectedElements, [key], [value], true);
+            sceneActions.updateElements(scene, selectedElements, [key], [value], true);
             props?.onChange?.({
                 elements: board.elements,
             });
         }
         // Force an update
-        board.update();
+        editor.update();
     };
     // Handle active section change
     const handleSectionChange = newSection => {

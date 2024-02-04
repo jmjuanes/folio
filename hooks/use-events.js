@@ -366,7 +366,7 @@ export const useEvents = (scene, editor, callbacks) => {
                 }
                 else if (editor.state.action === ACTIONS.SELECT) {
                     const selection = editor.state.selection;
-                    sceneActions.setSelectedElements(scene, {
+                    sceneActions.setSelection(scene, {
                         x1: Math.min(selection.x1, selection.x2),
                         x2: Math.max(selection.x1, selection.x2),
                         y1: Math.min(selection.y1, selection.y2),

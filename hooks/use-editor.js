@@ -29,7 +29,7 @@ export const useEditor = (scene) => {
         editorActions.current = {
             setTool: newTool => {
                 editorActions.current.setAction(null);
-                sceneActions.clearSelector(scene);
+                sceneActions.clearSelection(scene);
                 editorState.current.tool = newTool;
             },
             setAction: newAction => {

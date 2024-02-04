@@ -4,7 +4,6 @@ import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
 import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "@lib/constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "@lib/export.js";
 import {Form} from "@components/commons/form.jsx";
-import {useBoard} from "@components/contexts/board.jsx";
 
 import transparentBg from "../../assets/transparent.svg";
 
@@ -46,7 +45,6 @@ const ExportPreview = props => (
 );
 
 export const ExportDialog = props => {
-    const board = useBoard();
     const copiedToClipboardTimer = React.useRef(null);
     const [copiedToClipboard, setCopiedToClipboard] = React.useState(false);
     const [preview, setPreview] = React.useState(null);

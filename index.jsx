@@ -3,8 +3,8 @@ import {createRoot} from "react-dom/client";
 import {useDebounce, useHash, useToggle} from "react-use";
 import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {saveAsJson, loadFromJson} from "@lib/json.js";
-import {ClientProvider, useClient} from "@components/contexts/client.jsx";
-import {ConfirmProvider, useConfirm} from "@components/contexts/confirm.jsx";
+import {ClientProvider, useClient} from "@contexts/client.jsx";
+import {ConfirmProvider, useConfirm} from "@contexts/confirm.jsx";
 import {Editor} from "@components/editor.jsx";
 import {Welcome} from "@components/welcome.jsx";
 import {Sidebar} from "@components/sidebar.jsx";
@@ -78,11 +78,14 @@ const App = () => {
 
     // Hook to update current state abd boards list
     React.useEffect(() => {
-        // Terrible hack to force updating saved state after each id change
-        // This will ensure that data of previous board is not saved on the current board
-        setState({id: id});
-
-        if (!hasBeenInitialized.current || id === "") {
+        // Import data for the current opened board
+        if (id && state?.id !== id) {
+            client.get(id).then(data => {
+                setState({id: id, ...data});
+            })
+        }
+        // Check for importing boards data
+        if (!hasBeenInitialized.current || !id) {
             updateBoards().then(() => {
                 hasBeenInitialized.current = true;
             });
@@ -137,7 +140,7 @@ const App = () => {
             {(!!id && state?.id === id) && (
                 <Editor
                     key={id}
-                    initialData={() => client.get(id)}
+                    initialData={state}
                     links={[
                         {url: "./", text: "About Folio"},
                         {url: process.env.URL_ISSUES, text: "Report a bug"},
