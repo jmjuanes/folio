@@ -16,11 +16,11 @@ import {ContextMenu} from "@components/ui/context-menu.jsx";
 import {Menu} from "@components/ui/menu.jsx";
 import {Title} from "@components/ui/title.jsx";
 import {Hint} from "@components/ui/hint.jsx";
-import {Zooming} from "@components/ui/zooming.jsx";
 import {History} from "@components/ui/history.jsx";
 import {ExportDialog} from "@components/dialogs/export.jsx";
 import {ToolsPanel} from "@components/panels/tools.jsx";
 import {EditionPanel} from "@components/panels/edition.jsx";
+import {ZoomPanel} from "@components/panels/zoom.jsx";
 import {useConfirm} from "@contexts/confirm.jsx";
 import {blobToDataUrl} from "@lib/utils/blob.js";
 import {useHandlers} from "@hooks/use-handlers.js";
@@ -306,7 +306,7 @@ export const Editor = props => {
                         )}
                         {props.showZoom && (
                             <div className="flex relative">
-                                <Zooming
+                                <ZoomPanel
                                     zoom={editor.scene.zoom}
                                     onZoomInClick={editor.zoomIn}
                                     onZoomOutClick={editor.zoomOut}

@@ -1,8 +1,8 @@
 import React from "react";
 import {ZOOM_MIN, ZOOM_MAX} from "@lib/constants.js";
-import {HeaderContainer, HeaderButton} from "@components/commons/header.jsx";
+import {HeaderContainer, HeaderButton} from "../commons/header.jsx";
 
-export const Zooming = props => (
+export const ZoomPanel = props => (
     <HeaderContainer>
         <HeaderButton
             icon="zoom-out"
