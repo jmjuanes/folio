@@ -1,7 +1,13 @@
 import React from "react";
 import classNames from "classnames";
-import {TrashIcon, BanIcon, CopyIcon, LockIcon, UnlockIcon} from "@josemi-icons/react";
-import {NoteIcon} from "@josemi-icons/react";
+import {
+    BanIcon,
+    CopyIcon,
+    LockIcon,
+    NoteIcon,
+    TrashIcon,
+    UnlockIcon,
+} from "@josemi-icons/react";
 import {
     FORM_OPTIONS,
     FIELDS,
@@ -365,10 +371,12 @@ const getVisibleSections = (sections, values) => {
     });
 };
 
-export const EditionPanel = ({selectedElements, editor, scene, ...props}) => {
+export const EditionPanel = ({editor, ...props}) => {
+    const selectedElements = sceneActions.getSelection(editor.scene);
     const [activeSection, setActiveSection] = React.useState("");
     const values = useValues(selectedElements);
     const keys = Object.keys(values);
+
     // Get visible sections
     const visibleSections = React.useMemo(() => {
         return {
@@ -376,49 +384,44 @@ export const EditionPanel = ({selectedElements, editor, scene, ...props}) => {
             display: getVisibleSections(displaySections, values),
         };
     }, [keys.length]);
+
     // Handle selection change
-    const handleChange = (key, value) => {
+    const handleChange = React.useCallback((key, value) => {
         if (key === "actions" || key === "layers") {
             switch (value) {
                 case ACTIONS.REMOVE:
-                    sceneActions.removeElements(scene, selectedElements);
+                    sceneActions.removeElements(editor.scene, selectedElements);
                     break;
                 case ACTIONS.DUPLICATE:
-                    sceneActions.duplicateElements(scene, selectedElements);
+                    sceneActions.duplicateElements(editor.scene, selectedElements);
                     break;
                 case ACTIONS.SEND_BACK:
-                    sceneActions.sendElementsToBack(scene, selectedElements);
+                    sceneActions.sendElementsToBack(editor.scene, selectedElements);
                     break;
                 case ACTIONS.SEND_BACKWARD:
-                    sceneActions.sendElementsBackward(scene, selectedElements);
+                    sceneActions.sendElementsBackward(editor.scene, selectedElements);
                     break;
                 case ACTIONS.BRING_FORWARD:
-                    sceneActions.bringElementsForward(scene, selectedElements);
+                    sceneActions.bringElementsForward(editor.scene, selectedElements);
                     break;
                 case ACTIONS.BRING_FRONT:
-                    sceneActions.bringElementsToFront(scene, selectedElements);
+                    sceneActions.bringElementsToFront(editor.scene, selectedElements);
                     break;
                 case ACTIONS.LOCK:
-                    sceneActions.lockElements(scene, selectedElements);
+                    sceneActions.lockElements(editor.scene, selectedElements);
                     break;
                 case ACTIONS.UNLOCK:
-                    sceneActions.unlockElements(scene, selectedElements);
+                    sceneActions.unlockElements(editor.scene, selectedElements);
                     break;
             }
-            // Handle change
-            props?.onChange?.({
-                elements: scene.elements,
-            });
         }
         else {
-            sceneActions.updateElements(scene, selectedElements, [key], [value], true);
-            props?.onChange?.({
-                elements: board.elements,
-            });
+            sceneActions.updateElements(editor.scene, selectedElements, [key], [value], true);
         }
-        // Force an update
-        editor.update();
-    };
+        editor.dispatchChange();
+        // editor.update();
+    }, [selectedElements.length]);
+
     // Handle active section change
     const handleSectionChange = newSection => {
         return setActiveSection(prevSection => {

@@ -100,7 +100,8 @@ export const useEditor = ({initialData, onChange}) => {
 
             // @description set active action
             setAction: newAction => {
-                editor.scene.elements.forEach(el => el.editing = false);
+                sceneActions.getElements(editor.scene)
+                    .forEach(element => element.editing = false);
                 editor.state.action = newAction;
                 editor.state.contextMenu = false;
             },

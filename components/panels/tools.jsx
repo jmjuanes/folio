@@ -204,7 +204,7 @@ const isSelectEnabled = a => {
 };
 
 // Tools Panel component
-export const ToolsPanel = ({editor, scene, ...props}) => {
+export const ToolsPanel = ({editor, ...props}) => {
     const update = useUpdate();
     return (
         <div className="flex items-center relative select-none">
@@ -250,12 +250,12 @@ export const ToolsPanel = ({editor, scene, ...props}) => {
                                 />
                                 {tools[key].quickPicks && key === editor.state.tool && (
                                     <PickPanel
-                                        values={scene.defaults}
+                                        values={editor.scene.defaults}
                                         items={tools[key].quickPicks}
                                         onChange={(field, value) => {
-                                            scene.defaults[field] = value;
+                                            editor.scene.defaults[field] = value;
                                             if (typeof tools[key].onQuickPickChange === "function") {
-                                                tools[key].onQuickPickChange(board.defaults, field, value);
+                                                tools[key].onQuickPickChange(editor.scene.defaults, field, value);
                                             }
                                             // Force and update of the component
                                             update();
@@ -298,12 +298,12 @@ export const ToolsPanel = ({editor, scene, ...props}) => {
                 <div
                     className={classNames({
                         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-                        "bg-neutral-950 text-white": editor.state.toolLock,
-                        "o-50 hover:o-100": !editor.state.toolLock,
+                        "bg-neutral-950 text-white": editor.state.toolLocked,
+                        "o-50 hover:o-100": !editor.state.toolLocked,
                     })}
                     onClick={props.onToolLockClick}
                 >
-                    {editor.state.toolLock ? <LockIcon /> : <UnlockIcon />}
+                    {editor.state.toolLocked ? <LockIcon /> : <UnlockIcon />}
                 </div>
             )}
         </div>
@@ -311,9 +311,6 @@ export const ToolsPanel = ({editor, scene, ...props}) => {
 };
 
 ToolsPanel.defaultProps = {
-    action: null,
-    tool: null,
-    toolLock: false,
     showTools: true,
     showPointer: false,
     showLock: true,

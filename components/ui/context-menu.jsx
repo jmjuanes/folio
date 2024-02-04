@@ -1,14 +1,14 @@
 import React from "react";
 import {ContextMenu as Menu} from "@josemi-ui/react";
+import {sceneActions} from "@lib/scene.js";
 
-export const ContextMenu = props => {
-    const {selectedElements} = props;
+export const ContextMenu = ({editor, ...props}) => {
+    const selectedElements = sceneActions.getSelection(editor.state);
     const style = {
-        top: props.y,
-        left: props.x,
-        transform: props.y > props.canvasHeight / 2 ? "translateY(-100%)" : "",
+        top: props.top,
+        left: props.left,
+        transform: props.top > props.canvasHeight / 2 ? "translateY(-100%)" : "",
     };
-
     return (
         <Menu className="absolute z-10 w-40" style={style}>
             {selectedElements.length > 0 && (

@@ -123,9 +123,9 @@ export const Editor = props => {
             />
             {(editor.state.contextMenu && !isPresentation) &&  (
                 <ContextMenu
+                    editor={editor}
                     left={editor.state.contextMenuLeft}
                     top={editor.state.contextMenuTop}
-                    selectedElements={selectedElements}
                     canvasWidth={editor.scene.width}
                     canvasHeight={editor.scene.height}
                     onDuplicate={editor.duplicate}
@@ -195,7 +195,6 @@ export const Editor = props => {
                         <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-6">
                             <EditionPanel
                                 key={selectedElements.map(el => el.id).join("-")}
-                                selectedElements={selectedElements}
                                 editor={editor}
                                 onChange={props.onChange}
                             />
