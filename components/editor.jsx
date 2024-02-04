@@ -26,7 +26,6 @@ import {blobToDataUrl} from "@lib/utils/blob.js";
 import {useHandlers} from "@hooks/use-handlers.js";
 import {useBounds} from "@hooks/use-bounds.js";
 import {sceneActions} from "@lib/scene.js";
-import {useScene} from "@hooks/use-scene.js";
 import {useEvents} from "@hooks/use-events.js";
 import {useCursor} from "@hooks/use-cursor.js";
 import {useEditor} from "@hooks/use-editor.js";
@@ -38,17 +37,13 @@ export const Editor = props => {
     });
     const [exportVisible, setExportVisible] = React.useState(false);
     const [screenshotRegion, setScreenshotRegion] = React.useState(null);
-    // const [contextMenuVisible, toggleContextMenu] = useToggle(false);
-    const contextMenuPosition = React.useRef({});
+    const editor = useEditor(props.initialData);
 
-    const scene = useScene(props.initialData);
-    const editor = useEditor(scene);
-
-    const selectedElements = sceneActions.getSelection(scene);
+    const selectedElements = sceneActions.getSelection(editor.scene);
     const isScreenshot = editor.state.action === ACTIONS.SCREENSHOT;
     const isPresentation = !!editor.state.presentation;
 
-    const events = useEvents(scene, editor, {
+    const events = useEvents(editor, {
         onChange: props.onChange,
         onScreenshot: region => {
             setScreenshotRegion(region);
@@ -59,33 +54,12 @@ export const Editor = props => {
     const bounds = useBounds(editor, selectedElements);
     const handlers = useHandlers(editor, selectedElements);
 
-    // Handle context menu
-    const handleContextMenu = React.useCallback(event => {
-        const {action, tool} = editor.state;
-        if ((!action || action === ACTIONS.SELECT || action === ACTIONS.TRANSLATE) && !tool) {
-            editor.state.current = STATES.IDLE;
-            editor.state.action = null;
-            // Display context menu
-            editor.state.contextMenu = true;
-            contextMenuPosition.current.x = event.x;
-            contextMenuPosition.current.y = event.y;
-            editor.update();
-        }
-    }, [editor.state.action, editor.state.tool]);
-
     // Effect to disable the visibility of the welcome elements
     React.useEffect(() => {
-        if (welcomeHintVisible && scene && scene?.elements?.length > 0) {
+        if (welcomeHintVisible && editor?.scene?.elements?.length > 0) {
             setWelcomeHintVisible(false);
         }
-    }, [scene?.elements?.length]);
-
-    // Effect to hide the context menu
-    // React.useEffect(() => {
-    //     if (contextMenuVisible) {
-    //         toggleContextMenu(true);
-    //     }
-    // }, [editorState.action, editorState.tool]);
+    }, [editor.scene?.elements?.length]);
 
     // Handle board reset
     const handleResetBoard = () => {
@@ -93,11 +67,11 @@ export const Editor = props => {
             title: "Clear board",
             message: "This will clear the whole board. Do you want to continue?",
             callback: () => {
-                board.clear();
-                props?.onChange?.({
-                    elements: board.elements,
-                    assets: board.assets,
-                });
+                // board.clear();
+                // props?.onChange?.({
+                //     elements: board.elements,
+                //     assets: board.assets,
+                // });
             },
         });
     };
@@ -111,29 +85,29 @@ export const Editor = props => {
             ],
             multiple: false,
         };
-        fileOpen(options)
-            .then(blob => blobToDataUrl(blob))
-            .then(data => board.addImage(data))
-            .then(() => {
-                props.onChange?.({
-                    elements: board.elements,
-                    assets: board.assets,
-                });
-            })
-            .catch(error => console.error(error));
+        // fileOpen(options)
+        //     .then(blob => blobToDataUrl(blob))
+        //     .then(data => board.addImage(data))
+        //     .then(() => {
+        //         props.onChange?.({
+        //             elements: board.elements,
+        //             assets: board.assets,
+        //         });
+        //     })
+        //     .catch(error => console.error(error));
     };
 
     return (
         <div className="relative overflow-hidden h-full w-full select-none">
             <Canvas
-                id={scene.id}
-                elements={scene.elements}
-                assets={scene.assets}
-                backgroundColor={scene.background}
+                id={editor.scene.id}
+                elements={editor.scene.elements}
+                assets={editor.scene.assets}
+                backgroundColor={editor.scene.background}
                 cursor={cursor}
-                translateX={scene.state.translateX}
-                translateY={scene.state.translateY}
-                zoom={scene.state.zoom}
+                translateX={editor.scene.translateX}
+                translateY={editor.scene.translateY}
+                zoom={editor.scene.zoom}
                 bounds={bounds}
                 boundsFillColor={SELECT_BOUNDS_FILL_COLOR}
                 boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
@@ -146,97 +120,29 @@ export const Editor = props => {
                 showPointer={editor.state.action === ACTIONS.ERASE}
                 showGrid={editor.state.grid}
                 {...events}
-                onContextMenu={handleContextMenu}
             />
             {(editor.state.contextMenu && !isPresentation) &&  (
                 <ContextMenu
-                    x={contextMenuPosition.current.x}
-                    y={contextMenuPosition.current.y}
+                    left={editor.state.contextMenuLeft}
+                    top={editor.state.contextMenuTop}
                     selectedElements={selectedElements}
-                    canvasWidth={scene.width}
-                    canvasHeight={scene.height}
-                    onDuplicate={() => {
-                        editor.actions.duplicate();
-                        props?.onChange?.({
-                            elements: scene.elements,
-                        });
-                        editor.state.contextMenu = false;
-                        editor.update();
-                    }}
-                    onLock={() => {
-                        sceneActions.lockElements(scene, selectedElements);
-                        props?.onChange?.({
-                            elements: scene.elements,
-                        });
-                        editor.update();
-                    }}
-                    onUnlock={() => {
-                        sceneActions.unlockElements(scene, selectedElements);
-                        props?.onChange?.({
-                            elements: scene.elements,
-                        });
-                        editor.update();
-                    }}
-                    onCut={() => {
-                        editor.actions.cut().then(() => {
-                            props.onChange?.({
-                                elements: scene.elements,
-                            });
-                            editor.state.contextMenu = false;
-                            editor.update();
-                        });
-                    }}
-                    onCopy={() => {
-                        editor.actions.copy().then(() => {
-                            editor.state.contextMenu = false;
-                            editor.update();
-                        });
-                    }}
-                    onPaste={() => {
-                        editor.actions.paste(null, {x, y}).then(() => {
-                            props.onChange?.({
-                                elements: scene.elements,
-                                assets: scene.assets,
-                            });
-                            editor.state.contextMenu = false;
-                            editor.update();
-                        });
-                    }}
-                    onSendBackward={() => {
-                        sceneActions.sendElementsBackward(scene, selectedElements);
-                        props?.onChange?.({
-                            elements: scene.elements,
-                        });
-                        editor.state.contextMenu = false;
-                        editor.update();
-                    }}
-                    onBringForward={() => {
-                        sceneActions.bringElementsForward(scene, selectedElements);
-                        props?.onChange?.({
-                            elements: scene.elements,
-                        });
-                        editor.state.contextMenu = false;
-                        editor.update();
-                    }}
-                    onSelectAll={() => {
-                        editor.actions.selectAll();
-                        editor.state.contextMenu = false;
-                        editor.update();
-                    }}
-                    onDelete={() => {
-                        sceneActions.removeElements(scene, selectedElements);
-                        props.onChange?.({
-                            elements: scene.elements,
-                        });
-                        editor.state.contextMenu = false;
-                        editor.update();
-                    }}
+                    canvasWidth={editor.scene.width}
+                    canvasHeight={editor.scene.height}
+                    onDuplicate={editor.duplicate}
+                    onLock={editor.lockElements}
+                    onUnlock={editor.unlockElements}
+                    onCut={editor.cut}
+                    onCopy={editor.copy}
+                    onPaste={editor.paste}
+                    onSendBackward={editor.sendBackward}
+                    onBringForward={editor.bringForward}
+                    onSelectAll={editor.selectAll}
+                    onDelete={editor.remove}
                 />
             )}
             {props.showTools && !isScreenshot && !isPresentation && (
                 <div className="absolute z-5 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
                     <ToolsPanel
-                        scene={scene}
                         editor={editor}
                         showSelect={!isPresentation}
                         showTools={!isPresentation}
@@ -247,17 +153,17 @@ export const Editor = props => {
                             // board.update();
                         }}
                         onMoveClick={() => {
-                            editor.actions.setTool(null);
-                            editor.actions.setAction(ACTIONS.MOVE);
+                            editor.setTool(null);
+                            editor.setAction(ACTIONS.MOVE);
                             editor.update();
                         }}
                         onEraseClick={() => {
-                            editor.actions.setTool(null);
-                            editor.actions.setAction(ACTIONS.ERASE);
+                            editor.setTool(null);
+                            editor.setAction(ACTIONS.ERASE);
                             editor.update();
                         }}
                         onSelectionClick={() => {
-                            editor.actions.setTool(null);
+                            editor.setTool(null);
                             editor.update();
                         }}
                         onToolClick={tool => {
@@ -265,12 +171,12 @@ export const Editor = props => {
                             if (tool === ELEMENTS.IMAGE) {
                                 return handleImageLoad();
                             }
-                            editor.actions.setTool(tool);
+                            editor.setTool(tool);
                             editor.update();
                         }}
                         onToolLockClick={() => {
-                            editor.state.toolLock = !editor.state.toolLock;
-                            update();
+                            editor.state.toolLocked = !editor.state.toolLocked;
+                            editor.update();
                         }}
                     />
                     {(welcomeHintVisible && !editor.state.tool && !isPresentation) && (
@@ -290,7 +196,6 @@ export const Editor = props => {
                             <EditionPanel
                                 key={selectedElements.map(el => el.id).join("-")}
                                 selectedElements={selectedElements}
-                                scene={scene}
                                 editor={editor}
                                 onChange={props.onChange}
                             />
@@ -305,7 +210,6 @@ export const Editor = props => {
                             <HeaderContainer>
                                 {props.showMenu && (
                                     <Menu
-                                        scene={scene}
                                         editor={editor}
                                         links={props.links}
                                         showLinks={props.showLinks}
@@ -321,9 +225,9 @@ export const Editor = props => {
                                         onResetBoard={handleResetBoard}
                                         onExport={() => setExportVisible(true)}
                                         onBackgroundChange={newBackground => {
-                                            scene.background = newBackground;
+                                            editor.scene.background = newBackground;
                                             props?.onChange?.({
-                                                background: scene.background,
+                                                background: editor.scene.background,
                                             });
                                             editor.update();
                                         }}
@@ -333,8 +237,8 @@ export const Editor = props => {
                                         }}
                                         onPresentationToggle={() => {
                                             editor.state.presentation = !editor.state.presentation;
-                                            editor.actions.setTool(null);
-                                            editor.actions.setAction(ACTIONS.MOVE);
+                                            editor.setTool(null);
+                                            editor.setAction(ACTIONS.MOVE);
                                             editor.update();
                                         }}
                                     />
@@ -347,7 +251,7 @@ export const Editor = props => {
                                         title={scene.title}
                                         editable={!isPresentation}
                                         onChange={newTitle => {
-                                            scene.title = newTitle;
+                                            editor.scene.title = newTitle;
                                             props.onChange?.({
                                                 title: newTitle,
                                             });
@@ -357,10 +261,10 @@ export const Editor = props => {
                                 {props.showScreenshot && !isPresentation && (
                                     <HeaderButton
                                         icon="camera"
-                                        disabled={scene.elements.length === 0}
+                                        disabled={editor.scene.elements.length === 0}
                                         onClick={() => {
-                                            editor.actions.setTool(null);
-                                            editor.actions.setAction(ACTIONS.SCREENSHOT);
+                                            editor.setTool(null);
+                                            editor.setAction(ACTIONS.SCREENSHOT);
                                             editor.update();
                                         }}
                                     />
@@ -385,22 +289,10 @@ export const Editor = props => {
                         {props.showHistory && !isPresentation && (
                             <div className="flex relative">
                                 <History
-                                    undoDisabled={sceneActions.isUndoDisabled(scene)}
-                                    redoDisabled={sceneActions.isRedoDisabled(scene)}
-                                    onUndoClick={() => {
-                                        sceneActions.undo(scene);
-                                        props.onChange?.({
-                                            elements: scene.elements,
-                                        });
-                                        editor.update();
-                                    }}
-                                    onRedoClick={() => {
-                                        sceneActions.redo(scene);
-                                        props.onChange?.({
-                                            elements: scene.elements,
-                                        });
-                                        editor.update();
-                                    }}
+                                    undoDisabled={sceneActions.isUndoDisabled(editor.scene)}
+                                    redoDisabled={sceneActions.isRedoDisabled(editor.scene)}
+                                    onUndoClick={editor.undo}
+                                    onRedoClick={editor.redo}
                                 />
                                 {(welcomeHintVisible && !editor.state.tool) && (
                                     <Hint
@@ -415,17 +307,9 @@ export const Editor = props => {
                         {props.showZoom && (
                             <div className="flex relative">
                                 <Zooming
-                                    zoom={scene.state.zoom}
-                                    onZoomInClick={() => {
-                                        sceneActions.zoomIn(scene);
-                                        editor.state.contextMenu = false;
-                                        editor.update();
-                                    }}
-                                    onZoomOutClick={() => {
-                                        sceneActions.zoomOut(scene);
-                                        editor.state.contextMenu = false;
-                                        editor.update();
-                                    }}
+                                    zoom={editor.scene.zoom}
+                                    onZoomInClick={editor.zoomIn}
+                                    onZoomOutClick={editor.zoomOut}
                                 />
                                 {(welcomeHintVisible && !editor.state.tool && !isPresentation) && (
                                     <Hint
