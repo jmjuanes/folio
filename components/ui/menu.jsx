@@ -3,13 +3,17 @@ import classnames from "classnames";
 import {PresentationIcon, ExternalLinkIcon} from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
 import {BACKGROUND_COLOR_PALETTE} from "@lib/utils/colors.js";
-import {sceneActions} from "@lib/scene.js";
-import {ColorPicker} from "@components/commons/color-picker.jsx";
-import {HeaderButton} from "@components/commons/header.jsx";
-import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "@components/icons.jsx";
+import {ColorPicker} from "../commons/color-picker.jsx";
+import {HeaderButton} from "../commons/header.jsx";
+import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "../icons.jsx";
+import {useScene} from "@contexts/scene.jsx";
+import {useEditor} from "@contexts/editor.jsx";
 
-export const Menu = ({editor, ...props}) => {
-    const elements = sceneActions.getElements(editor.scene);
+export const Menu = props => {
+    const scene = useScene();
+    const [editorState] = useEditor();
+    const elements = scene.getElements();
+
     return (
         <div className="flex relative group" tabIndex="0">
             <HeaderButton
@@ -65,7 +69,7 @@ export const Menu = ({editor, ...props}) => {
                     <React.Fragment>
                         <Dropdown.Separator />
                         <Dropdown.CheckItem
-                            checked={!!editor.state.grid}
+                            checked={!!editorState.settings.grid}
                             onClick={props.onGridToggle}
                         >
                             <Dropdown.Icon>
@@ -74,7 +78,7 @@ export const Menu = ({editor, ...props}) => {
                             <span>Grid</span>
                         </Dropdown.CheckItem>
                         <Dropdown.CheckItem
-                            checked={!!editor.state.presentation}
+                            checked={!!editorState.settings.presentationMode}
                             onClick={props.onPresentationToggle}
                         >
                             <Dropdown.Icon>
@@ -90,7 +94,7 @@ export const Menu = ({editor, ...props}) => {
                         <div className="text-xs px-2 pb-1 text-neutral-600 select-none">Background</div>
                         <div className="px-2">
                             <ColorPicker
-                                value={editor.scene.background}
+                                value={scene.background}
                                 values={BACKGROUND_COLOR_PALETTE}
                                 collapseColorPalette={false}
                                 onChange={props.onBackgroundChange}

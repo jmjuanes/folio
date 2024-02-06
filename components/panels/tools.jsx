@@ -38,6 +38,8 @@ import {
     WidthSmallIcon,
 } from "@components/icons.jsx";
 import {Form} from "@components/commons/form.jsx";
+import {useScene} from "@contexts/scene.jsx";
+import {useEditor} from "@contexts/editor.jsx";
 
 const tools = {
     [ELEMENTS.SHAPE]: {
@@ -204,8 +206,11 @@ const isSelectEnabled = a => {
 };
 
 // Tools Panel component
-export const ToolsPanel = ({editor, ...props}) => {
+export const ToolsPanel = props => {
     const update = useUpdate();
+    const scene = useScene();
+    const [editorState] = useEditor();
+
     return (
         <div className="flex items-center relative select-none">
             <div className="border border-neutral-200 rounded-xl shadow-md items-center bg-white flex gap-2 p-1">
@@ -215,7 +220,7 @@ export const ToolsPanel = ({editor, ...props}) => {
                         testid="pointer"
                         text="Pointer"
                         icon={(<LaserPointerIcon />)}
-                        active={editor.state.action === ACTIONS.POINTER}
+                        active={editorState.action === ACTIONS.POINTER}
                         onClick={props.onPointerClick}
                     />
                 )}
@@ -223,7 +228,7 @@ export const ToolsPanel = ({editor, ...props}) => {
                     testid="drag"
                     text="Drag"
                     icon={(<HandGrabIcon />)}
-                    active={editor.state.action === ACTIONS.MOVE}
+                    active={editorState.action === ACTIONS.MOVE}
                     onClick={props.onMoveClick}
                 />
                 {props.showSelect && (
@@ -231,7 +236,7 @@ export const ToolsPanel = ({editor, ...props}) => {
                         testid="select"
                         text="Select"
                         icon={(<PointerIcon />)}
-                        active={!editor.state.tool && isSelectEnabled(editor.state.action)}
+                        active={!editorState.tool && isSelectEnabled(editorState.action)}
                         onClick={props.onSelectionClick}
                     />
                 )}
@@ -245,17 +250,17 @@ export const ToolsPanel = ({editor, ...props}) => {
                                     testid={key}
                                     text={tools[key].text}
                                     icon={tools[key].icon}
-                                    active={editor.state.tool === key}
+                                    active={editorState.tool === key}
                                     onClick={() => props.onToolClick(key)}
                                 />
-                                {tools[key].quickPicks && key === editor.state.tool && (
+                                {tools[key].quickPicks && key === editorState.tool && (
                                     <PickPanel
-                                        values={editor.scene.defaults}
+                                        values={scene.defaults}
                                         items={tools[key].quickPicks}
                                         onChange={(field, value) => {
-                                            editor.scene.defaults[field] = value;
+                                            scene.defaults[field] = value;
                                             if (typeof tools[key].onQuickPickChange === "function") {
-                                                tools[key].onQuickPickChange(editor.scene.defaults, field, value);
+                                                tools[key].onQuickPickChange(scene.defaults, field, value);
                                             }
                                             // Force and update of the component
                                             update();
@@ -272,7 +277,7 @@ export const ToolsPanel = ({editor, ...props}) => {
                             </div>
                             <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-5">
                                 <Dropdown.CheckItem
-                                    checked={editor.state.tool === ELEMENTS.NOTE}
+                                    checked={editorState.tool === ELEMENTS.NOTE}
                                     onClick={() => props.onToolClick(ELEMENTS.NOTE)}
                                 >
                                     <Dropdown.Icon>
@@ -281,7 +286,7 @@ export const ToolsPanel = ({editor, ...props}) => {
                                     <span>Note</span>
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
-                                    checked={editor.state.action === ACTIONS.ERASE}
+                                    checked={editorState.action === ACTIONS.ERASE}
                                     onClick={props.onEraseClick}
                                 >
                                     <Dropdown.Icon>
@@ -298,12 +303,12 @@ export const ToolsPanel = ({editor, ...props}) => {
                 <div
                     className={classNames({
                         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-                        "bg-neutral-950 text-white": editor.state.toolLocked,
-                        "o-50 hover:o-100": !editor.state.toolLocked,
+                        "bg-neutral-950 text-white": editorState.toolLocked,
+                        "o-50 hover:o-100": !editorState.toolLocked,
                     })}
                     onClick={props.onToolLockClick}
                 >
-                    {editor.state.toolLocked ? <LockIcon /> : <UnlockIcon />}
+                    {editorState.toolLocked ? <LockIcon /> : <UnlockIcon />}
                 </div>
             )}
         </div>

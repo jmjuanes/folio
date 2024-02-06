@@ -9,14 +9,17 @@ export const Title = props => {
         "flex items-center leading-none p-2 truncate w-full text-neutral-800 rounded-md": true,
         "cursor-pointer hover:bg-neutral-100": props.editable,
     });
+
     const handleClick = () => {
         props.editable && setEditing(true);
     };
+
     React.useEffect(() => {
         if (editing && inputRef?.current) {
             inputRef.current.focus();
         }
     }, [editing]);
+
     return (
         <div className="flex w-56">
             {!editing && (

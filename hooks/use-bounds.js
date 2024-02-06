@@ -2,11 +2,18 @@ import {ACTIONS} from "@lib/constants.js";
 import {getRectangleBounds} from "@lib/utils/math.js";
 import {getRectanglePath} from "@lib/utils/paths.js";
 import {getElementConfig} from "@lib/elements.js";
+import {useScene} from "@contexts/scene.jsx";
+import {useEditor} from "@contexts/editor.jsx";
 
-export const useBounds = (editor, selectedElements = []) => {
+export const useBounds = () => {
+    const scene = useScene();
+    const [editorState] = useEditor();
+
     const bounds = [];
-    const {action, tool} = editor.state;
+    const {action, tool} = editorState;
+
     if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
+        const selectedElements = scene.getSelection();
         // const selectedElements = elements.filter(el => el.selected);
         // Generate bounds for active group
         // const groups = board.activeGroup ? [board.activeGroup] : Array.from(selectedGroups);
@@ -19,6 +26,7 @@ export const useBounds = (editor, selectedElements = []) => {
         //         });
         //     });
         // }
+
         // Check if there is only one element in the selection
         if (selectedElements.length === 1) {
             const elementConfig = getElementConfig(selectedElements[0]);
@@ -26,6 +34,7 @@ export const useBounds = (editor, selectedElements = []) => {
                 return elementConfig.getBounds(selectedElements[0]);
             }
         }
+
         // Generate default bounds for selected elements
         if (selectedElements.length > 0) {
             const p = getRectangleBounds(selectedElements);
@@ -34,6 +43,7 @@ export const useBounds = (editor, selectedElements = []) => {
             });
         }
     }
+
     // Return bounds
     return bounds;
 };
