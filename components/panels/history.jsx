@@ -19,7 +19,7 @@ export const HistoryPanel = props => (
     </HeaderContainer>
 );
 
-History.defaultProps = {
+HistoryPanel.defaultProps = {
     undoDisabled: false,
     redoDisabled: false,
     onUndoClick: null,

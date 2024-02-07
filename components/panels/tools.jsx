@@ -39,7 +39,6 @@ import {
 } from "@components/icons.jsx";
 import {Form} from "@components/commons/form.jsx";
 import {useScene} from "@contexts/scene.jsx";
-import {useEditor} from "@contexts/editor.jsx";
 
 const tools = {
     [ELEMENTS.SHAPE]: {
@@ -209,7 +208,6 @@ const isSelectEnabled = a => {
 export const ToolsPanel = props => {
     const update = useUpdate();
     const scene = useScene();
-    const [editorState] = useEditor();
 
     return (
         <div className="flex items-center relative select-none">
@@ -220,7 +218,7 @@ export const ToolsPanel = props => {
                         testid="pointer"
                         text="Pointer"
                         icon={(<LaserPointerIcon />)}
-                        active={editorState.action === ACTIONS.POINTER}
+                        active={props.action === ACTIONS.POINTER}
                         onClick={props.onPointerClick}
                     />
                 )}
@@ -228,7 +226,7 @@ export const ToolsPanel = props => {
                     testid="drag"
                     text="Drag"
                     icon={(<HandGrabIcon />)}
-                    active={editorState.action === ACTIONS.MOVE}
+                    active={props.action === ACTIONS.MOVE}
                     onClick={props.onMoveClick}
                 />
                 {props.showSelect && (
@@ -236,7 +234,7 @@ export const ToolsPanel = props => {
                         testid="select"
                         text="Select"
                         icon={(<PointerIcon />)}
-                        active={!editorState.tool && isSelectEnabled(editorState.action)}
+                        active={!props.tool && isSelectEnabled(props.action)}
                         onClick={props.onSelectionClick}
                     />
                 )}
@@ -250,10 +248,10 @@ export const ToolsPanel = props => {
                                     testid={key}
                                     text={tools[key].text}
                                     icon={tools[key].icon}
-                                    active={editorState.tool === key}
+                                    active={props.tool === key}
                                     onClick={() => props.onToolClick(key)}
                                 />
-                                {tools[key].quickPicks && key === editorState.tool && (
+                                {tools[key].quickPicks && key === props.tool && (
                                     <PickPanel
                                         values={scene.defaults}
                                         items={tools[key].quickPicks}
@@ -277,7 +275,7 @@ export const ToolsPanel = props => {
                             </div>
                             <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-5">
                                 <Dropdown.CheckItem
-                                    checked={editorState.tool === ELEMENTS.NOTE}
+                                    checked={props.tool === ELEMENTS.NOTE}
                                     onClick={() => props.onToolClick(ELEMENTS.NOTE)}
                                 >
                                     <Dropdown.Icon>
@@ -286,7 +284,7 @@ export const ToolsPanel = props => {
                                     <span>Note</span>
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
-                                    checked={editorState.action === ACTIONS.ERASE}
+                                    checked={props.action === ACTIONS.ERASE}
                                     onClick={props.onEraseClick}
                                 >
                                     <Dropdown.Icon>
@@ -303,12 +301,12 @@ export const ToolsPanel = props => {
                 <div
                     className={classNames({
                         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-                        "bg-neutral-950 text-white": editorState.toolLocked,
-                        "o-50 hover:o-100": !editorState.toolLocked,
+                        "bg-neutral-950 text-white": props.toolLocked,
+                        "o-50 hover:o-100": !props.toolLocked,
                     })}
                     onClick={props.onToolLockClick}
                 >
-                    {editorState.toolLocked ? <LockIcon /> : <UnlockIcon />}
+                    {props.toolLocked ? <LockIcon /> : <UnlockIcon />}
                 </div>
             )}
         </div>

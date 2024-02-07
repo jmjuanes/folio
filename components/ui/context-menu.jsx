@@ -1,17 +1,14 @@
 import React from "react";
 import {ContextMenu as Menu} from "@josemi-ui/react";
 import {useScene} from "@contexts/scene.jsx";
-import {useEditor} from "@contexts/editor.jsx";
 
 export const ContextMenu = props => {
     const scene = useScene();
-    const [editorState] = useEditor();
-
     const selectedElements = scene.getSelection();
     const style = {
-        top: editorState.contextMenu.top,
-        left: editorState.contextMenu.left,
-        transform: editorState.contextMenu.top > scene.height / 2 ? "translateY(-100%)" : "",
+        top: props.top,
+        left: props.left,
+        transform: props.top > scene.height / 2 ? "translateY(-100%)" : "",
     };
 
     return (
@@ -42,7 +39,7 @@ export const ContextMenu = props => {
                     <Menu.Item onClick={props.onBringForward}>Bring forward</Menu.Item>
                 </React.Fragment>
             )}
-            {board.elements.length > 0 && (
+            {selectedElements.length > 0 && (
                 <React.Fragment>
                     <Menu.Separator />
                     <Menu.Item onClick={props.onSelectAll}>Select all</Menu.Item>

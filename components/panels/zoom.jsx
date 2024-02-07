@@ -24,7 +24,7 @@ export const ZoomPanel = props => (
     </HeaderContainer>
 );
 
-Zooming.defaultProps = {
+ZoomPanel.defaultProps = {
     zoom: 1,
     onZoomInClick: null,
     onZoomOutClick: null,

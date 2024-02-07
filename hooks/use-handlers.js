@@ -1,13 +1,9 @@
 import {ACTIONS} from "@lib/constants.js";
 import {getElementConfig} from "@lib/elements.js";
-import {useEditor} from "@contexts/editor.jsx";
 import {useScene} from "@contexts/scene.jsx";
 
-export const useHandlers = () => {
+export const useHandlers = ({action, tool}) => {
     const scene = useScene();
-    const [editorState] = useEditor();
-
-    const {action, tool} = editorState;
 
     if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
         // Get current selection in scene

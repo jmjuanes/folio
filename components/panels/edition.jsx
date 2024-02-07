@@ -30,7 +30,6 @@ import {
     TEXT_COLOR_PALETTE,
     NOTE_COLOR_PALETTE,
 } from "@lib/utils/colors.js";
-import {sceneActions} from "@lib/scene.js";
 import {
     FillIcon,
     StrokeIcon,
@@ -60,6 +59,7 @@ import {
     SendBackwardIcon,
 } from "@components/icons.jsx";
 import {Form} from "@components/commons/form.jsx";
+import {useScene} from "@contexts/scene.jsx";
 
 // Available sections
 const SECTIONS = {
@@ -371,8 +371,9 @@ const getVisibleSections = (sections, values) => {
     });
 };
 
-export const EditionPanel = ({editor, ...props}) => {
-    const selectedElements = sceneActions.getSelection(editor.scene);
+export const EditionPanel = props => {
+    const scene = useScene();
+    const selectedElements = scene.getSelection();
     const [activeSection, setActiveSection] = React.useState("");
     const values = useValues(selectedElements);
     const keys = Object.keys(values);
@@ -390,37 +391,36 @@ export const EditionPanel = ({editor, ...props}) => {
         if (key === "actions" || key === "layers") {
             switch (value) {
                 case ACTIONS.REMOVE:
-                    sceneActions.removeElements(editor.scene, selectedElements);
+                    scene.removeElements(selectedElements);
                     break;
                 case ACTIONS.DUPLICATE:
-                    sceneActions.duplicateElements(editor.scene, selectedElements);
+                    scene.duplicateElements(selectedElements);
                     break;
                 case ACTIONS.SEND_BACK:
-                    sceneActions.sendElementsToBack(editor.scene, selectedElements);
+                    scene.sendElementsToBack(selectedElements);
                     break;
                 case ACTIONS.SEND_BACKWARD:
-                    sceneActions.sendElementsBackward(editor.scene, selectedElements);
+                    scene.sendElementsBackward(selectedElements);
                     break;
                 case ACTIONS.BRING_FORWARD:
-                    sceneActions.bringElementsForward(editor.scene, selectedElements);
+                    scene.bringElementsForward(selectedElements);
                     break;
                 case ACTIONS.BRING_FRONT:
-                    sceneActions.bringElementsToFront(editor.scene, selectedElements);
+                    scene.bringElementsToFront(selectedElements);
                     break;
                 case ACTIONS.LOCK:
-                    sceneActions.lockElements(editor.scene, selectedElements);
+                    scene.lockElements(selectedElements);
                     break;
                 case ACTIONS.UNLOCK:
-                    sceneActions.unlockElements(editor.scene, selectedElements);
+                    scene.unlockElements(selectedElements);
                     break;
             }
         }
         else {
-            sceneActions.updateElements(editor.scene, selectedElements, [key], [value], true);
+            scene.updateElements(selectedElements, [key], [value], true);
         }
-        editor.dispatchChange();
-        // editor.update();
-    }, [selectedElements.length]);
+        props.onChange();
+    }, [selectedElements.length, props.onChange]);
 
     // Handle active section change
     const handleSectionChange = newSection => {

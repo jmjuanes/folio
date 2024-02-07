@@ -4,6 +4,7 @@ import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
 import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "@lib/constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "@lib/export.js";
 import {Form} from "@components/commons/form.jsx";
+import {useScene} from "@contexts/scene.jsx";
 
 import transparentBg from "../../assets/transparent.svg";
 
@@ -45,6 +46,7 @@ const ExportPreview = props => (
 );
 
 export const ExportDialog = props => {
+    const scene = useScene();
     const copiedToClipboardTimer = React.useRef(null);
     const [copiedToClipboard, setCopiedToClipboard] = React.useState(false);
     const [preview, setPreview] = React.useState(null);
@@ -54,9 +56,9 @@ export const ExportDialog = props => {
     // Utility function to generate export options
     const getExportOptions = format => {
         return {
-            elements: board.elements,
+            elements: scene.getElements(),
             format: format || EXPORT_FORMATS.PNG,
-            background: options.includeBackground ? board.background : TRANSPARENT,
+            background: options.includeBackground ? scene.background : TRANSPARENT,
             padding: !!props.cropRegion ? 0 : EXPORT_PADDING,
             crop: props.cropRegion,
         };

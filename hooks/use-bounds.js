@@ -3,14 +3,10 @@ import {getRectangleBounds} from "@lib/utils/math.js";
 import {getRectanglePath} from "@lib/utils/paths.js";
 import {getElementConfig} from "@lib/elements.js";
 import {useScene} from "@contexts/scene.jsx";
-import {useEditor} from "@contexts/editor.jsx";
 
-export const useBounds = () => {
+export const useBounds = ({action, tool}) => {
     const scene = useScene();
-    const [editorState] = useEditor();
-
     const bounds = [];
-    const {action, tool} = editorState;
 
     if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
         const selectedElements = scene.getSelection();

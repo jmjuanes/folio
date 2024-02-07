@@ -1,10 +1,6 @@
 import {ACTIONS, STATES, CURSORS} from "@lib/constants.js";
-import {useEditor} from "@contexts/editor.jsx";
 
-export const useCursor = () => {
-    const [editorState] = useEditor();
-    const {action, tool, currentState} = editorState;
-
+export const useCursor = ({action, tool, currentState}) => {
     // Move action --> grab or grabbing cursor
     if (action === ACTIONS.MOVE) {
         return currentState === STATES.DRAGGING ? CURSORS.GRABBING : CURSORS.GRAB;

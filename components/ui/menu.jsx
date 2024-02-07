@@ -7,11 +7,9 @@ import {ColorPicker} from "../commons/color-picker.jsx";
 import {HeaderButton} from "../commons/header.jsx";
 import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "../icons.jsx";
 import {useScene} from "@contexts/scene.jsx";
-import {useEditor} from "@contexts/editor.jsx";
 
 export const Menu = props => {
     const scene = useScene();
-    const [editorState] = useEditor();
     const elements = scene.getElements();
 
     return (
@@ -69,7 +67,7 @@ export const Menu = props => {
                     <React.Fragment>
                         <Dropdown.Separator />
                         <Dropdown.CheckItem
-                            checked={!!editorState.settings.grid}
+                            checked={!!props?.settings?.grid}
                             onClick={props.onGridToggle}
                         >
                             <Dropdown.Icon>
@@ -78,7 +76,7 @@ export const Menu = props => {
                             <span>Grid</span>
                         </Dropdown.CheckItem>
                         <Dropdown.CheckItem
-                            checked={!!editorState.settings.presentationMode}
+                            checked={!!props?.settings?.presentationMode}
                             onClick={props.onPresentationToggle}
                         >
                             <Dropdown.Icon>
