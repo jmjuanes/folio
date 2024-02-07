@@ -2,15 +2,16 @@ import React from "react";
 import classnames from "classnames";
 import {PresentationIcon, ExternalLinkIcon} from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
-import {ACTIONS} from "@lib/constants.js";
 import {BACKGROUND_COLOR_PALETTE} from "@lib/utils/colors.js";
-import {useBoard} from "@components/contexts/board.jsx";
-import {ColorPicker} from "@components/commons/color-picker.jsx";
-import {HeaderButton} from "@components/commons/header.jsx";
-import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "@components/icons.jsx";
+import {ColorPicker} from "../commons/color-picker.jsx";
+import {HeaderButton} from "../commons/header.jsx";
+import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "../icons.jsx";
+import {useScene} from "@contexts/scene.jsx";
 
 export const Menu = props => {
-    const board = useBoard();
+    const scene = useScene();
+    const elements = scene.getElements();
+
     return (
         <div className="flex relative group" tabIndex="0">
             <HeaderButton
@@ -36,9 +37,9 @@ export const Menu = props => {
                 )}
                 {props.showExport && (
                     <Dropdown.Item
-                        disabled={board.elements.length === 0}
+                        disabled={elements.length === 0}
                         className={classnames({
-                            "pointer-events-none": board.elements.length === 0,
+                            "pointer-events-none": elements.length === 0,
                         })}
                         onClick={props.onExport}
                     >
@@ -50,9 +51,9 @@ export const Menu = props => {
                 )}
                 {props.showResetBoard && (
                     <Dropdown.Item
-                        disabled={board.elements.length === 0}
+                        disabled={elements.length === 0}
                         className={classnames({
-                            "pointer-events-none": board.elements.length === 0,
+                            "pointer-events-none": elements.length === 0,
                         })}
                         onClick={props.onResetBoard}
                     >
@@ -66,14 +67,8 @@ export const Menu = props => {
                     <React.Fragment>
                         <Dropdown.Separator />
                         <Dropdown.CheckItem
-                            checked={board.grid}
-                            onClick={() => {
-                                board.grid = !board.grid;
-                                board.update();
-                                props.onChange?.({
-                                    grid: board.grid,
-                                });
-                            }}
+                            checked={!!props?.settings?.grid}
+                            onClick={props.onGridToggle}
                         >
                             <Dropdown.Icon>
                                 <GridIcon />
@@ -81,13 +76,8 @@ export const Menu = props => {
                             <span>Grid</span>
                         </Dropdown.CheckItem>
                         <Dropdown.CheckItem
-                            checked={board.state.presentationMode}
-                            onClick={() => {
-                                board.state.presentationMode = !board.state.presentationMode;
-                                board.setTool(null);
-                                board.setAction(ACTIONS.MOVE);
-                                board.update();
-                            }}
+                            checked={!!props?.settings?.presentationMode}
+                            onClick={props.onPresentationToggle}
                         >
                             <Dropdown.Icon>
                                 <PresentationIcon />
@@ -102,16 +92,10 @@ export const Menu = props => {
                         <div className="text-xs px-2 pb-1 text-neutral-600 select-none">Background</div>
                         <div className="px-2">
                             <ColorPicker
-                                value={board.background}
+                                value={scene.background}
                                 values={BACKGROUND_COLOR_PALETTE}
                                 collapseColorPalette={false}
-                                onChange={newBackground => {
-                                    board.background = newBackground;
-                                    board.update();
-                                    props.onChange?.({
-                                        background: board.background,
-                                    });
-                                }}
+                                onChange={props.onBackgroundChange}
                             />
                         </div>
                     </React.Fragment>

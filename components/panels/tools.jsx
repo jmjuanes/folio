@@ -29,7 +29,6 @@ import {
 import {
     STROKE_COLOR_PICK,
     TEXT_COLOR_PICK,
-    NOTE_COLOR_PALETTE,
 } from "@lib/utils/colors.js";
 import {
     LaserPointerIcon,
@@ -39,7 +38,7 @@ import {
     WidthSmallIcon,
 } from "@components/icons.jsx";
 import {Form} from "@components/commons/form.jsx";
-import {useBoard} from "@components/contexts/board.jsx";
+import {useScene} from "@contexts/scene.jsx";
 
 const tools = {
     [ELEMENTS.SHAPE]: {
@@ -208,7 +207,8 @@ const isSelectEnabled = a => {
 // Tools Panel component
 export const ToolsPanel = props => {
     const update = useUpdate();
-    const board = useBoard();
+    const scene = useScene();
+
     return (
         <div className="flex items-center relative select-none">
             <div className="border border-neutral-200 rounded-xl shadow-md items-center bg-white flex gap-2 p-1">
@@ -218,7 +218,7 @@ export const ToolsPanel = props => {
                         testid="pointer"
                         text="Pointer"
                         icon={(<LaserPointerIcon />)}
-                        active={board.activeAction === ACTIONS.POINTER}
+                        active={props.action === ACTIONS.POINTER}
                         onClick={props.onPointerClick}
                     />
                 )}
@@ -226,7 +226,7 @@ export const ToolsPanel = props => {
                     testid="drag"
                     text="Drag"
                     icon={(<HandGrabIcon />)}
-                    active={board.activeAction === ACTIONS.MOVE}
+                    active={props.action === ACTIONS.MOVE}
                     onClick={props.onMoveClick}
                 />
                 {props.showSelect && (
@@ -234,7 +234,7 @@ export const ToolsPanel = props => {
                         testid="select"
                         text="Select"
                         icon={(<PointerIcon />)}
-                        active={!board.activeTool && isSelectEnabled(board.activeAction)}
+                        active={!props.tool && isSelectEnabled(props.action)}
                         onClick={props.onSelectionClick}
                     />
                 )}
@@ -248,17 +248,17 @@ export const ToolsPanel = props => {
                                     testid={key}
                                     text={tools[key].text}
                                     icon={tools[key].icon}
-                                    active={board.activeTool === key}
+                                    active={props.tool === key}
                                     onClick={() => props.onToolClick(key)}
                                 />
-                                {tools[key].quickPicks && key === board.activeTool && (
+                                {tools[key].quickPicks && key === props.tool && (
                                     <PickPanel
-                                        values={board.defaults}
+                                        values={scene.defaults}
                                         items={tools[key].quickPicks}
                                         onChange={(field, value) => {
-                                            board.defaults[field] = value;
+                                            scene.defaults[field] = value;
                                             if (typeof tools[key].onQuickPickChange === "function") {
-                                                tools[key].onQuickPickChange(board.defaults, field, value);
+                                                tools[key].onQuickPickChange(scene.defaults, field, value);
                                             }
                                             // Force and update of the component
                                             update();
@@ -275,7 +275,7 @@ export const ToolsPanel = props => {
                             </div>
                             <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-5">
                                 <Dropdown.CheckItem
-                                    checked={board.activeTool === ELEMENTS.NOTE}
+                                    checked={props.tool === ELEMENTS.NOTE}
                                     onClick={() => props.onToolClick(ELEMENTS.NOTE)}
                                 >
                                     <Dropdown.Icon>
@@ -284,7 +284,7 @@ export const ToolsPanel = props => {
                                     <span>Note</span>
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
-                                    checked={board.activeAction === ACTIONS.ERASE}
+                                    checked={props.action === ACTIONS.ERASE}
                                     onClick={props.onEraseClick}
                                 >
                                     <Dropdown.Icon>
@@ -301,12 +301,12 @@ export const ToolsPanel = props => {
                 <div
                     className={classNames({
                         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-                        "bg-neutral-950 text-white": board.lockTool,
-                        "o-50 hover:o-100": !board.lockTool,
+                        "bg-neutral-950 text-white": props.toolLocked,
+                        "o-50 hover:o-100": !props.toolLocked,
                     })}
-                    onClick={props.onLockToolClick}
+                    onClick={props.onToolLockClick}
                 >
-                    {board.lockTool ? <LockIcon /> : <UnlockIcon />}
+                    {props.toolLocked ? <LockIcon /> : <UnlockIcon />}
                 </div>
             )}
         </div>
@@ -323,5 +323,5 @@ ToolsPanel.defaultProps = {
     onPointerClick: null,
     onEraseClick: null,
     onToolClick: null,
-    onLockToolClick: null,
+    onToolLockClick: null,
 };

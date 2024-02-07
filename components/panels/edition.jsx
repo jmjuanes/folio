@@ -1,7 +1,13 @@
 import React from "react";
 import classNames from "classnames";
-import {TrashIcon, BanIcon, CopyIcon, LockIcon, UnlockIcon} from "@josemi-icons/react";
-import {NoteIcon} from "@josemi-icons/react";
+import {
+    BanIcon,
+    CopyIcon,
+    LockIcon,
+    NoteIcon,
+    TrashIcon,
+    UnlockIcon,
+} from "@josemi-icons/react";
 import {
     FORM_OPTIONS,
     FIELDS,
@@ -53,7 +59,7 @@ import {
     SendBackwardIcon,
 } from "@components/icons.jsx";
 import {Form} from "@components/commons/form.jsx";
-import {useBoard} from "@components/contexts/board.jsx";
+import {useScene} from "@contexts/scene.jsx";
 
 // Available sections
 const SECTIONS = {
@@ -366,62 +372,56 @@ const getVisibleSections = (sections, values) => {
 };
 
 export const EditionPanel = props => {
+    const scene = useScene();
+    const selectedElements = scene.getSelection();
     const [activeSection, setActiveSection] = React.useState("");
-    const board = useBoard();
-    const selectedElements = board.getSelectedElements();
     const values = useValues(selectedElements);
     const keys = Object.keys(values);
+
     // Get visible sections
-    const visibleSections = React.useMemo(
-        () => {
-            return {
-                style: getVisibleSections(styleSections, values),
-                display: getVisibleSections(displaySections, values),
-            };
-        },
-        [keys.length],
-    );
+    const visibleSections = React.useMemo(() => {
+        return {
+            style: getVisibleSections(styleSections, values),
+            display: getVisibleSections(displaySections, values),
+        };
+    }, [keys.length]);
+
     // Handle selection change
-    const handleChange = (key, value) => {
+    const handleChange = React.useCallback((key, value) => {
         if (key === "actions" || key === "layers") {
             switch (value) {
                 case ACTIONS.REMOVE:
-                    board.remove();
+                    scene.removeElements(selectedElements);
                     break;
                 case ACTIONS.DUPLICATE:
-                    board.duplicate();
+                    scene.duplicateElements(selectedElements);
                     break;
                 case ACTIONS.SEND_BACK:
-                    board.sendSelectedElementsToBack();
+                    scene.sendElementsToBack(selectedElements);
                     break;
                 case ACTIONS.SEND_BACKWARD:
-                    board.sendSelectedElementsBackward();
+                    scene.sendElementsBackward(selectedElements);
                     break;
                 case ACTIONS.BRING_FORWARD:
-                    board.bringSelectedElementsForward();
+                    scene.bringElementsForward(selectedElements);
                     break;
                 case ACTIONS.BRING_FRONT:
-                    board.bringSelectedElementsToFront();
+                    scene.bringElementsToFront(selectedElements);
                     break;
                 case ACTIONS.LOCK:
-                    board.lockElements(selectedElements);
+                    scene.lockElements(selectedElements);
                     break;
                 case ACTIONS.UNLOCK:
-                    board.unlockElements(selectedElements);
+                    scene.unlockElements(selectedElements);
                     break;
             }
-            // Handle change
-            props?.onChange?.(board.export());
         }
         else {
-            board.updateElements(selectedElements, [key], [value], true);
-            props?.onChange?.({
-                elements: board.elements,
-            });
+            scene.updateElements(selectedElements, [key], [value], true);
         }
-        // Force an update
-        board.update();
-    };
+        props.onChange();
+    }, [selectedElements.length, props.onChange]);
+
     // Handle active section change
     const handleSectionChange = newSection => {
         return setActiveSection(prevSection => {

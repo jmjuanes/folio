@@ -1,26 +1,27 @@
 import React from "react";
-import {withBoard} from "@components/contexts/board.jsx";
 import {HeaderContainer, HeaderButton} from "@components/commons/header.jsx";
 
 // History panel component
-export const History = withBoard((props, board) => (
+export const HistoryPanel = props => (
     <HeaderContainer>
         <HeaderButton
             icon="history-undo"
             roundedEnd={false}
-            disabled={board.isUndoDisabled()}
+            disabled={props.undoDisabled}
             onClick={props.onUndoClick}
         />
         <HeaderButton
             icon="history-redo"
             roundedStart={false}
-            disabled={board.isRedoDisabled()}
+            disabled={props.redoDisabled}
             onClick={props.onRedoClick}
         />
     </HeaderContainer>
-));
+);
 
-History.defaultProps = {
+HistoryPanel.defaultProps = {
+    undoDisabled: false,
+    redoDisabled: false,
     onUndoClick: null,
     onRedoClick: null,
 };

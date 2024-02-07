@@ -1,15 +1,13 @@
 import {ACTIONS, STATES, CURSORS} from "@lib/constants.js";
-import {useBoard} from "@components/contexts/board.jsx";
 
-export const useCursor = () => {
-    const board = useBoard();
-
+export const useCursor = ({action, tool, currentState}) => {
     // Move action --> grab or grabbing cursor
-    if (board.activeAction === ACTIONS.MOVE) {
-        return board.currentState === STATES.DRAGGING ? CURSORS.GRABBING : CURSORS.GRAB;
+    if (action === ACTIONS.MOVE) {
+        return currentState === STATES.DRAGGING ? CURSORS.GRABBING : CURSORS.GRAB;
     }
+
     // Check for active tool or erase action --> cross cursor
-    else if (board.activeTool || board.activeAction === ACTIONS.ERASE || board.activeAction === ACTIONS.SCREENSHOT) {
+    else if (tool || action === ACTIONS.ERASE || action === ACTIONS.SCREENSHOT) {
         return CURSORS.CROSS;
     }
 

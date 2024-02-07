@@ -1,18 +1,7 @@
 import React from "react";
 import {CURSORS, HANDLERS, PRIMARY, WHITE} from "@lib/constants.js";
+import {isCornerHandler, isEdgeHandler, isNodeHandler} from "@lib/handlers.js";
 import {SvgContainer} from "@components/commons/svg.jsx";
-
-export const isCornerHandler = handler => {
-    return handler.startsWith("corner");
-};
-
-export const isEdgeHandler = handler => {
-    return handler.startsWith("edge");
-};
-
-export const isNodeHandler = handler => {
-    return handler.startsWith("node");
-};
 
 const cursorsByHandlerType = {
     [HANDLERS.EDGE_TOP]: CURSORS.RESIZE_NS,

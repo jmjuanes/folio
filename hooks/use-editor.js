@@ -12,22 +12,72 @@ import {
 } from "@lib/constants.js";
 import {normalizeBounds} from "@lib/utils/math.js";
 import {isArrowKey} from "@lib/utils/keys.js";
+import {isInputTarget} from "@lib/utils/events.js";
 import {getElementConfig, createElement} from "@lib/elements.js";
 import {useScene} from "@contexts/scene.jsx";
-import {useEditor} from "@contexts/editor.jsx";
 
-export const useEvents = () => {
+// @private create a new editor state
+const createInitialEditorState = (props, scene) => {
+    const editorState = {
+        currentState: STATES.IDLE,
+        action: null,
+
+        // @description active tool state
+        tool: null,
+        toolLocked: false,
+
+        // @description current selection  
+        selection: null,
+
+        // @description editor settings
+        settings: {
+            grid: false,
+            presentationMode: false,
+        },
+
+        // @description context menu configuration
+        contextMenu: {
+            visible: false,
+        },
+
+        // @description export configuration
+        export: {
+            visible: false,
+            cropRegion: null,
+        },
+
+        // @description state for welcome elements
+        welcomeHintsVisible: props.showHints && scene.elements.length === 0,
+        welcomeVisible: false,
+    };
+    return editorState;
+};
+
+// @public use editor
+export const useEditor = props => {
     const update = useUpdate();
     const scene = useScene();
-    const [editorState, dispatchEditorChange] = useEditor();
-    const events = React.useRef(null);
+    const editor = React.useRef(null);
+    const onChangeRef = React.useRef(props?.onChange);
 
-    if (!events.current) {
+    // We need to update the reference to the onChange function
+    onChangeRef.current = props?.onChange;
+
+    // Initialize editor state
+    if (!editor.current) {
+        const editorState = createInitialEditorState(props, scene);
+
+        // @description dispatch an editor change
+        const dispatchChange = () => {
+            return onChangeRef.current(scene.toJSON());
+        };
+
+        // @private get position based on the grid state
         const getPosition = pos => {
             return editorState.settings.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
         };
 
-        // Remove the current text element
+        // @description remove the current text element
         const removeTextElement = element => {
             // Check if this element has been just created
             // Just remove this history entry
@@ -36,7 +86,7 @@ export const useEvents = () => {
                 history.shift();
             }
             scene.removeElements([element]);
-            dispatchEditorChange();
+            dispatchChange();
             update();
         };
 
@@ -46,7 +96,8 @@ export const useEvents = () => {
         let isDragged = false, isResized = false, isPrevSelected = false;
         let lastTranslateX = 0, lastTranslateY = 0;
 
-        events.current = {
+        // Editor events
+        const editorEvents = {
             onPointCanvas: () => {
                 if (editorState.action === ACTIONS.EDIT) {
                     if (activeElement?.editing) {
@@ -54,6 +105,7 @@ export const useEvents = () => {
                             removeTextElement(activeElement);
                         }
                     }
+                    activeElement.editing = false; // Disable editing
                     activeElement = null;
                     editorState.action = null;
                 }
@@ -85,7 +137,7 @@ export const useEvents = () => {
                     //         el.selected = el.selected || (el.group && el.group === element.group);
                     //     });
                     // }
-                    editor.update();
+                    update();
                 }
             },
             onPointHandler: () => {
@@ -102,7 +154,7 @@ export const useEvents = () => {
                             removeTextElement(activeElement);
                         }
                     }
-                    editor.setAction(null);
+                    editorState.action = null;
                 }
                 if (editorState.tool) {
                     editorState.action = ACTIONS.CREATE;
@@ -162,8 +214,8 @@ export const useEvents = () => {
                 //     };
                 // }
                 editorState.currentState = STATES.POINTING;
-                editorState.contextMenu = false;
-                editor.update();
+                editorState.contextMenu.visible = false;
+                update();
             },
             onPointerMove: event => {
                 if (editorState.action === ACTIONS.MOVE) {
@@ -264,16 +316,13 @@ export const useEvents = () => {
                 if (editorState.action === ACTIONS.MOVE) {
                     lastTranslateX = scene.translateX;
                     lastTranslateY = scene.translateY;
-                    // callbacks?.onChange?.({
-                    //     translateX: board.translateX,
-                    //     translateY: board.translateY,
-                    // });
                     return update();
                 }
                 else if (editorState.action === ACTIONS.ERASE) {
                     const erasedElements = scene.getErasedElements();
                     scene.removeElements(erasedElements);
-                    return dispatchEditorChange();
+                    dispatchChange();
+                    return update();
                 }
                 else if (editorState.action === ACTIONS.CREATE && activeElement) {
                     const element = activeElement;
@@ -289,7 +338,7 @@ export const useEvents = () => {
                         };
                     }
                     // Call the element created listener
-                    dispatchEditorChange();
+                    dispatchChange();
                     activeElement = null;
                     // Check if the tool is not the handdraw
                     // TODO: we need also to check if lock is enabled
@@ -338,10 +387,7 @@ export const useEvents = () => {
                                 };
                             }),
                         });
-                        dispatchEditorChange();
-                        // callbacks?.onChange?.({
-                        //     elements: editor.scene.elements,
-                        // });
+                        dispatchChange();
                     }
                     else if (event.element) {
                         const element = scene.getElement(event.element);
@@ -373,10 +419,8 @@ export const useEvents = () => {
                     });
                 }
                 else if (editorState.action === ACTIONS.SCREENSHOT) {
-                    // TODO dispatch screenshot change
-                    // callbacks?.onScreenshot?.({
-                    //     ...editorState.selection,
-                    // });
+                    editorState.export.visible = true;
+                    editorState.export.cropRegion = {...editorState.selection};
                 }
                 editorState.selection = null;
                 editorState.action = null;
@@ -410,9 +454,12 @@ export const useEvents = () => {
                     if (editorState.action === ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
                         event.preventDefault();
                         if (activeElement?.editing) {
+                            activeElement.editing = false; // Stopediting element
                             if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
                                 removeTextElement(activeElement);
                             }
+                            // Force to reset the active element
+                            activeElement = null;
                         }
                         editorState.action = null;
                         update();
@@ -426,7 +473,7 @@ export const useEvents = () => {
                     // Check for backspace key or cut --> remove elements
                     if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
                         scene.removeSelection();
-                        dispatchEditorChange();
+                        dispatchChange();
                     }
                     update();
                 }
@@ -436,7 +483,7 @@ export const useEvents = () => {
                     // sceneActions.clearSelection(editor.scene);
                     activeElement = null;
                     event.key === KEYS.Z ? scene.undo() : scene.redo();
-                    dispatchEditorChange();
+                    dispatchChange();
                     update();
                 }
                 // Check ESCAPE key
@@ -481,7 +528,7 @@ export const useEvents = () => {
                             };
                         }),
                     });
-                    dispatchEditorChange();
+                    dispatchChange();
                     update();
                 }
             },
@@ -493,7 +540,7 @@ export const useEvents = () => {
             onElementChange: (id, keys, values) => {
                 if (activeElement?.id === id && activeElement?.editing) {
                     scene.updateElements([activeElement], keys, values, true);
-                    dispatchEditorChange();
+                    dispatchChange();
                     update();
                 }
             },
@@ -536,14 +583,22 @@ export const useEvents = () => {
 
             // @description handle paste event
             onPaste: event => {
-                scene.paste(event).then(() => {
-                    editorState.contextMenu.visible = false;
-                    dispatchEditorChange();
+                scene.pasteElementsFromClipboard(event).then(() => {
+                    dispatchChange();
                     update();
                 });
             },
         };
+
+        // Save reference to the editor
+        editor.current = {
+            update: update,
+            state: editorState,
+            dispatchChange: dispatchChange,
+            events: editorEvents,
+        };
     }
 
-    return events.current;
+    // Return editor context
+    return editor.current;
 };

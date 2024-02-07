@@ -6,7 +6,7 @@ export const HeaderButton = props => {
     const classList = classNames(props.className || "", {
         "flex items-center p-2 rounded-md": true,
         "cursor-pointer hover:bg-neutral-100 text-neutral-800": !props.disabled,
-        "cursor-not-allowed o-40": props.disabled,
+        "cursor-not-allowed o-40 pointer-events-none": props.disabled,
     });
     const handleClick = () => {
         return !props.disabled && props?.onClick?.();

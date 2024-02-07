@@ -1,19 +1,16 @@
 import {ACTIONS} from "@lib/constants.js";
 import {getRectangleBounds} from "@lib/utils/math.js";
 import {getRectanglePath} from "@lib/utils/paths.js";
-import {useBoard} from "@components/contexts/board.jsx";
-import {getElementConfig} from "@elements/index.jsx";
+import {getElementConfig} from "@lib/elements.js";
+import {useScene} from "@contexts/scene.jsx";
 
-export const useBounds = () => {
+export const useBounds = ({action, tool}) => {
+    const scene = useScene();
     const bounds = [];
-    const board = useBoard();
-    const action = board.activeAction;
-    if (!board.activeTool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
-        // const selectedGroups = new Set();
-        // if (!board.activeGroup) {
-        //     board.elements.forEach(el => el.selected && el.group && selectedGroups.add(el.group));
-        // }
-        const selectedElements = board.elements.filter(el => el.selected);
+
+    if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
+        const selectedElements = scene.getSelection();
+        // const selectedElements = elements.filter(el => el.selected);
         // Generate bounds for active group
         // const groups = board.activeGroup ? [board.activeGroup] : Array.from(selectedGroups);
         // if (groups.length > 0) {
@@ -25,6 +22,7 @@ export const useBounds = () => {
         //         });
         //     });
         // }
+
         // Check if there is only one element in the selection
         if (selectedElements.length === 1) {
             const elementConfig = getElementConfig(selectedElements[0]);
@@ -32,6 +30,7 @@ export const useBounds = () => {
                 return elementConfig.getBounds(selectedElements[0]);
             }
         }
+
         // Generate default bounds for selected elements
         if (selectedElements.length > 0) {
             const p = getRectangleBounds(selectedElements);
@@ -40,6 +39,7 @@ export const useBounds = () => {
             });
         }
     }
+
     // Return bounds
     return bounds;
 };

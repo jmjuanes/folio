@@ -1,12 +1,14 @@
 import {ACTIONS} from "@lib/constants.js";
-import {getElementConfig} from "@elements/index.jsx";
-import {useBoard} from "@components/contexts/board.jsx";
+import {getElementConfig} from "@lib/elements.js";
+import {useScene} from "@contexts/scene.jsx";
 
-export const useHandlers = () => {
-    const board = useBoard();
-    const action = board.activeAction;
-    if (!board.activeTool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
-        const selectedElements = board.elements.filter(el => el.selected);
+export const useHandlers = ({action, tool}) => {
+    const scene = useScene();
+
+    if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
+        // Get current selection in scene
+        const selectedElements = scene.getSelection();
+
         // Handlers are only visible when the number of selected elements is exactly 1,
         // and also only if this element is not locked
         if (selectedElements.length === 1 && !selectedElements[0].locked) {
@@ -16,6 +18,7 @@ export const useHandlers = () => {
             }
         }
     }
+
     // No handlers to display
     return [];
 };

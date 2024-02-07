@@ -12,7 +12,7 @@ import {
     NOTE_TEXT_SIZE,
 } from "@lib/constants.js";
 import {measureText} from "@lib/utils/math.js";
-import {EditableText} from "../shared/editable-text.jsx";
+import {EditableText} from "./editable-text.jsx";
 
 export const NoteElement = props => {
     const x = props.creating ? props.x1 - NOTE_MIN_WIDTH / 2 : Math.min(props.x1, props.x2);
