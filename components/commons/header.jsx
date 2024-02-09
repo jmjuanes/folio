@@ -1,21 +1,34 @@
 import React from "react";
-import {renderIcon} from "@josemi-icons/react";
+import {renderIcon, ChevronDownIcon} from "@josemi-icons/react";
 import classNames from "classnames";
 
 export const HeaderButton = props => {
     const classList = classNames(props.className || "", {
-        "flex items-center p-2 rounded-md": true,
+        "flex justify-between items-center gap-1 p-2 rounded-md": true,
         "cursor-pointer hover:bg-neutral-100 text-neutral-800": !props.disabled,
         "cursor-not-allowed o-40 pointer-events-none": props.disabled,
+        "bg-neutral-100 text-neutral-950": !props.disabled && props.active,
     });
     const handleClick = () => {
         return !props.disabled && props?.onClick?.();
     };
     return (
         <div className={classList} onClick={handleClick}>
-            <div className="flex items-center text-xl">
-                {renderIcon(props.icon)}
+            <div className="flex items-center gap-1">
+                <div className="flex items-center text-xl">
+                    {renderIcon(props.icon)}
+                </div>
+                {props.text && (
+                    <div className="flex items-center text-sm truncate">
+                        <span className="font-medium">{props.text}</span>
+                    </div>
+                )}
             </div>
+            {props.showChevron && (
+                <div className="text-xs flex items-center">
+                    <ChevronDownIcon />
+                </div>
+            )}
         </div>
     );
 };

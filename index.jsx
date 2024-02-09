@@ -1,13 +1,10 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {useDebounce, useHash, useToggle} from "react-use";
-import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {saveAsJson, loadFromJson} from "@lib/json.js";
 import {ClientProvider, useClient} from "@contexts/client.jsx";
 import {ConfirmProvider, useConfirm} from "@contexts/confirm.jsx";
 import {Editor} from "@components/editor.jsx";
-import {Welcome} from "@components/welcome.jsx";
-import {Sidebar} from "@components/sidebar.jsx";
 
 const App = () => {
     const client = useClient();
@@ -108,35 +105,6 @@ const App = () => {
 
     return (
         <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-neutral-800 flex">
-            {sidebarVisible && (
-                <Sidebar
-                    currentId={id}
-                    boards={boards}
-                    onBoardCreate={handleBoardCreate}
-                    onBoardDelete={handleBoardDelete}
-                    onBoardImport={handleBoardImport}
-                />
-            )}
-            <div className="relative h-full">
-                <div
-                    className="absolute left-0 top-half z-5 cursor-pointer"
-                    style={{
-                        transform: "translateY(-50%)",
-                    }}
-                    onClick={() => toggleSidebarVisible()}
-                >
-                    <div className="flex bg-neutral-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
-                        {sidebarVisible ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                    </div>
-                </div>
-            </div>
-            {!id && (
-                <Welcome
-                    boards={[...boards]}
-                    onBoardCreate={handleBoardCreate}
-                    onBoardImport={handleBoardImport}
-                />
-            )}
             {(!!id && state?.id === id) && (
                 <Editor
                     key={id}
@@ -146,7 +114,6 @@ const App = () => {
                         {url: process.env.URL_ISSUES, text: "Report a bug"},
                     ]}
                     showLoad={true}
-                    showWelcomeHint={true}
                     onChange={newState => {
                         // Check if we have changed the title
                         // This will force an update in the sidebar

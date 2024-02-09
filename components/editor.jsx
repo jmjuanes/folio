@@ -13,12 +13,6 @@ import {
     ZOOM_STEP,
 } from "@lib/constants.js";
 import {blobToDataUrl} from "@lib/utils/blob.js";
-import {
-    getTextFromClipboard,
-    copyTextToClipboard,
-    getTextFromClipboardItem,
-    getBlobFromClipboardItem,
-} from "@lib/utils/clipboard.js";
 import {useHandlers} from "@hooks/use-handlers.js";
 import {useBounds} from "@hooks/use-bounds.js";
 import {useCursor} from "@hooks/use-cursor.js";
@@ -30,10 +24,12 @@ import {Menu} from "./ui/menu.jsx";
 import {Title} from "./ui/title.jsx";
 import {Hint} from "./ui/hint.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
+import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
 import {EditionPanel} from "./panels/edition.jsx";
 import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
+import {PagesPanel} from "./panels/pages.jsx";
 import {useConfirm} from "@contexts/confirm.jsx";
 import {SceneProvider, useScene} from "@contexts/scene.jsx";
 
@@ -50,19 +46,6 @@ const EditorWithScene = props => {
     const isScreenshot = editor.state.action === ACTIONS.SCREENSHOT;
     const isPresentation = !!editor.state.settings.presentationMode;
 
-    // Handle board reset
-    const handleResetBoard = () => {
-        return showConfirm({
-            title: "Clear board",
-            message: "This will clear the whole board. Do you want to continue?",
-            callback: () => {
-                scene.clearHistory();
-                scene.clearElements();
-                editor.dispatchChange();
-                editor.update();
-            },
-        });
-    };
     // Handle image load
     const handleImageLoad = () => {
         const options = {
@@ -84,7 +67,7 @@ const EditorWithScene = props => {
     };
 
     // Handle tool or action change
-    const handleToolOrActionChange = React.useCallback((newTool, newAction) => {
+    const handleToolOrActionChange = (newTool, newAction) => {
         editor.state.tool = newTool;
         editor.state.action = newAction;
         scene.getElements().forEach(element => {
@@ -92,27 +75,27 @@ const EditorWithScene = props => {
             element.editing = false;
         });
         editor.update();
-    }, []);
+    };
 
     // Effect to disable the visibility of the welcome elements
     React.useEffect(() => {
-        if (editor.state.welcomeHintsVisible && scene?.elements?.length > 0) {
+        if (editor.state.welcomeHintsVisible && scene?.page?.elements?.length > 0) {
             editor.state.welcomeHintsVisible = false;
             editor.update();
         }
-    }, [scene?.elements?.length]);
+    }, [scene?.page?.elements?.length]);
 
     return (
         <div className="relative overflow-hidden h-full w-full select-none">
             <Canvas
                 id={scene.id}
-                elements={scene.elements}
+                elements={scene.page.elements}
                 assets={scene.assets}
                 backgroundColor={scene.background}
                 cursor={cursor}
-                translateX={scene.translateX}
-                translateY={scene.translateY}
-                zoom={scene.zoom}
+                translateX={scene.page.translateX}
+                translateY={scene.page.translateY}
+                zoom={scene.page.zoom}
                 bounds={bounds}
                 boundsFillColor={SELECT_BOUNDS_FILL_COLOR}
                 boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
@@ -240,7 +223,7 @@ const EditorWithScene = props => {
             {props.showEdition && editor.state.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
-                        <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-6">
+                        <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-4">
                             <EditionPanel
                                 key={selectedElements.map(el => el.id).join("-")}
                                 onChange={() => {
@@ -251,6 +234,33 @@ const EditorWithScene = props => {
                         </div>
                     )}
                 </React.Fragment>
+            )}
+            {editor.state.pages.visible && !isScreenshot && (
+                <div className="absolute z-6 top-0 mt-16 left-0 pt-1 pl-4">
+                    <PagesPanel
+                        editable={!isPresentation}
+                        onChangeActivePage={page => {
+                            scene.setActivePage(page);
+                            editor.update();
+                        }}
+                        onPageCreate={() => {
+                            scene.addPage();
+                            editor.dispatchChange();
+                            editor.update();
+                        }}
+                        onPageDelete={page => {
+                            return showConfirm({
+                                title: "Delete page",
+                                message: `Do you want to delete '${page.title}'? This action can not be undone.`,
+                                callback: () => {
+                                    scene.removePage(page);
+                                    editor.dispatchChange();
+                                    editor.update();
+                                },
+                            });
+                        }}
+                    />
+                </div>
             )}
             {props.showHeader && !isScreenshot && (
                 <React.Fragment>
@@ -271,8 +281,21 @@ const EditorWithScene = props => {
                                         onChange={props.onChange}
                                         onSave={props.onSave}
                                         onLoad={props.onLoad}
-                                        onResetBoard={handleResetBoard}
-                                        onExport={() => setExportVisible(true)}
+                                        onResetBoard={() => {
+                                            return showConfirm({
+                                                title: "Clear board",
+                                                message: "This will clear the whole board. Do you want to continue?",
+                                                callback: () => {
+                                                    scene.reset();
+                                                    editor.dispatchChange();
+                                                    editor.update();
+                                                },
+                                            });
+                                        }}
+                                        onExport={() => {
+                                            editor.state.export.visible = true;
+                                            editor.update();
+                                        }}
                                         onBackgroundChange={newBackground => {
                                             scene.background = newBackground;
                                             editor.dispatchChange();
@@ -291,7 +314,7 @@ const EditorWithScene = props => {
                                 {props.showMenu && (props.showTitle || props.showScreenshot) && (
                                     <div className="w-px bg-neutral-200" />
                                 )}
-                                {props.showTitle && (
+                                {props.showTitle && false && (
                                     <Title
                                         title={scene.title}
                                         editable={!isPresentation}
@@ -301,6 +324,18 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
+                                <HeaderButton
+                                    className="w-40"
+                                    icon="copy"
+                                    text={scene.getActivePage().title}
+                                    showChevron={true}
+                                    active={editor.state.pages.visible}
+                                    onClick={() => {
+                                        editor.state.pages.visible = !editor.state.pages.visible;
+                                        editor.state.contextMenu.visible = false;
+                                        editor.update();
+                                    }}
+                                />
                                 {props.showScreenshot && !isPresentation && (
                                     <HeaderButton
                                         icon="camera"
@@ -311,7 +346,7 @@ const EditorWithScene = props => {
                                     />
                                 )}
                             </HeaderContainer>
-                            {(editor.state.welcomeHintsVisible && !editor.state.tool && !isPresentation) && (
+                            {(editor.state.welcomeHintsVisible && !editor.state.tool && !isPresentation && !editor.state.pages.visible) && (
                                 <Hint position="bottom" title="Actions" contentClassName="w-48">
                                     <div className="flex items-center justify-center gap-2">
                                         <BarsIcon />
@@ -326,7 +361,7 @@ const EditorWithScene = props => {
                         </div>
                         {props.headerLeftContent}
                     </div>
-                    <div className="absolute top-0 right-0 pt-4 pr-6 z-7 flex gap-2">
+                    <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
                         {props.showHistory && !isPresentation && (
                             <div className="flex relative">
                                 <HistoryPanel
@@ -358,11 +393,11 @@ const EditorWithScene = props => {
                                 <ZoomPanel
                                     zoom={scene.getZoom()}
                                     onZoomInClick={() => {
-                                        scene.setZoom(scene.zoom + ZOOM_STEP);
+                                        scene.setZoom(scene.page.zoom + ZOOM_STEP);
                                         editor.update();
                                     }}
                                     onZoomOutClick={() => {
-                                        scene.setZoom(scene.zoom - ZOOM_STEP);
+                                        scene.setZoom(scene.page.zoom - ZOOM_STEP);
                                         editor.update();
                                     }}
                                 />
@@ -379,6 +414,15 @@ const EditorWithScene = props => {
                         {props.headerRightContent}
                     </div>
                 </React.Fragment>
+            )}
+            {editor.state.welcomeVisible && (
+                <WelcomeDialog
+                    onCreate={() => {
+                        editor.state.welcomeVisible = false;
+                        editor.update();
+                    }}
+                    onLoad={props.onLoad}
+                />
             )}
             {editor.state.export.visible && (
                 <ExportDialog
@@ -428,4 +472,5 @@ Editor.defaultProps = {
     showHeader: true,
     // showFooter: false,
     showHints: true,
+    showWelcome: true,
 };

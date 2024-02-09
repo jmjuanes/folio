@@ -18,6 +18,7 @@ import {useScene} from "@contexts/scene.jsx";
 
 // @private create a new editor state
 const createInitialEditorState = (props, scene) => {
+    const isSceneEmpty = scene.pages.length === 1 && scene.page.elements.length === 0;
     const editorState = {
         currentState: STATES.IDLE,
         action: null,
@@ -46,9 +47,14 @@ const createInitialEditorState = (props, scene) => {
             cropRegion: null,
         },
 
-        // @description state for welcome elements
-        welcomeHintsVisible: props.showHints && scene.elements.length === 0,
-        welcomeVisible: false,
+        // @description pages state
+        pages: {
+            visible: false,
+        },
+
+        // @description state for dialogs
+        welcomeHintsVisible: props.showHints && isSceneEmpty,
+        welcomeVisible: props.showWelcome && isSceneEmpty,
     };
     return editorState;
 };
@@ -204,8 +210,8 @@ export const useEditor = props => {
                 }
                 // We need to update the last translated point before start moving the board
                 else if (editorState.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.translateX;
-                    lastTranslateY = scene.translateY;
+                    lastTranslateX = scene.page.translateX;
+                    lastTranslateY = scene.page.translateY;
                 }
                 // else if (editorState.action === ACTIONS.ERASE) {
                 //     editorState.erase = {
@@ -220,8 +226,8 @@ export const useEditor = props => {
             onPointerMove: event => {
                 if (editorState.action === ACTIONS.MOVE) {
                     editorState.currentState = STATES.DRAGGING;
-                    scene.translateX = Math.floor(lastTranslateX + event.dx * scene.zoom);
-                    scene.translateY = Math.floor(lastTranslateY + event.dy * scene.zoom);
+                    scene.page.translateX = Math.floor(lastTranslateX + event.dx * scene.zoom);
+                    scene.page.translateY = Math.floor(lastTranslateY + event.dy * scene.zoom);
                 }
                 else if (editorState.action === ACTIONS.ERASE) {
                     editorState.currentState = STATES.ERASING;
@@ -314,8 +320,8 @@ export const useEditor = props => {
             onPointerUp: event => {
                 editorState.currentState = STATES.IDLE;
                 if (editorState.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.translateX;
-                    lastTranslateY = scene.translateY;
+                    lastTranslateX = scene.page.translateX;
+                    lastTranslateY = scene.page.translateY;
                     return update();
                 }
                 else if (editorState.action === ACTIONS.ERASE) {
@@ -330,7 +336,7 @@ export const useEditor = props => {
                     element.selected = true; // By default select this element
                     getElementConfig(element)?.onCreateEnd?.(element, event);
                     // We need to patch the history to save the new element values
-                    const last = scene.history[0] || {};
+                    const last = scene.page.history[0] || {};
                     if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
                         last.elements[0].newValues = {
                             ...element,
