@@ -1,6 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
-import {BarsIcon, CameraIcon} from "@josemi-icons/react";
+import {BarsIcon, CameraIcon, CopyIcon} from "@josemi-icons/react";
 import {
     ACTIONS,
     ELEMENTS,
@@ -383,6 +383,10 @@ const EditorWithScene = props => {
                                     <div className="flex items-center justify-center gap-2">
                                         <BarsIcon />
                                         <span>Export, save, and configure.</span>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-2">
+                                        <CopyIcon />
+                                        <span>Change and manage pages.</span>
                                     </div>
                                     <div className="flex items-center justify-center gap-2">
                                         <CameraIcon />
