@@ -1,6 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
-import {BarsIcon, CameraIcon, CopyIcon} from "@josemi-icons/react";
+import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
 import {
     ACTIONS,
     ELEMENTS,
@@ -358,7 +358,7 @@ const EditorWithScene = props => {
                                 )}
                                 <HeaderButton
                                     className="w-40"
-                                    icon="copy"
+                                    icon="files"
                                     text={scene.getActivePage().title}
                                     showChevron={true}
                                     active={editor.state.pagesVisible}
@@ -385,7 +385,7 @@ const EditorWithScene = props => {
                                         <span>Export, save, and configure.</span>
                                     </div>
                                     <div className="flex items-center justify-center gap-2">
-                                        <CopyIcon />
+                                        <FilesIcon />
                                         <span>Change and manage pages.</span>
                                     </div>
                                     <div className="flex items-center justify-center gap-2">
