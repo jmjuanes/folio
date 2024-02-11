@@ -296,6 +296,9 @@ const EditorWithScene = props => {
                             editor.dispatchChange();
                             editor.update();
                         }}
+                        onPageEdit={() => {
+                            editor.dispatchChange();
+                        }}
                         onPageDelete={page => {
                             return showConfirm({
                                 title: "Delete page",
