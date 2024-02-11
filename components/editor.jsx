@@ -47,25 +47,31 @@ const EditorWithScene = props => {
     const isScreenshot = editor.state.action === ACTIONS.SCREENSHOT;
     const isPresentation = !!editor.state.presentationMode;
 
-    // Handle loading a new scene
+    // Handle loading a new drawing
     // We will check first if the onLoad function has been provided as props. If yes,
     // we will call this function instead of loading a canvas from file
     const handleLoad = React.useCallback(() => {
         if (typeof props.onLoad === "function") {
             return props.onLoad();
         }
+        const loadDrawing = () => {
+            return loadFromJson()
+                .then(data => {
+                    scene.fromJSON(data);
+                    editor.state.welcomeVisible = false;
+                    editor.update();
+                })
+                .catch(error => console.error(error));
+        };
+        // Check if scene is empty
+        if (scene.pages.length === 1 && scene.page.elements.length === 0) {
+            return loadDrawing();
+        }
+        // If is not empty, display confirmation
         return showConfirm({
             title: "Load new drawing",
             message: "Changes made in this drawing will be lost. Do you want to continue?",
-            callback: () => {
-                return loadFromJson()
-                    .then(data => {
-                        scene.fromJSON(data);
-                        editor.state.welcomeVisible = false;
-                        editor.update();
-                    })
-                    .catch(error => console.error(error));
-            },
+            callback: () => loadDrawing(),
         });
     },  [props.onLoad]);
 
@@ -331,11 +337,11 @@ const EditorWithScene = props => {
                                         editor.update();
                                     }}
                                     onGridModeChange={() => {
-                                        editor.state.settings.grid = !editor.state.settings.grid;
+                                        editor.state.gridMode = !editor.state.gridMode;
                                         editor.update();
                                     }}
                                     onPresentationModeChange={() => {
-                                        editor.state.settings.presentationMode = !editor.state.settings.presentationMode;
+                                        editor.state.presentationMode = !editor.state.presentationMode;
                                         handleToolOrActionChange(null, ACTIONS.MOVE);
                                     }}
                                 />
@@ -372,7 +378,7 @@ const EditorWithScene = props => {
                                     />
                                 )}
                             </HeaderContainer>
-                            {(editor.state.hintsVisible && !editor.state.tool && !isPresentation && !editor.state.pages.visible) && (
+                            {(editor.state.hintsVisible && !editor.state.tool && !isPresentation && !editor.state.pagesVisible) && (
                                 <Hint position="bottom" title="Actions" contentClassName="w-48">
                                     <div className="flex items-center justify-center gap-2">
                                         <BarsIcon />
