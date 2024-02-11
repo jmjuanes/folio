@@ -468,7 +468,7 @@ export const useEditor = props => {
                 else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                     event.preventDefault();
                     if (event.key === KEYS.X || event.key === KEYS.C) {
-                        scene.copy();
+                        scene.copyElementsToClipboard(scene.getSelection());
                     }
                     // Check for backspace key or cut --> remove elements
                     if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
