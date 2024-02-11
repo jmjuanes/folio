@@ -1,5 +1,6 @@
 import React from "react";
-import {renderIcon, TrashIcon, CheckIcon} from "@josemi-icons/react";
+import classNames from "classnames";
+import {renderIcon, TrashIcon, CheckIcon, PencilIcon, CloseIcon} from "@josemi-icons/react";
 import {useScene} from "@contexts/scene.jsx";
 
 const ActionButton = ({icon, onClick}) => (
@@ -10,30 +11,89 @@ const ActionButton = ({icon, onClick}) => (
     </div>
 );
 
-// @private page item component
-const Page = ({title, active, editable, onClick, onDelete}) => (
-    <div className="relative group flex items-center hover:bg-neutral-100 rounded-md">
-        {active && (
-            <div className="absolute flex text-sm pl-2">
-                <CheckIcon />
-            </div>
-        )}
-        <div className="cursor-pointer flex items-center gap-2 w-full p-2 ml-6" onClick={onClick}>
-            <div className="font-medium text-sm w-40 truncate">{title}</div>
+// @private page action button
+const PageActionButton = ({className = "", children, onClick}) => (
+    <div className={classNames(className, "cursor-pointer items-center o-60 hover:o-100")} onClick={onClick}>
+        <div className="flex items-center text-lg py-2 px-1">
+            {children}
         </div>
-        {!active && editable && (
-            <div className="hidden group-hover:flex cursor-pointer items-center o-60 hover:o-100" onClick={onDelete}>
-                <div className="flex items-center text-lg p-2">
-                    <TrashIcon />
-                </div>
-            </div>
-        )}
     </div>
 );
 
+// @private page item component
+const Page = ({title, active, editable, editing, onClick, ...props}) => {
+    const inputRef = React.useRef(null);
+    React.useEffect(() => {
+        if (editable && editing && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [editing]);
+
+    return (
+        <div className="relative group flex items-center hover:bg-neutral-100 rounded-md">
+            {active && (
+                <div className="absolute flex text-sm pl-2">
+                    <CheckIcon />
+                </div>
+            )}
+            {!editing && (
+                <React.Fragment>
+                    <div className="cursor-pointer flex items-center gap-2 w-full p-2 ml-6" onClick={onClick}>
+                        <div className="font-medium text-sm w-32 truncate" title={title}>
+                            <span>{title}</span>
+                        </div>
+                    </div>
+                    {editable && (
+                        <PageActionButton className="hidden group-hover:flex" onClick={props.onEdit}>
+                            <PencilIcon />
+                        </PageActionButton>
+                    )}
+                    {editable && !active  && (
+                        <PageActionButton className="hidden group-hover:flex" onClick={props.onDelete}>
+                            <TrashIcon />
+                        </PageActionButton>
+                    )}
+                </React.Fragment>
+            )}
+            {editing && (
+                <React.Fragment>
+                    <input
+                        ref={inputRef}
+                        className="w-full bg-transparent border-none outline-none py-2 py-0 text-sm ml-8"
+                        defaultValue={title}
+                        onKeyUp={event => {
+                            // Check for enter key --> submit new page title
+                            if (event.key === "Enter") {
+                                return props.onEditSubmit(inputRef.current.value);
+                            }
+                            // Check for ESC key --> Cancel editing page
+                            else if (event.key === "Escape") {
+                                return props.onEditCancel();
+                            }
+                        }}
+                    />
+                    <PageActionButton onClick={() => props.onEditSubmit(inputRef.current.value || "")}>
+                        <CheckIcon />
+                    </PageActionButton>
+                    <PageActionButton onClick={() => props.onEditCancel()}>
+                        <CloseIcon />
+                    </PageActionButton>
+                </React.Fragment>
+            )}
+        </div>
+    );
+};
+
 export const PagesPanel = props => {
+    const [editingPage, setEditingPage] = React.useState("");
     const scene = useScene();
     const activePage = scene.getActivePage();
+
+    // Handle creating a new page: cancel current edition and call 'onPageCreate'.
+    const handlePageCreate = React.useCallback(() => {
+        setEditingPage("");
+        props.onPageCreate();
+    }, [editingPage, props.onPageCreate]);
 
     return (
         <div className="w-64 border border-neutral-200 rounded-lg shadow-md bg-white p-0 relative">
@@ -41,7 +101,7 @@ export const PagesPanel = props => {
                 <div className="font-medium text-sm">Pages</div>
                 {props.editable && (
                     <div className="flex items-center gap-0">
-                        <ActionButton icon="plus" onClick={props.onPageCreate} />
+                        <ActionButton icon="plus" onClick={handlePageCreate} />
                     </div>
                 )}
             </div>
@@ -52,8 +112,22 @@ export const PagesPanel = props => {
                         title={page.title}
                         active={page.id === activePage.id}
                         editable={props.editable}
-                        onClick={() => props.onChangeActivePage(page)}
-                        onDelete={() => props.onPageDelete(page)}
+                        editing={editingPage === page.id}
+                        onClick={() => {
+                            setEditingPage("");
+                            props.onChangeActivePage(page);
+                        }}
+                        onDelete={() => {
+                            setEditingPage("");
+                            props.onPageDelete(page);
+                        }}
+                        onEdit={() => setEditingPage(page.id)}
+                        onEditSubmit={title => {
+                            page.title = title || page.title;
+                            setEditingPage("");
+                            props.onPageEdit(page);
+                        }}
+                        onEditCancel={() => setEditingPage("")}
                     />
                 ))}
             </div>

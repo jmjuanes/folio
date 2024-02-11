@@ -296,6 +296,9 @@ const EditorWithScene = props => {
                             editor.dispatchChange();
                             editor.update();
                         }}
+                        onPageEdit={() => {
+                            editor.dispatchChange();
+                        }}
                         onPageDelete={page => {
                             return showConfirm({
                                 title: "Delete page",
@@ -357,9 +360,12 @@ const EditorWithScene = props => {
                                     />
                                 )}
                                 <HeaderButton
-                                    className="w-40"
                                     icon="files"
-                                    text={scene.getActivePage().title}
+                                    text={(
+                                        <div className="w-32 truncate">
+                                            <span>{scene.getActivePage().title}</span>
+                                        </div>
+                                    )}
                                     showChevron={true}
                                     active={editor.state.pagesVisible}
                                     onClick={() => {

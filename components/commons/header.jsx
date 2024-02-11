@@ -19,8 +19,8 @@ export const HeaderButton = props => {
                     {renderIcon(props.icon)}
                 </div>
                 {props.text && (
-                    <div className="flex items-center text-sm truncate">
-                        <span className="font-medium">{props.text}</span>
+                    <div className="flex items-center text-sm font-medium">
+                        {props.text}
                     </div>
                 )}
             </div>
