@@ -74,7 +74,7 @@ export const useEditor = props => {
 
         // @private get position based on the grid state
         const getPosition = pos => {
-            return editorState.settings.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
+            return editorState.gridMode ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
         };
 
         // @description remove the current text element
