@@ -34,7 +34,9 @@ const Page = ({title, active, editable, editing, onClick, ...props}) => {
             {!editing && (
                 <React.Fragment>
                     <div className="cursor-pointer flex items-center gap-2 w-full p-2 ml-6" onClick={onClick}>
-                        <div className="font-medium text-sm w-32 truncate">{title}</div>
+                        <div className="font-medium text-sm w-32 truncate" title={title}>
+                            <span>{title}</span>
+                        </div>
                     </div>
                     {editable && (
                         <PageActionButton className="hidden group-hover:flex" onClick={props.onEdit}>
