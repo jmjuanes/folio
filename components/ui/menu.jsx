@@ -8,6 +8,16 @@ import {HeaderButton} from "../commons/header.jsx";
 import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "../icons.jsx";
 import {useScene} from "@contexts/scene.jsx";
 
+// @private menu link component
+const MenuLink = ({text, url}) => (
+    <Dropdown.Item as="a" href={url} target="_blank">
+        <Dropdown.Icon>
+            <ExternalLinkIcon />
+        </Dropdown.Icon>
+        <span>{text}</span>
+    </Dropdown.Item>
+);
+
 export const Menu = props => {
     const scene = useScene();
     const elements = scene.getElements();
@@ -49,43 +59,39 @@ export const Menu = props => {
                         <span>Export image...</span>
                     </Dropdown.Item>
                 )}
-                {props.showResetBoard && (
+                {props.showClear && (
                     <Dropdown.Item
                         disabled={elements.length === 0}
                         className={classnames({
                             "pointer-events-none": elements.length === 0,
                         })}
-                        onClick={props.onResetBoard}
+                        onClick={props.onClear}
                     >
                         <Dropdown.Icon>
                             <TrashIcon />
                         </Dropdown.Icon>
-                        <span>Reset the board</span>
+                        <span>Reset the canvas</span>
                     </Dropdown.Item>
                 )}
-                {props.showSettings && (
-                    <React.Fragment>
-                        <Dropdown.Separator />
-                        <Dropdown.CheckItem
-                            checked={!!props?.settings?.grid}
-                            onClick={props.onGridToggle}
-                        >
-                            <Dropdown.Icon>
-                                <GridIcon />
-                            </Dropdown.Icon>
-                            <span>Grid</span>
-                        </Dropdown.CheckItem>
-                        <Dropdown.CheckItem
-                            checked={!!props?.settings?.presentationMode}
-                            onClick={props.onPresentationToggle}
-                        >
-                            <Dropdown.Icon>
-                                <PresentationIcon />
-                            </Dropdown.Icon>
-                            <span>Presentation mode</span>
-                        </Dropdown.CheckItem>
-                    </React.Fragment>
-                )}
+                <Dropdown.Separator />
+                <Dropdown.CheckItem
+                    checked={!!props?.gridMode}
+                    onClick={props.onGridModeChange}
+                >
+                    <Dropdown.Icon>
+                        <GridIcon />
+                    </Dropdown.Icon>
+                    <span>Grid</span>
+                </Dropdown.CheckItem>
+                <Dropdown.CheckItem
+                    checked={!!props?.presentationMode}
+                    onClick={props.onPresentationModeChange}
+                >
+                    <Dropdown.Icon>
+                        <PresentationIcon />
+                    </Dropdown.Icon>
+                    <span>Presentation mode</span>
+                </Dropdown.CheckItem>
                 {props.showChangeBackground && (
                     <React.Fragment>
                         <Dropdown.Separator />
@@ -100,21 +106,11 @@ export const Menu = props => {
                         </div>
                     </React.Fragment>
                 )}
-                {(props.showLinks && props.links?.length > 0) && (
+                {(props.links && props.links?.length > 0) && (
                     <React.Fragment>
                         <Dropdown.Separator />
                         {props.links.map(link => (
-                            <Dropdown.Item
-                                key={link.url}
-                                as="a"
-                                href={link.url}
-                                target="_blank"
-                            >
-                                <Dropdown.Icon>
-                                    <ExternalLinkIcon />
-                                </Dropdown.Icon>
-                                <span>{link.text}</span>
-                            </Dropdown.Item>
+                            <MenuLink key={link.url} {...link} />
                         ))}
                     </React.Fragment>
                 )}
@@ -124,17 +120,19 @@ export const Menu = props => {
 };
 
 Menu.defaultProps = {
+    gridMode: false,
+    presentationMode: false,
     links: [],
+    showSave: true,
     showLoad: true,
-    showResetBoard: true,
-    showSettings: true,
+    showClear: true,
     showChangeBackground: true,
-    showLinks: true,
     showExport: true,
-    onChange: null,
     onSave: null,
-    onResetBoard: null,
+    onClear: null,
     onLoad: null,
     onExport: null,
-    onScreenshot: null,
+    onGridModeChange: null,
+    onPresentationModeChange: null,
+    onBackgroundChange: null,
 };

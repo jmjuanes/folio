@@ -1,6 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
-import {BarsIcon, CameraIcon} from "@josemi-icons/react";
+import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
 import {
     ACTIONS,
     ELEMENTS,
@@ -12,13 +12,8 @@ import {
     STATES,
     ZOOM_STEP,
 } from "@lib/constants.js";
+import {saveAsJson, loadFromJson} from "@lib/json.js";
 import {blobToDataUrl} from "@lib/utils/blob.js";
-import {
-    getTextFromClipboard,
-    copyTextToClipboard,
-    getTextFromClipboardItem,
-    getBlobFromClipboardItem,
-} from "@lib/utils/clipboard.js";
 import {useHandlers} from "@hooks/use-handlers.js";
 import {useBounds} from "@hooks/use-bounds.js";
 import {useCursor} from "@hooks/use-cursor.js";
@@ -30,10 +25,12 @@ import {Menu} from "./ui/menu.jsx";
 import {Title} from "./ui/title.jsx";
 import {Hint} from "./ui/hint.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
+import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
 import {EditionPanel} from "./panels/edition.jsx";
 import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
+import {PagesPanel} from "./panels/pages.jsx";
 import {useConfirm} from "@contexts/confirm.jsx";
 import {SceneProvider, useScene} from "@contexts/scene.jsx";
 
@@ -48,23 +45,64 @@ const EditorWithScene = props => {
 
     const selectedElements = scene.getSelection();
     const isScreenshot = editor.state.action === ACTIONS.SCREENSHOT;
-    const isPresentation = !!editor.state.settings.presentationMode;
+    const isPresentation = !!editor.state.presentationMode;
 
-    // Handle board reset
-    const handleResetBoard = () => {
+    // Handle loading a new drawing
+    // We will check first if the onLoad function has been provided as props. If yes,
+    // we will call this function instead of loading a canvas from file
+    const handleLoad = React.useCallback(() => {
+        if (typeof props.onLoad === "function") {
+            return props.onLoad();
+        }
+        const loadDrawing = () => {
+            return loadFromJson()
+                .then(data => {
+                    scene.fromJSON(data);
+                    editor.state.welcomeVisible = false;
+                    editor.update();
+                })
+                .catch(error => console.error(error));
+        };
+        // Check if scene is empty
+        if (scene.pages.length === 1 && scene.page.elements.length === 0) {
+            return loadDrawing();
+        }
+        // If is not empty, display confirmation
         return showConfirm({
-            title: "Clear board",
-            message: "This will clear the whole board. Do you want to continue?",
+            title: "Load new drawing",
+            message: "Changes made in this drawing will be lost. Do you want to continue?",
+            callback: () => loadDrawing(),
+        });
+    },  [props.onLoad]);
+
+    // Handle save canvas to a file
+    // If a onSave function has been provided as prop, we will execute it instead of loading a
+    // canvas from file
+    const handleSave = React.useCallback(() => {
+        if (typeof props.onSave === "function") {
+            return props.onSave();
+        }
+        // Default action: save canvas to file
+        return saveAsJson(scene.toJSON())
+            .then(() => console.log("Folio file saved"))
+            .catch(error => console.error(error));
+    }, [props.onSave]);
+
+    // Handle clear drawing
+    const handleClear = React.useCallback(() => {
+        return showConfirm({
+            title: "Clear drawing",
+            message: "This will clear the whole drawing, including pages. Do you want to continue?",
             callback: () => {
-                scene.clearHistory();
-                scene.clearElements();
+                scene.reset();
                 editor.dispatchChange();
                 editor.update();
             },
         });
-    };
+    }, []);
+
     // Handle image load
-    const handleImageLoad = () => {
+    const handleImageLoad = React.useCallback(() => {
         const options = {
             description: "Folio Board",
             extensions: [
@@ -81,12 +119,13 @@ const EditorWithScene = props => {
                 editor.update();
             })
             .catch(error => console.error(error));
-    };
+    }, []);
 
     // Handle tool or action change
     const handleToolOrActionChange = React.useCallback((newTool, newAction) => {
         editor.state.tool = newTool;
         editor.state.action = newAction;
+        editor.state.contextMenu = false;
         scene.getElements().forEach(element => {
             element.selected = false;
             element.editing = false;
@@ -96,23 +135,23 @@ const EditorWithScene = props => {
 
     // Effect to disable the visibility of the welcome elements
     React.useEffect(() => {
-        if (editor.state.welcomeHintsVisible && scene?.elements?.length > 0) {
-            editor.state.welcomeHintsVisible = false;
+        if (editor.state.hintsVisible && scene?.page?.elements?.length > 0) {
+            editor.state.hintsVisible = false;
             editor.update();
         }
-    }, [scene?.elements?.length]);
+    }, [scene?.page?.elements?.length]);
 
     return (
         <div className="relative overflow-hidden h-full w-full select-none">
             <Canvas
                 id={scene.id}
-                elements={scene.elements}
+                elements={scene.page.elements}
                 assets={scene.assets}
                 backgroundColor={scene.background}
                 cursor={cursor}
-                translateX={scene.translateX}
-                translateY={scene.translateY}
-                zoom={scene.zoom}
+                translateX={scene.page.translateX}
+                translateY={scene.page.translateY}
+                zoom={scene.page.zoom}
                 bounds={bounds}
                 boundsFillColor={SELECT_BOUNDS_FILL_COLOR}
                 boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
@@ -123,16 +162,16 @@ const EditorWithScene = props => {
                 brushStrokeColor={SELECTION_STROKE_COLOR}
                 showBrush={editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT}
                 showPointer={editor.state.action === ACTIONS.ERASE}
-                showGrid={editor.state.settings.grid}
+                showGrid={editor.state.gridMode}
                 {...editor.events}
             />
-            {(editor.state.contextMenu.visible && !isPresentation) &&  (
+            {(editor.state.contextMenu && !isPresentation) &&  (
                 <ContextMenu
-                    top={editor.state.contextMenu.top}
-                    left={editor.state.contextMenu.left}
+                    top={editor.state.contextMenuTop}
+                    left={editor.state.contextMenuLeft}
                     onDuplicate={() => {
                         scene.duplicateElements(scene.getSelection());
-                        editor.state.contextMenu.visible = false;
+                        editor.state.contextMenu = false;
                         editor.dispatchChange();
                         editor.update();
                     }}
@@ -149,7 +188,7 @@ const EditorWithScene = props => {
                     onCut={() => {
                         const elements = scene.getSelection();
                         scene.cutElementsToClipboard(elements).then(() => {
-                            editor.state.contextMenu.visible = false;
+                            editor.state.contextMenu = false;
                             editor.dispatchChange();
                             editor.update();
                         });
@@ -157,7 +196,7 @@ const EditorWithScene = props => {
                     onCopy={() => {
                         const elements = scene.getSelection();
                         scene.copyElementsToClipboard(elements).then(() => {
-                            editor.state.contextMenu.visible = false;
+                            editor.state.contextMenu = false;
                             editor.dispatchChange();
                             editor.update();
                         });
@@ -166,7 +205,7 @@ const EditorWithScene = props => {
                         const x = editor.state.contextMenu.left;
                         const y = editor.state.contextMenu.top;
                         scene.pasteElementsFromClipboard(null, {x, y}).then(() => {
-                            editor.state.contextMenu.visible = false;
+                            editor.state.contextMenu = false;
                             editor.dispatchChange();
                             editor.update();
                         });
@@ -192,20 +231,12 @@ const EditorWithScene = props => {
                     }}
                 />
             )}
-            {props.showTools && !isScreenshot && !isPresentation && (
+            {!isScreenshot && !isPresentation && (
                 <div className="absolute z-5 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
                     <ToolsPanel
                         action={editor.state.action}
                         tool={editor.state.tool}
                         toolLocked={editor.state.toolLocked}
-                        showSelect={!isPresentation}
-                        showTools={!isPresentation}
-                        showLock={!isPresentation}
-                        onPointerClick={() => {
-                            // board.setTool(null);
-                            // board.setAction(ACTIONS.POINTER);
-                            // board.update();
-                        }}
                         onMoveClick={() => {
                             handleToolOrActionChange(null, ACTIONS.MOVE);
                         }}
@@ -227,7 +258,7 @@ const EditorWithScene = props => {
                             editor.update();
                         }}
                     />
-                    {(editor.state.welcomeHintsVisible && !editor.state.tool && !isPresentation) && (
+                    {(editor.state.hintsVisible && !editor.state.tool && !isPresentation) && (
                         <Hint
                             position="top"
                             title="Tools Panel"
@@ -237,10 +268,10 @@ const EditorWithScene = props => {
                     )}
                 </div>
             )}
-            {props.showEdition && editor.state.currentState === STATES.IDLE && selectedElements.length > 0 && (
+            {editor.state.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
-                        <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-6">
+                        <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-4">
                             <EditionPanel
                                 key={selectedElements.map(el => el.id).join("-")}
                                 onChange={() => {
@@ -252,46 +283,70 @@ const EditorWithScene = props => {
                     )}
                 </React.Fragment>
             )}
-            {props.showHeader && !isScreenshot && (
+            {editor.state.pagesVisible && !isScreenshot && (
+                <div className="absolute z-6 top-0 mt-16 left-0 pt-1 pl-4">
+                    <PagesPanel
+                        editable={!isPresentation}
+                        onChangeActivePage={page => {
+                            scene.setActivePage(page);
+                            editor.update();
+                        }}
+                        onPageCreate={() => {
+                            scene.addPage();
+                            editor.dispatchChange();
+                            editor.update();
+                        }}
+                        onPageDelete={page => {
+                            return showConfirm({
+                                title: "Delete page",
+                                message: `Do you want to delete '${page.title}'? This action can not be undone.`,
+                                callback: () => {
+                                    scene.removePage(page);
+                                    editor.dispatchChange();
+                                    editor.update();
+                                },
+                            });
+                        }}
+                    />
+                </div>
+            )}
+            {!isScreenshot && (
                 <React.Fragment>
                     <div className="absolute top-0 left-0 pt-4 pl-4 z-7 flex gap-2">
                         <div className="relative flex">
                             <HeaderContainer>
-                                {props.showMenu && (
-                                    <Menu
-                                        settings={editor.state.settings}
-                                        links={props.links}
-                                        showLinks={props.showLinks}
-                                        showLoad={props.showLoad}
-                                        showSave={props.showSave}
-                                        showResetBoard={props.showResetBoard}
-                                        showChangeBackground={props.showChangeBackground}
-                                        showSettings={props.showSettings}
-                                        showExport={props.showExport}
-                                        onChange={props.onChange}
-                                        onSave={props.onSave}
-                                        onLoad={props.onLoad}
-                                        onResetBoard={handleResetBoard}
-                                        onExport={() => setExportVisible(true)}
-                                        onBackgroundChange={newBackground => {
-                                            scene.background = newBackground;
-                                            editor.dispatchChange();
-                                            editor.update();
-                                        }}
-                                        onGridToggle={() => {
-                                            editor.state.settings.grid = !editor.state.settings.grid;
-                                            editor.update();
-                                        }}
-                                        onPresentationToggle={() => {
-                                            editor.state.settings.presentationMode = !editor.state.settings.presentationMode;
-                                            handleToolOrActionChange(null, ACTIONS.MOVE);
-                                        }}
-                                    />
-                                )}
-                                {props.showMenu && (props.showTitle || props.showScreenshot) && (
-                                    <div className="w-px bg-neutral-200" />
-                                )}
-                                {props.showTitle && (
+                                <Menu
+                                    links={props.links}
+                                    gridMode={editor.state.gridMode}
+                                    presentationMode={editor.state.presentationMode}
+                                    showLoad={props.showLoad}
+                                    showSave={props.showSave}
+                                    showClear={props.showClear}
+                                    showChangeBackground={props.showChangeBackground}
+                                    showExport={props.showExport}
+                                    onSave={handleSave}
+                                    onLoad={handleLoad}
+                                    onClear={handleClear}
+                                    onExport={() => {
+                                        editor.state.exportVisible = true;
+                                        editor.update();
+                                    }}
+                                    onBackgroundChange={newBackground => {
+                                        scene.background = newBackground;
+                                        editor.dispatchChange();
+                                        editor.update();
+                                    }}
+                                    onGridModeChange={() => {
+                                        editor.state.gridMode = !editor.state.gridMode;
+                                        editor.update();
+                                    }}
+                                    onPresentationModeChange={() => {
+                                        editor.state.presentationMode = !editor.state.presentationMode;
+                                        handleToolOrActionChange(null, ACTIONS.MOVE);
+                                    }}
+                                />
+                                <div className="w-px bg-neutral-200" />
+                                {props.showTitle && false && (
                                     <Title
                                         title={scene.title}
                                         editable={!isPresentation}
@@ -301,7 +356,19 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
-                                {props.showScreenshot && !isPresentation && (
+                                <HeaderButton
+                                    className="w-40"
+                                    icon="files"
+                                    text={scene.getActivePage().title}
+                                    showChevron={true}
+                                    active={editor.state.pagesVisible}
+                                    onClick={() => {
+                                        editor.state.pagesVisible = !editor.state.pagesVisible;
+                                        editor.state.contextMenu = false;
+                                        editor.update();
+                                    }}
+                                />
+                                {!isPresentation && props.showScreenshot && (
                                     <HeaderButton
                                         icon="camera"
                                         disabled={scene.getElements().length === 0}
@@ -311,11 +378,15 @@ const EditorWithScene = props => {
                                     />
                                 )}
                             </HeaderContainer>
-                            {(editor.state.welcomeHintsVisible && !editor.state.tool && !isPresentation) && (
+                            {(editor.state.hintsVisible && !editor.state.tool && !isPresentation && !editor.state.pagesVisible) && (
                                 <Hint position="bottom" title="Actions" contentClassName="w-48">
                                     <div className="flex items-center justify-center gap-2">
                                         <BarsIcon />
                                         <span>Export, save, and configure.</span>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-2">
+                                        <FilesIcon />
+                                        <span>Change and manage pages.</span>
                                     </div>
                                     <div className="flex items-center justify-center gap-2">
                                         <CameraIcon />
@@ -326,8 +397,8 @@ const EditorWithScene = props => {
                         </div>
                         {props.headerLeftContent}
                     </div>
-                    <div className="absolute top-0 right-0 pt-4 pr-6 z-7 flex gap-2">
-                        {props.showHistory && !isPresentation && (
+                    <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
+                        {!isPresentation && (
                             <div className="flex relative">
                                 <HistoryPanel
                                     undoDisabled={!scene.canUndo()}
@@ -343,7 +414,7 @@ const EditorWithScene = props => {
                                         editor.update();
                                     }}
                                 />
-                                {(editor.state.welcomeHintsVisible && !editor.state.tool) && (
+                                {(editor.state.hintsVisible && !editor.state.tool) && (
                                     <Hint
                                         position="bottom"
                                         title="History"
@@ -353,39 +424,46 @@ const EditorWithScene = props => {
                                 )}
                             </div>
                         )}
-                        {props.showZoom && (
-                            <div className="flex relative">
-                                <ZoomPanel
-                                    zoom={scene.getZoom()}
-                                    onZoomInClick={() => {
-                                        scene.setZoom(scene.zoom + ZOOM_STEP);
-                                        editor.update();
-                                    }}
-                                    onZoomOutClick={() => {
-                                        scene.setZoom(scene.zoom - ZOOM_STEP);
-                                        editor.update();
-                                    }}
+                        <div className="flex relative">
+                            <ZoomPanel
+                                zoom={scene.getZoom()}
+                                onZoomInClick={() => {
+                                    scene.setZoom(scene.page.zoom + ZOOM_STEP);
+                                    editor.update();
+                                }}
+                                onZoomOutClick={() => {
+                                    scene.setZoom(scene.page.zoom - ZOOM_STEP);
+                                    editor.update();
+                                }}
+                            />
+                            {(editor.state.hintsVisible && !editor.state.tool && !isPresentation) && (
+                                <Hint
+                                    position="bottom"
+                                    title="Zoom"
+                                    contentClassName="w-24 text-center"
+                                    content="Apply zoom to the board."
                                 />
-                                {(editor.state.welcomeHintsVisible && !editor.state.tool && !isPresentation) && (
-                                    <Hint
-                                        position="bottom"
-                                        title="Zoom"
-                                        contentClassName="w-24 text-center"
-                                        content="Apply zoom to the board."
-                                    />
-                                )}
-                            </div>
-                        )}
+                            )}
+                        </div>
                         {props.headerRightContent}
                     </div>
                 </React.Fragment>
             )}
-            {editor.state.export.visible && (
+            {editor.state.welcomeVisible && (
+                <WelcomeDialog
+                    onCreate={() => {
+                        editor.state.welcomeVisible = false;
+                        editor.update();
+                    }}
+                    onLoad={handleLoad}
+                />
+            )}
+            {editor.state.exportVisible && (
                 <ExportDialog
-                    cropRegion={editor.state.export.cropRegion}
+                    crop={editor.state.exportRegion}
                     onClose={() => {
-                        editor.state.export.visible = false;
-                        editor.state.export.cropRegion = null;
+                        editor.state.exportVisible = false;
+                        editor.state.exportRegion = null;
                         editor.update();
                     }}
                 />
@@ -411,21 +489,12 @@ Editor.defaultProps = {
     onChange: null,
     onSave: null,
     onLoad: null,
-    showExport: true,
-    showLinks: true,
     showLoad: true,
     showSave: true,
-    showMenu: true,
-    showTitle: true,
-    showResetBoard: true,
-    showSettings: true,
+    showClear: true,
     showChangeBackground: true,
     showScreenshot: true,
-    showTools: true,
-    showZoom: true,
-    showHistory: true,
-    showEdition: true,
-    showHeader: true,
-    // showFooter: false,
+    showExport: true,
     showHints: true,
+    showWelcome: true,
 };

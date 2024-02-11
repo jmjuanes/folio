@@ -18,6 +18,7 @@ import {useScene} from "@contexts/scene.jsx";
 
 // @private create a new editor state
 const createInitialEditorState = (props, scene) => {
+    const isSceneEmpty = scene.pages.length === 1 && scene.page.elements.length === 0;
     const editorState = {
         currentState: STATES.IDLE,
         action: null,
@@ -30,25 +31,24 @@ const createInitialEditorState = (props, scene) => {
         selection: null,
 
         // @description editor settings
-        settings: {
-            grid: false,
-            presentationMode: false,
-        },
+        gridMode: false,
+        presentationMode: false,
 
         // @description context menu configuration
-        contextMenu: {
-            visible: false,
-        },
+        contextMenu: false,
+        contextMenuTop: 0,
+        contextMenuLeft: 0,
 
         // @description export configuration
-        export: {
-            visible: false,
-            cropRegion: null,
-        },
+        exportRegion: null,
 
-        // @description state for welcome elements
-        welcomeHintsVisible: props.showHints && scene.elements.length === 0,
-        welcomeVisible: false,
+        // @description state for dialogs
+        exportVisible: false,
+        pagesVisible: false,
+
+        // @description state for welcome items
+        hintsVisible: props.showHints && isSceneEmpty,
+        welcomeVisible: props.showWelcome && isSceneEmpty,
     };
     return editorState;
 };
@@ -74,7 +74,7 @@ export const useEditor = props => {
 
         // @private get position based on the grid state
         const getPosition = pos => {
-            return editorState.settings.grid ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
+            return editorState.gridMode ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
         };
 
         // @description remove the current text element
@@ -204,8 +204,8 @@ export const useEditor = props => {
                 }
                 // We need to update the last translated point before start moving the board
                 else if (editorState.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.translateX;
-                    lastTranslateY = scene.translateY;
+                    lastTranslateX = scene.page.translateX;
+                    lastTranslateY = scene.page.translateY;
                 }
                 // else if (editorState.action === ACTIONS.ERASE) {
                 //     editorState.erase = {
@@ -214,14 +214,14 @@ export const useEditor = props => {
                 //     };
                 // }
                 editorState.currentState = STATES.POINTING;
-                editorState.contextMenu.visible = false;
+                editorState.contextMenu = false;
                 update();
             },
             onPointerMove: event => {
                 if (editorState.action === ACTIONS.MOVE) {
                     editorState.currentState = STATES.DRAGGING;
-                    scene.translateX = Math.floor(lastTranslateX + event.dx * scene.zoom);
-                    scene.translateY = Math.floor(lastTranslateY + event.dy * scene.zoom);
+                    scene.page.translateX = Math.floor(lastTranslateX + event.dx * scene.page.zoom);
+                    scene.page.translateY = Math.floor(lastTranslateY + event.dy * scene.page.zoom);
                 }
                 else if (editorState.action === ACTIONS.ERASE) {
                     editorState.currentState = STATES.ERASING;
@@ -314,8 +314,8 @@ export const useEditor = props => {
             onPointerUp: event => {
                 editorState.currentState = STATES.IDLE;
                 if (editorState.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.translateX;
-                    lastTranslateY = scene.translateY;
+                    lastTranslateX = scene.page.translateX;
+                    lastTranslateY = scene.page.translateY;
                     return update();
                 }
                 else if (editorState.action === ACTIONS.ERASE) {
@@ -330,7 +330,7 @@ export const useEditor = props => {
                     element.selected = true; // By default select this element
                     getElementConfig(element)?.onCreateEnd?.(element, event);
                     // We need to patch the history to save the new element values
-                    const last = scene.history[0] || {};
+                    const last = scene.page.history[0] || {};
                     if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
                         last.elements[0].newValues = {
                             ...element,
@@ -419,8 +419,8 @@ export const useEditor = props => {
                     });
                 }
                 else if (editorState.action === ACTIONS.SCREENSHOT) {
-                    editorState.export.visible = true;
-                    editorState.export.cropRegion = {...editorState.selection};
+                    editorState.exportVisible = true;
+                    editorState.exportRegion = {...editorState.selection};
                 }
                 editorState.selection = null;
                 editorState.action = null;
@@ -574,9 +574,9 @@ export const useEditor = props => {
                 if ((!action || action === ACTIONS.SELECT || action === ACTIONS.TRANSLATE) && !tool) {
                     editorState.currentState = STATES.IDLE;
                     editorState.action = null;
-                    editorState.contextMenu.visible = true;
-                    editorState.contextMenu.top = event.y;
-                    editorState.contextMenu.left = event.x;
+                    editorState.contextMenu = true;
+                    editorState.contextMenuTop = event.y;
+                    editorState.contextMenuLeft = event.x;
                     update();
                 }
             },
