@@ -47,12 +47,11 @@ const ExportPreview = props => (
 
 export const ExportDialog = props => {
     const scene = useScene();
-    const copiedToClipboardTimer = React.useRef(null);
-    const [copiedToClipboard, setCopiedToClipboard] = React.useState(false);
     const [preview, setPreview] = React.useState(null);
     const [options, setOptions] = React.useState({
         includeBackground: true,
     });
+
     // Utility function to generate export options
     const getExportOptions = format => {
         return {
@@ -63,49 +62,28 @@ export const ExportDialog = props => {
             crop: props.crop,
         };
     };
+
     // Handle preview update when an option is changed
-    React.useEffect(
-        () => {
-            // TODO: we would need to delay the preview update if we depend on another option, for example padding,
-            // so we can just update the preview once for multiple consecutive changes.
-            exportToDataURL(getExportOptions()).then(data => {
-                setPreview(data);
-            });
-        },
-        [options.includeBackground],
-    );
-    // On unmount export dialog --> reset copied to clipboard timer
-    React.useEffect(
-        () => {
-            return () => {
-                if (copiedToClipboardTimer.current) {
-                    clearTimeout(copiedToClipboardTimer.current);
-                }
-            };
-        },
-        [],
-    );
+    React.useEffect(() => {
+        // TODO: we would need to delay the preview update if we depend on another option, for example padding,
+        // so we can just update the preview once for multiple consecutive changes.
+        exportToDataURL(getExportOptions()).then(data => {
+            setPreview(data);
+        });
+    }, [options.includeBackground]);
+
     // Handle copy to clipboard
     const handleCopyToClipboard = () => {
-        // First check if there is an active timer
-        if (copiedToClipboardTimer.current) {
-            setTimeout(copiedToClipboardTimer.current);
-        }
-        setCopiedToClipboard(true);
-        exportToClipboard(getExportOptions());
-        // Delay reseting the current timer
-        copiedToClipboardTimer.current = setTimeout(
-            () => {
-                setCopiedToClipboard(false);
-                copiedToClipboardTimer.current = null;
-            },
-            props.copiedToClipboardMessageDelay,
-        );
+        exportToClipboard(getExportOptions())
+            .finally(() => props.onClose());
     };
+
     // Handle export to file
     const handleExportToFile = () => {
-        return exportToFile(getExportOptions());
+        exportToFile(getExportOptions())
+            .finally(() => props.onClose());
     };
+
     return (
         <React.Fragment>
             <Overlay />
@@ -156,7 +134,7 @@ export const ExportDialog = props => {
                                 <ClipboardIcon />
                             </div>
                             <div className="flex items-center">
-                                <span>{copiedToClipboard ? "Copied!" : "Copy to clipboard"}</span>
+                                <span>Copy to clipboard</span>
                             </div>
                         </Button>
                     </div>
@@ -167,7 +145,6 @@ export const ExportDialog = props => {
 };
 
 ExportDialog.defaultProps = {
-    copiedToClipboardMessageDelay: 2000,
     crop: null,
     onClose: null,
 };
