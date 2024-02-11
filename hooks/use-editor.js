@@ -220,8 +220,8 @@ export const useEditor = props => {
             onPointerMove: event => {
                 if (editorState.action === ACTIONS.MOVE) {
                     editorState.currentState = STATES.DRAGGING;
-                    scene.page.translateX = Math.floor(lastTranslateX + event.dx * scene.zoom);
-                    scene.page.translateY = Math.floor(lastTranslateY + event.dy * scene.zoom);
+                    scene.page.translateX = Math.floor(lastTranslateX + event.dx * scene.page.zoom);
+                    scene.page.translateY = Math.floor(lastTranslateY + event.dy * scene.page.zoom);
                 }
                 else if (editorState.action === ACTIONS.ERASE) {
                     editorState.currentState = STATES.ERASING;
