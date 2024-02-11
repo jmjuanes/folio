@@ -23,6 +23,11 @@ const PageActionButton = ({className = "", children, onClick}) => (
 // @private page item component
 const Page = ({title, active, editable, editing, onClick, ...props}) => {
     const inputRef = React.useRef(null);
+    React.useEffect(() => {
+        if (editable && editing && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [editing]);
 
     return (
         <div className="relative group flex items-center hover:bg-neutral-100 rounded-md">
@@ -84,13 +89,19 @@ export const PagesPanel = props => {
     const scene = useScene();
     const activePage = scene.getActivePage();
 
+    // Handle creating a new page: cancel current edition and call 'onPageCreate'.
+    const handlePageCreate = React.useCallback(() => {
+        setEditingPage("");
+        props.onPageCreate();
+    }, [editingPage, props.onPageCreate]);
+
     return (
         <div className="w-64 border border-neutral-200 rounded-lg shadow-md bg-white p-0 relative">
             <div className="flex items-center justify-between sticky top-0 p-2 border-b border-neutral-200 h-12">
                 <div className="font-medium text-sm">Pages</div>
                 {props.editable && (
                     <div className="flex items-center gap-0">
-                        <ActionButton icon="plus" onClick={props.onPageCreate} />
+                        <ActionButton icon="plus" onClick={handlePageCreate} />
                     </div>
                 )}
             </div>
