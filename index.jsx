@@ -21,7 +21,6 @@ const App = () => {
     return (
         <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-neutral-800 flex">
             <Editor
-                key={id}
                 initialData={() => client.data.get()}
                 links={[
                     {url: "./", text: "About Folio"},
