@@ -31,29 +31,23 @@ const createInitialEditorState = (props, scene) => {
         selection: null,
 
         // @description editor settings
-        settings: {
-            grid: false,
-            presentationMode: false,
-        },
+        gridMode: false,
+        presentationMode: false,
 
         // @description context menu configuration
-        contextMenu: {
-            visible: false,
-        },
+        contextMenu: false,
+        contextMenuTop: 0,
+        contextMenuLeft: 0,
 
         // @description export configuration
-        export: {
-            visible: false,
-            cropRegion: null,
-        },
-
-        // @description pages state
-        pages: {
-            visible: false,
-        },
+        exportRegion: null,
 
         // @description state for dialogs
-        welcomeHintsVisible: props.showHints && isSceneEmpty,
+        exportVisible: false,
+        pagesVisible: false,
+
+        // @description state for welcome items
+        hintsVisible: props.showHints && isSceneEmpty,
         welcomeVisible: props.showWelcome && isSceneEmpty,
     };
     return editorState;
@@ -220,7 +214,7 @@ export const useEditor = props => {
                 //     };
                 // }
                 editorState.currentState = STATES.POINTING;
-                editorState.contextMenu.visible = false;
+                editorState.contextMenu = false;
                 update();
             },
             onPointerMove: event => {
@@ -425,8 +419,8 @@ export const useEditor = props => {
                     });
                 }
                 else if (editorState.action === ACTIONS.SCREENSHOT) {
-                    editorState.export.visible = true;
-                    editorState.export.cropRegion = {...editorState.selection};
+                    editorState.exportVisible = true;
+                    editorState.exportRegion = {...editorState.selection};
                 }
                 editorState.selection = null;
                 editorState.action = null;
@@ -580,9 +574,9 @@ export const useEditor = props => {
                 if ((!action || action === ACTIONS.SELECT || action === ACTIONS.TRANSLATE) && !tool) {
                     editorState.currentState = STATES.IDLE;
                     editorState.action = null;
-                    editorState.contextMenu.visible = true;
-                    editorState.contextMenu.top = event.y;
-                    editorState.contextMenu.left = event.x;
+                    editorState.contextMenu = true;
+                    editorState.contextMenuTop = event.y;
+                    editorState.contextMenuLeft = event.x;
                     update();
                 }
             },

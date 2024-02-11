@@ -59,8 +59,8 @@ export const ExportDialog = props => {
             elements: scene.getElements(),
             format: format || EXPORT_FORMATS.PNG,
             background: options.includeBackground ? scene.background : TRANSPARENT,
-            padding: !!props.cropRegion ? 0 : EXPORT_PADDING,
-            crop: props.cropRegion,
+            padding: !!props.crop ? 0 : EXPORT_PADDING,
+            crop: props.crop,
         };
     };
     // Handle preview update when an option is changed
@@ -168,6 +168,6 @@ export const ExportDialog = props => {
 
 ExportDialog.defaultProps = {
     copiedToClipboardMessageDelay: 2000,
-    cropRegion: null,
+    crop: null,
     onClose: null,
 };
