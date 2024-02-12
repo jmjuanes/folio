@@ -32,6 +32,8 @@ const getPath = points => {
 export const DrawElement = props => {
     const width = Math.abs(props.x2 - props.x1);
     const height = Math.abs(props.y2 - props.y1);
+    const drawWidth = props.drawWidth || width || 1;
+    const drawHeight = props.drawHeight || height || 1;
     const points = props.points || [];
     const strokeWidth = props.strokeWidth ?? 0;
     const path = React.useMemo(() => getPath(points), [points.length, props.creating]);
@@ -49,7 +51,7 @@ export const DrawElement = props => {
     );
     return (
         <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity}>
-            <g transform={`scale(${width/props.drawWidth} ${height/props.drawHeight})`}>
+            <g transform={`scale(${width/drawWidth} ${height/drawHeight})`}>
                 <rect
                     x={-GRID_SIZE / 2}
                     y={-GRID_SIZE / 2}
