@@ -14,7 +14,7 @@ const ActionButton = ({icon, onClick}) => (
 // @private page action button
 const PageActionButton = ({className = "", children, onClick}) => (
     <div className={classNames(className, "cursor-pointer items-center o-60 hover:o-100")} onClick={onClick}>
-        <div className="flex items-center text-lg py-2 px-1">
+        <div className="flex items-center text-lg px-1">
             {children}
         </div>
     </div>
@@ -30,15 +30,15 @@ const Page = ({title, active, editable, editing, onClick, ...props}) => {
     }, [editing]);
 
     return (
-        <div className="relative group flex items-center hover:bg-neutral-100 rounded-md">
+        <div className="relative group flex items-center hover:bg-neutral-100 rounded-md p-2">
             {active && (
-                <div className="absolute flex text-sm pl-2">
+                <div className="absolute flex text-sm pl-0">
                     <CheckIcon />
                 </div>
             )}
             {!editing && (
                 <React.Fragment>
-                    <div className="cursor-pointer flex items-center gap-2 w-full p-2 ml-6" onClick={onClick}>
+                    <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-6" onClick={onClick}>
                         <div className="font-medium text-sm w-32 truncate" title={title}>
                             <span>{title}</span>
                         </div>
@@ -59,7 +59,7 @@ const Page = ({title, active, editable, editing, onClick, ...props}) => {
                 <React.Fragment>
                     <input
                         ref={inputRef}
-                        className="w-full bg-transparent border-none outline-none py-2 py-0 text-sm ml-8"
+                        className="w-full bg-transparent border-none outline-none p-0 text-sm ml-6"
                         defaultValue={title}
                         onKeyUp={event => {
                             // Check for enter key --> submit new page title
