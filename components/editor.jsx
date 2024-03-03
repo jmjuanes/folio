@@ -286,6 +286,7 @@ const EditorWithScene = props => {
             {editor.state.pagesVisible && !isScreenshot && (
                 <div className="absolute z-6 top-0 mt-16 left-0 pt-1 pl-4">
                     <PagesPanel
+                        key={`pages:${scene.pages.length}`}
                         editable={!isPresentation}
                         onChangeActivePage={page => {
                             scene.setActivePage(page);
@@ -309,6 +310,11 @@ const EditorWithScene = props => {
                                     editor.update();
                                 },
                             });
+                        }}
+                        onPagesUpdate={() => {
+                            console.log("UPDATE_PAGES");
+                            editor.dispatchChange();
+                            editor.update();
                         }}
                     />
                 </div>
