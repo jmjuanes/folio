@@ -89,13 +89,19 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
     );
 };
 
+// @private initialize sorted pages list
+const initializeSortedPages = pages => {
+    return Object.fromEntries(pages.map(page => {
+        return [page.id, {index: page.index, y: 0, selected: false}];
+    }));
+};
+
+// @public pages panel component
 export const PagesPanel = props => {
     const scene = useScene();
     const [editingPage, setEditingPage] = React.useState("");
     const [sortedPages, setSortedPages] = React.useState(() => {
-        return Object.fromEntries(scene.pages.map(page => {
-            return [page.id, {index: page.index, y: 0, selected: false}];
-        }));
+        return initializeSortedPages(scene.pages);
     });
     const activePage = scene.getActivePage();
 
@@ -106,7 +112,7 @@ export const PagesPanel = props => {
     }, [editingPage, props.onPageCreate]);
 
     // Handle page move
-    const handlePageMove = React.useCallback((page, event) => {
+    const handlePageMove = React.useCallback((event, page) => {
         event.preventDefault();
         // Update the selected page
         sortedPages[page.id].selected = true;
@@ -139,7 +145,7 @@ export const PagesPanel = props => {
             e.preventDefault();
             document.removeEventListener("pointermove", handlePointerMove);
             document.removeEventListener("pointerup", handlePointerUp);
-            // document.removeEventListener("pointerleave", handlePointerUp);
+            document.removeEventListener("pointerleave", handlePointerUp);
             // Reset sorted pages
             const nextSortedPages = {...sortedPages};
             nextSortedPages[page.id].y = 0;
@@ -159,7 +165,7 @@ export const PagesPanel = props => {
         // Register event listeners
         document.addEventListener("pointermove", handlePointerMove);
         document.addEventListener("pointerup", handlePointerUp);
-        // document.addEventListener("pointerleave", handlePointerUp);
+        document.addEventListener("pointerleave", handlePointerUp);
     }, [props.onPagesUpdate]);
 
     return (
@@ -201,7 +207,7 @@ export const PagesPanel = props => {
                                 props.onPageEdit(page);
                             }}
                             onEditCancel={() => setEditingPage("")}
-                            onMove={event => handlePageMove(page, event)}
+                            onMove={event => handlePageMove(event, page)}
                         />
                     ))}
                 </div>
