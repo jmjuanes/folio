@@ -297,6 +297,36 @@ export const Canvas = props => {
                         onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
                     />
                 )}
+                {props.showSnaps && props.snaps && (
+                    <SvgContainer>
+                        {props.snaps.map((snap, index) => {
+                            const points = snap.map(p => p.join(","));
+                            return (
+                                <React.Fragment key={index}>
+                                    <path
+                                        d={`M${points.join("L")}`}
+                                        fill={NONE}
+                                        stroke={props.snapsStrokeColor}
+                                        strokeWidth={props.snapsStrokeWidth}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    {snap.map((p, pointIndex) => (
+                                        <path
+                                            key={`snap:point:${pointIndex}`}
+                                            d={`M${p[0]-3},${p[1]-3}L${p[0]+3},${p[1]+3}M${p[0]-3},${p[1]+3}L${p[0]+3},${p[1]-3}`}
+                                            fill={NONE}
+                                            stroke={props.snapsStrokeColor}
+                                            strokeWidth={props.snapsStrokeWidth}
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    ))}
+                                </React.Fragment>
+                            );
+                        })}
+                    </SvgContainer>
+                )}
             </div>
         </div>
     );
@@ -314,6 +344,9 @@ Canvas.defaultProps = {
     translateX: 0,
     translateY: 0,
     zoom: 1,
+    snaps: [],
+    snapsStrokeWidth: 2,
+    snapsStrokeColor: "#df2033",
     bounds: null,
     boundsFillColor: NONE,
     boundsStrokeColor: NONE,
@@ -348,6 +381,7 @@ Canvas.defaultProps = {
     showBrush: false,
     showGrid: true,
     showPointer: false,
+    showSnaps: true,
     svgStyle: {},
     svgClassName: "",
     longPressDelay: 700,
