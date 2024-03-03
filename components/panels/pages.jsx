@@ -1,7 +1,9 @@
 import React from "react";
 import classNames from "classnames";
-import {renderIcon, TrashIcon, CheckIcon, PencilIcon, CloseIcon} from "@josemi-icons/react";
+import {renderIcon, TrashIcon, CheckIcon, PencilIcon, CloseIcon, BarsIcon} from "@josemi-icons/react";
 import {useScene} from "@contexts/scene.jsx";
+
+const PAGES_ITEM_HEIGHT = 37;
 
 const ActionButton = ({icon, onClick}) => (
     <div className="flex items-center rounded-md hover:bg-neutral-100 cursor-pointer" onClick={onClick}>
@@ -21,7 +23,7 @@ const PageActionButton = ({className = "", children, onClick}) => (
 );
 
 // @private page item component
-const Page = ({title, active, editable, editing, onClick, ...props}) => {
+const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
     const inputRef = React.useRef(null);
     React.useEffect(() => {
         if (editable && editing && inputRef.current) {
@@ -30,12 +32,15 @@ const Page = ({title, active, editable, editing, onClick, ...props}) => {
     }, [editing]);
 
     return (
-        <div className="relative group flex items-center hover:bg-neutral-100 rounded-md p-2">
+        <div className="absolute group flex items-center hover:bg-neutral-100 rounded-md p-2 w-full" style={style}>
             {active && (
-                <div className="absolute flex text-sm pl-0">
+                <div className="absolute flex text-sm" style={{left:"1.5rem"}}>
                     <CheckIcon />
                 </div>
             )}
+            <div className="flex items-center text-xs text-neutral-400" style={{touchAction: "none"}} onPointerDown={props.onMove}>
+                <BarsIcon />
+            </div>
             {!editing && (
                 <React.Fragment>
                     <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-6" onClick={onClick}>
@@ -85,8 +90,13 @@ const Page = ({title, active, editable, editing, onClick, ...props}) => {
 };
 
 export const PagesPanel = props => {
-    const [editingPage, setEditingPage] = React.useState("");
     const scene = useScene();
+    const [editingPage, setEditingPage] = React.useState("");
+    const [sortedPages, setSortedPages] = React.useState(() => {
+        return Object.fromEntries(scene.pages.map(page => {
+            return [page.id, {index: page.index, y: 0, selected: false}];
+        }));
+    });
     const activePage = scene.getActivePage();
 
     // Handle creating a new page: cancel current edition and call 'onPageCreate'.
@@ -94,6 +104,63 @@ export const PagesPanel = props => {
         setEditingPage("");
         props.onPageCreate();
     }, [editingPage, props.onPageCreate]);
+
+    // Handle page move
+    const handlePageMove = React.useCallback((page, event) => {
+        event.preventDefault();
+        // Update the selected page
+        sortedPages[page.id].selected = true;
+        setSortedPages({...sortedPages});
+        let currentIndex = sortedPages[page.id].index;
+
+        // Handle pointer move
+        const handlePointerMove = e => {
+            e.preventDefault();
+            // pageMove.current.y = e.clientY - event.nativeEvent.clientY;
+            const nextSortedPages = {...sortedPages};
+            nextSortedPages[page.id].y = e.clientY - event.nativeEvent.clientY;
+            // Fix position of all pages
+            const currentY = (nextSortedPages[page.id].index * PAGES_ITEM_HEIGHT) + nextSortedPages[page.id].y;
+            const nextIndex = Math.max(0, Math.min(Math.round(currentY / PAGES_ITEM_HEIGHT), scene.pages.length));
+            scene.pages.forEach(item => {
+                if (item.id !== page.id) {
+                    const index = nextSortedPages[item.id].index;
+                    if (nextIndex === index) {
+                        nextSortedPages[item.id].index = currentIndex;
+                        currentIndex = nextIndex;
+                    }
+                }
+            });
+            setSortedPages(nextSortedPages);
+        };
+
+        // Handle pointer up
+        const handlePointerUp = e => {
+            e.preventDefault();
+            document.removeEventListener("pointermove", handlePointerMove);
+            document.removeEventListener("pointerup", handlePointerUp);
+            // document.removeEventListener("pointerleave", handlePointerUp);
+            // Reset sorted pages
+            const nextSortedPages = {...sortedPages};
+            nextSortedPages[page.id].y = 0;
+            nextSortedPages[page.id].selected = false;
+            // Check if we need to update indexes
+            if (nextSortedPages[page.id].index !== currentIndex) {
+                nextSortedPages[page.id].index = currentIndex;
+                scene.pages.forEach(item => {
+                    item.index = nextSortedPages[item.id].index;
+                });
+                // Trigger the pages update
+                props?.onPagesUpdate?.();
+            }
+            setSortedPages(nextSortedPages);
+        };
+
+        // Register event listeners
+        document.addEventListener("pointermove", handlePointerMove);
+        document.addEventListener("pointerup", handlePointerUp);
+        // document.addEventListener("pointerleave", handlePointerUp);
+    }, [props.onPagesUpdate]);
 
     return (
         <div className="w-64 border border-neutral-200 rounded-lg shadow-md bg-white p-0 relative">
@@ -105,31 +172,39 @@ export const PagesPanel = props => {
                     </div>
                 )}
             </div>
-            <div className="flex flex-col gap-1 p-1 scrollbar overflow-y-auto" style={{maxHeight: "50vh"}}>
-                {scene.pages.map((page, index) => (
-                    <Page
-                        key={`page:${index}:${page?.id || ""}`}
-                        title={page.title}
-                        active={page.id === activePage.id}
-                        editable={props.editable}
-                        editing={editingPage === page.id}
-                        onClick={() => {
-                            setEditingPage("");
-                            props.onChangeActivePage(page);
-                        }}
-                        onDelete={() => {
-                            setEditingPage("");
-                            props.onPageDelete(page);
-                        }}
-                        onEdit={() => setEditingPage(page.id)}
-                        onEditSubmit={title => {
-                            page.title = title || page.title;
-                            setEditingPage("");
-                            props.onPageEdit(page);
-                        }}
-                        onEditCancel={() => setEditingPage("")}
-                    />
-                ))}
+            <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
+                <div className="relative w-full" style={{height: scene.pages.length * PAGES_ITEM_HEIGHT}}>
+                    {scene.pages.map(page => (
+                        <Page
+                            key={`page:${page.index}:${page?.id || ""}`}
+                            title={page.title}
+                            active={page.id === activePage.id}
+                            editable={props.editable}
+                            editing={editingPage === page.id}
+                            style={{
+                                top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
+                                transform: sortedPages[page.id].selected ? `translate(0px, ${sortedPages[page.id].y}px)` : null,
+                                zIndex: sortedPages[page.id].selected ? 100 : 0,
+                            }}
+                            onClick={() => {
+                                setEditingPage("");
+                                props.onChangeActivePage(page);
+                            }}
+                            onDelete={() => {
+                                setEditingPage("");
+                                props.onPageDelete(page);
+                            }}
+                            onEdit={() => setEditingPage(page.id)}
+                            onEditSubmit={title => {
+                                page.title = title || page.title;
+                                setEditingPage("");
+                                props.onPageEdit(page);
+                            }}
+                            onEditCancel={() => setEditingPage("")}
+                            onMove={event => handlePageMove(page, event)}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
