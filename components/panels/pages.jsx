@@ -161,12 +161,15 @@ export const PagesPanel = props => {
             }
             setSortedPages(nextSortedPages);
         };
-
         // Register event listeners
         document.addEventListener("pointermove", handlePointerMove);
         document.addEventListener("pointerup", handlePointerUp);
         document.addEventListener("pointerleave", handlePointerUp);
-    }, [props.onPagesUpdate]);
+        // Check to reset the current editing page
+        if (editingPage) {
+            setEditingPage("");
+        }
+    }, [props.onPagesUpdate, editingPage]);
 
     return (
         <div className="w-64 border border-neutral-200 rounded-lg shadow-md bg-white p-0 relative">
