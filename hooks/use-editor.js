@@ -33,6 +33,7 @@ const createInitialEditorState = (props, scene) => {
         // @description editor settings
         gridMode: false,
         presentationMode: false,
+        snapMode: false,
 
         // @description context menu configuration
         contextMenu: false,

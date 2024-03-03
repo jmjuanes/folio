@@ -149,6 +149,7 @@ const EditorWithScene = props => {
                 assets={scene.assets}
                 backgroundColor={scene.background}
                 cursor={cursor}
+                snap={editor}
                 translateX={scene.page.translateX}
                 translateY={scene.page.translateY}
                 zoom={scene.page.zoom}
@@ -328,6 +329,7 @@ const EditorWithScene = props => {
                                     links={props.links}
                                     gridMode={editor.state.gridMode}
                                     presentationMode={editor.state.presentationMode}
+                                    snapMode={editor.state.snapMode}
                                     showLoad={props.showLoad}
                                     showSave={props.showSave}
                                     showClear={props.showClear}
@@ -352,6 +354,10 @@ const EditorWithScene = props => {
                                     onPresentationModeChange={() => {
                                         editor.state.presentationMode = !editor.state.presentationMode;
                                         handleToolOrActionChange(null, ACTIONS.MOVE);
+                                    }}
+                                    onSnapModeChange={() => {
+                                        editor.state.snapMode = !editor.state.snapMode;
+                                        editor.update();
                                     }}
                                 />
                                 <div className="w-px bg-neutral-200" />
