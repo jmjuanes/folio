@@ -9,11 +9,16 @@ import {
     CHANGES,
     KEYS,
     STATES,
+    SNAP_THRESHOLD,
 } from "@lib/constants.js";
-import {normalizeBounds} from "@lib/utils/math.js";
+import {normalizeBounds, getRectangleBounds} from "@lib/utils/math.js";
 import {isArrowKey} from "@lib/utils/keys.js";
 import {isInputTarget} from "@lib/utils/events.js";
-import {getElementConfig, createElement} from "@lib/elements.js";
+import {
+    getElementConfig, 
+    createElement,
+    getElementsSnappingEdges,
+} from "@lib/elements.js";
 import {useScene} from "@contexts/scene.jsx";
 
 // @private create a new editor state
@@ -22,6 +27,7 @@ const createInitialEditorState = (props, scene) => {
     const editorState = {
         currentState: STATES.IDLE,
         action: null,
+        visibleSnapEdges: [],
 
         // @description active tool state
         tool: null,
@@ -93,6 +99,7 @@ export const useEditor = props => {
 
         // Internal variables
         let snapshot = [];
+        let snapEdges = [];
         let activeElement = null;
         let isDragged = false, isResized = false, isPrevSelected = false;
         let lastTranslateX = 0, lastTranslateY = 0;
@@ -100,6 +107,7 @@ export const useEditor = props => {
         // Editor events
         const editorEvents = {
             onPointCanvas: () => {
+                editorState.visibleSnapEdges = [];
                 if (editorState.action === ACTIONS.EDIT) {
                     if (activeElement?.editing) {
                         if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
@@ -216,6 +224,13 @@ export const useEditor = props => {
                 // }
                 editorState.currentState = STATES.POINTING;
                 editorState.contextMenu = false;
+                editorState.visibleSnapEdges = [];
+                snapEdges = [];
+                if (editorState.action === ACTIONS.TRANSLATE || editorState.action === ACTIONS.RESIZE) {
+                    if (editorState.snapMode) {
+                        snapEdges = getElementsSnappingEdges(scene.getElements());
+                    }
+                }
                 update();
             },
             onPointerMove: event => {
@@ -249,7 +264,8 @@ export const useEditor = props => {
                 else if (editorState.action === ACTIONS.TRANSLATE) {
                     editorState.currentState = STATES.TRANSLATING;
                     isDragged = true;
-                    scene.getSelection().forEach((element, index) => {
+                    const elements = scene.getSelection();
+                    elements.forEach((element, index) => {
                         element.x1 = getPosition(snapshot[index].x1 + event.dx);
                         element.y1 = getPosition(snapshot[index].y1 + event.dy);
                         element.x2 = element.x1 + (snapshot[index].x2 - snapshot[index].x1);
@@ -257,6 +273,30 @@ export const useEditor = props => {
                         // Execute the onDrag function
                         getElementConfig(element)?.onDrag?.(element, snapshot[index], event);
                     });
+                    // Check if snap mode is enabled
+                    if (editorState.snapMode) {
+                        const b = getRectangleBounds(elements);
+                        let hasSnapEdgeX = false, hasSnapEdgeY = false;
+                        editorState.visibleSnapEdges = [];
+                        for (let i = 0; i < snapEdges.length; i++) {
+                            if (hasSnapEdgeX && hasSnapEdgeY) {
+                                break;
+                            }
+                            const snap = snapEdges[i];
+                            if (typeof snap.x !== "undefined") {
+                                ["x1", "x2"].forEach(p => {
+                                    if (!hasSnapEdgeX && Math.abs(snap.x - b[p]) < SNAP_THRESHOLD) {
+                                        editorState.visibleSnapEdges.push([
+                                            ...snap.points,
+                                            [b[p], b.y1],
+                                            [b[p], b.y2],
+                                        ]);
+                                        hasSnapEdgeY = true;
+                                    }
+                                });
+                            }
+                        }
+                    }
                 }
                 else if (editorState.action === ACTIONS.RESIZE) {
                     editorState.currentState = STATES.RESIZING;
@@ -313,6 +353,7 @@ export const useEditor = props => {
 
             // @description handle pointer up
             onPointerUp: event => {
+                editorState.visibleSnapEdges = [];
                 editorState.currentState = STATES.IDLE;
                 if (editorState.action === ACTIONS.MOVE) {
                     lastTranslateX = scene.page.translateX;

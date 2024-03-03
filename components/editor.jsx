@@ -149,10 +149,10 @@ const EditorWithScene = props => {
                 assets={scene.assets}
                 backgroundColor={scene.background}
                 cursor={cursor}
-                snap={editor}
                 translateX={scene.page.translateX}
                 translateY={scene.page.translateY}
                 zoom={scene.page.zoom}
+                snaps={editor.state.visibleSnapEdges}
                 bounds={bounds}
                 boundsFillColor={SELECT_BOUNDS_FILL_COLOR}
                 boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
@@ -164,6 +164,7 @@ const EditorWithScene = props => {
                 showBrush={editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT}
                 showPointer={editor.state.action === ACTIONS.ERASE}
                 showGrid={editor.state.gridMode}
+                showSnaps={editor.state.snapMode}
                 {...editor.events}
             />
             {(editor.state.contextMenu && !isPresentation) &&  (
