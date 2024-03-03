@@ -91,8 +91,8 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
 
 // @private initialize sorted pages list
 const initializeSortedPages = pages => {
-    return Object.fromEntries(pages.map(page => {
-        return [page.id, {index: page.index, y: 0, selected: false}];
+    return Object.fromEntries(pages.map((page, index) => {
+        return [page.id, {index: index, y: 0, selected: false}];
     }));
 };
 
@@ -153,11 +153,7 @@ export const PagesPanel = props => {
             // Check if we need to update indexes
             if (nextSortedPages[page.id].index !== currentIndex) {
                 nextSortedPages[page.id].index = currentIndex;
-                scene.pages.forEach(item => {
-                    item.index = nextSortedPages[item.id].index;
-                });
-                // Trigger the pages update
-                props?.onPagesUpdate?.();
+                props?.onPageMove?.(page, currentIndex);
             }
             setSortedPages(nextSortedPages);
         };
@@ -185,7 +181,7 @@ export const PagesPanel = props => {
                 <div className="relative w-full" style={{height: scene.pages.length * PAGES_ITEM_HEIGHT}}>
                     {scene.pages.map(page => (
                         <Page
-                            key={`page:${page.index}:${page?.id || ""}`}
+                            key={`page:${page.id}`}
                             title={page.title}
                             active={page.id === activePage.id}
                             editable={props.editable}

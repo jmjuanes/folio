@@ -311,8 +311,8 @@ const EditorWithScene = props => {
                                 },
                             });
                         }}
-                        onPagesUpdate={() => {
-                            console.log("UPDATE_PAGES");
+                        onPageMove={(page, nextIndex) => {
+                            scene.movePage(page, nextIndex);
                             editor.dispatchChange();
                             editor.update();
                         }}
