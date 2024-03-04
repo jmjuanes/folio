@@ -202,8 +202,8 @@ const EditorWithScene = props => {
                         });
                     }}
                     onPaste={() => {
-                        const x = editor.state.contextMenu.left;
-                        const y = editor.state.contextMenu.top;
+                        const x = editor.state.contextMenuLeft;
+                        const y = editor.state.contextMenuTop;
                         scene.pasteElementsFromClipboard(null, {x, y}).then(() => {
                             editor.state.contextMenu = false;
                             editor.dispatchChange();
