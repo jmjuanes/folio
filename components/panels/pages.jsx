@@ -31,6 +31,11 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
         }
     }, [editing]);
 
+    const moveButtonStyle = {
+        cursor: props.moving ? "grabbing" : "grab",
+        touchAction: "none",
+    };
+
     return (
         <div className="absolute group flex items-center hover:bg-neutral-100 rounded-md p-2 w-full" style={style}>
             {active && (
@@ -38,7 +43,7 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
                     <CheckIcon />
                 </div>
             )}
-            <div className="flex items-center text-xs text-neutral-400" style={{touchAction: "none"}} onPointerDown={props.onMove}>
+            <div className="flex items-center text-xs text-neutral-400" style={moveButtonStyle} onPointerDown={props.onMove}>
                 <BarsIcon />
             </div>
             {!editing && (
@@ -186,6 +191,7 @@ export const PagesPanel = props => {
                             active={page.id === activePage.id}
                             editable={props.editable}
                             editing={editingPage === page.id}
+                            moving={sortedPages[page.id].selected}
                             style={{
                                 top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
                                 transform: sortedPages[page.id].selected ? `translate(0px, ${sortedPages[page.id].y}px)` : null,
