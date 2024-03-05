@@ -10,6 +10,8 @@ import {
     KEYS,
     STATES,
     SNAP_THRESHOLD,
+    SNAP_EDGE_X,
+    SNAP_EDGE_Y,
 } from "@lib/constants.js";
 import {normalizeBounds, getRectangleBounds} from "@lib/utils/math.js";
 import {isArrowKey} from "@lib/utils/keys.js";
@@ -18,6 +20,7 @@ import {
     getElementConfig, 
     createElement,
     getElementsSnappingEdges,
+    getElementSnappingPoints,
 } from "@lib/elements.js";
 import {useScene} from "@contexts/scene.jsx";
 
@@ -39,7 +42,7 @@ const createInitialEditorState = (props, scene) => {
         // @description editor settings
         gridMode: false,
         presentationMode: false,
-        snapMode: false,
+        snapMode: true,
 
         // @description context menu configuration
         contextMenu: false,
@@ -80,8 +83,28 @@ export const useEditor = props => {
         };
 
         // @private get position based on the grid state
-        const getPosition = pos => {
-            return editorState.gridMode ? Math.round(pos / GRID_SIZE) * GRID_SIZE : pos;
+        const getPosition = (pos, edge = null, size) => {
+            // 1. Check if grid mode is enabled
+            if (editorState.gridMode) {
+                return Math.round(pos / GRID_SIZE) * GRID_SIZE;
+            }
+            // 2. check if snap mode is enabled
+            if (edge && editorState.snapMode) {
+                let edges = [0, size];
+                for (let i = 0; i < snapEdges.length; i++) {
+                    const item = snapEdges[i];
+                    if (item.edge === edge && typeof item[edge] !== "undefined") {
+                        for (let j = 0; j < edges.length; j++) {
+                            if (Math.abs(item[edge] - pos - edges[j]) < SNAP_THRESHOLD) {
+                                activeSnapEdges.push(item);
+                                return item[edge] - edges[j];
+                            }
+                        }
+                    }
+                }
+            }
+            // 3: just return the new position
+            return pos;
         };
 
         // @description remove the current text element
@@ -99,7 +122,9 @@ export const useEditor = props => {
 
         // Internal variables
         let snapshot = [];
+        let snapshotBounds = null;
         let snapEdges = [];
+        let activeSnapEdges = [];
         let activeElement = null;
         let isDragged = false, isResized = false, isPrevSelected = false;
         let lastTranslateX = 0, lastTranslateY = 0;
@@ -191,6 +216,7 @@ export const useEditor = props => {
                         }
                         // Save a snapshot of the current selection for calculating the correct element position
                         snapshot = scene.getSelection().map(el => ({...el}));
+                        snapshotBounds = getRectangleBounds(snapshot);
                         // Check for calling the onResizeStart listener
                         if (editorState.action === ACTIONS.RESIZE && snapshot.length === 1) {
                             const element = scene.getElement(snapshot[0].id);
@@ -226,6 +252,7 @@ export const useEditor = props => {
                 editorState.contextMenu = false;
                 editorState.visibleSnapEdges = [];
                 snapEdges = [];
+                activeSnapEdges = [];
                 if (editorState.action === ACTIONS.TRANSLATE || editorState.action === ACTIONS.RESIZE) {
                     if (editorState.snapMode) {
                         snapEdges = getElementsSnappingEdges(scene.getElements());
@@ -262,40 +289,30 @@ export const useEditor = props => {
                     getElementConfig(element)?.onCreateMove?.(element, event);
                 }
                 else if (editorState.action === ACTIONS.TRANSLATE) {
+                    editorState.visibleSnapEdges = [];
+                    activeSnapEdges = [];
                     editorState.currentState = STATES.TRANSLATING;
                     isDragged = true;
                     const elements = scene.getSelection();
+                    const dx = getPosition(snapshotBounds.x1 + event.dx, SNAP_EDGE_X, snapshotBounds.x2 - snapshotBounds.x1) - snapshotBounds.x1;
+                    const dy = getPosition(snapshotBounds.y1 + event.dy, SNAP_EDGE_Y, snapshotBounds.y2 - snapshotBounds.y1) - snapshotBounds.y1;
                     elements.forEach((element, index) => {
-                        element.x1 = getPosition(snapshot[index].x1 + event.dx);
-                        element.y1 = getPosition(snapshot[index].y1 + event.dy);
-                        element.x2 = element.x1 + (snapshot[index].x2 - snapshot[index].x1);
-                        element.y2 = element.y1 + (snapshot[index].y2 - snapshot[index].y1);
+                        element.x1 = snapshot[index].x1 + dx;
+                        element.x2 = snapshot[index].x2 + dx;
+                        element.y1 = snapshot[index].y1 + dy;
+                        element.y2 = snapshot[index].y2 + dy;
                         // Execute the onDrag function
                         getElementConfig(element)?.onDrag?.(element, snapshot[index], event);
                     });
-                    // Check if snap mode is enabled
-                    if (editorState.snapMode) {
-                        const b = getRectangleBounds(elements);
-                        let hasSnapEdgeX = false, hasSnapEdgeY = false;
-                        editorState.visibleSnapEdges = [];
-                        for (let i = 0; i < snapEdges.length; i++) {
-                            if (hasSnapEdgeX && hasSnapEdgeY) {
-                                break;
-                            }
-                            const snap = snapEdges[i];
-                            if (typeof snap.x !== "undefined") {
-                                ["x1", "x2"].forEach(p => {
-                                    if (!hasSnapEdgeX && Math.abs(snap.x - b[p]) < SNAP_THRESHOLD) {
-                                        editorState.visibleSnapEdges.push([
-                                            ...snap.points,
-                                            [b[p], b.y1],
-                                            [b[p], b.y2],
-                                        ]);
-                                        hasSnapEdgeY = true;
-                                    }
-                                });
-                            }
-                        }
+                    if (editorState.snapMode && activeSnapEdges.length > 0) {
+                        const bounds = elements.length === 1 ? elements[0] : getRectangleBounds(elements);
+                        editorState.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
+                            // ...snapEdge,
+                            points: [
+                                ...snapEdge.points,
+                                ...getElementSnappingPoints(bounds, snapEdge),
+                            ],
+                        }));
                     }
                 }
                 else if (editorState.action === ACTIONS.RESIZE) {
