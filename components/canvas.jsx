@@ -39,7 +39,7 @@ const SnapEdge = props => {
             {props.points.map((p, index) => (
                 <path
                     key={`snap:point:${index}`}
-                    d={`M${p[0]-3},${p[1]-3}L${p[0]+3},${p[1]+3}M${p[0]-3},${p[1]+3}L${p[0]+3},${p[1]-3}`}
+                    d={`M${p[0]-2},${p[1]-2}L${p[0]+2},${p[1]+2}M${p[0]-2},${p[1]+2}L${p[0]+2},${p[1]-2}`}
                     fill={NONE}
                     stroke={props.strokeColor}
                     strokeWidth={props.strokeWidth}
@@ -358,8 +358,8 @@ Canvas.defaultProps = {
     translateY: 0,
     zoom: 1,
     snaps: [],
-    snapsStrokeWidth: 1.5,
-    snapsStrokeColor: "#df2033",
+    snapsStrokeWidth: 2,
+    snapsStrokeColor: "#e54d5c",
     bounds: null,
     boundsFillColor: NONE,
     boundsStrokeColor: NONE,
