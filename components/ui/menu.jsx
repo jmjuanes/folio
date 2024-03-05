@@ -1,6 +1,6 @@
 import React from "react";
 import classnames from "classnames";
-import {PresentationIcon, ExternalLinkIcon} from "@josemi-icons/react";
+import {PresentationIcon, ExternalLinkIcon, MagnetIcon} from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
 import {BACKGROUND_COLOR_PALETTE} from "@lib/utils/colors.js";
 import {ColorPicker} from "../commons/color-picker.jsx";
@@ -83,6 +83,12 @@ export const Menu = props => {
                     </Dropdown.Icon>
                     <span>Grid</span>
                 </Dropdown.CheckItem>
+                <Dropdown.CheckItem checked={props.snapMode} onClick={props.onSnapModeChange}>
+                    <Dropdown.Icon>
+                        <MagnetIcon />
+                    </Dropdown.Icon>
+                    <span>Snap to elements</span>
+                </Dropdown.CheckItem>
                 <Dropdown.CheckItem
                     checked={!!props?.presentationMode}
                     onClick={props.onPresentationModeChange}
@@ -122,6 +128,7 @@ export const Menu = props => {
 Menu.defaultProps = {
     gridMode: false,
     presentationMode: false,
+    snapMode: false,
     links: [],
     showSave: true,
     showLoad: true,
@@ -134,5 +141,6 @@ Menu.defaultProps = {
     onExport: null,
     onGridModeChange: null,
     onPresentationModeChange: null,
+    onSnapModeChange: null,
     onBackgroundChange: null,
 };
