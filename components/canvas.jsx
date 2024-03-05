@@ -20,6 +20,37 @@ const isTouchOrPenEvent = event => {
 const preventDefault = e => e.preventDefault();
 const delay = (timeout, cb) => window.setTimeout(cb, timeout);
 
+// @private snap edge item
+const SnapEdge = props => {
+    const xItems = props.points.map(p => p[0]);
+    const yItems = props.points.map(p => p[1]);
+    const start = [Math.min(...xItems), Math.min(...yItems)];
+    const end = [Math.max(...xItems), Math.max(...yItems)];
+    return (
+        <React.Fragment>
+            <path
+                d={`M${start.join(",")}L${end.join(",")}`}
+                fill={NONE}
+                stroke={props.strokeColor}
+                strokeWidth={props.strokeWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            {props.points.map((p, index) => (
+                <path
+                    key={`snap:point:${index}`}
+                    d={`M${p[0]-3},${p[1]-3}L${p[0]+3},${p[1]+3}M${p[0]-3},${p[1]+3}L${p[0]+3},${p[1]-3}`}
+                    fill={NONE}
+                    stroke={props.strokeColor}
+                    strokeWidth={props.strokeWidth}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            ))}
+        </React.Fragment>
+    );
+};
+
 export const Canvas = props => {
     const canvasRef = React.useRef(null);
     const longPressTimerRef = React.useRef(0);
@@ -299,32 +330,14 @@ export const Canvas = props => {
                 )}
                 {props.showSnaps && props.snaps && (
                     <SvgContainer>
-                        {props.snaps.map((snap, index) => {
-                            const points = snap.map(p => p.join(","));
-                            return (
-                                <React.Fragment key={index}>
-                                    <path
-                                        d={`M${points.join("L")}`}
-                                        fill={NONE}
-                                        stroke={props.snapsStrokeColor}
-                                        strokeWidth={props.snapsStrokeWidth}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                    {snap.map((p, pointIndex) => (
-                                        <path
-                                            key={`snap:point:${pointIndex}`}
-                                            d={`M${p[0]-3},${p[1]-3}L${p[0]+3},${p[1]+3}M${p[0]-3},${p[1]+3}L${p[0]+3},${p[1]-3}`}
-                                            fill={NONE}
-                                            stroke={props.snapsStrokeColor}
-                                            strokeWidth={props.snapsStrokeWidth}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    ))}
-                                </React.Fragment>
-                            );
-                        })}
+                        {props.snaps.map((item, index) => (
+                            <SnapEdge
+                                key={`snap:edge:${index}`}
+                                points={item.points}
+                                strokeWidth={props.snapsStrokeWidth}
+                                strokeColor={props.snapsStrokeColor}
+                            />
+                        ))}
                     </SvgContainer>
                 )}
             </div>
@@ -345,7 +358,7 @@ Canvas.defaultProps = {
     translateY: 0,
     zoom: 1,
     snaps: [],
-    snapsStrokeWidth: 2,
+    snapsStrokeWidth: 1.5,
     snapsStrokeColor: "#df2033",
     bounds: null,
     boundsFillColor: NONE,
