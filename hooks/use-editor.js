@@ -90,7 +90,7 @@ export const useEditor = props => {
             }
             // 2. check if snap mode is enabled
             if (edge && editorState.snapMode) {
-                let edges = size > 0 ? [0, size] : [0];
+                const edges = size > 0 ? [0, size] : [0];
                 for (let i = 0; i < snapEdges.length; i++) {
                     const item = snapEdges[i];
                     if (item.edge === edge && typeof item[edge] !== "undefined") {
