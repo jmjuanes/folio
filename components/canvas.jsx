@@ -358,7 +358,7 @@ Canvas.defaultProps = {
     translateY: 0,
     zoom: 1,
     snaps: [],
-    snapsStrokeWidth: 2,
+    snapsStrokeWidth: 1.5,
     snapsStrokeColor: "#e54d5c",
     bounds: null,
     boundsFillColor: NONE,
