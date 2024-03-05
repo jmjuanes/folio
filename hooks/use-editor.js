@@ -83,14 +83,14 @@ export const useEditor = props => {
         };
 
         // @private get position based on the grid state
-        const getPosition = (pos, edge = null, size = 0) => {
+        const getPosition = (pos, edge = null, size = 0, includeCenter = false) => {
             // 1. Check if grid mode is enabled
             if (editorState.gridMode) {
                 return Math.round(pos / GRID_SIZE) * GRID_SIZE;
             }
             // 2. check if snap mode is enabled
             if (edge && editorState.snapMode) {
-                const edges = size > 0 ? [0, size] : [0];
+                const edges = size > 0 ? (includeCenter ? [0, size / 2, size] : [0, size]) : [0];
                 for (let i = 0; i < snapEdges.length; i++) {
                     const item = snapEdges[i];
                     if (item.edge === edge && typeof item[edge] !== "undefined") {
@@ -294,8 +294,9 @@ export const useEditor = props => {
                     editorState.currentState = STATES.TRANSLATING;
                     isDragged = true;
                     const elements = scene.getSelection();
-                    const dx = getPosition(snapshotBounds.x1 + event.dx, SNAP_EDGE_X, snapshotBounds.x2 - snapshotBounds.x1) - snapshotBounds.x1;
-                    const dy = getPosition(snapshotBounds.y1 + event.dy, SNAP_EDGE_Y, snapshotBounds.y2 - snapshotBounds.y1) - snapshotBounds.y1;
+                    const includeCenter = elements.length > 1 || elements[0].type !== ELEMENTS.ARROW;
+                    const dx = getPosition(snapshotBounds.x1 + event.dx, SNAP_EDGE_X, snapshotBounds.x2 - snapshotBounds.x1, includeCenter) - snapshotBounds.x1;
+                    const dy = getPosition(snapshotBounds.y1 + event.dy, SNAP_EDGE_Y, snapshotBounds.y2 - snapshotBounds.y1, includeCenter) - snapshotBounds.y1;
                     elements.forEach((element, index) => {
                         element.x1 = snapshot[index].x1 + dx;
                         element.x2 = snapshot[index].x2 + dx;
