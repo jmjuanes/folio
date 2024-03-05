@@ -87,7 +87,7 @@ export const Menu = props => {
                     <Dropdown.Icon>
                         <MagnetIcon />
                     </Dropdown.Icon>
-                    <span>Snap</span>
+                    <span>Snap to elements</span>
                 </Dropdown.CheckItem>
                 <Dropdown.CheckItem
                     checked={!!props?.presentationMode}
