@@ -83,14 +83,14 @@ export const useEditor = props => {
         };
 
         // @private get position based on the grid state
-        const getPosition = (pos, edge = null, size) => {
+        const getPosition = (pos, edge = null, size = 0) => {
             // 1. Check if grid mode is enabled
             if (editorState.gridMode) {
                 return Math.round(pos / GRID_SIZE) * GRID_SIZE;
             }
             // 2. check if snap mode is enabled
             if (edge && editorState.snapMode) {
-                let edges = [0, size];
+                let edges = size > 0 ? [0, size] : [0];
                 for (let i = 0; i < snapEdges.length; i++) {
                     const item = snapEdges[i];
                     if (item.edge === edge && typeof item[edge] !== "undefined") {
@@ -316,48 +316,60 @@ export const useEditor = props => {
                     }
                 }
                 else if (editorState.action === ACTIONS.RESIZE) {
+                    editorState.visibleSnapEdges = [];
                     editorState.currentState = STATES.RESIZING;
+                    activeSnapEdges = [];
                     isResized = true;
                     const element = scene.getElement(snapshot[0].id);
                     const elementConfig = getElementConfig(element);
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2);
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
                     }
                     else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1);
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2);
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1);
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
                     }
                     else if (event.handler === HANDLERS.EDGE_TOP) {
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy), snapshot[0].y2);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
                     }
                     else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy), snapshot[0].y1);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
                     }
                     else if (event.handler === HANDLERS.EDGE_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx), snapshot[0].x2);
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
                     }
                     else if (event.handler === HANDLERS.EDGE_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx), snapshot[0].x1);
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
                     }
                     else if (event.handler === HANDLERS.NODE_START) {
-                        element.x1 = getPosition(snapshot[0].x1 + event.dx);
-                        element.y1 = getPosition(snapshot[0].y1 + event.dy);
+                        element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
+                        element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
                     }
                     else if (event.handler === HANDLERS.NODE_END) {
-                        element.x2 = getPosition(snapshot[0].x2 + event.dx);
-                        element.y2 = getPosition(snapshot[0].y2 + event.dy);
+                        element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
+                        element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
                     }
                     // Execute onResize handler
                     elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
+                    // Set visible snap edges
+                    if (editorState.snapMode && activeSnapEdges.length > 0) {
+                        editorState.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
+                            // ...snapEdge,
+                            points: [
+                                ...snapEdge.points,
+                                ...getElementSnappingPoints(element, snapEdge),
+                            ],
+                        }));
+                    }
                 }
                 else if (editorState.action === ACTIONS.SELECT || editorState.action === ACTIONS.SCREENSHOT) {
                     editorState.currentState = STATES.BRUSHING;
