@@ -56,7 +56,7 @@ const LaserBrush = props => {
             d={step.path}
             fill={NONE}
             stroke={props.color}
-            strokeWidth={props.width * (0.3 + 0.7 * (step.length / lastLength))}
+            strokeWidth={props.width * (0.5 + 0.5 * (step.length / lastLength))}
             strokeLinecap={"butt"}
             strokeLinejoin="round"
         />
@@ -114,6 +114,8 @@ export const Pointer = props => {
         // Register events listeners
         target.addEventListener(EVENTS.POINTER_MOVE, handlePointerMove);
         target.addEventListener(EVENTS.POINTER_UP, handlePointerUp);
+        // Clear current points list
+        setPoints([]);
     };
     return (
         <div style={props.style} onPointerDown={handlePointerDown}>
