@@ -125,7 +125,7 @@ export const Pointer = props => {
                         width={props.width}
                     />
                 )}
-                {lastPoint.current && (
+                {lastPoint.current && points.length > 0 && (
                     <ellipse
                         cx={lastPoint.current.x}
                         cy={lastPoint.current.y}
