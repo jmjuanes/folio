@@ -15,6 +15,7 @@ import {
     CircleIcon,
     TriangleIcon,
     DotsVerticalIcon,
+    LaserPointerIcon,
 } from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
 import {
@@ -31,7 +32,6 @@ import {
     TEXT_COLOR_PICK,
 } from "@lib/utils/colors.js";
 import {
-    LaserPointerIcon,
     ArrowIcon,
     LineIcon,
     WidthLargeIcon,
@@ -212,16 +212,6 @@ export const ToolsPanel = props => {
     return (
         <div className="flex items-center relative select-none">
             <div className="border border-neutral-200 rounded-xl shadow-md items-center bg-white flex gap-2 p-1">
-                {/* Actions */}
-                {props.showPointer && (
-                    <PanelButton
-                        testid="pointer"
-                        text="Pointer"
-                        icon={(<LaserPointerIcon />)}
-                        active={props.action === ACTIONS.POINTER}
-                        onClick={props.onPointerClick}
-                    />
-                )}
                 <PanelButton
                     testid="drag"
                     text="Drag"
@@ -241,7 +231,6 @@ export const ToolsPanel = props => {
                 {props.showTools && (
                     <React.Fragment>
                         <PanelSeparator />
-                        {/* Available tools */}
                         {Object.keys(tools).map(key => (
                             <div key={key} className="flex relative">
                                 <PanelButton
@@ -274,6 +263,12 @@ export const ToolsPanel = props => {
                                 </div>
                             </div>
                             <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-5">
+                                <Dropdown.CheckItem checked={props.action === ACTIONS.POINTER} onClick={props.onPointerClick}>
+                                    <Dropdown.Icon>
+                                        <LaserPointerIcon />
+                                    </Dropdown.Icon>
+                                    <span>Pointer</span>
+                                </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
                                     checked={props.tool === ELEMENTS.NOTE}
                                     onClick={() => props.onToolClick(ELEMENTS.NOTE)}
@@ -315,7 +310,6 @@ export const ToolsPanel = props => {
 
 ToolsPanel.defaultProps = {
     showTools: true,
-    showPointer: false,
     showLock: true,
     showSelect: true,
     onMoveClick: null,
