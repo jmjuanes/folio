@@ -267,7 +267,7 @@ export const ToolsPanel = props => {
                                     <Dropdown.Icon>
                                         <LaserPointerIcon />
                                     </Dropdown.Icon>
-                                    <span>Pointer</span>
+                                    <span>Laser Pointer</span>
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
                                     checked={props.tool === ELEMENTS.NOTE}
