@@ -20,6 +20,7 @@ import {useCursor} from "@hooks/use-cursor.js";
 import {useEditor} from "@hooks/use-editor.js";
 import {HeaderContainer, HeaderButton} from "./commons/header.jsx";
 import {Canvas} from "./canvas.jsx";
+import {Pointer} from "./pointer.jsx";
 import {ContextMenu} from "./ui/context-menu.jsx";
 import {Menu} from "./ui/menu.jsx";
 import {Title} from "./ui/title.jsx";
@@ -167,6 +168,9 @@ const EditorWithScene = props => {
                 showSnaps={editor.state.snapMode}
                 {...editor.events}
             />
+            {editor.state.action === ACTIONS.POINTER && (
+                <Pointer />
+            )}
             {(editor.state.contextMenu && !isPresentation) &&  (
                 <ContextMenu
                     top={editor.state.contextMenuTop}
@@ -244,6 +248,9 @@ const EditorWithScene = props => {
                         }}
                         onEraseClick={() => {
                             handleToolOrActionChange(null, ACTIONS.ERASE);
+                        }}
+                        onPointerClick={() => {
+                            handleToolOrActionChange(null, ACTIONS.POINTER);
                         }}
                         onSelectionClick={() => {
                             handleToolOrActionChange(null, ACTIONS.SELECT);
