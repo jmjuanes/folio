@@ -58,7 +58,7 @@ export const ExportDialog = props => {
             elements: scene.getElements(),
             format: format || EXPORT_FORMATS.PNG,
             background: options.includeBackground ? scene.background : TRANSPARENT,
-            padding: !!props.crop ? 0 : EXPORT_PADDING,
+            padding: EXPORT_PADDING,
             crop: props.crop,
         };
     };
