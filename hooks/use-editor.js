@@ -12,17 +12,17 @@ import {
     SNAP_THRESHOLD,
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
-} from "@lib/constants.js";
-import {normalizeBounds, getRectangleBounds} from "@lib/utils/math.js";
-import {isArrowKey} from "@lib/utils/keys.js";
-import {isInputTarget} from "@lib/utils/events.js";
+} from "../lib/constants.js";
+import {normalizeBounds, getRectangleBounds} from "../lib/utils/math.js";
+import {isArrowKey} from "../lib/utils/keys.js";
+import {isInputTarget} from "../lib/utils/events.js";
 import {
     getElementConfig, 
     createElement,
     getElementsSnappingEdges,
     getElementSnappingPoints,
-} from "@lib/elements.js";
-import {useScene} from "@contexts/scene.jsx";
+} from "../lib/elements.js";
+import {useScene} from "../contexts/scene.jsx";
 
 // @private create a new editor state
 const createInitialEditorState = (props, scene) => {
@@ -38,11 +38,6 @@ const createInitialEditorState = (props, scene) => {
 
         // @description current selection  
         selection: null,
-
-        // @description editor settings
-        gridMode: false,
-        presentationMode: false,
-        snapMode: false,
 
         // @description context menu configuration
         contextMenu: false,
@@ -85,11 +80,11 @@ export const useEditor = props => {
         // @private get position based on the grid state
         const getPosition = (pos, edge = null, size = 0, includeCenter = false) => {
             // 1. Check if grid mode is enabled
-            if (editorState.gridMode) {
+            if (scene?.appState?.grid) {
                 return Math.round(pos / GRID_SIZE) * GRID_SIZE;
             }
             // 2. check if snap mode is enabled
-            if (edge && editorState.snapMode) {
+            if (edge && scene?.appState?.snapToElements) {
                 const edges = size > 0 ? (includeCenter ? [0, size / 2, size] : [0, size]) : [0];
                 for (let i = 0; i < snapEdges.length; i++) {
                     const item = snapEdges[i];
@@ -254,7 +249,7 @@ export const useEditor = props => {
                 snapEdges = [];
                 activeSnapEdges = [];
                 if (editorState.action === ACTIONS.TRANSLATE || editorState.action === ACTIONS.RESIZE) {
-                    if (editorState.snapMode) {
+                    if (scene?.appState?.snapToElements) {
                         snapEdges = getElementsSnappingEdges(scene.getElements());
                     }
                 }
@@ -305,7 +300,7 @@ export const useEditor = props => {
                         // Execute the onDrag function
                         getElementConfig(element)?.onDrag?.(element, snapshot[index], event);
                     });
-                    if (editorState.snapMode && activeSnapEdges.length > 0) {
+                    if (scene?.appState?.snapToElements && activeSnapEdges.length > 0) {
                         const bounds = elements.length === 1 ? elements[0] : getRectangleBounds(elements);
                         editorState.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
                             // ...snapEdge,
@@ -362,7 +357,7 @@ export const useEditor = props => {
                     // Execute onResize handler
                     elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
                     // Set visible snap edges
-                    if (editorState.snapMode && activeSnapEdges.length > 0) {
+                    if (scene?.appState?.snapToElements && activeSnapEdges.length > 0) {
                         editorState.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
                             // ...snapEdge,
                             points: [

@@ -1,11 +1,18 @@
 import React from "react";
 import classnames from "classnames";
-import {PresentationIcon, ExternalLinkIcon, MagnetIcon} from "@josemi-icons/react";
+import {
+    ExternalLinkIcon,
+    MagnetIcon,
+    GridIcon,
+    ImageIcon,
+    DownloadIcon,
+    FolderIcon,
+    TrashIcon,
+} from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
 import {BACKGROUND_COLOR_PALETTE} from "@lib/utils/colors.js";
 import {ColorPicker} from "../commons/color-picker.jsx";
 import {HeaderButton} from "../commons/header.jsx";
-import {DownloadIcon, FolderIcon, TrashIcon, ImageIcon, GridIcon} from "../icons.jsx";
 import {useScene} from "@contexts/scene.jsx";
 
 // @private menu link component
@@ -74,29 +81,17 @@ export const Menu = props => {
                     </Dropdown.Item>
                 )}
                 <Dropdown.Separator />
-                <Dropdown.CheckItem
-                    checked={!!props?.gridMode}
-                    onClick={props.onGridModeChange}
-                >
+                <Dropdown.CheckItem checked={!!scene?.appState?.grid} onClick={props.onGridChange}>
                     <Dropdown.Icon>
                         <GridIcon />
                     </Dropdown.Icon>
                     <span>Grid</span>
                 </Dropdown.CheckItem>
-                <Dropdown.CheckItem checked={props.snapMode} onClick={props.onSnapModeChange}>
+                <Dropdown.CheckItem checked={!!scene?.appState?.snapToElements} onClick={props.onSnapToElementsChange}>
                     <Dropdown.Icon>
                         <MagnetIcon />
                     </Dropdown.Icon>
                     <span>Snap to elements</span>
-                </Dropdown.CheckItem>
-                <Dropdown.CheckItem
-                    checked={!!props?.presentationMode}
-                    onClick={props.onPresentationModeChange}
-                >
-                    <Dropdown.Icon>
-                        <PresentationIcon />
-                    </Dropdown.Icon>
-                    <span>Presentation mode</span>
                 </Dropdown.CheckItem>
                 {props.showChangeBackground && (
                     <React.Fragment>
@@ -126,9 +121,6 @@ export const Menu = props => {
 };
 
 Menu.defaultProps = {
-    gridMode: false,
-    presentationMode: false,
-    snapMode: false,
     links: [],
     showSave: true,
     showLoad: true,
@@ -139,8 +131,7 @@ Menu.defaultProps = {
     onClear: null,
     onLoad: null,
     onExport: null,
-    onGridModeChange: null,
-    onPresentationModeChange: null,
-    onSnapModeChange: null,
+    onGridChange: null,
+    onSnapToElementsChange: null,
     onBackgroundChange: null,
 };

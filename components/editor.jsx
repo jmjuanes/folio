@@ -1,6 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
-import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
+import {BarsIcon, CameraIcon, FilesIcon, PresentationIcon} from "@josemi-icons/react";
 import {
     ACTIONS,
     ELEMENTS,
@@ -11,13 +11,13 @@ import {
     SELECTION_STROKE_COLOR,
     STATES,
     ZOOM_STEP,
-} from "@lib/constants.js";
-import {saveAsJson, loadFromJson} from "@lib/json.js";
-import {blobToDataUrl} from "@lib/utils/blob.js";
-import {useHandlers} from "@hooks/use-handlers.js";
-import {useBounds} from "@hooks/use-bounds.js";
-import {useCursor} from "@hooks/use-cursor.js";
-import {useEditor} from "@hooks/use-editor.js";
+} from "../lib/constants.js";
+import {saveAsJson, loadFromJson} from "../lib/json.js";
+import {blobToDataUrl} from "../lib/utils/blob.js";
+import {useHandlers} from "../hooks/use-handlers.js";
+import {useBounds} from "../hooks/use-bounds.js";
+import {useCursor} from "../hooks/use-cursor.js";
+import {useEditor} from "../hooks/use-editor.js";
 import {HeaderContainer, HeaderButton} from "./commons/header.jsx";
 import {Canvas} from "./canvas.jsx";
 import {Pointer} from "./pointer.jsx";
@@ -32,8 +32,8 @@ import {EditionPanel} from "./panels/edition.jsx";
 import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
 import {PagesPanel} from "./panels/pages.jsx";
-import {useConfirm} from "@contexts/confirm.jsx";
-import {SceneProvider, useScene} from "@contexts/scene.jsx";
+import {useConfirm} from "../contexts/confirm.jsx";
+import {SceneProvider, useScene} from "../contexts/scene.jsx";
 
 // @private
 const EditorWithScene = props => {
@@ -46,7 +46,6 @@ const EditorWithScene = props => {
 
     const selectedElements = scene.getSelection();
     const isScreenshot = editor.state.action === ACTIONS.SCREENSHOT;
-    const isPresentation = !!editor.state.presentationMode;
 
     // Handle loading a new drawing
     // We will check first if the onLoad function has been provided as props. If yes,
@@ -164,14 +163,14 @@ const EditorWithScene = props => {
                 brushStrokeColor={SELECTION_STROKE_COLOR}
                 showBrush={editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT}
                 showPointer={editor.state.action === ACTIONS.ERASE}
-                showGrid={editor.state.gridMode}
-                showSnaps={editor.state.snapMode}
+                showGrid={scene.appState.grid}
+                showSnaps={scene.appState.snapToElements}
                 {...editor.events}
             />
             {editor.state.action === ACTIONS.POINTER && (
                 <Pointer />
             )}
-            {(editor.state.contextMenu && !isPresentation) &&  (
+            {editor.state.contextMenu &&  (
                 <ContextMenu
                     top={editor.state.contextMenuTop}
                     left={editor.state.contextMenuLeft}
@@ -237,7 +236,7 @@ const EditorWithScene = props => {
                     }}
                 />
             )}
-            {!isScreenshot && !isPresentation && (
+            {!isScreenshot && (
                 <div className="absolute z-5 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
                     <ToolsPanel
                         action={editor.state.action}
@@ -267,7 +266,7 @@ const EditorWithScene = props => {
                             editor.update();
                         }}
                     />
-                    {(editor.state.hintsVisible && !editor.state.tool && !isPresentation) && (
+                    {(editor.state.hintsVisible && !editor.state.tool) && (
                         <Hint
                             position="top"
                             title="Tools Panel"
@@ -296,7 +295,7 @@ const EditorWithScene = props => {
                 <div className="absolute z-6 top-0 mt-16 left-0 pt-1 pl-4">
                     <PagesPanel
                         key={`pages:${scene.pages.length}`}
-                        editable={!isPresentation}
+                        editable={true}
                         onChangeActivePage={page => {
                             scene.setActivePage(page);
                             editor.update();
@@ -335,9 +334,6 @@ const EditorWithScene = props => {
                             <HeaderContainer>
                                 <Menu
                                     links={props.links}
-                                    gridMode={editor.state.gridMode}
-                                    presentationMode={editor.state.presentationMode}
-                                    snapMode={editor.state.snapMode}
                                     showLoad={props.showLoad}
                                     showSave={props.showSave}
                                     showClear={props.showClear}
@@ -355,16 +351,14 @@ const EditorWithScene = props => {
                                         editor.dispatchChange();
                                         editor.update();
                                     }}
-                                    onGridModeChange={() => {
-                                        editor.state.gridMode = !editor.state.gridMode;
+                                    onGridChange={() => {
+                                        scene.appState.grid = !scene.appState.grid;
+                                        editor.dispatchChange();
                                         editor.update();
                                     }}
-                                    onPresentationModeChange={() => {
-                                        editor.state.presentationMode = !editor.state.presentationMode;
-                                        handleToolOrActionChange(null, ACTIONS.MOVE);
-                                    }}
-                                    onSnapModeChange={() => {
-                                        editor.state.snapMode = !editor.state.snapMode;
+                                    onSnapToElementsChange={() => {
+                                        scene.appState.snapToElements = !scene.appState.snapToElements;
+                                        editor.dispatchChange();
                                         editor.update();
                                     }}
                                 />
@@ -372,7 +366,7 @@ const EditorWithScene = props => {
                                 {props.showTitle && false && (
                                     <Title
                                         title={scene.title}
-                                        editable={!isPresentation}
+                                        editable={true}
                                         onChange={newTitle => {
                                             scene.title = newTitle;
                                             editor.dispatchChange();
@@ -394,7 +388,7 @@ const EditorWithScene = props => {
                                         editor.update();
                                     }}
                                 />
-                                {!isPresentation && props.showScreenshot && (
+                                {props.showScreenshot && (
                                     <HeaderButton
                                         icon="camera"
                                         disabled={scene.getElements().length === 0}
@@ -404,7 +398,7 @@ const EditorWithScene = props => {
                                     />
                                 )}
                             </HeaderContainer>
-                            {(editor.state.hintsVisible && !editor.state.tool && !isPresentation && !editor.state.pagesVisible) && (
+                            {(editor.state.hintsVisible && !editor.state.tool && !editor.state.pagesVisible) && (
                                 <Hint position="bottom" title="Actions" contentClassName="w-48">
                                     <div className="flex items-center justify-center gap-2">
                                         <BarsIcon />
@@ -424,32 +418,30 @@ const EditorWithScene = props => {
                         {props.headerLeftContent}
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
-                        {!isPresentation && (
-                            <div className="flex relative">
-                                <HistoryPanel
-                                    undoDisabled={!scene.canUndo()}
-                                    redoDisabled={!scene.canRedo()}
-                                    onUndoClick={() => {
-                                        scene.undo();
-                                        editor.dispatchChange();
-                                        editor.update();
-                                    }}
-                                    onRedoClick={() => {
-                                        scene.redo();
-                                        editor.dispatchChange();
-                                        editor.update();
-                                    }}
+                        <div className="flex relative">
+                            <HistoryPanel
+                                undoDisabled={!scene.canUndo()}
+                                redoDisabled={!scene.canRedo()}
+                                onUndoClick={() => {
+                                    scene.undo();
+                                    editor.dispatchChange();
+                                    editor.update();
+                                }}
+                                onRedoClick={() => {
+                                    scene.redo();
+                                    editor.dispatchChange();
+                                    editor.update();
+                                }}
+                            />
+                            {(editor.state.hintsVisible && !editor.state.tool) && (
+                                <Hint
+                                    position="bottom"
+                                    title="History"
+                                    contentClassName="w-24 text-center"
+                                    content="Undo and redo changes."
                                 />
-                                {(editor.state.hintsVisible && !editor.state.tool) && (
-                                    <Hint
-                                        position="bottom"
-                                        title="History"
-                                        contentClassName="w-24 text-center"
-                                        content="Undo and redo changes."
-                                    />
-                                )}
-                            </div>
-                        )}
+                            )}
+                        </div>
                         <div className="flex relative">
                             <ZoomPanel
                                 zoom={scene.getZoom()}
@@ -462,7 +454,7 @@ const EditorWithScene = props => {
                                     editor.update();
                                 }}
                             />
-                            {(editor.state.hintsVisible && !editor.state.tool && !isPresentation) && (
+                            {(editor.state.hintsVisible && !editor.state.tool) && (
                                 <Hint
                                     position="bottom"
                                     title="Zoom"
