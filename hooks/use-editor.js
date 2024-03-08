@@ -650,10 +650,12 @@ export const useEditor = props => {
 
             // @description handle paste event
             onPaste: event => {
-                scene.pasteElementsFromClipboard(event).then(() => {
-                    dispatchChange();
-                    update();
-                });
+                if (!isInputTarget(event)) {
+                    scene.pasteElementsFromClipboard(event).then(() => {
+                        dispatchChange();
+                        update();
+                    });
+                }
             },
         };
 
