@@ -578,20 +578,29 @@ export const useEditor = props => {
                         ids: selectedElements.map(el => el.id).join(","),
                         keys: `${dir}1,${dir}2`,
                         elements: selectedElements.map(el => {
-                            const prev1 = el[`${dir}1`];
-                            const prev2 = el[`${dir}2`];
-                            el[`${dir}1`] = event.shiftKey ? prev1 + sign : getPosition(prev1 + sign * GRID_SIZE);
-                            el[`${dir}2`] = event.shiftKey ? prev2 + sign : getPosition(prev2 + sign * GRID_SIZE);
+                            const snapshot = {...el};
+                            const field1 = `${dir}1`, field2 = `${dir}2`;
+                            const elementConfig = getElementConfig(el);
+                            const fields = [field1, field2];
+                            if (typeof elementConfig.getUpdatedFields === "function") {
+                                (elementConfig.getUpdatedFields(el) || []).forEach(f => fields.push(f));
+                            }
+                            // Assign the new values to the element
+                            el[field1] = event.shiftKey ? snapshot[field1] + sign : getPosition(snapshot[field1] + sign * GRID_SIZE);
+                            el[field2] = event.shiftKey ? snapshot[field2] + sign : getPosition(snapshot[field2] + sign * GRID_SIZE);
+                            // Check for updating additional field on drag
+                            if (typeof elementConfig.onDrag === "function") {
+                                elementConfig.onDrag(el, snapshot, null);
+                            }
+                            // Return updated values
                             return {
                                 id: el.id,
-                                prevValues: {
-                                    [`${dir}1`]: prev1,
-                                    [`${dir}2`]: prev2,
-                                },
-                                newValues: {
-                                    [`${dir}1`]: el[`${dir}1`],
-                                    [`${dir}2`]: el[`${dir}2`],
-                                },
+                                prevValues: Object.fromEntries(fields.map(field => {
+                                    return [field, snapshot[field]];
+                                })),
+                                newValues: Object.fromEntries(fields.map(field => {
+                                    return [field, el[field]];
+                                })),
                             };
                         }),
                     });
