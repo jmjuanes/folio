@@ -12,6 +12,8 @@ import {
     SNAP_THRESHOLD,
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
+    BOUND_ELEMENTS_THRESHOLD,
+    FIELDS,
 } from "../lib/constants.js";
 import {normalizeBounds, getRectangleBounds} from "../lib/utils/math.js";
 import {isArrowKey} from "../lib/utils/keys.js";
@@ -21,6 +23,7 @@ import {
     createElement,
     getElementsSnappingEdges,
     getElementSnappingPoints,
+    getElementsIntersection,
 } from "../lib/elements.js";
 import {useScene} from "../contexts/scene.jsx";
 
@@ -115,10 +118,28 @@ export const useEditor = props => {
             update();
         };
 
+        // @description get nearest element to point
+        const getNearestElementToPoint = (x, y, delta = 0) => {
+            return boundElements.find(element => {
+                if (element.type !== ELEMENTS.ARROW) {
+                    if (element.x1 - delta <= x && x <= element.x2 + delta) {
+                        if (element.y1 - delta <= y && y <= element.y2 + delta) {
+                            return true;
+                        }
+                    }
+                }
+                // Not valid
+                return false;
+            });
+        };
+
         // Internal variables
         let snapshot = [];
         let snapshotBounds = null;
         let snapEdges = [];
+        let boundElements = [];
+        let startBindingElement = null;
+        let endBindingElement = null;
         let activeSnapEdges = [];
         let activeElement = null;
         let isDragged = false, isResized = false, isPrevSelected = false;
@@ -253,6 +274,21 @@ export const useEditor = props => {
                         snapEdges = getElementsSnappingEdges(scene.getElements());
                     }
                 }
+                boundElements = [];
+                startBindingElement = null;
+                endBindingElement = null;
+                if (editorState.action === ACTIONS.RESIZE) {
+                    boundElements = scene.getElements().filter(el => {
+                        return el.type !== ELEMENTS.ARROW && el.type !== ELEMENTS.NOTE;
+                    });
+                    // Get binding elements
+                    if (snapshot[0][FIELDS.START_BINDING]) {
+                        startBindingElement = scene.getElement(snapshot[0][FIELDS.START_BINDING].id);
+                    }
+                    if (snapshot[0][FIELDS.END_BINDING]) {
+                        endBindingElement = scene.getElement(snapshot[0][FIELDS.END_BINDING].id);
+                    }
+                }
                 update();
             },
             onPointerMove: event => {
@@ -316,6 +352,7 @@ export const useEditor = props => {
                     editorState.currentState = STATES.RESIZING;
                     activeSnapEdges = [];
                     isResized = true;
+                    let skipSnaps = false;
                     const element = scene.getElement(snapshot[0].id);
                     const elementConfig = getElementConfig(element);
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
@@ -349,15 +386,46 @@ export const useEditor = props => {
                     else if (event.handler === HANDLERS.NODE_START) {
                         element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
                         element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
+                        element[FIELDS.START_BINDING] = null;
+                        const boundElement = getNearestElementToPoint(element.x1, element.y1, BOUND_ELEMENTS_THRESHOLD);
+                        if (boundElement) {
+                            skipSnaps = true;
+                            element.x1 = (boundElement.x1 + boundElement.x2) / 2;
+                            element.y1 = (boundElement.y1 + boundElement.y2) / 2;
+                            element[FIELDS.START_BINDING] = {
+                                id: boundElement.id,
+                                point: getElementsIntersection(element, boundElement),
+                            };
+                        }
+                        // Update end binding
+                        if (element[FIELDS.END_BINDING] && endBindingElement) {
+                            element[FIELDS.END_BINDING].point = getElementsIntersection(element, endBindingElement);
+                        }
                     }
                     else if (event.handler === HANDLERS.NODE_END) {
                         element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
                         element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
+                        element[FIELDS.END_BINDING] = null;
+                        const boundElement = getNearestElementToPoint(element.x2, element.y2, BOUND_ELEMENTS_THRESHOLD);
+                        if (boundElement) {
+                            skipSnaps = true;
+                            element.x2 = (boundElement.x1 + boundElement.x2) / 2;
+                            element.y2 = (boundElement.y1 + boundElement.y2) / 2;
+                            element[FIELDS.END_BINDING] = {
+                                id: boundElement.id,
+                                point: getElementsIntersection(element, boundElement),
+                            };
+                            console.log(element.endBinding);
+                        }
+                        // Update start binding
+                        if (element[FIELDS.START_BINDING] && startBindingElement) {
+                            element[FIELDS.START_BINDING].point = getElementsIntersection(element, startBindingElement);
+                        }
                     }
                     // Execute onResize handler
                     elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
                     // Set visible snap edges
-                    if (scene?.appState?.snapToElements && activeSnapEdges.length > 0) {
+                    if (!skipSnaps && scene?.appState?.snapToElements && activeSnapEdges.length > 0) {
                         editorState.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
                             // ...snapEdge,
                             points: [
