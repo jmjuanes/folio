@@ -7,14 +7,24 @@ import {
     TRANSPARENT,
     OPACITY_FULL,
     OPACITY_NONE,
-} from "@lib/constants.js";
-import {getBalancedDash, getPointsDistance} from "@lib/utils/math.js";
-import {getCurvePath} from "@lib/utils/paths.js";
+} from "../../lib/constants.js";
+import {getBalancedDash, getPointsDistance} from "../../lib/utils/math.js";
+import {getCurvePath} from "../../lib/utils/paths.js";
 import {Arrowhead} from "./arrow-head.jsx";
+
+// Get the correct point
+const getPoint = (x, y, binding) => {
+    if (binding && binding?.point) {
+        return {x: binding.point[0], y: binding.point[1]};
+    }
+    return {x, y};
+};
 
 export const ArrowElement = props => {
     const x = Math.min(props.x1, props.x2);
     const y = Math.min(props.y1, props.y2);
+    const start = getPoint(props.x1, props.y1, props.startBinding);
+    const end = getPoint(props.x2, props.y2, props.endBinding);
     const strokeColor = props.strokeColor ?? BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
@@ -27,13 +37,15 @@ export const ArrowElement = props => {
             }
             return [NONE, NONE];
         },
-        [strokeWidth, props.strokeStyle, props.x, props.y, props.x2, props.y2],
+        [strokeWidth, props.strokeStyle, props.x1, props.y1, props.x2, props.y2],
     );
     const arrowPath = React.useMemo(
         () => {
             const points = [
-                [props.x1 - x, props.y1 - y],
-                [props.x2 - x, props.y2 - y],
+                // [props.x1 - x, props.y1 - y],
+                [start.x - x, start.y - y],
+                // [props.x2 - x, props.y2 - y],
+                [end.x - x, end.y - y],
             ];
             let controlPoint = null;
             if (typeof props.xCenter === "number") {
@@ -41,7 +53,7 @@ export const ArrowElement = props => {
             }
             return getCurvePath(points, controlPoint);
         },
-        [props.x1, props.y1, props.xCenter, props.yCenter, props.x2, props.y2],
+        [start.x, start.y, props.xCenter, props.yCenter, end.x, end.y],
     );
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>
@@ -70,10 +82,10 @@ export const ArrowElement = props => {
                 <Arrowhead
                     id={props.id}
                     type={props.startArrowhead}
-                    x={props.x1 - x}
-                    y={props.y1 - y}
-                    x2={(props.xCenter ?? props.x2) - x}
-                    y2={(props.yCenter ?? props.y2) - y}
+                    x={start.x - x}
+                    y={start.y - y}
+                    x2={(props.xCenter ?? end.x) - x}
+                    y2={(props.yCenter ?? end.y) - y}
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     strokeOpacity={strokeOpacity}
@@ -84,10 +96,10 @@ export const ArrowElement = props => {
                 <Arrowhead
                     id={props.id}
                     type={props.endArrowhead}
-                    x={props.x2 - x}
-                    y={props.y2 - y}
-                    x2={(props.xCenter ?? props.x1) - x}
-                    y2={(props.yCenter ?? props.y1) - y}
+                    x={end.x - x}
+                    y={end.y - y}
+                    x2={(props.xCenter ?? start.x) - x}
+                    y2={(props.yCenter ?? start.y) - y}
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     strokeOpacity={strokeOpacity}
