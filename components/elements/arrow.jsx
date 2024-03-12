@@ -8,7 +8,12 @@ import {
     OPACITY_FULL,
     OPACITY_NONE,
 } from "../../lib/constants.js";
-import {getBalancedDash, getPointsDistance} from "../../lib/utils/math.js";
+import {
+    getBalancedDash,
+    getPointsDistance,
+    splitBezierCurve,
+    convertBezierPointToTValue,
+} from "../../lib/utils/math.js";
 import {getCurvePath} from "../../lib/utils/paths.js";
 import {Arrowhead} from "./arrow-head.jsx";
 
@@ -41,19 +46,38 @@ export const ArrowElement = props => {
     );
     const arrowPath = React.useMemo(
         () => {
-            const points = [
-                // [props.x1 - x, props.y1 - y],
-                [start.x - x, start.y - y],
-                // [props.x2 - x, props.y2 - y],
-                [end.x - x, end.y - y],
-            ];
-            let controlPoint = null;
-            if (typeof props.xCenter === "number") {
-                controlPoint = [props.xCenter - x, props.yCenter - y];
+            // No control point provided, just render the line
+            if (typeof props.xCenter !== "number") {
+                return getCurvePath([start.x - x, start.y - y], [end.x - x, end.y - y]);
             }
-            return getCurvePath(points, controlPoint);
+            const s = [props.x1 - x, props.y1 - y];
+            const e = [props.x2 - x, props.y2 - y];
+            const c = [props.xCenter - x, props.yCenter - y];
+            // Check for rendering a simple curve without bindings
+            if (!props.startBinding && !props.endBinding) {
+                return getCurvePath(s, c, e);
+            }
+            let result = null;
+            // 1st case, rendering with only startBinding defined
+            if (!props.endBinding) {
+                const t = convertBezierPointToTValue(s, c, e, [start.x - x, start.y - y]);
+                result = splitBezierCurve(s, c, e, t)[1];
+            }
+            // 4. Rendering with only endBonding defined
+            else if (!props.startBinding) {
+                const t = convertBezierPointToTValue(s, c, e, [end.x - x, end.y - y]);
+                result = splitBezierCurve(s, c, e, t)[0];
+            }
+            // 5. Both startBinding and endBinding defined
+            else {
+                const t1 = convertBezierPointToTValue(s, c, e, [start.x - x, start.y - y]);
+                const t2 = convertBezierPointToTValue(s, c, e, [end.x - x, end.y - y]);
+                result = splitBezierCurve(s, c, e, t1, t2)[1];
+            }
+            // Render curve
+            return getCurvePath(result[0], result[1], result[2]);
         },
-        [start.x, start.y, props.xCenter, props.yCenter, end.x, end.y],
+        [start.x, start.y, props.xCenter, props.yCenter, end.x, end.y, !!props.startBinding, !!props.endBinding],
     );
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>

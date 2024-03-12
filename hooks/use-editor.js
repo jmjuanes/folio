@@ -415,7 +415,6 @@ export const useEditor = props => {
                                 id: boundElement.id,
                                 point: getElementsIntersection(element, boundElement),
                             };
-                            console.log(element.endBinding);
                         }
                         // Update start binding
                         if (element[FIELDS.START_BINDING] && startBindingElement) {
