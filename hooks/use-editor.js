@@ -138,6 +138,11 @@ export const useEditor = props => {
                     activeElement = null;
                     editorState.action = null;
                 }
+                // Check if we have an active group
+                if (scene.page.activeGroup) {
+                    scene.page.activeGroup = null;
+                    update();
+                }
                 if (!editorState.tool) {
                     scene.clearSelection();
                     update();
@@ -148,12 +153,12 @@ export const useEditor = props => {
                     const element = scene.getElement(event.element);
                     isPrevSelected = element.selected;
                     // Check to reset active group
-                    // if (board.activeGroup && element.group !== board.activeGroup) {
-                    //     board.elements.forEach(el => {
-                    //         el.selected = el.group === board.activeGroup || el.selected;
-                    //     });
-                    //     board.activeGroup = null;
-                    // }
+                    if (scene.page.activeGroup && element.group !== scene.page.activeGroup) {
+                        scene.getElements().forEach(el => {
+                            el.selected = el.group === scene.page.activeGroup || el.selected;
+                        });
+                        scene.page.activeGroup = null;
+                    }
                     const inCurrentSelection = scene.getSelection().some(el => {
                         return el.id === element.id;
                     });
@@ -161,11 +166,11 @@ export const useEditor = props => {
                         scene.clearSelection();
                     }
                     element.selected = true;
-                    // if (!board.activeGroup && element.group) {
-                    //     board.elements.forEach(el => {
-                    //         el.selected = el.selected || (el.group && el.group === element.group);
-                    //     });
-                    // }
+                    if (!scene.page.activeGroup && element.group) {
+                        scene.getElements().forEach(el => {
+                            el.selected = el.selected || (el.group && el.group === element.group);
+                        });
+                    }
                     update();
                 }
             },
@@ -467,11 +472,11 @@ export const useEditor = props => {
                             element.selected = !isPrevSelected;
                         }
                         // Select all elements of this group
-                        // if (element.group && !board.activeGroup) {
-                        //     board.elements.forEach(el => {
-                        //         el.selected = el.group === element.group ? element.selected : el.selected;
-                        //     });
-                        // }
+                        if (element.group && !scene.page.activeGroup) {
+                            scene.getElements().forEach(el => {
+                                el.selected = el.group === element.group ? element.selected : el.selected;
+                            });
+                        }
                     }
                     isDragged = false;
                     isResized = false;
@@ -499,12 +504,13 @@ export const useEditor = props => {
                 if (!editorState.action && !editorState.tool) {
                     // board.clearSelectedElements();
                     const element = scene.getElement(event.element);
-                    // if (!board.activeGroup && element.group) {
-                    //     board.activeGroup = element.group;
-                    //     board.clearSelectedElements();
-                    //     element.selected = true; // Mark this element as selected
-                    // }
-                    if (element && !element.locked) {
+                    // Check for entering in group edition mode
+                    if (!scene.page.activeGroup && element.group) {
+                        scene.page.activeGroup = element.group;
+                        scene.clearSelection();
+                        element.selected = true; // Mark this element as selected
+                    }
+                    else if (element && !element.locked) {
                         activeElement = element;
                         activeElement.editing = true;
                         editorState.action = ACTIONS.EDIT;
@@ -660,6 +666,7 @@ export const useEditor = props => {
             // @description handle paste event
             onPaste: event => {
                 if (!isInputTarget(event)) {
+                    scene.page.activeGroup = null;
                     scene.pasteElementsFromClipboard(event).then(() => {
                         dispatchChange();
                         update();
