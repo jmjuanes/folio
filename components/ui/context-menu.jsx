@@ -22,6 +22,16 @@ export const ContextMenu = props => {
                     {selectedElements.some(el => el.locked) && (
                         <Menu.Item onClick={props.onUnlock}>Unlock</Menu.Item>
                     )}
+                    {(!scene.page.activeGroup && selectedElements.length > 1) && (
+                        <React.Fragment>
+                            {selectedElements.some(el => !el.group || el.group !== selectedElements[0].group) && (
+                                <Menu.Item onClick={props.onGroup}>Group</Menu.Item>
+                            )}
+                            {selectedElements.some(el => !!el.group) && (
+                                <Menu.Item onClick={props.onUngroup}>Ungroup</Menu.Item>
+                            )}
+                        </React.Fragment>
+                    )}
                     <Menu.Separator />
                 </React.Fragment>
             )} 
