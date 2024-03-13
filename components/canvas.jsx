@@ -268,8 +268,8 @@ export const Canvas = props => {
                                 key={index}
                                 d={bound.path ?? ""}
                                 fill={props.boundsFillColor}
-                                stroke={props.boundsStrokeColor}
-                                strokeWidth={props.boundsStrokeWidth / props.zoom}
+                                stroke={bound.strokeColor ?? props.boundsStrokeColor}
+                                strokeWidth={(bound.strokeWidth ?? props.boundsStrokeWidth) / props.zoom}
                                 strokeDasharray={bound.strokeDasharray ?? null}
                             />
                         ))}
