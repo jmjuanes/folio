@@ -190,6 +190,16 @@ const EditorWithScene = props => {
                         editor.dispatchChange();
                         editor.update();
                     }}
+                    onGroup={() => {
+                        scene.groupElements(scene.getSelection());
+                        editor.dispatchChange();
+                        editor.update();
+                    }}
+                    onUngroup={() => {
+                        scene.ungroupElements(scene.getSelection());
+                        editor.dispatchChange();
+                        editor.update();
+                    }}
                     onCut={() => {
                         const elements = scene.getSelection();
                         scene.cutElementsToClipboard(elements).then(() => {
