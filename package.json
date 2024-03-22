@@ -10,6 +10,7 @@
     "scripts": {
         "build": "yarn clean && yarn build:app && yarn copy-assets",
         "build:app": "cross-env NODE_ENV=production webpack build",
+        "build:site": "node ./scripts/site.js",
         "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
@@ -42,6 +43,7 @@
         "html-webpack-plugin": "^5.5.0",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
+        "mikel": "^0.2.1",
         "react": "^18.2.0",
         "react-test-renderer": "^18.2.0",
         "webpack": "^5.72.1",
