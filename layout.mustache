@@ -23,23 +23,40 @@
                     <span>folio.</span>
                 </div>
             </a>
-            <div class="flex items-center">
-                <div class="hidden md:flex items-center mr-6 gap-2">
+            <div class="flex items-center gap-2">
+                <div class="hidden md:flex items-center mr-4 gap-2">
                     {{#site.navbar.links}}
                     <a href="{{link}}" class="inline-flex items-center px-2 py-2 rounded-md hover:bg-neutral-100">
                         <span class="font-medium">{{text}}</span>
                     </a>
                     {{/site.navbar.links}}
                 </div>
-                <div class="flex items-center ml-auto">
+                <div class="flex items-center">
                     <a href="./app" class="cursor-pointer flex items-center px-3 py-2 rounded-md bg-neutral-950 hover:bg-neutral-900 no-underline">
                         <strong class="text-white">Try Folio</strong>
                         <i class="text-white italic">- it's free!</i>
                     </a>
                 </div>
+                <a id="menu-open" class="flex md:hidden items-center text-neutral-900 hover:bg-neutral-100 cursor-pointer p-2 rounded-md">
+                    <svg data-menu="open" class="w-6 h-6">
+                        <use xlink:href="sprite.svg#bars"></use>
+                    </svg>
+                    <svg data-menu="close" class="hidden w-6 h-6">
+                        <use xlink:href="sprite.svg#close"></use>
+                    </svg>
+                </a>
             </div>
         </div>
         <div class="hidden w-full h-px bg-neutral-900"></div>
+    </div>
+    <!-- Menu -->
+    <div id="menu" class="hidden md:hidden bg-white px-8 pb-8">
+        {{#site.navbar.links}}
+        <div class="h-px w-full bg-neutral-400"></div>
+        <a href="{{link}}" class="block py-3 text-lg">
+            <span class="font-medium">{{text}}</span>
+        </a>
+        {{/site.navbar.links}}
     </div>
     <!-- Main content -->
     <div class="w-full">
@@ -65,5 +82,21 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        // const menu = document.querySelector(`div#menu`);
+        const toggleMenu = () => {
+            document.querySelector(`div#menu`).classList.toggle("hidden");
+            Array.from(document.querySelectorAll(`a#menu-open > svg`)).forEach(element => {
+                element.classList.toggle("hidden");
+            });
+        };
+        document.querySelector(`a#menu-open`).addEventListener("click", e => {
+            e.preventDefault();
+            toggleMenu();
+        });
+        Array.from(menu.querySelectorAll("a")).forEach(element => {
+            element.addEventListener("click", () => toggleMenu());
+        });
+    </script>
 </body>
 </html>
