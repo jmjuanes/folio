@@ -1,10 +1,16 @@
 # Changelog
 
-## v0.16.0 (Mar 6, 2024) Snap to Elements and enabled Laser Pointer tool
+## v0.16.0 (Mar 6, 2024) Snap to Elements and Laser Pointer tool
+
+We are thrilled to announce the release of version v0.16.0, packed with exciting new features and improvements to enhance your drawing experience.
+
+### Introducing Snap to Elements
 
 In this update, we have added the Snap to Elements feature, allowing you to align your drawings with precision. Say goodbye to crooked lines and uneven shapes – now your elements will snap into place effortlessly, ensuring a polished and professional look.
 
-Also, we are excited to announce that the Laser Pointer Tool is back! Use it to highlight specific details or guide your audience during presentations and demos.
+### Laser Pointer tool is back!
+
+We are excited to announce that the Laser Pointer Tool has been enabled again. Use it to highlight specific details or guide your audience during presentations and demos.
 
 
 ## v0.15.0 (Mar 3, 2024) Enabling page reordering
