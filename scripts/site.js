@@ -15,7 +15,7 @@ const build = async () => {
     const inputFolder = path.join(process.cwd(), "site");
     const outputFolder = path.join(process.cwd(), "www");
     // 1. Read layout
-    const layout = fs.readFileSync(path.join(inputFolder, "layouts", "default.mustache"), "utf8");
+    const layout = fs.readFileSync(path.join(inputFolder, "_layouts", "default.mustache"), "utf8");
     // 2. Read input folder and process all .mustache files
     fs.readdirSync(inputFolder, "utf8")
         .filter(file => path.extname(file) === ".mustache")
