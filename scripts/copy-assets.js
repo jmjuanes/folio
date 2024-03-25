@@ -4,14 +4,14 @@ const path = require("node:path");
 const rootPath = path.resolve(__dirname, "../");
 const buildPath = path.join(rootPath, "www/");
 const assets = [
-    {
-        from: "public/index.html",
-        to: "./index.html",
-    },
-    {
-        from: "public/privacy.html",
-        to: "./privacy.html",
-    },
+    // {
+    //     from: "public/index.html",
+    //     to: "./index.html",
+    // },
+    // {
+    //     from: "public/privacy.html",
+    //     to: "./privacy.html",
+    // },
     {
         from: "public/404.html",
         to: "./404.html",
