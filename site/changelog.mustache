@@ -1,0 +1,28 @@
+<div class="w-full max-w-7xl mx-auto px-8 py-12">
+    <div class="mb-20">
+        <div class="font-black text-5xl md:text-7xl leading-none text-neutral-950 mb-4 md:mb-6">
+            <span>Changelog.</span>
+        </div>
+        <div class="text-2xl md:text-3xl text-neutral-700 font-medium max-w-4xl leading-tight">
+            <span>Stay up-to-date with the latest improvements and enhancements to Folio.</span>
+        </div>
+    </div>
+    {{#site.data.changelog}}
+    <div class="flex flex-col md:flex-row gap-4 md:gap-8 w-full pb-16">
+        <div class="md:w-72 md:mt-4">
+            <div class="font-medium text-lg text-neutral-700 leading-none mb-1">{{date}}</div>
+            <div class="text-xs text-neutral-600">{{version}}</div>
+        </div>
+        <div class="w-full">
+            <div class="font-bold text-3xl text-neutral-950 mb-1">
+                <span>{{title}}</span>
+            </div>
+            <div class="h-px w-full bg-neutral-200 mb-4"></div>
+            {{#content}}
+            {{#heading}}<div class="text-2xl text-neutral-950 font-bold mb-3">{{text}}</div>{{/heading}}
+            {{^heading}}<div class="mb-6">{{text}}</div>{{/heading}}
+            {{/content}}
+        </div>
+    </div>
+    {{/site.data.changelog}}
+</div>

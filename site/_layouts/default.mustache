@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" style="overscroll-behavior-x:none;">
+<head>
+    <meta charSet="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta name="title" content="Folio">
+    <meta name="description" content="Folio is a digital whiteboard for sketching and prototyping">
+    <meta property="og:site_name" content="Folio - Digital whiteboard">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.josemi.xyz/folio">
+    <meta property="og:image" content="https://www.josemi.xyz/folio/cover.png">
+    <meta property="og:description" content="Folio is a digital whiteboard for sketching and prototyping">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap">
+    <link rel="stylesheet" href="./low.css">
+    <title>Folio | Minimal whiteboard for sketching and prototyping</title>
+</head>
+<body class="m-0 p-0 font-inter leading-normal text-neutral-800 bg-white">
+    <!-- Header -->
+    <div class="w-full">
+        <div class="flex justify-between items-center w-full max-w-7xl mx-auto h-24 px-8 select-none">
+            <a href="./" class="flex items-center gap-2 text-neutral-950 no-underline">
+                <div class="font-black leading-none text-3xl">
+                    <span>folio.</span>
+                </div>
+            </a>
+            <div class="flex items-center gap-2">
+                <div class="hidden md:flex items-center mr-4 gap-4">
+                    {{#site.navbar.links}}
+                    <a href="{{link}}" class="inline-flex items-center px-2 py-2 rounded-md hover:bg-neutral-100">
+                        <span class="font-medium">{{text}}</span>
+                    </a>
+                    {{/site.navbar.links}}
+                </div>
+                <div class="flex items-center">
+                    <a href="./app" class="cursor-pointer flex items-center px-3 py-2 rounded-md bg-neutral-950 hover:bg-neutral-900 no-underline">
+                        <strong class="text-white">Try Folio</strong>
+                        <i class="text-white italic">- it's free!</i>
+                    </a>
+                </div>
+                <a id="menu-open" class="flex md:hidden items-center text-neutral-900 hover:bg-neutral-100 cursor-pointer p-2 rounded-md">
+                    <svg data-menu="open" class="w-6 h-6">
+                        <use xlink:href="sprite.svg#bars"></use>
+                    </svg>
+                    <svg data-menu="close" class="hidden w-6 h-6">
+                        <use xlink:href="sprite.svg#close"></use>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="hidden w-full h-px bg-neutral-900"></div>
+    </div>
+    <!-- Menu -->
+    <div id="menu" class="hidden md:hidden bg-white px-8 pb-8">
+        {{#site.navbar.links}}
+        <div class="h-px w-full bg-neutral-400"></div>
+        <a href="{{link}}" class="block py-3 text-lg">
+            <span class="font-medium">{{text}}</span>
+        </a>
+        {{/site.navbar.links}}
+    </div>
+    <!-- Main content -->
+    <div class="w-full">
+        {{ content }}
+    </div>
+    <!--Footer -->
+    <div class="w-full bg-black text-white">
+        <div class="w-full max-w-7xl mx-auto px-8 pt-16 pb-24">
+            <div class="font-black leading-none text-2xl mb-2">
+                <span>folio.</span>
+            </div>
+            <div class="flex gap-3 mb-4 text-sm">
+                {{#site.footer.links}}
+                <a href="{{link}}" target="{{target}}" class="hover:underline text-white font-bold">{{text}}</a>
+                {{/site.footer.links}}
+            </div>
+            <div class="mb-1 text-sm text-neutral-400">
+                <span>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-white font-bold">Josemi</a> in Valencia, Spain. </span>
+                <span>Source code is available on <a href="{{site.repository}}" class="hover:underline text-white font-bold">GitHub</a>.</span>
+            </div>
+            <div class="text-xs text-neutral-500">
+                <span>This site does not track you.</span>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // const menu = document.querySelector(`div#menu`);
+        const toggleMenu = () => {
+            document.querySelector(`div#menu`).classList.toggle("hidden");
+            Array.from(document.querySelectorAll(`a#menu-open > svg`)).forEach(element => {
+                element.classList.toggle("hidden");
+            });
+        };
+        document.querySelector(`a#menu-open`).addEventListener("click", e => {
+            e.preventDefault();
+            toggleMenu();
+        });
+        Array.from(menu.querySelectorAll("a")).forEach(element => {
+            element.addEventListener("click", () => toggleMenu());
+        });
+    </script>
+</body>
+</html>
