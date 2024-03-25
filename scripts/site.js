@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const siteConfig = require("../config/site.js");
+const siteConfig = require("../site/config.js");
 
 const readPage = pagePath => {
     return {
@@ -12,11 +12,10 @@ const readPage = pagePath => {
 
 const build = async () => {
     const m = (await import("mikel")).default;
-    const inputFolder = path.join(process.cwd(), "pages");
+    const inputFolder = path.join(process.cwd(), "site");
     const outputFolder = path.join(process.cwd(), "www");
-    // 1. Read layout template
-    const layoutPath = path.join(process.cwd(), "layout.mustache");
-    const layout = fs.readFileSync(layoutPath, "utf8");
+    // 1. Read layout
+    const layout = fs.readFileSync(path.join(inputFolder, "layouts", "default.mustache"), "utf8");
     // 2. Read input folder and process all .mustache files
     fs.readdirSync(inputFolder, "utf8")
         .filter(file => path.extname(file) === ".mustache")
