@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.17.0 (Mar 25, 2024) Grouping Elements
+
+### Restored Group Elements Feature
+
+In this update, we have restored the Group Elements feature to its full functionality. Now you can easily group together multiple elements on your canvas for streamlined organization and editing.
+
+### Bug Fixes
+
+We have also included various bug fixes and performance improvements to ensure a smoother and more reliable drawing experience overall.
+
 ## v0.16.0 (Mar 6, 2024) Snap to Elements and Laser Pointer tool
 
 We are thrilled to announce the release of version v0.16.0, packed with exciting new features and improvements to enhance your drawing experience.
