@@ -60,6 +60,7 @@ export const TextElement = props => {
                         return props.onChange?.(keys, values);
                     }
                 }}
+                onBlur={props.onBlur}
             />
             {!props.editing && (
                 <rect

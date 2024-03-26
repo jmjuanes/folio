@@ -71,6 +71,7 @@ export const EditableText = props => {
                         onMouseDown={stopEventPropagation}
                         onMouseUp={stopEventPropagation}
                         onChange={props.onChange}
+                        onBlur={props.onBlur}
                     />
                 )}
             </foreignObject>
