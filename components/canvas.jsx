@@ -243,6 +243,7 @@ export const Canvas = props => {
                             onChange: (k, v) => {
                                 return props?.onElementChange?.(element.id, k, v);
                             },
+                            onBlur: () => props?.onElementBlur?.(element.id),
                             onPointerDown: e => {
                                 return handlePointerDown(e, "element", props.onPointElement);
                             },
@@ -356,6 +357,7 @@ Canvas.defaultProps = {
     onPointElement: null,
     onDoubleClickElement: null,
     onElementChange: null,
+    onElementBlur: null,
     onPointHandler: null,
     onPointerDown: null,
     onPointerMove: null,
