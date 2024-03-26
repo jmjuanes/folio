@@ -1,6 +1,6 @@
 {
     "name": "folio",
-    "version": "0.17.0",
+    "version": "0.17.1",
     "description": "A minimalistic digital whiteboard for sketching and prototyping",
     "private": true,
     "homepage": "https://www.josemi.xyz/folio",
