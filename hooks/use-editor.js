@@ -626,6 +626,15 @@ export const useEditor = props => {
                     update();
                 }
             },
+
+            // @description handle element blur
+            onElementBlur: () => {
+                scene.getElements().forEach(element => {
+                    element.editing = false;
+                });
+                update();
+            },
+
             // onWheel: event => {
             //     if (!isInputTarget(event)) {
             //         const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
