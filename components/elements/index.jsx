@@ -1,12 +1,13 @@
 import React from "react";
-import {ELEMENTS, SHAPE_PADDING} from "@lib/constants.js";
-import {SvgContainer} from "@components/commons/svg.jsx";
-import {ArrowElement} from "@components/elements/arrow.jsx";
-import {DrawElement} from "@components/elements/draw.jsx";
-import {TextElement} from "@components/elements/text.jsx";
-import {ShapeElement} from "@components/elements/shape.jsx";
-import {ImageElement} from "@components/elements/image.jsx";
-import {NoteElement} from "@components/elements/note.jsx";
+import {ELEMENTS, SHAPE_PADDING} from "../../lib/constants.js";
+import {SvgContainer} from "../commons/svg.jsx";
+import {ArrowElement} from "./arrow.jsx";
+import {DrawElement} from "./draw.jsx";
+import {TextElement} from "./text.jsx";
+import {ShapeElement} from "./shape.jsx";
+import {ImageElement} from "./image.jsx";
+import {NoteElement} from "./note.jsx";
+import {BookmarkElement} from "./bookmark.jsx";
 
 const ElementContainer = props => (
     <SvgContainer>
@@ -51,6 +52,11 @@ const elementsRenderer = {
     [ELEMENTS.NOTE]: props => (
         <ElementContainer id={props.id}>
             <NoteElement {...props} />
+        </ElementContainer>
+    ),
+    [ELEMENTS.BOOKMARK]: props => (
+        <ElementContainer id={props.id}>
+            <BookmarkElement {...props} />
         </ElementContainer>
     ),
 };
