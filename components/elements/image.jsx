@@ -1,9 +1,9 @@
 import React from "react";
-import {useAssets} from "@contexts/assets.jsx";
+import {useAssets} from "../../contexts/assets.jsx";
 
 export const ImageElement = props => {
     const assets = useAssets();
-    const dataUrl = assets[props.assetId]?.dataUrl || "";
+    const dataUrl = assets[props.assetId]?.data?.src || "";
 
     return (
         <g opacity={props.opacity}>
