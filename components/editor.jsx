@@ -59,6 +59,7 @@ const EditorWithScene = props => {
                 .then(data => {
                     scene.fromJSON(data);
                     editor.state.welcomeVisible = false;
+                    editor.dispatchChange();
                     editor.update();
                 })
                 .catch(error => console.error(error));
