@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.18.0 (Apr 12, 2024) Rendering links as bookmarks
+
+### Introducing Bookmarked Links
+
+In this update, we have added the ability to render links as bookmarks styled like cards, instead of plain text. Now, when you add a link to your canvas, it will be displayed as a visually appealing bookmark card, making it easier to identify and access important resources.
+
+### Bug Fixes and Improvements
+
+We have included various bug fixes when saving the version of the secene in the local storageo of your browser.
+
+
 ## v0.17.0 (Mar 25, 2024) Grouping Elements
 
 ### Restored Group Elements Feature
@@ -9,6 +20,7 @@ In this update, we have restored the Group Elements feature to its full function
 ### Bug Fixes
 
 We have also included various bug fixes and performance improvements to ensure a smoother and more reliable drawing experience overall.
+
 
 ## v0.16.0 (Mar 6, 2024) Snap to Elements and Laser Pointer tool
 
