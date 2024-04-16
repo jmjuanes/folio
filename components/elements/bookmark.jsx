@@ -31,19 +31,6 @@ export const BookmarkElement = props => {
     };
     return (
         <g>
-            {props.selected && (
-                <foreignObject x={props.x1} y={props.y1 - 50} width={BOOKMARK_WIDTH} height={50}>
-                    <div className="flex justify-center gap-2" onPointerDown={stopEventPropagation}>
-                        <BookmarkActionButton
-                            icon="clipboard"
-                            onPointerDown={() => copyTextToClipboard(link.src)}
-                        />
-                        <a href={link.src} target="_blank" className="flex">
-                            <BookmarkActionButton icon="external-link" />
-                        </a>
-                    </div>
-                </foreignObject>
-            )}
             <foreignObject
                 x={props.x1 - BOOKMARK_OFFSET}
                 y={props.y1 - BOOKMARK_OFFSET}
@@ -74,6 +61,19 @@ export const BookmarkElement = props => {
                 stroke={NONE}
                 onPointerDown={props.onPointerDown}
             />
+            {props.selected && (
+                <foreignObject x={props.x1} y={props.y1 - 50} width={BOOKMARK_WIDTH} height={50}>
+                    <div className="flex justify-center gap-2" onPointerDown={stopEventPropagation}>
+                        <BookmarkActionButton
+                            icon="clipboard"
+                            onPointerDown={() => copyTextToClipboard(link.src)}
+                        />
+                        <a href={link.src} target="_blank" className="flex">
+                            <BookmarkActionButton icon="external-link" />
+                        </a>
+                    </div>
+                </foreignObject>
+            )}
         </g>
     );
 };
