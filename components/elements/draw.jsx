@@ -30,10 +30,10 @@ const getPath = points => {
 };
 
 export const DrawElement = props => {
-    const width = Math.abs(props.x2 - props.x1);
-    const height = Math.abs(props.y2 - props.y1);
-    const drawWidth = props.drawWidth || width || 1;
-    const drawHeight = props.drawHeight || height || 1;
+    const width = Math.abs(props.x2 - props.x1) || 1;
+    const height = Math.abs(props.y2 - props.y1) || 1;
+    const drawWidth = props.drawWidth || width;
+    const drawHeight = props.drawHeight || height;
     const points = props.points || [];
     const strokeWidth = props.strokeWidth ?? 0;
     const path = React.useMemo(() => getPath(points), [points.length, props.creating]);
