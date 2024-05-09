@@ -7,7 +7,7 @@ const package = require("./package.json");
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: path.join(__dirname, "index.jsx"),
+    entry: path.join(__dirname, "app", "index.jsx"),
     output: {
         path: path.join(__dirname, "www"),
         publicPath: "./",
@@ -18,14 +18,6 @@ module.exports = {
     optimization: {
         splitChunks: {
             chunks: "all",
-        },
-    },
-    resolve: {
-        alias: {
-            "@components": path.resolve(__dirname, "./components"),
-            "@contexts": path.resolve(__dirname, "./contexts"),
-            "@hooks": path.resolve(__dirname, "./hooks"),
-            "@lib": path.resolve(__dirname, "./lib"),
         },
     },
     devServer: {
@@ -51,7 +43,7 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    __dirname,
+                    path.join(__dirname, "app"),
                 ],
                 exclude: /(node_modules|www)/,
                 loader: "babel-loader",
@@ -90,7 +82,7 @@ module.exports = {
             ],
         }),
         new HtmlWebpackPlugin({
-            template: path.join(__dirname, "index.html"),
+            template: path.join(__dirname, "app", "template.html"),
             filename: "app.html",
             minify: true,
         }),
