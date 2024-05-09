@@ -1,9 +1,9 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {useDebounce} from "react-use";
-import {ClientProvider, useClient} from "@contexts/client.jsx";
-import {ConfirmProvider} from "@contexts/confirm.jsx";
-import {Editor} from "@components/editor.jsx";
+import {ClientProvider, useClient} from "./contexts/client.jsx";
+import {ConfirmProvider} from "./contexts/confirm.jsx";
+import {Editor} from "./components/editor.jsx";
 
 const App = () => {
     const client = useClient();
