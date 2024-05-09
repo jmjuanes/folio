@@ -2,10 +2,10 @@ import {
     ACTIONS,
     GROUP_BOUNDS_COLOR,
     GROUP_ACTIVE_BOUNDS_COLOR,
-} from "../lib/constants";
-import {getRectangleBounds} from "../lib/utils/math.js";
-import {getRectanglePath} from "../lib/utils/paths.js";
-import {getElementConfig} from "../lib/elements.js";
+} from "../constants";
+import {getRectangleBounds} from "../utils/math.js";
+import {getRectanglePath} from "../utils/paths.js";
+import {getElementConfig} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
 
 export const useBounds = ({action, tool}) => {

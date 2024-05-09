@@ -12,16 +12,16 @@ import {
     SNAP_THRESHOLD,
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
-} from "../lib/constants.js";
-import {normalizeBounds, getRectangleBounds} from "../lib/utils/math.js";
-import {isArrowKey} from "../lib/utils/keys.js";
-import {isInputTarget} from "../lib/utils/events.js";
+} from "../constants.js";
+import {normalizeBounds, getRectangleBounds} from "../utils/math.js";
+import {isArrowKey} from "../utils/keys.js";
+import {isInputTarget} from "../utils/events.js";
 import {
     getElementConfig, 
     createElement,
     getElementsSnappingEdges,
     getElementSnappingPoints,
-} from "../lib/elements.js";
+} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
 
 // @private create a new editor state

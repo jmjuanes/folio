@@ -1,4 +1,4 @@
-import {ACTIONS, STATES, CURSORS} from "../lib/constants.js";
+import {ACTIONS, STATES, CURSORS} from "../constants.js";
 
 export const useCursor = ({action, tool, currentState}) => {
     // Move action --> grab or grabbing cursor

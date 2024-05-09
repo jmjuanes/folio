@@ -1,6 +1,6 @@
-import {ACTIONS} from "@lib/constants.js";
-import {getElementConfig} from "@lib/elements.js";
-import {useScene} from "@contexts/scene.jsx";
+import {ACTIONS} from "../constants.js";
+import {getElementConfig} from "../elements.js";
+import {useScene} from "../contexts/scene.jsx";
 
 export const useHandlers = ({action, tool}) => {
     const scene = useScene();
