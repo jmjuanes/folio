@@ -2,7 +2,7 @@ import React from "react";
 import {useMount} from "react-use";
 import {DrawingIcon} from "@josemi-icons/react";
 import {Centered} from "@josemi-ui/react";
-import {createLocalClient} from "@lib/clients/local.js";
+import {createLocalClient} from "../clients/local.js";
 
 const ClientContext = React.createContext(null);
 

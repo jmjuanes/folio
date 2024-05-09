@@ -1,6 +1,6 @@
 import React from "react";
 import {useMount} from "react-use";
-import {createScene} from "@lib/scene.js";
+import {createScene} from "../scene.js";
 
 // @private Shared scene context
 const SceneContext = React.createContext(null);
