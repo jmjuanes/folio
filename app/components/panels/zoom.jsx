@@ -1,5 +1,5 @@
 import React from "react";
-import {ZOOM_MIN, ZOOM_MAX} from "@lib/constants.js";
+import {ZOOM_MIN, ZOOM_MAX} from "../../constants.js";
 import {HeaderContainer, HeaderButton} from "../commons/header.jsx";
 
 export const ZoomPanel = props => (

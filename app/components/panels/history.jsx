@@ -1,5 +1,5 @@
 import React from "react";
-import {HeaderContainer, HeaderButton} from "@components/commons/header.jsx";
+import {HeaderContainer, HeaderButton} from "../commons/header.jsx";
 
 // History panel component
 export const HistoryPanel = props => (

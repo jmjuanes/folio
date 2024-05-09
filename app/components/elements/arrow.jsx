@@ -7,9 +7,9 @@ import {
     TRANSPARENT,
     OPACITY_FULL,
     OPACITY_NONE,
-} from "@lib/constants.js";
-import {getBalancedDash, getPointsDistance} from "@lib/utils/math.js";
-import {getCurvePath} from "@lib/utils/paths.js";
+} from "../../constants.js";
+import {getBalancedDash, getPointsDistance} from "../../utils/math.js";
+import {getCurvePath} from "../../utils/paths.js";
 import {Arrowhead} from "./arrow-head.jsx";
 
 export const ArrowElement = props => {

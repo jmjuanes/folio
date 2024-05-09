@@ -1,6 +1,6 @@
 import React from "react";
-import {GRID_SIZE} from "@lib/constants.js";
-import {SvgContainer} from "@components/commons/svg.jsx";
+import {GRID_SIZE} from "../constants.js";
+import {SvgContainer} from "./commons/svg.jsx";
 
 export const Grid = props => {
     const translateX = props.translateX / props.zoom;

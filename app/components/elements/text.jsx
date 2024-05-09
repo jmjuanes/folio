@@ -4,8 +4,8 @@ import {
     FONT_FACES,
     GRID_SIZE,
     TEXT_ALIGNS,
-} from "@lib/constants.js";
-import {measureText} from "@lib/utils/math.js";
+} from "../../constants.js";
+import {measureText} from "../../utils/math.js";
 import {EditableText} from "./editable-text.jsx";
 
 export const TextElement = props => {

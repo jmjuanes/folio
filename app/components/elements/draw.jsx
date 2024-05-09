@@ -7,12 +7,12 @@ import {
     GRID_SIZE,
     OPACITY_FULL,
     OPACITY_NONE,
-} from "@lib/constants.js";
+} from "../../constants.js";
 import {
     getPointsCenter,
     getBalancedDash,
     getPointsDistance,
-} from "@lib/utils/math.js";
+} from "../../utils/math.js";
 
 const getPath = points => {
     let lastPoint = points[0];

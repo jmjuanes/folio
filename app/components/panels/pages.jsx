@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import {renderIcon, TrashIcon, CheckIcon, PencilIcon, CloseIcon, BarsIcon} from "@josemi-icons/react";
-import {useScene} from "@contexts/scene.jsx";
+import {useScene} from "../../contexts/scene.jsx";
 
 const PAGES_ITEM_HEIGHT = 37;
 

@@ -10,10 +10,10 @@ import {
     TrashIcon,
 } from "@josemi-icons/react";
 import {Dropdown} from "@josemi-ui/react";
-import {BACKGROUND_COLOR_PALETTE} from "@lib/utils/colors.js";
+import {BACKGROUND_COLOR_PALETTE} from "../../utils/colors.js";
 import {ColorPicker} from "../commons/color-picker.jsx";
 import {HeaderButton} from "../commons/header.jsx";
-import {useScene} from "@contexts/scene.jsx";
+import {useScene} from "../../contexts/scene.jsx";
 
 // @private menu link component
 const MenuLink = ({text, url}) => (

@@ -1,8 +1,8 @@
 import React from "react";
 import classNames from "classnames";
 import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
-import {FORM_OPTIONS, THEMES} from "@lib/constants.js";
-import {ColorPicker} from "@components/commons/color-picker.jsx";
+import {FORM_OPTIONS, THEMES} from "../../constants.js";
+import {ColorPicker} from "./color-picker.jsx";
 
 const optionsWithInlineTitle = new Set([
     FORM_OPTIONS.CHECKBOX,

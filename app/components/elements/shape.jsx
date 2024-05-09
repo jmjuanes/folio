@@ -11,17 +11,17 @@ import {
     OPACITY_FULL,
     HATCH_ANGLE,
     HATCH_GAP,
-} from "@lib/constants.js";
+} from "../../constants.js";
 import {
     getBalancedDash,
     getEllipsePerimeter,
     getPointsDistance,
-} from "@lib/utils/math.js";
+} from "../../utils/math.js";
 import {
     getPolygonPath,
     getPolygonHatchPath,
     getEllipseHatchPath,
-} from "@lib/utils/paths.js";
+} from "../../utils/paths.js";
 
 const HatchFill = props => {
     const lines = React.useMemo(

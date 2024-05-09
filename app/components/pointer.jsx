@@ -9,9 +9,9 @@ import {
     POINTER_WIDTH,
     TRANSPARENT,
     POINTER_TENSION,
-} from "@lib/constants.js";
-import {hypotenuse} from "@lib/utils/math.js";
-import {SvgContainer} from "@components/commons/svg.jsx";
+} from "../constants.js";
+import {hypotenuse} from "../utils/math.js";
+import {SvgContainer} from "./commons/svg.jsx";
 
 const createInterval = (ms, listener) => setInterval(listener, ms);
 

@@ -11,9 +11,9 @@ import {
     SELECTION_STROKE_COLOR,
     STATES,
     ZOOM_STEP,
-} from "../lib/constants.js";
-import {saveAsJson, loadFromJson} from "../lib/json.js";
-import {blobToDataUrl} from "../lib/utils/blob.js";
+} from "../constants.js";
+import {saveAsJson, loadFromJson} from "../json.js";
+import {blobToDataUrl} from "../utils/blob.js";
 import {useHandlers} from "../hooks/use-handlers.js";
 import {useBounds} from "../hooks/use-bounds.js";
 import {useCursor} from "../hooks/use-cursor.js";

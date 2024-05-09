@@ -23,13 +23,13 @@ import {
     SHAPES,
     FILL_STYLES,
     ARROWHEADS,
-} from "@lib/constants.js";
+} from "../../constants.js";
 import {
     FILL_COLOR_PALETTE,
     STROKE_COLOR_PALETTE,
     TEXT_COLOR_PALETTE,
     NOTE_COLOR_PALETTE,
-} from "@lib/utils/colors.js";
+} from "../../utils/colors.js";
 import {
     FillIcon,
     StrokeIcon,
@@ -57,9 +57,9 @@ import {
     BringFrontIcon,
     SendBackIcon,
     SendBackwardIcon,
-} from "@components/icons.jsx";
-import {Form} from "@components/commons/form.jsx";
-import {useScene} from "@contexts/scene.jsx";
+} from "../icons.jsx";
+import {Form} from "../commons/form.jsx";
+import {useScene} from "../../contexts/scene.jsx";
 
 // Available sections
 const SECTIONS = {

@@ -10,8 +10,8 @@ import {
     NOTE_TEXT_COLOR,
     NOTE_TEXT_FONT,
     NOTE_TEXT_SIZE,
-} from "@lib/constants.js";
-import {measureText} from "@lib/utils/math.js";
+} from "../../constants.js";
+import {measureText} from "../../utils/math.js";
 import {EditableText} from "./editable-text.jsx";
 
 export const NoteElement = props => {

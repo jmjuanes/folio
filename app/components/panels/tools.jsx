@@ -26,19 +26,19 @@ import {
     SHAPES,
     ARROWHEADS,
     STROKE_WIDTHS,
-} from "@lib/constants.js";
+} from "../../constants.js";
 import {
     STROKE_COLOR_PICK,
     TEXT_COLOR_PICK,
-} from "@lib/utils/colors.js";
+} from "../../utils/colors.js";
 import {
     ArrowIcon,
     LineIcon,
     WidthLargeIcon,
     WidthSmallIcon,
-} from "@components/icons.jsx";
-import {Form} from "@components/commons/form.jsx";
-import {useScene} from "@contexts/scene.jsx";
+} from "../icons.jsx";
+import {Form} from "../commons/form.jsx";
+import {useScene} from "../../contexts/scene.jsx";
 
 const tools = {
     [ELEMENTS.SHAPE]: {

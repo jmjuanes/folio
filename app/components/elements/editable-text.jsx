@@ -1,5 +1,5 @@
 import React from "react";
-import {stopEventPropagation} from "@lib/utils/events.js";
+import {stopEventPropagation} from "../../utils/events.js";
 
 const Placeholder = props => (
     <span style={{opacity:"0.5"}}>{props.value || ""}</span>

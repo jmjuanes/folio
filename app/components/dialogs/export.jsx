@@ -1,10 +1,10 @@
 import React from "react";
 import {Button, Centered, Overlay, Modal} from "@josemi-ui/react";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
-import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "@lib/constants.js";
-import {exportToDataURL, exportToFile, exportToClipboard} from "@lib/export.js";
-import {Form} from "@components/commons/form.jsx";
-import {useScene} from "@contexts/scene.jsx";
+import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "../../constants.js";
+import {exportToDataURL, exportToFile, exportToClipboard} from "../../export.js";
+import {Form} from "../commons/form.jsx";
+import {useScene} from "../..contexts/scene.jsx";
 
 import transparentBg from "../../assets/transparent.svg";
 
