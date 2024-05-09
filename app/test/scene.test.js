@@ -1,6 +1,6 @@
-import {createScene} from "./scene.js";
+import {createScene} from "../scene.js";
 
-jest.mock("@lib/elements.js", () => ({
+jest.mock("../elements.js", () => ({
     getElementConfig: () => null,
     createElement: () => ({
         id: ""
