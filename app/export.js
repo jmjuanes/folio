@@ -6,9 +6,9 @@ import {
     TRANSPARENT,
     FILE_EXTENSIONS,
     FONT_SOURCES,
-} from "@lib/constants.js";
-import {getRectangleBounds} from "@lib/utils/math.js";
-import {exportElementSvg} from "@lib/elements.js";
+} from "./constants.js";
+import {getRectangleBounds} from "./utils/math.js";
+import {exportElementSvg} from "./elements.js";
 
 // Append a new DOM node element
 const appendChildNode = (parent, newNode) => {
