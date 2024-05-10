@@ -58,7 +58,7 @@ import {
     SendBackIcon,
     SendBackwardIcon,
 } from "../icons.jsx";
-import {Form} from "../commons/form.jsx";
+import {Form} from "../form.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 
 // Available sections

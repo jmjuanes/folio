@@ -7,7 +7,7 @@ import {
 } from "../constants.js";
 import {AssetsProvider} from "../contexts/assets.jsx";
 import {renderElement} from "./elements/index.jsx";
-import {SvgContainer} from "./commons/svg.jsx";
+import {SvgContainer} from "./svg.jsx";
 import {Handlers} from "./handlers.jsx";
 import {Grid} from "./grid.jsx";
 

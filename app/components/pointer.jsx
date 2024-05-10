@@ -11,7 +11,7 @@ import {
     POINTER_TENSION,
 } from "../constants.js";
 import {hypotenuse} from "../utils/math.js";
-import {SvgContainer} from "./commons/svg.jsx";
+import {SvgContainer} from "./svg.jsx";
 
 const createInterval = (ms, listener) => setInterval(listener, ms);
 

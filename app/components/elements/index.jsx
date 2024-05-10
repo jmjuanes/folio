@@ -1,6 +1,6 @@
 import React from "react";
 import {ELEMENTS, SHAPE_PADDING} from "../../constants.js";
-import {SvgContainer} from "../commons/svg.jsx";
+import {SvgContainer} from "../svg.jsx";
 import {ArrowElement} from "./arrow.jsx";
 import {DrawElement} from "./draw.jsx";
 import {TextElement} from "./text.jsx";
