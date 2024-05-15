@@ -3,6 +3,7 @@ import classNames from "classnames";
 import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
 import {ColorPicker} from "./components/color-picker.jsx";
 import {FontPicker} from "./components/font-picker.jsx";
+import {checkIsActive, checkIsVisible} from "./utils.js";
 
 // Export primitive components
 export * from "./components/color-picker.jsx";
@@ -26,24 +27,6 @@ const optionsWithInlineTitle = new Set([
     FORM_OPTIONS.RANGE,
     FORM_OPTIONS.SEPARATOR,
 ]);
-
-// Tiny utility to check if a value is active
-const checkIsActive = (value, currentValue, isActiveFn, data) => {
-    if (typeof isActiveFn === "function") {
-        return isActiveFn(value, currentValue, data);
-    }
-    // Other case, just check if value is the current value
-    return value === currentValue;
-};
-
-// Tiny utility to check if a value is visible
-const checkIsVisible = (value, currentValue, isVisibleFn, data) => {
-    if (typeof isVisibleFn === "function") {
-        return !!isVisibleFn(value, currentValue, data);
-    }
-    // By default, item is visible
-    return true;
-};
 
 const optionTypes = {
     [FORM_OPTIONS.COLOR]: props => (
