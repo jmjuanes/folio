@@ -1,8 +1,23 @@
 import React from "react";
 import classNames from "classnames";
 import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
-import {FORM_OPTIONS, THEMES} from "../constants.js";
-import {ColorPicker} from "./color-picker.jsx";
+import {ColorPicker} from "./components/color-picker.jsx";
+
+// Export primitive components
+export * from "./components/color-picker.jsx";
+
+// Available form options
+export const FORM_OPTIONS = {
+    COLOR: "color",
+    SELECT: "select",
+    LABELED_SELECT: "labeledSelect",
+    COLOR_SELECT: "colorSelect",
+    FONT: "font",
+    RANGE: "range",
+    CHECKBOX: "checkbox",
+    PIXELS: "pixels",
+    SEPARATOR: "separator",
+};
 
 const optionsWithInlineTitle = new Set([
     FORM_OPTIONS.CHECKBOX,
@@ -40,10 +55,10 @@ const optionTypes = {
                     key={font}
                     className={classNames({
                         "flex justify-center items-center rounded-md h-8 text-sm": true,
-                        "bg-gray-900 text-white": props.theme === THEMES.LIGHT && font === props.value,
-                        "bg-gray-600": props.theme === THEMES.DARK && font === props.value,
-                        "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && font !== props.value,
-                        "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && font !== props.value,
+                        "bg-gray-900 text-white": font === props.value,
+                        "bg-gray-600": font === props.value,
+                        // "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && font !== props.value,
+                        // "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && font !== props.value,
                     })}
                     style={{
                         fontFamily: font,
@@ -64,8 +79,8 @@ const optionTypes = {
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = classNames({
                     "flex flex-col justify-center items-center rounded-md py-2 grow": true,
-                    "bg-neutral-900 text-white": props.theme === THEMES.LIGHT && active,
-                    "bg-neutral-100 hover:bg-neutral-200 cursor-pointer": props.theme === THEMES.LIGHT && !active,
+                    "bg-neutral-900 text-white": active,
+                    "bg-neutral-100 hover:bg-neutral-200 cursor-pointer": !active,
                     // "bg-gray-600": props.theme === THEMES.DARK && active,
                     // "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && !active,
                 });
@@ -93,9 +108,9 @@ const optionTypes = {
                     key={value}
                     className={classNames({
                         "flex flex-col justify-center items-center rounded-md h-8 grow border": true,
-                        "border-gray-300": props.theme === THEMES.LIGHT && value === props.value,
+                        "border-gray-300": value === props.value,
+                        "border-gray-300 opacity-50 hover:opacity-100 cursor-pointer": value !== props.value,
                         // "border-gray-300": props.theme === THEMES.DARK && value === props.value,
-                        "border-gray-300 opacity-50 hover:opacity-100 cursor-pointer": props.theme === THEMES.LIGHT && value !== props.value,
                         // "opacity-30 hover:opacity-50 cursor-pointer": props.theme === THEMES.DARK && value !== props.value,
                     })}
                     style={{
@@ -116,9 +131,9 @@ const optionTypes = {
                 }
                 const itemClass = classNames({
                     "flex flex-nowrap justify-center gap-1 items-center grow rounded-md h-8 px-1": true,
-                    "bg-gray-900 text-white": props.theme === THEMES.LIGHT && item.value === props.value,
+                    "bg-gray-900 text-white": item.value === props.value,
+                    "hover:bg-gray-200 cursor-pointer": item.value !== props.value,
                     // "bg-gray-600": props.theme === THEMES.DARK && item.value === props.value,
-                    "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && item.value !== props.value,
                     // "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && item.value !== props.value,
                 });
                 return (
@@ -195,7 +210,7 @@ const optionTypes = {
 
 export const Option = props => {
     const optionClassList = classNames({
-        "text-neutral-700": props.theme === THEMES.LIGHT,
+        "text-neutral-700": true, // props.theme === THEMES.LIGHT,
         // "text-white opacity-90": props.theme === THEMES.DARK,
     });
     return (
@@ -257,7 +272,6 @@ Form.defaultProps = {
     data: {},
     items: {},
     style: {},
-    theme: THEMES.LIGHT,
     separator: null,
     onChange: null,
 };
