@@ -19,7 +19,7 @@ import {useHandlers} from "../hooks/use-handlers.js";
 import {useBounds} from "../hooks/use-bounds.js";
 import {useCursor} from "../hooks/use-cursor.js";
 import {useEditor} from "../hooks/use-editor.js";
-import {HeaderContainer, HeaderButton} from "./header.jsx";
+import {Island} from "./island.jsx";
 import {Canvas} from "./canvas.jsx";
 import {Pointer} from "./pointer.jsx";
 import {ContextMenu} from "./context-menu.jsx";
@@ -342,7 +342,7 @@ const EditorWithScene = props => {
                 <React.Fragment>
                     <div className="absolute top-0 left-0 pt-4 pl-4 z-20 flex gap-2">
                         <div className="relative flex">
-                            <HeaderContainer>
+                            <Island>
                                 <Menu
                                     links={props.links}
                                     showLoad={props.showLoad}
@@ -384,7 +384,7 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
-                                <HeaderButton
+                                <Island.Button
                                     icon="files"
                                     text={(
                                         <div className="w-32 truncate">
@@ -400,7 +400,7 @@ const EditorWithScene = props => {
                                     }}
                                 />
                                 {props.showScreenshot && (
-                                    <HeaderButton
+                                    <Island.Button
                                         icon="camera"
                                         disabled={scene.getElements().length === 0}
                                         onClick={() => {
@@ -408,7 +408,7 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
-                            </HeaderContainer>
+                            </Island>
                             {(editor.state.hintsVisible && !editor.state.tool && !editor.state.pagesVisible) && (
                                 <Hint position="bottom" title="Actions" contentClassName="w-48">
                                     <div className="flex items-center justify-center gap-2">

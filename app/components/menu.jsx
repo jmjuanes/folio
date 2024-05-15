@@ -12,7 +12,7 @@ import {
 import {Dropdown} from "@folio/ui";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {ColorPicker} from "./color-picker.jsx";
-import {HeaderButton} from "./header.jsx";
+import {Island} from "./island.jsx";
 import {useScene} from "../contexts/scene.jsx";
 
 // @private menu link component
@@ -31,7 +31,7 @@ export const Menu = props => {
 
     return (
         <div className="flex relative group" tabIndex="0">
-            <HeaderButton
+            <Island.Button
                 className="group-focus-within:bg-neutral-100"
                 icon="bars"
             />
