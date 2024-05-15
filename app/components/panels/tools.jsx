@@ -17,7 +17,7 @@ import {
     DotsVerticalIcon,
     LaserPointerIcon,
 } from "@josemi-icons/react";
-import {Dropdown} from "@josemi-ui/react";
+import {Dropdown} from "@folio/ui";
 import {
     ELEMENTS,
     ACTIONS,

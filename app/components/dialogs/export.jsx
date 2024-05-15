@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Centered, Overlay, Modal} from "@josemi-ui/react";
+import {Button, Centered, Overlay, Dialog} from "@folio/ui";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
 import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "../../constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../../export.js";
@@ -88,14 +88,14 @@ export const ExportDialog = props => {
         <React.Fragment>
             <Overlay />
             <Centered className="fixed z-10 h-full">
-                <Modal className="max-w-sm">
-                    <Modal.Header className="mb-4">
-                        <Modal.Title>Export Image</Modal.Title>
-                        <Modal.Close
+                <Dialog className="max-w-sm">
+                    <Dialog.Header className="mb-4">
+                        <Dialog.Title>Export Image</Dialog.Title>
+                        <Dialog.Close
                             onClick={props.onClose}
                         />
-                    </Modal.Header>
-                    <Modal.Body>
+                    </Dialog.Header>
+                    <Dialog.Body>
                         <ExportPreview
                             data={preview}
                         />
@@ -111,7 +111,7 @@ export const ExportDialog = props => {
                                 }}
                             />
                         </div>
-                    </Modal.Body>
+                    </Dialog.Body>
                     <div className="flex gap-2 w-full flex-col">
                         <Button
                             variant="secondary"
@@ -138,7 +138,7 @@ export const ExportDialog = props => {
                             </div>
                         </Button>
                     </div>
-                </Modal>
+                </Dialog>
             </Centered>
         </React.Fragment>
     );

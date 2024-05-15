@@ -1,5 +1,5 @@
 import React from "react";
-import {ContextMenu as Menu} from "@josemi-ui/react";
+import {ContextMenu as Menu} from "@folio/ui";
 import {useScene} from "../contexts/scene.jsx";
 
 export const ContextMenu = props => {

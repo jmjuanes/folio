@@ -9,7 +9,7 @@ import {
     FolderIcon,
     TrashIcon,
 } from "@josemi-icons/react";
-import {Dropdown} from "@josemi-ui/react";
+import {Dropdown} from "@folio/ui";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {ColorPicker} from "./color-picker.jsx";
 import {HeaderButton} from "./header.jsx";

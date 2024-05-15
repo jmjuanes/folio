@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Overlay, Centered, Modal} from "@josemi-ui/react";
+import {Button, Overlay, Centered, Dialog} from "@folio/ui";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
@@ -51,25 +51,25 @@ export const ConfirmProvider = props => {
                 <React.Fragment>
                     <Overlay />
                     <Centered className="fixed z-10 h-full">
-                        <Modal className="max-w-md">
-                            <Modal.Header>
-                                <Modal.Title>{confirm.title}</Modal.Title>
-                                <Modal.Close onClick={hideConfirm} />
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Modal.Description>
+                        <Dialog className="max-w-md">
+                            <Dialog.Header>
+                                <Dialog.Title>{confirm.title}</Dialog.Title>
+                                <Dialog.Close onClick={hideConfirm} />
+                            </Dialog.Header>
+                            <Dialog.Body>
+                                <Dialog.Description>
                                     {confirm.message}
-                                </Modal.Description>
-                            </Modal.Body>
-                            <Modal.Footer>
+                                </Dialog.Description>
+                            </Dialog.Body>
+                            <Dialog.Footer>
                                 <Button variant="secondary" onClick={hideConfirm}>
                                     {props.cancelText}
                                 </Button>
                                 <Button variant="primary" onClick={submitConfirm}>
                                     {props.confirmText}
                                 </Button>
-                            </Modal.Footer>
-                        </Modal>
+                            </Dialog.Footer>
+                        </Dialog>
                     </Centered>
                 </React.Fragment>
             )}
