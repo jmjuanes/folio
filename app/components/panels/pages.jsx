@@ -15,7 +15,7 @@ const ActionButton = ({icon, onClick}) => (
 
 // @private page action button
 const PageActionButton = ({className = "", children, onClick}) => (
-    <div className={classNames(className, "cursor-pointer items-center o-60 hover:o-100")} onClick={onClick}>
+    <div className={classNames(className, "cursor-pointer items-center opacity-60 hover:opacity-100")} onClick={onClick}>
         <div className="flex items-center text-lg px-1">
             {children}
         </div>

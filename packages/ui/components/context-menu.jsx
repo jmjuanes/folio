@@ -21,7 +21,7 @@ ContextMenu.Item = ({className, inset = false, disabled = false, ...props}) => (
             "rounded-md text-sm pl-2 pr-2 pt-1 pb-1": true,
             "pl-8": inset,
             "cursor-pointer hover:bg-neutral-100": !disabled,
-            "pointer-events-none o-60 cursor-disabled": disabled,
+            "pointer-events-none opacity-60 cursor-disabled": disabled,
         }, className)}
         {...props}
     />

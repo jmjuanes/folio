@@ -350,7 +350,7 @@ const Separator = props => {
     const classList = classNames({
         "w-full h-px": true,
         "bg-neutral-200": props.theme === THEMES.LIGHT,
-        "bg-white o-20": props.theme === THEMES.DARK,
+        "bg-white opacity-20": props.theme === THEMES.DARK,
     });
     return (
         <div className={classList} />

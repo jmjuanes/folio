@@ -6,7 +6,7 @@ export const HeaderButton = props => {
     const classList = classNames(props.className || "", {
         "flex justify-between items-center gap-1 p-2 rounded-md": true,
         "cursor-pointer hover:bg-neutral-100 text-neutral-800": !props.disabled,
-        "cursor-not-allowed o-40 pointer-events-none": props.disabled,
+        "cursor-not-allowed opacity-40 pointer-events-none": props.disabled,
         "bg-neutral-100 text-neutral-950": !props.disabled && props.active,
     });
     const handleClick = () => {

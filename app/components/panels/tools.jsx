@@ -297,7 +297,7 @@ export const ToolsPanel = props => {
                     className={classNames({
                         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
                         "bg-neutral-950 text-white": props.toolLocked,
-                        "o-50 hover:o-100": !props.toolLocked,
+                        "opacity-50 hover:opacity-100": !props.toolLocked,
                     })}
                     onClick={props.onToolLockClick}
                 >

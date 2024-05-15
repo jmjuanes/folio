@@ -95,8 +95,8 @@ const optionTypes = {
                         "flex flex-col justify-center items-center rounded-md h-8 grow border": true,
                         "border-gray-300": props.theme === THEMES.LIGHT && value === props.value,
                         // "border-gray-300": props.theme === THEMES.DARK && value === props.value,
-                        "border-gray-300 o-50 hover:o-100 cursor-pointer": props.theme === THEMES.LIGHT && value !== props.value,
-                        // "o-30 hover:o-50 cursor-pointer": props.theme === THEMES.DARK && value !== props.value,
+                        "border-gray-300 opacity-50 hover:opacity-100 cursor-pointer": props.theme === THEMES.LIGHT && value !== props.value,
+                        // "opacity-30 hover:opacity-50 cursor-pointer": props.theme === THEMES.DARK && value !== props.value,
                     })}
                     style={{
                         backgroundColor: value,
@@ -196,7 +196,7 @@ const optionTypes = {
 export const Option = props => {
     const optionClassList = classNames({
         "text-neutral-700": props.theme === THEMES.LIGHT,
-        // "text-white o-90": props.theme === THEMES.DARK,
+        // "text-white opacity-90": props.theme === THEMES.DARK,
     });
     return (
         <div className={optionClassList}>
