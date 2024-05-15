@@ -7,3 +7,4 @@ export * from "./components/dropdown.jsx";
 export * from "./components/overlay.jsx";
 
 // Export contexts
+export * from "./contexts/confirm.jsx";
