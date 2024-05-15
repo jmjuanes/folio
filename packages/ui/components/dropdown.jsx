@@ -29,20 +29,23 @@ Dropdown.Label = ({className, ...props}) => (
     />
 );
 
-Dropdown.Item = ({className, disabled = false, inset = false, ...props}) => (
-    <div
-        data-testid="dropdown-item"
-        className={classNames({
-            "relative flex items-center gap-2 select-none": true,
-            "rounded-md text-sm no-underline pl-2 pr-2 py-1": true,
-            "pl-8": inset,
-            "cursor-pointer hover:bg-neutral-100": !disabled,
-            "pointer-events-none opacity-60 cursor-not-allowed": disabled,
-        }, className)}
-        tabIndex="0"
-        {...props}
-    />
-);
+Dropdown.Item = ({as, className, disabled = false, inset = false, ...props}) => {
+    const Component = as || "div";
+    return (
+        <Component
+            data-testid="dropdown-item"
+            className={classNames({
+                "relative flex items-center gap-2 select-none": true,
+                "rounded-md text-sm no-underline pl-2 pr-2 py-1": true,
+                "pl-8": inset,
+                "cursor-pointer hover:bg-neutral-100": !disabled,
+                "pointer-events-none opacity-60 cursor-not-allowed": disabled,
+            }, className)}
+            tabIndex="0"
+            {...props}
+        />
+    );
+};
 
 Dropdown.Icon = ({className, ...props}) => (
     <div
