@@ -248,7 +248,7 @@ const EditorWithScene = props => {
                 />
             )}
             {!isScreenshot && (
-                <div className="absolute z-5 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
+                <div className="absolute z-20 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
                     <ToolsPanel
                         action={editor.state.action}
                         tool={editor.state.tool}
@@ -290,7 +290,7 @@ const EditorWithScene = props => {
             {editor.state.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
-                        <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-4">
+                        <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                             <EditionPanel
                                 key={selectedElements.map(el => el.id).join("-")}
                                 onChange={() => {
@@ -303,7 +303,7 @@ const EditorWithScene = props => {
                 </React.Fragment>
             )}
             {editor.state.pagesVisible && !isScreenshot && (
-                <div className="absolute z-6 top-0 mt-16 left-0 pt-1 pl-4">
+                <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4">
                     <PagesPanel
                         key={`pages:${scene.pages.length}`}
                         editable={true}
@@ -340,7 +340,7 @@ const EditorWithScene = props => {
             )}
             {!isScreenshot && (
                 <React.Fragment>
-                    <div className="absolute top-0 left-0 pt-4 pl-4 z-7 flex gap-2">
+                    <div className="absolute top-0 left-0 pt-4 pl-4 z-20 flex gap-2">
                         <div className="relative flex">
                             <HeaderContainer>
                                 <Menu
@@ -428,7 +428,7 @@ const EditorWithScene = props => {
                         </div>
                         {props.headerLeftContent}
                     </div>
-                    <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
+                    <div className="absolute top-0 right-0 pt-4 pr-4 z-20 flex gap-2">
                         <div className="flex relative">
                             <HistoryPanel
                                 undoDisabled={!scene.canUndo()}

@@ -86,14 +86,12 @@ export const ExportDialog = props => {
 
     return (
         <React.Fragment>
-            <Overlay />
-            <Centered className="fixed z-10 h-full">
-                <Dialog className="max-w-sm">
+            <Overlay className="z-50" />
+            <Centered className="fixed z-50 h-full">
+                <Dialog className="max-w-sm relative">
+                    <Dialog.Close onClick={props.onClose} />
                     <Dialog.Header className="mb-4">
                         <Dialog.Title>Export Image</Dialog.Title>
-                        <Dialog.Close
-                            onClick={props.onClose}
-                        />
                     </Dialog.Header>
                     <Dialog.Body>
                         <ExportPreview

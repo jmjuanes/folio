@@ -53,11 +53,11 @@ export const ConfirmProvider = props => {
             {confirm?.visible && (
                 <React.Fragment>
                     <Overlay />
-                    <Centered className="fixed z-10 h-full">
-                        <Dialog className="max-w-md">
+                    <Centered className="fixed z-50 h-full">
+                        <Dialog className="max-w-md relative">
+                            <Dialog.Close onClick={hideConfirm} />
                             <Dialog.Header>
                                 <Dialog.Title>{confirm.title}</Dialog.Title>
-                                <Dialog.Close onClick={hideConfirm} />
                             </Dialog.Header>
                             <Dialog.Body>
                                 <Dialog.Description>

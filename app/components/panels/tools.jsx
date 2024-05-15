@@ -262,7 +262,7 @@ export const ToolsPanel = props => {
                                     <DotsVerticalIcon />
                                 </div>
                             </div>
-                            <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-5">
+                            <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
                                 <Dropdown.CheckItem checked={props.action === ACTIONS.POINTER} onClick={props.onPointerClick}>
                                     <Dropdown.Icon>
                                         <LaserPointerIcon />

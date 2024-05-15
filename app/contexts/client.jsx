@@ -24,7 +24,7 @@ export const ClientProvider = props => {
     // If client is not ready, display the loading window
     if (!client) {
         return (
-            <Centered className="fixed h-full z-10">
+            <Centered className="fixed h-full z-50">
                 <div className="flex text-3xl text-neutral-950 rounded-lg p-2 border border-neutral-200">
                     <DrawingIcon />
                 </div>

@@ -12,7 +12,7 @@ export const ContextMenu = props => {
     };
 
     return (
-        <Menu className="absolute z-10 w-40" style={style}>
+        <Menu className="absolute z-40 w-40" style={style}>
             {selectedElements.length > 0 && (
                 <React.Fragment>
                     <Menu.Item onClick={props.onDuplicate}>Duplicate</Menu.Item>
