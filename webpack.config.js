@@ -44,6 +44,7 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 include: [
                     path.join(__dirname, "app"),
+                    path.join(__dirname, "packages"),
                 ],
                 exclude: /(node_modules|www)/,
                 loader: "babel-loader",
@@ -78,7 +79,7 @@ module.exports = {
         }),
         new CopyWebpackPlugin({
             patterns: [
-                path.join(__dirname, "node_modules/lowcss/dist/low.css"),
+                path.join(__dirname, "node_modules/lowcss/low.css"),
             ],
         }),
         new HtmlWebpackPlugin({
