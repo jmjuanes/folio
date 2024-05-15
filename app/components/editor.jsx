@@ -1,6 +1,7 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
 import {BarsIcon, CameraIcon, FilesIcon, PresentationIcon} from "@josemi-icons/react";
+import {useConfirm} from "@folio/ui";
 import {
     ACTIONS,
     ELEMENTS,
@@ -32,7 +33,6 @@ import {EditionPanel} from "./panels/edition.jsx";
 import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
 import {PagesPanel} from "./panels/pages.jsx";
-import {useConfirm} from "../contexts/confirm.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 
 // @private
