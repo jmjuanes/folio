@@ -1,9 +1,13 @@
 import React from "react";
-import {Button, Centered, Overlay, Modal} from "@josemi-ui/react";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
-import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "../../constants.js";
+import {Button, Centered, Overlay, Dialog} from "@folio/ui";
+import {Form} from "@folio/form";
+import {
+    EXPORT_FORMATS,
+    EXPORT_PADDING,
+    TRANSPARENT,
+} from "../../constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../../export.js";
-import {Form} from "../form.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 
 import transparentBg from "../../assets/transparent.svg";
@@ -86,16 +90,14 @@ export const ExportDialog = props => {
 
     return (
         <React.Fragment>
-            <Overlay />
-            <Centered className="fixed z-10 h-full">
-                <Modal className="max-w-sm">
-                    <Modal.Header className="mb-4">
-                        <Modal.Title>Export Image</Modal.Title>
-                        <Modal.Close
-                            onClick={props.onClose}
-                        />
-                    </Modal.Header>
-                    <Modal.Body>
+            <Overlay className="z-50" />
+            <Centered className="fixed z-50 h-full">
+                <Dialog className="max-w-sm relative">
+                    <Dialog.Close onClick={props.onClose} />
+                    <Dialog.Header className="mb-4">
+                        <Dialog.Title>Export Image</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
                         <ExportPreview
                             data={preview}
                         />
@@ -111,7 +113,7 @@ export const ExportDialog = props => {
                                 }}
                             />
                         </div>
-                    </Modal.Body>
+                    </Dialog.Body>
                     <div className="flex gap-2 w-full flex-col">
                         <Button
                             variant="secondary"
@@ -138,7 +140,7 @@ export const ExportDialog = props => {
                             </div>
                         </Button>
                     </div>
-                </Modal>
+                </Dialog>
             </Centered>
         </React.Fragment>
     );

@@ -1,10 +1,10 @@
 import React from "react";
 import {ZOOM_MIN, ZOOM_MAX} from "../../constants.js";
-import {HeaderContainer, HeaderButton} from "../header.jsx";
+import {Island} from "../island.jsx";
 
 export const ZoomPanel = props => (
-    <HeaderContainer>
-        <HeaderButton
+    <Island>
+        <Island.Button
             icon="zoom-out"
             roundedEnd={false}
             disabled={props.zoom <= ZOOM_MIN}
@@ -15,13 +15,13 @@ export const ZoomPanel = props => (
                 {(props.zoom * 100).toFixed(0)}%
             </span>
         </div>
-        <HeaderButton
+        <Island.Button
             icon="zoom-in"
             roundedStart={false}
             disabled={ZOOM_MAX <= props.zoom}
             onClick={props.onZoomInClick}
         />
-    </HeaderContainer>
+    </Island>
 );
 
 ZoomPanel.defaultProps = {

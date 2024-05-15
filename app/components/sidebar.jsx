@@ -56,7 +56,7 @@ export const Sidebar = props => (
                                 <div className="font-medium text-sm w-40 truncate">{item.title}</div>
                             </div>
                             <div
-                                className="hidden group-hover:flex cursor-pointer items-center ml-auto text-lg p-2 o-60 hover:o-100"
+                                className="hidden group-hover:flex cursor-pointer items-center ml-auto text-lg p-2 opacity-60 hover:opacity-100"
                                 onClick={event => {
                                     event.preventDefault();
                                     props?.onBoardDelete?.(item.id);
@@ -79,7 +79,7 @@ export const Sidebar = props => (
             </div>
         </div>
         <div className="hidden px-6 pt-4 pb-6 bg-white">
-            <div className="cursor-pointer flex items-center gap-2 p-2 hover:bg-neutral-100 rounded-md o-40 hover:o-100">
+            <div className="cursor-pointer flex items-center gap-2 p-2 hover:bg-neutral-100 rounded-md opacity-40 hover:opacity-100">
                 <div className="text-lg flex items-center">
                     <LogoutIcon />
                 </div>

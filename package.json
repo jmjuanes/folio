@@ -7,6 +7,9 @@
     "repository": "https://github.com/jmjuanes/folio",
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
+    "workspaces": [
+        "packages/*"
+    ],
     "scripts": {
         "build": "yarn clean && yarn build:app && yarn build:site && yarn copy-assets",
         "build:app": "cross-env NODE_ENV=production webpack build",
@@ -18,13 +21,12 @@
         "test": "jest"
     },
     "dependencies": {
-        "@josemi-icons/react": "^0.6.0",
-        "@josemi-icons/svg": "^0.6.0",
-        "@josemi-ui/react": "^0.3.4",
+        "@josemi-icons/react": "^0.6.1",
+        "@josemi-icons/svg": "^0.6.1",
         "browser-fs-access": "^0.35.0",
         "classnames": "^2.3.2",
         "idb-keyval": "^6.2.1",
-        "lowcss": "^0.19.2",
+        "lowcss": "^0.22.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-use": "^17.5.0",

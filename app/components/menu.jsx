@@ -9,10 +9,10 @@ import {
     FolderIcon,
     TrashIcon,
 } from "@josemi-icons/react";
-import {Dropdown} from "@josemi-ui/react";
+import {ColorPicker} from "@folio/form";
+import {Dropdown} from "@folio/ui";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
-import {ColorPicker} from "./color-picker.jsx";
-import {HeaderButton} from "./header.jsx";
+import {Island} from "./island.jsx";
 import {useScene} from "../contexts/scene.jsx";
 
 // @private menu link component
@@ -31,11 +31,11 @@ export const Menu = props => {
 
     return (
         <div className="flex relative group" tabIndex="0">
-            <HeaderButton
+            <Island.Button
                 className="group-focus-within:bg-neutral-100"
                 icon="bars"
             />
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56 z-5">
+            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56 z-40">
                 {props.showLoad && (
                     <Dropdown.Item onClick={props.onLoad}>
                         <Dropdown.Icon>

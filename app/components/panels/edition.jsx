@@ -8,8 +8,8 @@ import {
     TrashIcon,
     UnlockIcon,
 } from "@josemi-icons/react";
+import {FORM_OPTIONS, Form} from "@folio/form";
 import {
-    FORM_OPTIONS,
     FIELDS,
     THEMES,
     TEXT_SIZES,
@@ -58,7 +58,6 @@ import {
     SendBackIcon,
     SendBackwardIcon,
 } from "../icons.jsx";
-import {Form} from "../form.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 
 // Available sections
@@ -350,7 +349,7 @@ const Separator = props => {
     const classList = classNames({
         "w-full h-px": true,
         "bg-neutral-200": props.theme === THEMES.LIGHT,
-        "bg-white o-20": props.theme === THEMES.DARK,
+        "bg-white opacity-20": props.theme === THEMES.DARK,
     });
     return (
         <div className={classList} />

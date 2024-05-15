@@ -1,6 +1,7 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
 import {BarsIcon, CameraIcon, FilesIcon, PresentationIcon} from "@josemi-icons/react";
+import {useConfirm} from "@folio/ui";
 import {
     ACTIONS,
     ELEMENTS,
@@ -18,7 +19,7 @@ import {useHandlers} from "../hooks/use-handlers.js";
 import {useBounds} from "../hooks/use-bounds.js";
 import {useCursor} from "../hooks/use-cursor.js";
 import {useEditor} from "../hooks/use-editor.js";
-import {HeaderContainer, HeaderButton} from "./header.jsx";
+import {Island} from "./island.jsx";
 import {Canvas} from "./canvas.jsx";
 import {Pointer} from "./pointer.jsx";
 import {ContextMenu} from "./context-menu.jsx";
@@ -32,7 +33,6 @@ import {EditionPanel} from "./panels/edition.jsx";
 import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
 import {PagesPanel} from "./panels/pages.jsx";
-import {useConfirm} from "../contexts/confirm.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 
 // @private
@@ -248,7 +248,7 @@ const EditorWithScene = props => {
                 />
             )}
             {!isScreenshot && (
-                <div className="absolute z-5 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
+                <div className="absolute z-20 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
                     <ToolsPanel
                         action={editor.state.action}
                         tool={editor.state.tool}
@@ -290,7 +290,7 @@ const EditorWithScene = props => {
             {editor.state.currentState === STATES.IDLE && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
-                        <div className="absolute z-6 top-0 mt-16 right-0 pt-1 pr-4">
+                        <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                             <EditionPanel
                                 key={selectedElements.map(el => el.id).join("-")}
                                 onChange={() => {
@@ -303,7 +303,7 @@ const EditorWithScene = props => {
                 </React.Fragment>
             )}
             {editor.state.pagesVisible && !isScreenshot && (
-                <div className="absolute z-6 top-0 mt-16 left-0 pt-1 pl-4">
+                <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4">
                     <PagesPanel
                         key={`pages:${scene.pages.length}`}
                         editable={true}
@@ -340,9 +340,9 @@ const EditorWithScene = props => {
             )}
             {!isScreenshot && (
                 <React.Fragment>
-                    <div className="absolute top-0 left-0 pt-4 pl-4 z-7 flex gap-2">
+                    <div className="absolute top-0 left-0 pt-4 pl-4 z-20 flex gap-2">
                         <div className="relative flex">
-                            <HeaderContainer>
+                            <Island>
                                 <Menu
                                     links={props.links}
                                     showLoad={props.showLoad}
@@ -384,7 +384,7 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
-                                <HeaderButton
+                                <Island.Button
                                     icon="files"
                                     text={(
                                         <div className="w-32 truncate">
@@ -400,7 +400,7 @@ const EditorWithScene = props => {
                                     }}
                                 />
                                 {props.showScreenshot && (
-                                    <HeaderButton
+                                    <Island.Button
                                         icon="camera"
                                         disabled={scene.getElements().length === 0}
                                         onClick={() => {
@@ -408,7 +408,7 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
-                            </HeaderContainer>
+                            </Island>
                             {(editor.state.hintsVisible && !editor.state.tool && !editor.state.pagesVisible) && (
                                 <Hint position="bottom" title="Actions" contentClassName="w-48">
                                     <div className="flex items-center justify-center gap-2">
@@ -428,7 +428,7 @@ const EditorWithScene = props => {
                         </div>
                         {props.headerLeftContent}
                     </div>
-                    <div className="absolute top-0 right-0 pt-4 pr-4 z-7 flex gap-2">
+                    <div className="absolute top-0 right-0 pt-4 pr-4 z-20 flex gap-2">
                         <div className="flex relative">
                             <HistoryPanel
                                 undoDisabled={!scene.canUndo()}

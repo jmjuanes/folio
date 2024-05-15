@@ -17,12 +17,12 @@ import {
     DotsVerticalIcon,
     LaserPointerIcon,
 } from "@josemi-icons/react";
-import {Dropdown} from "@josemi-ui/react";
+import {FORM_OPTIONS, Form} from "@folio/form";
+import {Dropdown} from "@folio/ui";
 import {
     ELEMENTS,
     ACTIONS,
     FIELDS,
-    FORM_OPTIONS,
     SHAPES,
     ARROWHEADS,
     STROKE_WIDTHS,
@@ -37,7 +37,6 @@ import {
     WidthLargeIcon,
     WidthSmallIcon,
 } from "../icons.jsx";
-import {Form} from "../form.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 
 const tools = {
@@ -262,7 +261,7 @@ export const ToolsPanel = props => {
                                     <DotsVerticalIcon />
                                 </div>
                             </div>
-                            <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-5">
+                            <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
                                 <Dropdown.CheckItem checked={props.action === ACTIONS.POINTER} onClick={props.onPointerClick}>
                                     <Dropdown.Icon>
                                         <LaserPointerIcon />
@@ -297,7 +296,7 @@ export const ToolsPanel = props => {
                     className={classNames({
                         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
                         "bg-neutral-950 text-white": props.toolLocked,
-                        "o-50 hover:o-100": !props.toolLocked,
+                        "opacity-50 hover:opacity-100": !props.toolLocked,
                     })}
                     onClick={props.onToolLockClick}
                 >

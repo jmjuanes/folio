@@ -1,0 +1,13 @@
+{
+    "name": "@folio/form",
+    "version": "0.0.0",
+    "private": true,
+    "main": "index.jsx",
+    "dependencies": {
+        "@josemi-icons/react": "^0.6.1",
+        "classnames": "^2.3.2",
+        "lowcss": "^0.22.1",
+        "react": "^18.2.0"
+    },
+    "license": "MIT"
+}

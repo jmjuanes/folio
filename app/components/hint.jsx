@@ -12,7 +12,7 @@ const defaultStyle = {
 
 export const Hint = props => {
     const classList = classnames(props.className, {
-        "absolute z-1 animation-fadein": true,
+        "absolute z-10 animation-fadein": true,
         "bottom-full left-half mb-2": props.position === HINT_POSITION_TOP,
         "top-full left-half mt-2": props.position === HINT_POSITION_BOTTOM,
     });

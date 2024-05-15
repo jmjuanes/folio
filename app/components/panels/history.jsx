@@ -1,22 +1,22 @@
 import React from "react";
-import {HeaderContainer, HeaderButton} from "../header.jsx";
+import {Island} from "../island.jsx";
 
 // History panel component
 export const HistoryPanel = props => (
-    <HeaderContainer>
-        <HeaderButton
+    <Island>
+        <Island.Button
             icon="history-undo"
             roundedEnd={false}
             disabled={props.undoDisabled}
             onClick={props.onUndoClick}
         />
-        <HeaderButton
+        <Island.Button
             icon="history-redo"
             roundedStart={false}
             disabled={props.redoDisabled}
             onClick={props.onRedoClick}
         />
-    </HeaderContainer>
+    </Island>
 );
 
 HistoryPanel.defaultProps = {

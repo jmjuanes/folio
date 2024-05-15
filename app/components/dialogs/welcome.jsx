@@ -1,6 +1,6 @@
 import React from "react";
 import {renderIcon, DrawingIcon, FolderIcon} from "@josemi-icons/react";
-import {Button, Centered, Overlay} from "@josemi-ui/react";
+import {Button, Centered, Overlay} from "@folio/ui";
 
 const defaultWelcomeFeatures = [
     {
@@ -17,8 +17,8 @@ const defaultWelcomeFeatures = [
 
 export const WelcomeDialog = props => (
     <React.Fragment>
-        <Overlay className="z-9" />
-        <Centered className="fixed h-full z-10">
+        <Overlay className="z-50" />
+        <Centered className="fixed h-full z-50">
             <div className="w-full max-w-lg p-8 bg-white border border-neutral-200 rounded-lg shadow-sm">
                 <div className="pt-12 pb-4 select-none">
                     <div className="font-black text-5xl mb-6 text-neutral-950 leading-none">Hello 👋</div>

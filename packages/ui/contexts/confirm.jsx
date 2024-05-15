@@ -1,5 +1,8 @@
 import React from "react";
-import {Button, Overlay, Centered, Modal} from "@josemi-ui/react";
+import {Button} from "../components/button.jsx";
+import {Overlay} from "../components/overlay.jsx";
+import {Centered} from "../components/centered.jsx";
+import {Dialog} from "../components/dialog.jsx";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
@@ -50,34 +53,29 @@ export const ConfirmProvider = props => {
             {confirm?.visible && (
                 <React.Fragment>
                     <Overlay />
-                    <Centered className="fixed z-10 h-full">
-                        <Modal className="max-w-md">
-                            <Modal.Header>
-                                <Modal.Title>{confirm.title}</Modal.Title>
-                                <Modal.Close onClick={hideConfirm} />
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Modal.Description>
+                    <Centered className="fixed z-50 h-full">
+                        <Dialog className="max-w-md relative">
+                            <Dialog.Close onClick={hideConfirm} />
+                            <Dialog.Header>
+                                <Dialog.Title>{confirm.title}</Dialog.Title>
+                            </Dialog.Header>
+                            <Dialog.Body>
+                                <Dialog.Description>
                                     {confirm.message}
-                                </Modal.Description>
-                            </Modal.Body>
-                            <Modal.Footer>
+                                </Dialog.Description>
+                            </Dialog.Body>
+                            <Dialog.Footer>
                                 <Button variant="secondary" onClick={hideConfirm}>
-                                    {props.cancelText}
+                                    {props.cancelText || "Cancel"}
                                 </Button>
                                 <Button variant="primary" onClick={submitConfirm}>
-                                    {props.confirmText}
+                                    {props.confirmText || "Confirm"}
                                 </Button>
-                            </Modal.Footer>
-                        </Modal>
+                            </Dialog.Footer>
+                        </Dialog>
                     </Centered>
                 </React.Fragment>
             )}
         </ConfirmContext.Provider>
     );
-};
-
-ConfirmProvider.defaultProps = {
-    confirmText: "Confirm",
-    cancelText: "Cancel",
 };

@@ -2,11 +2,17 @@ import React from "react";
 import {renderIcon, ChevronDownIcon} from "@josemi-icons/react";
 import classNames from "classnames";
 
-export const HeaderButton = props => {
+export const Island = props => (
+    <div className="flex gap-1 p-1 rounded-lg shadow-sm bg-white border border-neutral-200">
+        {props.children}
+    </div>
+);
+
+Island.Button = props => {
     const classList = classNames(props.className || "", {
         "flex justify-between items-center gap-1 p-2 rounded-md": true,
         "cursor-pointer hover:bg-neutral-100 text-neutral-800": !props.disabled,
-        "cursor-not-allowed o-40 pointer-events-none": props.disabled,
+        "cursor-not-allowed opacity-40 pointer-events-none": props.disabled,
         "bg-neutral-100 text-neutral-950": !props.disabled && props.active,
     });
     const handleClick = () => {
@@ -32,9 +38,3 @@ export const HeaderButton = props => {
         </div>
     );
 };
-
-export const HeaderContainer = props => (
-    <div className="flex gap-1 p-1 rounded-lg shadow-sm bg-white border border-neutral-200">
-        {props.children}
-    </div>
-);
