@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
 import {ColorPicker} from "./components/color-picker.jsx";
+import {FontPicker} from "./components/font-picker.jsx";
 
 // Export primitive components
 export * from "./components/color-picker.jsx";
@@ -49,26 +50,7 @@ const optionTypes = {
         <ColorPicker {...props} />
     ),
     [FORM_OPTIONS.FONT]: props => (
-        <div className="grid grid-cols-5 gap-1 w-full">
-            {(props.values || []).map(font => (
-                <div
-                    key={font}
-                    className={classNames({
-                        "flex justify-center items-center rounded-md h-8 text-sm": true,
-                        "bg-gray-900 text-white": font === props.value,
-                        "bg-gray-600": font === props.value,
-                        // "hover:bg-gray-200 cursor-pointer": props.theme === THEMES.LIGHT && font !== props.value,
-                        // "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && font !== props.value,
-                    })}
-                    style={{
-                        fontFamily: font,
-                    }}
-                    onClick={() => props.onChange(font)}
-                >
-                    <strong>Aa</strong>
-                </div>
-            ))}
-        </div>
+        <FontPicker {...props} />
     ),
     [FORM_OPTIONS.SELECT]: props => (
         <div className={props.className || "grid grid-cols-5 gap-1 w-full"}>
