@@ -1,5 +1,8 @@
 import React from "react";
-import {Button, Overlay, Centered, Dialog} from "@folio/ui";
+import {Button} from "../components/button.jsx";
+import {Overlay} from "../components/overlay.jsx";
+import {Centered} from "../components/centered.jsx";
+import {Dialog} from "../components/dialog.jsx";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
@@ -63,10 +66,10 @@ export const ConfirmProvider = props => {
                             </Dialog.Body>
                             <Dialog.Footer>
                                 <Button variant="secondary" onClick={hideConfirm}>
-                                    {props.cancelText}
+                                    {props.cancelText || "Cancel"}
                                 </Button>
                                 <Button variant="primary" onClick={submitConfirm}>
-                                    {props.confirmText}
+                                    {props.confirmText || "Confirm"}
                                 </Button>
                             </Dialog.Footer>
                         </Dialog>
@@ -75,9 +78,4 @@ export const ConfirmProvider = props => {
             )}
         </ConfirmContext.Provider>
     );
-};
-
-ConfirmProvider.defaultProps = {
-    confirmText: "Confirm",
-    cancelText: "Cancel",
 };
