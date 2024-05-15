@@ -9,9 +9,9 @@ import {
     FolderIcon,
     TrashIcon,
 } from "@josemi-icons/react";
+import {ColorPicker} from "@folio/form";
 import {Dropdown} from "@folio/ui";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
-import {ColorPicker} from "./color-picker.jsx";
 import {Island} from "./island.jsx";
 import {useScene} from "../contexts/scene.jsx";
 

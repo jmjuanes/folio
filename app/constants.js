@@ -293,19 +293,6 @@ export const KEYS = {
     Y: "y",
 };
 
-// Form option types
-export const FORM_OPTIONS = {
-    COLOR: "color",
-    SELECT: "select",
-    LABELED_SELECT: "labeledSelect",
-    COLOR_SELECT: "colorSelect",
-    FONT: "font",
-    RANGE: "range",
-    CHECKBOX: "checkbox",
-    PIXELS: "pixels",
-    SEPARATOR: "separator",
-};
-
 export const THEMES = {
     LIGHT: "light",
     DARK: "dark",

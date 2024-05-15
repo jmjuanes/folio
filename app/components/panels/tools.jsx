@@ -17,12 +17,12 @@ import {
     DotsVerticalIcon,
     LaserPointerIcon,
 } from "@josemi-icons/react";
+import {FORM_OPTIONS, Form} from "@folio/form";
 import {Dropdown} from "@folio/ui";
 import {
     ELEMENTS,
     ACTIONS,
     FIELDS,
-    FORM_OPTIONS,
     SHAPES,
     ARROWHEADS,
     STROKE_WIDTHS,
@@ -37,7 +37,6 @@ import {
     WidthLargeIcon,
     WidthSmallIcon,
 } from "../icons.jsx";
-import {Form} from "../form.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 
 const tools = {

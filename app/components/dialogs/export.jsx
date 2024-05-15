@@ -1,9 +1,13 @@
 import React from "react";
-import {Button, Centered, Overlay, Dialog} from "@folio/ui";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
-import {EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT} from "../../constants.js";
+import {Button, Centered, Overlay, Dialog} from "@folio/ui";
+import {Form} from "@folio/form";
+import {
+    EXPORT_FORMATS,
+    EXPORT_PADDING,
+    TRANSPARENT,
+} from "../../constants.js";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../../export.js";
-import {Form} from "../form.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 
 import transparentBg from "../../assets/transparent.svg";
