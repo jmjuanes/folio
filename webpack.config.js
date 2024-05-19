@@ -6,8 +6,8 @@ const package = require("./package.json");
 const env = require("./server/utils/environment.js");
 
 const CLIENTS = {
-    LOCAL: "clients/local.js",
-    REMOTE: "clients/remote.js",
+    LOCAL: path.join(__dirname, "app/clients/local.js"),
+    REMOTE: path.join(__dirname, "app/clients/remote.js"),
 };
 
 module.exports = {
