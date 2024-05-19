@@ -2,7 +2,7 @@ import React from "react";
 import {useMount} from "react-use";
 import {DrawingIcon} from "@josemi-icons/react";
 import {Centered} from "@folio/ui";
-import {createLocalClient} from "../clients/local.js";
+import createClient from "@folio/client";
 
 const ClientContext = React.createContext(null);
 
@@ -15,7 +15,7 @@ export const ClientProvider = props => {
 
     // On mount, create a new client instance and initialize it
     useMount(() => {
-        const clientInstance = createLocalClient();
+        const clientInstance = createClient();
         clientInstance.initialize().then(() => {
             setClient(clientInstance);
         });

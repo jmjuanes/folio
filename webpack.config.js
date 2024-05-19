@@ -3,6 +3,12 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const package = require("./package.json");
+const env = require("./server/utils/environment.js");
+
+const CLIENTS = {
+    LOCAL: path.join(__dirname, "app/clients/local.js"),
+    REMOTE: path.join(__dirname, "app/clients/remote.js"),
+};
 
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
@@ -14,6 +20,11 @@ module.exports = {
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].chunk.js",
         assetModuleFilename: "assets/[hash][ext][query]",
+    },
+    resolve:{
+        alias: {
+            "@folio/client": CLIENTS[(env?.CLIENT || "LOCAL").toUpperCase()],
+        },
     },
     optimization: {
         splitChunks: {
@@ -72,10 +83,14 @@ module.exports = {
     plugins: [
         new webpack.ProgressPlugin(),
         new webpack.DefinePlugin({
+            // Global values
             "process.env.VERSION": JSON.stringify(package.version),
             "process.env.URL_REPOSITORY": JSON.stringify(package.repository),
             "process.env.URL_ISSUES": JSON.stringify(package.bugs),
             "process.env.URL_HOMEPAGE": JSON.stringify(package.homepage),
+            // ENV values
+            "process.env.APP": JSON.stringify(env.APP || "LITE"),
+            "process.env.CLIENT": JSON.stringify(env.CLIENT || "LOCAL"),
         }),
         new CopyWebpackPlugin({
             patterns: [

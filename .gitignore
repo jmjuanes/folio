@@ -12,4 +12,7 @@ firebase-debug.log
 
 # Configuration files
 .env
+.env.development
+.env.production
+.env.local
 .firebaserc
