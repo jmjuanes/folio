@@ -3,6 +3,12 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const package = require("./package.json");
+const env = require("./server/utils/environment.js");
+
+const CLIENTS = {
+    LOCAL: "clients/local.js",
+    REMOTE: "clients/remote.js",
+};
 
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
@@ -14,6 +20,11 @@ module.exports = {
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].chunk.js",
         assetModuleFilename: "assets/[hash][ext][query]",
+    },
+    resolve:{
+        alias: {
+            "@folio/client": CLIENTS[(env?.CLIENT || "LOCAL").toUpperCase()],
+        },
     },
     optimization: {
         splitChunks: {
