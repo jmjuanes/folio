@@ -16,7 +16,7 @@ const STORE_KEYS = {
 const store = idb.createStore("folio", "folio-store");
 
 // @public create a new local client instance
-export const createLocalClient = () => ({
+export default () => ({
     config: {},
     session: {},
 
