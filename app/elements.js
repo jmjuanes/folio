@@ -23,6 +23,8 @@ import {
     BOOKMARK_WIDTH,
     BOOKMARK_HEIGHT,
     OPACITY_DEFAULT,
+    STICKER_HEIGHT,
+    STICKER_WIDTH,
 } from "./constants.js";
 import {
     measureText,
@@ -431,6 +433,22 @@ export const elementsConfig = {
             element.y2 = element.y1 + BOOKMARK_HEIGHT;
         },
     },
+    [ELEMENTS.STICKER]: {
+        initialize: values => ({
+            [FIELDS.STICKER]: values?.[FIELDS.STICKER] ?? DEFAULTS.STICKER,
+            [FIELDS.OPACITY]: values?.[FIELDS.OPACITY] ?? DEFAULTS.OPACITY,
+        }),
+        onCreateMove: element => {
+            element.x1 = element.x2;
+            element.y1 = element.y2;
+        },
+        onCreateEnd: element => {
+            element.x1 = element.x1 - STICKER_WIDTH / 2;
+            element.x2 = element.x2 + STICKER_WIDTH / 2;
+            element.y1 = element.y1 - STICKER_HEIGHT / 2;
+            element.y2 = element.y2 + STICKER_HEIGHT / 2;
+        },
+    },
 };
 
 export const getElementConfig = element => {
@@ -466,8 +484,8 @@ export const createNewElement = elementType => {
     return createElement(elementType);
 };
 
-export const exportElementSvg = elementId => {
-    return document.querySelector(`g[data-element="${elementId}"]`)?.cloneNode?.(true);
+export const exportElementSvg = element => {
+    return document.querySelector(`g[data-element="${element.id}"]`)?.cloneNode?.(true);
 };
 
 // @description Measure text with the configuration of the provided element
