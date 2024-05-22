@@ -78,6 +78,10 @@ module.exports = {
                 test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
                 type: "asset/resource",
             },
+            {
+                test: /stickers\/([\w-]+)\.svg$/,
+                type: "asset/inline",
+            },
         ],
     },
     plugins: [
