@@ -64,6 +64,7 @@ export const ELEMENTS = {
     DRAW: "draw",
     NOTE: "note",
     BOOKMARK: "bookmark",
+    STICKER: "sticker",
 };
 
 export const SHAPES = {
@@ -80,6 +81,44 @@ export const ARROWHEADS = {
     SQUARE: "square",
     CIRCLE: "circle",
     SEGMENT: "segment",
+};
+
+export const STICKERS = {
+    HEART: "heart",
+    SMILING_FACE_WITH_HEART_EYES: "smilig-face-with-heart-eyes",
+    WINKING_FACE: "winking-face",
+    GRINNING_FACE_WITH_SMILING_EYES: "grinning-face-with-smiling-eyes",
+    CONFUSED_FACE: "confused-face",
+    FACE_WITH_TEARS_OF_JOY: "face-with-tears-of-joy",
+    PARTYING_FACE: "partying-face",
+    SMILING_FACE_WITH_SUNGLASSES: "smiling-face-with-sunglasses",
+    ZANY_FACE: "zany-face",
+    NERD_FACE: "nerd-face",
+    THINKING_FACE: "thinking-face",
+    HUSHED_FACE: "hushed-face",
+    FACE_WITH_PEEKING_EYE: "face-with-peeking-eye",
+    PILE_OF_POO: "pile-of-poo",
+    THUMBS_UP: "thumbs-up",
+    THUMBS_DOWN: "thums-down",
+    CLAPPING_HANDS: "clapping-hands",
+    OK_HAND: "ok-hand",
+    RAISING_HANDS: "raising-hands",
+    PARTY_POPPER: "party-popper",
+    STAR: "star",
+    TOP: "top",
+    EYES: "eyes",
+    MAGIC_WAND: "magic-wand",
+    HUNDRED_POINTS: "hundred-points",
+    CHECK_MARK: "check-mark",
+    CROSS_MARK: "cross-mark",
+    QUESTION_MARK: "question-mark",
+    EXCLAMATION_MARK: "exclamation-mark",
+    MEDAL: "medal",
+    TROPHY: "trophy",
+    CAT_FACE: "cat-face",
+    DOG_FACE: "dog-face",
+    MOUSE_FACE: "mouse-face",
+    RACCOON:"raccoon",
 };
 
 // Grid constants
@@ -232,6 +271,7 @@ export const DEFAULTS = {
     ARROWHEAD_END: ARROWHEADS.ARROW,
     OPACITY: OPACITY_DEFAULT,
     NOTE_COLOR: STICKYNOTE_COLORS.yellow,
+    STICKER: STICKERS.THUMBS_UP,
 };
 
 // Fields in elements
@@ -268,6 +308,7 @@ export const FIELDS = {
     NOTE_COLOR: "noteColor",
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
+    STICKER: "sticker",
 };
 
 // Deprecated fields
@@ -370,6 +411,10 @@ export const GROUP_ACTIVE_BOUNDS_COLOR = ACCENT;
 export const BOOKMARK_WIDTH = 240;
 export const BOOKMARK_HEIGHT = 200;
 export const BOOKMARK_OFFSET = 25;
+
+// Sticker constants
+export const STICKER_WIDTH = 72;
+export const STICKER_HEIGHT = 72;
 
 // Assets types constants
 export const ASSETS = {
