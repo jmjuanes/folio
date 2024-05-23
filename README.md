@@ -65,7 +65,7 @@ Pull requests are always welcome. For new features or major changes, please open
 
 ## Credits
 
-- The images for the Stickers tool have been adapted from the [Microsoft Fluent Emojis collection](https://github.com/microsoft/fluentui-emoji), which is licensed under the [MIT License](https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE). We would like to extend our gratitude to Microsoft for making these high-quality emojis available for use.
+The images for the Stickers tool have been adapted from the [Microsoft Fluent Emojis collection](https://github.com/microsoft/fluentui-emoji), which is licensed under the [MIT License](https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE). We would like to extend our gratitude to Microsoft for making these high-quality emojis available for use.
 
 
 ## License
