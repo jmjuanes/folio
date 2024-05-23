@@ -63,6 +63,11 @@ Open a new browser window and navigate to `localhost:8080`.
 
 Pull requests are always welcome. For new features or major changes, please open first a [new issue](https://github.com/jmjuanes/folio/issues) to discuss the new features or the changes you want to add to Folio.
 
+## Credits
+
+- The images for the Stickers tool have been adapted from the [Microsoft Fluent Emojis collection](https://github.com/microsoft/fluentui-emoji), which is licensed under the [MIT License](https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE). We would like to extend our gratitude to Microsoft for making these high-quality emojis available for use.
+
+
 ## License
 
 Code is released under the [MIT](./LICENSE) license.
