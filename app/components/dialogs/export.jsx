@@ -1,12 +1,15 @@
 import React from "react";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
-import {Button, Centered, Overlay, Dialog} from "@folio/ui";
 import {Form} from "@folio/form";
 import {
     EXPORT_FORMATS,
     EXPORT_PADDING,
     TRANSPARENT,
 } from "../../constants.js";
+import {Button} from "../ui/button.jsx";
+import {Centered} from "../ui/centered.jsx";
+import {Dialog} from "../ui/dialog.jsx";
+import {Overlay} from "../ui/overlay.jsx";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../../export.js";
 import {useScene} from "../../contexts/scene.jsx";
 

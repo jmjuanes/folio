@@ -19,7 +19,6 @@ import {
     StickerIcon,
 } from "@josemi-icons/react";
 import {FORM_OPTIONS, Form} from "@folio/form";
-import {Dropdown} from "@folio/ui";
 import {
     ELEMENTS,
     ACTIONS,
@@ -39,6 +38,7 @@ import {
     WidthLargeIcon,
     WidthSmallIcon,
 } from "../icons.jsx";
+import {Dropdown} from "../ui/dropdown.jsx";
 import {getStickerPath} from "../../stickers.js";
 import {useScene} from "../../contexts/scene.jsx";
 

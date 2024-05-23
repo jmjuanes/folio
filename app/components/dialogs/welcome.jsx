@@ -1,6 +1,9 @@
 import React from "react";
 import {renderIcon, DrawingIcon, FolderIcon} from "@josemi-icons/react";
-import {Button, Centered, Overlay} from "@folio/ui";
+import {Button} from "../ui/button.jsx";
+import {Centered} from "../ui/centered.jsx";
+import {Overlay} from "../ui/overlay.jsx";
+
 
 const defaultWelcomeFeatures = [
     {
