@@ -9,11 +9,11 @@ import {
     FolderIcon,
     TrashIcon,
 } from "@josemi-icons/react";
-import {ColorPicker} from "@folio/form";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {Island} from "./island.jsx";
 import {Dropdown} from "./ui/dropdown.jsx";
 import {useScene} from "../contexts/scene.jsx";
+import {ColorPicker} from "./form/color-picker.jsx";
 
 // @private menu link component
 const MenuLink = ({text, url}) => (

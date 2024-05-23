@@ -1,6 +1,5 @@
 import React from "react";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
-import {Form} from "@folio/form";
 import {
     EXPORT_FORMATS,
     EXPORT_PADDING,
@@ -10,6 +9,7 @@ import {Button} from "../ui/button.jsx";
 import {Centered} from "../ui/centered.jsx";
 import {Dialog} from "../ui/dialog.jsx";
 import {Overlay} from "../ui/overlay.jsx";
+import {Form} from "../form/index.jsx";
 import {exportToDataURL, exportToFile, exportToClipboard} from "../../export.js";
 import {useScene} from "../../contexts/scene.jsx";
 

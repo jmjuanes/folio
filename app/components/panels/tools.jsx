@@ -18,7 +18,6 @@ import {
     LaserPointerIcon,
     StickerIcon,
 } from "@josemi-icons/react";
-import {FORM_OPTIONS, Form} from "@folio/form";
 import {
     ELEMENTS,
     ACTIONS,
@@ -27,6 +26,7 @@ import {
     ARROWHEADS,
     STROKE_WIDTHS,
     STICKERS,
+    FORM_OPTIONS,
 } from "../../constants.js";
 import {
     STROKE_COLOR_PICK,
@@ -38,6 +38,7 @@ import {
     WidthLargeIcon,
     WidthSmallIcon,
 } from "../icons.jsx";
+import {Form} from "../form/index.jsx";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {getStickerPath} from "../../stickers.js";
 import {useScene} from "../../contexts/scene.jsx";
