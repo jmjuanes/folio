@@ -55,6 +55,20 @@ export const CURSORS = {
     RESIZE_NWSE: "nwse-resize",
 };
 
+// Available form options
+export const FORM_OPTIONS = {
+    COLOR: "color",
+    SELECT: "select",
+    LABELED_SELECT: "labeledSelect",
+    COLOR_SELECT: "colorSelect",
+    FONT: "font",
+    RANGE: "range",
+    CHECKBOX: "checkbox",
+    PIXELS: "pixels",
+    IMAGE_SELECT: "imageSelect",
+    SEPARATOR: "separator",
+};
+
 export const ELEMENTS = {
     SHAPE: "shape",
     LINE: "line",

@@ -1,25 +1,26 @@
 import React from "react";
 import classNames from "classnames";
 import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
-import {ColorPicker} from "./components/color-picker.jsx";
-import {FontPicker} from "./components/font-picker.jsx";
-import {checkIsActive, checkIsVisible} from "./utils.js";
+import {FORM_OPTIONS} from "../../constants.js";
+import {ColorPicker} from "./color-picker.jsx";
+import {FontPicker} from "./font-picker.jsx";
 
-// Export primitive components
-export * from "./components/color-picker.jsx";
+// Tiny utility to check if a value is active
+export const checkIsActive = (value, currentValue, isActiveFn, data) => {
+    if (typeof isActiveFn === "function") {
+        return isActiveFn(value, currentValue, data);
+    }
+    // Other case, just check if value is the current value
+    return value === currentValue;
+};
 
-// Available form options
-export const FORM_OPTIONS = {
-    COLOR: "color",
-    SELECT: "select",
-    LABELED_SELECT: "labeledSelect",
-    COLOR_SELECT: "colorSelect",
-    FONT: "font",
-    RANGE: "range",
-    CHECKBOX: "checkbox",
-    PIXELS: "pixels",
-    IMAGE_SELECT: "imageSelect",
-    SEPARATOR: "separator",
+// Tiny utility to check if a value is visible
+export const checkIsVisible = (value, currentValue, isVisibleFn, data) => {
+    if (typeof isVisibleFn === "function") {
+        return !!isVisibleFn(value, currentValue, data);
+    }
+    // By default, item is visible
+    return true;
 };
 
 const optionsWithInlineTitle = new Set([
@@ -233,8 +234,8 @@ const getVisibleItems = (items, data) => {
 };
 
 export const Form = props => (
-    <div className={props.className} style={props.style}>
-        {getVisibleItems(props.items, props.data).map(key => (
+    <div className={props.className || "flex flex-col gap-4"} style={props.style || {}}>
+        {getVisibleItems(props.items || {}, props.data || {}).map(key => (
             <React.Fragment key={key}>
                 <Option
                     {...props.items[key]}
@@ -254,12 +255,3 @@ export const Form = props => (
         ))}
     </div>
 );
-
-Form.defaultProps = {
-    className: "flex flex-col gap-4",
-    data: {},
-    items: {},
-    style: {},
-    separator: null,
-    onChange: null,
-};
