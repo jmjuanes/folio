@@ -23,6 +23,8 @@ import {
     BOOKMARK_WIDTH,
     BOOKMARK_HEIGHT,
     OPACITY_DEFAULT,
+    STICKER_WIDTH,
+    STICKER_HEIGHT,
 } from "./constants.js";
 import {
     measureText,
@@ -429,6 +431,22 @@ export const elementsConfig = {
             element.y1 = element.y1 - (BOOKMARK_HEIGHT / 2);
             element.x2 = element.x1 + BOOKMARK_WIDTH;
             element.y2 = element.y1 + BOOKMARK_HEIGHT;
+        },
+    },
+    [ELEMENTS.STICKER]: {
+        initialize: values => ({
+            [FIELDS.STICKER]: values?.[FIELDS.STICKER] ?? DEFAULTS.STICKER,
+            [FIELDS.OPACITY]: values?.[FIELDS.OPACITY] ?? DEFAULTS.OPACITY,
+        }),
+        onCreateMove: element => {
+            element.x1 = element.x2;
+            element.y1 = element.y2;
+        },
+        onCreateEnd: element => {
+            element.x1 = element.x1 - STICKER_WIDTH / 2;
+            element.x2 = element.x2 + STICKER_WIDTH / 2;
+            element.y1 = element.y1 - STICKER_HEIGHT / 2;
+            element.y2 = element.y2 + STICKER_HEIGHT / 2;
         },
     },
 };

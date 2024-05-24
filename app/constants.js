@@ -21,6 +21,8 @@ export const PRIMARY = "#0d6efd";
 export const SECONDARY = "#20c997";
 export const ACCENT = "#5e5c6c";
 
+export const STICKERS = {};
+
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
     POINTER_MOVE: "pointermove",
@@ -77,6 +79,7 @@ export const ELEMENTS = {
     DRAW: "draw",
     NOTE: "note",
     BOOKMARK: "bookmark",
+    STICKER: "sticker",
 };
 
 export const SHAPES = {
@@ -245,6 +248,7 @@ export const DEFAULTS = {
     ARROWHEAD_END: ARROWHEADS.ARROW,
     OPACITY: OPACITY_DEFAULT,
     NOTE_COLOR: STICKYNOTE_COLORS.yellow,
+    STICKER: "",
 };
 
 // Fields in elements
@@ -281,6 +285,7 @@ export const FIELDS = {
     NOTE_COLOR: "noteColor",
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
+    STICKER: "sticker",
 };
 
 // Deprecated fields
@@ -383,6 +388,10 @@ export const GROUP_ACTIVE_BOUNDS_COLOR = ACCENT;
 export const BOOKMARK_WIDTH = 240;
 export const BOOKMARK_HEIGHT = 200;
 export const BOOKMARK_OFFSET = 25;
+
+// Sticker constants
+export const STICKER_WIDTH = 72;
+export const STICKER_HEIGHT = 72;
 
 // Assets types constants
 export const ASSETS = {
