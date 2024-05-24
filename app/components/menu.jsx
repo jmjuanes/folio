@@ -9,10 +9,10 @@ import {
     FolderIcon,
     TrashIcon,
 } from "@josemi-icons/react";
-import {ColorPicker} from "@folio/form";
 import {Dropdown} from "./ui/dropdown.jsx";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {Island} from "./island.jsx";
+import {ColorPicker} from "./form/color-picker.jsx";
 import {useScene} from "../contexts/scene.jsx";
 
 // @private menu link component

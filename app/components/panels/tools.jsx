@@ -17,7 +17,6 @@ import {
     DotsVerticalIcon,
     LaserPointerIcon,
 } from "@josemi-icons/react";
-import {FORM_OPTIONS, Form} from "@folio/form";
 import {
     ELEMENTS,
     ACTIONS,
@@ -25,6 +24,7 @@ import {
     SHAPES,
     ARROWHEADS,
     STROKE_WIDTHS,
+    FORM_OPTIONS,
 } from "../../constants.js";
 import {
     STROKE_COLOR_PICK,
@@ -37,6 +37,7 @@ import {
     WidthSmallIcon,
 } from "../icons.jsx";
 import {Dropdown} from "../ui/dropdown.jsx";
+import {Form} from "../form/index.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 
 const tools = {
