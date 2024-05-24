@@ -105,7 +105,7 @@ const getSvgImage = options => {
         group.setAttribute("transform", `translate(${padding - bounds.x1} ${padding - bounds.y1})`);
         // 6. Append elements into  group
         elements.forEach(element => {
-            appendChildNode(group, exportElementSvg(element.id));
+            appendChildNode(group, exportElementSvg(element));
         });
         // 7. return SVG
         const content = (new XMLSerializer()).serializeToString(svg);
