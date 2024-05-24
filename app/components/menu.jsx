@@ -10,7 +10,7 @@ import {
     TrashIcon,
 } from "@josemi-icons/react";
 import {ColorPicker} from "@folio/form";
-import {Dropdown} from "@folio/ui";
+import {Dropdown} from "./ui/dropdown.jsx";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {Island} from "./island.jsx";
 import {useScene} from "../contexts/scene.jsx";
