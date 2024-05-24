@@ -1,6 +1,6 @@
 import React from "react";
 import {FIELDS, STICKER_WIDTH, STICKER_HEIGHT} from "../../constants.js";
-import {getStickerPath} from "../../stickers.js";
+import {getStickerImage} from "../../stickers.js";
 
 export const StickerElement = props => {
     const x = props.creating ? (props.x1 - STICKER_WIDTH / 2) : Math.min(props.x1, props.x2);
@@ -13,7 +13,7 @@ export const StickerElement = props => {
                 y={y}
                 width={STICKER_WIDTH}
                 height={STICKER_HEIGHT}
-                href={getStickerPath(props[FIELDS.STICKER])}
+                href={getStickerImage(props[FIELDS.STICKER])}
                 onPointerDown={props.onPointerDown}
                 onDoubleClick={props.onDoubleClick}
             />
