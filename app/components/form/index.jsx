@@ -4,6 +4,7 @@ import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
 import {FORM_OPTIONS} from "../../constants.js";
 import {ColorPicker} from "./color-picker.jsx";
 import {FontPicker} from "./font-picker.jsx";
+import {ImagePicker} from "./image-picker.jsx";
 
 // Tiny utility to check if a value is active
 export const checkIsActive = (value, currentValue, isActiveFn, data) => {
@@ -169,6 +170,9 @@ const optionTypes = {
                 <span className="text-xs pl-2">px</span>
             </div>
         </div>
+    ),
+    [FORM_OPTIONS.IMAGE_SELECT]: props => (
+        <ImagePicker {...props} />
     ),
     [FORM_OPTIONS.SEPARATOR]: () => (
         <div className="w-full h-px bg-gray-500" />

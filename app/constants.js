@@ -58,13 +58,14 @@ export const CURSORS = {
 export const FORM_OPTIONS = {
     COLOR: "color",
     SELECT: "select",
-    LABELED_SELECT: "labeledSelect",
-    COLOR_SELECT: "colorSelect",
+    LABELED_SELECT: "labeled-select",
+    COLOR_SELECT: "color-select",
     FONT: "font",
     RANGE: "range",
     CHECKBOX: "checkbox",
     PIXELS: "pixels",
     SEPARATOR: "separator",
+    IMAGE_SELECT: "image-select",
 };
 
 export const ELEMENTS = {
