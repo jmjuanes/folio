@@ -374,13 +374,16 @@ const EditorWithScene = props => {
                                     }}
                                 />
                                 <div className="w-px bg-neutral-200" />
-                                {props.showTitle && false && (
+                                {props.showTitle && (
                                     <Title
-                                        title={scene.title}
+                                        key={scene.title}
                                         editable={true}
                                         onChange={newTitle => {
-                                            scene.title = newTitle;
-                                            editor.dispatchChange();
+                                            // Prevent dispatching a new update if the new title is the same as the prev title
+                                            if (newTitle !== scene.title) {
+                                                scene.title = newTitle;
+                                                editor.dispatchChange();
+                                            }
                                         }}
                                     />
                                 )}
@@ -526,4 +529,5 @@ Editor.defaultProps = {
     showExport: true,
     showHints: true,
     showWelcome: true,
+    showTitle: true,
 };
