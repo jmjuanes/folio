@@ -223,6 +223,7 @@ const defaults = {
     endArrowhead: DEFAULTS.ARROWHEAD_END,
     opacity: DEFAULTS.OPACITY,
     [FIELDS.NOTE_COLOR]: DEFAULTS.NOTE_COLOR,
+    [FIELDS.STICKER]: DEFAULTS.STICKER,
 };
 
 // @description Generate a scene state from initial data object
