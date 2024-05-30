@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkpad (http://www.taptrix.com/) -->
+
+<svg
+   height="32pt"
+   width="32pt"
+   version="1.1"
+   viewBox="0 0 32 32"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <filter
+       style="color-interpolation-filters:sRGB"
+       id="filter9"
+       x="-0.089798231"
+       y="-0.089798168"
+       width="1.1795965"
+       height="1.1795963">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         id="feFlood8" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="1.000000"
+         id="feGaussianBlur8" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset8" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite8" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite9" />
+    </filter>
+  </defs>
+  <path
+     id="path7"
+     style="fill:#ffffff;filter:url(#filter9)"
+     d="m 14,2.6367188 c -4.9623997,0 -7.9014772,2.4352091 -9.46875,4.9999999 H 4 A 1.3628312,1.3628312 0 0 0 2.6367188,9 v 2 a 1.3628312,1.3628312 0 0 0 0.4121093,0.412109 c -0.2404908,1.251074 -0.4121093,2.582032 -0.4121093,2.582032 a 1.3628312,1.3628312 0 0 0 0,0.0059 v 4 c 0,0 -0.017979,2.784357 1.3945312,5.609375 1.4125106,2.825018 4.5145282,5.753906 9.96875,5.753906 h 4 c 5.454222,0 8.556239,-2.928888 9.96875,-5.753906 C 29.381261,20.784357 29.363281,18 29.363281,18 v -4 a 1.3628312,1.3628312 0 0 0 0,-0.0059 c 0,0 -0.17159,-1.330879 -0.412109,-2.582032 A 1.3628312,1.3628312 0 0 0 29.363281,11 V 9 A 1.3628312,1.3628312 0 0 0 28,7.6367187 H 27.46875 C 25.901477,5.0719279 22.962399,2.6367188 18,2.6367188 Z" />
+  <path
+     d="M 4,18 V 14 C 4,14 4,4 14,4 h 4 c 10,0 10,10 10,10 v 4 c 0,0 0,10 -10,10 H 14 C 4,28 4,18 4,18 Z"
+     opacity="1"
+     fill="#f3c160"
+     id="path2" />
+  <path
+     stroke="#0d1c30"
+     stroke-width="2"
+     d="m 11,19 c 2,3 8,3 10,0"
+     fill="none"
+     stroke-linecap="round"
+     opacity="1"
+     stroke-linejoin="round"
+     id="path3" />
+  <path
+     d="m 4,18 c 0,0 0,10 10,10 h 4 C 28,28 28,18 28,18 v -3 c 0,0 0,12 -15,12 -9,0 -9,-9 -9,-9 z"
+     opacity="1"
+     fill="#f3b360"
+     id="path4" />
+  <path
+     d="M 15,10 C 14,9 11,9 11,9 H 4 v 2 h 1 c 0,4 2,5 3,5 h 2 c 4,0 5,-2 5,-4 0,-1 2,-1 2,0 0,2 1,4 5,4 h 2 c 1,0 3,-1 3,-5 h 1 V 9 h -7 c 0,0 -3,0 -4,1 z"
+     opacity="1"
+     fill="#0d1c30"
+     id="path5" />
+</svg>
