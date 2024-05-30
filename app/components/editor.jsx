@@ -387,6 +387,9 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
+                                {props.showTitle && (
+                                    <div className="w-px bg-neutral-200" />
+                                )}
                                 <Island.Button
                                     icon="files"
                                     text={(
