@@ -1,8 +1,8 @@
 import React from "react";
 import {useMount} from "react-use";
 import {DrawingIcon} from "@josemi-icons/react";
-import {Centered} from "@folio/ui";
 import createClient from "@folio/client";
+import {Centered} from "../components/ui/centered.jsx";
 
 const ClientContext = React.createContext(null);
 

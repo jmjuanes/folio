@@ -16,16 +16,17 @@ import {
     TriangleIcon,
     DotsVerticalIcon,
     LaserPointerIcon,
+    StickerIcon,
 } from "@josemi-icons/react";
-import {FORM_OPTIONS, Form} from "@folio/form";
-import {Dropdown} from "@folio/ui";
 import {
     ELEMENTS,
     ACTIONS,
     FIELDS,
     SHAPES,
+    STICKERS,
     ARROWHEADS,
     STROKE_WIDTHS,
+    FORM_OPTIONS,
 } from "../../constants.js";
 import {
     STROKE_COLOR_PICK,
@@ -37,7 +38,10 @@ import {
     WidthLargeIcon,
     WidthSmallIcon,
 } from "../icons.jsx";
+import {Dropdown} from "../ui/dropdown.jsx";
+import {Form} from "../form/index.jsx";
 import {useScene} from "../../contexts/scene.jsx";
+import {getStickerImage} from "../../stickers.js";
 
 const tools = {
     [ELEMENTS.SHAPE]: {
@@ -138,6 +142,20 @@ const tools = {
         icon: (<ImageIcon />),
         text: "Image",
         quickPicks: null,
+    },
+    [ELEMENTS.STICKER]: {
+        icon: (<StickerIcon />),
+        text: "Sticker",
+        quickPicks: {
+            [FIELDS.STICKER]: {
+                type: FORM_OPTIONS.IMAGE_SELECT,
+                className: "w-64 grid grid-cols-8 gap-1",
+                values: Object.values(STICKERS).map(stickerName => ({
+                    value: stickerName,
+                    image: getStickerImage(stickerName),
+                })),
+            },
+        },
     },
 };
 

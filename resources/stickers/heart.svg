@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkpad (http://www.taptrix.com/) -->
+
+<svg
+   height="32pt"
+   width="32pt"
+   version="1.1"
+   viewBox="0 0 32 32"
+   id="svg2"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <filter
+       style="color-interpolation-filters:sRGB"
+       id="filter4"
+       x="-0.090339656"
+       y="-0.090339656"
+       width="1.1806793"
+       height="1.1806793">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         id="feFlood3" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="1.000000"
+         id="feGaussianBlur3" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset3" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite3" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite4" />
+    </filter>
+  </defs>
+  <path
+     id="path3"
+     style="fill:#ffffff;filter:url(#filter4)"
+     d="m 10,2.7167969 c -2.4277083,0 -4.3858596,1.2985159 -5.5683594,3.0722656 C 3.2491408,7.5628122 2.7167969,9.7861468 2.7167969,12 c 0,5.888822 2.706507,10.246392 5.6464844,13.052734 1.4699886,1.403171 2.9978097,2.435698 4.3203127,3.13086 1.322502,0.695161 2.281769,1.099609 3.316406,1.099609 1.141565,0 2.056018,-0.495927 3.371094,-1.271484 1.315076,-0.775558 2.829628,-1.896034 4.287109,-3.353516 2.914963,-2.914963 5.625,-7.230498 5.625,-12.658203 0,-2.2138532 -0.532344,-4.4371878 -1.714844,-6.2109375 C 26.38586,4.0153128 24.427708,2.7167969 22,2.7167969 c -2.927708,0 -4.886168,1.5617125 -5.925781,3.046875 C 16.037583,5.8160088 16.0348,5.855898 16,5.9082031 15.9652,5.855898 15.962417,5.8160088 15.925781,5.7636719 14.886168,4.2785094 12.927708,2.7167969 10,2.7167969 Z" />
+  <path
+     d="M 16,9 C 16,9 15,4 10,4 6,4 4,8 4,12 4,23 14,28 16,28 18,28 28,22 28,12 28,8 26,4 22,4 17,4 16,9 16,9 Z"
+     opacity="1"
+     fill="#eb7162"
+     id="path2" />
+</svg>

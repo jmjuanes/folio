@@ -1,8 +1,8 @@
 import React from "react";
-import {Button} from "../components/button.jsx";
-import {Overlay} from "../components/overlay.jsx";
-import {Centered} from "../components/centered.jsx";
-import {Dialog} from "../components/dialog.jsx";
+import {Button} from "../components/ui/button.jsx";
+import {Overlay} from "../components/ui/overlay.jsx";
+import {Centered} from "../components/ui/centered.jsx";
+import {Dialog} from "../components/ui/dialog.jsx";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";

@@ -8,7 +8,6 @@ import {
     TrashIcon,
     UnlockIcon,
 } from "@josemi-icons/react";
-import {FORM_OPTIONS, Form} from "@folio/form";
 import {
     FIELDS,
     THEMES,
@@ -23,6 +22,7 @@ import {
     SHAPES,
     FILL_STYLES,
     ARROWHEADS,
+    FORM_OPTIONS,
 } from "../../constants.js";
 import {
     FILL_COLOR_PALETTE,
@@ -58,6 +58,7 @@ import {
     SendBackIcon,
     SendBackwardIcon,
 } from "../icons.jsx";
+import {Form} from "../form/index.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 
 // Available sections

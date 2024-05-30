@@ -21,6 +21,18 @@ export const PRIMARY = "#0d6efd";
 export const SECONDARY = "#20c997";
 export const ACCENT = "#5e5c6c";
 
+export const STICKERS = {
+    // SMILING_FACE: "smiling-face",
+    SMILING_FACE_WITH_HEART_EYES: "smiling-face-with-heart-eyes",
+    FACE_WITH_TEARS_OF_JOY: "face-with-tears-of-joy",
+    CONFUSED_FACE: "confused-face",
+    SMILING_FACE_WITH_SUNGLASES: "smiling-face-with-sunglases",
+    ANGUISHED_FACE: "anguished-face",
+    HEART: "heart",
+    THUMBS_UP: "thumbs-up",
+    THUMBS_DOWN: "thumbs-down",
+};
+
 export const EVENTS = {
     POINTER_DOWN: "pointerdown",
     POINTER_MOVE: "pointermove",
@@ -55,6 +67,19 @@ export const CURSORS = {
     RESIZE_NWSE: "nwse-resize",
 };
 
+export const FORM_OPTIONS = {
+    COLOR: "color",
+    SELECT: "select",
+    LABELED_SELECT: "labeled-select",
+    COLOR_SELECT: "color-select",
+    FONT: "font",
+    RANGE: "range",
+    CHECKBOX: "checkbox",
+    PIXELS: "pixels",
+    SEPARATOR: "separator",
+    IMAGE_SELECT: "image-select",
+};
+
 export const ELEMENTS = {
     SHAPE: "shape",
     LINE: "line",
@@ -64,6 +89,7 @@ export const ELEMENTS = {
     DRAW: "draw",
     NOTE: "note",
     BOOKMARK: "bookmark",
+    STICKER: "sticker",
 };
 
 export const SHAPES = {
@@ -232,6 +258,7 @@ export const DEFAULTS = {
     ARROWHEAD_END: ARROWHEADS.ARROW,
     OPACITY: OPACITY_DEFAULT,
     NOTE_COLOR: STICKYNOTE_COLORS.yellow,
+    STICKER: STICKERS.SMILING_FACE_WITH_HEART_EYES,
 };
 
 // Fields in elements
@@ -268,6 +295,7 @@ export const FIELDS = {
     NOTE_COLOR: "noteColor",
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
+    STICKER: "sticker",
 };
 
 // Deprecated fields
@@ -370,6 +398,10 @@ export const GROUP_ACTIVE_BOUNDS_COLOR = ACCENT;
 export const BOOKMARK_WIDTH = 240;
 export const BOOKMARK_HEIGHT = 200;
 export const BOOKMARK_OFFSET = 25;
+
+// Sticker constants
+export const STICKER_WIDTH = 72;
+export const STICKER_HEIGHT = 72;
 
 // Assets types constants
 export const ASSETS = {

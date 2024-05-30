@@ -1,24 +1,26 @@
 import React from "react";
 import classNames from "classnames";
 import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
-import {ColorPicker} from "./components/color-picker.jsx";
-import {FontPicker} from "./components/font-picker.jsx";
-import {checkIsActive, checkIsVisible} from "./utils.js";
+import {FORM_OPTIONS} from "../../constants.js";
+import {ColorPicker} from "./color-picker.jsx";
+import {FontPicker} from "./font-picker.jsx";
 
-// Export primitive components
-export * from "./components/color-picker.jsx";
+// Tiny utility to check if a value is active
+export const checkIsActive = (value, currentValue, isActiveFn, data) => {
+    if (typeof isActiveFn === "function") {
+        return isActiveFn(value, currentValue, data);
+    }
+    // Other case, just check if value is the current value
+    return value === currentValue;
+};
 
-// Available form options
-export const FORM_OPTIONS = {
-    COLOR: "color",
-    SELECT: "select",
-    LABELED_SELECT: "labeledSelect",
-    COLOR_SELECT: "colorSelect",
-    FONT: "font",
-    RANGE: "range",
-    CHECKBOX: "checkbox",
-    PIXELS: "pixels",
-    SEPARATOR: "separator",
+// Tiny utility to check if a value is visible
+export const checkIsVisible = (value, currentValue, isVisibleFn, data) => {
+    if (typeof isVisibleFn === "function") {
+        return !!isVisibleFn(value, currentValue, data);
+    }
+    // By default, item is visible
+    return true;
 };
 
 const optionsWithInlineTitle = new Set([
@@ -168,6 +170,26 @@ const optionTypes = {
             </div>
         </div>
     ),
+    [FORM_OPTIONS.IMAGE_SELECT]: props => (
+        <div className={props.className || "grid grid-cols-5 gap-1 w-full"} style={props.style || {}}>
+            {(props.values || []).map(item => {
+                if (!checkIsVisible(item.value, props.value, props.isVisible, props.data)) {
+                    return null;
+                }
+                const active = checkIsActive(item.value, props.value, props.isActive, props.data);
+                const itemClass = classNames({
+                    "flex flex-col justify-center items-center rounded-md py-0 grow": true,
+                    "bg-neutral-900 text-white": active,
+                    "bg-neutral-100 hover:bg-neutral-200 cursor-pointer": !active,
+                });
+                return (
+                    <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
+                        <img width="32px" height="32px" src={item.image} />
+                    </div>
+                );
+            })}
+        </div>
+    ),
     [FORM_OPTIONS.SEPARATOR]: () => (
         <div className="w-full h-px bg-gray-500" />
     ),
@@ -210,7 +232,7 @@ const getVisibleItems = (items, data) => {
 };
 
 export const Form = props => (
-    <div className={props.className} style={props.style}>
+    <div className={props.className || "flex flex-col gap-4"} style={props.style || {}}>
         {getVisibleItems(props.items, props.data).map(key => (
             <React.Fragment key={key}>
                 <Option
@@ -231,12 +253,3 @@ export const Form = props => (
         ))}
     </div>
 );
-
-Form.defaultProps = {
-    className: "flex flex-col gap-4",
-    data: {},
-    items: {},
-    style: {},
-    separator: null,
-    onChange: null,
-};

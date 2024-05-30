@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkpad (http://www.taptrix.com/) -->
+
+<svg
+   height="32pt"
+   width="32pt"
+   version="1.1"
+   viewBox="0 0 32 32"
+   id="svg6"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <filter
+       style="color-interpolation-filters:sRGB"
+       id="filter8"
+       x="-0.090766669"
+       y="-0.090766731"
+       width="1.1815333"
+       height="1.1815335">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         id="feFlood7" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="1.000000"
+         id="feGaussianBlur7" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset7" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite7" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite8" />
+    </filter>
+  </defs>
+  <path
+     id="path7"
+     style="fill:#ffffff;filter:url(#filter8)"
+     d="m 14,2.7792969 c -5.4067742,0 -8.4462644,2.8847162 -9.8417969,5.6757812 C 2.7626706,11.246143 2.7792969,14 2.7792969,14 v 4 c 0,0 -0.016626,2.753857 1.3789062,5.544922 C 5.5537356,26.335987 8.5932258,29.220703 14,29.220703 h 4 c 5.406774,0 8.446264,-2.884716 9.841797,-5.675781 C 29.237329,20.753857 29.220703,18 29.220703,18 v -4 c 0,0 0.01663,-2.753857 -1.378906,-5.5449219 C 26.446264,5.6640131 23.406774,2.7792969 18,2.7792969 Z" />
+  <path
+     d="M 4,18 V 14 C 4,14 4,4 14,4 h 4 c 10,0 10,10 10,10 v 4 c 0,0 0,10 -10,10 H 14 C 4,28 4,18 4,18 Z"
+     opacity="1"
+     fill="#f3c160"
+     id="path2" />
+  <path
+     stroke="#0d1c30"
+     stroke-width="2"
+     d="m 11,19 c 2,4 8,4 10,0"
+     fill="none"
+     stroke-linecap="round"
+     opacity="1"
+     stroke-linejoin="round"
+     id="path3" />
+  <path
+     d="m 4,18 c 0,0 0,10 10,10 h 4 C 28,28 28,18 28,18 v -3 c 0,0 0,12 -15,12 -9,0 -9,-9 -9,-9 z"
+     opacity="1"
+     fill="#f3b360"
+     id="path4" />
+  <path
+     d="m 9,13 c 0,-1.1046 0.89543,-2 2,-2 1.1046,0 2,0.8954 2,2 0,1.1046 -0.8954,2 -2,2 -1.10457,0 -2,-0.8954 -2,-2 z"
+     opacity="1"
+     fill="#0d1c30"
+     id="path5" />
+  <path
+     d="m 19,13 c 0,-1.1046 0.8954,-2 2,-2 1.1046,0 2,0.8954 2,2 0,1.1046 -0.8954,2 -2,2 -1.1046,0 -2,-0.8954 -2,-2 z"
+     opacity="1"
+     fill="#0d1c30"
+     id="path6" />
+</svg>
