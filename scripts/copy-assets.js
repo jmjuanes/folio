@@ -17,7 +17,7 @@ const assets = [
         to: "./404.html",
     },
     {
-        from: "node_modules/lowcss/dist/low.css",
+        from: "node_modules/lowcss/low.css",
         to: "./low.css",
     },
     {
