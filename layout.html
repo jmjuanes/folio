@@ -10,16 +10,26 @@
     <meta property="og:url" content="https://www.josemi.xyz/folio">
     <meta property="og:image" content="https://www.josemi.xyz/folio/cover.png">
     <meta property="og:description" content="Folio is a digital whiteboard for sketching and prototyping">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@800&display=swap">
     <link rel="stylesheet" href="./low.css">
-    <title>Folio | Minimal whiteboard for sketching and prototyping</title>
+    <title>{{page.data.title}}</title>
+    <style>
+        .font-brand {
+            font-family: "EB Garamond", serif;
+            font-weight: 800 !important;
+        }
+    </style>
 </head>
 <body class="m-0 p-0 font-inter leading-normal text-neutral-800 bg-white">
     <!-- Header -->
     <div class="w-full">
         <div class="flex justify-between items-center w-full max-w-7xl mx-auto h-24 px-8 select-none">
-            <a href="./" class="flex items-center gap-2 text-neutral-950 no-underline">
-                <div class="font-black leading-none text-3xl">
+            <a href="./" class="flex items-center gap-2 text-neutral-950 hover:underline">
+                <div class="flex items-center text-white bg-neutral-950 p-2 rounded-tl-xl rounded-tr-xl rounded-bl-xl">
+                    <svg class="w-6 h-6"><use xlink:href="sprite.svg#drawing"></use></svg>
+                </div>
+                <div class="font-brand leading-none text-4xl tracking-tight">
                     <span>folio.</span>
                 </div>
             </a>
@@ -60,12 +70,12 @@
     </div>
     <!-- Main content -->
     <div class="w-full">
-        {{ content }}
+        {{>content}}
     </div>
     <!--Footer -->
     <div class="w-full bg-black text-white">
         <div class="w-full max-w-7xl mx-auto px-8 pt-16 pb-24">
-            <div class="font-black leading-none text-2xl mb-2">
+            <div class="font-brand leading-none text-3xl mb-2 tracking-tight">
                 <span>folio.</span>
             </div>
             <div class="flex gap-3 mb-4 text-sm">
