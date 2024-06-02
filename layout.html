@@ -11,13 +11,13 @@
     <meta property="og:image" content="https://www.josemi.xyz/folio/cover.png">
     <meta property="og:description" content="Folio is a digital whiteboard for sketching and prototyping">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@900&display=swap">
     <link rel="stylesheet" href="./low.css">
     <title>{{page.data.title}}</title>
     <style>
         .font-brand {
-            font-family: "EB Garamond", serif;
-            font-weight: 800 !important;
+            font-family: "Crimson Pro", serif;
+            font-weight: 900 !important;
         }
     </style>
 </head>
@@ -25,22 +25,21 @@
     <!-- Header -->
     <div class="w-full">
         <div class="flex justify-between items-center w-full max-w-7xl mx-auto h-24 px-8 select-none">
-            <a href="./" class="flex items-center gap-2 text-neutral-950 hover:underline">
-                <div class="flex items-center text-white bg-neutral-950 p-2 rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl">
-                    <svg class="w-6 h-6"><use xlink:href="sprite.svg#drawing"></use></svg>
-                </div>
-                <div class="font-brand leading-none text-4xl tracking-tight">
-                    <span>folio.</span>
-                </div>
-            </a>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-8">
+                <a href="./" class="flex items-center gap-2 text-neutral-950 hover:underline">
+                    <div class="font-brand leading-none text-4xl tracking-tight">
+                        <span>folio.</span>
+                    </div>
+                </a>
                 <div class="hidden md:flex items-center mr-4 gap-4">
                     {{#site.navbar.links}}
                     <a href="{{link}}" class="inline-flex items-center px-2 py-2 rounded-md hover:bg-neutral-100">
-                        <span class="font-medium">{{text}}</span>
+                        <span class="font-medium text-neutral-900">{{text}}</span>
                     </a>
                     {{/site.navbar.links}}
                 </div>
+            </div>
+            <div class="flex items-center gap-2">
                 <div class="flex items-center">
                     <a href="./app" class="cursor-pointer flex items-center px-3 py-2 rounded-md bg-neutral-950 hover:bg-neutral-900 no-underline">
                         <strong class="text-white">Try Folio</strong>
