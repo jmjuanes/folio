@@ -24,6 +24,14 @@ const assets = [
         from: "node_modules/@josemi-icons/svg/sprite.svg",
         to: "./sprite.svg",
     },
+    {
+        from: "public/screenshot.png",
+        to: "./screenshot.png",
+    },
+    {
+        from: "public/og.png",
+        to: "./og.png",
+    },
 ];
 
 assets.forEach(asset => {
