@@ -1,18 +1,43 @@
+---
+title: "Folio | Minimal whiteboard for sketching and prototyping"
+features:
+  - subtitle: "Privacy First."
+    title: "Design with total <u>Privacy</u>."
+    content:
+      - "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
+      - "Sketch and create with <b>confidence</b>."
+  - subtitle: "Sketch without constraints."
+    title: "Boundless Canvas for <u>Ideas</u>."
+    content:
+        - "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
+  - subtitle: "Introducing Pages."
+    title: "<u>Organize</u> your ideas seamlessly."
+    content:
+      - "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
+      - "Whether you are storyboarding or brainstorming, the Pages feature provides a structured canvas for your creativity."
+---
 <!-- Presentation -->
-<div class="pt-20 pb-20 md:pt-32 md:pb-40 px-8 w-full max-w-7xl mx-auto">
-    <div class="font-black text-7xl md:text-9xl leading-none text-neutral-950">
-        <span>From <u>Concept</u> to <u>Reality</u>.</span>
+<div class="pt-16 pb-16 md:pt-20 md:pb-20 px-8 w-full max-w-7xl mx-auto">
+    <div class="font-bold text-5xl md:text-8xl leading-none text-neutral-950 max-w-6xl">
+        Unleash <span class="font-black underline">Creativity</span> on an <span class="font-black underline">Infinite Canvas</span>.
     </div>
-    <div class="mt-8 text-2xl md:text-4xl w-full max-w-2xl text-neutral-700">
-        <span>Sketch, prototype, and bring your ideas to life on an expansive canvas.</span>
+    <div class="mt-4 md:mt-6 text-2xl md:text-4xl w-full max-w-4xl text-neutral-800">
+        <span>Sketch, prototype, and bring your ideas to life  with unparalleled flexibility and ease.</span>
     </div>
     <div class="flex mt-10">
-        <a href="./app" data-role="launcher-btn" class="flex items-center gap-4 px-8 py-6 rounded-lg bg-neutral-950 hover:bg-neutral-900 text-white cursor-pointer">
-            <strong class="text-2xl">Start Sketching</strong>
+        <a href="./app" data-role="launcher-btn" class="flex items-center gap-4 px-6 py-4 rounded-lg bg-neutral-950 hover:bg-neutral-800 text-white cursor-pointer">
+            <strong class="text-xl">Start Sketching</strong>
             <div class="flex items-center">
                 <svg class="w-8 h-8"><use xlink:href="sprite.svg#arrow-right"></use></svg>
             </div>
         </a>
+    </div>
+</div>
+<div class="w-full max-w-7xl mx-auto px-8">
+    <div class="w-full">
+        <div class="mx-8 h-3 rounded-tl-2xl rounded-tr-2xl border border-neutral-200 border-dashed border-b-0 bg-white shadow-sm"></div>
+        <div class="mx-4 h-3 rounded-tl-2xl rounded-tr-2xl border border-neutral-200 border-dashed border-b-0 bg-white shadow-sm"></div>
+        <img class="rounded-tl-2xl rounded-tr-2xl border border-neutral-200 shadow-sm" width="100%" src="./screenshot.png">
     </div>
 </div>
 <!-- Features -->
@@ -24,44 +49,15 @@
         </div>
     </div>
     <div class="w-full max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
-        <!--Privacy -->
+        {{#each page.data.features}}
         <div class="w-full max-w-xl mb-12">
-            <div class="mb-2 text-lg font-bold o-80">
-                <span>Privacy First.</span>
-            </div>
-            <div class="font-black text-4xl md:text-5xl leading-none">
-                <span>Design with total <u>Privacy</u>.</span>
-            </div>
-            <div class="text-xl mt-8">
-                <div class="mb-2">We are committed to keeping your work private and secure. For that reason, <b>Folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>.</div>
-                <div>Sketch and create with <b>confidence</b>.</div>
+            <div class="mb-2 text-lg font-bold o-80">{{!subtitle}}</div>
+            <div class="font-black text-4xl md:text-5xl leading-none">{{!title}}</div>
+            <div class="flex flex-col gap-2 text-xl mt-8">
+                {{#each content}}<div>{{!.}}</div>{{/each}}
             </div>
         </div>
-        <!-- Infinite canvas -->
-        <div class="w-full max-w-xl mb-12">
-            <div class="mb-2 text-lg font-bold o-80">
-                <span>Sketch without constraints.</span>
-            </div>
-            <div class="font-black text-4xl md:text-5xl leading-none">
-                <span>Boundless Canvas for <u>Ideas</u>.</span>
-            </div>
-            <div class="text-xl mt-8">
-                <div>Unleash your imagination on an infinite canvas. Whether you're sketching, prototyping, or creating, <b>Folio</b> provides limitless space for your creativity to flourish.</div>
-            </div>
-        </div>
-        <!-- Pages -->
-        <div class="w-full max-w-xl mb-12">
-            <div class="mb-2 text-lg font-bold o-80">
-                <span>Introducing Pages.</span>
-            </div>
-            <div class="font-black text-4xl md:text-5xl leading-none">
-                <span><u>Organize</u> your ideas seamlessly.</span>
-            </div>
-            <div class="text-xl mt-8">
-                <div class="mb-2">The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas.</div>
-                <div>Whether you are storyboarding or brainstorming, the Pages feature provides a structured canvas for your creativity.</div>
-            </div>
-        </div>
+        {{/each}}
     </div>
 </div>
 <!-- Products -->

@@ -7,30 +7,39 @@
     <meta name="description" content="Folio is a digital whiteboard for sketching and prototyping">
     <meta property="og:site_name" content="Folio - Digital whiteboard">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.josemi.xyz/folio">
-    <meta property="og:image" content="https://www.josemi.xyz/folio/cover.png">
+    <meta property="og:url" content="https://folio.josemi.xyz">
+    <meta property="og:image" content="https://folio.josemi.xyy/og.png">
     <meta property="og:description" content="Folio is a digital whiteboard for sketching and prototyping">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@900&display=swap">
     <link rel="stylesheet" href="./low.css">
-    <title>Folio | Minimal whiteboard for sketching and prototyping</title>
+    <title>{{page.data.title}}</title>
+    <style>
+        .font-brand {
+            font-family: "Crimson Pro", serif;
+            font-weight: 900 !important;
+        }
+    </style>
 </head>
 <body class="m-0 p-0 font-inter leading-normal text-neutral-800 bg-white">
     <!-- Header -->
     <div class="w-full">
         <div class="flex justify-between items-center w-full max-w-7xl mx-auto h-24 px-8 select-none">
-            <a href="./" class="flex items-center gap-2 text-neutral-950 no-underline">
-                <div class="font-black leading-none text-3xl">
-                    <span>folio.</span>
-                </div>
-            </a>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-8">
+                <a href="./" class="flex items-center gap-2 text-neutral-950 hover:underline">
+                    <div class="font-brand leading-none text-4xl tracking-tight">
+                        <span>folio.</span>
+                    </div>
+                </a>
                 <div class="hidden md:flex items-center mr-4 gap-4">
                     {{#site.navbar.links}}
                     <a href="{{link}}" class="inline-flex items-center px-2 py-2 rounded-md hover:bg-neutral-100">
-                        <span class="font-medium">{{text}}</span>
+                        <span class="font-medium text-neutral-900">{{text}}</span>
                     </a>
                     {{/site.navbar.links}}
                 </div>
+            </div>
+            <div class="flex items-center gap-2">
                 <div class="flex items-center">
                     <a href="./app" class="cursor-pointer flex items-center px-3 py-2 rounded-md bg-neutral-950 hover:bg-neutral-900 no-underline">
                         <strong class="text-white">Try Folio</strong>
@@ -60,12 +69,12 @@
     </div>
     <!-- Main content -->
     <div class="w-full">
-        {{ content }}
+        {{>content}}
     </div>
     <!--Footer -->
     <div class="w-full bg-black text-white">
         <div class="w-full max-w-7xl mx-auto px-8 pt-16 pb-24">
-            <div class="font-black leading-none text-2xl mb-2">
+            <div class="font-brand leading-none text-3xl mb-2 tracking-tight">
                 <span>folio.</span>
             </div>
             <div class="flex gap-3 mb-4 text-sm">
