@@ -23,6 +23,7 @@ import {
     ACTIONS,
     FIELDS,
     SHAPES,
+    ARROW_SHAPES,
     STICKERS,
     ARROWHEADS,
     STROKE_WIDTHS,
@@ -68,15 +69,26 @@ const tools = {
         icon: (<ArrowIcon />),
         text: "Arrow",
         quickPicks: {
-            [FIELDS.END_ARROWHEAD]: {
+            // [FIELDS.END_ARROWHEAD]: {
+            //     type: FORM_OPTIONS.SELECT,
+            //     className: "flex flex-nowrap w-24 gap-1",
+            //     isActive: (value, currentValue, data) => {
+            //         return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
+            //     },
+            //     values: [
+            //         {value: ARROWHEADS.NONE, icon: <LineIcon />},
+            //         {value: ARROWHEADS.ARROW, icon: <ArrowIcon />},
+            //     ],
+            // },
+            [FIELDS.ARROW_SHAPE]: {
                 type: FORM_OPTIONS.SELECT,
                 className: "flex flex-nowrap w-24 gap-1",
-                isActive: (value, currentValue, data) => {
-                    return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
-                },
+                // isActive: (value, currentValue, data) => {
+                //     return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
+                // },
                 values: [
-                    {value: ARROWHEADS.NONE, icon: <LineIcon />},
-                    {value: ARROWHEADS.ARROW, icon: <ArrowIcon />},
+                    {value: ARROW_SHAPES.LINE, icon: <LineIcon />},
+                    {value: ARROW_SHAPES.CONNECTOR, icon: <ArrowIcon />},
                 ],
             },
             [FIELDS.STROKE_WIDTH]: {

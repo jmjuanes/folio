@@ -22,6 +22,7 @@ import {
     SHAPES,
     FILL_STYLES,
     ARROWHEADS,
+    ARROW_SHAPES,
     FORM_OPTIONS,
 } from "../../constants.js";
 import {
@@ -70,6 +71,7 @@ const SECTIONS = {
     EFFECTS: "effects",
     ARROWHEADS: "arrowheads",
     SHAPE: "shape",
+    ARROW_SHAPES: "arrowShapes",
     ACTIONS: "actions",
 };
 
@@ -220,6 +222,19 @@ const displaySections = {
                     {value: SHAPES.ELLIPSE, icon: CircleIcon()},
                     {value: SHAPES.DIAMOND, icon: DiamondIcon()},
                     {value: SHAPES.TRIANGLE, icon: TriangleIcon()},
+                ],
+            },
+        },
+    },
+    [SECTIONS.ARROW_SHAPES]: {
+        test: FIELDS.ARROW_SHAPE,
+        items: {
+            [FIELDS.ARROW_SHAPE]: {
+                title: "Arrow shape",
+                type: FORM_OPTIONS.SELECT,
+                values: [
+                    {value: ARROW_SHAPES.LINE, icon: null},
+                    {value: ARROW_SHAPES.CONNECTOR, icon: null},
                 ],
             },
         },
