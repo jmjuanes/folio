@@ -7,9 +7,10 @@ import {
     TRANSPARENT,
     OPACITY_FULL,
     OPACITY_NONE,
+    ARROW_SHAPES,
 } from "../../constants.js";
 import {getBalancedDash, getPointsDistance} from "../../utils/math.js";
-import {getCurvePath} from "../../utils/paths.js";
+import {getCurvePath, getConnectorPath} from "../../utils/paths.js";
 import {Arrowhead} from "./arrow-head.jsx";
 
 export const ArrowElement = props => {
@@ -35,13 +36,18 @@ export const ArrowElement = props => {
                 [props.x1 - x, props.y1 - y],
                 [props.x2 - x, props.y2 - y],
             ];
+            // Case 1: arrow shape is a connector
+            if (props.arrowShape === ARROW_SHAPES.CONNECTOR) {
+                return getConnectorPath(points);
+            }
+            // Other case: render as a curve
             let controlPoint = null;
             if (typeof props.xCenter === "number") {
                 controlPoint = [props.xCenter - x, props.yCenter - y];
             }
             return getCurvePath(points, controlPoint);
         },
-        [props.x1, props.y1, props.xCenter, props.yCenter, props.x2, props.y2],
+        [props.x1, props.y1, props.xCenter, props.yCenter, props.x2, props.y2, props.arrowShape],
     );
     return (
         <g transform={`translate(${x},${y})`} opacity={props.opacity}>
