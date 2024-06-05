@@ -16,6 +16,8 @@ import {Arrowhead} from "./arrow-head.jsx";
 export const ArrowElement = props => {
     const x = Math.min(props.x1, props.x2);
     const y = Math.min(props.y1, props.y2);
+    const o = Math.abs(props.x1 - props.x2) > Math.abs(props.y1 - props.y2) ? "h" : "v";
+    const isConnector = props.arrowShape === ARROW_SHAPES.CONNECTOR;
     const strokeColor = props.strokeColor ?? BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
@@ -78,8 +80,8 @@ export const ArrowElement = props => {
                     type={props.startArrowhead}
                     x={props.x1 - x}
                     y={props.y1 - y}
-                    x2={(props.xCenter ?? props.x2) - x}
-                    y2={(props.yCenter ?? props.y2) - y}
+                    x2={(isConnector ? (o === "h" ? props.x2 : props.x1) : (props.xCenter ?? props.x2)) - x}
+                    y2={(isConnector ? (o === "h" ? props.y1 : props.y2) : (props.yCenter ?? props.y2)) - y}
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     strokeOpacity={strokeOpacity}
@@ -92,8 +94,8 @@ export const ArrowElement = props => {
                     type={props.endArrowhead}
                     x={props.x2 - x}
                     y={props.y2 - y}
-                    x2={(props.xCenter ?? props.x1) - x}
-                    y2={(props.yCenter ?? props.y1) - y}
+                    x2={(isConnector ? (o === "h" ? props.x1 : props.x2) : (props.xCenter ?? props.x1)) - x}
+                    y2={(isConnector ? (o === "h" ? props.y2 : props.y1) : (props.yCenter ?? props.y1)) - y}
                     strokeWidth={strokeWidth}
                     strokeColor={strokeColor}
                     strokeOpacity={strokeOpacity}
