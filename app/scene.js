@@ -219,6 +219,7 @@ const defaults = {
     textSize: DEFAULTS.TEXT_SIZE,
     textAlign: DEFAULTS.TEXT_ALIGN,
     shape: DEFAULTS.SHAPE,
+    [FIELDS.ARROW_SHAPE]: DEFAULTS.ARROW_SHAPE,
     startArrowhead: DEFAULTS.ARROWHEAD_START,
     endArrowhead: DEFAULTS.ARROWHEAD_END,
     opacity: DEFAULTS.OPACITY,
