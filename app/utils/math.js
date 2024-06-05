@@ -1,3 +1,6 @@
+// Returns the sign of the provided value
+export const sign = value => value < 0 ? -1 : +1;
+
 // Calculate the hipotenuse
 export const hypotenuse = (x, y) => {
     return Math.sqrt(x * x + y * y);
