@@ -98,7 +98,7 @@ export const getCurvePath = (points, controlPoint = null) => {
 };
 
 // Get connector path
-export const getConnectorPath = (points, radius = 20) => {
+export const getConnectorPath = (points, radius = 25) => {
     if (points.length === 2) {
         const width = Math.abs(points[1][0] - points[0][0]);
         const height = Math.abs(points[1][1] - points[0][1]);
