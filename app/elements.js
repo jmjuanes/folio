@@ -32,7 +32,7 @@ import {
     getPointDistanceToLine,
     getPointProjectionToLine,
 } from "./utils/math.js";
-import {getCurvePath} from "./utils/paths.js";
+import {getCurvePath, getConnectorPath} from "./utils/paths.js";
 import {isCornerHandler} from "./handlers.js";
 
 // Generate default handlers
@@ -160,21 +160,30 @@ export const elementsConfig = {
         },
         getBounds: element => {
             const bounds = [];
-            const center = (typeof element.xCenter === "number") ? [element.xCenter, element.yCenter] : null;
-            // 1. Add default bound connecting the two nodes of the arrow
-            bounds.push({
-                path: getCurvePath([[element.x1, element.y1], [element.x2, element.y2]], center),
-            });
-            // 2. Add lines to connect the control point with the start and end nodes
-            if (center && !element.locked) {
+            // 1. Check for connector arrow
+            if (element[FIELDS.ARROW_SHAPE] === ARROW_SHAPES.CONNECTOR) {
                 bounds.push({
-                    path: getCurvePath([[element.x1, element.y1], [element.xCenter, element.yCenter]]),
-                    strokeDasharray: 5,
+                    path: getConnectorPath([[element.x1, element.y1], [element.x2, element.y2]]),
                 });
+            }
+            // 2. Check for default arrow curve
+            else {
+                const center = (typeof element.xCenter === "number") ? [element.xCenter, element.yCenter] : null;
+                // 2.1. Add default bound connecting the two nodes of the arrow
                 bounds.push({
-                    path: getCurvePath([[element.x2, element.y2], [element.xCenter, element.yCenter]]),
-                    strokeDasharray: 5,
+                    path: getCurvePath([[element.x1, element.y1], [element.x2, element.y2]], center),
                 });
+                // 2.2. Add lines to connect the control point with the start and end nodes
+                if (center && !element.locked) {
+                    bounds.push({
+                        path: getCurvePath([[element.x1, element.y1], [element.xCenter, element.yCenter]]),
+                        strokeDasharray: 5,
+                    });
+                    bounds.push({
+                        path: getCurvePath([[element.x2, element.y2], [element.xCenter, element.yCenter]]),
+                        strokeDasharray: 5,
+                    });
+                }
             }
             // 3. Return bounds
             return bounds;
