@@ -99,6 +99,11 @@ export const SHAPES = {
     TRIANGLE: "triangle",
 };
 
+export const ARROW_SHAPES = {
+    LINE: "line",
+    CONNECTOR: "connector",
+};
+
 export const ARROWHEADS = {
     NONE: "none",
     ARROW: "arrow",
@@ -254,6 +259,7 @@ export const DEFAULTS = {
     TEXT_COLOR: BLACK,
     TEXT_ALIGN: TEXT_ALIGNS.CENTER,
     SHAPE: SHAPES.RECTANGLE,
+    ARROW_SHAPE: ARROW_SHAPES.LINE,
     ARROWHEAD_START: ARROWHEADS.NONE,
     ARROWHEAD_END: ARROWHEADS.ARROW,
     OPACITY: OPACITY_DEFAULT,
@@ -287,6 +293,7 @@ export const FIELDS = {
     TEXT_SIZE: "textSize",
     TEXT_ALIGN: "textAlign",
     SHAPE: "shape",
+    ARROW_SHAPE: "arrowShape",
     START_ARROWHEAD: "startArrowhead",
     END_ARROWHEAD: "endArrowhead",
     OPACITY: "opacity",
