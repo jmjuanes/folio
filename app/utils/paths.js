@@ -1,5 +1,5 @@
 import {EPSILON, POLYGON} from "../constants.js";
-import {rotateLines} from "./math.js";
+import {rotateLines, sign} from "./math.js";
 
 export const getPolygonPath = (type, width, height) => {
     if (type === POLYGON.RECTANGLE) {
@@ -94,5 +94,35 @@ export const getCurvePath = (points, controlPoint = null) => {
         return `M${points[0][0]},${points[0][1]} Q${controlPoint[0]},${controlPoint[1]} ${points[1][0]},${points[1][1]}`;
     }
     // TODO
+    return "";
+};
+
+// Get connector path
+export const getConnectorPath = (points, radius = 20) => {
+    if (points.length === 2) {
+        const width = Math.abs(points[1][0] - points[0][0]);
+        const height = Math.abs(points[1][1] - points[0][1]);
+        const signx = sign(points[1][0] - points[0][0]);
+        const signy = sign(points[1][1] - points[0][1]);
+        const r = Math.min(radius, width / 2, height / 2);
+        let path = [`M${points[0][0]},${points[0][1]}`];
+        if (height > width) {
+            const center = (points[0][1] + points[1][1]) / 2;
+            path.push(`L${points[0][0]},${center - signy * r}`);
+            path.push(`A${r},${r},0,0,${signx * signy > 0 ? "0" : "1"},${points[0][0] + signx * r},${center}`);
+            path.push(`L${points[1][0] - signx * r},${center}`);
+            path.push(`A${r},${r},0,0,${signx * signy > 0 ? "1" : "0"},${points[1][0]},${center + signy * r}`);
+        }
+        else {
+            const center = (points[0][0] + points[1][0]) / 2;
+            path.push(`L${center - signx * r},${points[0][1]}`);
+            path.push(`A${r},${r},0,0,${signx * signy < 0 ? "0" : "1"},${center},${points[0][1] + signy * r}`);
+            path.push(`L${center},${points[1][1] - signy * r}`);
+            path.push(`A${r},${r},0,0,${signx * signy < 0 ? "1" : "0"},${center + signx * r},${points[1][1]}`);
+        }
+        path.push(`L${points[1][0]},${points[1][1]}`);
+        return path.join(" ");
+    }
+    // Other case is not supported
     return "";
 };
