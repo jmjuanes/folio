@@ -25,6 +25,7 @@ import {
     OPACITY_DEFAULT,
     STICKER_WIDTH,
     STICKER_HEIGHT,
+    ARROW_SHAPES,
 } from "./constants.js";
 import {
     measureText,
@@ -133,23 +134,30 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.ARROW]: {
-        getHandlers: element => ([
-            {
-                type: HANDLERS.NODE_START,
-                x: element.x1,
-                y: element.y1,
-            },
-            {
-                type: HANDLERS.NODE_MIDDLE,
-                x: element.xCenter ?? ((element.x1 + element.x2) / 2),
-                y: element.yCenter ?? ((element.y1 + element.y2) / 2),
-            },
-            {
-                type: HANDLERS.NODE_END,
-                x: element.x2,
-                y: element.y2,
+        getHandlers: element => {
+            const handlers = [
+                {
+                    type: HANDLERS.NODE_START,
+                    x: element.x1,
+                    y: element.y1,
+                },
+                {
+                    type: HANDLERS.NODE_END,
+                    x: element.x2,
+                    y: element.y2,
+                },
+            ];
+            // Note: this field may not exist in previously versions
+            // In that case, we assume that the arrow type is a straight line and not a connector
+            if (!element[FIELDS.ARROW_SHAPE] || element[FIELDS.ARROW_SHAPE] === ARROW_SHAPES.LINE) {
+                handlers.splice(1, 0, {
+                    type: HANDLERS.NODE_MIDDLE,
+                    x: element.xCenter ?? ((element.x1 + element.x2) / 2),
+                    y: element.yCenter ?? ((element.y1 + element.y2) / 2),
+                });
             }
-        ]),
+            return handlers;
+        },
         getBounds: element => {
             const bounds = [];
             const center = (typeof element.xCenter === "number") ? [element.xCenter, element.yCenter] : null;
@@ -195,6 +203,7 @@ export const elementsConfig = {
                 xCenter: null,
                 yCenter: null,
                 opacity: DEFAULTS.OPACITY,
+                [FIELDS.ARROW_SHAPE]: values?.[FIELDS.ARROW_SHAPE] ?? DEFAULTS.ARROW_SHAPE,
                 startArrowhead: values?.startArrowhead || DEFAULTS.ARROWHEAD_START,
                 endArrowhead: values?.endArrowhead || DEFAULTS.ARROWHEAD_END,
                 strokeColor: values?.strokeColor ?? DEFAULTS.STROKE_COLOR,
