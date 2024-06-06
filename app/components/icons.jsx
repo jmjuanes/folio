@@ -8,6 +8,12 @@ const SvgIcon = props => (
     </svg>
 );
 
+export const ArrowConnectorIcon = () => (
+    <SvgIcon title="Arrow Connector">
+        <path d="m 18,4 3,3 -3,3 M 3,19 h 6 c 3,0 3,-3 3,-3 v -6 c 0,0 0,-3 3,-3 h 5 v 0 0" />
+    </SvgIcon>
+);
+
 export const ArrowIcon = () => (
     <SvgIcon title="Arrow">
         <path d="M6 18L18 6M18 15L18 6L9 6" />
