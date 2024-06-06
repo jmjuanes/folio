@@ -2,10 +2,24 @@ import React from "react";
 import classNames from "classnames";
 import {
     BanIcon,
+    BringForwardIcon,
+    BringFrontIcon,
+    CircleIcon,
     CopyIcon,
+    DiamondIcon,
+    FillIcon,
     LockIcon,
     NoteIcon,
+    SendBackIcon,
+    SendBackwardIcon,
+    SquareIcon,
+    TextIcon,
+    TextCenterIcon,
+    TextLeftIcon,
+    TextRightIcon,
+    TextJustifyIcon,
     TrashIcon,
+    TriangleIcon,
     UnlockIcon,
 } from "@josemi-icons/react";
 import {
@@ -22,6 +36,7 @@ import {
     SHAPES,
     FILL_STYLES,
     ARROWHEADS,
+    ARROW_SHAPES,
     FORM_OPTIONS,
 } from "../../constants.js";
 import {
@@ -31,32 +46,20 @@ import {
     NOTE_COLOR_PALETTE,
 } from "../../utils/colors.js";
 import {
-    FillIcon,
+    ArrowIcon,
+    ArrowConnectorIcon,
     StrokeIcon,
-    TextIcon,
     CircleSolidIcon,
     CircleDashedIcon,
     CircleDottedIcon,
     CircleSolidFillIcon,
     CircleHatchFillIcon,
     CircleSemiFillIcon,
-    SquareIcon,
-    CircleIcon,
-    TriangleIcon,
-    DiamondIcon,
     ArrowheadNoneIcon,
     ArrowheadArrowIcon,
     ArrowheadTriangleIcon,
     ArrowheadSquareIcon,
     ArrowheadCircleIcon,
-    TextCenterIcon,
-    TextLeftIcon,
-    TextRightIcon,
-    TextJustifyIcon,
-    BringForwardIcon,
-    BringFrontIcon,
-    SendBackIcon,
-    SendBackwardIcon,
 } from "../icons.jsx";
 import {Form} from "../form/index.jsx";
 import {useScene} from "../../contexts/scene.jsx";
@@ -68,7 +71,7 @@ const SECTIONS = {
     STROKE: "stroke",
     TEXT: "text",
     EFFECTS: "effects",
-    ARROWHEADS: "arrowheads",
+    ARROWS: "arrows",
     SHAPE: "shape",
     ACTIONS: "actions",
 };
@@ -224,9 +227,17 @@ const displaySections = {
             },
         },
     },
-    [SECTIONS.ARROWHEADS]: {
+    [SECTIONS.ARROWS]: {
         test: FIELDS.START_ARROWHEAD,
         items: {
+            [FIELDS.ARROW_SHAPE]: {
+                title: "Arrow shape",
+                type: FORM_OPTIONS.SELECT,
+                values: [
+                    {value: ARROW_SHAPES.LINE, icon: ArrowIcon()},
+                    {value: ARROW_SHAPES.CONNECTOR, icon: ArrowConnectorIcon()},
+                ],
+            },
             [FIELDS.START_ARROWHEAD]: {
                 title: "Start arrowhead",
                 type: FORM_OPTIONS.SELECT,

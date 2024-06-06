@@ -17,6 +17,7 @@ import {
     BLACK,
     ASSETS,
     MIME_TYPES,
+    ARROW_SHAPES,
 } from "./constants.js";
 import {BACKGROUND_COLORS} from "./utils/colors.js";
 import {measureText} from "./utils/math.js";
@@ -108,6 +109,11 @@ export const migrateElements = (elements, version) => {
                 if (element.type === ELEMENTS.IMAGE) {
                     delete element.imageWidth;
                     delete element.imageHeight;
+                }
+            case "11":
+                // Arrows now have an 'arrowShape' field
+                if (element.type === ELEMENTS.ARROW) {
+                    element[FIELDS.ARROW_SHAPE] = element[FIELDS.ARROW_SHAPE] ?? ARROW_SHAPES.LINE;
                 }
         }
         return element;
