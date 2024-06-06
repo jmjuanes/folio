@@ -35,7 +35,7 @@ import {
 } from "../../utils/colors.js";
 import {
     ArrowIcon,
-    LineIcon,
+    ArrowConnectorIcon,
     WidthLargeIcon,
     WidthSmallIcon,
 } from "../icons.jsx";
@@ -87,8 +87,8 @@ const tools = {
                 //     return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
                 // },
                 values: [
-                    {value: ARROW_SHAPES.LINE, icon: <LineIcon />},
-                    {value: ARROW_SHAPES.CONNECTOR, icon: <ArrowIcon />},
+                    {value: ARROW_SHAPES.LINE, icon: <ArrowIcon />},
+                    {value: ARROW_SHAPES.CONNECTOR, icon: <ArrowConnectorIcon />},
                 ],
             },
             [FIELDS.STROKE_WIDTH]: {

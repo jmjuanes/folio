@@ -32,6 +32,8 @@ import {
     NOTE_COLOR_PALETTE,
 } from "../../utils/colors.js";
 import {
+    ArrowIcon,
+    ArrowConnectorIcon,
     FillIcon,
     StrokeIcon,
     TextIcon,
@@ -69,9 +71,8 @@ const SECTIONS = {
     STROKE: "stroke",
     TEXT: "text",
     EFFECTS: "effects",
-    ARROWHEADS: "arrowheads",
+    ARROWS: "arrows",
     SHAPE: "shape",
-    ARROW_SHAPES: "arrowShapes",
     ACTIONS: "actions",
 };
 
@@ -226,22 +227,17 @@ const displaySections = {
             },
         },
     },
-    [SECTIONS.ARROW_SHAPES]: {
-        test: FIELDS.ARROW_SHAPE,
+    [SECTIONS.ARROWS]: {
+        test: FIELDS.START_ARROWHEAD,
         items: {
             [FIELDS.ARROW_SHAPE]: {
                 title: "Arrow shape",
                 type: FORM_OPTIONS.SELECT,
                 values: [
-                    {value: ARROW_SHAPES.LINE, icon: null},
-                    {value: ARROW_SHAPES.CONNECTOR, icon: null},
+                    {value: ARROW_SHAPES.LINE, icon: ArrowIcon()},
+                    {value: ARROW_SHAPES.CONNECTOR, icon: ArrowConnectorIcon()},
                 ],
             },
-        },
-    },
-    [SECTIONS.ARROWHEADS]: {
-        test: FIELDS.START_ARROWHEAD,
-        items: {
             [FIELDS.START_ARROWHEAD]: {
                 title: "Start arrowhead",
                 type: FORM_OPTIONS.SELECT,
