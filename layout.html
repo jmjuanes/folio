@@ -46,7 +46,7 @@
                         <i class="text-white italic">- it's free!</i>
                     </a>
                 </div>
-                <a id="menu-open" class="flex md:hidden items-center text-neutral-900 hover:bg-neutral-900 hover:text-white border-2 border-neutral-900 cursor-pointer p-2 rounded-md">
+                <a id="menu-open" class="flex md:hidden items-center text-neutral-900 hover:bg-neutral-900 hover:text-white border-2 border-b-4 border-neutral-900 cursor-pointer p-2 rounded-lg">
                     <svg data-menu="open" class="w-6 h-6">
                         <use xlink:href="sprite.svg#bars"></use>
                     </svg>
@@ -59,11 +59,11 @@
         <div class="hidden w-full h-px bg-neutral-900"></div>
     </div>
     <!-- Menu -->
-    <div id="menu" class="hidden md:hidden bg-white px-4 border-2 border-neutral-900 rounded-lg m-4">
+    <div id="menu" class="hidden md:hidden bg-white px-4 border-b-4 border-neutral-900 mb-4">
         {{#site.navbar.links}}
-        <div class="first:hidden h-px w-full bg-neutral-800"></div>
-        <a href="{{link}}" class="block py-3 text-lg">
-            <span class="font-medium">{{text}}</span>
+        <div class="first:hidden h-px w-full border-b-2 border-neutral-900 border-dashed"></div>
+        <a href="{{link}}" class="block py-4 text-neutral-950">
+            <span class="text-xl font-medium">{{text}}</span>
         </a>
         {{/site.navbar.links}}
     </div>
