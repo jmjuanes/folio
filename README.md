@@ -7,11 +7,6 @@
 ![](https://badgen.net/github/license/jmjuanes/folio?labelColor=1d2734&color=21bf81)
 ![](https://badgen.net/badge/PRs/welcome/codecake?labelColor=1d2734&color=21bf81)
 
-
-## Try it now
-
-Go to [josemi.xyz/folio](https://www.josemi.xyz/folio) for start sketching.
-
 ## Note: Folio is still a Work in Progress
 
 We are excited to share our drawing application with you, but please be aware that it is currently in active development. While the app is fully functional and offers a range of features, we are continuously working to enhance and expand its capabilities.
