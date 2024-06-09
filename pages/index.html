@@ -15,6 +15,23 @@ features:
     content:
       - "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
       - "Whether you are storyboarding or brainstorming, the Pages feature provides a structured canvas for your creativity."
+price:
+  title: "Free"
+  description: "Everithing you need for sketching and prototyping, forever free."
+  features:
+    - title: "Privacy-First Storage"
+      description: "Your artwork is securely stored on your device using the local storage of your browser, enhancing data privacy and security."
+    - title: "Comprehensive set of drawing tools"
+      description: "Folio provides a full set of drawing tools, from shapes to arrows and notes!"
+    - title: "Organize your drawings into pages"
+      description: "Seamlessly divide your drawings into pages, allowing for structured layouts and easy navigation."
+faq:
+  - question: "Does Folio save drawings on the server?"
+    answer: "<b>Nope</b>! Folio values your privacy like a secret sketchbook. Your drawings are securely saved right on your device."
+  - question: "Do you use cookies or other tracking software on the application?"
+    answer: "<b>Absolutely not</b>. Folio respects your digital privacy. No cookies, no tracking - just you and your canvas."
+  - question: "How can I share my drawing with my colleague?"
+    answer: "Currently, the best way is to download your drawing as a <code>.folio</code> file. Then, simply share it with your colleague via email or your favorite cloud service. We are working on even more ways to share and collaborate in the future, so stay tuned for updates!"
 ---
 <!-- Presentation -->
 <div class="pt-20 pb-16 md:pt-32 md:pb-28 px-8 w-full max-w-7xl mx-auto">
@@ -69,84 +86,48 @@ features:
     <a href="#pricing" name="pricing" class=""></a>
     <div class="w-full max-w-7xl mx-auto px-8">
         <div class="font-black text-center text-6xl md:text-7xl leading-none mb-20 text-neutral-950">
-            <span>Getting started.</span>
+            <span>Getting Started.</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
             <!-- Folio (Basic) description -->
             <div class="w-full">
-                <div class="w-full p-8 rounded-2xl border-2 border-b-6 border-neutral-950">
-                    <div class="mb-8 mt-4">
-                        <div class="font-black text-4xl md:text-5xl text-neutral-950 leading-none mb-4">Free</div>
-                        <div class="text-lg text-neutral-800">Everithing you need for sketching and prototyping, forever free.</div>
+                <div class="w-full p-0 rounded-2xl border-2 border-b-6 border-neutral-950">
+                    <div class="px-8 my-8">
+                        <div class="font-black text-4xl md:text-5xl text-neutral-950 leading-none mb-4">{{page.data.price.title}}</div>
+                        <div class="text-lg text-neutral-800 font-medium">{{page.data.price.description}}</div>
                     </div>
-                    <div class="mb-4">
+                    <div class="w-full h-0 border-b-2 border-dashed border-neutral-500 my-8"></div>
+                    {{#each page.data.price.features}}
+                    <div class="px-8 my-4">
                         <div class="flex flex-row items-center gap-2 mb-2">
                             <div class="flex items-center">
                                 <svg class="w-6 h-6"><use xlink:href="sprite.svg#check-circle"></use></svg>
                             </div>
-                            <div class="font-bold">Privacy-First Storage</div>
+                            <div class="font-bold">{{title}}</div>
                         </div>
-                        <div class="text-sm o-80 pl-8">
-                            <span>Your artwork is securely stored on your device using the local storage of your browser, </span>
-                            <span>enhancing data privacy and security.</span>
-                        </div>
+                        <div class="text-sm o-80 pl-8">{{description}}</div>
                     </div>
-                    <div class="mb-4">
-                        <div class="flex flex-row items-center gap-2 mb-2">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6"><use xlink:href="sprite.svg#check-circle"></use></svg>
+                    {{/each}}
+                    <div class="w-full h-0 border-b-2 border-dashed border-neutral-500 my-8"></div>
+                    <div class="px-8 my-8">
+                        <a href="./app" class="flex items-center justify-center gap-2 bg-neutral-950 text-white px-4 py-3 rounded-xl">
+                            <div class="font-bold">Start with Folio</div>
+                            <div class="flex text-xl">
+                                <svg width="1em" height="1em"><use xlink:href="sprite.svg#arrow-right"></use></svg>
                             </div>
-                            <div class="font-bold">Comprehensive set of drawing tools</div>
-                        </div>
-                        <div class="text-sm o-80 pl-8">
-                            <span>Folio provides a full set of drawing tools, from shapes to arrows and notes!</span>
-                        </div>
+                        </a>
                     </div>
-                    <div class="mb-8">
-                        <div class="flex flex-row items-center gap-2 mb-2">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6"><use xlink:href="sprite.svg#check-circle"></use></svg>
-                            </div>
-                            <div class="font-bold">Organize your drawings into pages</div>
-                        </div>
-                        <div class="text-sm o-80 pl-8">
-                            <span>Seamlessly divide your drawings into pages, </span>
-                            <span>allowing for structured layouts and easy navigation.</span>
-                        </div>
-                    </div>
-                    <a href="./app" class="flex items-center justify-center gap-2 bg-neutral-950 text-white px-4 py-3 rounded-xl">
-                        <div class="font-bold">Start with Folio</div>
-                        <div class="flex text-xl">
-                            <svg width="1em" height="1em"><use xlink:href="sprite.svg#arrow-right"></use></svg>
-                        </div>
-                    </a>
                 </div>
             </div>
             <!-- Faq -->
             <div class="w-full">
                 <a href="#faq" name="faq" class=""></a>
+                {{#each page.data.faq}}
                 <div class="mb-8">
-                    <div class="font-bold text-lg mb-4">Does Folio save drawings on the server?</div>
-                    <div class="text-sm">
-                        <span><b>Nope</b>! Folio values your privacy like a secret sketchbook. </span>
-                        <span>Your drawings are securely saved right on your device. </span>
-                    </div>
+                    <div class="font-bold text-lg mb-4">{{!question}}</div>
+                    <div class="text-sm">{{!answer}}</div>
                 </div>
-                <div class="mb-8">
-                    <div class="font-bold text-lg mb-4">Do you use cookies or other tracking software on the application?</div>
-                    <div class="text-sm">
-                        <span><b>Absolutely not</b>. Folio respects your digital privacy. </span>
-                        <span>No cookies, no tracking - just you and your canvas.</span>
-                    </div>
-                </div>
-                <div class="mb-0">
-                    <div class="font-bold text-lg mb-4">How can I share my drawing with my colleague?</div>
-                    <div class="text-sm">
-                        <span>Currently, the best way is to download your drawing as a <i>.folio</i> file. </span>
-                        <span>Then, simply share it with your colleague via email or your favorite cloud service. </span>
-                        <span>We are working on even more ways to share and collaborate in the future, so stay tuned for updates!</span>
-                    </div>
-                </div>
+                {{/each}}
             </div>
         </div>
     </div>
