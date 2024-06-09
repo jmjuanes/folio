@@ -1,4 +1,4 @@
-![Folio logo](./public/readme.png)
+![Folio logo](./cover.png)
 
 > A minimalistic and infinite whiteboard. Sketch, Prototype, and Design with total freedom.
 
