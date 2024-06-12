@@ -13,7 +13,7 @@ const CLIENTS = {
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: path.join(__dirname, "app", "index.jsx"),
+    entry: path.join(__dirname, "app", process.env.APP_ENTRY || "index.jsx"),
     output: {
         path: path.join(__dirname, "www"),
         publicPath: "./",
@@ -93,7 +93,7 @@ module.exports = {
             "process.env.URL_ISSUES": JSON.stringify(package.bugs),
             "process.env.URL_HOMEPAGE": JSON.stringify(package.homepage),
             // ENV values
-            "process.env.APP": JSON.stringify(env.APP || "LITE"),
+            "process.env.URL": JSON.stringify(env.URL || ""),
             "process.env.CLIENT": JSON.stringify(env.CLIENT || "LOCAL"),
         }),
         new CopyWebpackPlugin({

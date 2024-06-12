@@ -10,10 +10,11 @@
     "scripts": {
         "build": "yarn clean && yarn build:app && yarn build:site && yarn copy-assets",
         "build:app": "cross-env NODE_ENV=production webpack build",
+        "build:backup": "cross-env NODE_ENV=production APP_ENTRY=backup.jsx webpack build",
         "build:site": "node ./scripts/site.js",
         "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
-        "dev": "yarn clean && webpack serve",
+        "dev": "yarn clean && cross-env NODE_ENV=development webpack serve",
         "site": "yarn clean && yarn build:site && yarn copy-assets",
         "test": "jest"
     },
