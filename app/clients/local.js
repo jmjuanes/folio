@@ -23,33 +23,45 @@ export default () => ({
     // @description initialize local client and perform migration
     initialize: async () => {
         const keys = await idb.keys(store);
-        // Check if we need to migrate to new projects data
-        if (!keys.includes(STORE_KEYS.VERSION)) {
-            // 1. Initialize new data object
-            const newData = {
-                pages: [],
-                assets: {},
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
-            };
-            // 2. Read all old store keys. Each item will be a new page
-            for (let i = 0; i < keys.length; i++) {
-                const data = await idb.get(keys[i], store);
-                newData.pages.push({
-                    id: keys[i],
-                    title: data.title || `Page ${newData.pages.length + 1}`,
-                    elements: data.elements,
-                });
-                Object.assign(newData.assets, data.assets || {});
-                await idb.del(keys[i], store);
-            }
-            // Create new store keys
+        // Check if we need to initialize store
+        if (keys.length === 0) {
             await idb.set(STORE_KEYS.VERSION, STORE_VERSION, store)
-            await idb.set(STORE_KEYS.DATA, newData, store);
+            await idb.set(STORE_KEYS.DATA, {}, store);
             await idb.set(STORE_KEYS.SETTINGS, {}, store);
         }
         // Store initialized
         return true;
+    },
+
+    // @description recover data from old store
+    recover: async () => {
+        const keys = await idb.keys(store);
+        // Check if store has been initialized
+        // This is just a check, because the 'initialize' method should have been initialized the store keys
+        if (keys.length > 0) {
+            let data = {title: "Untitled", pages: [], assets: {}};
+            // Check if store keys are from old versions
+            if (!keys.includes(STORE_KEYS.VERSION)) {
+                // Read all old store keys. Each item will be a new page
+                for (let i = 0; i < keys.length; i++) {
+                    const currentData = await idb.get(keys[i], store);
+                    data.pages.push({
+                        id: keys[i],
+                        title: currentData.title || `Page ${data.pages.length + 1}`,
+                        elements: currentData.elements,
+                    });
+                    Object.assign(data.assets, currentData.assets || {});
+                    // await idb.del(keys[i], store);
+                }
+            }
+            // If we have new versions data, just get the data
+            else {
+                data = await idb.get(STORE_KEYS.DATA, store);
+            }
+            return data?.pages?.length > 0 ? [data] : []; 
+        }
+        // No data to recover
+        return [];
     },
 
     // @description data manager
