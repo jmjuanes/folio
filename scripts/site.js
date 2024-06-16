@@ -1,10 +1,12 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const frontMatter = require("front-matter");
+const marked = require("marked");
 const pkg = require("../package.json");
 
 const buildChangelogData = () => {
     const items = [];
+    let lastItem = null;
     fs.readFileSync(path.join(process.cwd(), "CHANGELOG.md"), "utf8")
         .split("\n").slice(1)
         .filter(line => !!line.trim())
@@ -15,21 +17,26 @@ const buildChangelogData = () => {
                 items.push({
                     version: match[1],
                     date: match[2],
-                    title: match[3],
+                    url: match[3].toLowerCase().trim().replaceAll(" ", "-"),
+                    title: match[3].trim(),
                     content: [],
                 });
+                lastItem = items[items.length - 1];
             }
-            // Check for heading 3 --> title inside the item content
-            else if (line.startsWith("###")) {
-                items[items.length - 1].content.push({
-                    heading: true,
-                    text: line.replace("###", "").trim(),
+            // Check for item description
+            else if (line.startsWith("> ") && lastItem.content.length === 0) {
+                lastItem.description = line.slice(1).trim();
+            }
+            // Check for heading
+            else if (line.startsWith("### ")) {
+                lastItem.content.push({
+                    heading: line.replace("###", "").trim(),
                 });
             }
-            // Other case --> paragraph
+            // Other case --> content of the changelog item
             else {
-                items[items.length - 1].content.push({
-                    text: line.trim(),
+                lastItem.content.push({
+                    text: marked.parse(line.trim()),
                 });
             }
         });
@@ -42,14 +49,14 @@ const getSiteConfiguration = () => ({
     version: pkg.version,
     navbar: {
         links: [
-            {link: "./#features", text: "Features"},
-            {link: "./#pricing", text: "Pricing"},
-            {link: "./changelog", text: "Changelog"},
+            {link: "/#features", text: "Features"},
+            {link: "/#pricing", text: "Pricing"},
+            {link: "/changelog", text: "Changelog"},
         ],
     },
     footer: {
         links: [
-            {link: "./privacy", target: "_self", text: "Privacy"},
+            {link: "/privacy", target: "_self", text: "Privacy"},
             {link: "https://github.com/jmjuanes/folio/issues", target: "_blank", text: "Report a bug"},
         ],
     },
@@ -89,6 +96,14 @@ const build = async () => {
     // Build each page
     data.site.pages.forEach(page => {
         const content = m(layout.content, {...data, page}, {
+            helpers: {
+                firstItems: ({value, fn}) => {
+                    const items = Object.entries(value || {}).slice(0, 2).map((item, index) => {
+                        return fn(item[1], {index: index, first: index === 0});
+                    });
+                    return items.join("");
+                },
+            },
             partials: {
                 content: page.content,
             },
