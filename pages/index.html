@@ -65,7 +65,7 @@ faq:
 -->
 <div class="w-full max-w-7xl mx-auto px-8 pb-20">
     <div class="text-neutral-900 text-4xl font-black mb-4">Latest updates</div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         {{#firstItems site.data.changelog}}
         <div class="p-8 rounded-2xl border-2 border-l-8 border-neutral-950">
             <div class="flex gap-2 mb-2">
@@ -73,8 +73,8 @@ faq:
                     <span class="font-extrabold leading-none text-sm text-neutral-900">{{version}}</span>
                 </div>
                 {{#if @first}}
-                <div class="flex items-center bg-neutral-100 border-2 border-neutral-900 rounded-full px-3 py-1">
-                    <span class="font-extrabold leading-none text-sm text-neutral-900">CURRENT</span>
+                <div class="flex items-center bg-neutral-100 border-2 border-neutral-900 bg-neutral-900 rounded-full px-3 py-1">
+                    <span class="font-extrabold leading-none text-sm text-white">CURRENT</span>
                 </div>
                 {{/if}}
             </div>
