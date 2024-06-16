@@ -34,7 +34,7 @@ faq:
     answer: "Currently, the best way is to download your drawing as a <code>.folio</code> file. Then, simply share it with your colleague via email or your favorite cloud service. We are working on even more ways to share and collaborate in the future, so stay tuned for updates!"
 ---
 <!-- Presentation -->
-<div class="pt-20 pb-16 md:pt-32 md:pb-28 px-8 w-full max-w-7xl mx-auto">
+<div class="pt-20 pb-16 md:pt-32 md:pb-20 px-8 w-full max-w-7xl mx-auto">
     <div class="mb-8 font-black text-6xl md:text-8xl leading-none text-neutral-950 max-w-6xl">
         <!-- Unleash <span class="font-black underline">Creativity</span> on an <span class="font-black underline">Infinite Canvas</span>. -->
         <!-- Your <span class="font-black underline">Infinite Canvas</span> for <span class="font-black underline">Creativity</span>. -->
@@ -56,9 +56,44 @@ faq:
         <span>No signup. Start in less than 5 seconds.</span>
     </div>
 </div>
-<div class="block w-full max-w-7xl mx-auto px-8 pb-28">
+<!--
+<div class="hidden w-full max-w-7xl mx-auto px-8 pb-28">
     <div class="w-full">
         <img class="rounded-2xl border-4 border-b-8 border-neutral-950 shadow-sm" width="100%" src="./screenshot.png">
+    </div>
+</div>
+-->
+<div class="w-full max-w-7xl mx-auto px-8 pb-20">
+    <div class="text-neutral-900 text-4xl font-black mb-4">Latest updates</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+        {{#firstItems site.data.changelog}}
+        <div class="p-8 rounded-2xl border-2 border-l-8 border-neutral-950">
+            <div class="flex gap-2 mb-2">
+                <div class="flex items-center bg-neutral-100 border-2 border-neutral-900 rounded-full px-3 py-1">
+                    <span class="font-extrabold leading-none text-sm text-neutral-900">{{version}}</span>
+                </div>
+                {{#if @first}}
+                <div class="flex items-center bg-neutral-100 border-2 border-neutral-900 rounded-full px-3 py-1">
+                    <span class="font-extrabold leading-none text-sm text-neutral-900">CURRENT</span>
+                </div>
+                {{/if}}
+            </div>
+            <a href="/changelog#{{url}}" class="flex text-neutral-950 leading-tight text-2xl hover:underline mb-2">
+                <div class="font-bold">{{title}}</div>
+            </a>
+            {{#if description}}
+            <div class="text-lg font-medium">{{description}}</div>
+            {{/if}}
+        </div>
+        {{/firstItems}}
+    </div>
+    <div class="mt-3">
+        <a href="/changelog" class="inline-flex items-center gap-2 underline">
+            <div class="leading-none">See more updates</div>
+            <div class="flex items-center">
+                <svg class="w-4 h-4"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+            </div>
+        </a>
     </div>
 </div>
 <!-- Features -->
