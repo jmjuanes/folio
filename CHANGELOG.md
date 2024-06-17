@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.19.0 (Jun 17, 2024) New URL and Stickers tool
+
+> Folio has a new home at folio.josemi.xyz! In this update, we have introduced a new Stickers tool, and restored the board title in the header for improved project management.
+
+### We have moved folio App to folio.josemi.xyz
+
+We are excited to announce that Folio has a new home! The application has been migrated from *josemi.xyz/folio* to a dedicated subdomain: [folio.josemi.xyz](https://folio.josemi.xyz). This change is aimed at providing a better and more seamless user experience. Follow the next instructions to migrate your whiteboard:
+
+**1. Visit the Legacy Version**: access the previous version of Folio at [josemi.xyz/folio-legacy](https://www.josemi.xyz/folio-legacy).
+
+**2. Export Your Whiteboards**: go to *Menu* -> *Save As...* to download your whiteboard as a *.folio* file. Save this file to a safe location on your device.
+
+**3. Import to the New Folio**: go to the new Folio application at [folio.josemi.xyz](https://folio.josemi.xyz) and go to *Menu* -> *Open...* to upload the *.folio* file you exported from the legacy version. Your whiteboard will be restored and ready for you to continue working on them.
+
+### New Stickers Tool
+
+We have introduced a fun and creative way to enhance your whiteboards! The new Stickers tool allows you to insert a variety of custom stickers into your boards. We have created our own unique set of stickers, and in future releases, we will be adding even more stickers to provide you with a broader range of options to express your ideas.
+
+### Restored Board Title in Header
+
+We have restored the board title in the header. Now you can easily see and manage the title of your current board, making it simpler to keep track of your projects.
+
+
 ## v0.18.0 (Apr 12, 2024) Rendering links as bookmarks
 
 > We are thrilled to announce the release of version v0.18.0, packed with a new exciting way to render links as bookmarks cards and some bug fixes.
