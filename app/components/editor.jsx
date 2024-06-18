@@ -238,10 +238,12 @@ const EditorWithScene = props => {
                     }}
                     onSelectAll={() => {
                         scene.getElements().forEach(el => el.selected = true);
+                        editor.state.contextMenu = false;
                         editor.update();
                     }}
                     onDelete={() => {
                         scene.removeElements(scene.getSelection());
+                        editor.state.contextMenu = false;
                         editor.dispatchChange();
                         editor.update();
                     }}
