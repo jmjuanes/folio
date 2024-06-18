@@ -49,7 +49,7 @@ export const Menu = props => {
                         <Dropdown.Icon>
                             <DownloadIcon />
                         </Dropdown.Icon>
-                        <span>Save as...</span>
+                        <span className="font-bold">Save as...</span>
                     </Dropdown.Item>
                 )}
                 {props.showExport && (

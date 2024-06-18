@@ -13,7 +13,7 @@ export const Banner = () => {
                 <div className="text-sm ">
                     <span>Please visit our new URL at <a href="https://folio.josemi.xyz" target="_blank" className="font-bold hover:underline">folio.josemi.xyz</a>. </span>
                     <span>Note that <b>this legacy version will no longer receive updates</b>, </span>
-                    <span>so do not forget to export your current whiteboards from here and import them into the new folio app.</span>
+                    <span>so do not forget to export (<i className="font-bold">Menu -{">"} Save as...</i>) your current whiteboard from here and import them into the new folio app.</span>
                 </div>
             </div>
             <div className="flex items-center shrink-0">
