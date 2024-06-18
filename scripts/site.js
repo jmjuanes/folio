@@ -4,6 +4,12 @@ const frontMatter = require("front-matter");
 const marked = require("marked");
 const pkg = require("../package.json");
 
+// @description this method formats a date object and returns an string with the format 'YYYY-MM-DD'
+// Source: https://stackoverflow.com/a/29774197
+const formatDate = date => {
+    return new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString().split("T")[0];
+};
+
 const buildChangelogData = () => {
     const items = [];
     let lastItem = null;
@@ -17,7 +23,7 @@ const buildChangelogData = () => {
                 items.push({
                     version: match[1],
                     date: match[2],
-                    url: match[3].toLowerCase().trim().replaceAll(" ", "-"),
+                    url: formatDate(new Date(match[2])) + "-" + match[3].toLowerCase().trim().replaceAll(" ", "-"),
                     title: match[3].trim(),
                     content: [],
                 });
