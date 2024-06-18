@@ -49,7 +49,7 @@ export const ContextMenu = props => {
                     <Menu.Item onClick={props.onBringForward}>Bring forward</Menu.Item>
                 </React.Fragment>
             )}
-            {selectedElements.length > 0 && (
+            {selectedElements.length !== scene.getElements().length && (
                 <React.Fragment>
                     <Menu.Separator />
                     <Menu.Item onClick={props.onSelectAll}>Select all</Menu.Item>
