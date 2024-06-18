@@ -25,11 +25,8 @@ title: "Changelog - Folio"
             <div class="font-medium text-xl text-neutral-900">{{description}}</div>
             {{/if}}
             <div class="h-0 w-full mb-8"></div>
-            <div class="text-neutral-900">
-                {{#each content}}
-                {{#if heading}}<div class="text-2xl font-bold mb-2">{{heading}}</div>{{/if}}
-                {{#if text}}<div class="text-lg mb-6">{{!text}}</div>{{/if}}
-                {{/each}}
+            <div class="text-neutral-900 markup text-lg">
+                {{#each content}}{{!.}}{{/each}}
             </div>
         </div>
     </div>
