@@ -4,20 +4,26 @@ const frontMatter = require("front-matter");
 const marked = require("marked");
 const pkg = require("../package.json");
 
+// @description this method formats a date object and returns an string with the format 'YYYY-MM-DD'
+// Source: https://stackoverflow.com/a/29774197
+const formatDate = date => {
+    return new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString().split("T")[0];
+};
+
 const buildChangelogData = () => {
     const items = [];
     let lastItem = null;
     fs.readFileSync(path.join(process.cwd(), "CHANGELOG.md"), "utf8")
-        .split("\n").slice(1)
+        .split("\n") // .slice(1)
         .filter(line => !!line.trim())
         .forEach(line => {
             // Check for heading 2 --> new changelog item
-            if (line.startsWith("## ")) {
-                const match = line.match(/##\s+(v[\d\.]+)\s+\(([\w\s,]+)\)\s+(.*)/);
+            if (line.startsWith("# ")) {
+                const match = line.match(/#\s+(v[\d\.]+)\s+\(([\w\s,]+)\)\s+(.*)/);
                 items.push({
                     version: match[1],
                     date: match[2],
-                    url: match[3].toLowerCase().trim().replaceAll(" ", "-"),
+                    url: formatDate(new Date(match[2])) + "-" + match[3].toLowerCase().trim().replaceAll(" ", "-"),
                     title: match[3].trim(),
                     content: [],
                 });
@@ -27,17 +33,13 @@ const buildChangelogData = () => {
             else if (line.startsWith("> ") && lastItem.content.length === 0) {
                 lastItem.description = line.slice(1).trim();
             }
-            // Check for heading
-            else if (line.startsWith("### ")) {
-                lastItem.content.push({
-                    heading: line.replace("###", "").trim(),
-                });
-            }
-            // Other case --> content of the changelog item
+            // // Check for heading
+            // else if (line.startsWith("### ") || line.startsWith("#### ")) {
+            //     lastItem.content.push(marked.parse(line.replace("### ", "## ").trim()));
+            // }
+            // Other case
             else {
-                lastItem.content.push({
-                    text: marked.parse(line.trim()),
-                });
+                lastItem.content.push(marked.parse(line.trim()));
             }
         });
     return items;
