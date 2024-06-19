@@ -443,5 +443,26 @@ describe("scene", () => {
                 expect(el.order).toEqual(index);
             });
         });
+
+        it("should keep groups when duplicating elements", () => {
+            const prevElementsLength = scene.page.elements.length;
+            scene.groupElements([scene.page.elements[1], scene.page.elements[2]]);
+            scene.duplicateElements([scene.page.elements[1], scene.page.elements[2]]);
+
+            expect(scene.page.elements.length).toEqual(prevElementsLength + 2);
+            expect(scene.page.elements[prevElementsLength].group).toEqual(scene.page.elements[prevElementsLength + 1].group);
+        });
+
+        // NOTE: currently this is not supported
+        // it("should keep group when duplicating an element inside a group", () => {
+        //     const prevElementsLength = scene.page.elements.length;
+        //     scene.groupElements([scene.page.elements[1], scene.page.elements[2]]);
+        //     scene.page.activeGroup = scene.page.elements[1];
+        //     scene.duplicateElements([scene.page.elements[1]]);
+
+        //     expect(scene.page.elements.length).toEqual(prevElementsLength + 1);
+        //     expect(scene.page.elements[2].group).toEqual(scene.page.elements[1].group);
+        //     expect(scene.page.elements[3].group).toEqual(scene.page.elements[1].group);
+        // });
     });
 });
