@@ -507,13 +507,18 @@ export const createScene = initialData => {
         importElements: (elements, dx = 0, dy = 0) => {
             scene.clearSelection();
             // 1. Process new elements
-            // const groups = new Map();
-            const numElements = scene.page.elements.length;
+            const changes = [];
+            const groups = new Map();
+            const originalElementsOrder = new Map(scene.page.elements.map(element => ([element.id, element[FIELDS.ORDER]])));
+            const changedElementsOrder = new Map();
+            const maxOrder = Math.max.apply(null, scene.page.elements.map(el => {
+                return (!scene.page?.activeGroup || scene.page.activeGroup === el[FIELDS.GROUP]) ? el[FIELDS.ORDER] : 0;
+            }));
             const newElements = elements.map((element, index) => {
                 // 1.1. Check if this element is part of a group
-                // if (elements.length > 1 && !!element.group && !groups.has(element.group)) {
-                //     groups.set(element.group, generateRandomId());
-                // }
+                if (elements.length > 1 && !scene.page?.activeGroup && !!element.group && !groups.has(element.group)) {
+                    groups.set(element.group, generateRandomId());
+                }
                 // 1.2 Prepare new element configuration
                 const newElement = {
                     ...element,
@@ -523,8 +528,8 @@ export const createScene = initialData => {
                     y1: element.y1 + dy,
                     y2: element.y2 + dy,
                     selected: true,
-                    [FIELDS.GROUP]: scene.page?.activeGroup || null,
-                    [FIELDS.ORDER]: numElements + index,
+                    [FIELDS.GROUP]: scene.page?.activeGroup || groups.get(element.group) || null,
+                    [FIELDS.ORDER]: maxOrder + index + 1,
                 };
                 // 1.3 Check if this element has an onDuplicate listener defined
                 const elementConfig = getElementConfig(element);
@@ -534,10 +539,17 @@ export const createScene = initialData => {
                 // 1.4 Return the new element data
                 return newElement;
             });
-            // 2. insert new elements
+            // 2. Check if activeGroup is enabled
+            if (scene.page?.activeGroup) {
+                for (let i = maxOrder + 1; i < scene.page.elements.length; i++) {
+                    scene.page.elements[i][FIELDS.ORDER] = i + newElements.length;
+                    changedElementsOrder.set(scene.page.elements[i].id, scene.page.elements[i][FIELDS.ORDER]);
+                }
+            }
+            // 3. insert new elements
             newElements.forEach(element => scene.page.elements.push(element));
-            // 3. register history change
-            scene.addHistory({
+            // 4.1 Register CREATE change
+            changes.push({
                 type: CHANGES.CREATE,
                 elements: newElements.map(element => ({
                     id: element.id,
@@ -548,6 +560,25 @@ export const createScene = initialData => {
                     },
                 })),
             });
+            // 4.2 Register UPDATE change
+            if (changedElementsOrder.size > 0) {
+                changes.push({
+                    type: CHANGES.UPDATE,
+                    elements: Array.from(changedElementsOrder).map(entry => ({
+                        id: entry[0],
+                        prevValues: {
+                            [FIELDS.ORDER]: originalElementsOrder.get(entry[0]),
+                        },
+                        newValues: {
+                            [FIELDS.ORDER]: entry[1],
+                        },
+                    })),
+                });
+            }
+            // 4.3 Register history change
+            scene.addHistory(changes);
+            // 5. Fix Elements order
+            scene.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
         },
 
         // @description export elements as JSON
@@ -881,27 +912,29 @@ export const createScene = initialData => {
         // @description Perform an undo change to the scene
         undo: () => {
             if (scene.page.historyIndex < scene.page.history.length) {
-                const entry = scene.page.history[scene.page.historyIndex];
-                if (entry.type === CHANGES.CREATE) {
-                    const removeElements = new Set(entry.elements.map(el => el.id));
-                    scene.page.elements = scene.page.elements.filter(el => {
-                        return !removeElements.has(el.id);
-                    });
-                } else if (entry.type === CHANGES.REMOVE) {
-                    // We need to restore elements in the current order
-                    entry.elements.forEach(el => {
-                        scene.page.elements.splice(el.prevValues[FIELDS.ORDER], 0, {...el.prevValues});
-                    });
-                } else if (entry.type === CHANGES.UPDATE) {
-                    entry.elements.forEach(item => {
-                        // 1. Update element values
-                        const element = scene.page.elements.find(el => el.id === item.id);
-                        Object.assign(element, item.prevValues);
-                        // 2. Apply element update
-                        const changedKeys = new Set(Object.keys(item.prevValues));
-                        getElementConfig(element)?.onUpdate?.(element, changedKeys);
-                    });
-                }
+                // const entry = scene.page.history[scene.page.historyIndex];
+                [scene.page.history[scene.page.historyIndex]].flat().forEach(entry => {
+                    if (entry.type === CHANGES.CREATE) {
+                        const removeElements = new Set(entry.elements.map(el => el.id));
+                        scene.page.elements = scene.page.elements.filter(el => {
+                            return !removeElements.has(el.id);
+                        });
+                    } else if (entry.type === CHANGES.REMOVE) {
+                        // We need to restore elements in the current order
+                        entry.elements.forEach(el => {
+                            scene.page.elements.splice(el.prevValues[FIELDS.ORDER], 0, {...el.prevValues});
+                        });
+                    } else if (entry.type === CHANGES.UPDATE) {
+                        entry.elements.forEach(item => {
+                            // 1. Update element values
+                            const element = scene.page.elements.find(el => el.id === item.id);
+                            Object.assign(element, item.prevValues);
+                            // 2. Apply element update
+                            const changedKeys = new Set(Object.keys(item.prevValues));
+                            getElementConfig(element)?.onUpdate?.(element, changedKeys);
+                        });
+                    }
+                });
                 // Sort elements by order
                 scene.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
                 scene.page.elements.forEach(el => {
@@ -916,24 +949,26 @@ export const createScene = initialData => {
         redo: () => {
             if (scene.page.historyIndex > 0 && scene.page.history.length > 0) {
                 scene.page.historyIndex = scene.page.historyIndex - 1;
-                const entry = scene.page.history[scene.page.historyIndex];
-                if (entry.type === CHANGES.CREATE) {
-                    entry.elements.forEach(el => {
-                        scene.page.elements.splice(el.newValues[FIELDS.ORDER], 0, {...el.newValues});
-                    });
-                } else if (entry.type === CHANGES.REMOVE) {
-                    const removeElements = new Set(entry.elements.map(el => el.id));
-                    scene.page.elements = scene.page.elements.filter(el => !removeElements.has(el.id));
-                } else if (entry.type === CHANGES.UPDATE) {
-                    entry.elements.forEach(item => {
-                        // 1. Update element values
-                        const element = scene.page.elements.find(el => el.id === item.id);
-                        Object.assign(element, item.newValues);
-                        // 2. Apply element update
-                        const changedKeys = new Set(Object.keys(item.newValues));
-                        getElementConfig(element)?.onUpdate?.(element, changedKeys);
-                    });
-                }
+                // const entry = scene.page.history[scene.page.historyIndex];
+                [scene.page.history[scene.page.historyIndex]].flat().forEach(entry => {
+                    if (entry.type === CHANGES.CREATE) {
+                        entry.elements.forEach(el => {
+                            scene.page.elements.splice(el.newValues[FIELDS.ORDER], 0, {...el.newValues});
+                        });
+                    } else if (entry.type === CHANGES.REMOVE) {
+                        const removeElements = new Set(entry.elements.map(el => el.id));
+                        scene.page.elements = scene.page.elements.filter(el => !removeElements.has(el.id));
+                    } else if (entry.type === CHANGES.UPDATE) {
+                        entry.elements.forEach(item => {
+                            // 1. Update element values
+                            const element = scene.page.elements.find(el => el.id === item.id);
+                            Object.assign(element, item.newValues);
+                            // 2. Apply element update
+                            const changedKeys = new Set(Object.keys(item.newValues));
+                            getElementConfig(element)?.onUpdate?.(element, changedKeys);
+                        });
+                    }
+                });
                 // sort elements by order
                 scene.page.elements
                     .sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER])
