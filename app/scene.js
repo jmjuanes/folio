@@ -507,14 +507,17 @@ export const createScene = initialData => {
         importElements: (elements, dx = 0, dy = 0) => {
             scene.clearSelection();
             // 1. Process new elements
-            // const groups = new Map();
+            const groups = new Map();
             const numElements = scene.page.elements.length;
             const newElements = elements.map((element, index) => {
                 // 1.1. Check if this element is part of a group
-                // if (elements.length > 1 && !!element.group && !groups.has(element.group)) {
-                //     groups.set(element.group, generateRandomId());
-                // }
+                if (elements.length > 1 && !scene.page?.activeGroup && !!element.group && !groups.has(element.group)) {
+                    groups.set(element.group, generateRandomId());
+                }
                 // 1.2 Prepare new element configuration
+                // NOTE: we are duplicating elements inside a group, the duplicated elements will be pasted OUTSIDE the group
+                // This is a current limitation because we have to update the order of the other elements, and this means to register two
+                // history actions: CREATE + UPDATE
                 const newElement = {
                     ...element,
                     id: generateRandomId(),
@@ -523,7 +526,8 @@ export const createScene = initialData => {
                     y1: element.y1 + dy,
                     y2: element.y2 + dy,
                     selected: true,
-                    [FIELDS.GROUP]: scene.page?.activeGroup || null,
+                    // [FIELDS.GROUP]: scene.page?.activeGroup || groups.get(element.group) || null,
+                    [FIELDS.GROUP]: groups.get(element.group) || null,
                     [FIELDS.ORDER]: numElements + index,
                 };
                 // 1.3 Check if this element has an onDuplicate listener defined
@@ -548,6 +552,10 @@ export const createScene = initialData => {
                     },
                 })),
             });
+            // 4. Reset active group
+            if (scene.page?.activeGroup) {
+                scene.page.activeGroup = null;
+            }
         },
 
         // @description export elements as JSON
