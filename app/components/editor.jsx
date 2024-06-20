@@ -32,6 +32,7 @@ import {EditionPanel} from "./panels/edition.jsx";
 import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
 import {PagesPanel} from "./panels/pages.jsx";
+import {LayersPanel} from "./panels/layers.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 
@@ -289,7 +290,7 @@ const EditorWithScene = props => {
                     )}
                 </div>
             )}
-            {editor.state.currentState === STATES.IDLE && selectedElements.length > 0 && (
+            {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
                         <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
@@ -303,6 +304,11 @@ const EditorWithScene = props => {
                         </div>
                     )}
                 </React.Fragment>
+            )}
+            {editor.state.layersVisible && !isScreenshot && (
+                <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
+                    <LayersPanel />
+                </div>
             )}
             {editor.state.pagesVisible && !isScreenshot && (
                 <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4">
@@ -481,6 +487,26 @@ const EditorWithScene = props => {
                                     content="Apply zoom to the board."
                                 />
                             )}
+                        </div>
+                        <div className="">
+                            <Island>
+                                <Island.Button
+                                    icon="edit"
+                                    active={!editor.state.layersVisible}
+                                    onClick={() => {
+                                        editor.state.layersVisible = false;
+                                        editor.update();
+                                    }}
+                                />
+                                <Island.Button
+                                    icon="stack"
+                                    active={editor.state.layersVisible}
+                                    onClick={() => {
+                                        editor.state.layersVisible = true;
+                                        editor.update();
+                                    }}
+                                />
+                            </Island>
                         </div>
                         {props.headerRightContent}
                     </div>
