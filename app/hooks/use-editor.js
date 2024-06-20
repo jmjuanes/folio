@@ -50,6 +50,7 @@ const createInitialEditorState = (props, scene) => {
         // @description state for dialogs
         exportVisible: false,
         pagesVisible: false,
+        layersVisible: false,
 
         // @description state for welcome items
         hintsVisible: props.showHints && isSceneEmpty,
