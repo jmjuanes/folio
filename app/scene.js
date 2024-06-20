@@ -431,6 +431,35 @@ export const createScene = initialData => {
             }
         },
 
+        // @description select provided elements
+        selectElements: elements => {
+            const groups = new Set(elements.map(el => el.group).filter(Boolean));
+            const selectedElements = new Set(elements.map(el => el.id));
+            const hasElementsWithoutGroup = elements.some(el => !el.group);
+            // 1. select the elements using the selection area
+            scene.page.elements.forEach(element => {
+                element.selected = selectedElements.has(element.id);
+            });
+            // 2. Select the elements based on the groups set
+            if (groups.size > 0 || hasElementsWithoutGroup) {
+                // Check if we are selecting elements in the active group
+                if (scene.page.activeGroup && groups.size === 1 && groups.has(scene.page.activeGroup)) {
+                    // Nothing to do 
+                }
+                // Other case, reset active group and select elements in all groups
+                else {
+                    scene.page.activeGroup = null;
+                    if (groups.size > 0) {
+                        scene.page.elements.forEach(element => {
+                            if (element.group && groups.has(element.group)) {
+                                element.selected = true;
+                            }
+                        });
+                    }
+                }
+            }
+        },
+
         // @description remove provided elements from scene
         removeElements: elements => {
             if (elements && elements.length > 0) {
