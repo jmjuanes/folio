@@ -307,7 +307,19 @@ const EditorWithScene = props => {
             )}
             {editor.state.layersVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
-                    <LayersPanel />
+                    <LayersPanel
+                        onElementSelect={element => {
+                            if (!editor.state.action || editor.state.action === ACTIONS.SELECT) {
+                                scene.selectElements([element]);
+                                editor.update();
+                            }
+                        }}
+                        onElementDelete={element => {
+                            scene.removeElements([element]);
+                            editor.dispatchChange();
+                            editor.update();
+                        }}
+                    />
                 </div>
             )}
             {editor.state.pagesVisible && !isScreenshot && (
