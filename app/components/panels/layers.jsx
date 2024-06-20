@@ -39,13 +39,13 @@ const LayerItem = props => {
     }, [props.element.id]);
     return (
         <div className={classList}>
-            <div className="w-8 h-8 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
+            <div className="w-8 h-8 border border-neutral-200 rounded-md bg-white" style={previewStyle} onClick={props.onClick}>
                 {previewImage && (
                     <img src={previewImage} width="100%" height="100%" />
                 )}
             </div>
             <div className="flex gap-1 items-center group-hover:opacity-100 opacity-0">
-                <LayerItemAction icon="trash" />
+                <LayerItemAction icon="trash" onClick={props.onDeleteClick} />
             </div>
         </div>
     );
@@ -60,6 +60,8 @@ export const LayersPanel = props => {
                     <LayerItem
                         key={element.id}
                         element={element}
+                        onClick={() => props?.onElementSelect(element)}
+                        onDeleteClick={() => props?.onElementDelete(element)}
                     />
                 ))}
             </div>
