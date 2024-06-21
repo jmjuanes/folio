@@ -12,6 +12,7 @@ import {
     SNAP_THRESHOLD,
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
+    FIELDS,
 } from "../constants.js";
 import {normalizeBounds, getRectangleBounds} from "../utils/math.js";
 import {isArrowKey} from "../utils/keys.js";
@@ -440,10 +441,11 @@ export const useEditor = props => {
                             }
                         }
                         const selectedElements = scene.getSelection();
+                        selectedElements.forEach(el => el[FIELDS.VERSION] = el[FIELDS.VERSION] + 1);
                         scene.addHistory({
                             type: CHANGES.UPDATE,
                             elements: selectedElements.map((element, index) => {
-                                const updatedFields = new Set(["x1", "x2", "y1", "y2"]);
+                                const updatedFields = new Set(["x1", "x2", "y1", "y2", "version"]);
                                 // We need to check the fields that the element has updated internally
                                 const elementConfig = getElementConfig(element);
                                 if (typeof elementConfig.getUpdatedFields === "function") {
