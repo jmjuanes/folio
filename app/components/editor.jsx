@@ -314,6 +314,11 @@ const EditorWithScene = props => {
                                 editor.update();
                             }
                         }}
+                        onElementDuplicate={element => {
+                            scene.duplicateElements([element]);
+                            editor.dispatchChange();
+                            editor.update();
+                        }}
                         onElementDelete={element => {
                             scene.removeElements([element]);
                             editor.dispatchChange();
