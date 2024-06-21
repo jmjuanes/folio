@@ -198,6 +198,7 @@ const createPage = (page, index = 0) => ({
         [FIELDS.SELECTED]: false,
         [FIELDS.EDITING]: false,
         [FIELDS.CREATING]: false,
+        [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
     })),
     history: page?.history || [],
     historyIndex: page?.historyIndex ?? 0,
