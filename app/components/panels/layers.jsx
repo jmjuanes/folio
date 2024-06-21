@@ -50,7 +50,7 @@ const LayerItem = props => {
                     </div> 
                 )}
             </div>
-            <div className="shrink-0 w-8 h-8 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
+            <div className="shrink-0 w-6 h-6 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
                 {previewImage && (
                     <img src={previewImage} width="100%" height="100%" />
                 )}
@@ -73,7 +73,7 @@ const LayerGroupItem = props => {
             <div className="shrink-0 w-4 flex items-center text-sm">
                 {props.expanded ? (<ChevronDownIcon />) : (<ChevronRightIcon />)}
             </div>
-            <div className="shrink-0 w-8 h-8 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
+            <div className="shrink-0 w-6 h-6 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
                 {previewImage && (
                     <img src={previewImage} width="100%" height="100%" />
                 )}
@@ -111,11 +111,11 @@ export const LayersPanel = props => {
     }, [key]);
     return (
         <div className="w-64 border border-neutral-200 rounded-xl shadow-md bg-white p-2 overflow-y-auto" style={{maxHeight:"calc(100vh - 5rem)"}}>
-            <div className="flex flex-col-reverse gap-1">
+            <div className="flex flex-col-reverse gap-0">
                 {scene.page.elements.map(element => (
                     <React.Fragment key={element.id + "." + (element.group || "")}>
                         {(!element.group || expandedGroups.current.has(element.group)) && (
-                            <div className={classNames(!!element.group && "ml-6")}>
+                            <div className={classNames(!!element.group && "ml-4")}>
                                 <LayerItem
                                     key={element.id}
                                     element={element}
