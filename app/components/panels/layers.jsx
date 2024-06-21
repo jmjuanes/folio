@@ -1,25 +1,27 @@
 import React from "react";
-import {StackIcon, renderIcon, CheckIcon} from "@josemi-icons/react";
+import {useUpdate} from "react-use";
+import {StackIcon, renderIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {useScene} from "../../contexts/scene.jsx";
 import {exportToDataURL} from "../../export.js";
 import {FIELDS, TRANSPARENT} from "../../constants.js";
 import transparentBg from "../../assets/transparent.svg";
+import classNames from "classnames";
 
 // Tiny hook to generate the preview of the element
 const useElementPreview = (elements, dependencies = []) => {
     const [previewImage, setPreviewImage] = React.useState(null);
     React.useEffect(() => {
-        // if (elements.length > 1 || !) {
-        //     const previewOptions = {
-        //         elements: elements,
-        //         width: 32,
-        //         height: 32,
-        //         background: TRANSPARENT,
-        //     };
-        //     exportToDataURL(previewOptions).then(image => {
-        //         setPreviewImage(image);
-        //     });
-        // }
+        if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
+            const previewOptions = {
+                elements: elements,
+                width: 32,
+                height: 32,
+                background: TRANSPARENT,
+            };
+            exportToDataURL(previewOptions).then(image => {
+                setPreviewImage(image);
+            });
+        }
     }, dependencies);
     return previewImage;
 };
@@ -64,52 +66,85 @@ const LayerItem = props => {
     );
 };
 
-const LayerGroup = props => {
-
+const LayerGroupItem = props => {
+    const previewImage = useElementPreview(props.elements, props.elements.map(el => el.version));
+    return (
+        <div className="flex items-center gap-2 p-2" onClick={props.onClick}>
+            <div className="shrink-0 w-4 flex items-center text-sm">
+                {props.expanded ? (<ChevronDownIcon />) : (<ChevronRightIcon />)}
+            </div>
+            <div className="shrink-0 w-8 h-8 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
+                {previewImage && (
+                    <img src={previewImage} width="100%" height="100%" />
+                )}
+            </div>
+            <div className="flex items-center grow">
+                <span className="text-xs font-medium text-neutral-700">Group {props.index}</span>
+            </div>
+        </div>
+    );
 };
 
 export const LayersPanel = props => {
+    const expandedGroups = React.useRef(new Set());
     const scene = useScene();
+    const update = useUpdate();
     const key = scene.page.elements.map(el => el.id + "." + (el.group || ".")).join("-");
-    const elementsTree = React.useMemo(() => {
-        const currentTree = [];
+    const groups = React.useMemo(() => {
+        const groupsMap = new Map();
+        let currentGroupIndex = 1;
         scene.page.elements.forEach(element => {
-            // Check if this element is inside a group
             if (element.group) {
-                // Check if we need to initialize the group in the current tree
-                if (currentTree.length === 0 || currentTree[currentTree.length - 1]?.group !== element.group) {
-                    currentTree.push({group: element.group, elements: []});
+                if (!groupsMap.has(element.group)) {
+                    groupsMap.set(element.group, {
+                        elements: [],
+                        index: currentGroupIndex,
+                        lastElement: null,
+                    });
+                    currentGroupIndex = currentGroupIndex + 1;
                 }
-                // Add this element to the current tree
-                currentTree[currentTree.length - 1].elements.push(element);
-            }
-            // Other case, add as a single element
-            else {
-                currentTree.push(element);
+                groupsMap.get(element.group).elements.push(element);
+                groupsMap.get(element.group).lastElement = element.id;
             }
         });
-        return currentTree;
+        return groupsMap;
     }, [key]);
     return (
-        <div className="w-56 border border-neutral-200 rounded-xl shadow-md bg-white p-2 overflow-y-auto" style={{maxHeight:"calc(100vh - 5rem)"}}>
+        <div className="w-64 border border-neutral-200 rounded-xl shadow-md bg-white p-2 overflow-y-auto" style={{maxHeight:"calc(100vh - 5rem)"}}>
             <div className="flex flex-col-reverse gap-1">
-                {elementsTree.map(element => (
-                    <React.Fragment>
-                        {element.group && element.elements?.length > 0 && (
-                            <div>Group</div>
+                {scene.page.elements.map(element => (
+                    <React.Fragment key={element.id + "." + (element.group || "")}>
+                        {(!element.group || expandedGroups.current.has(element.group)) && (
+                            <div className={classNames(!!element.group && "ml-6")}>
+                                <LayerItem
+                                    key={element.id}
+                                    element={element}
+                                    onClick={() => props?.onElementSelect(element)}
+                                    onDeleteClick={event => {
+                                        event.stopPropagation();
+                                        props?.onElementDelete(element);
+                                    }}
+                                    onDuplicateClick={event => {
+                                        event.stopPropagation();
+                                        props?.onElementDuplicate(element);
+                                    }}
+                                />
+                            </div>
                         )}
-                        {!element.group && (
-                            <LayerItem
-                                key={element.id}
-                                element={element}
-                                onClick={() => props?.onElementSelect(element)}
-                                onDeleteClick={event => {
-                                    event.stopPropagation();
-                                    props?.onElementDelete(element);
-                                }}
-                                onDuplicateClick={event => {
-                                    event.stopPropagation();
-                                    props?.onElementDuplicate(element);
+                        {element.group && groups.get(element.group).lastElement === element.id && (
+                            <LayerGroupItem
+                                key={element.group}
+                                index={groups.get(element.group).index}
+                                elements={groups.get(element.group).elements}
+                                expanded={expandedGroups.current.has(element.group)}
+                                onClick={() => {
+                                    if (expandedGroups.current.has(element.group)) {
+                                        expandedGroups.current.delete(element.group);
+                                    }
+                                    else {
+                                        expandedGroups.current.add(element.group);
+                                    }
+                                    update();
                                 }}
                             />
                         )}
