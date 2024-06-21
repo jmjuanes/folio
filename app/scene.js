@@ -552,7 +552,8 @@ export const createScene = initialData => {
                 // 1.2 Prepare new element configuration
                 const newElement = {
                     ...element,
-                    id: generateRandomId(),
+                    [FIELDS.VERSION]: 0,
+                    [FIELDS.ID]: generateRandomId(),
                     x1: element.x1 + dx,
                     x2: element.x2 + dx,
                     y1: element.y1 + dy,
