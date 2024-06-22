@@ -310,6 +310,9 @@ const EditorWithScene = props => {
                     <LayersPanel
                         onElementSelect={element => {
                             if (!editor.state.action || editor.state.action === ACTIONS.SELECT) {
+                                if (element?.group) {
+                                    scene.page.activeGroup = element.group;
+                                }
                                 scene.selectElements([element]);
                                 editor.update();
                             }
