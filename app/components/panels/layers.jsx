@@ -109,6 +109,22 @@ export const LayersPanel = props => {
         });
         return groupsMap;
     }, [key]);
+    // Automatically expand groups with selected items
+    React.useEffect(() => {
+        let shouldUpdate = false;
+        // 1. Check if there is a selected element inside a group
+        scene.page.elements.forEach(element => {
+            if (element.group && element.selected && scene.page.activeGroup === element.group) {
+                expandedGroups.current.add(element.group);
+                shouldUpdate = true;
+            }
+        });
+        // 2. Trigger an update if we have added at least one group
+        // in the list of expanded groups
+        if (expandedGroups.current.size > 0 && shouldUpdate) {
+            update();
+        }
+    }, [scene.page.activeGroup]);
     return (
         <div className="w-64 border border-neutral-200 rounded-xl shadow-md bg-white p-2 overflow-y-auto" style={{maxHeight:"calc(100vh - 5rem)"}}>
             <div className="flex flex-col-reverse gap-0">
