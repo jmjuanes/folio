@@ -481,6 +481,7 @@ export const generateElementId = () => {
 // Create a new element
 export const createElement = elementType => {
     return {
+        [FIELDS.VERSION]: 0,
         [FIELDS.TYPE]: elementType,
         [FIELDS.ID]: generateElementId(),
         [FIELDS.X_START]: 0,

@@ -125,6 +125,7 @@ const getPngImage = options => {
         img.addEventListener("load", () => {
             let x = 0, y = 0;
             const padding = (options.padding ?? EXPORT_PADDING) + EXPORT_OFFSET;
+            // 1. We have selected a region to crop
             if (options.crop) {
                 const bounds = getRectangleBounds(options.elements);
                 x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2) - padding;
@@ -132,8 +133,13 @@ const getPngImage = options => {
                 canvas.width = Math.abs(options.crop.x2 - options.crop.x1);
                 canvas.height = Math.abs(options.crop.y2 - options.crop.y1);
             }
+            // 2. We have provided a custom size for the image
+            else if (options.width || options.height) {
+                canvas.width = options.width ?? options.height;
+                canvas.height = options.height ?? options.width;
+            }
+            // 3. Use the size of the image
             else {
-                // Set the canvas size to the total image size
                 canvas.width = img.width;
                 canvas.height = img.height;
             }
@@ -142,7 +148,18 @@ const getPngImage = options => {
                 ctx.fillStyle = options.background;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
-            ctx.drawImage(img, x, y);
+            // 1. We have a custom size for the output image
+            if (options.width || options.height) {
+                const cw = options.width ?? options.height, ch = options.height ?? options.width;
+                const d = img.height / img.width;
+                const w = (img.height > img.width) ? (ch / d) : cw;
+                const h = (img.height > img.width) ? ch : (cw * d);
+                ctx.drawImage(img, x + ((cw - w) / 2), y + ((ch - h) / 2), w, h);
+            }
+            // 2. Maintain the current image size
+            else {
+                ctx.drawImage(img, x, y);
+            }
             canvas.toBlob(resolve);
         });
         img.addEventListener("error", event => {
