@@ -402,6 +402,7 @@ export const useEditor = props => {
                     const element = activeElement;
                     element.creating = false;
                     element.selected = true; // By default select this element
+                    element[FIELDS.VERSION] = 1; // Set as initial version of this element
                     getElementConfig(element)?.onCreateEnd?.(element, event);
                     // We need to patch the history to save the new element values
                     const last = scene.page.history[0] || {};

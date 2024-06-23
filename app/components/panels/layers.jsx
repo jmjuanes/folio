@@ -56,7 +56,7 @@ const LayerItem = props => {
                 )}
             </div>
             <div className="flex items-center grow">
-                <span className="text-xs font-medium text-neutral-700">Layer {props.element.order + 1}</span>
+                <span className="text-xs font-medium text-neutral-700">Layer</span>
             </div>
             <div className="flex flex-row-reverse shrink-0 gap-1 items-center group-hover:opacity-100 opacity-0">
                 <LayerItemAction icon="trash" onClick={props.onDeleteClick} />
@@ -79,7 +79,7 @@ const LayerGroupItem = props => {
                 )}
             </div>
             <div className="flex items-center grow">
-                <span className="text-xs font-medium text-neutral-700">Group {props.index}</span>
+                <span className="text-xs font-medium text-neutral-700">Group</span>
             </div>
         </div>
     );
@@ -126,7 +126,7 @@ export const LayersPanel = props => {
         }
     }, [scene.page.activeGroup]);
     return (
-        <div className="w-64 border border-neutral-200 rounded-xl shadow-md bg-white p-2 overflow-y-auto" style={{maxHeight:"calc(100vh - 5rem)"}}>
+        <div className="w-56 border border-neutral-200 rounded-xl shadow-md bg-white p-2 overflow-y-auto" style={{maxHeight:"calc(100vh - 8rem)"}}>
             <div className="flex flex-col-reverse gap-0">
                 {scene.page.elements.map(element => (
                     <React.Fragment key={element.id + "." + (element.group || "")}>
@@ -150,7 +150,6 @@ export const LayersPanel = props => {
                         {element.group && groups.get(element.group).lastElement === element.id && (
                             <LayerGroupItem
                                 key={element.group}
-                                index={groups.get(element.group).index}
                                 elements={groups.get(element.group).elements}
                                 expanded={expandedGroups.current.has(element.group)}
                                 onClick={() => {
