@@ -244,6 +244,7 @@ export const getSceneStateFromInitialData = initialData => {
         appState: {
             grid: !!initialData?.appState?.grid,
             snapToElements: !!initialData?.appState?.snapToElements,
+            objectDimensions: !!initialData?.appState?.objectDimensions,
         },
         background: initialData?.background || BACKGROUND_COLORS.gray,
         metadata: initialData?.metadata || {},
