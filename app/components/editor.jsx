@@ -18,6 +18,7 @@ import {useHandlers} from "../hooks/use-handlers.js";
 import {useBounds} from "../hooks/use-bounds.js";
 import {useCursor} from "../hooks/use-cursor.js";
 import {useEditor} from "../hooks/use-editor.js";
+import {useDimensions} from "../hooks/use-dimensions.js";
 import {Island} from "./island.jsx";
 import {Canvas} from "./canvas.jsx";
 import {Pointer} from "./pointer.jsx";
@@ -44,6 +45,7 @@ const EditorWithScene = props => {
     const cursor = useCursor(editor.state);
     const bounds = useBounds(editor.state);
     const handlers = useHandlers(editor.state);
+    const dimensions = useDimensions(editor.state);
 
     const selectedElements = scene.getSelection();
     const isScreenshot = editor.state.action === ACTIONS.SCREENSHOT;
@@ -163,10 +165,12 @@ const EditorWithScene = props => {
                 brush={editor.state.selection}
                 brushFillColor={SELECTION_FILL_COLOR}
                 brushStrokeColor={SELECTION_STROKE_COLOR}
+                dimensions={dimensions}
                 showBrush={editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT}
                 showPointer={editor.state.action === ACTIONS.ERASE}
                 showGrid={scene.appState.grid}
                 showSnaps={scene.appState.snapToElements}
+                showObjectDimensions={scene.appState.objectDimensions}
                 {...editor.events}
             />
             {editor.state.action === ACTIONS.POINTER && (
@@ -397,6 +401,11 @@ const EditorWithScene = props => {
                                     }}
                                     onSnapToElementsChange={() => {
                                         scene.appState.snapToElements = !scene.appState.snapToElements;
+                                        editor.dispatchChange();
+                                        editor.update();
+                                    }}
+                                    onObjectDimensionsChange={() => {
+                                        scene.appState.objectDimensions = !scene.appState.objectDimensions,
                                         editor.dispatchChange();
                                         editor.update();
                                     }}
