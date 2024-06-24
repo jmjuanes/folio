@@ -1,10 +1,5 @@
 import React from "react";
-import {
-    CURSORS,
-    EVENTS,
-    FONT_SOURCES,
-    NONE,
-} from "../constants.js";
+import {CURSORS, EVENTS, FONT_SOURCES, NONE, WHITE, PRIMARY} from "../constants.js";
 import {AssetsProvider} from "../contexts/assets.jsx";
 import {renderElement} from "./elements/index.jsx";
 import {SvgContainer} from "./svg.jsx";
@@ -318,6 +313,34 @@ export const Canvas = props => {
                             );
                         })}
                     </SvgContainer>
+                )}
+                {props.showObjectDimensions && props.dimensions && (
+                    <React.Fragment>
+                        {(props.dimensions || []).map((item, index) => {
+                            const st = {
+                                color: WHITE,
+                                fontSize: "0.625rem",
+                                backgroundColor: PRIMARY,
+                                borderRadius: "0.25rem",
+                                display: "inline-flex",
+                                lineHeight: "1",
+                                padding: "0.25rem",
+                                pointerEvents: "none",
+                                position: "absolute",
+                                top: item.y + "px",
+                                left: item.x + "px",
+                                textWrap: "nowrap",
+                                transform: `translate(${item.translateX},${item.translateY})`,
+                                userSelect: "none",
+                                width: "content",
+                            };
+                            return (
+                                <div key={`prop:${index}`} style={st}>
+                                    <div>{item.value}</div>
+                                </div>
+                            );
+                        })}
+                    </React.Fragment>
                 )}
             </div>
         </div>
