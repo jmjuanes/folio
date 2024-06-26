@@ -2,6 +2,9 @@ import {ACTIONS, ELEMENTS} from "../constants.js";
 // import {getElementConfig} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
 
+// Tiny utility to parse the dimension
+const di = value => Math.floor(Math.abs(value));
+
 export const useDimensions = ({action, tool}) => {
     const scene = useScene();
     const dimensions = [];
@@ -13,7 +16,7 @@ export const useDimensions = ({action, tool}) => {
             // if (el.type === ELEMENTS.SHAPE && !action) {
             if (el.type === ELEMENTS.SHAPE || el.type === ELEMENTS.DRAW || el.type === ELEMENTS.TEXT) {
                 dimensions.push({
-                    value: `w: ${Math.abs(el.x2 - el.x1)} h: ${Math.abs(el.y2 - el.y1)}`,
+                    value: `w: ${di(el.x2 - el.x1)} h: ${di(el.y2 - el.y1)}`,
                     x: (el.x1 + el.x2) / 2,
                     y: Math.min(el.y1, el.y2),
                     translateX: "-50%",
@@ -42,7 +45,7 @@ export const useDimensions = ({action, tool}) => {
             else if (el.type === ELEMENTS.ARROW) {
                 // Start point
                 dimensions.push({
-                    value: `x: ${el.x1} y: ${el.y1}`,
+                    value: `x: ${di(el.x1)} y: ${di(el.y1)}`,
                     x: el.x1,
                     y: el.y1,
                     translateX: (el.x1 >= el.x2) ? "0.6rem" : "calc(-100% - 0.6rem)",
@@ -50,7 +53,7 @@ export const useDimensions = ({action, tool}) => {
                 });
                 // End point
                 dimensions.push({
-                    value: `x: ${el.x2} y: ${el.y2}`,
+                    value: `x: ${di(el.x2)} y: ${di(el.y2)}`,
                     x: el.x2,
                     y: el.y2,
                     translateX: (el.x2 >= el.x1) ? "0.6rem" : "calc(-100% - 0.6rem)",
