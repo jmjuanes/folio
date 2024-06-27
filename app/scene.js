@@ -4,7 +4,6 @@ import {
     DEFAULTS,
     ELEMENTS,
     FIELDS,
-    GRID_SIZE,
     PASTE_OFFSET,
     ZOOM_DEFAULT,
     ASSETS,
@@ -781,10 +780,10 @@ export const createScene = initialData => {
             const [textWidth, textHeight] = measureTextInElement(element, text || " ");
             // Override element position
             Object.assign(element, {
-                x1: Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE,
-                y1: Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE,
-                x2: Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE,
-                y2: Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE,
+                x1: Math.floor((x - textWidth / 2)), // / GRID_SIZE) * GRID_SIZE,
+                y1: Math.floor((y - textHeight / 2)), // / GRID_SIZE) * GRID_SIZE,
+                x2: Math.ceil((x + textWidth / 2)), // / GRID_SIZE) * GRID_SIZE,
+                y2: Math.ceil((y + textHeight / 2)), // / GRID_SIZE) * GRID_SIZE,
                 textWidth: textWidth,
                 textHeight: textHeight,
             });
