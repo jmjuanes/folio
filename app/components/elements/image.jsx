@@ -14,6 +14,7 @@ export const ImageElement = props => {
                 width={Math.abs(props.x2 - props.x1)}
                 height={Math.abs(props.y2 - props.y1)}
                 href={dataUrl}
+                preserveAspectRatio="none"
                 onPointerDown={props.onPointerDown}
                 onDoubleClick={props.onDoubleClick}
             />

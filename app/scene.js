@@ -4,7 +4,6 @@ import {
     DEFAULTS,
     ELEMENTS,
     FIELDS,
-    GRID_SIZE,
     PASTE_OFFSET,
     ZOOM_DEFAULT,
     ASSETS,
@@ -244,6 +243,7 @@ export const getSceneStateFromInitialData = initialData => {
         appState: {
             grid: !!initialData?.appState?.grid,
             snapToElements: !!initialData?.appState?.snapToElements,
+            objectDimensions: !!initialData?.appState?.objectDimensions,
         },
         background: initialData?.background || BACKGROUND_COLORS.gray,
         metadata: initialData?.metadata || {},
@@ -780,10 +780,10 @@ export const createScene = initialData => {
             const [textWidth, textHeight] = measureTextInElement(element, text || " ");
             // Override element position
             Object.assign(element, {
-                x1: Math.floor((x - textWidth / 2) / GRID_SIZE) * GRID_SIZE,
-                y1: Math.floor((y - textHeight / 2) / GRID_SIZE) * GRID_SIZE,
-                x2: Math.ceil((x + textWidth / 2) / GRID_SIZE) * GRID_SIZE,
-                y2: Math.ceil((y + textHeight / 2) / GRID_SIZE) * GRID_SIZE,
+                x1: Math.floor((x - textWidth / 2)), // / GRID_SIZE) * GRID_SIZE,
+                y1: Math.floor((y - textHeight / 2)), // / GRID_SIZE) * GRID_SIZE,
+                x2: Math.ceil((x + textWidth / 2)), // / GRID_SIZE) * GRID_SIZE,
+                y2: Math.ceil((y + textHeight / 2)), // / GRID_SIZE) * GRID_SIZE,
                 textWidth: textWidth,
                 textHeight: textHeight,
             });
@@ -809,10 +809,10 @@ export const createScene = initialData => {
                         height: img.height,
                         size: image.length,
                     }),
-                    x1: Math.floor((x - img.width / 2) / GRID_SIZE) * GRID_SIZE,
-                    y1: Math.floor((y - img.height / 2) / GRID_SIZE) * GRID_SIZE,
-                    x2: Math.ceil((x + img.width / 2) / GRID_SIZE) * GRID_SIZE,
-                    y2: Math.ceil((y + img.height / 2) / GRID_SIZE) * GRID_SIZE,
+                    x1: Math.floor((x - img.width / 2)), // / GRID_SIZE) * GRID_SIZE,
+                    y1: Math.floor((y - img.height / 2)), // / GRID_SIZE) * GRID_SIZE,
+                    x2: Math.ceil((x + img.width / 2)), // / GRID_SIZE) * GRID_SIZE,
+                    y2: Math.ceil((y + img.height / 2)), // / GRID_SIZE) * GRID_SIZE,
                     selected: true,
                     [FIELDS.GROUP]: null,
                 });

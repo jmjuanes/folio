@@ -8,6 +8,7 @@ import {
     DownloadIcon,
     FolderIcon,
     TrashIcon,
+    Ruler2Icon,
 } from "@josemi-icons/react";
 import {Dropdown} from "./ui/dropdown.jsx";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
@@ -92,6 +93,12 @@ export const Menu = props => {
                         <MagnetIcon />
                     </Dropdown.Icon>
                     <span>Snap to elements</span>
+                </Dropdown.CheckItem>
+                <Dropdown.CheckItem checked={!!scene?.appState?.objectDimensions} onClick={props.onObjectDimensionsChange}>
+                    <Dropdown.Icon>
+                        <Ruler2Icon />
+                    </Dropdown.Icon>
+                    <span>Object dimensions</span>
                 </Dropdown.CheckItem>
                 {props.showChangeBackground && (
                     <React.Fragment>
