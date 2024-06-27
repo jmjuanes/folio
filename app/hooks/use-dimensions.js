@@ -1,64 +1,43 @@
-import {ACTIONS, ELEMENTS} from "../constants.js";
+import {ACTIONS, ELEMENTS, FIELDS} from "../constants.js";
 // import {getElementConfig} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
+import {getRectangleBounds} from "../utils/math.js";
 
-// Tiny utility to parse the dimension
-const di = value => Math.floor(Math.abs(value));
+const generateDimensionLabel = el => ({
+    value: [Math.floor(Math.abs(el.x2 - el.x1)), Math.floor(Math.abs(el.y2 - el.y1))].join(" x "),
+    x: Math.max(el.x1, el.x2),
+    y: Math.max(el.y1, el.y2),
+    translateX: "-100%",
+    translateY: "0.5rem",
+});
 
 export const useDimensions = ({action, tool}) => {
     const scene = useScene();
     const dimensions = [];
-    if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
-        const selectedElements = scene.getSelection();
-        if (selectedElements.length === 1) {
-            const el = selectedElements[0];
-            // Case 1: we are in selection and element is a shape
-            // if (el.type === ELEMENTS.SHAPE && !action) {
-            if (el.type === ELEMENTS.SHAPE || el.type === ELEMENTS.DRAW || el.type === ELEMENTS.TEXT) {
-                dimensions.push({
-                    value: `w: ${di(el.x2 - el.x1)} h: ${di(el.y2 - el.y1)}`,
-                    x: (el.x1 + el.x2) / 2,
-                    y: Math.min(el.y1, el.y2),
-                    translateX: "-50%",
-                    translateY: "calc(-100% - 0.6rem)",
-                });
+    if (scene?.appState?.objectDimensions) {
+        // Case 1. No tool or action or we are translating or resizing the element
+        if ((!tool && !action) || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {
+            const selectedElements = scene.getSelection();
+            // Case 1.1. Just one single element to calculate the size
+            // In this case, we only want to display the dimension for shapes, drawings, text or images
+            if (selectedElements.length === 1) {
+                const el = selectedElements[0];
+                if (el.type === ELEMENTS.SHAPE || el.type === ELEMENTS.DRAW || el.type === ELEMENTS.TEXT || el.type === ELEMENTS.IMAGE) {
+                    dimensions.push(generateDimensionLabel(el));
+                }
             }
-            // Case 2: we are translating or resizing the element and it is a shape
-            // else if (el.type === ELEMENTS.SHAPE && (action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
-            // if (el.type === ELEMENTS.SHAPE || el.type === ELEMENTS.DRAW || el.type === ELEMENTS.TEXT) {
-            //     props.push({
-            //         value: `x: ${el.x1} y: ${el.y1}`,
-            //         x: el.x1,
-            //         y: el.y1,
-            //         translateX: "calc(-100% - 0.6rem)",
-            //         translateY: "calc(-100% - 0.6rem)",
-            //     });
-            //     props.push({
-            //         value: `x: ${el.x2} y: ${el.y2}`,
-            //         x: el.x2,
-            //         y: el.y2,
-            //         translateX: "0.6rem",
-            //         translateY: "0.6rem",
-            //     });
-            // }
-            // Case 3: we are in an arrow
-            else if (el.type === ELEMENTS.ARROW) {
-                // Start point
-                dimensions.push({
-                    value: `x: ${di(el.x1)} y: ${di(el.y1)}`,
-                    x: el.x1,
-                    y: el.y1,
-                    translateX: (el.x1 >= el.x2) ? "0.6rem" : "calc(-100% - 0.6rem)",
-                    translateY: (el.y1 >= el.y2) ? "0.6rem" : "calc(-100% - 0.6rem)",
-                });
-                // End point
-                dimensions.push({
-                    value: `x: ${di(el.x2)} y: ${di(el.y2)}`,
-                    x: el.x2,
-                    y: el.y2,
-                    translateX: (el.x2 >= el.x1) ? "0.6rem" : "calc(-100% - 0.6rem)",
-                    translateY: (el.y2 >= el.y1) ? "0.6rem" : "calc(-100% - 0.6rem)",
-                });
+            // Case 1.2. We have more than one element selected
+            // In this case, calculate the dimension of the selection
+            else if (selectedElements.length > 1) {
+                dimensions.push(generateDimensionLabel(getRectangleBounds(selectedElements)));
+            }
+        }
+        // Case 2. We are creating an element
+        // In this case, only for shapes or text will be displayed
+        else if (action === ACTIONS.CREATE && (tool === ELEMENTS.SHAPE || tool === ELEMENTS.TEXT)) {
+            const el = scene.getElements().find(element => element[FIELDS.CREATING]);
+            if (el) {
+                dimensions.push(generateDimensionLabel(el));
             }
         }
     }
