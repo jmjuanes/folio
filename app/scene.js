@@ -23,6 +23,7 @@ import {
     getElementConfig,
     createElement,
     measureTextInElement,
+    getElementDisplayName,
 } from "./elements.js";
 import {
     parseZoomValue,
@@ -189,23 +190,39 @@ const fixPagesIndex = pages => {
 };
 
 // @private create a new page
-const createPage = (page, index = 0) => ({
-    id: page?.id || generateRandomId(),
-    title: page?.title || `Page ${index + 1}`,
-    elements: (page?.elements || []).map(element => ({
-        ...element,
-        [FIELDS.SELECTED]: false,
-        [FIELDS.EDITING]: false,
-        [FIELDS.CREATING]: false,
-        [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
-    })),
-    history: page?.history || [],
-    historyIndex: page?.historyIndex ?? 0,
-    translateX: page?.translateX ?? 0,
-    translateY: page?.translateY ?? 0,
-    zoom: page?.zoom ?? ZOOM_DEFAULT,
-    activeGroup: null,
-});
+const createPage = (page, index = 0) => {
+    const elementsIndexByType = (page?.elements || []).reduce((elementsMap, el) => {
+        return {
+            ...elementsMap,
+            [el[FIELDS.TYPE]]: {
+                ...(elementsMap[el[FIELDS.TYPE]] || {}),
+                [el[FIELDS.ID]]: Object.keys(elementsMap[el[FIELDS.TYPE]] || {}).length,
+            },
+        };
+    }, {});
+    return {
+        id: page?.id || generateRandomId(),
+        title: page?.title || `Page ${index + 1}`,
+        elements: (page?.elements || []).map(element => ({
+            ...element,
+            [FIELDS.NAME]: element[FIELDS.NAME] ?? getElementDisplayName(element, elementsIndexByType[element[FIELDS.TYPE]][element[FIELDS.ID]]),
+            [FIELDS.SELECTED]: false,
+            [FIELDS.EDITING]: false,
+            [FIELDS.CREATING]: false,
+            [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
+        })),
+        history: page?.history || [],
+        historyIndex: page?.historyIndex ?? 0,
+        translateX: page?.translateX ?? 0,
+        translateY: page?.translateY ?? 0,
+        zoom: page?.zoom ?? ZOOM_DEFAULT,
+        activeGroup: null,
+        counts: (page?.elements || []).reduce((counts, element) => {
+            counts[element[FIELDS.TYPE]] = (counts[element[FIELDS.TYPE]] ?? 0) + 1;
+            return counts;
+        }, {}),
+    };
+};
 
 // Default values for new elements
 const defaults = {
@@ -411,7 +428,9 @@ export const createScene = initialData => {
                 const numElements = scene.page.elements.length;
                 // 1. Fix elements positions
                 elements.forEach((element, index) => {
+                    element[FIELDS.NAME] = getDisplayName(element, scene.page.counts);
                     element[FIELDS.ORDER] = numElements + index;
+                    scene.page.counts[element[FIELDS.TYPE]] = (scene.page.counts[element[FIELDS.TYPE]] ?? 0) + 1;
                 });
                 // 2. Register element create in the history
                 scene.addHistory({
@@ -578,7 +597,11 @@ export const createScene = initialData => {
                 }
             }
             // 3. insert new elements
-            newElements.forEach(element => scene.page.elements.push(element));
+            newElements.forEach(element => {
+                element[FIELDS.NAME] = getDisplayName(element, scene.page.counts);
+                scene.page.elements.push(element);
+                scene.page.counts[element[FIELDS.TYPE]] = (scene.page.counts[element[FIELDS.TYPE]] ?? 0) + 1;
+            });
             // 4.1 Register CREATE change
             changes.push({
                 type: CHANGES.CREATE,
