@@ -271,6 +271,7 @@ export const DEFAULTS = {
 export const FIELDS = {
     ID: "id",
     TYPE: "type",
+    NAME: "name",
     VERSION: "version",
     SELECTED: "selected",
     ERASED: "erased",
