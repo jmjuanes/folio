@@ -56,7 +56,7 @@ const LayerItem = props => {
                 )}
             </div>
             <div className="flex items-center grow">
-                <span className="text-xs font-medium text-neutral-700">Layer</span>
+                <span className="text-xs font-medium text-neutral-700">{props.element[FIELDS.NAME] || "Layer"}</span>
             </div>
             <div className="flex flex-row-reverse shrink-0 gap-1 items-center group-hover:opacity-100 opacity-0">
                 <LayerItemAction icon="trash" onClick={props.onDeleteClick} />
