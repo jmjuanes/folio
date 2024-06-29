@@ -191,36 +191,33 @@ const fixPagesIndex = pages => {
 
 // @private create a new page
 const createPage = (page, index = 0) => {
-    const elementsIndexByType = (page?.elements || []).reduce((elementsMap, el) => {
-        return {
-            ...elementsMap,
-            [el[FIELDS.TYPE]]: {
-                ...(elementsMap[el[FIELDS.TYPE]] || {}),
-                [el[FIELDS.ID]]: Object.keys(elementsMap[el[FIELDS.TYPE]] || {}).length,
-            },
-        };
-    }, {});
+    const counts = {};
     return {
         id: page?.id || generateRandomId(),
         title: page?.title || `Page ${index + 1}`,
-        elements: (page?.elements || []).map(element => ({
-            ...element,
-            [FIELDS.NAME]: element[FIELDS.NAME] ?? getElementDisplayName(element, elementsIndexByType[element[FIELDS.TYPE]][element[FIELDS.ID]]),
-            [FIELDS.SELECTED]: false,
-            [FIELDS.EDITING]: false,
-            [FIELDS.CREATING]: false,
-            [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
-        })),
+        elements: (page?.elements || []).map(element => {
+            const type = element[FIELDS.TYPE];
+            // Only increment counts if this element does not have a name assigned
+            // This means that this element commes from a previous version
+            if (type && !element[FIELDS.NAME]) {
+                element[FIELDS.NAME] = getElementDisplayName(element, counts[type] ?? 0);
+                counts[type] = (counts[type] ?? 0) + 1;
+            }
+            return {
+                ...element,
+                [FIELDS.SELECTED]: false,
+                [FIELDS.EDITING]: false,
+                [FIELDS.CREATING]: false,
+                [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
+            };
+        }),
         history: page?.history || [],
         historyIndex: page?.historyIndex ?? 0,
         translateX: page?.translateX ?? 0,
         translateY: page?.translateY ?? 0,
         zoom: page?.zoom ?? ZOOM_DEFAULT,
         activeGroup: null,
-        counts: (page?.elements || []).reduce((counts, element) => {
-            counts[element[FIELDS.TYPE]] = (counts[element[FIELDS.TYPE]] ?? 0) + 1;
-            return counts;
-        }, {}),
+        counts: page?.counts || counts,
     };
 };
 
@@ -248,8 +245,9 @@ const defaults = {
 export const getSceneStateFromInitialData = initialData => {
     // Parse pages list from initialData object
     // If no pages are available, a new empty page will be automatically created
-    const pages = parseInitialPages(initialData?.pages)
-        .map((page, index) => createPage(page, index));
+    const pages = parseInitialPages(initialData?.pages).map((page, index) => {
+        return createPage(page, index);
+    });
     return {
         id: initialData?.id || generateRandomId(),
         version: initialData?.version || VERSION,
@@ -426,11 +424,12 @@ export const createScene = initialData => {
         addElements: elements => {
             if (elements && elements.length > 0) {
                 const numElements = scene.page.elements.length;
-                // 1. Fix elements positions
+                // 1. Fix elements values
                 elements.forEach((element, index) => {
-                    element[FIELDS.NAME] = getDisplayName(element, scene.page.counts);
+                    const type = element[FIELDS.TYPE];
+                    element[FIELDS.NAME] = getElementDisplayName(element, scene.page.counts[type]);
                     element[FIELDS.ORDER] = numElements + index;
-                    scene.page.counts[element[FIELDS.TYPE]] = (scene.page.counts[element[FIELDS.TYPE]] ?? 0) + 1;
+                    scene.page.counts[type] = (scene.page.counts[type] ?? 0) + 1;
                 });
                 // 2. Register element create in the history
                 scene.addHistory({
@@ -598,9 +597,10 @@ export const createScene = initialData => {
             }
             // 3. insert new elements
             newElements.forEach(element => {
-                element[FIELDS.NAME] = getDisplayName(element, scene.page.counts);
+                const type = element[FIELDS.TYPE];
+                element[FIELDS.NAME] = getElementDisplayName(element, scene.page.counts[type]);
                 scene.page.elements.push(element);
-                scene.page.counts[element[FIELDS.TYPE]] = (scene.page.counts[element[FIELDS.TYPE]] ?? 0) + 1;
+                scene.page.counts[type] = (scene.page.counts[type] ?? 0) + 1;
             });
             // 4.1 Register CREATE change
             changes.push({
