@@ -492,6 +492,7 @@ export const createElement = elementType => {
         [FIELDS.VERSION]: 0,
         [FIELDS.TYPE]: elementType,
         [FIELDS.ID]: generateElementId(),
+        [FIELDS.NAME]: "",
         [FIELDS.X_START]: 0,
         [FIELDS.Y_START]: 0,
         [FIELDS.X_END]: 0,
