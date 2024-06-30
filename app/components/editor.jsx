@@ -312,6 +312,7 @@ const EditorWithScene = props => {
             {editor.state.layersVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                     <LayersPanel
+                        key={scene.page.id}
                         onElementSelect={element => {
                             if (!editor.state.action || editor.state.action === ACTIONS.SELECT) {
                                 if (element?.group) {
