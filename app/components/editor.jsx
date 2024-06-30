@@ -331,6 +331,10 @@ const EditorWithScene = props => {
                             editor.dispatchChange();
                             editor.update();
                         }}
+                        onElementRename={() => {
+                            editor.dispatchChange();
+                            editor.update();
+                        }}
                     />
                 </div>
             )}
