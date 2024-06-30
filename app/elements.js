@@ -86,6 +86,7 @@ const checkStrokeStyleValue = initialValue => {
 
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
+        displayName: "Shape",
         getHandlers: element => getDefaultElementHandlers(element),
         initialize: values => {
             // Prevent drawing a shape with stroke and fill styles as none
@@ -134,6 +135,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.ARROW]: {
+        displayName: "Arrow",
         getHandlers: element => {
             const handlers = [
                 {
@@ -270,6 +272,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.TEXT]: {
+        displayName: "Text",
         getHandlers: element => getDefaultElementHandlers(element),
         getUpdatedFields: (element, snapshot) => {
             return ["textSize", "textWidth", "textHeight"];
@@ -362,6 +365,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.DRAW]: {
+        displayName: "Drawing",
         getHandlers: element => getDefaultElementHandlers(element),
         initialize: values => {
             return {
@@ -415,6 +419,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.IMAGE]: {
+        displayName: "Image",
         getHandlers: element => getDefaultElementHandlers(element),
         initialize: () => ({
             [FIELDS.ASSET_ID]: "",
@@ -422,6 +427,7 @@ export const elementsConfig = {
         }),
     },
     [ELEMENTS.NOTE]: {
+        displayName: "Note",
         getSnapEdges: () => [],
         initialize: values => ({
             [FIELDS.NOTE_COLOR]: values?.[FIELDS.NOTE_COLOR] ?? DEFAULTS.NOTE_COLOR,
@@ -439,6 +445,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.BOOKMARK]: {
+        displayName: "Bookmark",
         getSnapEdges: () => [],
         initialize: () => ({
             [FIELDS.ASSET_ID]: "",
@@ -452,6 +459,7 @@ export const elementsConfig = {
         },
     },
     [ELEMENTS.STICKER]: {
+        displayName: "Sticker",
         initialize: values => ({
             [FIELDS.STICKER]: values?.[FIELDS.STICKER] ?? DEFAULTS.STICKER,
             [FIELDS.OPACITY]: values?.[FIELDS.OPACITY] ?? DEFAULTS.OPACITY,
@@ -484,6 +492,7 @@ export const createElement = elementType => {
         [FIELDS.VERSION]: 0,
         [FIELDS.TYPE]: elementType,
         [FIELDS.ID]: generateElementId(),
+        [FIELDS.NAME]: "",
         [FIELDS.X_START]: 0,
         [FIELDS.Y_START]: 0,
         [FIELDS.X_END]: 0,
@@ -575,4 +584,9 @@ export const getElementSnappingPoints = (element, snapEdge) => {
     }
     // wat?
     return [];
+};
+
+// @public generate display name for the provided element
+export const getElementDisplayName = (element, index = 0) => {
+    return [getElementConfig(element).displayName, index + 1].join(" ");
 };

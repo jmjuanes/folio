@@ -23,6 +23,7 @@ import {
     getElementConfig,
     createElement,
     measureTextInElement,
+    getElementDisplayName,
 } from "./elements.js";
 import {
     parseZoomValue,
@@ -188,24 +189,45 @@ const fixPagesIndex = pages => {
         });
 };
 
+// @private fix elements names in provided page
+const fixElementsNamesInPage = page => {
+    // Check if we have to initialize page counts
+    if (page.elements.length > 0 && Object.keys(page.stats?.elementCounts || {}).length === 0) {
+        page.stats.elementCounts = {};
+        page.elements.forEach(element => {
+            const type = element[FIELDS.TYPE];
+            const index = page.stats.elementCounts[type] ?? 0;
+            element[FIELDS.NAME] = element[FIELDS.NAME] || getElementDisplayName(element, index);
+            page.stats.elementCounts[type] = index + 1;
+        });
+    }
+    return page;
+};
+
 // @private create a new page
-const createPage = (page, index = 0) => ({
-    id: page?.id || generateRandomId(),
-    title: page?.title || `Page ${index + 1}`,
-    elements: (page?.elements || []).map(element => ({
-        ...element,
-        [FIELDS.SELECTED]: false,
-        [FIELDS.EDITING]: false,
-        [FIELDS.CREATING]: false,
-        [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
-    })),
-    history: page?.history || [],
-    historyIndex: page?.historyIndex ?? 0,
-    translateX: page?.translateX ?? 0,
-    translateY: page?.translateY ?? 0,
-    zoom: page?.zoom ?? ZOOM_DEFAULT,
-    activeGroup: null,
-});
+const createPage = (page, index = 0) => {
+    return fixElementsNamesInPage({
+        id: page?.id || generateRandomId(),
+        title: page?.title || `Page ${index + 1}`,
+        elements: (page?.elements || []).map(element => ({
+            ...element,
+            [FIELDS.SELECTED]: false,
+            [FIELDS.EDITING]: false,
+            [FIELDS.CREATING]: false,
+            [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
+        })),
+        history: page?.history || [],
+        historyIndex: page?.historyIndex ?? 0,
+        translateX: page?.translateX ?? 0,
+        translateY: page?.translateY ?? 0,
+        zoom: page?.zoom ?? ZOOM_DEFAULT,
+        activeGroup: null,
+        stats: {
+            elementCounts: {},
+            ...(page?.stats || {}),
+        },
+    });
+};
 
 // Default values for new elements
 const defaults = {
@@ -231,8 +253,9 @@ const defaults = {
 export const getSceneStateFromInitialData = initialData => {
     // Parse pages list from initialData object
     // If no pages are available, a new empty page will be automatically created
-    const pages = parseInitialPages(initialData?.pages)
-        .map((page, index) => createPage(page, index));
+    const pages = parseInitialPages(initialData?.pages).map((page, index) => {
+        return createPage(page, index);
+    });
     return {
         id: initialData?.id || generateRandomId(),
         version: initialData?.version || VERSION,
@@ -272,6 +295,7 @@ export const createScene = initialData => {
                     id: page.id,
                     title: page.title,
                     elements: page.elements,
+                    stats: page?.stats || {},
                 })),
                 assets: scene.assets,
                 background: scene.background,
@@ -409,9 +433,13 @@ export const createScene = initialData => {
         addElements: elements => {
             if (elements && elements.length > 0) {
                 const numElements = scene.page.elements.length;
-                // 1. Fix elements positions
+                // 1. Fix elements values
                 elements.forEach((element, index) => {
+                    const type = element[FIELDS.TYPE];
+                    const count = scene.page.stats.elementCounts[type] ?? 0;
+                    element[FIELDS.NAME] = element[FIELDS.NAME] || getElementDisplayName(element, count);
                     element[FIELDS.ORDER] = numElements + index;
+                    scene.page.stats.elementCounts[type] = count + 1;
                 });
                 // 2. Register element create in the history
                 scene.addHistory({
@@ -561,6 +589,7 @@ export const createScene = initialData => {
                     selected: true,
                     [FIELDS.GROUP]: scene.page?.activeGroup || groups.get(element.group) || null,
                     [FIELDS.ORDER]: maxOrder + index + 1,
+                    [FIELDS.NAME]: "Copy of " + (element[FIELDS.NAME] || ""),
                 };
                 // 1.3 Check if this element has an onDuplicate listener defined
                 const elementConfig = getElementConfig(element);
@@ -578,7 +607,10 @@ export const createScene = initialData => {
                 }
             }
             // 3. insert new elements
-            newElements.forEach(element => scene.page.elements.push(element));
+            newElements.forEach(element => {
+                scene.page.elements.push(element);
+                scene.page.stats.elementCounts[element.type] = (scene.page.stats.elementCounts[element.type] ?? 0) + 1;
+            });
             // 4.1 Register CREATE change
             changes.push({
                 type: CHANGES.CREATE,
