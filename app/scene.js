@@ -492,8 +492,9 @@ export const createScene = initialData => {
         // @description remove provided elements from scene
         removeElements: elements => {
             if (elements && elements.length > 0) {
+                const changes = [];
                 // 1. Register element remove in the history
-                scene.addHistory({
+                changes.push({
                     type: CHANGES.REMOVE,
                     elements: elements.map(element => ({
                         id: element.id,
@@ -510,10 +511,41 @@ export const createScene = initialData => {
                 scene.page.elements = scene.page.elements.filter(element => {
                     return !elementsToRemove.has(element.id);
                 });
-                // 3. Reset elements order
+                // 3. Check if we have removed elements from any group and we have groups with only one element
+                const removedGroups = new Set(elements.filter(el => !!el.group).map(el => el.group));
+                if (removedGroups.size > 0) {
+                    Array.from(removedGroups).forEach(group => {
+                        // 3.1. Get the elements that are still on this group
+                        const elementsInGroup = scene.page.elements.filter(el => el.group === group);
+                        if (elementsInGroup.length === 1) {
+                            // 3.2.1. Register an update change
+                            changes.push({
+                                type: CHANGES.UPDATE,
+                                elements: elementsInGroup.map(element => ({
+                                    id: element.id,
+                                    prevValues: {
+                                        [FIELDS.GROUP]: group,
+                                    },
+                                    newValues: {
+                                        [FIELDS.GROUP]: null,
+                                    },
+                                })),
+                            });
+                            // 3.2.2. Remove group attribute
+                            elementsInGroup[0][FIELDS.GROUP] = null;
+                            // 3.2.3. Reset active group
+                            if (scene.page.activeGroup === group) {
+                                scene.page.activeGroup = null;
+                            }
+                        }
+                    });
+                }
+                // 4. Reset elements order
                 scene.page.elements.forEach((element, index) => {
                     element[FIELDS.ORDER] = index;
                 });
+                // 5. Register history changes
+                scene.addHistory(changes);
             }
         },
 
