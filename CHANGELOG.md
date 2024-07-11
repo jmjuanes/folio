@@ -1,3 +1,26 @@
+# v0.20.0 (July 11, 2024) New Layers Panel and Object Dimensions
+
+> The latest update to Folio introduces a new Layers Panel, allowing users to manage elements with ease. Additionally, users can enable displaying dimensions for shapes, text, and selections for precise designs. 
+
+## New Layers Panel
+
+Introducing the Layers Panel, a powerful new feature that enhances your workflow by displaying all elements added to the board. This panel allows you to easily manage your elements, including changing the name, duplicating an element, or removing an element.
+
+## Displaying Object Dimensions
+
+We have added the ability to view object dimensions for shapes, text, and for a selection. This new feature helps you achieve precise designs by displaying the width and height of selected objects directly on the board.
+
+Displaying dimensions can be enabled from *Menu* -> *Object dimensions*.
+
+## Full changelog
+
+- We have added a new layers panel, allowing users to see all the elements added to the board. [#87](https://github.com/jmjuanes/folio/pull/87).
+- Now users can display the dimensions of shapes, text, and selections. [#88](https://github.com/jmjuanes/folio/pull/88).
+- We allow to set and change the name of elements from the new layers panel. [#89](https://github.com/jmjuanes/folio/pull/89).
+- We have fixed a bug that crashes Folio when the user clears the board with some elements selected. [#90](https://github.com/jmjuanes/folio/pull/90).
+- Now when you keep a single element inside a group (for example when you remove the other elements), we remove also the group. [#91](https://github.com/jmjuanes/folio/pull/91).
+
+
 # v0.19.0 (Jun 17, 2024) New URL and Stickers tool
 
 > Folio has a new home at folio.josemi.xyz! In this update, we have introduced a new Stickers tool, and restored the board title in the header for improved project management.
