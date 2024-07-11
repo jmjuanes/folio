@@ -33,15 +33,15 @@ const buildChangelogData = () => {
             else if (line.startsWith("> ") && lastItem.content.length === 0) {
                 lastItem.description = line.slice(1).trim();
             }
-            // // Check for heading
-            // else if (line.startsWith("### ") || line.startsWith("#### ")) {
-            //     lastItem.content.push(marked.parse(line.replace("### ", "## ").trim()));
-            // }
             // Other case
             else {
-                lastItem.content.push(marked.parse(line.trim()));
+                lastItem.content.push(line.trim());
             }
         });
+    // Fix the content field of all items
+    items.forEach(item => {
+        item.content = marked.parse(item.content.join("\n"));
+    });
     return items;
 };
 
