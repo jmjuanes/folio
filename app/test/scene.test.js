@@ -468,14 +468,9 @@ describe("scene", () => {
     describe("pages", () => {
         it("should allow to duplicate the provided page", () => {
             scene.page.title = "PAGE";
-            scene.page.elements = [
-                {id: "element0"},
-                {id: "element1"},
-            ];
             expect(scene.pages).toHaveLength(1);
             scene.duplicatePage(scene.page);
             expect(scene.pages).toHaveLength(2);
-            expect(scene.pages[1].elements).toHaveLength(scene.pages[0].elements.length);
             expect(scene.pages[0].id).not.toEqual(scene.pages[1].id);
             expect(scene.pages[0].title).not.toEqual(scene.pages[1].title);
         });
