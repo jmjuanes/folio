@@ -1,6 +1,14 @@
 import React from "react";
 import classNames from "classnames";
-import {renderIcon, TrashIcon, CheckIcon, PencilIcon, CloseIcon, BarsIcon} from "@josemi-icons/react";
+import {
+    renderIcon,
+    TrashIcon,
+    CheckIcon,
+    PencilIcon,
+    CloseIcon,
+    CopyIcon,
+    BarsIcon,
+} from "@josemi-icons/react";
 import {useScene} from "../../contexts/scene.jsx";
 
 const PAGES_ITEM_HEIGHT = 37;
@@ -56,6 +64,11 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
                     {editable && (
                         <PageActionButton className="hidden group-hover:flex" onClick={props.onEdit}>
                             <PencilIcon />
+                        </PageActionButton>
+                    )}
+                    {editable && (
+                        <PageActionButton className="hidden group-hover:flex" onClick={props.onDuplicate}>
+                            <CopyIcon />
                         </PageActionButton>
                     )}
                     {editable && !active  && (
@@ -173,7 +186,7 @@ export const PagesPanel = props => {
     }, [props.onPagesUpdate, editingPage]);
 
     return (
-        <div className="w-64 border border-neutral-200 rounded-lg shadow-md bg-white p-0 relative">
+        <div className="w-72 border border-neutral-200 rounded-lg shadow-md bg-white p-0 relative">
             <div className="flex items-center justify-between sticky top-0 p-2 border-b border-neutral-200 h-12">
                 <div className="font-medium text-sm">Pages</div>
                 {props.editable && (
@@ -204,6 +217,10 @@ export const PagesPanel = props => {
                             onDelete={() => {
                                 setEditingPage("");
                                 props.onPageDelete(page);
+                            }}
+                            onDuplicate={() => {
+                                setEditingPage("");
+                                props?.onPageDuplicate?.(page);
                             }}
                             onEdit={() => setEditingPage(page.id)}
                             onEditSubmit={title => {
