@@ -318,12 +318,12 @@ export const createScene = initialData => {
 
         // @description Get a page by id
         getPage: id => {
-            return scene.pages.find(page => page.id === id);
+            return scene.pages.find(page => page.id === id || page === id);
         },
 
         // @description add a new page
-        addPage: (setNewPageAsActive = true) => {
-            scene.pages.push(createPage({}, scene.pages.length));
+        addPage: (newPage = {}, setNewPageAsActive = true) => {
+            scene.pages.push(createPage(newPage, scene.pages.length));
             if (setNewPageAsActive) {
                 scene.setActivePage(scene.pages[scene.pages.length - 1].id);
             }
@@ -351,6 +351,16 @@ export const createScene = initialData => {
                 scene.pages.splice(prevIndex, 1);
                 scene.pages.splice(nextIndex, 0, page);
             }
+        },
+
+        // @description duplicate the provided page
+        duplicatePage: (id, setAsActive = true) => {
+            const page = scene.getPage(id);
+            scene.addPage({
+                title:"Copy of " + (page?.title || "-"),
+                elements: page?.elements || [],
+                stats: page?.stats || {},
+            }, setAsActive);
         },
 
         // @description get active page

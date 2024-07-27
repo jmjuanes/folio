@@ -349,12 +349,17 @@ const EditorWithScene = props => {
                             editor.update();
                         }}
                         onPageCreate={() => {
-                            scene.addPage();
+                            scene.addPage({});
                             editor.dispatchChange();
                             editor.update();
                         }}
                         onPageEdit={() => {
                             editor.dispatchChange();
+                        }}
+                        onPageDuplicate={page => {
+                            scene.duplicatePage(page);
+                            editor.dispatchChange();
+                            editor.update();
                         }}
                         onPageDelete={page => {
                             return showConfirm({

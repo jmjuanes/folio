@@ -464,4 +464,23 @@ describe("scene", () => {
             expect(scene.page.elements[3].group).toEqual(scene.page.elements[1].group);
         });
     });
+
+    describe("pages", () => {
+        it("should allow to duplicate the provided page", () => {
+            scene.page.title = "PAGE";
+            expect(scene.pages).toHaveLength(1);
+            scene.duplicatePage(scene.page);
+            expect(scene.pages).toHaveLength(2);
+            expect(scene.pages[0].id).not.toEqual(scene.pages[1].id);
+            expect(scene.pages[0].title).not.toEqual(scene.pages[1].title);
+        });
+
+        it("should change active page when duplicating", () => {
+            scene.page.title = "PAGE";
+            expect(scene.page.title).toEqual(scene.pages[0].title);
+            scene.duplicatePage(scene.page);
+            expect(scene.pages).toHaveLength(2);
+            expect(scene.page.title).not.toEqual(scene.pages[0].title);
+        });
+    });
 });
