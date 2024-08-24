@@ -5,7 +5,7 @@ import {
     FIELDS,
     ELEMENTS,
 } from "../constants.js";
-import {getRectangleBounds, getPointInQuadraticCurve} from "../utils/math.js";
+import {getRectangleBounds, getPointInQuadraticCurve, getPointsBounds} from "../utils/math.js";
 import {getRectanglePath} from "../utils/paths.js";
 import {getElementConfig} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
@@ -16,12 +16,7 @@ const getSelectionBounds = elements => {
             const points = [0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 0.9].map(t => {
                 return getPointInQuadraticCurve([el.x1, el.y1], [el.xCenter, el.yCenter], [el.x2, el.y2], t);
             });
-            return {
-                x1: Math.min(el.x1, el.x2, ...points.map(point => point[0])),
-                x2: Math.max(el.x1, el.x2, ...points.map(point => point[0])),
-                y1: Math.min(el.y1, el.y2, ...points.map(point => point[1])),
-                y2: Math.max(el.y1, el.y2, ...points.map(point => point[1])),
-            };
+            return getPointsBounds([[el.x1, el.y1], [el.x2, el.y2], ...points]);
         }
         return el;
     }));
