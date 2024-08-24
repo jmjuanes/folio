@@ -67,6 +67,14 @@ export const getRectangleBounds = bounds => ({
     y2: Math.max.apply(null, bounds.map(b => Math.max(b.y1, b.y2))),
 });
 
+// add method to get a point in a quadratig curve
+export const getPointInQuadraticCurve = (p1, p2, p3, t = 0.5) => {
+    // const t = 0.5; // (p1[0] - p2[0]) / (p1[0] + p3[0] - 2 * p2[0]);
+    const x = (p1[0] * (1 - t) * (1 - t)) + (p2[0] * 2 * t * (1 - t)) + (p3[0] * t * t);
+    const y = (p1[1] * (1 - t) * (1 - t)) + (p2[1] * 2 * t * (1 - t)) + (p3[1] * t * t);
+    return [x, y];
+};
+
 // Normalize bounds
 // @param bounds: a bounds object containing the coordinates x1,y1 and x2,y2
 export const normalizeBounds = bounds => ({
