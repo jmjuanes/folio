@@ -43,7 +43,9 @@ export const useBounds = ({action, tool}) => {
         if (selectedElements.length === 1) {
             const elementConfig = getElementConfig(selectedElements[0]);
             if (typeof elementConfig.getBounds === "function") {
-                return elementConfig.getBounds(selectedElements[0]);
+                (elementConfig.getBounds(selectedElements[0]) || []).map(b => {
+                    return bounds.push(b);
+                });
             }
         }
         // 3. Generate default bounds for selected elements
