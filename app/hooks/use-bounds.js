@@ -2,21 +2,17 @@ import {
     ACTIONS,
     GROUP_BOUNDS_COLOR,
     GROUP_ACTIVE_BOUNDS_COLOR,
-    FIELDS,
-    ELEMENTS,
 } from "../constants.js";
-import {getRectangleBounds, getPointInQuadraticCurve, getPointsBounds} from "../utils/math.js";
+import {getRectangleBounds} from "../utils/math.js";
 import {getRectanglePath} from "../utils/paths.js";
 import {getElementConfig} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
 
 const getSelectionBounds = elements => {
     return getRectangleBounds(elements.map(el => {
-        if (el[FIELDS.TYPE] === ELEMENTS.ARROW && typeof el.xCenter === "number") {
-            const points = [0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 0.9].map(t => {
-                return getPointInQuadraticCurve([el.x1, el.y1], [el.xCenter, el.yCenter], [el.x2, el.y2], t);
-            });
-            return getPointsBounds([[el.x1, el.y1], [el.x2, el.y2], ...points]);
+        const elementConfig = getElementConfig(el);
+        if (typeof elementConfig.getBoundingRectangle === "function") {
+            return elementConfig.getBoundingRectangle(el);
         }
         return el;
     }));
