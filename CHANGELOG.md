@@ -1,3 +1,20 @@
+# v0.21.0 (August 25, 2024) Duplicate Pages and some Bug Fixes
+
+> We have introduced the ability to duplicate entire pages, making it easier to create variations of your work. We have also fixed bugs related to curved arrows, ensuring accurate selection area calculations and preventing cropping when exporting to images.
+
+## Duplicating Pages
+
+We have added a highly requested feature: you can now duplicate entire pages within your whiteboard. This makes it easier than ever to create variations of your designs or work on multiple versions of your ideas without starting from scratch.
+
+## Fixed Selection Area Calculation for Curved Arrows
+
+We have resolved an issue where the total selection area was incorrectly calculated when it included a curved arrow. Now, the selection area will be accurately reflected for all elements.
+
+## Fixed Image Export for Curved Arrows
+
+We have also fixed a bug that caused curved arrows to be cropped when exporting the whiteboard to an image. Your exported images will now correctly include the full shape of curved arrows.
+
+
 # v0.20.0 (July 11, 2024) New Layers Panel and Object Dimensions
 
 > The latest update to Folio introduces a new Layers Panel, allowing users to manage elements with ease. Additionally, users can enable displaying dimensions for shapes, text, and selections for precise designs. 
