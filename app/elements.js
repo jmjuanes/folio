@@ -31,6 +31,8 @@ import {
     measureText,
     getPointDistanceToLine,
     getPointProjectionToLine,
+    getPointInQuadraticCurve,
+    getPointsBounds,
 } from "./utils/math.js";
 import {getCurvePath, getConnectorPath} from "./utils/paths.js";
 import {isCornerHandler} from "./handlers.js";
@@ -189,6 +191,15 @@ export const elementsConfig = {
             }
             // 3. Return bounds
             return bounds;
+        },
+        getBoundingRectangle: el => {
+            if (typeof el.xCenter === "number") {
+                const points = [0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 0.9].map(t => {
+                    return getPointInQuadraticCurve([el.x1, el.y1], [el.xCenter, el.yCenter], [el.x2, el.y2], t);
+                });
+                return getPointsBounds([[el.x1, el.y1], [el.x2, el.y2], ...points]);
+            }
+            return el;
         },
         getUpdatedFields: (element, snapshot) => {
             return ["xCenter", "yCenter"];
