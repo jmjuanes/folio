@@ -8,7 +8,7 @@ import {
     FONT_SOURCES,
 } from "./constants.js";
 import {getRectangleBounds} from "./utils/math.js";
-import {exportElementSvg} from "./elements.js";
+import {exportElementSvg, getElementConfig} from "./elements.js";
 
 // Append a new DOM node element
 const appendChildNode = (parent, newNode) => {
@@ -84,7 +84,13 @@ const getSvgImage = options => {
     const padding = options?.padding ?? EXPORT_PADDING;
     const fonts = options?.fonts || Object.values(FONT_SOURCES);
     return getFonts(fonts, !!options.embedFonts).then(fontsCss => {
-        const bounds = getRectangleBounds(elements);
+        const bounds = getRectangleBounds(elements.map(el => {
+            const elementConfig = getElementConfig(el);
+            if (typeof elementConfig.getBoundingRectangle === "function") {
+                return elementConfig.getBoundingRectangle(el);
+            }
+            return el;
+        }));
         // 1. Create a new SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
