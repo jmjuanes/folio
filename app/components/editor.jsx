@@ -36,6 +36,7 @@ import {PagesPanel} from "./panels/pages.jsx";
 import {LayersPanel} from "./panels/layers.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
+import {ThemeProvider, themed} from "../contexts/theme.jsx";
 
 // @private
 const EditorWithScene = props => {
@@ -146,7 +147,7 @@ const EditorWithScene = props => {
     }, [scene?.page?.elements?.length]);
 
     return (
-        <div className="relative overflow-hidden h-full w-full select-none">
+        <div className={themed("relative overflow-hidden h-full w-full select-none", "editor")}>
             <Canvas
                 id={scene.id}
                 elements={scene.page.elements}
@@ -577,9 +578,11 @@ const EditorWithScene = props => {
 // @description Public editor
 export const Editor = ({initialData, ...props}) => {
     return (
-        <SceneProvider initialData={initialData}>
-            <EditorWithScene {...props} />
-        </SceneProvider>
+        <ThemeProvider theme="default">
+            <SceneProvider initialData={initialData}>
+                <EditorWithScene {...props} />
+            </SceneProvider>
+        </ThemeProvider>
     );
 };
 

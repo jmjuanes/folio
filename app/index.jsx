@@ -19,7 +19,7 @@ const App = () => {
     }, 250, [state?.updatedAt]);
 
     return (
-        <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-neutral-800 flex">
+        <div className="fixed top-0 left-0 h-full w-full bg-white text-base flex">
             <Editor
                 initialData={() => client.data.get()}
                 links={[
