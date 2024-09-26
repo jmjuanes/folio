@@ -21,6 +21,11 @@ export const PRIMARY = "#0d6efd";
 export const SECONDARY = "#20c997";
 export const ACCENT = "#5e5c6c";
 
+// available themes for folio
+export const THEMES = {
+    DEFAULT: "default",
+};
+
 export const STICKERS = {
     // SMILING_FACE: "smiling-face",
     SMILING_FACE_WITH_HEART_EYES: "smiling-face-with-heart-eyes",
@@ -328,11 +333,6 @@ export const KEYS = {
     X: "x",
     Z: "z",
     Y: "y",
-};
-
-export const THEMES = {
-    LIGHT: "light",
-    DARK: "dark",
 };
 
 export const ACTIONS = {
