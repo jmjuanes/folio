@@ -12,12 +12,12 @@ export const ContextMenu = ({className, ...props}) => (
 ContextMenu.Item = ({className, disabled = false, ...props}) => (
     <div
         data-testid="contextmenu-item"
-        className={themed(className, {
+        className={themed({
             "relative flex items-center gap-2 select-none rounded-lg text-sm px-2 py-1": true,
             "pointer-events-none opacity-60 cursor-disabled": disabled,
             "cursor-pointer": !disabled,
             "context-menu.item": !disabled,
-        })}
+        }, className)}
         {...props}
     />
 );

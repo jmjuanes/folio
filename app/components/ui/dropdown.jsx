@@ -1,14 +1,12 @@
 import React from "react";
 import classNames from "classnames";
 import {CheckIcon} from "@josemi-icons/react";
+import {themed} from "../../contexts/theme.jsx";
 
 export const Dropdown = ({className, ...props}) => (
     <div
         data-testid="dropdown"
-        className={classNames(
-            "absolute bg-white border border-neutral-200 shadow-sm p-1 rounded-lg",
-            className,
-        )}
+        className={themed("absolute p-1 rounded-xl", "dropdown", className)}
         {...props}
     />
 );
@@ -16,7 +14,7 @@ export const Dropdown = ({className, ...props}) => (
 Dropdown.Separator = ({className, ...props}) => (
     <div
         data-testid="dropdown-separator"
-        className={classNames("w-full bg-neutral-100 h-px my-1", className)}
+        className={themed("w-full h-px my-1", "dropdown.separator", className)}
         {...props}
     />
 );
@@ -24,22 +22,22 @@ Dropdown.Separator = ({className, ...props}) => (
 Dropdown.Label = ({className, ...props}) => (
     <div
         data-testid="dropdown-label"
-        className={classNames("select-none text-xs mb-1 text-neutral-600", className)}
+        className={themed("select-none text-xs mb-1", "dropdown.label", className)}
         {...props}
     />
 );
 
-Dropdown.Item = ({as, className, disabled = false, inset = false, ...props}) => {
+Dropdown.Item = ({as, className, disabled = false, ...props}) => {
     const Component = as || "div";
     return (
         <Component
             data-testid="dropdown-item"
-            className={classNames({
+            className={themed({
                 "relative flex items-center gap-2 select-none": true,
-                "rounded-md text-sm no-underline pl-2 pr-2 py-1": true,
-                "pl-8": inset,
-                "cursor-pointer hover:bg-neutral-100": !disabled,
+                "rounded-lg text-sm no-underline px-2 py-1": true,
                 "pointer-events-none opacity-60 cursor-not-allowed": disabled,
+                "cursor-pointer": !disabled,
+                "dropdown.item": !disabled,
             }, className)}
             tabIndex="0"
             {...props}

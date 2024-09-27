@@ -1,14 +1,11 @@
 import React from "react";
-import classNames from "classnames";
 import {CloseIcon} from "@josemi-icons/react";
+import {themed} from "../../contexts/theme.jsx";
 
 export const Dialog = ({className, ...props}) => (
     <div
         data-testid="dialog"
-        className={classNames(
-            "w-full rounded-xl bg-white p-6 border border-neutral-200 shadow-sm",
-            className,
-        )}
+        className={themed("w-full rounded-xl p-6", "dialog", className)}
         {...props}
     />
 );
@@ -16,7 +13,7 @@ export const Dialog = ({className, ...props}) => (
 Dialog.Title = ({className, ...props}) => (
     <div
         data-testid="dialog-title"
-        className={classNames("font-bold text-lg text-neutral-950", className)}
+        className={themed("dialog.title", className)}
         {...props}
     />
 );
@@ -24,7 +21,7 @@ Dialog.Title = ({className, ...props}) => (
 Dialog.Description = ({className, ...props}) => (
     <div
         data-testid="dialog-description"
-        className={classNames("text-sm text-neutral-700", className)}
+        className={themed("dialog.description", className)}
         {...props}
     />
 );
@@ -32,11 +29,7 @@ Dialog.Description = ({className, ...props}) => (
 Dialog.Close = ({className, ...props}) => (
     <div
         data-testid="dialog-close"
-        className={classNames(
-            "flex cursor-pointer text-2xl text-neutral-500 hover:text-neutral-900",
-            "absolute top-0 right-0 mt-3 mr-3",
-            className,
-        )}
+        className={themed("flex cursor-pointer text-2xl absolute top-0 right-0 mt-3 mr-3", "dialog.close", className)}
         {...props}
     >
         <CloseIcon />
@@ -46,22 +39,23 @@ Dialog.Close = ({className, ...props}) => (
 Dialog.Header = ({className, ...props}) => (
     <div
         data-testid="dialog-header"
-        className={classNames("flex flex-col select-none mb-2", className)}
+        className={themed("flex flex-col select-none mb-2", "dialog.header", className)}
         {...props}
     />
 );
 
-Dialog.Body = props => (
-    <div data-testid="dialog-body" {...props} />
+Dialog.Body = ({className, ...props}) => (
+    <div
+        data-testid="dialog-body"
+        className={themed("dialog.body", className)}
+        {...props}
+    />
 );
 
 Dialog.Footer = ({className, ...props}) => (
     <div
         data-testid="dialog-footer"
-        className={classNames(
-            "flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4",
-            className,
-        )}
+        className={themed("flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4", "dialog.footer", className)}
         {...props}
     />
 );

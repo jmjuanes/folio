@@ -3,7 +3,7 @@ import {renderIcon, ChevronDownIcon} from "@josemi-icons/react";
 import {themed} from "../contexts/theme.jsx";
 
 export const Island = props => (
-    <div className={themed("flex gap-1 p-1 rounded-xl", "island")}>
+    <div className={themed("flex gap-1 p-1 rounded-xl", "island", props.className)}>
         {props.children}
     </div>
 );
@@ -13,13 +13,13 @@ Island.Separator = () => (
 );
 
 Island.Button = props => {
-    const classList = themed(props.className || "", {
+    const classList = themed({
         "flex justify-between items-center gap-1 p-2 rounded-lg": true,
         "cursor-pointer": !props.disabled && !props.active,
         "cursor-not-allowed opacity-40 pointer-events-none": props.disabled,
         "island.item": !props.active,
         "island.item.active": !props.disabled && props.active,
-    });
+    }, props.className);
     const handleClick = () => {
         return !props.disabled && props?.onClick?.();
     };
