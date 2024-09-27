@@ -26,4 +26,10 @@ export default {
     "dialog.body": "",
     "dialog.footer": "",
 
+    "panel.edition": "border border-neutral-200 shadow-sm bg-white",
+    "panel.edition.tabs": "bg-neutral-100",
+    "panel.edition.tabs.item.inactive": "text-neutral-900 hover:bg-neutral-200",
+    "panel.edition.tabs.item.active": "text-white bg-neutral-900",
+    "panel.edition.separator": "bg-neutral-200",
+
 };

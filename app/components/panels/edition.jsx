@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import {
     BanIcon,
     BringForwardIcon,
@@ -63,6 +62,7 @@ import {
 } from "../icons.jsx";
 import {Form} from "../form/index.jsx";
 import {useScene} from "../../contexts/scene.jsx";
+import {themed} from "../../contexts/theme.jsx";
 
 // Available sections
 const SECTIONS = {
@@ -314,19 +314,17 @@ const useValues = selection => {
 };
 
 const TabsWrapper = props => (
-    <div className="flex gap-1 items-center flex-nowrap rounded-lg bg-neutral-100 p-1">
+    <div className={themed("flex gap-1 items-center flex-nowrap rounded-lg p-1", "panel.edition.tabs")}>
         {props.children}
     </div>
 );
 
 const TabButton = props => {
-    const classList = classNames(props.className, {
+    const classList = themed({
         "rounded-md flex justify-center items-center flex gap-0 p-2 cursor-pointer w-full": true,
-        // "text-white hover:bg-gray-800": props.theme === THEMES.DARK && !props.active,
-        // "text-white bg-gray-800": props.theme === THEMES.DARK && props.active,
-        "text-neutral-800 hover:bg-neutral-200": props.theme === THEMES.LIGHT && !props.active,
-        "text-white bg-neutral-900": props.theme === THEMES.LIGHT && props.active,
-    });
+        "panel.edition.tabs.item.inactive": !props.active,
+        "panel.edition.tabs.item.active": props.active,
+    }, props.className);
     return (
         <div className={classList} style={props.style} onClick={props.onClick}>
             <div className="flex items-center">
@@ -357,19 +355,12 @@ const ActiveSectionWrapper = props => (
 );
 
 // Separator for buttons
-const Separator = props => {
-    const classList = classNames({
-        "w-full h-px": true,
-        "bg-neutral-200": props.theme === THEMES.LIGHT,
-        "bg-white opacity-20": props.theme === THEMES.DARK,
-    });
-    return (
-        <div className={classList} />
-    );
-};
+const Separator = () => (
+    <div className={themed("w-full h-px", "panel.edition.separator")} />
+);
 
 const EditionWrapper = props => (
-    <div className="w-56 border border-neutral-200 rounded-xl shadow-md bg-white p-2">
+    <div className={themed("w-56 rounded-xl p-2", "panel.edition", props.className)}>
         <div className="flex flex-col gap-2">
             {props.children}
         </div>
