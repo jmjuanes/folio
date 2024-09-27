@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import {themed} from "../../contexts/theme.jsx";
 
 export const Button = ({className, disabled, variant = "primary", ...props}) => (
