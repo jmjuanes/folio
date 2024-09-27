@@ -1,5 +1,9 @@
 export default {
     "editor": "text-neutral-900",
+
+    "button.primary": "bg-neutral-950 hover:bg-neutral-900 text-white text-sm",
+    "button.secondary": "bg-white text-neutral-900 hover:bg-neutral-200 border border-neutral-200 text-sm",
+
     "island": "shadow-sm bg-white border border-neutral-200",
     "island.separator": "bg-neutral-200",
     "island.item": "hover:bg-neutral-100 text-neutral-800",
