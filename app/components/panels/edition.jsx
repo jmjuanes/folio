@@ -23,7 +23,6 @@ import {
 } from "@josemi-icons/react";
 import {
     FIELDS,
-    THEMES,
     TEXT_SIZES,
     FONT_FACES,
     TEXT_ALIGNS,
@@ -60,9 +59,9 @@ import {
     ArrowheadSquareIcon,
     ArrowheadCircleIcon,
 } from "../icons.jsx";
+import {Panel} from "../ui/panel.jsx";
 import {Form} from "../form/index.jsx";
 import {useScene} from "../../contexts/scene.jsx";
-import {themed} from "../../contexts/theme.jsx";
 
 // Available sections
 const SECTIONS = {
@@ -313,58 +312,14 @@ const useValues = selection => {
     return selection.reduce((prev, item) => ({...prev, ...item}), {});
 };
 
-const TabsWrapper = props => (
-    <div className={themed("flex gap-1 items-center flex-nowrap rounded-lg p-1", "panel.edition.tabs")}>
-        {props.children}
-    </div>
-);
-
-const TabButton = props => {
-    const classList = themed({
-        "rounded-md flex justify-center items-center flex gap-0 p-2 cursor-pointer w-full": true,
-        "panel.edition.tabs.item.inactive": !props.active,
-        "panel.edition.tabs.item.active": props.active,
-    }, props.className);
-    return (
-        <div className={classList} style={props.style} onClick={props.onClick}>
-            <div className="flex items-center">
-                {props.icon}
-            </div>
-        </div>
-    );
-};
-
-TabButton.defaultProps = {
-    className: "",
-    style: null,
-    icon: null,
-    active: false,
-    theme: THEMES.LIGHT,
-    onClick: null,
-};
-
 // Active section wrapper
 const ActiveSectionWrapper = props => (
     <Form
         className="flex flex-col gap-2"
-        theme={props.theme}
         data={props.values}
         items={props.items}
         onChange={props.onChange}
     />
-);
-
-// Separator for buttons
-const Separator = () => (
-    <div className={themed("w-full h-px", "panel.edition.separator")} />
-);
-
-const EditionWrapper = props => (
-    <div className={themed("w-56 rounded-xl p-2", "panel.edition", props.className)}>
-        <div className="flex flex-col gap-2">
-            {props.children}
-        </div>
-    </div>
 );
 
 const getVisibleSections = (sections, values) => {
@@ -433,51 +388,44 @@ export const EditionPanel = props => {
     // Fix value of active section
     const currentSection = activeSection || visibleSections.style[0];
     return (
-        <EditionWrapper>
-            {visibleSections.style.length > 0 && (
-                <React.Fragment>
-                    {visibleSections.style.length > 1 && (
-                        <TabsWrapper>
-                            {visibleSections.style.map(key => (
-                                <TabButton
-                                    key={key}
-                                    theme={props.theme}
-                                    active={currentSection === key}
-                                    icon={styleSections[key].icon}
-                                    onClick={() => handleSectionChange(key)}
-                                />
-                            ))}
-                        </TabsWrapper>
-                    )}
-                    <ActiveSectionWrapper
-                        key={currentSection}
-                        theme={props.theme}
-                        values={values || {}}
-                        items={styleSections[currentSection].items}
-                        onChange={handleChange}
-                    />
-                </React.Fragment>
-            )}
-            {visibleSections.display.map((key, index) => (
-                <React.Fragment key={key}>
-                    {(index > 0 || visibleSections.style.length > 0) && (
-                        <Separator theme={props.theme} />
-                    )}
-                    <ActiveSectionWrapper
-                        key={key}
-                        theme={props.theme}
-                        values={values || {}}
-                        items={displaySections[key].items}
-                        onChange={handleChange}
-                    />
-                </React.Fragment>
-            ))}
-        </EditionWrapper>
+        <Panel className="w-56">
+            <div className="flex flex-col gap-2">
+                {visibleSections.style.length > 0 && (
+                    <React.Fragment>
+                        {visibleSections.style.length > 1 && (
+                            <Panel.Tabs>
+                                {visibleSections.style.map(key => (
+                                    <Panel.TabItem
+                                        key={key}
+                                        active={currentSection === key}
+                                        onClick={() => handleSectionChange(key)}>
+                                        {styleSections[key].icon}
+                                    </Panel.TabItem>
+                                ))}
+                            </Panel.Tabs>
+                        )}
+                        <ActiveSectionWrapper
+                            key={currentSection}
+                            values={values || {}}
+                            items={styleSections[currentSection].items}
+                            onChange={handleChange}
+                        />
+                    </React.Fragment>
+                )}
+                {visibleSections.display.map((key, index) => (
+                    <React.Fragment key={key}>
+                        {(index > 0 || visibleSections.style.length > 0) && (
+                            <Panel.Separator />
+                        )}
+                        <ActiveSectionWrapper
+                            key={key}
+                            values={values || {}}
+                            items={displaySections[key].items}
+                            onChange={handleChange}
+                        />
+                    </React.Fragment>
+                ))}
+            </div>
+        </Panel>
     );
-};
-
-EditionPanel.defaultProps = {
-    theme: THEMES.LIGHT,
-    offset: 24,
-    onChange: null,
 };
