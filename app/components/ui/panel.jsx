@@ -1,5 +1,4 @@
 import React from "react";
-import {renderIcon} from "@josemi-icons/react";
 import {themed} from "../../contexts/theme.jsx";
 
 // panel component
@@ -45,19 +44,25 @@ Panel.Header = props => (
 
 // panel header title
 Panel.HeaderTitle = props => (
-    <div className={themed("text-sm", "panel.header.title", props.className)}>
+    <div className={themed("text-sm select-none", "panel.header.title", props.className)}>
         {props.children}
     </div>
 );
 
 // panel header button
-Panel.HeaderButton = ({className, icon, onClick}) => (
-    <div className={themed("flex items-center rounded-md cursor-pointer", "panel.header.button", className)} onClick={onClick}>
-        <div className="flex p-2 text-base">
-            {renderIcon(icon)}
+Panel.HeaderButton = ({active, className, children, onClick}) => {
+    const classList = themed({
+        "flex items-center rounded-md cursor-pointer p-2": true,
+        "panel.header.button": true,
+        "panel.header.button.active": active,
+        "panel.header.button.inactive": !active,
+    }, className);
+    return (
+        <div className={classList} onClick={onClick}>
+            {children}
         </div>
-    </div>
-);
+    );
+};
 
 // panel body content
 Panel.Body = props => (

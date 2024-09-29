@@ -34,9 +34,29 @@ export default {
     "panel.body": "",
     "panel.header": "border-b border-neutral-200",
     "panel.header.title": "font-medium",
-    "panel.header.button": "hover:bg-neutral-100 ",
+    "panel.header.button": "",
+    "panel.header.button.active": "bg-neutral-900 text-white",
+    "panel.header.button.inactive": "hover:bg-neutral-200 ",
 
-    "panels.layers": "",
-    "panels.layers.empty": "border border-dashed border-neutral-300 text-neutral-600",
+    "layers": "",
+    "layers.empty": "border border-dashed border-neutral-300 text-neutral-600",
+    "layers.item": "hover:bg-neutral-200",
+    "layers.item.preview": "border border-neutral-300 bg-white",
+    "layers.item.name": "text-neutral-900",
+    "layers.item.action": "text-neutral-500 hover:text-neutral-900",
+
+    "pages.item": "hover:bg-neutral-200",
+    "pages.item.action": "text-neutral-500 hover:text-neutral-900",
+
+    "toolbar": "border border-neutral-200 bg-white shadow-sm text-neutral-900",
+    "toolbar.separator": "bg-neutral-200",
+    "toolbar.button": "",
+    "toolbar.button.inactive": "hover:bg-neutral-200",
+    "toolbar.button.active": "bg-neutral-950 text-white",
+    "toolbar.pick": "bg-white border border-neutral-200 shadow-sm",
+    "toolbar.pick.separator": "bg-neutral-200",
+    "toolbar.dots": "hover:bg-neutral-200 group-focus-within:bg-neutral-200",
+    "toolbar.lock.active": "bg-neutral-950 text-white",
+    "toolbar.lock.inactive": "opacity-50 hover:opacity-100",
 
 };

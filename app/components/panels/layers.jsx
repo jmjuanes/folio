@@ -35,7 +35,7 @@ const previewStyle = {
 };
 
 const LayerItemAction = props => (
-    <div className="flex text-lg text-neutral-500 hover:text-neutral-900 cursor-pointer" onClick={props.onClick}>
+    <div className={themed("flex text-lg cursor-pointer", "layers.item.action")} onClick={props.onClick}>
         {renderIcon(props.icon)}
     </div>
 );
@@ -51,7 +51,7 @@ const LayerItem = props => {
         }
     }, [props.editing]);
     return (
-        <div className="group flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-neutral-100" onClick={props.onClick}>
+        <div className={themed("group flex items-center gap-2 p-2 rounded-lg cursor-pointer", "layers.item")} onClick={props.onClick}>
             <div className="shrink-0 w-4">
                 {element.selected && (
                     <div className="flex items-center text-sm">
@@ -59,7 +59,7 @@ const LayerItem = props => {
                     </div> 
                 )}
             </div>
-            <div className="shrink-0 w-6 h-6 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
+            <div className={themed("shrink-0 w-6 h-6 rounded-md", "layers.item.preview")} style={previewStyle}>
                 {previewImage && (
                     <img src={previewImage} width="100%" height="100%" />
                 )}
@@ -67,7 +67,7 @@ const LayerItem = props => {
             {!props.editing && (
                 <React.Fragment>
                     <div className="flex items-center grow">
-                        <div className="w-20 text-xs font-medium text-neutral-700 truncate" title={props.element[FIELDS.NAME]}>
+                        <div className={themed("w-20 text-xs font-medium truncate", "layers.item.name")} title={props.element[FIELDS.NAME]}>
                             <span>{props.element[FIELDS.NAME] || "Layer"}</span>
                         </div>
                     </div>
@@ -83,7 +83,7 @@ const LayerItem = props => {
                     <div className="flex items-center grow">
                         <input
                             ref={inputRef}
-                            className="w-full bg-transparent border-none outline-none p-0 text-xs"
+                            className={themed("w-full bg-transparent border-none outline-none p-0 text-xs", "layers.item.name")}
                             defaultValue={props.element[FIELDS.NAME] || "Layer"}
                             onKeyUp={event => {
                                 // Check for enter key --> submit new page title
@@ -117,20 +117,20 @@ const LayerGroupItem = props => {
             <div className="shrink-0 w-4 flex items-center text-sm">
                 {props.expanded ? (<ChevronDownIcon />) : (<ChevronRightIcon />)}
             </div>
-            <div className="shrink-0 w-6 h-6 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
+            <div className={themed("shrink-0 w-6 h-6 rounded-md", "layers.item.preview")} style={previewStyle}>
                 {previewImage && (
                     <img src={previewImage} width="100%" height="100%" />
                 )}
             </div>
             <div className="flex items-center grow">
-                <span className="text-xs font-medium text-neutral-700">Group</span>
+                <span className={themed("text-xs font-medium", "layers.item.name")}>Group</span>
             </div>
         </div>
     );
 };
 
 const EmptyLayers = () => (
-    <div className={themed("flex flex-col items-center justify-center p-3 rounded-lg", "panels.layers.empty")}>
+    <div className={themed("flex flex-col items-center justify-center p-3 rounded-lg", "layers.empty")}>
         <div className="flex items-center text-xl">
             <StackIcon />
         </div>
@@ -181,7 +181,7 @@ export const LayersPanel = props => {
         }
     }, [scene.page.activeGroup]);
     return (
-        <Panel className={themed("w-64", "panels.layers", props.className)}>
+        <Panel className={themed("w-64", "layers", props.className)}>
             <Panel.Header className="">
                 <Panel.HeaderTitle>Layers</Panel.HeaderTitle>
             </Panel.Header>

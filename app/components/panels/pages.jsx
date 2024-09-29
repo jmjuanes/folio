@@ -1,13 +1,13 @@
 import React from "react";
 import classNames from "classnames";
 import {
-    renderIcon,
     TrashIcon,
     CheckIcon,
     PencilIcon,
     CloseIcon,
     CopyIcon,
     BarsIcon,
+    PlusIcon,
 } from "@josemi-icons/react";
 import {Panel} from "../ui/panel.jsx";
 import {useScene} from "../../contexts/scene.jsx";
@@ -16,11 +16,9 @@ import {themed} from "../../contexts/theme.jsx";
 const PAGES_ITEM_HEIGHT = 37;
 
 // @private page action button
-const PageActionButton = ({className = "", children, onClick}) => (
-    <div className={classNames(className, "cursor-pointer items-center opacity-60 hover:opacity-100")} onClick={onClick}>
-        <div className="flex items-center text-lg px-1">
-            {children}
-        </div>
+const PageActionButton = ({children, onClick}) => (
+    <div className={themed("cursor-pointer flex items-center px-1", "pages.item.action")} onClick={onClick}>
+        {children}
     </div>
 );
 
@@ -32,14 +30,12 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
             inputRef.current.focus();
         }
     }, [editing]);
-
     const moveButtonStyle = {
         cursor: props.moving ? "grabbing" : "grab",
         touchAction: "none",
     };
-
     return (
-        <div className="absolute group flex items-center hover:bg-neutral-100 rounded-md p-2 w-full" style={style}>
+        <div className={themed("absolute group flex items-center rounded-md p-2 w-full", "pages.item")} style={style}>
             {active && (
                 <div className="absolute flex text-sm" style={{left:"1.5rem"}}>
                     <CheckIcon />
@@ -55,21 +51,23 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
                             <span>{title}</span>
                         </div>
                     </div>
-                    {editable && (
-                        <PageActionButton className="hidden group-hover:flex" onClick={props.onEdit}>
-                            <PencilIcon />
-                        </PageActionButton>
-                    )}
-                    {editable && (
-                        <PageActionButton className="hidden group-hover:flex" onClick={props.onDuplicate}>
-                            <CopyIcon />
-                        </PageActionButton>
-                    )}
-                    {editable && !active  && (
-                        <PageActionButton className="hidden group-hover:flex" onClick={props.onDelete}>
-                            <TrashIcon />
-                        </PageActionButton>
-                    )}
+                    <div className="flex items-center opacity-0 group-hover:opacity-100">
+                        {editable && (
+                            <PageActionButton onClick={props.onEdit}>
+                                <PencilIcon />
+                            </PageActionButton>
+                        )}
+                        {editable && (
+                            <PageActionButton onClick={props.onDuplicate}>
+                                <CopyIcon />
+                            </PageActionButton>
+                        )}
+                        {editable && !active  && (
+                            <PageActionButton onClick={props.onDelete}>
+                                <TrashIcon />
+                            </PageActionButton>
+                        )}
+                    </div>
                 </React.Fragment>
             )}
             {editing && (
@@ -185,7 +183,9 @@ export const PagesPanel = props => {
                 <Panel.HeaderTitle>Pages</Panel.HeaderTitle>
                 {props.editable && (
                     <div className="flex items-center gap-0">
-                        <Panel.HeaderButton icon="plus" onClick={handlePageCreate} />
+                        <Panel.HeaderButton onClick={handlePageCreate}>
+                            <PlusIcon />
+                        </Panel.HeaderButton>
                     </div>
                 )}
             </Panel.Header>

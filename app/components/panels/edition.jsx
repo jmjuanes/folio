@@ -378,30 +378,31 @@ export const EditionPanel = props => {
     // Fix value of active section
     const currentSection = activeSection || visibleSections.style[0];
     return (
-        <Panel className="w-56">
+        <Panel className="w-64">
+            <Panel.Header>
+                <Panel.HeaderTitle>Edit</Panel.HeaderTitle>
+                {visibleSections.style.length > 1 && (
+                    <div className="flex items-center gap-1">
+                        {visibleSections.style.map(key => (
+                            <Panel.HeaderButton
+                                key={key}
+                                active={currentSection === key}
+                                onClick={() => handleSectionChange(key)}>
+                                {styleSections[key].icon}
+                            </Panel.HeaderButton>
+                        ))}
+                    </div>
+                )}
+            </Panel.Header>
             <Panel.Body className="flex flex-col gap-2">
                 {visibleSections.style.length > 0 && (
-                    <React.Fragment>
-                        {visibleSections.style.length > 1 && (
-                            <Panel.Tabs>
-                                {visibleSections.style.map(key => (
-                                    <Panel.TabsItem
-                                        key={key}
-                                        active={currentSection === key}
-                                        onClick={() => handleSectionChange(key)}>
-                                        {styleSections[key].icon}
-                                    </Panel.TabsItem>
-                                ))}
-                            </Panel.Tabs>
-                        )}
-                        <Form
-                            key={currentSection}
-                            className="flex flex-col gap-2"
-                            data={values}
-                            items={styleSections[currentSection].items}
-                            onChange={handleChange}
-                        />
-                    </React.Fragment>
+                    <Form
+                        key={currentSection}
+                        className="flex flex-col gap-2"
+                        data={values}
+                        items={styleSections[currentSection].items}
+                        onChange={handleChange}
+                    />
                 )}
                 {visibleSections.display.map((key, index) => (
                     <React.Fragment key={key}>

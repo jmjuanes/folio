@@ -42,6 +42,7 @@ import {
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Form} from "../form/index.jsx";
 import {useScene} from "../../contexts/scene.jsx";
+import {themed} from "../../contexts/theme.jsx";
 import {getStickerImage} from "../../stickers.js";
 
 const tools = {
@@ -171,38 +172,35 @@ const tools = {
     },
 };
 
-const PickPanel = props => {
-    const classList = classNames({
-        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
-        "bg-white border border-neutral-200": true, // props.theme === THEMES.LIGHT,
-        // "bg-gray-900": props.theme === THEMES.DARK,
-    });
-    const style = {
-        transform: "translateX(-50%)",
-    };
-    return (
-        <div className={classList} style={style} data-testid="pickpanel">
-            <Form
-                className="flex flex-row gap-2"
-                data={props.values}
-                items={props.items}
-                separator={(
-                    <div className="border-l-2 border-neutral-200 h-6" />
-                )}
-                onChange={props.onChange}
-            />
-        </div>
-    );
-};
+const PickPanel = props => (
+    <div
+        className={themed("absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3", "toolbar.pick")}
+        style={{
+            transform: "translateX(-50%)",
+        }}
+    >
+        <Form
+            className="flex flex-row gap-2"
+            data={props.values}
+            items={props.items}
+            separator={(
+                <div className={themed("w-px h-6", "toolbar.pick.separator")} />
+            )}
+            onChange={props.onChange}
+        />
+    </div>
+);
 
 const PanelButton = props => {
-    const classList = classNames(props.className, {
-        "flex flex-col justify-center items-center flex px-4 py-2 gap-1 rounded-lg": true,
-        "text-neutral-800 hover:bg-neutral-100 cursor-pointer": !props.active,
-        "bg-neutral-950 text-white cursor-pointer": props.active,
-    });
+    const classList = themed({
+        "flex flex-col justify-center items-center flex px-4 py-2 gap-1 rounded-xl": true,
+        "cursor-pointer": !props.active,
+        "toolbar.button": true,
+        "toolbar.button.active": props.active,
+        "toolbar.button.inactive": !props.active,
+    }, props.className);
     return (
-        <div className={classList} onClick={props.onClick} data-testid={props.testid}>
+        <div className={classList} onClick={props.onClick}>
             {props.icon && (
                 <div className="text-xl flex items-center">
                     {props.icon}
@@ -217,16 +215,8 @@ const PanelButton = props => {
     );
 };
 
-PanelButton.defaultProps = {
-    testid: "",
-    className: "",
-    text: null,
-    icon: null,
-    active: false,
-};
-
 const PanelSeparator = () => (
-    <div className="bg-neutral-200 w-px h-12" />
+    <div className={themed("w-px h-12", "toolbar.separator")} />
 );
 
 const isSelectEnabled = a => {
@@ -237,10 +227,9 @@ const isSelectEnabled = a => {
 export const ToolsPanel = props => {
     const update = useUpdate();
     const scene = useScene();
-
     return (
         <div className="flex items-center relative select-none">
-            <div className="border border-neutral-200 rounded-xl shadow-md items-center bg-white flex gap-2 p-1">
+            <div className={themed("rounded-2xl items-center flex gap-2 p-1", "toolbar", props.className)}>
                 <PanelButton
                     testid="drag"
                     text="Drag"
@@ -286,7 +275,7 @@ export const ToolsPanel = props => {
                             </div>
                         ))}
                         <div className="flex self-stretch relative group" tabIndex="0">
-                            <div className="flex items-center hover:bg-neutral-100 group-focus-within:bg-neutral-100 cursor-pointer rounded-lg px-1">
+                            <div className={themed("flex items-center cursor-pointer rounded-xl px-1", "toolbar.dots")}>
                                 <div className="flex items-center text-xl">
                                     <DotsVerticalIcon />
                                 </div>
@@ -323,10 +312,10 @@ export const ToolsPanel = props => {
             </div>
             {props.showLock && (
                 <div
-                    className={classNames({
+                    className={themed({
                         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-                        "bg-neutral-950 text-white": props.toolLocked,
-                        "opacity-50 hover:opacity-100": !props.toolLocked,
+                        "toolbar.lock.active": props.toolLocked,
+                        "toolbar.lock.inactive": !props.toolLocked,
                     })}
                     onClick={props.onToolLockClick}
                 >
