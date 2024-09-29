@@ -2,6 +2,8 @@ import React from "react";
 import {useUpdate} from "react-use";
 import classNames from "classnames";
 import {StackIcon, renderIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon} from "@josemi-icons/react";
+import {Panel} from "../ui/panel.jsx";
+import {themed} from "../../contexts/theme.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 import {exportToDataURL} from "../../export.js";
 import {FIELDS, TRANSPARENT} from "../../constants.js";
@@ -127,6 +129,15 @@ const LayerGroupItem = props => {
     );
 };
 
+const EmptyLayers = () => (
+    <div className={themed("flex flex-col items-center justify-center p-3 rounded-lg", "panels.layers.empty")}>
+        <div className="flex items-center text-xl">
+            <StackIcon />
+        </div>
+        <div className="text-center text-2xs font-medium">No layers to display</div>
+    </div>
+);
+
 export const LayersPanel = props => {
     const [editingLayer, setEditingLayer] = React.useState("");
     const expandedGroups = React.useRef(new Set());
@@ -170,77 +181,77 @@ export const LayersPanel = props => {
         }
     }, [scene.page.activeGroup]);
     return (
-        <div className="w-64 border border-neutral-200 rounded-xl shadow-md bg-white p-2 overflow-y-auto" style={{maxHeight:"calc(100vh - 8rem)"}}>
-            <div className="flex flex-col-reverse gap-0">
-                {scene.page.elements.map(element => (
-                    <React.Fragment key={element.id + "." + (element.group || "")}>
-                        {(!element.group || expandedGroups.current.has(element.group)) && (
-                            <div className={classNames(!!element.group && "ml-4")}>
-                                <LayerItem
-                                    key={element.id}
-                                    element={element}
-                                    editing={editingLayer === element.id}
-                                    onClick={() => {
-                                        if (editingLayer !== element.id) {
-                                            props?.onElementSelect(element);
+        <Panel className={themed("w-64", "panels.layers", props.className)}>
+            <Panel.Header className="">
+                <Panel.HeaderTitle>Layers</Panel.HeaderTitle>
+            </Panel.Header>
+            <Panel.Body className="overflow-y-auto" style={{maxHeight:"calc(100vh - 8rem)"}}>
+                <div className="flex flex-col-reverse gap-0">
+                    {scene.page.elements.map(element => (
+                        <React.Fragment key={element.id + "." + (element.group || "")}>
+                            {(!element.group || expandedGroups.current.has(element.group)) && (
+                                <div className={classNames(!!element.group && "ml-4")}>
+                                    <LayerItem
+                                        key={element.id}
+                                        element={element}
+                                        editing={editingLayer === element.id}
+                                        onClick={() => {
+                                            if (editingLayer !== element.id) {
+                                                props?.onElementSelect(element);
+                                                setEditingLayer("");
+                                            }
+                                        }}
+                                        onDeleteClick={event => {
+                                            event.stopPropagation();
                                             setEditingLayer("");
+                                            props?.onElementDelete(element);
+                                        }}
+                                        onDuplicateClick={event => {
+                                            event.stopPropagation();
+                                            setEditingLayer("");
+                                            props?.onElementDuplicate(element);
+                                        }}
+                                        onEditClick={event => {
+                                            event.stopPropagation();
+                                            setEditingLayer(element.id);
+                                        }}
+                                        onEditSubmit={(event, value) => {
+                                            event.stopPropagation();
+                                            element[FIELDS.NAME] = value || element[FIELDS.NAME];
+                                            setEditingLayer("");
+                                            props?.onElementRename(element);
+                                        }}
+                                        onEditCancel={event => {
+                                            event.stopPropagation();
+                                            setEditingLayer("");
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            {element.group && groups.get(element.group).lastElement === element.id && (
+                                <LayerGroupItem
+                                    key={element.group}
+                                    elements={groups.get(element.group).elements}
+                                    expanded={expandedGroups.current.has(element.group)}
+                                    onClick={() => {
+                                        if (expandedGroups.current.has(element.group)) {
+                                            expandedGroups.current.delete(element.group);
                                         }
-                                    }}
-                                    onDeleteClick={event => {
-                                        event.stopPropagation();
+                                        else {
+                                            expandedGroups.current.add(element.group);
+                                        }
                                         setEditingLayer("");
-                                        props?.onElementDelete(element);
-                                    }}
-                                    onDuplicateClick={event => {
-                                        event.stopPropagation();
-                                        setEditingLayer("");
-                                        props?.onElementDuplicate(element);
-                                    }}
-                                    onEditClick={event => {
-                                        event.stopPropagation();
-                                        setEditingLayer(element.id);
-                                    }}
-                                    onEditSubmit={(event, value) => {
-                                        event.stopPropagation();
-                                        element[FIELDS.NAME] = value || element[FIELDS.NAME];
-                                        setEditingLayer("");
-                                        props?.onElementRename(element);
-                                    }}
-                                    onEditCancel={event => {
-                                        event.stopPropagation();
-                                        setEditingLayer("");
+                                        update();
                                     }}
                                 />
-                            </div>
-                        )}
-                        {element.group && groups.get(element.group).lastElement === element.id && (
-                            <LayerGroupItem
-                                key={element.group}
-                                elements={groups.get(element.group).elements}
-                                expanded={expandedGroups.current.has(element.group)}
-                                onClick={() => {
-                                    if (expandedGroups.current.has(element.group)) {
-                                        expandedGroups.current.delete(element.group);
-                                    }
-                                    else {
-                                        expandedGroups.current.add(element.group);
-                                    }
-                                    setEditingLayer("");
-                                    update();
-                                }}
-                            />
-                        )}
-                    </React.Fragment>
-                ))}
-                {scene.page.elements.length === 0 && (
-                    <div className="flex flex-col items-center justify-center p-3 border border-dashed border-neutral-300 rounded-lg">
-                        <div className="flex items-center text-xl text-neutral-600">
-                            <StackIcon />
-                        </div>
-                        <div className="text-center text-neutral-500 text-2xs font-medium">No layers to display</div>
-                    </div>
-                )}
-            </div>
-        </div>
+                            )}
+                        </React.Fragment>
+                    ))}
+                    {scene.page.elements.length === 0 && (
+                        <EmptyLayers />
+                    )}
+                </div>
+            </Panel.Body>
+        </Panel>
     );
 };

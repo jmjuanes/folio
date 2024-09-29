@@ -312,16 +312,6 @@ const useValues = selection => {
     return selection.reduce((prev, item) => ({...prev, ...item}), {});
 };
 
-// Active section wrapper
-const ActiveSectionWrapper = props => (
-    <Form
-        className="flex flex-col gap-2"
-        data={props.values}
-        items={props.items}
-        onChange={props.onChange}
-    />
-);
-
 const getVisibleSections = (sections, values) => {
     return Object.keys(sections).filter(option => {
         return typeof values[sections[option].test] !== "undefined";
@@ -389,24 +379,25 @@ export const EditionPanel = props => {
     const currentSection = activeSection || visibleSections.style[0];
     return (
         <Panel className="w-56">
-            <div className="flex flex-col gap-2">
+            <Panel.Body className="flex flex-col gap-2">
                 {visibleSections.style.length > 0 && (
                     <React.Fragment>
                         {visibleSections.style.length > 1 && (
                             <Panel.Tabs>
                                 {visibleSections.style.map(key => (
-                                    <Panel.TabItem
+                                    <Panel.TabsItem
                                         key={key}
                                         active={currentSection === key}
                                         onClick={() => handleSectionChange(key)}>
                                         {styleSections[key].icon}
-                                    </Panel.TabItem>
+                                    </Panel.TabsItem>
                                 ))}
                             </Panel.Tabs>
                         )}
-                        <ActiveSectionWrapper
+                        <Form
                             key={currentSection}
-                            values={values || {}}
+                            className="flex flex-col gap-2"
+                            data={values}
                             items={styleSections[currentSection].items}
                             onChange={handleChange}
                         />
@@ -417,15 +408,16 @@ export const EditionPanel = props => {
                         {(index > 0 || visibleSections.style.length > 0) && (
                             <Panel.Separator />
                         )}
-                        <ActiveSectionWrapper
+                        <Form
                             key={key}
-                            values={values || {}}
+                            className="flex flex-col gap-2"
+                            data={values}
                             items={displaySections[key].items}
                             onChange={handleChange}
                         />
                     </React.Fragment>
                 ))}
-            </div>
+            </Panel.Body>
         </Panel>
     );
 };

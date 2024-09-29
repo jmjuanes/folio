@@ -9,17 +9,11 @@ import {
     CopyIcon,
     BarsIcon,
 } from "@josemi-icons/react";
+import {Panel} from "../ui/panel.jsx";
 import {useScene} from "../../contexts/scene.jsx";
+import {themed} from "../../contexts/theme.jsx";
 
 const PAGES_ITEM_HEIGHT = 37;
-
-const ActionButton = ({icon, onClick}) => (
-    <div className="flex items-center rounded-md hover:bg-neutral-100 cursor-pointer" onClick={onClick}>
-        <div className="flex p-2 text-base">
-            {renderIcon(icon)}
-        </div>
-    </div>
-);
 
 // @private page action button
 const PageActionButton = ({className = "", children, onClick}) => (
@@ -186,15 +180,15 @@ export const PagesPanel = props => {
     }, [props.onPagesUpdate, editingPage]);
 
     return (
-        <div className="w-72 border border-neutral-200 rounded-lg shadow-md bg-white p-0 relative">
-            <div className="flex items-center justify-between sticky top-0 p-2 border-b border-neutral-200 h-12">
-                <div className="font-medium text-sm">Pages</div>
+        <Panel className="w-72">
+            <Panel.Header className="sticky top-0">
+                <Panel.HeaderTitle>Pages</Panel.HeaderTitle>
                 {props.editable && (
                     <div className="flex items-center gap-0">
-                        <ActionButton icon="plus" onClick={handlePageCreate} />
+                        <Panel.HeaderButton icon="plus" onClick={handlePageCreate} />
                     </div>
                 )}
-            </div>
+            </Panel.Header>
             <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
                 <div className="relative w-full" style={{height: scene.pages.length * PAGES_ITEM_HEIGHT}}>
                     {scene.pages.map(page => (
@@ -234,6 +228,6 @@ export const PagesPanel = props => {
                     ))}
                 </div>
             </div>
-        </div>
+        </Panel>
     );
 };
