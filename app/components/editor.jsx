@@ -421,7 +421,7 @@ const EditorWithScene = props => {
                                         editor.update();
                                     }}
                                 />
-                                <div className="w-px bg-neutral-200" />
+                                <Island.Separator />
                                 {props.showTitle && (
                                     <Title
                                         key={scene.title}
@@ -435,9 +435,7 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
-                                {props.showTitle && (
-                                    <div className="w-px bg-neutral-200" />
-                                )}
+                                {props.showTitle && <Island.Separator />}
                                 <Island.Button
                                     icon="files"
                                     text={(
