@@ -12,7 +12,7 @@ import {Dialog} from "../ui/dialog.jsx";
 import {Overlay} from "../ui/overlay.jsx";
 import {Form} from "../form/index.jsx";
 import {useScene} from "../../contexts/scene.jsx";
-
+import {themed} from "../../contexts/theme.jsx";
 import transparentBg from "../../assets/transparent.svg";
 
 const formOptions = {
@@ -29,7 +29,7 @@ const previewStyle = {
 };
 
 const ExportPreview = props => (
-    <div data-testid="export-preview" className="select-none mb-4 rounded border border-neutral-200">
+    <div data-testid="export-preview" className={themed("select-none mb-4 rounded", "export.preview")}>
         {!!props.data && (
             <div className="flex items-center justify-center h-48" style={previewStyle}>
                 <img
@@ -41,10 +41,10 @@ const ExportPreview = props => (
         )}
         {!props.data && (
             <div className="flex items-center justify-center h-48">
-                <div className="flex text-lg text-neutral-400">
+                <div className="flex text-lg">
                     <ImageIcon />
                 </div>
-                <span className="text-xs text-neutral-400">
+                <span className="text-xs">
                     Generating preview...
                 </span>
             </div>
