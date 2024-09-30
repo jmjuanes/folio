@@ -45,6 +45,7 @@ export default {
     "layers.item.name": "text-neutral-900",
     "layers.item.action": "text-neutral-500 hover:text-neutral-900",
 
+    "pages": "",
     "pages.item": "hover:bg-neutral-200",
     "pages.item.action": "text-neutral-500 hover:text-neutral-900",
 
@@ -58,5 +59,40 @@ export default {
     "toolbar.dots": "hover:bg-neutral-200 group-focus-within:bg-neutral-200",
     "toolbar.lock.active": "bg-neutral-950 text-white",
     "toolbar.lock.inactive": "opacity-50 hover:opacity-100",
+
+    "form": "",
+    "form.separator": "bg-neutral-200",
+    "form.option": "text-neutral-900",
+    "form.option.title": "",
+    "form.option.helper": "bg-neutral-600",
+
+    "form.colorpicker.preview": "border border-neutral-200",
+    "form.colorpicker.input": "bg-white border border-neutral-200 text-neutral-900",
+    "form.colorpicker.palette.item": "border border-neutral-200",
+
+    "form.fontpicker.item.active": "bg-neutral-900 text-white",
+    "form.fontpicker.item.inactive": "text-neutral-900 bg-neutral-100 hover:bg-neutral-200",
+
+    "form.select.item.active": "bg-neutral-900 text-white",
+    "form.select.item.inactive": "bg-neutral-100 hover:bg-neutral-200",
+
+    "form.colorselect.item.active": "border border-neutral-300",
+    "form.colorselect.item.inactive": "border border-neutral-300 opacity-50 hover:opacity-100",
+
+    "form.labeledselect.item.active": "bg-neutral-900 text-white",
+    "form.labeledselect.item.inactive": "bg-neutral-100 hover:bg-neutral-200",
+
+    "form.range": "",
+    "form.range.title": "text-neutral-900",
+    "form.range.input": "bg-neutral-200",
+
+    "form.checkbox": "",
+    "form.checkbox.title": "text-neutral-900",
+    "form.checkbox.input": "text-neutral-950",
+
+    "form.imageselect": "",
+    "form.imageselect.item.active": "bg-neutral-900",
+    "form.imageselect.item.inactive": "bg-neutral-100 hover:bg-neutral-200",
+
 
 };

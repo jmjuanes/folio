@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
 import {FORM_OPTIONS} from "../../constants.js";
+import {themed} from "../../contexts/theme.jsx";
 import {ColorPicker} from "./color-picker.jsx";
 import {FontPicker} from "./font-picker.jsx";
 
@@ -44,12 +45,11 @@ const optionTypes = {
                     return null;
                 }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
-                const itemClass = classNames({
+                const itemClass = themed({
                     "flex flex-col justify-center items-center rounded-md py-2 grow": true,
-                    "bg-neutral-900 text-white": active,
-                    "bg-neutral-100 hover:bg-neutral-200 cursor-pointer": !active,
-                    // "bg-gray-600": props.theme === THEMES.DARK && active,
-                    // "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && !active,
+                    "cursor-pointer": !active,
+                    "form.select.item.active": active,
+                    "form.select.item.inactive": !active,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -73,12 +73,11 @@ const optionTypes = {
             {(props.values || []).map(value => (
                 <div
                     key={value}
-                    className={classNames({
-                        "flex flex-col justify-center items-center rounded-md h-8 grow border": true,
-                        "border-gray-300": value === props.value,
-                        "border-gray-300 opacity-50 hover:opacity-100 cursor-pointer": value !== props.value,
-                        // "border-gray-300": props.theme === THEMES.DARK && value === props.value,
-                        // "opacity-30 hover:opacity-50 cursor-pointer": props.theme === THEMES.DARK && value !== props.value,
+                    className={themed({
+                        "flex flex-col justify-center items-center rounded-md h-8 grow": true,
+                        "cursor-pointer": value !== props.value,
+                        "form.colorselect.item.active": value === props.value,
+                        "form.colorselect.item.inactive": value !== props.value,
                     })}
                     style={{
                         backgroundColor: value,
@@ -96,12 +95,11 @@ const optionTypes = {
                 if (!checkIsVisible(item.value, props.value, props.isVisible, props.data)) {
                     return null;
                 }
-                const itemClass = classNames({
+                const itemClass = themed({
                     "flex flex-nowrap justify-center gap-1 items-center grow rounded-md h-8 px-1": true,
-                    "bg-gray-900 text-white": item.value === props.value,
-                    "hover:bg-gray-200 cursor-pointer": item.value !== props.value,
-                    // "bg-gray-600": props.theme === THEMES.DARK && item.value === props.value,
-                    // "hover:bg-gray-700 cursor-pointer": props.theme === THEMES.DARK && item.value !== props.value,
+                    "cursor-pointer": item.value !== props.value,
+                    "form.labeledselect.item.active": item.value === props.value,
+                    "form.labeledselect.item.inactive": item.value !== props.value,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -119,14 +117,16 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.RANGE]: props => (
-        <div className="flex items-center gap-2">
+        <div className={themed("flex items-center gap-2", "form.range")}>
             {props.title && (
-                <div className="text-xs w-16 shrink-0">{props.title}</div>
+                <div className={themed("text-xs w-16 shrink-0", "form.range.title")}>
+                    {props.title}
+                </div>
             )}
             <div className="flex items-center">
                 <input
                     type="range"
-                    className="m-0 w-full bg-gray-300 h-1 mt-3 mb-2"
+                    className={themed("m-0 w-full h-1 mt-3 mb-2", "form.range.input")}
                     onChange={e => props.onChange(e.target.value || 0)}
                     defaultValue={props.value}
                     min={props.minValue}
@@ -141,35 +141,37 @@ const optionTypes = {
             return props.onChange(!props.value);
         };
         return (
-            <div className="flex items-center justify-between select-none">
-                <div className="text-xs">{props.title}</div>
-                <div className="text-lg cursor-pointer flex items-center" onClick={handleClick}>
+            <div className={themed("flex items-center justify-between select-none", "form.checkbox")}>
+                <div className={themed("text-xs", "form.checkbox.title")}>
+                    {props.title}
+                </div>
+                <div className={themed("text-lg cursor-pointer flex items-center", "form.checkbox.input")} onClick={handleClick}>
                     {props.value ? <CheckSquareIcon /> : <SquareIcon />}
                 </div>
             </div>
         );
     },
-    [FORM_OPTIONS.PIXELS]: props => (
-        <div className="flex items-center justify-between select-none">
-            <div className="text-xs">
-                <strong>{props.title}</strong>
-            </div>
-            <div className="flex items-center">
-                <input
-                    type="number"
-                    className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border border-gray-300 text-xs"
-                    defaultValue={props.value}
-                    min={props.minValue}
-                    max={props.maxValue}
-                    style={{
-                        fontFamily: "monospace",
-                    }}
-                    onChange={event => props.onChange(Number(event.target.value) ?? 0)}
-                />
-                <span className="text-xs pl-2">px</span>
-            </div>
-        </div>
-    ),
+    // [FORM_OPTIONS.PIXELS]: props => (
+    //     <div className="flex items-center justify-between select-none">
+    //         <div className="text-xs">
+    //             <strong>{props.title}</strong>
+    //         </div>
+    //         <div className="flex items-center">
+    //             <input
+    //                 type="number"
+    //                 className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border border-gray-300 text-xs"
+    //                 defaultValue={props.value}
+    //                 min={props.minValue}
+    //                 max={props.maxValue}
+    //                 style={{
+    //                     fontFamily: "monospace",
+    //                 }}
+    //                 onChange={event => props.onChange(Number(event.target.value) ?? 0)}
+    //             />
+    //             <span className="text-xs pl-2">px</span>
+    //         </div>
+    //     </div>
+    // ),
     [FORM_OPTIONS.IMAGE_SELECT]: props => (
         <div className={props.className || "grid grid-cols-5 gap-1 w-full"} style={props.style || {}}>
             {(props.values || []).map(item => {
@@ -179,8 +181,9 @@ const optionTypes = {
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = classNames({
                     "flex flex-col justify-center items-center rounded-md py-0 grow": true,
-                    "bg-neutral-900 text-white": active,
-                    "bg-neutral-100 hover:bg-neutral-200 cursor-pointer": !active,
+                    "cursor-pointer": !active,
+                    "form.imageselect.item.active": active,
+                    "form.imageselect.item.inactive": !active,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -191,33 +194,27 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.SEPARATOR]: () => (
-        <div className="w-full h-px bg-gray-500" />
+        <div className={themed("w-full h-px", "form.separator")} />
     ),
 };
 
-export const Option = props => {
-    const optionClassList = classNames({
-        "text-neutral-700": true, // props.theme === THEMES.LIGHT,
-        // "text-white opacity-90": props.theme === THEMES.DARK,
-    });
-    return (
-        <div className={optionClassList}>
-            {(!optionsWithInlineTitle.has(props.type)) && !!props.title && (
-                <div className="text-xs mb-1 select-none">
-                    {props.title}
-                </div>
-            )}
-            <div className="block">
-                {optionTypes[props.type](props)}
+export const Option = props => (
+    <div className={themed("form.option")}>
+        {(!optionsWithInlineTitle.has(props.type)) && !!props.title && (
+            <div className={themed("text-xs mb-1 select-none", "form.option.title")}>
+                {props.title}
             </div>
-            {!!props.helper && (
-                <div className="text-neutral-400 text-2xs mt-0 select-none">
-                    {props.helper}
-                </div>
-            )}
+        )}
+        <div className="block">
+            {optionTypes[props.type](props)}
         </div>
-    );
-};
+        {!!props.helper && (
+            <div className={themed("text-2xs mt-0 select-none", "form.option.helper")}>
+                {props.helper}
+            </div>
+        )}
+    </div>
+);
 
 // TODO: check the visible field of each item to decide if item should be visible
 const getVisibleItems = (items, data) => {
@@ -232,7 +229,7 @@ const getVisibleItems = (items, data) => {
 };
 
 export const Form = props => (
-    <div className={props.className || "flex flex-col gap-4"} style={props.style || {}}>
+    <div className={themed(props.className || "flex flex-col gap-4", "form")} style={props.style || {}}>
         {getVisibleItems(props.items, props.data).map(key => (
             <React.Fragment key={key}>
                 <Option

@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames";
+import {themed} from "../../contexts/theme.jsx";
 import {isValidHexColor} from "../../utils/colors.js";
 
 export const ColorPicker = ({value = "", values = [], showInput = true, showPalette = true, onChange}) => {
@@ -11,11 +11,7 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                 <div className="flex items-center w-full">
                     <div
                         data-testid="colorpicker:preview"
-                        className={classNames({
-                            "flex rounded-md h-8 w-8 mr-1": true,
-                            "border border-neutral-200": true, // props.theme === THEMES.LIGHT,
-                            // "border border-gray-700": props.theme === THEMES.DARK,
-                        })}
+                        className={themed("flex rounded-md h-8 w-8 mr-1", "form.colorpicker.preview")}
                         style={{
                             backgroundColor: value,
                             minWidth: "2rem",
@@ -44,11 +40,7 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                         data-testid="colorpicker:input"
                         ref={inputRef}
                         type="text"
-                        className={classNames({
-                            "w-full px-2 py-0 h-8 rounded-md outline-0 text-xs border": true,
-                            "bg-white border-neutral-200 text-neutral-800": true, // props.theme === THEMES.LIGHT,
-                            // "border border-gray-700": props.theme === THEMES.DARK,
-                        })}
+                        className={themed("w-full px-2 py-0 h-8 rounded-md outline-0 text-xs", "form.colorpicker.input")}
                         defaultValue={value}
                         style={{
                             fontFamily: "monospace",
@@ -66,12 +58,7 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                     {values.map(color => (
                         <div
                             key={color}
-                            data-testid={"color:" + color}
-                            className={classNames({
-                                "flex w-full h-6 rounded-md cursor-pointer": true,
-                                "border border-neutral-200": true, // props.theme === THEMES.LIGHT,
-                                // "border border-gray-700": props.theme === THEMES.DARK,
-                            })}
+                            className={themed("flex w-full h-6 rounded-md cursor-pointer", "form.colorpicker.palette.item")}
                             style={{
                                 backgroundColor: color,
                             }}
