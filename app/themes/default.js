@@ -50,8 +50,8 @@ export default {
     "form.separator": "bg-neutral-200",
 
     "island": "shadow-sm bg-white border border-neutral-200",
-    "island.item": "hover:bg-neutral-100 text-neutral-800",
-    "island.item.active": "bg-neutral-100 text-neutral-950",
+    "island.item": "hover:bg-neutral-200 text-neutral-900 group-focus-within:bg-neutral-200",
+    "island.item.active": "bg-neutral-200 text-neutral-950",
     "island.separator": "bg-neutral-200",
 
     "layers": "",
@@ -76,6 +76,9 @@ export default {
     // "panel.tabs": "bg-neutral-100",
     // "panel.tabs.item.inactive": "text-neutral-900 hover:bg-neutral-200",
     // "panel.tabs.item.active": "text-white bg-neutral-900",
+
+    "title.input": "text-neutral-900 bg-neutral-200",
+    "title.preview": "text-neutral-900 hover:bg-neutral-200",
 
     "toolbar": "border border-neutral-200 bg-white shadow-sm text-neutral-900",
     "toolbar.button": "",
