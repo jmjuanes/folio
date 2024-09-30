@@ -88,4 +88,13 @@ export default {
     "toolbar.lock.inactive": "opacity-50 hover:opacity-100",
     "toolbar.separator": "bg-neutral-200",
 
+    "welcome": "bg-white border border-neutral-200 shadow-sm",
+    "welcome.description": "",
+    "welcome.feature": "bg-neutral-50 text-neutral-700",
+    "welcome.feature.description": "",
+    "welcome.feature.icon": "",
+    "welcome.feature.title": "",
+    "welcome.title": "text-neutral-950",
+    "welcome.version": "text-neutral-400",
+
 };

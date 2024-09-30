@@ -1,5 +1,6 @@
 import React from "react";
 import {renderIcon, DrawingIcon, FolderIcon, ExternalLinkIcon, ExclamationTriangleIcon} from "@josemi-icons/react";
+import {themed} from "../../contexts/theme.jsx";
 import {Button} from "../ui/button.jsx";
 import {Centered} from "../ui/centered.jsx";
 import {Overlay} from "../ui/overlay.jsx";
@@ -17,42 +18,31 @@ const defaultWelcomeFeatures = [
     },
 ];
 
-const LegacyAppNotice = () => (
-    <div className="mb-4">
-        <div className="w-full flex gap-2 p-3 rounded-md border border-neutral-200 bg-neutral-50">
-            <div className="shrink-0 flex text-xl animation-pulse">
-                <ExclamationTriangleIcon />
-            </div>
-            <div className="grow-1">
-                <div className="text-xs leading-snug">
-                    <span>Comming from <b>www.josemi.xyz/folio</b>? </span>
-                    <span>You can easily transfer your existing whiteboard by visiting our </span>
-                    <span><a href="https://www.josemi.xyz/folio-legacy" target="_blank" className="font-bold underline inline-flex items-center">legacy app <ExternalLinkIcon /></a> to export and then import it here.</span>
-                </div>
-            </div>
-        </div>
-    </div>
-);
-
 export const WelcomeDialog = props => (
     <React.Fragment>
         <Overlay className="z-50" />
         <Centered className="fixed h-full z-50">
-            <div className="w-full max-w-lg p-8 bg-white border border-neutral-200 rounded-lg shadow-sm">
+            <div className={themed("w-full max-w-lg p-8 rounded-lg", "welcome")}>
                 <div className="pt-12 pb-4 select-none">
-                    <div className="font-black text-5xl mb-6 text-neutral-950 leading-none">Hello 👋</div>
-                    <div className="">
+                    <div className={themed("font-black text-5xl mb-6 leading-none", "welcome.title")}>
+                        <span>Hello 👋</span>
+                    </div>
+                    <div className={themed("", "welcome.description")}>
                         Welcome to <b>folio</b>, our work-in-progress minimal digital whiteboard for sketching and prototyping.
                     </div>
                 </div>
                 <div className="flex gap-2 w-full pb-6">
                     {(props.features || []).map(feature => (
-                        <div key={feature.title} className="rounded-md bg-neutral-50 text-neutral-700 p-4 w-full">
-                            <div className="text-3xl text-neutral-700 flex mb-1">
+                        <div key={feature.title} className={themed("rounded-md p-4 w-full", "welcome.feature")}>
+                            <div className={themed("text-3xl flex mb-1", "welcome.feature.icon")}>
                                 {renderIcon(feature.icon)}
                             </div>
-                            <div className="text-sm font-bold">{feature.title}</div>
-                            <div className="text-2xs">{feature.description}</div>
+                            <div className={themed("text-sm font-bold", "welcome.feature.title")}>
+                                {feature.title}
+                            </div>
+                            <div className={themed("text-2xs", "welcome.feature.description")}>
+                                {feature.description}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -70,8 +60,7 @@ export const WelcomeDialog = props => (
                         <div className="font-medium">Load from file</div>
                     </Button>
                 </div>
-                <LegacyAppNotice />
-                <div className="text-neutral-400 text-center text-xs select-none">
+                <div className={themed("text-center text-xs select-none", "welcome.version")}>
                     <span><b>folio</b> v{process.env.VERSION}</span> 
                 </div>
             </div>
