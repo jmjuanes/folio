@@ -444,7 +444,7 @@ const EditorWithScene = props => {
                                         </div>
                                     )}
                                     showChevron={true}
-                                    active={editor.state.pagesVisible}
+                                    active={false && editor.state.pagesVisible}
                                     onClick={() => {
                                         editor.state.pagesVisible = !editor.state.pagesVisible;
                                         editor.state.contextMenu = false;
