@@ -5,7 +5,7 @@ import {themed} from "../../contexts/theme.jsx";
 export const Dialog = ({className, ...props}) => (
     <div
         data-testid="dialog"
-        className={themed("w-full rounded-xl p-6", "dialog", className)}
+        className={themed("w-full rounded-2xl px-6 pt-8 pb-6", "dialog", className)}
         {...props}
     />
 );
@@ -29,7 +29,7 @@ Dialog.Description = ({className, ...props}) => (
 Dialog.Close = ({className, ...props}) => (
     <div
         data-testid="dialog-close"
-        className={themed("flex cursor-pointer text-2xl absolute top-0 right-0 mt-3 mr-3", "dialog.close", className)}
+        className={themed("flex cursor-pointer text-xl absolute top-0 right-0 mt-3 mr-3", "dialog.close", className)}
         {...props}
     >
         <CloseIcon />

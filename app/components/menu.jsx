@@ -75,7 +75,7 @@ export const Menu = props => {
                         <Dropdown.Icon>
                             <TrashIcon />
                         </Dropdown.Icon>
-                        <span>Reset the canvas</span>
+                        <span>Reset</span>
                     </Dropdown.Item>
                 )}
                 <Dropdown.Separator />

@@ -96,8 +96,9 @@ const EditorWithScene = props => {
     // Handle clear drawing
     const handleClear = React.useCallback(() => {
         return showConfirm({
-            title: "Clear drawing",
-            message: "This will clear the whole drawing, including pages. Do you want to continue?",
+            title: "Delete all data",
+            message: "This will delete all the information of this board, including all pages and drawings. Do you want to continue?",
+            confirmText: "Yes, delete all data",
             callback: () => {
                 scene.reset();
                 editor.dispatchChange();

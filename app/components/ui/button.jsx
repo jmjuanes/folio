@@ -6,7 +6,7 @@ export const Button = ({className, disabled, variant = "primary", ...props}) => 
         data-testid="button"
         disabled={!!disabled}
         className={themed({
-            "flex items-center justify-center gap-2 select-none p-3 rounded-lg": true,
+            "flex items-center justify-center gap-2 select-none p-3 rounded-lg font-medium": true,
             "button.primary": variant === "primary",
             "button.secondary": variant === "secondary",
             "cursor-pointer": !disabled,

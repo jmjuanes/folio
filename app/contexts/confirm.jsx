@@ -14,6 +14,8 @@ const confirmReducer = (state, action) => {
             visible: true,
             title: action.payload.title,
             message: action.payload.message,
+            confirmText: action.payload.confirmText,
+            cancelText: action.payload.cancelText,
             callback: action.payload.callback,
         };
     }
@@ -54,7 +56,7 @@ export const ConfirmProvider = props => {
                 <React.Fragment>
                     <Overlay />
                     <Centered className="fixed z-50 h-full">
-                        <Dialog className="max-w-md relative">
+                        <Dialog className="max-w-lg relative">
                             <Dialog.Close onClick={hideConfirm} />
                             <Dialog.Header>
                                 <Dialog.Title>{confirm.title}</Dialog.Title>
@@ -66,10 +68,10 @@ export const ConfirmProvider = props => {
                             </Dialog.Body>
                             <Dialog.Footer>
                                 <Button variant="secondary" onClick={hideConfirm}>
-                                    {props.cancelText || "Cancel"}
+                                    {confirm?.cancelText || props.cancelText || "Cancel"}
                                 </Button>
                                 <Button variant="primary" onClick={submitConfirm}>
-                                    {props.confirmText || "Confirm"}
+                                    {confirm?.confirmText || props.confirmText || "Confirm"}
                                 </Button>
                             </Dialog.Footer>
                         </Dialog>
