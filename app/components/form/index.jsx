@@ -179,7 +179,7 @@ const optionTypes = {
                     return null;
                 }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
-                const itemClass = classNames({
+                const itemClass = themed({
                     "flex flex-col justify-center items-center rounded-md py-0 grow": true,
                     "cursor-pointer": !active,
                     "form.imageselect.item.active": active,

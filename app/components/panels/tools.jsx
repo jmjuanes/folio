@@ -162,7 +162,7 @@ const tools = {
         quickPicks: {
             [FIELDS.STICKER]: {
                 type: FORM_OPTIONS.IMAGE_SELECT,
-                className: "w-64 grid grid-cols-8 gap-1",
+                className: "w-72 grid grid-cols-8 gap-1",
                 values: Object.values(STICKERS).map(stickerName => ({
                     value: stickerName,
                     image: getStickerImage(stickerName),
