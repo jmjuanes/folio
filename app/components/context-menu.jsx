@@ -12,23 +12,38 @@ export const ContextMenu = props => {
     };
 
     return (
-        <Menu className="absolute z-40 w-40" style={style}>
+        <Menu className="absolute z-40 w-48" style={style}>
             {selectedElements.length > 0 && (
                 <React.Fragment>
-                    <Menu.Item onClick={props.onDuplicate}>Duplicate</Menu.Item>
+                    <Menu.Item onClick={props.onDuplicate}>
+                        <Menu.Icon icon="copy" />
+                        <span>Duplicate</span>
+                    </Menu.Item>
                     {selectedElements.some(el => !el.locked) && (
-                        <Menu.Item onClick={props.onLock}>Lock</Menu.Item>
+                        <Menu.Item onClick={props.onLock}>
+                            <Menu.Icon icon="lock" />
+                            <span>Lock</span>
+                        </Menu.Item>
                     )}
                     {selectedElements.some(el => el.locked) && (
-                        <Menu.Item onClick={props.onUnlock}>Unlock</Menu.Item>
+                        <Menu.Item onClick={props.onUnlock}>
+                            <Menu.Icon icon="unlock" />
+                            <span>Unlock</span>
+                        </Menu.Item>
                     )}
                     {(!scene.page.activeGroup && selectedElements.length > 1) && (
                         <React.Fragment>
                             {selectedElements.some(el => !el.group || el.group !== selectedElements[0].group) && (
-                                <Menu.Item onClick={props.onGroup}>Group</Menu.Item>
+                                <Menu.Item onClick={props.onGroup}>
+                                    <Menu.Icon icon="object-group" />
+                                    <span>Group</span>
+                                </Menu.Item>
                             )}
                             {selectedElements.some(el => !!el.group) && (
-                                <Menu.Item onClick={props.onUngroup}>Ungroup</Menu.Item>
+                                <Menu.Item onClick={props.onUngroup}>
+                                    <Menu.Icon icon="object-ungroup" />
+                                    <span>Ungroup</span>
+                                </Menu.Item>
                             )}
                         </React.Fragment>
                     )}
@@ -37,28 +52,49 @@ export const ContextMenu = props => {
             )} 
             {selectedElements.length > 0 && (
                 <React.Fragment>
-                    <Menu.Item onClick={props.onCut}>Cut</Menu.Item>
-                    <Menu.Item onClick={props.onCopy}>Copy</Menu.Item>
+                    <Menu.Item onClick={props.onCut}>
+                        <Menu.Icon icon="cut" />
+                        <span>Cut</span>
+                    </Menu.Item>
+                    <Menu.Item onClick={props.onCopy}>
+                        <Menu.Icon icon="copy" />
+                        <span>Copy</span>
+                    </Menu.Item>
                 </React.Fragment>
             )}
-            <Menu.Item onClick={props.onPaste}>Paste</Menu.Item>
+            <Menu.Item onClick={props.onPaste}>
+                <Menu.Icon icon="clipboard" />
+                <span>Paste</span>
+            </Menu.Item>
             {selectedElements.length > 0 && (
                 <React.Fragment>
                     <Menu.Separator />
-                    <Menu.Item onClick={props.onSendBackward}>Send backward</Menu.Item>
-                    <Menu.Item onClick={props.onBringForward}>Bring forward</Menu.Item>
+                    <Menu.Item onClick={props.onSendBackward}>
+                        <Menu.Icon icon="send-backward" />
+                        <span>Send backward</span>
+                    </Menu.Item>
+                    <Menu.Item onClick={props.onBringForward}>
+                        <Menu.Icon icon="bring-forward" />
+                        <span>Bring forward</span>
+                    </Menu.Item>
                 </React.Fragment>
             )}
             {selectedElements.length !== scene.getElements().length && (
                 <React.Fragment>
                     <Menu.Separator />
-                    <Menu.Item onClick={props.onSelectAll}>Select all</Menu.Item>
+                    <Menu.Item onClick={props.onSelectAll}>
+                        <Menu.Icon icon="box-selection" />
+                        <span>Select all</span>
+                    </Menu.Item>
                 </React.Fragment>
             )}
             {selectedElements.length > 0 && (
                 <React.Fragment>
                     <Menu.Separator />
-                    <Menu.Item onClick={props.onDelete}>Delete</Menu.Item>
+                    <Menu.Item onClick={props.onDelete}>
+                        <Menu.Icon icon="trash" />
+                        <span>Delete</span>
+                    </Menu.Item>
                 </React.Fragment>
             )} 
         </Menu>

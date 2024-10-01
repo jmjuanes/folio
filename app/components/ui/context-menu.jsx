@@ -1,4 +1,6 @@
 import React from "react";
+import classNames from "classnames";
+import {renderIcon} from "@josemi-icons/react";
 import {themed} from "../../contexts/theme.jsx";
 
 export const ContextMenu = ({className, ...props}) => (
@@ -20,6 +22,12 @@ ContextMenu.Item = ({className, disabled = false, ...props}) => (
         }, className)}
         {...props}
     />
+);
+
+ContextMenu.Icon = ({className, icon}) => (
+    <div className={classNames("flex items-center text-base", className)}>
+        {renderIcon(icon)}
+    </div>
 );
 
 ContextMenu.Separator = ({className, ...props}) => (
