@@ -489,7 +489,7 @@ const EditorWithScene = props => {
                                     editor.update();
                                 }}
                             />
-                            {(editor.state.hintsVisible && !editor.state.tool) && (
+                            {(editor.state.hintsVisible && !editor.state.tool && !editor.state.layersVisible) && (
                                 <Hint
                                     position="bottom"
                                     title="History"
@@ -510,7 +510,7 @@ const EditorWithScene = props => {
                                     editor.update();
                                 }}
                             />
-                            {(editor.state.hintsVisible && !editor.state.tool) && (
+                            {(editor.state.hintsVisible && !editor.state.tool && !editor.state.layersVisible) && (
                                 <Hint
                                     position="bottom"
                                     title="Zoom"
