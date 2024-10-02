@@ -2,6 +2,8 @@ import React from "react";
 import {useUpdate} from "react-use";
 import classNames from "classnames";
 import {StackIcon, renderIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon} from "@josemi-icons/react";
+import {Panel} from "../ui/panel.jsx";
+import {themed} from "../../contexts/theme.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 import {exportToDataURL} from "../../export.js";
 import {FIELDS, TRANSPARENT} from "../../constants.js";
@@ -33,7 +35,7 @@ const previewStyle = {
 };
 
 const LayerItemAction = props => (
-    <div className="flex text-lg text-neutral-500 hover:text-neutral-900 cursor-pointer" onClick={props.onClick}>
+    <div className={themed("flex text-lg cursor-pointer", "layers.item.action")} onClick={props.onClick}>
         {renderIcon(props.icon)}
     </div>
 );
@@ -49,7 +51,7 @@ const LayerItem = props => {
         }
     }, [props.editing]);
     return (
-        <div className="group flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-neutral-100" onClick={props.onClick}>
+        <div className={themed("group flex items-center gap-2 p-2 rounded-lg cursor-pointer", "layers.item")} onClick={props.onClick}>
             <div className="shrink-0 w-4">
                 {element.selected && (
                     <div className="flex items-center text-sm">
@@ -57,7 +59,7 @@ const LayerItem = props => {
                     </div> 
                 )}
             </div>
-            <div className="shrink-0 w-6 h-6 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
+            <div className={themed("shrink-0 w-6 h-6 rounded-md", "layers.item.preview")} style={previewStyle}>
                 {previewImage && (
                     <img src={previewImage} width="100%" height="100%" />
                 )}
@@ -65,7 +67,7 @@ const LayerItem = props => {
             {!props.editing && (
                 <React.Fragment>
                     <div className="flex items-center grow">
-                        <div className="w-20 text-xs font-medium text-neutral-700 truncate" title={props.element[FIELDS.NAME]}>
+                        <div className={themed("w-20 text-xs font-medium truncate", "layers.item.name")} title={props.element[FIELDS.NAME]}>
                             <span>{props.element[FIELDS.NAME] || "Layer"}</span>
                         </div>
                     </div>
@@ -81,7 +83,7 @@ const LayerItem = props => {
                     <div className="flex items-center grow">
                         <input
                             ref={inputRef}
-                            className="w-full bg-transparent border-none outline-none p-0 text-xs"
+                            className={themed("w-full bg-transparent border-none outline-none p-0 text-xs", "layers.item.name")}
                             defaultValue={props.element[FIELDS.NAME] || "Layer"}
                             onKeyUp={event => {
                                 // Check for enter key --> submit new page title
@@ -115,17 +117,23 @@ const LayerGroupItem = props => {
             <div className="shrink-0 w-4 flex items-center text-sm">
                 {props.expanded ? (<ChevronDownIcon />) : (<ChevronRightIcon />)}
             </div>
-            <div className="shrink-0 w-6 h-6 border border-neutral-200 rounded-md bg-white" style={previewStyle}>
+            <div className={themed("shrink-0 w-6 h-6 rounded-md", "layers.item.preview")} style={previewStyle}>
                 {previewImage && (
                     <img src={previewImage} width="100%" height="100%" />
                 )}
             </div>
             <div className="flex items-center grow">
-                <span className="text-xs font-medium text-neutral-700">Group</span>
+                <span className={themed("text-xs font-medium", "layers.item.name")}>Group</span>
             </div>
         </div>
     );
 };
+
+const EmptyLayers = () => (
+    <div className={themed("flex flex-col items-center justify-center gap-1 p-3 rounded-lg", "layers.empty")}>
+        <div className="text-center text-xs font-medium">Your board is empty...</div>
+    </div>
+);
 
 export const LayersPanel = props => {
     const [editingLayer, setEditingLayer] = React.useState("");
@@ -170,77 +178,77 @@ export const LayersPanel = props => {
         }
     }, [scene.page.activeGroup]);
     return (
-        <div className="w-64 border border-neutral-200 rounded-xl shadow-md bg-white p-2 overflow-y-auto" style={{maxHeight:"calc(100vh - 8rem)"}}>
-            <div className="flex flex-col-reverse gap-0">
-                {scene.page.elements.map(element => (
-                    <React.Fragment key={element.id + "." + (element.group || "")}>
-                        {(!element.group || expandedGroups.current.has(element.group)) && (
-                            <div className={classNames(!!element.group && "ml-4")}>
-                                <LayerItem
-                                    key={element.id}
-                                    element={element}
-                                    editing={editingLayer === element.id}
-                                    onClick={() => {
-                                        if (editingLayer !== element.id) {
-                                            props?.onElementSelect(element);
+        <Panel className={themed("w-64", "layers", props.className)}>
+            <Panel.Header className="">
+                <Panel.HeaderTitle>Layers</Panel.HeaderTitle>
+            </Panel.Header>
+            <Panel.Body className="overflow-y-auto" style={{maxHeight:"calc(100vh - 8rem)"}}>
+                <div className="flex flex-col-reverse gap-0">
+                    {scene.page.elements.map(element => (
+                        <React.Fragment key={element.id + "." + (element.group || "")}>
+                            {(!element.group || expandedGroups.current.has(element.group)) && (
+                                <div className={classNames(!!element.group && "ml-4")}>
+                                    <LayerItem
+                                        key={element.id}
+                                        element={element}
+                                        editing={editingLayer === element.id}
+                                        onClick={() => {
+                                            if (editingLayer !== element.id) {
+                                                props?.onElementSelect(element);
+                                                setEditingLayer("");
+                                            }
+                                        }}
+                                        onDeleteClick={event => {
+                                            event.stopPropagation();
                                             setEditingLayer("");
+                                            props?.onElementDelete(element);
+                                        }}
+                                        onDuplicateClick={event => {
+                                            event.stopPropagation();
+                                            setEditingLayer("");
+                                            props?.onElementDuplicate(element);
+                                        }}
+                                        onEditClick={event => {
+                                            event.stopPropagation();
+                                            setEditingLayer(element.id);
+                                        }}
+                                        onEditSubmit={(event, value) => {
+                                            event.stopPropagation();
+                                            element[FIELDS.NAME] = value || element[FIELDS.NAME];
+                                            setEditingLayer("");
+                                            props?.onElementRename(element);
+                                        }}
+                                        onEditCancel={event => {
+                                            event.stopPropagation();
+                                            setEditingLayer("");
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            {element.group && groups.get(element.group).lastElement === element.id && (
+                                <LayerGroupItem
+                                    key={element.group}
+                                    elements={groups.get(element.group).elements}
+                                    expanded={expandedGroups.current.has(element.group)}
+                                    onClick={() => {
+                                        if (expandedGroups.current.has(element.group)) {
+                                            expandedGroups.current.delete(element.group);
                                         }
-                                    }}
-                                    onDeleteClick={event => {
-                                        event.stopPropagation();
+                                        else {
+                                            expandedGroups.current.add(element.group);
+                                        }
                                         setEditingLayer("");
-                                        props?.onElementDelete(element);
-                                    }}
-                                    onDuplicateClick={event => {
-                                        event.stopPropagation();
-                                        setEditingLayer("");
-                                        props?.onElementDuplicate(element);
-                                    }}
-                                    onEditClick={event => {
-                                        event.stopPropagation();
-                                        setEditingLayer(element.id);
-                                    }}
-                                    onEditSubmit={(event, value) => {
-                                        event.stopPropagation();
-                                        element[FIELDS.NAME] = value || element[FIELDS.NAME];
-                                        setEditingLayer("");
-                                        props?.onElementRename(element);
-                                    }}
-                                    onEditCancel={event => {
-                                        event.stopPropagation();
-                                        setEditingLayer("");
+                                        update();
                                     }}
                                 />
-                            </div>
-                        )}
-                        {element.group && groups.get(element.group).lastElement === element.id && (
-                            <LayerGroupItem
-                                key={element.group}
-                                elements={groups.get(element.group).elements}
-                                expanded={expandedGroups.current.has(element.group)}
-                                onClick={() => {
-                                    if (expandedGroups.current.has(element.group)) {
-                                        expandedGroups.current.delete(element.group);
-                                    }
-                                    else {
-                                        expandedGroups.current.add(element.group);
-                                    }
-                                    setEditingLayer("");
-                                    update();
-                                }}
-                            />
-                        )}
-                    </React.Fragment>
-                ))}
-                {scene.page.elements.length === 0 && (
-                    <div className="flex flex-col items-center justify-center p-3 border border-dashed border-neutral-300 rounded-lg">
-                        <div className="flex items-center text-xl text-neutral-600">
-                            <StackIcon />
-                        </div>
-                        <div className="text-center text-neutral-500 text-2xs font-medium">No layers to display</div>
-                    </div>
-                )}
-            </div>
-        </div>
+                            )}
+                        </React.Fragment>
+                    ))}
+                    {scene.page.elements.length === 0 && (
+                        <EmptyLayers />
+                    )}
+                </div>
+            </Panel.Body>
+        </Panel>
     );
 };

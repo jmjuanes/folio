@@ -5,10 +5,6 @@ import {
     ACTIONS,
     ELEMENTS,
     FILE_EXTENSIONS,
-    SELECT_BOUNDS_FILL_COLOR,
-    SELECT_BOUNDS_STROKE_COLOR,
-    SELECTION_FILL_COLOR,
-    SELECTION_STROKE_COLOR,
     STATES,
     ZOOM_STEP,
 } from "../constants.js";
@@ -36,6 +32,7 @@ import {PagesPanel} from "./panels/pages.jsx";
 import {LayersPanel} from "./panels/layers.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
+import {ThemeProvider, themed} from "../contexts/theme.jsx";
 
 // @private
 const EditorWithScene = props => {
@@ -95,8 +92,9 @@ const EditorWithScene = props => {
     // Handle clear drawing
     const handleClear = React.useCallback(() => {
         return showConfirm({
-            title: "Clear drawing",
-            message: "This will clear the whole drawing, including pages. Do you want to continue?",
+            title: "Delete all data",
+            message: "This will delete all the information of this board, including all pages and drawings. Do you want to continue?",
+            confirmText: "Yes, delete all data",
             callback: () => {
                 scene.reset();
                 editor.dispatchChange();
@@ -146,7 +144,7 @@ const EditorWithScene = props => {
     }, [scene?.page?.elements?.length]);
 
     return (
-        <div className="relative overflow-hidden h-full w-full select-none">
+        <div className={themed("relative overflow-hidden h-full w-full select-none", "editor")}>
             <Canvas
                 id={scene.id}
                 elements={scene.page.elements}
@@ -158,13 +156,9 @@ const EditorWithScene = props => {
                 zoom={scene.page.zoom}
                 snaps={editor.state.visibleSnapEdges}
                 bounds={bounds}
-                boundsFillColor={SELECT_BOUNDS_FILL_COLOR}
-                boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
                 showBounds={!!bounds}
                 handlers={handlers}
                 brush={editor.state.selection}
-                brushFillColor={SELECTION_FILL_COLOR}
-                brushStrokeColor={SELECTION_STROKE_COLOR}
                 dimensions={dimensions}
                 showBrush={editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT}
                 showPointer={editor.state.action === ACTIONS.ERASE}
@@ -420,7 +414,7 @@ const EditorWithScene = props => {
                                         editor.update();
                                     }}
                                 />
-                                <div className="w-px bg-neutral-200" />
+                                <Island.Separator />
                                 {props.showTitle && (
                                     <Title
                                         key={scene.title}
@@ -434,9 +428,7 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
-                                {props.showTitle && (
-                                    <div className="w-px bg-neutral-200" />
-                                )}
+                                {props.showTitle && <Island.Separator />}
                                 <Island.Button
                                     icon="files"
                                     text={(
@@ -445,7 +437,7 @@ const EditorWithScene = props => {
                                         </div>
                                     )}
                                     showChevron={true}
-                                    active={editor.state.pagesVisible}
+                                    active={false && editor.state.pagesVisible}
                                     onClick={() => {
                                         editor.state.pagesVisible = !editor.state.pagesVisible;
                                         editor.state.contextMenu = false;
@@ -497,7 +489,7 @@ const EditorWithScene = props => {
                                     editor.update();
                                 }}
                             />
-                            {(editor.state.hintsVisible && !editor.state.tool) && (
+                            {(editor.state.hintsVisible && !editor.state.tool && !editor.state.layersVisible) && (
                                 <Hint
                                     position="bottom"
                                     title="History"
@@ -518,7 +510,7 @@ const EditorWithScene = props => {
                                     editor.update();
                                 }}
                             />
-                            {(editor.state.hintsVisible && !editor.state.tool) && (
+                            {(editor.state.hintsVisible && !editor.state.tool && !editor.state.layersVisible) && (
                                 <Hint
                                     position="bottom"
                                     title="Zoom"
@@ -577,9 +569,11 @@ const EditorWithScene = props => {
 // @description Public editor
 export const Editor = ({initialData, ...props}) => {
     return (
-        <SceneProvider initialData={initialData}>
-            <EditorWithScene {...props} />
-        </SceneProvider>
+        <ThemeProvider theme="default">
+            <SceneProvider initialData={initialData}>
+                <EditorWithScene {...props} />
+            </SceneProvider>
+        </ThemeProvider>
     );
 };
 

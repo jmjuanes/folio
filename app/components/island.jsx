@@ -1,20 +1,25 @@
 import React from "react";
 import {renderIcon, ChevronDownIcon} from "@josemi-icons/react";
-import classNames from "classnames";
+import {themed} from "../contexts/theme.jsx";
 
 export const Island = props => (
-    <div className="flex gap-1 p-1 rounded-lg shadow-sm bg-white border border-neutral-200">
+    <div className={themed("flex gap-1 p-1 rounded-xl", "island", props.className)}>
         {props.children}
     </div>
 );
 
+Island.Separator = () => (
+    <div className={themed("w-px", "island.separator")} />
+);
+
 Island.Button = props => {
-    const classList = classNames(props.className || "", {
-        "flex justify-between items-center gap-1 p-2 rounded-md": true,
-        "cursor-pointer hover:bg-neutral-100 text-neutral-800": !props.disabled,
+    const classList = themed({
+        "flex justify-between items-center gap-1 p-2 rounded-lg": true,
+        "cursor-pointer": !props.disabled && !props.active,
         "cursor-not-allowed opacity-40 pointer-events-none": props.disabled,
-        "bg-neutral-100 text-neutral-950": !props.disabled && props.active,
-    });
+        "island.item": !props.active,
+        "island.item.active": !props.disabled && props.active,
+    }, props.className);
     const handleClick = () => {
         return !props.disabled && props?.onClick?.();
     };

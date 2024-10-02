@@ -1,47 +1,39 @@
 import React from "react";
 import classNames from "classnames";
-import {CheckIcon} from "@josemi-icons/react";
+import {renderIcon} from "@josemi-icons/react";
+import {themed} from "../../contexts/theme.jsx";
 
 export const ContextMenu = ({className, ...props}) => (
     <div
         data-testid="contextmenu"
-        className={classNames(
-            "bg-white shadow-md p-1 rounded-lg border border-neutral-200",
-            className,
-        )}
+        className={themed("p-1 rounded-xl", "context-menu", className)}
         {...props}
     />
 );
 
-ContextMenu.Item = ({className, inset = false, disabled = false, ...props}) => (
+ContextMenu.Item = ({className, disabled = false, ...props}) => (
     <div
         data-testid="contextmenu-item"
-        className={classNames({
-            "relative flex items-center gap-2 select-none": true,
-            "rounded-md text-sm pl-2 pr-2 pt-1 pb-1": true,
-            "pl-8": inset,
-            "cursor-pointer hover:bg-neutral-100": !disabled,
+        className={themed({
+            "relative flex items-center gap-2 select-none rounded-lg text-sm px-2 py-1": true,
             "pointer-events-none opacity-60 cursor-disabled": disabled,
+            "cursor-pointer": !disabled,
+            "context-menu.item": !disabled,
         }, className)}
         {...props}
     />
 );
 
-ContextMenu.CheckItem = ({checked, children, ...props}) => (
-    <ContextMenu.Item {...props} inset={true}>
-        {checked && (
-            <div className="absolute text-lg top-0 left-0 mt-1 ml-2">
-                <CheckIcon />
-            </div>
-        )}
-        {children}
-    </ContextMenu.Item>
+ContextMenu.Icon = ({className, icon}) => (
+    <div className={classNames("flex items-center text-base", className)}>
+        {renderIcon(icon)}
+    </div>
 );
 
 ContextMenu.Separator = ({className, ...props}) => (
     <div
         data-testid="contextmenu-separator"
-        className={classNames("w-full bg-neutral-200 h-px my-1", className)}
+        className={themed("w-full h-px my-1", "context-menu.separator", className)}
         {...props}
     />
 );

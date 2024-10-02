@@ -1,6 +1,7 @@
 import React from "react";
-import {CURSORS, HANDLERS, PRIMARY, WHITE} from "../constants.js";
+import {CURSORS, HANDLERS, HANDLERS_FILL_COLOR, HANDLERS_STROKE_COLOR} from "../constants.js";
 import {isCornerHandler, isEdgeHandler, isNodeHandler} from "../handlers.js";
+import {isVerticalEdgeHandler, isHorizontalEdgeHandler} from "../handlers.js";
 import {SvgContainer} from "./svg.jsx";
 
 const cursorsByHandlerType = {
@@ -20,8 +21,8 @@ export const NodeHandler = props => (
         cx={props.x}
         cy={props.y}
         r={props.radius / props.zoom}
-        fill={props.fillColor}
-        stroke={props.strokeColor}
+        fill={HANDLERS_FILL_COLOR}
+        stroke={HANDLERS_STROKE_COLOR}
         strokeWidth={props.strokeWidth / props.zoom}
         style={{
             cursor: CURSORS.GRAB,
@@ -29,17 +30,6 @@ export const NodeHandler = props => (
         onPointerDown={props.onPointerDown}
     />
 );
-
-NodeHandler.defaultProps = {
-    type: null,
-    x: 0,
-    y: 0,
-    fillColor: WHITE,
-    strokeColor: PRIMARY,
-    strokeWidth: 2,
-    radius: 6,
-    zoom: 1,
-};
 
 export const ResizeHandler = props => (
     <rect
@@ -49,8 +39,8 @@ export const ResizeHandler = props => (
         width={props.width / props.zoom}
         height={props.height / props.zoom}
         rx={props.radius / props.zoom}
-        fill={props.fillColor}
-        stroke={props.strokeColor}
+        fill={HANDLERS_FILL_COLOR}
+        stroke={HANDLERS_STROKE_COLOR}
         strokeWidth={props.strokeWidth / props.zoom}
         style={{
             cursor: cursorsByHandlerType[props.type],
@@ -58,19 +48,6 @@ export const ResizeHandler = props => (
         onPointerDown={props.onPointerDown}
     />
 );
-
-ResizeHandler.defaultProps = {
-    type: null,
-    x: 0,
-    y: 0,
-    fillColor: WHITE,
-    strokeColor: PRIMARY,
-    strokeWidth: 2,
-    width: 12,
-    height: 12,
-    radius: 3,
-    zoom: 1,
-};
 
 export const Handlers = props => (
     <SvgContainer>
@@ -81,7 +58,11 @@ export const Handlers = props => (
                         type={handler.type}
                         x={handler.x}
                         y={handler.y}
-                        zoom={props.zoom}
+                        width={isVerticalEdgeHandler(handler.type) ? 24 : 12}
+                        height={isHorizontalEdgeHandler(handler.type) ? 24 : 12}
+                        strokeWidth={4}
+                        radius={isEdgeHandler(handler.type) ? 6 : 4}
+                        zoom={props.zoom ?? 1}
                         onPointerDown={props.onPointerDown}
                     />
                 )}
@@ -90,7 +71,9 @@ export const Handlers = props => (
                         type={handler.type}
                         x={handler.x}
                         y={handler.y}
-                        zoom={props.zoom}
+                        radius={6}
+                        strokeWidth={4}
+                        zoom={props.zoom ?? 1}
                         onPointerDown={props.onPointerDown}
                     />
                 )}
@@ -98,9 +81,3 @@ export const Handlers = props => (
         ))}
     </SvgContainer>
 );
-
-Handlers.defaultProps = {
-    handlers: [],
-    zoom: 1,
-    onPointerDown: null,
-};

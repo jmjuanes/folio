@@ -1,32 +1,24 @@
 import React from "react";
 import classNames from "classnames";
 import {
-    renderIcon,
     TrashIcon,
     CheckIcon,
     PencilIcon,
     CloseIcon,
     CopyIcon,
     BarsIcon,
+    PlusIcon,
 } from "@josemi-icons/react";
+import {Panel} from "../ui/panel.jsx";
 import {useScene} from "../../contexts/scene.jsx";
+import {themed} from "../../contexts/theme.jsx";
 
 const PAGES_ITEM_HEIGHT = 37;
 
-const ActionButton = ({icon, onClick}) => (
-    <div className="flex items-center rounded-md hover:bg-neutral-100 cursor-pointer" onClick={onClick}>
-        <div className="flex p-2 text-base">
-            {renderIcon(icon)}
-        </div>
-    </div>
-);
-
 // @private page action button
-const PageActionButton = ({className = "", children, onClick}) => (
-    <div className={classNames(className, "cursor-pointer items-center opacity-60 hover:opacity-100")} onClick={onClick}>
-        <div className="flex items-center text-lg px-1">
-            {children}
-        </div>
+const PageActionButton = ({children, onClick}) => (
+    <div className={themed("cursor-pointer flex items-center px-1", "pages.item.action")} onClick={onClick}>
+        {children}
     </div>
 );
 
@@ -38,14 +30,12 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
             inputRef.current.focus();
         }
     }, [editing]);
-
     const moveButtonStyle = {
         cursor: props.moving ? "grabbing" : "grab",
         touchAction: "none",
     };
-
     return (
-        <div className="absolute group flex items-center hover:bg-neutral-100 rounded-md p-2 w-full" style={style}>
+        <div className={themed("absolute group flex items-center rounded-md p-2 w-full", "pages.item")} style={style}>
             {active && (
                 <div className="absolute flex text-sm" style={{left:"1.5rem"}}>
                     <CheckIcon />
@@ -61,21 +51,23 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
                             <span>{title}</span>
                         </div>
                     </div>
-                    {editable && (
-                        <PageActionButton className="hidden group-hover:flex" onClick={props.onEdit}>
-                            <PencilIcon />
-                        </PageActionButton>
-                    )}
-                    {editable && (
-                        <PageActionButton className="hidden group-hover:flex" onClick={props.onDuplicate}>
-                            <CopyIcon />
-                        </PageActionButton>
-                    )}
-                    {editable && !active  && (
-                        <PageActionButton className="hidden group-hover:flex" onClick={props.onDelete}>
-                            <TrashIcon />
-                        </PageActionButton>
-                    )}
+                    <div className="flex items-center opacity-0 group-hover:opacity-100">
+                        {editable && (
+                            <PageActionButton onClick={props.onEdit}>
+                                <PencilIcon />
+                            </PageActionButton>
+                        )}
+                        {editable && (
+                            <PageActionButton onClick={props.onDuplicate}>
+                                <CopyIcon />
+                            </PageActionButton>
+                        )}
+                        {editable && !active  && (
+                            <PageActionButton onClick={props.onDelete}>
+                                <TrashIcon />
+                            </PageActionButton>
+                        )}
+                    </div>
                 </React.Fragment>
             )}
             {editing && (
@@ -186,15 +178,17 @@ export const PagesPanel = props => {
     }, [props.onPagesUpdate, editingPage]);
 
     return (
-        <div className="w-72 border border-neutral-200 rounded-lg shadow-md bg-white p-0 relative">
-            <div className="flex items-center justify-between sticky top-0 p-2 border-b border-neutral-200 h-12">
-                <div className="font-medium text-sm">Pages</div>
+        <Panel className="w-72">
+            <Panel.Header className="sticky top-0">
+                <Panel.HeaderTitle>Pages</Panel.HeaderTitle>
                 {props.editable && (
                     <div className="flex items-center gap-0">
-                        <ActionButton icon="plus" onClick={handlePageCreate} />
+                        <Panel.HeaderButton onClick={handlePageCreate}>
+                            <PlusIcon />
+                        </Panel.HeaderButton>
                     </div>
                 )}
-            </div>
+            </Panel.Header>
             <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
                 <div className="relative w-full" style={{height: scene.pages.length * PAGES_ITEM_HEIGHT}}>
                     {scene.pages.map(page => (
@@ -234,6 +228,6 @@ export const PagesPanel = props => {
                     ))}
                 </div>
             </div>
-        </div>
+        </Panel>
     );
 };

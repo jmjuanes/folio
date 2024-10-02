@@ -1,15 +1,16 @@
 import React from "react";
-import classNames from "classnames";
 import {useScene} from "../contexts/scene.jsx";
+import {themed} from "../contexts/theme.jsx";
 
 export const Title = ({editable = false, onChange = null}) => {
     const scene = useScene();
     const title = scene.title || "Untitled";
     const inputRef = React.useRef();
     const [editing, setEditing] = React.useState(false);
-    const previewClass = classNames({
-        "flex items-center leading-none p-2 w-full text-neutral-800 rounded-md": true,
-        "cursor-pointer hover:bg-neutral-100": editable,
+    const previewClass = themed({
+        "flex items-center leading-none p-2 w-full rounded-md": true,
+        "title.preview": editable,
+        "cursor-pointer": editable,
     });
     // Automatically focus the input element when the editing state changes to 'true'
     React.useEffect(() => {
@@ -29,7 +30,7 @@ export const Title = ({editable = false, onChange = null}) => {
                     ref={inputRef}
                     type="text"
                     defaultValue={title}
-                    className="outline-none font-bold leading-none w-full p-2 rounded-md text-neutral-900 bg-neutral-100"
+                    className={themed("outline-none font-bold leading-none w-full p-2 rounded-md", "title.input")}
                     placeholder="Untitled"
                     onKeyUp={event => {
                         if (event.key === "Enter") {

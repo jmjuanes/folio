@@ -32,10 +32,7 @@ export const Menu = props => {
 
     return (
         <div className="flex relative group" tabIndex="0">
-            <Island.Button
-                className="group-focus-within:bg-neutral-100"
-                icon="bars"
-            />
+            <Island.Button icon="bars" />
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56 z-40">
                 {props.showLoad && (
                     <Dropdown.Item onClick={props.onLoad}>
@@ -78,7 +75,7 @@ export const Menu = props => {
                         <Dropdown.Icon>
                             <TrashIcon />
                         </Dropdown.Icon>
-                        <span>Reset the canvas</span>
+                        <span>Reset</span>
                     </Dropdown.Item>
                 )}
                 <Dropdown.Separator />
@@ -103,7 +100,7 @@ export const Menu = props => {
                 {props.showChangeBackground && (
                     <React.Fragment>
                         <Dropdown.Separator />
-                        <div className="text-xs px-2 pb-1 text-neutral-600 select-none">Background</div>
+                        <Dropdown.Label>Background</Dropdown.Label>
                         <div className="px-2">
                             <ColorPicker
                                 value={scene.background}
