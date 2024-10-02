@@ -130,11 +130,8 @@ const LayerGroupItem = props => {
 };
 
 const EmptyLayers = () => (
-    <div className={themed("flex flex-col items-center justify-center p-3 rounded-lg", "layers.empty")}>
-        <div className="flex items-center text-xl">
-            <StackIcon />
-        </div>
-        <div className="text-center text-2xs font-medium">No layers to display</div>
+    <div className={themed("flex flex-col items-center justify-center gap-1 p-3 rounded-lg", "layers.empty")}>
+        <div className="text-center text-xs font-medium">Your board is empty...</div>
     </div>
 );
 

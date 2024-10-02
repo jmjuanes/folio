@@ -61,7 +61,7 @@ export default {
     "island.separator": "bg-neutral-200",
 
     "layers": "",
-    "layers.empty": "border border-dashed border-neutral-300 text-neutral-600",
+    "layers.empty": "text-neutral-600",
     "layers.item": "hover:bg-neutral-200",
     "layers.item.action": "text-neutral-500 hover:text-neutral-900",
     "layers.item.name": "text-neutral-900",
