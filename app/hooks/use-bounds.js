@@ -17,6 +17,7 @@ const getSelectionBounds = elements => {
 export const useBounds = ({action, tool}) => {
     const scene = useScene();
     const bounds = [];
+    let hasCustomBounds = false;
     if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
         const selectedElements = scene.getSelection();
         // 1. Check for active group
@@ -38,6 +39,7 @@ export const useBounds = ({action, tool}) => {
                 (elementConfig.getBounds(selectedElements[0]) || []).map(b => {
                     return bounds.push(b);
                 });
+                hasCustomBounds = true;
             }
         }
         // 3. Generate default bounds for selected elements
@@ -56,11 +58,13 @@ export const useBounds = ({action, tool}) => {
                 });
             }
             // Note: we have to fix rectangle bounds for arrow elements
-            const p = getSelectionBounds(selectedElements);
-            bounds.push({
-                path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
-                strokeWidth: 4,
-            });
+            if (!hasCustomBounds) {
+                const p = getSelectionBounds(selectedElements);
+                bounds.push({
+                    path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
+                    strokeWidth: 4,
+                });
+            }
         }
     }
     // Return bounds
