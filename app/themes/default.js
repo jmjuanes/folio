@@ -49,6 +49,12 @@ export default {
     "form.range.input": "bg-neutral-200",
     "form.separator": "bg-neutral-200",
 
+    "hint": "",
+    "hint.content": "",
+    "hint.content.description": "text-neutral-500",
+    "hint.content.title": "text-neutral-600",
+    "hint.icon": "text-neutral-600",
+
     "island": "shadow-sm bg-white border border-neutral-200",
     "island.item": "hover:bg-neutral-200 text-neutral-900 group-focus-within:bg-neutral-200",
     "island.item.active": "bg-neutral-200 text-neutral-950",
