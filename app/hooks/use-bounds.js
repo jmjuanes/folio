@@ -1,8 +1,4 @@
-import {
-    ACTIONS,
-    GROUP_BOUNDS_COLOR,
-    GROUP_ACTIVE_BOUNDS_COLOR,
-} from "../constants.js";
+import {ACTIONS} from "../constants.js";
 import {getRectangleBounds} from "../utils/math.js";
 import {getRectanglePath} from "../utils/paths.js";
 import {getElementConfig} from "../elements.js";
@@ -30,7 +26,7 @@ export const useBounds = ({action, tool}) => {
                 const p = getSelectionBounds(elementsInGroup);
                 bounds.push({
                     path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
-                    strokeColor: GROUP_ACTIVE_BOUNDS_COLOR,
+                    strokeWidth: 2,
                     strokeDasharray: 5,
                 });
             }
@@ -54,7 +50,7 @@ export const useBounds = ({action, tool}) => {
                     const p = getSelectionBounds(elements);
                     bounds.push({
                         path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
-                        strokeColor: GROUP_BOUNDS_COLOR,
+                        strokeWidth: 2,
                         strokeDasharray: 5,
                     });
                 });
@@ -63,6 +59,7 @@ export const useBounds = ({action, tool}) => {
             const p = getSelectionBounds(selectedElements);
             bounds.push({
                 path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
+                strokeWidth: 4,
             });
         }
     }

@@ -17,7 +17,7 @@ export const NONE = "none";
 export const TRANSPARENT = "transparent";
 export const WHITE = "#ffffff";
 export const BLACK = "#000000";
-export const PRIMARY = "#0d6efd";
+export const PRIMARY = "#5053F1";
 export const SECONDARY = "#20c997";
 export const ACCENT = "#5e5c6c";
 
@@ -367,14 +367,6 @@ export const STATES = {
 // Paste constants
 export const PASTE_OFFSET = 20;
 
-// Selection brush constants
-export const SELECTION_FILL_COLOR = PRIMARY;
-export const SELECTION_STROKE_COLOR = PRIMARY;
-
-// Select bounds constants
-export const SELECT_BOUNDS_FILL_COLOR = NONE;
-export const SELECT_BOUNDS_STROKE_COLOR = PRIMARY;
-
 // Sticky notes constants
 export const NOTE_MIN_WIDTH = 280;
 export const NOTE_MIN_HEIGHT = 280;
@@ -417,3 +409,28 @@ export const ASSETS = {
     IMAGE: "image",
     BOOKMARK: "bookmark",
 };
+
+// snaps constans
+export const SNAPS_STROKE_COLOR = "#E92F8C";
+export const SNAPS_STROKE_WIDTH = 2;
+
+// bounds constants
+export const BOUNDS_STROKE_COLOR = PRIMARY;
+export const BOUNDS_STROKE_WIDTH = 3;
+export const BOUNDS_STROKE_DASH = 0;
+
+// brush constants
+export const BRUSH_FILL_COLOR = PRIMARY;
+export const BRUSH_FILL_OPACITY = 0.3;
+export const BRUSH_STROKE_COLOR = NONE;
+export const BRUSH_STROKE_WIDTH = 0;
+export const BRUSH_STROKE_DASH = 5;
+
+// object dimensions constants
+export const OBJECT_DIMENSIONS_FILL_COLOR = PRIMARY;
+export const OBJECT_DIMENSIONS_TEXT_COLOR = WHITE;
+export const OBJECT_DIMENSIONS_TEXT_SIZE = "0.625rem";
+
+// handlers constants
+export const HANDLERS_FILL_COLOR = WHITE;
+export const HANDLERS_STROKE_COLOR = PRIMARY;

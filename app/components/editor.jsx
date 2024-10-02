@@ -5,10 +5,6 @@ import {
     ACTIONS,
     ELEMENTS,
     FILE_EXTENSIONS,
-    SELECT_BOUNDS_FILL_COLOR,
-    SELECT_BOUNDS_STROKE_COLOR,
-    SELECTION_FILL_COLOR,
-    SELECTION_STROKE_COLOR,
     STATES,
     ZOOM_STEP,
 } from "../constants.js";
@@ -160,13 +156,9 @@ const EditorWithScene = props => {
                 zoom={scene.page.zoom}
                 snaps={editor.state.visibleSnapEdges}
                 bounds={bounds}
-                boundsFillColor={SELECT_BOUNDS_FILL_COLOR}
-                boundsStrokeColor={SELECT_BOUNDS_STROKE_COLOR}
                 showBounds={!!bounds}
                 handlers={handlers}
                 brush={editor.state.selection}
-                brushFillColor={SELECTION_FILL_COLOR}
-                brushStrokeColor={SELECTION_STROKE_COLOR}
                 dimensions={dimensions}
                 showBrush={editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT}
                 showPointer={editor.state.action === ACTIONS.ERASE}

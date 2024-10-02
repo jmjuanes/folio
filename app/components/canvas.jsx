@@ -1,5 +1,23 @@
 import React from "react";
-import {CURSORS, EVENTS, FONT_SOURCES, NONE, WHITE, PRIMARY} from "../constants.js";
+import {
+    CURSORS,
+    EVENTS,
+    FONT_SOURCES,
+    NONE,
+    SNAPS_STROKE_COLOR,
+    SNAPS_STROKE_WIDTH,
+    BRUSH_FILL_COLOR,
+    BRUSH_FILL_OPACITY,
+    BRUSH_STROKE_COLOR,
+    BRUSH_STROKE_WIDTH,
+    BRUSH_STROKE_DASH,
+    BOUNDS_STROKE_COLOR,
+    BOUNDS_STROKE_WIDTH,
+    BOUNDS_STROKE_DASH,
+    OBJECT_DIMENSIONS_FILL_COLOR,
+    OBJECT_DIMENSIONS_TEXT_COLOR,
+    OBJECT_DIMENSIONS_TEXT_SIZE,
+} from "../constants.js";
 import {AssetsProvider} from "../contexts/assets.jsx";
 import {renderElement} from "./elements/index.jsx";
 import {SvgContainer} from "./svg.jsx";
@@ -263,10 +281,10 @@ export const Canvas = props => {
                             <path
                                 key={index}
                                 d={bound.path ?? ""}
-                                fill={props.boundsFillColor}
-                                stroke={bound.strokeColor ?? props.boundsStrokeColor}
-                                strokeWidth={(bound.strokeWidth ?? props.boundsStrokeWidth) / props.zoom}
-                                strokeDasharray={bound.strokeDasharray ?? null}
+                                fill={props.boundsFillColor ?? NONE}
+                                stroke={bound.strokeColor ?? props.boundsStrokeColor ?? BOUNDS_STROKE_COLOR}
+                                strokeWidth={(bound.strokeWidth ?? props.boundsStrokeWidth ?? BOUNDS_STROKE_WIDTH) / props.zoom}
+                                strokeDasharray={(bound.strokeDasharray ?? BOUNDS_STROKE_DASH) ?? null}
                             />
                         ))}
                     </SvgContainer>
@@ -278,11 +296,11 @@ export const Canvas = props => {
                             y={Math.min(props.brush.y1, props.brush.y2)}
                             width={Math.abs(props.brush.x2 - props.brush.x1)}
                             height={Math.abs(props.brush.y2 - props.brush.y1)}
-                            fill={props.brushFillColor}
-                            fillOpacity={props.brushFillOpacity}
-                            stroke={props.brushStrokeColor}
-                            strokeWidth={props.brushStrokeWidth / props.zoom}
-                            strokeDasharray={props.brushStrokeDash / props.zoom}
+                            fill={props.brushFillColor ?? BRUSH_FILL_COLOR}
+                            fillOpacity={props.brushFillOpacity ?? BRUSH_FILL_OPACITY}
+                            stroke={props.brushStrokeColor ?? BRUSH_STROKE_COLOR}
+                            strokeWidth={(props.brushStrokeWidth ?? BRUSH_STROKE_WIDTH) / props.zoom}
+                            strokeDasharray={(props.brushStrokeDash ?? BRUSH_STROKE_DASH) / props.zoom}
                         />
                     </SvgContainer>
                 )}
@@ -305,8 +323,8 @@ export const Canvas = props => {
                                     key={`snap:edge:${item.edge}.${index}`}
                                     d={`M${start.join(",")}L${end.join(",")}`}
                                     fill={NONE}
-                                    stroke={props.snapsStrokeColor}
-                                    strokeWidth={props.snapsStrokeWidth}
+                                    stroke={props.snapsStrokeColor ?? SNAPS_STROKE_COLOR}
+                                    strokeWidth={props.snapsStrokeWidth ?? SNAPS_STROKE_WIDTH}
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 />
@@ -318,9 +336,9 @@ export const Canvas = props => {
                     <React.Fragment>
                         {(props.dimensions || []).map((item, index) => {
                             const st = {
-                                color: WHITE,
-                                fontSize: "0.625rem",
-                                backgroundColor: PRIMARY,
+                                color: OBJECT_DIMENSIONS_TEXT_COLOR,
+                                fontSize: OBJECT_DIMENSIONS_TEXT_SIZE,
+                                backgroundColor: OBJECT_DIMENSIONS_FILL_COLOR,
                                 borderRadius: "0.25rem",
                                 display: "inline-flex",
                                 lineHeight: "1",
@@ -360,19 +378,19 @@ Canvas.defaultProps = {
     translateY: 0,
     zoom: 1,
     snaps: [],
-    snapsStrokeWidth: 3,
-    snapsStrokeColor: "#3789fb",
+    // snapsStrokeWidth: 3,
+    // snapsStrokeColor: "#3789fb",
     bounds: null,
-    boundsFillColor: NONE,
-    boundsStrokeColor: NONE,
-    boundsStrokeWidth: 2,
+    // boundsFillColor: NONE,
+    // boundsStrokeColor: NONE,
+    // boundsStrokeWidth: 2,
     handlers: null,
     brush: null,
-    brushFillColor: "#4184f4",
-    brushFillOpacity: 0.1,
-    brushStrokeColor: "#4285f4",
-    brushStrokeWidth: 2,
-    brushStrokeDash: 5,
+    // brushFillColor: "#4184f4",
+    // brushFillOpacity: 0.1,
+    // brushStrokeColor: "#4285f4",
+    // brushStrokeWidth: 2,
+    // brushStrokeDash: 5,
     pointer: null,
     pointerFillColor: "#fff",
     onPointCanvas: null,
