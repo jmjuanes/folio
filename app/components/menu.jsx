@@ -1,15 +1,5 @@
 import React from "react";
 import classnames from "classnames";
-import {
-    ExternalLinkIcon,
-    MagnetIcon,
-    GridIcon,
-    ImageIcon,
-    DownloadIcon,
-    FolderIcon,
-    TrashIcon,
-    Ruler2Icon,
-} from "@josemi-icons/react";
 import {Dropdown} from "./ui/dropdown.jsx";
 import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {Island} from "./island.jsx";
@@ -19,9 +9,7 @@ import {useScene} from "../contexts/scene.jsx";
 // @private menu link component
 const MenuLink = ({text, url}) => (
     <Dropdown.Item as="a" href={url} target="_blank">
-        <Dropdown.Icon>
-            <ExternalLinkIcon />
-        </Dropdown.Icon>
+        <Dropdown.Icon icon="external-link" />
         <span>{text}</span>
     </Dropdown.Item>
 );
@@ -36,17 +24,13 @@ export const Menu = props => {
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56 z-40">
                 {props.showLoad && (
                     <Dropdown.Item onClick={props.onLoad}>
-                        <Dropdown.Icon>
-                            <FolderIcon />
-                        </Dropdown.Icon>
+                        <Dropdown.Icon icon="folder" />
                         <span>Open...</span>
                     </Dropdown.Item>
                 )}
                 {props.showSave && (
                     <Dropdown.Item onClick={props.onSave}>
-                        <Dropdown.Icon>
-                            <DownloadIcon />
-                        </Dropdown.Icon>
+                        <Dropdown.Icon icon="download" />
                         <span>Save as...</span>
                     </Dropdown.Item>
                 )}
@@ -58,9 +42,7 @@ export const Menu = props => {
                         })}
                         onClick={props.onExport}
                     >
-                        <Dropdown.Icon>
-                            <ImageIcon />
-                        </Dropdown.Icon>
+                        <Dropdown.Icon icon="image" />
                         <span>Export image...</span>
                     </Dropdown.Item>
                 )}
@@ -72,29 +54,21 @@ export const Menu = props => {
                         })}
                         onClick={props.onClear}
                     >
-                        <Dropdown.Icon>
-                            <TrashIcon />
-                        </Dropdown.Icon>
+                        <Dropdown.Icon icon="trash" />
                         <span>Reset</span>
                     </Dropdown.Item>
                 )}
                 <Dropdown.Separator />
                 <Dropdown.CheckItem checked={!!scene?.appState?.grid} onClick={props.onGridChange}>
-                    <Dropdown.Icon>
-                        <GridIcon />
-                    </Dropdown.Icon>
+                    <Dropdown.Icon icon="grid" />
                     <span>Grid</span>
                 </Dropdown.CheckItem>
                 <Dropdown.CheckItem checked={!!scene?.appState?.snapToElements} onClick={props.onSnapToElementsChange}>
-                    <Dropdown.Icon>
-                        <MagnetIcon />
-                    </Dropdown.Icon>
+                    <Dropdown.Icon icon="magnet" />
                     <span>Snap to elements</span>
                 </Dropdown.CheckItem>
                 <Dropdown.CheckItem checked={!!scene?.appState?.objectDimensions} onClick={props.onObjectDimensionsChange}>
-                    <Dropdown.Icon>
-                        <Ruler2Icon />
-                    </Dropdown.Icon>
+                    <Dropdown.Icon icon="ruler-2" />
                     <span>Object dimensions</span>
                 </Dropdown.CheckItem>
                 {props.showChangeBackground && (

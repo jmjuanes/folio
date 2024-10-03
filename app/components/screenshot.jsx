@@ -1,5 +1,4 @@
 import React from "react";
-import {FileIcon, FillIcon} from "@josemi-icons/react";
 import {
     BLACK,
     CURSORS,
@@ -182,16 +181,12 @@ export const Screenshot = props => {
                         <Island.Button icon="cog" />
                         <Dropdown className="hidden group-focus-within:block top-full right-0 mt-2 w-56 z-50">
                             <Dropdown.Item disabled={true}>
-                                <Dropdown.Icon>
-                                    <FileIcon />
-                                </Dropdown.Icon>
+                                <Dropdown.Icon icon="file" />
                                 <span>Format</span>
                                 <span className="ml-auto opacity-60">PNG</span>
                             </Dropdown.Item>
                             <Dropdown.CheckItem checked={options.background} onClick={() => setOptions({background: !options.background})}>
-                                <Dropdown.Icon>
-                                    <FillIcon />
-                                </Dropdown.Icon>
+                                <Dropdown.Icon icon="fill" />
                                 <span>Solid Background</span>
                             </Dropdown.CheckItem>
                         </Dropdown>

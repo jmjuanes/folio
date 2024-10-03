@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import {CheckIcon} from "@josemi-icons/react";
+import {CheckIcon, renderIcon} from "@josemi-icons/react";
 import {themed} from "../../contexts/theme.jsx";
 
 export const Dropdown = ({className, ...props}) => (
@@ -45,12 +45,10 @@ Dropdown.Item = ({as, className, disabled = false, ...props}) => {
     );
 };
 
-Dropdown.Icon = ({className, ...props}) => (
-    <div
-        data-testid="dropdown-icon"
-        className={classNames("flex items-center text-base", className)}
-        {...props}
-    />
+Dropdown.Icon = ({className, icon, ...props}) => (
+    <div className={classNames("flex items-center text-base", className)} {...props}>
+        {renderIcon(icon)}
+    </div>
 );
 
 Dropdown.CheckItem = ({checked = false, children, ...props}) => (
