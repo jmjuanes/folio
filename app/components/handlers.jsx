@@ -21,8 +21,8 @@ export const NodeHandler = props => (
         cx={props.x}
         cy={props.y}
         r={props.radius / props.zoom}
-        fill={HANDLERS_FILL_COLOR}
-        stroke={HANDLERS_STROKE_COLOR}
+        fill={props.fillColor ?? HANDLERS_FILL_COLOR}
+        stroke={props.strokeColor ?? HANDLERS_STROKE_COLOR}
         strokeWidth={props.strokeWidth / props.zoom}
         style={{
             cursor: CURSORS.GRAB,
@@ -39,8 +39,8 @@ export const ResizeHandler = props => (
         width={props.width / props.zoom}
         height={props.height / props.zoom}
         rx={props.radius / props.zoom}
-        fill={HANDLERS_FILL_COLOR}
-        stroke={HANDLERS_STROKE_COLOR}
+        fill={props.fillColor ?? HANDLERS_FILL_COLOR}
+        stroke={props.strokeColor ?? HANDLERS_STROKE_COLOR}
         strokeWidth={props.strokeWidth / props.zoom}
         style={{
             cursor: cursorsByHandlerType[props.type],
@@ -60,6 +60,8 @@ export const Handlers = props => (
                         y={handler.y}
                         width={isVerticalEdgeHandler(handler.type) ? 24 : 12}
                         height={isHorizontalEdgeHandler(handler.type) ? 24 : 12}
+                        fillColor={props.fillColor}
+                        strokeColor={props.strokeColor}
                         strokeWidth={4}
                         radius={isEdgeHandler(handler.type) ? 6 : 4}
                         zoom={props.zoom ?? 1}
@@ -72,6 +74,8 @@ export const Handlers = props => (
                         x={handler.x}
                         y={handler.y}
                         radius={6}
+                        fillColor={props.fillColor}
+                        strokeColor={props.strokeColor}
                         strokeWidth={4}
                         zoom={props.zoom ?? 1}
                         onPointerDown={props.onPointerDown}
