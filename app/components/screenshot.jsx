@@ -124,6 +124,7 @@ export const Screenshot = props => {
                 className="absolute top-0 left-0 w-full h-full z-50"
                 style={{
                     backgroundColor: region ? TRANSPARENT : BLACK,
+                    cursor: CURSORS.CROSSHAIR,
                     opacity: "0.5",
                 }}
                 onPointerDown={event => handlePointerDown(event, false, false)}
@@ -136,6 +137,9 @@ export const Screenshot = props => {
                             fill={BLACK}
                             fillOpacity="0.5"
                             stroke={NONE}
+                            style={{
+                                cursor: CURSORS.CROSSHAIR,
+                            }}
                             onPointerDown={event => handlePointerDown(event, false, false)}
                         />
                         <path

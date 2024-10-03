@@ -58,6 +58,7 @@ export const EVENTS = {
 
 export const CURSORS = {
     NONE: "",
+    CROSSHAIR: "crosshair",
     DEFAULT: "default",
     DISABLED: "not-allowed",
     POINTER: "pointer",
