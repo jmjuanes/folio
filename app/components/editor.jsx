@@ -553,7 +553,7 @@ const EditorWithScene = props => {
                         exportToFile({
                             elements: scene.getElements(),
                             background: TRANSPARENT, // scene.background,
-                            crop: convertRegionToSceneCoordinates(region, scene),
+                            crop: convertRegionToSceneCoordinates(scene, region),
                         }).catch(error => console.error(error));
                         editor.state.action = null;
                         editor.update();
@@ -562,7 +562,7 @@ const EditorWithScene = props => {
                         exportToClipboard({
                             elements: scene.getElements(),
                             background: TRANSPARENT, // scene.background,
-                            crop: convertRegionToSceneCoordinates(region, scene),
+                            crop: convertRegionToSceneCoordinates(scene, region),
                         }).catch(error => console.error(error));
                         editor.state.action = null;
                         editor.update();
