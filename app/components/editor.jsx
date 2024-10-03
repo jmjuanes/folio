@@ -7,6 +7,7 @@ import {
     FILE_EXTENSIONS,
     STATES,
     ZOOM_STEP,
+    TRANSPARENT,
 } from "../constants.js";
 import {saveAsJson, loadFromJson} from "../json.js";
 import {blobToDataUrl} from "../utils/blob.js";
@@ -22,6 +23,7 @@ import {ContextMenu} from "./context-menu.jsx";
 import {Menu} from "./menu.jsx";
 import {Title} from "./title.jsx";
 import {Hint} from "./hint.jsx";
+import {Screenshot} from "./screenshot.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
 import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
@@ -33,6 +35,8 @@ import {LayersPanel} from "./panels/layers.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
+import {exportToFile, exportToClipboard} from "../export.js";
+import {convertRegionToSceneCoordinates} from "../scene.js";
 
 // @private
 const EditorWithScene = props => {
@@ -542,6 +546,32 @@ const EditorWithScene = props => {
                         {props.headerRightContent}
                     </div>
                 </React.Fragment>
+            )}
+            {editor.state.action === ACTIONS.SCREENSHOT && (
+                <Screenshot
+                    onDownload={(region, options) => {
+                        exportToFile({
+                            elements: scene.getElements(),
+                            background: options?.background ? scene.background : TRANSPARENT,
+                            crop: convertRegionToSceneCoordinates(scene, region),
+                        }).catch(error => console.error(error));
+                        editor.state.action = null;
+                        editor.update();
+                    }}
+                    onCopyToClipboard={(region, options) => {
+                        exportToClipboard({
+                            elements: scene.getElements(),
+                            background: options?.background ? scene.background : TRANSPARENT,
+                            crop: convertRegionToSceneCoordinates(scene, region),
+                        }).catch(error => console.error(error));
+                        editor.state.action = null;
+                        editor.update();
+                    }}
+                    onCancel={() => {
+                        editor.state.action = null;
+                        editor.update();
+                    }}
+                />
             )}
             {editor.state.welcomeVisible && (
                 <WelcomeDialog

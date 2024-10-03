@@ -7,8 +7,8 @@ const generateDimensionLabel = el => ({
     value: [Math.floor(Math.abs(el.x2 - el.x1)), Math.floor(Math.abs(el.y2 - el.y1))].join(" x "),
     x: Math.max(el.x1, el.x2),
     y: Math.max(el.y1, el.y2),
-    translateX: "-100%",
-    translateY: "0.5rem",
+    // translateX: "-100%",
+    // translateY: "0.5rem",
 });
 
 export const useDimensions = ({action, tool}) => {

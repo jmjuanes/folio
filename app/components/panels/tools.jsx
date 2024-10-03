@@ -4,8 +4,6 @@ import {useUpdate} from "react-use";
 import {
     LockIcon,
     UnlockIcon,
-    NoteIcon,
-    EraseIcon,
     PenIcon,
     ImageIcon,
     TextIcon,
@@ -15,7 +13,6 @@ import {
     CircleIcon,
     TriangleIcon,
     DotsVerticalIcon,
-    LaserPointerIcon,
     StickerIcon,
 } from "@josemi-icons/react";
 import {
@@ -282,27 +279,21 @@ export const ToolsPanel = props => {
                             </div>
                             <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
                                 <Dropdown.CheckItem checked={props.action === ACTIONS.POINTER} onClick={props.onPointerClick}>
-                                    <Dropdown.Icon>
-                                        <LaserPointerIcon />
-                                    </Dropdown.Icon>
+                                    <Dropdown.Icon icon="laser-pointer" />
                                     <span>Laser Pointer</span>
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
                                     checked={props.tool === ELEMENTS.NOTE}
                                     onClick={() => props.onToolClick(ELEMENTS.NOTE)}
                                 >
-                                    <Dropdown.Icon>
-                                        <NoteIcon />
-                                    </Dropdown.Icon>
+                                    <Dropdown.Icon icon="note" />
                                     <span>Note</span>
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
                                     checked={props.action === ACTIONS.ERASE}
                                     onClick={props.onEraseClick}
                                 >
-                                    <Dropdown.Icon>
-                                        <EraseIcon />
-                                    </Dropdown.Icon>
+                                    <Dropdown.Icon icon="erase" />
                                     <span>Erase</span>
                                 </Dropdown.CheckItem>
                             </Dropdown>

@@ -1180,3 +1180,13 @@ export const createScene = initialData => {
 
     return scene;
 };
+
+// @description convert a region into scene coordinates
+export const convertRegionToSceneCoordinates = (scene, region) => {
+    return {
+        x1: (region.x1 - scene.page.translateX) / scene.page.zoom,
+        y1: (region.y1 - scene.page.translateY) / scene.page.zoom,
+        x2: (region.x2 - scene.page.translateX) / scene.page.zoom,
+        y2: (region.y2 - scene.page.translateY) / scene.page.zoom,
+    };
+};

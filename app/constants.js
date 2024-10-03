@@ -58,6 +58,7 @@ export const EVENTS = {
 
 export const CURSORS = {
     NONE: "",
+    CROSSHAIR: "crosshair",
     DEFAULT: "default",
     DISABLED: "not-allowed",
     POINTER: "pointer",
@@ -434,3 +435,7 @@ export const OBJECT_DIMENSIONS_TEXT_SIZE = "0.625rem";
 // handlers constants
 export const HANDLERS_FILL_COLOR = WHITE;
 export const HANDLERS_STROKE_COLOR = PRIMARY;
+
+// screenshot constants
+export const SCREENSHOT_STROKE_COLOR = PRIMARY;
+export const SCREENSHOT_STROKE_WIDTH = 3;
