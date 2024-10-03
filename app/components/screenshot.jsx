@@ -13,6 +13,7 @@ import {SvgContainer} from "./svg.jsx";
 import {ObjectDimensions} from "./object-dimensions.jsx";
 import {Island} from "./island.jsx";
 import {Dropdown} from "./ui/dropdown.jsx";
+import {clearFocus} from "../utils/dom.js";
 
 const getScreenshotCommand = r => {
     return `M0,0 H${r.width} V${r.height} H0 Z M${r.x1},${r.y1} V${r.y2} H${r.x2} V${r.y1} Z`;
@@ -114,6 +115,7 @@ export const Screenshot = props => {
         document.addEventListener("pointermove", handlePointerMove);
         document.addEventListener("pointerup", handlePointerUp);
         document.addEventListener("pointerleave", handlePointerUp);
+        clearFocus();
     };
     return (
         <React.Fragment>
