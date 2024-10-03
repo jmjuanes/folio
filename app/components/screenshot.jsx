@@ -11,6 +11,7 @@ import {
 import {Handlers} from "./handlers.jsx";
 import {SvgContainer} from "./svg.jsx";
 import {ObjectDimensions} from "./object-dimensions.jsx";
+import {Island} from "./island.jsx";
 
 const getScreenshotCommand = r => {
     return `M0,0 H${r.width} V${r.height} H0 Z M${r.x1},${r.y1} V${r.y2} H${r.x2} V${r.y1} Z`;
@@ -157,6 +158,28 @@ export const Screenshot = props => {
                     y={Math.max(region.y1, region.y2)}
                 />
             )}
+            <div className="absolute left-half top-0 mt-4 translate-x-half-n z-50">
+                <Island>
+                    <Island.Button
+                        icon="download"
+                        text="Download"
+                        disabled={!region}
+                        onClick={() => props.onDownload(region)}
+                    />
+                    <Island.Button
+                        icon="clipboard"
+                        text="Copy to Clipboard"
+                        disabled={!region}
+                        onClick={() => props.onCopyToClipboard(region)}
+                    />
+                    <Island.Separator />
+                    <Island.Button
+                        icon="x"
+                        text="Cancel"
+                        onClick={props.onCancel}
+                    />
+                </Island>
+            </div>
         </React.Fragment>
     );
 };
