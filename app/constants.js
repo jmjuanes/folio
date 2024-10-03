@@ -434,3 +434,7 @@ export const OBJECT_DIMENSIONS_TEXT_SIZE = "0.625rem";
 // handlers constants
 export const HANDLERS_FILL_COLOR = WHITE;
 export const HANDLERS_STROKE_COLOR = PRIMARY;
+
+// screenshot constants
+export const SCREENSHOT_STROKE_COLOR = PRIMARY;
+export const SCREENSHOT_STROKE_WIDTH = 3;
