@@ -549,19 +549,19 @@ const EditorWithScene = props => {
             )}
             {editor.state.action === ACTIONS.SCREENSHOT && (
                 <Screenshot
-                    onDownload={region => {
+                    onDownload={(region, options) => {
                         exportToFile({
                             elements: scene.getElements(),
-                            background: TRANSPARENT, // scene.background,
+                            background: options?.background ? scene.background : TRANSPARENT,
                             crop: convertRegionToSceneCoordinates(scene, region),
                         }).catch(error => console.error(error));
                         editor.state.action = null;
                         editor.update();
                     }}
-                    onCopyToClipboard={region => {
+                    onCopyToClipboard={(region, options) => {
                         exportToClipboard({
                             elements: scene.getElements(),
-                            background: TRANSPARENT, // scene.background,
+                            background: options?.background ? scene.background : TRANSPARENT,
                             crop: convertRegionToSceneCoordinates(scene, region),
                         }).catch(error => console.error(error));
                         editor.state.action = null;

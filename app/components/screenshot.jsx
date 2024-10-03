@@ -1,4 +1,5 @@
 import React from "react";
+import {FileIcon, FillIcon} from "@josemi-icons/react";
 import {
     BLACK,
     CURSORS,
@@ -12,6 +13,7 @@ import {Handlers} from "./handlers.jsx";
 import {SvgContainer} from "./svg.jsx";
 import {ObjectDimensions} from "./object-dimensions.jsx";
 import {Island} from "./island.jsx";
+import {Dropdown} from "./ui/dropdown.jsx";
 
 const getScreenshotCommand = r => {
     return `M0,0 H${r.width} V${r.height} H0 Z M${r.x1},${r.y1} V${r.y2} H${r.x2} V${r.y1} Z`;
@@ -33,6 +35,9 @@ const getHandlers = region => {
 
 export const Screenshot = props => {
     const [region, setRegion] = React.useState(null);
+    const [options, setOptions] = React.useReducer((p, s) => ({...p, ...s}), {
+        background: true,
+    });
     const parent = React.useRef();
     const handlePointerDown = (event, isHandler, isMoving) => {
         event.preventDefault();
@@ -164,14 +169,33 @@ export const Screenshot = props => {
                         icon="download"
                         text="Download"
                         disabled={!region}
-                        onClick={() => props.onDownload(region)}
+                        onClick={() => props.onDownload(region, options)}
                     />
                     <Island.Button
                         icon="clipboard"
                         text="Copy to Clipboard"
                         disabled={!region}
-                        onClick={() => props.onCopyToClipboard(region)}
+                        onClick={() => props.onCopyToClipboard(region, options)}
                     />
+                    <Island.Separator />
+                    <div className="flex relative group" tabIndex="0">
+                        <Island.Button icon="cog" />
+                        <Dropdown className="hidden group-focus-within:block top-full right-0 mt-2 w-56 z-50">
+                            <Dropdown.Item disabled={true}>
+                                <Dropdown.Icon>
+                                    <FileIcon />
+                                </Dropdown.Icon>
+                                <span>Format</span>
+                                <span className="ml-auto opacity-60">PNG</span>
+                            </Dropdown.Item>
+                            <Dropdown.CheckItem checked={options.background} onClick={() => setOptions({background: !options.background})}>
+                                <Dropdown.Icon>
+                                    <FillIcon />
+                                </Dropdown.Icon>
+                                <span>Solid Background</span>
+                            </Dropdown.CheckItem>
+                        </Dropdown>
+                    </div>
                     <Island.Separator />
                     <Island.Button
                         icon="x"
