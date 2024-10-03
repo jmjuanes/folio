@@ -184,7 +184,7 @@ export const Screenshot = props => {
                     />
                     <Island.Separator />
                     <div className="flex relative group" tabIndex="0">
-                        <Island.Button icon="cog" />
+                        <Island.Button icon="sliders" />
                         <Dropdown className="hidden group-focus-within:block top-full right-0 mt-2 w-56 z-50">
                             <Dropdown.Item disabled={true}>
                                 <Dropdown.Icon icon="file" />
