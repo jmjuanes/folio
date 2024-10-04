@@ -2,15 +2,18 @@
 title: "Folio | Minimal whiteboard for sketching and prototyping"
 features:
   - subtitle: "Privacy First."
+    icon: "shield"
     title: "Design with total <u>Privacy</u>."
     content:
       - "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
       - "Sketch and create with <b>confidence</b>."
   - subtitle: "Sketch without constraints."
+    icon: "drawing"
     title: "Boundless Canvas for <u>Ideas</u>."
     content:
         - "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
   - subtitle: "Introducing Pages."
+    icon: "files"
     title: "<u>Organize</u> your ideas seamlessly."
     content:
       - "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
@@ -34,11 +37,11 @@ faq:
     answer: "Currently, the best way is to download your drawing as a <code>.folio</code> file. Then, simply share it with your colleague via email or your favorite cloud service. We are working on even more ways to share and collaborate in the future, so stay tuned for updates!"
 ---
 <!-- Presentation -->
-<div class="pt-20 pb-16 md:pt-32 md:pb-20 px-8 w-full max-w-7xl mx-auto">
+<div class="pt-20 pb-16 md:pt-32 md:pb-20">
     <div class="mb-8 font-display text-6xl md:text-8xl leading-none text-neutral-950 max-w-5xl">
         Sketch Freely on an Infinite Canvas.
     </div>
-    <div class="mb-10 text-2xl md:text-3xl w-full max-w-3xl text-neutral-800">
+    <div class="mb-10 text-2xl md:text-3xl w-full max-w-2xl text-neutral-800">
         <span>Sketch, prototype, and bring your ideas to life  with unparalleled flexibility and ease.</span>
     </div>
     <div class="flex mb-2">
@@ -92,19 +95,28 @@ faq:
     </div>
 </div>
 <!-- Features -->
-<div class="py-24 md:py-40 w-full bg-black text-white">
+<div class="py-24 md:py-32">
     <a href="#features" name="features" class=""></a>
-    <div class="w-full max-w-7xl mx-auto px-8 mb-24">
-        <div class="font-black text-5xl md:text-7xl leading-none max-w-4xl">
-            <span>Discover the power of folio.</span>
-        </div>
+    <div class="hidden font-display text-5xl md:text-7xl leading-none max-w-4xl mb-24">
+        <span>Discover the power of folio.</span>
     </div>
-    <div class="w-full max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
         {{#each page.data.features}}
         <div class="w-full max-w-xl mb-12">
-            <div class="mb-2 text-lg font-bold o-80">{{!subtitle}}</div>
-            <div class="font-black text-4xl md:text-5xl leading-none">{{!title}}</div>
-            <div class="flex flex-col gap-2 text-xl mt-8">
+            {{#if icon}}
+            <div class="flex mb-4">
+                <div class="flex items-center border-4 border-white shadow-md bg-neutral-950 text-white rounded-xl p-3">
+                    <svg class="w-10 h-10"><use xlink:href="sprite.svg#{{icon}}"></use></svg>
+                </div>
+            </div>
+            {{/if}}
+            <div class="mb-4 font-bold text-neutral-800">
+                <span class="">{{!subtitle}}</span>
+            </div>
+            <div class="font-display text-neutral-950 text-4xl md:text-5xl leading-none">
+                {{!title}}
+            </div>
+            <div class="flex flex-col gap-2 text-lg mt-8">
                 {{#each content}}<div>{{!.}}</div>{{/each}}
             </div>
         </div>
@@ -164,25 +176,25 @@ faq:
 </div>
 <!-- Open source -->
 <div class="py-20 md:py-24 w-full">
-    <div class="w-full max-w-7xl mx-auto px-8">
-        <div class="font-black text-5xl md:text-6xl leading-none text-center text-neutral-950 mb-6">
-            <span>Proudly <u>Open Source</u>.</span>
-        </div>
-        <div class="w-full max-w-2xl mx-auto text-center text-xl">
-            <span><b>Folio</b> is open source and powered by open source software. </span>
-            <span>The source code is available on <a href="https://github.com/jmjuanes/folio" class="font-bold underline">GitHub</a>.</span>
-        </div>
+    <div class="font-display text-4xl md:text-5xl leading-none text-center text-neutral-950 mb-6">
+        <span>Proudly <u>Open Source</u>.</span>
+    </div>
+    <div class="w-full max-w-xl mx-auto text-center text-lg">
+        <span><b>Folio</b> is open source and powered by open source software. </span>
+        <span>The source code is available on <a href="https://github.com/jmjuanes/folio" class="font-bold underline">GitHub</a>.</span>
     </div>
 </div>
 <!-- Work in progress warning -->
-<div class="p-12 w-full bg-neutral-100 rounded-2xl">
-    <div class="text-2xl font-bold">
-        <span><u>Warning</u>: Folio is still a Work in Progress</span>
-    </div>
-    <div class="mt-4">
-        Please be aware that Folio is currently in active development. While the app is fully functional and offers a range of features, we are continuously working to enhance and expand its capabilities.
-    </div>
-    <div class="mt-2">
-        You might encounter occasional bugs or experience features that are still being refined. We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
+<div class="py-10 md:py-16 w-full">
+    <div class="p-12 w-full bg-neutral-100 rounded-2xl">
+        <div class="text-2xl font-bold">
+            <span><u>Warning</u>: Folio is still a Work in Progress</span>
+        </div>
+        <div class="mt-4">
+            Please be aware that Folio is currently in active development. While the app is fully functional and offers a range of features, we are continuously working to enhance and expand its capabilities.
+        </div>
+        <div class="mt-2">
+            You might encounter occasional bugs or experience features that are still being refined. We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
+        </div>
     </div>
 </div>
