@@ -1,5 +1,6 @@
 ---
-title: "Folio | Minimal whiteboard for sketching and prototyping"
+title: "Minimal whiteboard for sketching and prototyping"
+layout: "default"
 features:
   - subtitle: "Privacy First."
     icon: "shield"
@@ -56,37 +57,87 @@ faq:
         <span>No signup. Start in less than 5 seconds.</span>
     </div>
 </div>
-<div class="w-full max-w-7xl mx-auto px-8 pb-28">
-    <div class="w-full">
-        <img class="rounded-2xl border-4 border-b-8 border-neutral-200 shadow-sm" width="100%" src="./screenshot.png">
+<div class="w-full pb-16 select-none">
+    <img class="rounded-2xl border-8 border-neutral-950 shadow-md" width="100%" src="./screenshot.png">
+    <div class="hidden justify-center mt-8">
+        <div class="flex gap-2 items-center">
+            <div class="flex items-center gap-2 px-3 py-2 text-neutral-950 bg-white border border-neutral-200 rounded-lg">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6"><use xlink:href="sprite.svg#drawing"></use></svg>
+                </div>
+                <span class="font-medium">Folio</span>
+            </div>
+        </div>
     </div>
 </div>
-<div class="w-full max-w-7xl mx-auto px-8 pb-20">
-    <div class="text-neutral-900 text-4xl font-black mb-4">What's new in folio?</div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+<!-- Features -->
+<div class="py-16 md:py-20">
+    <a href="#features" name="features" class=""></a>
+    <div class="mb-16">
+        <div class="font-display text-5xl md:text-6xl text-neutral-950 leading-none mb-4">
+            <span>Everything you need.</span>
+        </div>
+        <div class="text-xl md:text-2xl text-neutral-800 font-medium max-w-2xl">
+            All the features that you need for sketching, planning, and visualizing your projects with no limits.
+        </div>
+    </div>
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{#each page.data.features}}
+        <div class="w-full max-w-xl bg-white border border-neutral-200 p-8 rounded-xl mb-2">
+            {{#if icon}}
+            <div class="flex mb-4">
+                <div class="flex items-center border-4 border-white shadow-lg bg-neutral-950 text-white rounded-xl p-3">
+                    <svg class="w-8 h-8"><use xlink:href="sprite.svg#{{icon}}"></use></svg>
+                </div>
+            </div>
+            {{/if}}
+            <div class="mb-4 font-bold text-sm text-neutral-800">
+                <span class="">{{!subtitle}}</span>
+            </div>
+            <div class="font-extrabold text-neutral-950 text-2xl md:text-3xl leading-none mb-4">
+                {{!title}}
+            </div>
+            <div class="flex flex-col gap-2 text-base">
+                {{#each content}}<div>{{!.}}</div>{{/each}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+<!-- latest news -->
+<div class="w-full py-16 md:py-20">
+    <div class="mb-16">
+        <div class="font-display text-5xl md:text-6xl text-neutral-950 leading-none mb-4">
+            What's new in folio?
+        </div>
+        <div class="text-xl md:text-2xl text-neutral-800 font-medium max-w-2xl">
+            The latest improvements and enhancements in <b>folio</b>.
+        </div>
+    </div>
+    <div class="grid grid-cols-1 gap-4 w-full">
         {{#firstItems site.data.changelog}}
-        <div class="p-8 rounded-2xl border-2 border-l-8 border-neutral-950">
-            <div class="flex gap-2 mb-2">
-                <div class="flex items-center bg-neutral-100 border-2 border-neutral-900 rounded-full px-3 py-1">
-                    <span class="font-extrabold leading-none text-sm text-neutral-900">{{version}}</span>
+        <div class="p-8 rounded-xl border border-neutral-200 bg-white">
+            <div class="flex gap-2 mb-4">
+                <div class="flex items-center bg-neutral-50 border border-neutral-200 rounded-full px-3 py-1">
+                    <span class="font-medium leading-none text-xs text-neutral-800">{{version}}</span>
                 </div>
                 {{#if @first}}
-                <div class="flex items-center bg-neutral-100 border-2 border-neutral-900 bg-neutral-900 rounded-full px-3 py-1">
-                    <span class="font-extrabold leading-none text-sm text-white">CURRENT</span>
+                <div class="flex items-center bg-neutral-50 border border-neutral-200 rounded-full px-3 py-1">
+                    <span class="font-bold leading-none text-xs text-neutral-800">CURRENT</span>
                 </div>
                 {{/if}}
             </div>
-            <a href="/changelog#{{url}}" class="flex text-neutral-950 leading-tight text-2xl hover:underline mb-2">
+            <a href="/changelog#{{url}}" class="flex text-neutral-950 leading-tight text-xl hover:underline mb-2">
                 <div class="font-bold">{{title}}</div>
             </a>
             {{#if description}}
-            <div class="text-lg font-medium">{{description}}</div>
+            <div class="">{{description}}</div>
             {{/if}}
         </div>
         {{/firstItems}}
     </div>
-    <div class="mt-3">
-        <a href="/changelog" class="inline-flex items-center gap-2 underline">
+    <div class="mt-4">
+        <a href="/changelog" class="inline-flex items-center gap-2 hover:underline">
             <div class="leading-none">See more updates</div>
             <div class="flex items-center">
                 <svg class="w-4 h-4"><use xlink:href="sprite.svg#arrow-right"></use></svg>
@@ -94,88 +145,8 @@ faq:
         </a>
     </div>
 </div>
-<!-- Features -->
-<div class="py-24 md:py-32">
-    <a href="#features" name="features" class=""></a>
-    <div class="hidden font-display text-5xl md:text-7xl leading-none max-w-4xl mb-24">
-        <span>Discover the power of folio.</span>
-    </div>
-    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
-        {{#each page.data.features}}
-        <div class="w-full max-w-xl mb-12">
-            {{#if icon}}
-            <div class="flex mb-4">
-                <div class="flex items-center border-4 border-white shadow-md bg-neutral-950 text-white rounded-xl p-3">
-                    <svg class="w-10 h-10"><use xlink:href="sprite.svg#{{icon}}"></use></svg>
-                </div>
-            </div>
-            {{/if}}
-            <div class="mb-4 font-bold text-neutral-800">
-                <span class="">{{!subtitle}}</span>
-            </div>
-            <div class="font-display text-neutral-950 text-4xl md:text-5xl leading-none">
-                {{!title}}
-            </div>
-            <div class="flex flex-col gap-2 text-lg mt-8">
-                {{#each content}}<div>{{!.}}</div>{{/each}}
-            </div>
-        </div>
-        {{/each}}
-    </div>
-</div>
-<!-- Products -->
-<div class="py-24 w-full">
-    <a href="#pricing" name="pricing" class=""></a>
-    <div class="w-full max-w-7xl mx-auto px-8">
-        <div class="font-black text-center text-6xl md:text-7xl leading-none mb-20 text-neutral-950">
-            <span>Getting Started.</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
-            <!-- Folio (Basic) description -->
-            <div class="w-full">
-                <div class="w-full p-0 rounded-2xl border-2 border-b-6 border-neutral-950">
-                    <div class="px-8 my-8">
-                        <div class="font-black text-4xl md:text-5xl text-neutral-950 leading-none mb-4">{{page.data.price.title}}</div>
-                        <div class="text-lg text-neutral-800 font-medium">{{page.data.price.description}}</div>
-                    </div>
-                    <div class="w-full h-0 border-b-2 border-dashed border-neutral-500 my-8"></div>
-                    {{#each page.data.price.features}}
-                    <div class="px-8 my-4">
-                        <div class="flex flex-row items-center gap-2 mb-2">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6"><use xlink:href="sprite.svg#check-circle"></use></svg>
-                            </div>
-                            <div class="font-bold">{{title}}</div>
-                        </div>
-                        <div class="text-sm o-80 pl-8">{{description}}</div>
-                    </div>
-                    {{/each}}
-                    <div class="w-full h-0 border-b-2 border-dashed border-neutral-500 my-8"></div>
-                    <div class="px-8 my-8">
-                        <a href="./app" class="flex items-center justify-center gap-2 bg-neutral-950 text-white px-4 py-3 rounded-xl">
-                            <div class="font-bold">Start with Folio</div>
-                            <div class="flex text-xl">
-                                <svg width="1em" height="1em"><use xlink:href="sprite.svg#arrow-right"></use></svg>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <!-- Faq -->
-            <div class="w-full">
-                <a href="#faq" name="faq" class=""></a>
-                {{#each page.data.faq}}
-                <div class="mb-8">
-                    <div class="font-bold text-lg mb-4">{{!question}}</div>
-                    <div class="text-sm">{{!answer}}</div>
-                </div>
-                {{/each}}
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Open source -->
-<div class="py-20 md:py-24 w-full">
+<div class="py-20 md:py-20 w-full">
     <div class="font-display text-4xl md:text-5xl leading-none text-center text-neutral-950 mb-6">
         <span>Proudly <u>Open Source</u>.</span>
     </div>
@@ -185,16 +156,17 @@ faq:
     </div>
 </div>
 <!-- Work in progress warning -->
-<div class="py-10 md:py-16 w-full">
-    <div class="p-12 w-full bg-neutral-100 rounded-2xl">
-        <div class="text-2xl font-bold">
-            <span><u>Warning</u>: Folio is still a Work in Progress</span>
+<div class="py-8 w-full min-w-0">
+    <div class="p-8 w-full bg-neutral-50 rounded-xl border border-neutral-200 flex gap-4 items-start min-w-0 flex-nowrap">
+        <div class="flex text-neutral-800 animation-pulse">
+            <svg class="w-6 h-6"><use xlink:href="sprite.svg#exclamation-triangle"></use></svg>
         </div>
-        <div class="mt-4">
-            Please be aware that Folio is currently in active development. While the app is fully functional and offers a range of features, we are continuously working to enhance and expand its capabilities.
-        </div>
-        <div class="mt-2">
-            You might encounter occasional bugs or experience features that are still being refined. We appreciate your patience and understanding as we work to deliver the best possible drawing experience.
+        <div class="w-full min-w-0">
+            <div class="text-base font-bold mb-1">Folio is still a Work in Progress</div>
+            <div class="text-sm">
+                Please be aware that Folio is currently in active development, so you might encounter occasional bugs or experience features that are still being refined. 
+                While the app is fully functional and offers a range of features, we are continuously working to enhance and expand its capabilities.
+            </div>
         </div>
     </div>
 </div>
