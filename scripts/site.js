@@ -46,7 +46,7 @@ const buildChangelogData = () => {
 };
 
 const getSiteConfiguration = () => ({
-    name: "folio.",
+    title: "Folio",
     repository: pkg.repository,
     version: pkg.version,
     navbar: {
