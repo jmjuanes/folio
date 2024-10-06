@@ -46,13 +46,13 @@ const buildChangelogData = () => {
 };
 
 const getSiteConfiguration = () => ({
-    name: "folio.",
+    title: "Folio",
     repository: pkg.repository,
     version: pkg.version,
     navbar: {
         links: [
             {link: "/#features", text: "Features"},
-            {link: "/#pricing", text: "Pricing"},
+            {link: "/pricing", text: "Pricing"},
             {link: "/changelog", text: "Changelog"},
         ],
     },
@@ -99,9 +99,9 @@ const build = async () => {
     data.site.pages.forEach(page => {
         const content = m(layout.content, {...data, page}, {
             helpers: {
-                firstItems: ({value, fn}) => {
-                    const items = Object.entries(value || {}).slice(0, 2).map((item, index) => {
-                        return fn(item[1], {index: index, first: index === 0});
+                firstItems: (value, options) => {
+                    const items = Object.entries(value || {}).slice(0, 3).map((item, index) => {
+                        return options.fn(item[1], {index: index, first: index === 0});
                     });
                     return items.join("");
                 },

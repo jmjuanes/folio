@@ -1,32 +1,30 @@
 ---
-title: "Changelog - Folio"
+title: "Changelog"
+layout: "default"
 ---
-<div class="w-full max-w-7xl mx-auto px-8 pt-12 md:pt-24 pb-16">
-    <div class="mb-20">
-        <div class="font-black text-5xl md:text-7xl leading-none text-neutral-950 mb-4 md:mb-6">
-            <span>Changelog.</span>
-        </div>
-        <div class="text-2xl md:text-3xl text-neutral-900 font-medium max-w-3xl leading-tight">
-            <span>Stay up-to-date with the latest improvements and enhancements to <b>folio</b>.</span>
-        </div>
+<div class="py-20 md:py-24">
+    <div class="font-display text-5xl md:text-7xl leading-none text-neutral-950 mb-4 md:mb-6">
+        <span>Changelog.</span>
     </div>
-    {{#site.data.changelog}}
-    <div class="h-0 border-b-2 border-neutral-950 w-full mb-16"></div>
-    <div class="flex flex-col md:flex-row gap-4 md:gap-8 w-full mb-16">
-        <div class="md:w-72 md:mt-4">
-            <div class="font-bold text-lg text-neutral-800 leading-none mb-1">{{date}}</div>
-            <div class="font-medium text-sm text-neutral-700">{{version}}</div>
-        </div>
-        <div class="w-full">
-            <div class="font-bold text-4xl text-neutral-950 mb-1 leading-tight">
-                <a href="#{{url}}" name="{{url}}" class="text-neutral-950 hover:underline">{{title}}</a>
-            </div>
-            {{#if description}}
-            <div class="font-medium text-xl text-neutral-900 leading-relaxed">{{description}}</div>
-            {{/if}}
-            <div class="h-0 w-full mb-8"></div>
-            <div class="text-neutral-900 markup text-lg">{{!content}}</div>
-        </div>
+    <div class="text-xl md:text-2xl text-neutral-800 font-medium max-w-2xl leading-tight">
+        <span>Stay up-to-date with the latest improvements and enhancements to <b>folio</b>.</span>
     </div>
-    {{/site.data.changelog}}
 </div>
+{{#site.data.changelog}}
+<div class="flex flex-col md:flex-row gap-4 md:gap-8 w-full mb-16">
+    <div class="md:w-72 md:mt-4">
+        <div class="font-bold text-lg text-neutral-800 leading-none mb-1">{{date}}</div>
+        <div class="font-medium text-sm text-neutral-700">{{version}}</div>
+    </div>
+    <div class="w-full">
+        <div class="font-bold text-4xl text-neutral-950 mb-1 leading-tight">
+            <a href="#{{url}}" name="{{url}}" class="text-neutral-950 hover:underline">{{title}}</a>
+        </div>
+        {{#if description}}
+        <div class="font-medium text-xl text-neutral-900 leading-relaxed">{{description}}</div>
+        {{/if}}
+        <div class="h-0 w-full mb-8"></div>
+        <div class="text-neutral-900 markup text-lg">{{!content}}</div>
+    </div>
+</div>
+{{/site.data.changelog}}
