@@ -1,6 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-import {SquareIcon, CheckSquareIcon} from "@josemi-icons/react";
 import {FORM_OPTIONS} from "../../constants.js";
 import {themed} from "../../contexts/theme.jsx";
 import {ColorPicker} from "./color-picker.jsx";
@@ -119,7 +118,7 @@ const optionTypes = {
     [FORM_OPTIONS.RANGE]: props => (
         <div className={themed("flex items-center gap-2", "form.range")}>
             {props.title && (
-                <div className={themed("text-xs w-16 shrink-0", "form.range.title")}>
+                <div className={themed("text-xs w-16 shrink-0", "form.option.title")}>
                     {props.title}
                 </div>
             )}
@@ -137,16 +136,23 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.CHECKBOX]: props => {
+        const inputClass = themed({
+            "cursor-pointer border rounded-full p-px w-8 flex": true,
+            "justify-end": !!props.value,
+            "form.checkbox.input": true,
+            "form.checkbox.input.active": !!props.value,
+            "form.checkbox.input.inactive": !props.value,
+        });
         const handleClick = () => {
             return props.onChange(!props.value);
         };
         return (
             <div className={themed("flex items-center justify-between select-none", "form.checkbox")}>
-                <div className={themed("text-xs", "form.checkbox.title")}>
+                <div className={themed("text-xs", "form.option.title")}>
                     {props.title}
                 </div>
-                <div className={themed("text-lg cursor-pointer flex items-center", "form.checkbox.input")} onClick={handleClick}>
-                    {props.value ? <CheckSquareIcon /> : <SquareIcon />}
+                <div className={inputClass} onClick={handleClick}>
+                    <div className="bg-white rounded-full w-4 h-4" />
                 </div>
             </div>
         );
