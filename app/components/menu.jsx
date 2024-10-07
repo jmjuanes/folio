@@ -1,9 +1,7 @@
 import React from "react";
 import classnames from "classnames";
 import {Dropdown} from "./ui/dropdown.jsx";
-import {BACKGROUND_COLOR_PALETTE} from "../utils/colors.js";
 import {Island} from "./island.jsx";
-import {ColorPicker} from "./form/color-picker.jsx";
 import {useScene} from "../contexts/scene.jsx";
 
 // @private menu link component
@@ -17,7 +15,6 @@ const MenuLink = ({text, url}) => (
 export const Menu = props => {
     const scene = useScene();
     const elements = scene.getElements();
-
     return (
         <div className="flex relative group" tabIndex="0">
             <Island.Button icon="bars" />
@@ -31,7 +28,7 @@ export const Menu = props => {
                 {props.showSave && (
                     <Dropdown.Item onClick={props.onSave}>
                         <Dropdown.Icon icon="download" />
-                        <span>Save as...</span>
+                        <span>Save a copy</span>
                     </Dropdown.Item>
                 )}
                 {props.showExport && (
@@ -43,9 +40,10 @@ export const Menu = props => {
                         onClick={props.onExport}
                     >
                         <Dropdown.Icon icon="image" />
-                        <span>Export image...</span>
+                        <span>Export as image</span>
                     </Dropdown.Item>
                 )}
+                <Dropdown.Separator />
                 {props.showClear && (
                     <Dropdown.Item
                         disabled={elements.length === 0}
@@ -55,35 +53,8 @@ export const Menu = props => {
                         onClick={props.onClear}
                     >
                         <Dropdown.Icon icon="trash" />
-                        <span>Reset</span>
+                        <span>Reset the board</span>
                     </Dropdown.Item>
-                )}
-                <Dropdown.Separator />
-                <Dropdown.CheckItem checked={!!scene?.appState?.grid} onClick={props.onGridChange}>
-                    <Dropdown.Icon icon="grid" />
-                    <span>Grid</span>
-                </Dropdown.CheckItem>
-                <Dropdown.CheckItem checked={!!scene?.appState?.snapToElements} onClick={props.onSnapToElementsChange}>
-                    <Dropdown.Icon icon="magnet" />
-                    <span>Snap to elements</span>
-                </Dropdown.CheckItem>
-                <Dropdown.CheckItem checked={!!scene?.appState?.objectDimensions} onClick={props.onObjectDimensionsChange}>
-                    <Dropdown.Icon icon="ruler-2" />
-                    <span>Object dimensions</span>
-                </Dropdown.CheckItem>
-                {props.showChangeBackground && (
-                    <React.Fragment>
-                        <Dropdown.Separator />
-                        <Dropdown.Label>Background</Dropdown.Label>
-                        <div className="px-2">
-                            <ColorPicker
-                                value={scene.background}
-                                values={BACKGROUND_COLOR_PALETTE}
-                                collapseColorPalette={false}
-                                onChange={props.onBackgroundChange}
-                            />
-                        </div>
-                    </React.Fragment>
                 )}
                 {(props.links && props.links?.length > 0) && (
                     <React.Fragment>
@@ -96,20 +67,4 @@ export const Menu = props => {
             </Dropdown>
         </div>
     );
-};
-
-Menu.defaultProps = {
-    links: [],
-    showSave: true,
-    showLoad: true,
-    showClear: true,
-    showChangeBackground: true,
-    showExport: true,
-    onSave: null,
-    onClear: null,
-    onLoad: null,
-    onExport: null,
-    onGridChange: null,
-    onSnapToElementsChange: null,
-    onBackgroundChange: null,
 };
