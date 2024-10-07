@@ -38,7 +38,7 @@ const sections = {
         type: "separator",
     },
     [FIELDS.BACKGROUND]: {
-        title: "Board Background",
+        title: "Background",
         type: FORM_OPTIONS.COLOR,
         values: BACKGROUND_COLOR_PALETTE,
     },
