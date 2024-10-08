@@ -36,14 +36,6 @@ export const ExportDialog = props => {
             padding: EXPORT_PADDING,
         };
         return [exportElements, exportOptions];
-        // switch (mode) {
-        //     case EXPORT_MODES.DATA_URL:
-        //         return exportToDataURL(exportElements, exportOptions);
-        //     case EXPORT_MODES.FILE:
-        //         return exportToFile(exportElements, exportOptions);
-        //     case EXPORT_MODES.CLIPBOARD:
-        //         return exportToClipboard(exportElements, exportOptions);
-        // }
     }, [options.includeBackground, options.onlySelectedElements]);
     // Generate export fields
     const exportFields = React.useMemo(() => {
@@ -67,7 +59,6 @@ export const ExportDialog = props => {
     React.useEffect(() => {
         // TODO: we would need to delay the preview update if we depend on another option, for example padding,
         // so we can just update the preview once for multiple consecutive changes.
-        // const [exportElements, exportOptions] = getExportOptions();
         exportToDataURL(exportElements, exportOptions).then(data => {
             return setPreviewImage(data);
         });
