@@ -142,9 +142,10 @@ const optionTypes = {
             "form.checkbox.input": true,
             "form.checkbox.input.active": !!props.value,
             "form.checkbox.input.inactive": !props.value,
+            "cursor-not-allowed opacity-60": props.disabled,
         });
         const handleClick = () => {
-            return props.onChange(!props.value);
+            return !props.disabled && props.onChange(!props.value);
         };
         return (
             <div className={themed("flex items-center justify-between select-none", "form.checkbox")}>
