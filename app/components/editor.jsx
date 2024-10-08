@@ -39,6 +39,12 @@ import {ThemeProvider, themed} from "../contexts/theme.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
 import {convertRegionToSceneCoordinates} from "../scene.js";
 
+// @description export modes
+const EXPORT_MODES = {
+    FILE: "export-to-file",
+    CLIPBOARD: "export-to-clipboard",
+};
+
 // @private
 const EditorWithScene = props => {
     const scene = useScene();
@@ -138,6 +144,19 @@ const EditorWithScene = props => {
             element.editing = false;
         });
         editor.update();
+    }, []);
+
+    // handle export to file or clipboard
+    const handleExport = React.useCallback((mode, exportElements, exportOptions) => {
+        let exportPromise = null;
+        switch (mode) {
+            case EXPORT_MODES.FILE:
+                exportPromise = exportToFile(exportElements, exportOptions);
+            case EXPORT_MODES.CLIPBOARD:
+                exportPromise = exportToClipboard(exportElements, exportOptions);
+        }
+        // TODO: display a notification if the export is successful
+        return exportPromise.catch(error => console.error(error));
     }, []);
 
     // Effect to disable the visibility of the welcome elements
@@ -541,20 +560,18 @@ const EditorWithScene = props => {
             {editor.state.action === ACTIONS.SCREENSHOT && (
                 <Screenshot
                     onDownload={(region, options) => {
-                        exportToFile({
-                            elements: scene.getElements(),
+                        handleExport(EXPORT_MODES.FILE, scene.getElements(), {
                             background: options?.background ? scene.background : TRANSPARENT,
                             crop: convertRegionToSceneCoordinates(scene, region),
-                        }).catch(error => console.error(error));
+                        });
                         editor.state.action = null;
                         editor.update();
                     }}
                     onCopyToClipboard={(region, options) => {
-                        exportToClipboard({
-                            elements: scene.getElements(),
+                        handleExport(EXPORT_MODES.CLIPBOARD, scene.getElements(), {
                             background: options?.background ? scene.background : TRANSPARENT,
                             crop: convertRegionToSceneCoordinates(scene, region),
-                        }).catch(error => console.error(error));
+                        });
                         editor.state.action = null;
                         editor.update();
                     }}
@@ -575,10 +592,18 @@ const EditorWithScene = props => {
             )}
             {editor.state.exportVisible && (
                 <ExportDialog
-                    crop={editor.state.exportRegion}
-                    onClose={() => {
+                    onDownload={(exportElements, exportOptions) => {
+                        handleExport(EXPORT_MODES.FILE, exportElements, exportOptions);
                         editor.state.exportVisible = false;
-                        editor.state.exportRegion = null;
+                        editor.update();
+                    }}
+                    onCopyToClipboard={(exportElements, exportOptions) => {
+                        handleExport(EXPORT_MODES.CLIPBOARD, exportElements, exportOptions);
+                        editor.state.exportVisible = false;
+                        editor.update();
+                    }}
+                    onCancel={() => {
+                        editor.state.exportVisible = false;
                         editor.update();
                     }}
                 />
