@@ -32,6 +32,7 @@ import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
 import {PagesPanel} from "./panels/pages.jsx";
 import {LayersPanel} from "./panels/layers.jsx";
+import {SettingsPanel} from "./panels/settings.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
@@ -388,33 +389,12 @@ const EditorWithScene = props => {
                                     showLoad={props.showLoad}
                                     showSave={props.showSave}
                                     showClear={props.showClear}
-                                    showChangeBackground={props.showChangeBackground}
                                     showExport={props.showExport}
                                     onSave={handleSave}
                                     onLoad={handleLoad}
                                     onClear={handleClear}
                                     onExport={() => {
                                         editor.state.exportVisible = true;
-                                        editor.update();
-                                    }}
-                                    onBackgroundChange={newBackground => {
-                                        scene.background = newBackground;
-                                        editor.dispatchChange();
-                                        editor.update();
-                                    }}
-                                    onGridChange={() => {
-                                        scene.appState.grid = !scene.appState.grid;
-                                        editor.dispatchChange();
-                                        editor.update();
-                                    }}
-                                    onSnapToElementsChange={() => {
-                                        scene.appState.snapToElements = !scene.appState.snapToElements;
-                                        editor.dispatchChange();
-                                        editor.update();
-                                    }}
-                                    onObjectDimensionsChange={() => {
-                                        scene.appState.objectDimensions = !scene.appState.objectDimensions,
-                                        editor.dispatchChange();
                                         editor.update();
                                     }}
                                 />
@@ -448,6 +428,17 @@ const EditorWithScene = props => {
                                         editor.update();
                                     }}
                                 />
+                                <div className="flex relative group" tabIndex="0">
+                                    <Island.Button icon="sliders" />
+                                    <div className="hidden absolute group-focus-within:block top-full left-0 mt-2 z-40">
+                                        <SettingsPanel
+                                            onChange={() => {
+                                                editor.dispatchChange();
+                                                editor.update();
+                                            }}
+                                        />
+                                    </div>
+                                </div>
                                 {props.showScreenshot && (
                                     <Island.Button
                                         icon="camera"
