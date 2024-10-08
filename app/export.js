@@ -79,8 +79,7 @@ const getFonts = (fonts, embedFonts) => {
 };
 
 // Get image in SVG
-const getSvgImage = options => {
-    const elements = options?.elements || [];
+const getSvgImage = (elements = [], options = {}) => {
     const padding = options?.padding ?? EXPORT_PADDING;
     const fonts = options?.fonts || Object.values(FONT_SOURCES);
     return getFonts(fonts, !!options.embedFonts).then(fontsCss => {
@@ -122,7 +121,7 @@ const getSvgImage = options => {
 };
 
 // Get image in PNG format
-const getPngImage = options => {
+const getPngImage = (elements = [], options = {}) => {
     return new Promise((resolve, reject) => {
         const canvas = document.createElement("canvas");
         const img = new Image();
@@ -133,7 +132,7 @@ const getPngImage = options => {
             const padding = (options.padding ?? EXPORT_PADDING) + EXPORT_OFFSET;
             // 1. We have selected a region to crop
             if (options.crop) {
-                const bounds = getRectangleBounds(options.elements);
+                const bounds = getRectangleBounds(elements);
                 x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2) - padding;
                 y = bounds.y1 - Math.min(options.crop.y1, options.crop.y2) - padding;
                 canvas.width = Math.abs(options.crop.x2 - options.crop.x1);
@@ -172,47 +171,47 @@ const getPngImage = options => {
             return reject(event);
         });
         // Load image
-        getSvgImage(options)
+        getSvgImage(elements, options)
             .then(data => blobToDataUrl(data))
             .then(data => img.src = data);
     });
 };
 
 // Export to blob image
-export const exportToBlob = options => {
+export const exportToBlob = (elements, options) => {
     // TODO: throw an error if no elements list are provided
     // Generate SVG image
     if (options?.format === EXPORT_FORMATS.SVG) {
         if (options?.crop) {
             return Promise.reject(new Error("Can not crop a SVG export"));
         }
-        return getSvgImage({
+        return getSvgImage(elements, {
             embedFonts: false,
             ...options,
         });
     }
     // Fallback: generate PNG image
-    return getPngImage({
+    return getPngImage(elements, {
         embedFonts: true,
         ...options,
     })
 };
 
 // Export image to DataURL
-export const exportToDataURL = options => {
-    return exportToBlob(options).then(blob => blobToDataUrl(blob));
+export const exportToDataURL = (elements, options) => {
+    return exportToBlob(elements, options).then(blob => blobToDataUrl(blob));
 };
 
 // Export image to clipboard
-export const exportToClipboard = options => {
-    return exportToBlob(options).then(imageBlob => {
+export const exportToClipboard = (elements, options) => {
+    return exportToBlob(elements, options).then(imageBlob => {
         return blobToClipboard(imageBlob);
     });
 };
 
 // Export image to file
-export const exportToFile = options => {
-    return exportToBlob(options).then(imageBlob => {
+export const exportToFile = (elements, options) => {
+    return exportToBlob(elements, options).then(imageBlob => {
         const name = options?.filename || "untitled";
         const extension = FILE_EXTENSIONS[options?.format] || FILE_EXTENSIONS.PNG;
         return blobToFile(imageBlob, `${name}${extension}`);
