@@ -38,23 +38,24 @@ faq:
     answer: "Currently, the best way is to download your drawing as a <code>.folio</code> file. Then, simply share it with your colleague via email or your favorite cloud service. We are working on even more ways to share and collaborate in the future, so stay tuned for updates!"
 ---
 <!-- Presentation -->
-<div class="pt-20 pb-16 md:pt-32 md:pb-20">
-    <div class="mb-8 font-display text-6xl md:text-8xl leading-none text-neutral-950 max-w-5xl">
-        Sketch Freely on an Infinite Canvas.
-    </div>
-    <div class="mb-10 text-2xl md:text-3xl w-full max-w-2xl text-neutral-800">
-        <span>Sketch, prototype, and bring your ideas to life  with unparalleled flexibility and ease.</span>
-    </div>
-    <div class="flex mb-2">
-        <a href="./app" class="flex grow md:grow-0 justify-center items-center gap-4 px-8 py-3 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white cursor-pointer">
-            <strong class="text-lg">Start Sketching</strong>
-            <div class="flex items-center">
-                <svg class="w-8 h-8"><use xlink:href="sprite.svg#arrow-right"></use></svg>
-            </div>
-        </a>
-    </div>
-    <div class="text-xs text-neutral-700 select-none">
-        <span>No signup. Start in less than 5 seconds.</span>
+<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-1 py-20 md:py-28">
+    <div class="w-full">
+        <div class="mb-8 font-display text-5xl md:text-6xl leading-none text-neutral-950">
+            Sketch Freely on an Infinite Canvas.
+        </div>
+        <div class="mb-10 text-xl text-neutral-800">
+            <span>Sketch, prototype, and bring your ideas to life  with unparalleled flexibility and ease.</span>
+        </div>
+        <div class="flex mb-2">
+            <a href="./app" class="w-full max-w-md flex grow md:grow-0 justify-center items-center gap-1 px-8 py-3 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white cursor-pointer">
+                <span class="text-lg font-medium">Start Sketching</span>
+                <span class="text-lg">-</span>
+                <span class="text-lg italic">it's free!</span>
+            </a>
+        </div>
+        <div class="text-xs text-neutral-700 select-none">
+            <span>No signup. Start in less than 5 seconds.</span>
+        </div>
     </div>
 </div>
 <div class="w-full pb-16 select-none">
@@ -74,16 +75,16 @@ faq:
 <div class="py-16 md:py-20">
     <a href="#features" name="features" class=""></a>
     <div class="mb-16">
-        <div class="font-display text-5xl md:text-6xl text-neutral-950 leading-none mb-4">
+        <div class="font-display text-4xl md:text-5xl text-neutral-950 leading-none mb-4">
             <span>Everything you need.</span>
         </div>
-        <div class="text-xl md:text-2xl text-neutral-800 font-medium max-w-2xl">
+        <div class="text-xl text-neutral-800 font-medium max-w-2xl">
             All the features that you need for sketching, planning, and visualizing your projects with no limits.
         </div>
     </div>
     <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
         {{#each page.data.features}}
-        <div class="w-full max-w-xl bg-white border border-neutral-200 p-8 rounded-xl mb-2">
+        <div class="w-full bg-white border border-neutral-200 p-8 rounded-xl mb-2">
             {{#if icon}}
             <div class="flex mb-4">
                 <div class="flex items-center border-4 border-white shadow-lg bg-neutral-950 text-white rounded-xl p-3">
@@ -107,15 +108,15 @@ faq:
 <!-- latest news -->
 <div class="w-full py-16 md:py-20">
     <div class="mb-16">
-        <div class="font-display text-5xl md:text-6xl text-neutral-950 leading-none mb-4">
+        <div class="font-display text-4xl md:text-5xl text-neutral-950 leading-none mb-4">
             What's new in folio?
         </div>
-        <div class="text-xl md:text-2xl text-neutral-800 font-medium max-w-2xl">
+        <div class="text-xl text-neutral-800 font-medium max-w-2xl">
             The latest improvements and enhancements in <b>folio</b>.
         </div>
     </div>
-    <div class="grid grid-cols-1 gap-4 w-full">
-        {{#firstItems site.data.changelog}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        {{#each site.data.changelog limit=2}}
         <div class="p-8 rounded-xl border border-neutral-200 bg-white">
             <div class="flex gap-2 mb-4">
                 <div class="flex items-center bg-neutral-50 border border-neutral-200 rounded-full px-3 py-1">
@@ -134,7 +135,7 @@ faq:
             <div class="">{{description}}</div>
             {{/if}}
         </div>
-        {{/firstItems}}
+        {{/each}}
     </div>
     <div class="mt-4">
         <a href="/changelog" class="inline-flex items-center gap-2 hover:underline">
