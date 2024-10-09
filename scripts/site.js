@@ -101,6 +101,11 @@ const build = async () => {
             partials: {
                 content: page.content,
             },
+            functions: {
+                icon: ({opt}) => {
+                    return `<svg class="size-${opt.size || "4"}"><use xlink:href="sprite.svg#${opt.icon}"></use></svg>`;
+                },
+            },
         });
         console.log(`[build:site] saving file to www/${page.name}.html`);
         fs.writeFileSync(path.join(outputFolder, page.name + ".html"), content, "utf8");

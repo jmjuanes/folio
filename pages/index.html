@@ -1,6 +1,7 @@
 ---
 title: "Minimal whiteboard for sketching and prototyping"
 layout: "default"
+screenshots:
 features:
   - subtitle: "Privacy First."
     icon: "shield"
@@ -58,16 +59,18 @@ faq:
         </div>
     </div>
 </div>
-<div class="w-full pb-16 select-none">
-    <img class="rounded-2xl border-8 border-neutral-950 shadow-md" width="100%" src="./screenshot.png">
-    <div class="hidden justify-center mt-8">
-        <div class="flex gap-2 items-center">
-            <div class="flex items-center gap-2 px-3 py-2 text-neutral-950 bg-white border border-neutral-200 rounded-lg">
-                <div class="flex items-center">
-                    <svg class="w-6 h-6"><use xlink:href="sprite.svg#drawing"></use></svg>
+<div data-role="screenshots" class="w-full pb-16 select-none">
+    <img data-role="screenshots:image" class="rounded-2xl border border-neutral-200" width="100%" src="./screenshot.png">
+    <div class="w-full hidden justify-center mt-8">
+        <div data-role="screenshots:tabs" class="flex gap-1 items-center p-1 bg-neutral-200 rounded-xl">
+            {{#each page.data.screenshots}}
+            <div data-role="screenshot:tab" data-screenshot="{{image}}" class="flex items-center gap-2 px-2 py-1 text-neutral-950 bg-white rounded-lg">
+                <div class="hidden flex items-center">
+                    {{=icon icon=icon size="4"}}
                 </div>
-                <span class="font-medium">Folio</span>
+                <span class="font-medium text-sm">{{title}}</span>
             </div>
+            {{/each}}
         </div>
     </div>
 </div>
@@ -171,3 +174,35 @@ faq:
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    const state = {
+        activeTab: -1,
+    };
+    const activeTabClass = ["bg-neutral-950", "text-white"];
+    const inactiveTabClass = ["bg-white", "text-neutral-950"];
+    const delay = 5000;
+    // const image = document.querySelector(`img[data-role="screenshots:image"]`);
+    // const tabsItems = Array.from(document.querySelectorAll(`div[data-role="screenshot:tab"]`));
+    // loop to change tab
+    const changeActiveTab = index => {
+        const nextTab = index % tabsItems.length;
+        if (state.activeTab !== -1) {
+            tabsItems[state.activeTab].classList.remove(...activeTabClass);
+            tabsItems[state.activeTab].classList.add(...inactiveTabClass);
+        }
+        tabsItems[nextTab].classList.remove(...inactiveTabClass);
+        tabsItems[nextTab].classList.add(...activeTabClass);
+        state.activeTab = nextTab;
+    };
+    // register click events for each tab 
+    tabsItems.forEach((tabElement, tabIndex) => {
+        return tabElement.addEventListener("click", event => {
+            event.preventDefault();
+            window.clearInterval(timer);
+            changeActiveTab(tabIndex);
+        });
+    });
+    // initialize
+    // const timer = window.setInterval(() => changeActiveTab(state.activeTab + 1), delay);
+    // changeActiveTab(0);
+</script>
