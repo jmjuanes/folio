@@ -6,10 +6,6 @@ const {globSync} = require("glob");
 const buildPath = path.join(process.cwd(), "www/");
 const assets = [
     {
-        from: "public/404.html",
-        to: "./404.html",
-    },
-    {
         from: "node_modules/lowcss/low.css",
         to: "./low.css",
     },
