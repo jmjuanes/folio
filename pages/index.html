@@ -2,21 +2,33 @@
 title: "Minimal whiteboard for sketching and prototyping"
 layout: "default"
 screenshots:
+  - title: "Diagramming"
+    description: "Create clear and concise diagrams."
+    icon: "diagram-project"
+  - title: "Sketching"
+    description: "Bring your sketches to life."
+    icon: "drawing"
+  - title: "Organize"
+    description: "Transform your whiteboard into a Kanban board."
+    icon: "kanban"
+  - title: "Brainstorming"
+    description: "Use sticky notes and stickers to capture ideas."
+    icon: "lightbulb"
 features:
   - subtitle: "Privacy First."
     icon: "shield"
-    title: "Design with total <u>Privacy</u>."
+    title: "Design with total Privacy."
     content:
       - "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
       - "Sketch and create with <b>confidence</b>."
   - subtitle: "Sketch without constraints."
     icon: "drawing"
-    title: "Boundless Canvas for <u>Ideas</u>."
+    title: "Boundless Canvas."
     content:
         - "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
   - subtitle: "Introducing Pages."
     icon: "files"
-    title: "<u>Organize</u> your ideas seamlessly."
+    title: "Organize your ideas."
     content:
       - "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
       - "Whether you are storyboarding or brainstorming, the Pages feature provides a structured canvas for your creativity."
@@ -45,7 +57,8 @@ faq:
             Sketch Freely on an Infinite Canvas.
         </div>
         <div class="mb-10 text-xl text-neutral-800">
-            <span>Sketch, prototype, and bring your ideas to life  with unparalleled flexibility and ease.</span>
+            <span>Sketch, design, and prototype without limitations. </span>
+            <span><b>Folio</b> offers an infinite canvas for your creative journey, enabling you to bring your ideas to life with ease.</span>
         </div>
         <div class="flex mb-2">
             <a href="./app" class="w-full max-w-md flex grow md:grow-0 justify-center items-center gap-1 px-8 py-3 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white cursor-pointer">
@@ -58,21 +71,25 @@ faq:
             <span>No signup. Start in less than 5 seconds.</span>
         </div>
     </div>
+    <div class="w-full">
+        <img class="w-full" src="illustration.png">
+    </div>
 </div>
 <div data-role="screenshots" class="w-full pb-16 select-none">
-    <img data-role="screenshots:image" class="rounded-2xl border border-neutral-200" width="100%" src="./screenshot.png">
-    <div class="w-full hidden justify-center mt-8">
-        <div data-role="screenshots:tabs" class="flex gap-1 items-center p-1 bg-neutral-200 rounded-xl">
+    <div class="w-full mb-8">
+        <div data-role="screenshots:tabs" class="grid md:grid-cols-4 gap-2">
             {{#each page.data.screenshots}}
-            <div data-role="screenshot:tab" data-screenshot="{{image}}" class="flex items-center gap-2 px-2 py-1 text-neutral-950 bg-white rounded-lg">
-                <div class="hidden flex items-center">
-                    {{=icon icon=icon size="4"}}
+            <div data-role="screenshot:tab" data-screenshot="" class="w-full p-6 text-neutral-950 border-2 border-neutral-100 bg-neutral-100 hover:bg-neutral-100 rounded-xl">
+                <div class="flex items-center mb-3">
+                    {{=icon icon=icon size="6"}}
                 </div>
-                <span class="font-medium text-sm">{{title}}</span>
+                <div class="font-bold text-xl">{{title}}</div>
+                <div class="text-sm">{{description}}</div>
             </div>
             {{/each}}
         </div>
     </div>
+    <img data-role="screenshots:image" class="rounded-2xl border border-neutral-200 shadow-sm" width="100%" src="./screenshot.png">
 </div>
 <!-- Features -->
 <div class="py-16 md:py-20">
@@ -85,20 +102,20 @@ faq:
             All the features that you need for sketching, planning, and visualizing your projects with no limits.
         </div>
     </div>
-    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
         {{#each page.data.features}}
-        <div class="w-full bg-white border border-neutral-200 p-8 rounded-xl mb-2">
+        <div class="w-full bg-neutral-100 p-8 rounded-xl mb-2">
             {{#if icon}}
-            <div class="flex mb-4">
-                <div class="flex items-center border-4 border-white shadow-lg bg-neutral-950 text-white rounded-xl p-3">
-                    <svg class="w-8 h-8"><use xlink:href="sprite.svg#{{icon}}"></use></svg>
+            <div class="flex mb-6">
+                <div class="flex items-center text-neutral-950">
+                    {{=icon icon=icon size="8"}}
                 </div>
             </div>
             {{/if}}
-            <div class="mb-4 font-bold text-sm text-neutral-800">
+            <div class="mb-0 font-bold text-xs text-neutral-800">
                 <span class="">{{!subtitle}}</span>
             </div>
-            <div class="font-extrabold text-neutral-950 text-2xl md:text-3xl leading-none mb-4">
+            <div class="font-bold text-neutral-950 text-2xl leading-tight mb-4">
                 {{!title}}
             </div>
             <div class="flex flex-col gap-2 text-base">
@@ -114,19 +131,19 @@ faq:
         <div class="font-display text-4xl md:text-5xl text-neutral-950 leading-none mb-4">
             What's new in folio?
         </div>
-        <div class="text-xl text-neutral-800 font-medium max-w-2xl">
-            The latest improvements and enhancements in <b>folio</b>.
+        <div class="text-xl text-neutral-800 font-medium max-w-xl">
+            Stay up to date with the latest improvements and enhancements in <b>folio</b>.
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         {{#each site.data.changelog limit=2}}
-        <div class="p-8 rounded-xl border border-neutral-200 bg-white">
+        <div class="p-8 rounded-xl bg-neutral-100">
             <div class="flex gap-2 mb-4">
-                <div class="flex items-center bg-neutral-50 border border-neutral-200 rounded-full px-3 py-1">
+                <div class="flex items-center bg-white border border-neutral-200 rounded-full px-3 py-1">
                     <span class="font-medium leading-none text-xs text-neutral-800">{{version}}</span>
                 </div>
                 {{#if @first}}
-                <div class="flex items-center bg-neutral-50 border border-neutral-200 rounded-full px-3 py-1">
+                <div class="flex items-center bg-white border border-neutral-200 rounded-full px-3 py-1">
                     <span class="font-bold leading-none text-xs text-neutral-800">CURRENT</span>
                 </div>
                 {{/if}}
@@ -150,7 +167,10 @@ faq:
     </div>
 </div>
 <!-- Open source -->
-<div class="py-20 md:py-20 w-full">
+<div class="py-20 md:py-20 w-full flex flex-col items-center">
+    <div class="mb-4">
+        <img src="/illustration-oss.png" class="h-20" />
+    </div>
     <div class="font-display text-4xl md:text-5xl leading-none text-center text-neutral-950 mb-6">
         <span>Proudly <u>Open Source</u>.</span>
     </div>
@@ -195,13 +215,13 @@ faq:
         state.activeTab = nextTab;
     };
     // register click events for each tab 
-    tabsItems.forEach((tabElement, tabIndex) => {
-        return tabElement.addEventListener("click", event => {
-            event.preventDefault();
-            window.clearInterval(timer);
-            changeActiveTab(tabIndex);
-        });
-    });
+    // tabsItems.forEach((tabElement, tabIndex) => {
+    //     return tabElement.addEventListener("click", event => {
+    //         event.preventDefault();
+    //         window.clearInterval(timer);
+    //         changeActiveTab(tabIndex);
+    //     });
+    // });
     // initialize
     // const timer = window.setInterval(() => changeActiveTab(state.activeTab + 1), delay);
     // changeActiveTab(0);
