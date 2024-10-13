@@ -1,7 +1,7 @@
 import React from "react";
 import {useUpdate} from "react-use";
 import classNames from "classnames";
-import {StackIcon, renderIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon} from "@josemi-icons/react";
+import {renderIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {Panel} from "../ui/panel.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import {useScene} from "../../contexts/scene.jsx";
