@@ -126,6 +126,9 @@ export const Screenshot = props => {
                     backgroundColor: region ? TRANSPARENT : BLACK,
                     cursor: CURSORS.CROSSHAIR,
                     opacity: "0.5",
+                    touchAction: "none",
+                    userSelect: "none",
+                    WebkitTouchCallout: "none",
                 }}
                 onPointerDown={event => handlePointerDown(event, false, false)}
             />
