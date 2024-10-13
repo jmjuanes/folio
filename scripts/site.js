@@ -98,16 +98,13 @@ const build = async () => {
     // Build each page
     data.site.pages.forEach(page => {
         const content = m(layout.content, {...data, page}, {
-            helpers: {
-                firstItems: (value, options) => {
-                    const items = Object.entries(value || {}).slice(0, 3).map((item, index) => {
-                        return options.fn(item[1], {index: index, first: index === 0});
-                    });
-                    return items.join("");
-                },
-            },
             partials: {
                 content: page.content,
+            },
+            functions: {
+                icon: ({opt}) => {
+                    return `<svg class="size-${opt.size || "4"}"><use xlink:href="sprite.svg#${opt.icon}"></use></svg>`;
+                },
             },
         });
         console.log(`[build:site] saving file to www/${page.name}.html`);

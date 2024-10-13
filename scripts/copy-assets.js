@@ -1,21 +1,40 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const picomatch = require("picomatch");
 
-const rootPath = path.resolve(__dirname, "../");
-const buildPath = path.join(rootPath, "www/");
-const assets = [
-    // {
-    //     from: "public/index.html",
-    //     to: "./index.html",
-    // },
-    // {
-    //     from: "public/privacy.html",
-    //     to: "./privacy.html",
-    // },
-    {
-        from: "public/404.html",
-        to: "./404.html",
-    },
+// helper method to copy from one source to another
+const copy = (src, dest) => {
+    fs.cpSync(src, dest);
+    console.log(`[COPY] ${src} => ${dest}`);
+};
+
+// method to copy assets from the provided sources to www folder
+const copyAssets = (dest, assets) => {
+    const destPath = path.join(process.cwd(), dest);
+    (assets || []).filter(Boolean).forEach(asset => {
+        // check for blob pattern
+        if (asset.from.includes("*")) {
+            const basePath = path.join(process.cwd(), path.dirname(asset.from));
+            return fs.readdirSync(basePath).forEach(file => {
+                const src = path.join(path.dirname(asset.from), file);
+                if (picomatch.isMatch(src, asset.from)) {
+                    const srcPath = path.resolve(process.cwd(), src);
+                    const targetPath = path.resolve(destPath, asset.to || path.basename(srcPath));
+                    copy(srcPath, targetPath);
+                }
+            });
+        }
+        // no blob patter, just copy and paste the file
+        else {
+            const srcPath = path.resolve(process.cwd(), asset.from);
+            const targetPath = path.resolve(destPath, asset.to || path.basename(asset.from));
+            copy(srcPath, targetPath);
+        }
+    });
+};
+
+// copy stuff to www folder
+copyAssets("www", [
     {
         from: "node_modules/lowcss/low.css",
         to: "./low.css",
@@ -25,22 +44,13 @@ const assets = [
         to: "./sprite.svg",
     },
     {
-        from: "public/screenshot.png",
-        to: "./screenshot.png",
-    },
-    {
         from: "public/og.png",
         to: "./og.png",
     },
-];
-
-assets.forEach(asset => {
-    if (asset) {
-        const srcPath = path.resolve(rootPath, asset.from);
-        const dstPath = path.resolve(buildPath, asset.to);
-
-        console.log(`${srcPath} => ${dstPath}`);
-        // Note: cpSync is still experimental
-        fs.cpSync(srcPath, dstPath);
-    }
-});
+    {
+        from: "public/illustration-*.png",
+    },
+    {
+        from: "public/screenshot-*.png",
+    },
+]);

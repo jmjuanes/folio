@@ -12,7 +12,6 @@
     <meta property="og:description" content="Folio is a digital whiteboard for sketching and prototyping">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,800,50&display=swap">
     <link rel="stylesheet" href="./low.css">
     <title>{{page.data.title}} | {{site.title}}</title>
     <style>
@@ -20,21 +19,15 @@
             font-family: Poppins, serif;
             font-weight: 700 !important;
         }
-        .font-display {
-            font-family: "Fraunces", serif;
-            font-optical-sizing: auto;
-            font-weight: 800;
-            font-style: normal;
-            font-variation-settings: "SOFT" 50, "WONK" 0;
-        }
         body {
             background-image: radial-gradient(hsla(0, 0%, 86%, .3) 1px, transparent 0);
             background-size: 12px 12px;
         }
     </style>
 </head>
-<body class="m-0 p-0 font-inter leading-normal text-neutral-800">
+<body class="m-0 p-0 font-inter leading-normal text-neutral-800 min-h-screen">
     <!-- Header -->
+    {{#ne page.data.layout "empty"}}
     <header class="w-full border-b border-neutral-100 bg-white">
         <div class="flex justify-between items-center w-full max-w-8xl mx-auto h-16 px-8 select-none">
             <div class="flex items-center gap-2">
@@ -87,36 +80,45 @@
             </a>
         </div>
     </div>
+    {{/ne}}
     <!-- Main content -->
-    {{#eq page.data.layout "default"}}
-    <main class="w-full max-w-7xl mx-auto px-8">
+    <main class="w-full">
+        {{#eq page.data.layout "default"}}
+        <div class="w-full max-w-7xl mx-auto px-8">
+            {{>content}}
+        </div>
+        {{/eq}}
+        {{#eq page.data.layout "page"}}
+        <div class="w-full max-w-5xl mx-auto px-8 py-16 markup">
+            {{>content}}
+        </div>
+        {{/eq}}
+        {{#eq page.data.layout "empty"}}
         {{>content}}
+        {{/eq}}
     </main>
-    {{/eq}}
-    {{#eq page.data.layout "page"}}
-    <main class="w-full max-w-5xl mx-auto px-8 py-16 markup">
-        {{>content}}
-    </main>
-    {{/eq}}
     <!--Footer -->
-    <footer class="w-full max-w-7xl mx-auto px-8 pt-10 pb-20">
-        <div class="h-0 border-b border-neutral-200 mb-10"></div>
-        <div class="font-brand leading-none text-2xl mb-3 tracking-tight text-neutral-950">
-            <span>folio.</span>
-        </div>
-        <div class="flex gap-3 mb-4 text-sm">
-            {{#site.footer.links}}
-            <a href="{{link}}" target="{{target}}" class="hover:underline text-neutral-900 font-bold">{{text}}</a>
-            {{/site.footer.links}}
-        </div>
-        <div class="mb-1 text-sm">
-            <span>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-neutral-900 font-bold">Josemi</a> in Valencia, Spain. </span>
-            <span>Source code is available on <a href="{{site.repository}}" class="hover:underline text-neutral-900 font-bold">GitHub</a>.</span>
-        </div>
-        <div class="text-xs text-neutral-500">
-            <span>This site does not track you.</span>
+    {{#ne page.data.layout "empty"}}
+    <footer class="w-full bg-white border-t border-neutral-100">
+        <div class="w-full max-w-7xl mx-auto px-8 pt-10 pb-20">
+            <div class="font-brand leading-none text-2xl mb-3 tracking-tight text-neutral-950">
+                <span>folio.</span>
+            </div>
+            <div class="flex gap-3 mb-4 text-sm">
+                {{#site.footer.links}}
+                <a href="{{link}}" target="{{target}}" class="hover:underline text-neutral-900 font-bold">{{text}}</a>
+                {{/site.footer.links}}
+            </div>
+            <div class="mb-1 text-sm">
+                <span>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-neutral-900 font-bold">Josemi</a> in Valencia, Spain. </span>
+                <span>Source code is available on <a href="{{site.repository}}" class="hover:underline text-neutral-900 font-bold">GitHub</a>.</span>
+            </div>
+            <div class="text-xs text-neutral-500">
+                <span>This site does not track you.</span>
+            </div>
         </div>
     </footer>
+    {{/ne}}
     <script type="text/javascript">
         // const menu = document.querySelector(`div#menu`);
         const toggleMenu = () => {
