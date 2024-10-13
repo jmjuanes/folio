@@ -1,7 +1,7 @@
 import React from "react";
 import {useUpdate} from "react-use";
 import classNames from "classnames";
-import {StackIcon, renderIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon} from "@josemi-icons/react";
+import {renderIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {Panel} from "../ui/panel.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import {useScene} from "../../contexts/scene.jsx";
@@ -9,19 +9,22 @@ import {exportToDataURL} from "../../export.js";
 import {FIELDS, TRANSPARENT} from "../../constants.js";
 import transparentBg from "../../assets/transparent.svg";
 
+// Layers preview variables
+const LAYER_PREVIEW_SIZE = 32;
+const LAYER_PREVIEW_BACKGROUND = TRANSPARENT;
+
 // Tiny hook to generate the preview of the element
 const useElementPreview = (elements, dependencies = []) => {
     const [previewImage, setPreviewImage] = React.useState(null);
     React.useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
-                elements: elements,
-                width: 32,
-                height: 32,
-                background: TRANSPARENT,
+                width: LAYER_PREVIEW_SIZE,
+                height: LAYER_PREVIEW_SIZE,
+                background: LAYER_PREVIEW_BACKGROUND,
             };
-            exportToDataURL(previewOptions).then(image => {
-                setPreviewImage(image);
+            exportToDataURL(elements, previewOptions).then(image => {
+                return setPreviewImage(image);
             });
         }
     }, dependencies);
