@@ -9,15 +9,19 @@ import {exportToDataURL} from "../../export.js";
 import {FIELDS, TRANSPARENT} from "../../constants.js";
 import transparentBg from "../../assets/transparent.svg";
 
+// Layers preview variables
+const LAYER_PREVIEW_SIZE = 32;
+const LAYER_PREVIEW_BACKGROUND = TRANSPARENT;
+
 // Tiny hook to generate the preview of the element
 const useElementPreview = (elements, dependencies = []) => {
     const [previewImage, setPreviewImage] = React.useState(null);
     React.useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
-                width: 32,
-                height: 32,
-                background: TRANSPARENT,
+                width: LAYER_PREVIEW_SIZE,
+                height: LAYER_PREVIEW_SIZE,
+                background: LAYER_PREVIEW_BACKGROUND,
             };
             exportToDataURL(elements, previewOptions).then(image => {
                 return setPreviewImage(image);
