@@ -1,3 +1,20 @@
+# v0.22.0 (October 13, 2024) New settings menu and enhanced screenshot tool
+
+> In this release, we have improved the screenshot mode with editable regions, streamlined the main menu by moving board settings to a new Settings menu, enhanced element handlers for easier adjustments, and gave our website a fresh new design.
+
+## Enhanced Screenshot mode
+
+We have upgraded the **screenshot feature** to allow users to **edit the selection area** before downloading the image or copying it to the clipboard. This provides better control and flexibility.
+
+## New Settings menu
+
+To streamline the main menu, we have moved all board configuration options (**background color**, **show grid**, **show object dimensions**, and **snap to elements**) to a brand-new **Settings** menu. This reorganization makes it easier to access and manage your board preferences.
+
+## Improved Element Handlers
+
+We have polished the **styles for element handlers**, making resizing and managing elements on the board more intuitive and visually clear.
+
+
 # v0.21.0 (August 25, 2024) Duplicate Pages and some Bug Fixes
 
 > We have introduced the ability to duplicate entire pages, making it easier to create variations of your work. We have also fixed bugs related to curved arrows, ensuring accurate selection area calculations and preventing cropping when exporting to images.
