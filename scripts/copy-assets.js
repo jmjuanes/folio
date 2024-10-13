@@ -44,14 +44,13 @@ copyAssets("www", [
         to: "./sprite.svg",
     },
     {
-        from: "public/screenshot.png",
-        to: "./screenshot.png",
-    },
-    {
         from: "public/og.png",
         to: "./og.png",
     },
     {
         from: "public/illustration-*.png",
+    },
+    {
+        from: "public/screenshot-*.png",
     },
 ]);
