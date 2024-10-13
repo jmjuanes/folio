@@ -20,6 +20,7 @@ export const ObjectDimensions = props => {
         left: props.x + "px",
         textWrap: "nowrap",
         transform: `translate(${props.translateX || "-100%"},${props.translateY || "0.5rem"})`,
+        whiteSpace: "nowrap",
         userSelect: "none",
         width: "content",
     };
