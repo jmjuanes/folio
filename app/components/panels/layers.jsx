@@ -15,13 +15,12 @@ const useElementPreview = (elements, dependencies = []) => {
     React.useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
-                elements: elements,
                 width: 32,
                 height: 32,
                 background: TRANSPARENT,
             };
-            exportToDataURL(previewOptions).then(image => {
-                setPreviewImage(image);
+            exportToDataURL(elements, previewOptions).then(image => {
+                return setPreviewImage(image);
             });
         }
     }, dependencies);
