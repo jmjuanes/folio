@@ -156,6 +156,7 @@ export const SHAPE_PADDING = 2;
 
 export const MIME_TYPES = {
     FOLIO: "application/vnd.folio+json",
+    FOLIO_LIB: "application/vnd.foliolib+json",
     JSON: "application/json",
     PNG: "image/png",
     JPG: "image/jpeg",
@@ -164,6 +165,7 @@ export const MIME_TYPES = {
 
 export const FILE_EXTENSIONS = {
     FOLIO: ".folio",
+    FOLIO_LIB: ".foliolib",
     JSON: ".json",
     PNG: ".png",
     JPG: ".jpg",
