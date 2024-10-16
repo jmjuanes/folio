@@ -50,6 +50,7 @@ export default {
     "form.range.title": "text-neutral-900",
     "form.range.input": "bg-neutral-200",
     "form.separator": "bg-neutral-200",
+    "form.text.input": "bg-white border border-neutral-200 text-neutral-900",
 
     "hint": "",
     "hint.content": "",

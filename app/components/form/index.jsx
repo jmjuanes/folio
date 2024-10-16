@@ -200,6 +200,15 @@ const optionTypes = {
             })}
         </div>
     ),
+    [FORM_OPTIONS.TEXT]: props => (
+        <input
+            type="text"
+            className={themed("w-full px-2 py-0 h-8 rounded-md outline-0 text-xs", "form.text.input")}
+            defaultValue={props.value}
+            placeholder={props.placeholder}
+            onChange={event => props.onChange(event.target.value)}
+        />
+    ),
     [FORM_OPTIONS.SEPARATOR]: () => (
         <div className={themed("w-full h-px", "form.separator")} />
     ),

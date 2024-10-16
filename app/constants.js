@@ -84,6 +84,7 @@ export const FORM_OPTIONS = {
     PIXELS: "pixels",
     SEPARATOR: "separator",
     IMAGE_SELECT: "image-select",
+    TEXT: "text",
 };
 
 export const ELEMENTS = {
