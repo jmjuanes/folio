@@ -263,6 +263,7 @@ export const getSceneStateFromInitialData = initialData => {
         pages: pages,
         page: pages.find(page => page.index === 0) || pages[0],
         assets: initialData?.assets || {},
+        libraryItems: initialData?.libraryItems || [],
         appState: {
             grid: !!initialData?.appState?.grid,
             snapToElements: !!initialData?.appState?.snapToElements,
