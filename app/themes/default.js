@@ -70,6 +70,9 @@ export default {
     "layers.item.name": "text-neutral-900",
     "layers.item.preview": "border border-neutral-300 bg-white",
 
+    "libraries.item.action": "text-neutral-500 hover:text-neutral-900",
+    "libraries.item.empty": "text-neutral-800 bg-neutral-100",
+
     "pages": "",
     "pages.item": "hover:bg-neutral-200",
     "pages.item.action": "text-neutral-500 hover:text-neutral-900",
