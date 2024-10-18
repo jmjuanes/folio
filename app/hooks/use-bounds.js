@@ -1,18 +1,7 @@
 import {ACTIONS} from "../constants.js";
-import {getRectangleBounds} from "../utils/math.js";
 import {getRectanglePath} from "../utils/paths.js";
-import {getElementConfig} from "../elements.js";
+import {getElementConfig, getElementsBounds} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
-
-const getSelectionBounds = elements => {
-    return getRectangleBounds(elements.map(el => {
-        const elementConfig = getElementConfig(el);
-        if (typeof elementConfig.getBoundingRectangle === "function") {
-            return elementConfig.getBoundingRectangle(el);
-        }
-        return el;
-    }));
-};
 
 export const useBounds = ({action, tool}) => {
     const scene = useScene();
@@ -24,7 +13,7 @@ export const useBounds = ({action, tool}) => {
         if (scene.page.activeGroup) {
             const elementsInGroup = scene.getElements().filter(el => el.group === scene.page.activeGroup);
             if (elementsInGroup.length > 0) {
-                const p = getSelectionBounds(elementsInGroup);
+                const p = getElementsBounds(elementsInGroup);
                 bounds.push({
                     path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
                     strokeWidth: 2,
@@ -49,7 +38,7 @@ export const useBounds = ({action, tool}) => {
                 const groups = new Set(selectedElements.map(el => el.group).filter(g => !!g));
                 Array.from(groups).forEach(group => {
                     const elements = selectedElements.filter(el => el.group === group);
-                    const p = getSelectionBounds(elements);
+                    const p = getElementsBounds(elements);
                     bounds.push({
                         path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
                         strokeWidth: 2,
@@ -59,7 +48,7 @@ export const useBounds = ({action, tool}) => {
             }
             // Note: we have to fix rectangle bounds for arrow elements
             if (!hasCustomBounds) {
-                const p = getSelectionBounds(selectedElements);
+                const p = getElementsBounds(selectedElements);
                 bounds.push({
                     path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
                     strokeWidth: 4,
