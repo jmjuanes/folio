@@ -26,7 +26,7 @@ const SelectDropdownItem = ({selected = false, text = "", onClick}) => (
 export const SelectDropdown = ({value, values = [], placeholder = "Select a value", onChange}) => {
     const [toggle, setToggle] = React.useState(false);
     const dropdownClassList = themed({
-        "top-full left-0 mt-px w-64 z-40 absolute rounded-md bg-white border border-neutral-200 shadow-sm": true,
+        "top-full left-0 mt-px w-full z-40 absolute rounded-md bg-white border border-neutral-200 shadow-sm": true,
         "hidden": !toggle,
         "block": toggle,
     });
