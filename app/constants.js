@@ -76,6 +76,7 @@ export const CURSORS = {
 export const FORM_OPTIONS = {
     COLOR: "color",
     SELECT: "select",
+    SELECT_DROPDOWN: "select-dropdown",
     LABELED_SELECT: "labeled-select",
     COLOR_SELECT: "color-select",
     FONT: "font",
@@ -442,3 +443,8 @@ export const HANDLERS_STROKE_COLOR = PRIMARY;
 // screenshot constants
 export const SCREENSHOT_STROKE_COLOR = PRIMARY;
 export const SCREENSHOT_STROKE_WIDTH = 3;
+
+// library constants
+export const LIBRARIES_THUMBNAIL_WIDTH = 100;
+export const LIBRARIES_THUMBNAIL_HEIGHT = 100;
+export const LIBRARIES_THUMBNAIL_BACKGROUND = WHITE;

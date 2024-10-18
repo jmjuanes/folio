@@ -4,6 +4,7 @@ import {FORM_OPTIONS} from "../../constants.js";
 import {themed} from "../../contexts/theme.jsx";
 import {ColorPicker} from "./color-picker.jsx";
 import {FontPicker} from "./font-picker.jsx";
+import {SelectDropdown} from "./select-dropdown.jsx";
 
 // Tiny utility to check if a value is active
 export const checkIsActive = (value, currentValue, isActiveFn, data) => {
@@ -66,6 +67,9 @@ const optionTypes = {
                 );
             })}
         </div>
+    ),
+    [FORM_OPTIONS.SELECT_DROPDOWN]: props => (
+        <SelectDropdown key={props.value} {...props} />
     ),
     [FORM_OPTIONS.COLOR_SELECT]: props => (
         <div className={props.className || "grid grid-cols-5 gap-1 w-full"}>
