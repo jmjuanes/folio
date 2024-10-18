@@ -98,6 +98,7 @@ export const ELEMENTS = {
     NOTE: "note",
     BOOKMARK: "bookmark",
     STICKER: "sticker",
+    LIBRARY_ITEM: "library-item",
 };
 
 export const SHAPES = {
@@ -315,6 +316,7 @@ export const FIELDS = {
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
     STICKER: "sticker",
+    LIBRARY_ITEM_ID: "libraryItemId",
 };
 
 // Deprecated fields

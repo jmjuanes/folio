@@ -10,7 +10,7 @@ export const ContextMenu = props => {
         left: props.left,
         transform: props.top > scene.height / 2 ? "translateY(-100%)" : "",
     };
-
+    const hasLibraryItemsOnSelection = false; // TODO
     return (
         <Menu className="absolute z-40 w-48" style={style}>
             {selectedElements.length > 0 && (
@@ -50,6 +50,15 @@ export const ContextMenu = props => {
                     <Menu.Separator />
                 </React.Fragment>
             )} 
+            {selectedElements.length > 0 && !hasLibraryItemsOnSelection && (
+                <React.Fragment>
+                    <Menu.Item onClick={props.onAddToLibrary}>
+                        <Menu.Icon icon="album" />
+                        <span>Add to library...</span>
+                    </Menu.Item>
+                    <Menu.Separator />
+                </React.Fragment>
+            )}
             {selectedElements.length > 0 && (
                 <React.Fragment>
                     <Menu.Item onClick={props.onCut}>

@@ -487,6 +487,20 @@ export const elementsConfig = {
             element.y2 = element.y2 + STICKER_HEIGHT / 2;
         },
     },
+    [ELEMENTS.LIBRARY_ITEM]: {
+        displayName: "Library Item",
+        initialize: values => ({
+            [FIELDS.LIBRARY_ITEM_ID]: "",
+            [FIELDS.OPACITY]: values?.[FIELDS.OPACITY] ?? DEFAULTS.OPACITY,
+        }),
+        onCreateMove: element => {
+            element.x1 = element.x2;
+            element.y1 = element.y2;
+        },
+        onCreateEnd: (element, event) => {
+            // TODO
+        },
+    },
 };
 
 export const getElementConfig = element => {

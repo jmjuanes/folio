@@ -40,6 +40,7 @@ const createInitialEditorState = (props, scene) => {
 
         // @description current selection  
         selection: null,
+        selectedLibraryItem: null,
 
         // @description context menu configuration
         contextMenu: false,
@@ -55,6 +56,7 @@ const createInitialEditorState = (props, scene) => {
         layersVisible: false,
         librariesVisible: false,
         libraryCreateVisible: false,
+        libraryItemAddVisible: false,
 
         // @description state for welcome items
         hintsVisible: props.showHints && isSceneEmpty,

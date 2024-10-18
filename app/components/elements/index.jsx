@@ -65,6 +65,10 @@ const elementsRenderer = {
             <StickerElement {...props} />
         </ElementContainer>
     ),
+    [ELEMENTS.LIBRARY_ITEM]: props => (
+        <ElementContainer id={props.id}>
+        </ElementContainer>
+    ),
 };
 
 export const renderElement = (element, props) => {
