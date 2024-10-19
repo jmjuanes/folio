@@ -16,6 +16,7 @@ import {
     BOUNDS_STROKE_DASH,
 } from "../constants.js";
 import {AssetsProvider} from "../contexts/assets.jsx";
+import {LibraryItemsProvider} from "../contexts/library-items.jsx";
 import {renderElement} from "./elements/index.jsx";
 import {SvgContainer} from "./svg.jsx";
 import {Handlers} from "./handlers.jsx";
@@ -68,6 +69,7 @@ export const Canvas = props => {
             originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             originalEvent: event.nativeEvent,
+            detail: {},
         };
 
         if (source && event.nativeEvent.target?.dataset?.[source]) {
@@ -238,30 +240,32 @@ export const Canvas = props => {
                     />
                 )}
                 <AssetsProvider value={props.assets || {}}>
-                    {props.elements.map(element => {
-                        const content = renderElement(element, {
-                            ...element,
-                            onChange: (k, v) => {
-                                return props?.onElementChange?.(element.id, k, v);
-                            },
-                            onBlur: () => props?.onElementBlur?.(element.id),
-                            onPointerDown: e => {
-                                return handlePointerDown(e, "element", props.onPointElement);
-                            },
-                            onDoubleClick: e => {
-                                return handleDoubleClick(e, "element", props.onDoubleClickElement);
-                            },
-                        });
-                        const style = {
-                            opacity: element.erased ? "0.3" : "1.0",
-                            cursor: props.cursor ? CURSORS.NONE : CURSORS.MOVE,
-                        };
-                        return (
-                            <div key={element.id} style={style}>
-                                {content}
-                            </div>
-                        );
-                    })}
+                    <LibraryItemsProvider value={props.libraryItems || {}}>
+                        {props.elements.map(element => {
+                            const content = renderElement(element, {
+                                ...element,
+                                onChange: (k, v) => {
+                                    return props?.onElementChange?.(element.id, k, v);
+                                },
+                                onBlur: () => props?.onElementBlur?.(element.id),
+                                onPointerDown: e => {
+                                    return handlePointerDown(e, "element", props.onPointElement);
+                                },
+                                onDoubleClick: e => {
+                                    return handleDoubleClick(e, "element", props.onDoubleClickElement);
+                                },
+                            });
+                            const style = {
+                                opacity: element.erased ? "0.3" : "1.0",
+                                cursor: props.cursor ? CURSORS.NONE : CURSORS.MOVE,
+                            };
+                            return (
+                                <div key={element.id} style={style}>
+                                    {content}
+                                </div>
+                            );
+                        })}
+                    </LibraryItemsProvider>
                 </AssetsProvider>
                 {props.showBounds && props.bounds && (
                     <SvgContainer>

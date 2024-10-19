@@ -51,7 +51,7 @@ const Library = props => {
                         <LibraryItem
                             key={item.id}
                             thumbnail={item.thumbnail}
-                            onClick={() => props.onItemClick(item.id, item)}
+                            onClick={() => props.onInsert(item.id, item)}
                         />
                     ))}
                 </div>
@@ -92,7 +92,7 @@ export const LibrariesPanel = props => {
                                 key={library.id}
                                 library={library}
                                 onDelete={() => props.onDelete(library.id, library)}
-                                onItemClick={(id, item) => props.onItemClick(id, item, library)}
+                                onInsert={(id, item) => props.onInsert(id, item, library)}
                             />
                         ))}
                     </div>

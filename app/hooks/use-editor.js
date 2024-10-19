@@ -40,15 +40,15 @@ const createInitialEditorState = (props, scene) => {
 
         // @description current selection  
         selection: null,
+
+        // @description current library selection
+        selectedLibraryItemId: null,
         selectedLibraryItem: null,
 
         // @description context menu configuration
         contextMenu: false,
         contextMenuTop: 0,
         contextMenuLeft: 0,
-
-        // @description export configuration
-        exportRegion: null,
 
         // @description state for dialogs
         exportVisible: false,
@@ -220,6 +220,7 @@ export const useEditor = props => {
                         y2: getPosition(event.originalY),
                         creating: true,
                     });
+                    event.detail.editorState = editorState;
                     elementConfig.onCreateStart?.(element, event),
                     activeElement = element; // Save element reference
                     // state.activeGroup = null; // Reset current group
@@ -509,10 +510,10 @@ export const useEditor = props => {
                         y2: Math.max(selection.y1, selection.y2),
                     });
                 }
-                else if (editorState.action === ACTIONS.SCREENSHOT) {
-                    editorState.exportVisible = true;
-                    editorState.exportRegion = {...editorState.selection};
-                }
+                // else if (editorState.action === ACTIONS.SCREENSHOT) {
+                //     editorState.exportVisible = true;
+                //     editorState.exportRegion = {...editorState.selection};
+                // }
                 editorState.selection = null;
                 editorState.action = null;
                 update();

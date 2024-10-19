@@ -177,6 +177,7 @@ const EditorWithScene = props => {
                 id={scene.id}
                 elements={scene.page.elements}
                 assets={scene.assets}
+                libraryItems={scene.libraryItems}
                 backgroundColor={scene.background}
                 cursor={cursor}
                 translateX={scene.page.translateX}
@@ -385,8 +386,11 @@ const EditorWithScene = props => {
                                 },
                             });
                         }}
-                        onItemClick={(id, item, library) => {
-                            // PENDING
+                        onInsert={(id, item, library) => {
+                            scene.addLibraryItem(item, library);
+                            editor.state.selectedLibraryItemId = id;
+                            editor.state.selectedLibraryItem = item;
+                            handleToolOrActionChange(ELEMENTS.LIBRARY_ITEM, null);
                         }}
                     />
                 </div>

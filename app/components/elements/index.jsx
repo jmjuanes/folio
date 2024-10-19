@@ -9,6 +9,7 @@ import {ImageElement} from "./image.jsx";
 import {NoteElement} from "./note.jsx";
 import {BookmarkElement} from "./bookmark.jsx";
 import {StickerElement} from "./sticker.jsx";
+import {LibraryItemElement} from "./library-item.jsx";
 
 const ElementContainer = props => (
     <SvgContainer>
@@ -67,6 +68,7 @@ const elementsRenderer = {
     ),
     [ELEMENTS.LIBRARY_ITEM]: props => (
         <ElementContainer id={props.id}>
+            <LibraryItemElement {...props} />
         </ElementContainer>
     ),
 };

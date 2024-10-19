@@ -299,6 +299,7 @@ export const createScene = initialData => {
                     stats: page?.stats || {},
                 })),
                 assets: scene.assets,
+                libraryItems: scene.libraryItems || [],
                 background: scene.background,
                 appState: scene.appState,
                 metadata: scene.metadata,
@@ -1176,6 +1177,24 @@ export const createScene = initialData => {
             // If not, check clipboard
             return getTextFromClipboard()
                 .then(content => parseTextDataToScene(scene, content, x, y));
+        },
+
+        // @description add a new library item
+        addLibraryItem: (libraryItem, library) => {
+            if (!scene.hasLibraryItem(libraryItem.id)) {
+                return scene.libraryItems.push({
+                    id: libraryItem.id,
+                    name: libraryItem.name,
+                    elements: libraryItem.elements,
+                    width: libraryItem.width,
+                    height: libraryItem.height,
+                    source: {},
+                });
+            }
+        },
+        // @description check if we have a library item registered
+        hasLibraryItem: id => {
+            return !!scene.libraryItems.find(item => item.id === id);
         },
     };
 

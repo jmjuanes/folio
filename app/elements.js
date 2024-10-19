@@ -493,12 +493,21 @@ export const elementsConfig = {
             [FIELDS.LIBRARY_ITEM_ID]: "",
             [FIELDS.OPACITY]: values?.[FIELDS.OPACITY] ?? DEFAULTS.OPACITY,
         }),
+        onCreateStart: (element, event) => {
+            element[FIELDS.LIBRARY_ITEM_ID] = event?.detail?.editorState?.selectedLibraryItemId ?? null;
+        },
         onCreateMove: element => {
             element.x1 = element.x2;
             element.y1 = element.y2;
         },
         onCreateEnd: (element, event) => {
-            // TODO
+            if (event?.detail?.editorState?.selectedLibraryItem) {
+                const {width, height} = event.detail.editorState.selectedLibraryItem;
+                element.x1 = element.x1 - width / 2;
+                element.y1 = element.y1 - height / 2;
+                element.x2 = element.x1 + width;
+                element.y2 = element.y1 + height;
+            }
         },
     },
 };
