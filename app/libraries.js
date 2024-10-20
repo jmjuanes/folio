@@ -100,7 +100,7 @@ export const createLibraryManager = initialLibraries => {
 
         // @description load or export libraries
         toJSON: () => {
-            return Array.values(manager.libraries.values());
+            return Array.from(manager.libraries.values());
         },
         fromJSON: data => {
             manager.libraries = getLibrariesMapFromInitialData(data);
