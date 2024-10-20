@@ -41,6 +41,7 @@ import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
 import {convertRegionToSceneCoordinates} from "../scene.js";
+import {createLibrary, loadLibraryFromJson, saveLibraryAsJson} from "../libraries.js";
 
 // @description export modes
 const EXPORT_MODES = {
@@ -375,6 +376,17 @@ const EditorWithScene = props => {
                             editor.state.libraryCreateVisible = true;
                             editor.update();
                         }}
+                        onLoad={() => {
+                            return loadLibraryFromJson()
+                                .then(data => {
+                                    libraries.add(data);
+                                    editor.dispatchLibraryChange();
+                                    editor.update();
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                });
+                        }}
                         onDelete={(id, library) => {
                             showConfirm({
                                 title: "Delete library",
@@ -385,6 +397,11 @@ const EditorWithScene = props => {
                                     editor.update();
                                 },
                             });
+                        }}
+                        onDownload={(id, library) => {
+                            saveLibraryAsJson(library)
+                                .then(() => console.log("Library saved"))
+                                .catch(error => console.error(error));
                         }}
                         onInsert={(id, item, library) => {
                             scene.addLibraryItem(item, library);
@@ -659,8 +676,8 @@ const EditorWithScene = props => {
             )}
             {editor.state.libraryCreateVisible && (
                 <LibraryCreateDialog
-                    onCreate={libraryData => {
-                        libraries.add(libraryData);
+                    onCreate={data => {
+                        libraries.add(createLibrary(data));
                         editor.state.libraryCreateVisible = false;
                         editor.dispatchLibraryChange();
                         editor.update();
