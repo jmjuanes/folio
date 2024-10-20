@@ -90,7 +90,7 @@ export const useEditor = props => {
         // @description dispatch a library change
         const dispatchLibraryChange = () => {
             if (typeof onChangeLibrariesRef.current === "function") {
-                return onChangeLibrariesRef.current(libraries.getAll());
+                return onChangeLibrariesRef.current(libraries.toJSON());
             }
         };
 
