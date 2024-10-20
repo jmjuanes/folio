@@ -247,6 +247,7 @@ const defaults = {
     opacity: DEFAULTS.OPACITY,
     [FIELDS.NOTE_COLOR]: DEFAULTS.NOTE_COLOR,
     [FIELDS.STICKER]: DEFAULTS.STICKER,
+    [FIELDS.LIBRARY_ITEM_ID]: "",
 };
 
 // @description Generate a scene state from initial data object
@@ -1180,7 +1181,7 @@ export const createScene = initialData => {
         },
 
         // @description add a new library item
-        addLibraryItem: (libraryItem, library) => {
+        addLibraryItem: libraryItem => {
             if (!scene.hasLibraryItem(libraryItem.id)) {
                 return scene.libraryItems.push({
                     id: libraryItem.id,
@@ -1188,11 +1189,6 @@ export const createScene = initialData => {
                     elements: libraryItem.elements,
                     width: libraryItem.width,
                     height: libraryItem.height,
-                    metadata: {
-                        library: library.id,
-                        libraryName: library.name,
-                        libraryAuthor: library.author,
-                    },
                 });
             }
         },

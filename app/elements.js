@@ -490,12 +490,9 @@ export const elementsConfig = {
     [ELEMENTS.LIBRARY_ITEM]: {
         displayName: "Library Item",
         initialize: values => ({
-            [FIELDS.LIBRARY_ITEM_ID]: "",
+            [FIELDS.LIBRARY_ITEM_ID]: values?.[FIELDS.LIBRARY_ITEM_ID] ?? "",
             [FIELDS.OPACITY]: values?.[FIELDS.OPACITY] ?? DEFAULTS.OPACITY,
         }),
-        onCreateStart: (element, event) => {
-            element[FIELDS.LIBRARY_ITEM_ID] = event?.detail?.editorState?.selectedLibraryItemId ?? null;
-        },
         onCreateMove: element => {
             element.x1 = element.x2;
             element.y1 = element.y2;

@@ -8,6 +8,7 @@ import {
     STATES,
     ZOOM_STEP,
     TRANSPARENT,
+    FIELDS,
 } from "../constants.js";
 import {saveAsJson, loadFromJson} from "../json.js";
 import {blobToDataUrl} from "../utils/blob.js";
@@ -33,15 +34,15 @@ import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
 import {PagesPanel} from "./panels/pages.jsx";
 import {LayersPanel} from "./panels/layers.jsx";
-import {LibrariesPanel} from "./panels/libraries.jsx";
+import {LibraryPanel} from "./panels/library.jsx";
 import {SettingsPanel} from "./panels/settings.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
-import {LibrariesProvider, useLibraries} from "../contexts/libraries.jsx";
+import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
 import {convertRegionToSceneCoordinates} from "../scene.js";
-import {createLibrary, loadLibraryFromJson, saveLibraryAsJson} from "../libraries.js";
+import {createLibrary, loadLibraryFromJson, saveLibraryAsJson} from "../library.js";
 
 // @description export modes
 const EXPORT_MODES = {
@@ -52,7 +53,7 @@ const EXPORT_MODES = {
 // @private
 const EditorWithScene = props => {
     const scene = useScene();
-    const libraries = useLibraries();
+    const library = useLibrary();
     const editor = useEditor(props);
     const {showConfirm} = useConfirm();
     const cursor = useCursor(editor.state);
@@ -368,10 +369,10 @@ const EditorWithScene = props => {
                     />
                 </div>
             )}
-            {editor.state.librariesVisible && !isScreenshot && (
+            {editor.state.libraryVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
-                    <LibrariesPanel
-                        key={`libraries:${scene.id || ""}:${scene.page.id || ""}`}
+                    <LibraryPanel
+                        key={`library:${scene.id || ""}`}
                         onCreate={() => {
                             editor.state.libraryCreateVisible = true;
                             editor.update();
@@ -403,10 +404,9 @@ const EditorWithScene = props => {
                                 .then(() => console.log("Library saved"))
                                 .catch(error => console.error(error));
                         }}
-                        onInsert={(id, item, library) => {
-                            scene.addLibraryItem(item, library);
-                            editor.state.selectedLibraryItemId = id;
-                            editor.state.selectedLibraryItem = item;
+                        onInsert={(id, item) => {
+                            scene.addLibraryItem(item);
+                            scene.defaults[FIELDS.LIBRARY_ITEM_ID] = id;
                             handleToolOrActionChange(ELEMENTS.LIBRARY_ITEM, null);
                         }}
                     />
@@ -592,10 +592,10 @@ const EditorWithScene = props => {
                             <Island>
                                 <Island.Button
                                     icon="edit"
-                                    active={!editor.state.layersVisible && !editor.state.librariesVisible}
+                                    active={!editor.state.layersVisible && !editor.state.libraryVisible}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
-                                        editor.state.librariesVisible = false;
+                                        editor.state.libraryVisible = false;
                                         editor.update();
                                     }}
                                 />
@@ -604,16 +604,16 @@ const EditorWithScene = props => {
                                     active={editor.state.layersVisible}
                                     onClick={() => {
                                         editor.state.layersVisible = true;
-                                        editor.state.librariesVisible = false;
+                                        editor.state.libraryVisible = false;
                                         editor.update();
                                     }}
                                 />
                                 <Island.Button
                                     icon="album"
-                                    active={editor.state.librariesVisible}
+                                    active={editor.state.libraryVisible}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
-                                        editor.state.librariesVisible = true;
+                                        editor.state.libraryVisible = true;
                                         editor.update();
                                     }}
                                 />
@@ -708,14 +708,14 @@ const EditorWithScene = props => {
 };
 
 // @description Public editor
-export const Editor = ({initialData, initialLibrariesData, ...props}) => {
+export const Editor = ({initialData, initialLibraryData, ...props}) => {
     return (
         <ThemeProvider theme="default">
-            <LibrariesProvider initialData={initialLibrariesData} onChange={props.onChangeLibraries}>
+            <LibraryProvider initialData={initialLibraryData} onChange={props.onLibraryChange}>
                 <SceneProvider initialData={initialData}>
                     <EditorWithScene {...props} />
                 </SceneProvider>
-            </LibrariesProvider>
+            </LibraryProvider>
         </ThemeProvider>
     );
 };

@@ -24,7 +24,7 @@ import {
     getElementSnappingPoints,
 } from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
-import {useLibraries} from "../contexts/libraries.jsx";
+import {useLibrary} from "../contexts/library.jsx";
 
 // @private create a new editor state
 const createInitialEditorState = (props, scene) => {
@@ -54,7 +54,7 @@ const createInitialEditorState = (props, scene) => {
         exportVisible: false,
         pagesVisible: false,
         layersVisible: false,
-        librariesVisible: false,
+        libraryVisible: false,
         libraryCreateVisible: false,
         libraryItemAddVisible: false,
 
@@ -69,14 +69,14 @@ const createInitialEditorState = (props, scene) => {
 export const useEditor = props => {
     const update = useUpdate();
     const scene = useScene();
-    const libraries = useLibraries();
+    const library = useLibrary();
     const editor = React.useRef(null);
     const onChangeRef = React.useRef(props?.onChange);
-    const onChangeLibrariesRef = React.useRef(props?.onChangeLibraries);
+    const onLibraryChangeRef = React.useRef(props?.onLibraryChange);
 
     // We need to update the reference to the onChange function
     onChangeRef.current = props?.onChange;
-    onChangeLibrariesRef.current = props?.onChangeLibraries;
+    onLibraryChangeRef.current = props?.onLibraryChange;
 
     // Initialize editor state
     if (!editor.current) {
@@ -89,8 +89,8 @@ export const useEditor = props => {
 
         // @description dispatch a library change
         const dispatchLibraryChange = () => {
-            if (typeof onChangeLibrariesRef.current === "function") {
-                return onChangeLibrariesRef.current(libraries.toJSON());
+            if (typeof onLibraryChangeRef.current === "function") {
+                return onLibraryChangeRef.current(library.toJSON());
             }
         };
 

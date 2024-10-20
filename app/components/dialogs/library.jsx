@@ -6,9 +6,9 @@ import {Overlay} from "../ui/overlay.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
-import {useLibraries} from "../../contexts/libraries.jsx";
+import {useLibraries} from "../../contexts/library.jsx";
 import {useScene} from "../../contexts/scene.jsx";
-import {getLibraryItemThumbnail} from "../../libraries.js";
+import {getLibraryItemThumbnail} from "../../library.js";
 
 // Tiny hook to generate the thumbnail for the library item
 const useLibraryItemThumbnail = (elements, scale = 1) => {

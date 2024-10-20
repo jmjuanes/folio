@@ -2,9 +2,9 @@ import React from "react";
 import {ELEMENTS} from "../constants.js";
 import {ContextMenu as Menu} from "./ui/context-menu.jsx";
 import {useScene} from "../contexts/scene.jsx";
-import {useLibraries} from "../contexts/libraries.jsx";
+import {useLibrary} from "../contexts/library.jsx";
 
-// Not allowed elements
+// Not allowed elements in library
 const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
     ELEMENTS.LIBRARY_ITEM,
     ELEMENTS.NOTE,
@@ -15,7 +15,7 @@ const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
 
 export const ContextMenu = props => {
     const scene = useScene();
-    const libraries = useLibraries();
+    const library = useLibrary();
     const selectedElements = scene.getSelection();
     const style = {
         top: props.top,
@@ -23,20 +23,10 @@ export const ContextMenu = props => {
         transform: props.top > scene.height / 2 ? "translateY(-100%)" : "",
     };
     const addLibraryItem = React.useMemo(() => {
-        // 1. check if user does not have any library or selected elements
-        if (libraries.count() === 0 || selectedElements.length === 0) {
-            return false;
-        }
-        // 2. check if user has all libraries as readonly
-        if (libraries.getAll().every(library => library.readonly)) {
-            return false;
-        }
-        // 3. check if selected elements are allowed to be added into library
-        const hasNotAllowedElements = selectedElements.some(element => {
-            return NOT_ALLOWED_ELEMENTS_IN_LIBRARY.includes(element.type);
+        return selectedElements.every(element => {
+            return !NOT_ALLOWED_ELEMENTS_IN_LIBRARY.includes(element.type);
         });
-        return !hasNotAllowedElements;
-    }, [selectedElements.length, libraries.count()]);
+    }, [selectedElements.length]);
     return (
         <Menu className="absolute z-40 w-48" style={style}>
             {selectedElements.length > 0 && (

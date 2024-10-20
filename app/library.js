@@ -4,9 +4,9 @@ import {
     VERSION,
     FILE_EXTENSIONS,
     MIME_TYPES,
-    LIBRARIES_THUMBNAIL_BACKGROUND,
-    LIBRARIES_THUMBNAIL_HEIGHT,
-    LIBRARIES_THUMBNAIL_WIDTH,
+    LIBRARY_THUMBNAIL_BACKGROUND,
+    LIBRARY_THUMBNAIL_HEIGHT,
+    LIBRARY_THUMBNAIL_WIDTH,
 } from "./constants.js";
 import {exportToDataURL} from "./export.js";
 import {getElementsBounds} from "./elements.js";
@@ -17,7 +17,9 @@ import {blobToText} from "./utils/blob.js";
 export const migrateLibrary = library => {
     return Object.assign({}, library, {
         version: VERSION, // set the current version
-        readonly: !!library.readonly,
+        id: library.id || uid(20), // generate a new id if not exists
+        name: library.name || "Untitled", // set a default name
+        description: library.description || "", // set a default description
         items: (library.items || []).map(item => {
             return Object.assign({}, item, {
                 elements: migrateElements(item.elements, library.version || VERSION),
@@ -25,20 +27,6 @@ export const migrateLibrary = library => {
         }),
     });
 };
-
-// @description create a new library
-export const createLibrary = data => ({
-    id: "lib:" + uid(20),
-    version: VERSION,
-    name: data.name || "Untitled",
-    description: data.description || "",
-    author: data.author || "",
-    tags: data.tags || [],
-    readonly: !!data.readonly,
-    items: data.items || [],
-    createdAt: data.createdAt || Date.now(),
-    updatedAt: data.updatedAt || Date.now(),
-});
 
 // @description allow to load a library from a local file
 export const loadLibraryFromJson = async () => {
@@ -63,7 +51,9 @@ export const saveLibraryAsJson = library => {
     const exportData = {
         type: MIME_TYPES.FOLIO_LIB,
         version: VERSION,
-        ...library,
+        name: library.name || "Untitled",
+        description: library.description || "",
+        items: library.items || [],
     };
     const dataStr = JSON.stringify(exportData, null, "    ");
     const blob = new Blob([dataStr], {type: MIME_TYPES.FOLIO_LIB});
@@ -80,71 +70,44 @@ export const saveLibraryAsJson = library => {
 // @description generate a thumbnail for the library
 export const getLibraryItemThumbnail = (elements = [], scale = 1) => {
     return exportToDataURL(elements, {
-        width: LIBRARIES_THUMBNAIL_WIDTH * scale,
-        height: LIBRARIES_THUMBNAIL_HEIGHT * scale,
-        background: LIBRARIES_THUMBNAIL_BACKGROUND,
+        width: LIBRARY_THUMBNAIL_WIDTH * scale,
+        height: LIBRARY_THUMBNAIL_HEIGHT * scale,
+        background: LIBRARY_THUMBNAIL_BACKGROUND,
     });
 };
 
 // @description generate libraries from initial libraries data
-const getLibrariesMapFromInitialData = initialLibraries => {
-    return new Map(initialLibraries.map(library => {
-        return [library.id, migrateLibrary(library)];
-    }));
+const getLibraryStateFromInitialData = initialData => {
+    return migrateLibrary(initialData);
 };
 
 // @description create a new library manager
-export const createLibraryManager = initialLibraries => {
-    const manager = {
-        libraries: getLibrariesMapFromInitialData(initialLibraries),
+export const createLibrary = initialData => {
+    const library = {
+        ...getLibraryStateFromInitialData(initialData || {}),
 
         // @description load or export libraries
         toJSON: () => {
-            return Array.from(manager.libraries.values());
+            return {
+                version: library.version || VERSION,
+                items: library.items,
+            };
         },
         fromJSON: data => {
-            manager.libraries = getLibrariesMapFromInitialData(data);
+            Object.assign(library, getLibraryStateFromInitialData(data));
         },
 
-        // @description manage library
-        add: library => {
-            manager.libraries.set(library.id, library);
-        },
-        update: (id, data) => {
-            if (manager.libraries.has(id)) {
-                Object.assign(manager.libraries.get(id), data, {
-                    updatedAt: Date.now(),
-                });
-            }
-        },
-        delete: id => {
-            manager.libraries.delete(id);
-        },
-        get: id => {
-            return manager.libraries.get(id);
-        },
-        getAll: () => {
-            return Array.from(manager.libraries.values());
-        },
-        count: () => {
-            return manager.libraries.size;
+        // @description clear library
+        clear: () => {
+            return library.fromJSON({});
         },
 
-        // @description get private libraries (user libraries)
-        getPrivate: () => {
-            return manager.getAll().filter(library => library.private);
-        },
-
-        // Add a new item to a library
-        addLibraryItem: (libraryId, elements, data) => {
-            const library = manager.get(libraryId);
-            if (library.readonly) {
-                return; // we can not add items to a readonly library
-            }
+        // @description add a new item to the library
+        addItem: (elements, data) => {
             const bounds = getElementsBounds(elements);
             return getLibraryItemThumbnail(elements).then(thumbnail => {
                 library.items.push({
-                    id: "lib:" + libraryId + "/" + uid(20),
+                    id: "lib:" + uid(20),
                     name: data.name || "Untitled",
                     description: data.description || "",
                     elements: elements.map(element => {
@@ -167,18 +130,16 @@ export const createLibraryManager = initialLibraries => {
                     width: bounds.x2 - bounds.x1,
                     height: bounds.y2 - bounds.y1,
                 });
-                library.updatedAt = Date.now();
             });
+
         },
-        getLibraryItem: (libraryId, itemId) => {
-            return manager.get(libraryId)?.items?.find(item => item.id === itemId) || null;
+        deleteItem: id => {
+            library.items = library.items.filter(item => item.id !== id);
         },
-        deleteLibraryItem: (libraryId, itemId) => {
-            const library = manager.get(libraryId);
-            library.items = library.items.filter(item => item.id !== itemId);
-            library.updatedAt = Date.now();
+        getItem: id => {
+            return library.items.find(item => item.id === id) || null;
         },
     };
-    // return libraries manager
-    return manager;
+    // return library manager
+    return library;
 };
