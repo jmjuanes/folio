@@ -247,6 +247,7 @@ const defaults = {
     opacity: DEFAULTS.OPACITY,
     [FIELDS.NOTE_COLOR]: DEFAULTS.NOTE_COLOR,
     [FIELDS.STICKER]: DEFAULTS.STICKER,
+    [FIELDS.LIBRARY_ITEM_ID]: "",
 };
 
 // @description Generate a scene state from initial data object
@@ -263,6 +264,7 @@ export const getSceneStateFromInitialData = initialData => {
         pages: pages,
         page: pages.find(page => page.index === 0) || pages[0],
         assets: initialData?.assets || {},
+        libraryItems: initialData?.libraryItems || [],
         appState: {
             grid: !!initialData?.appState?.grid,
             snapToElements: !!initialData?.appState?.snapToElements,
@@ -298,6 +300,7 @@ export const createScene = initialData => {
                     stats: page?.stats || {},
                 })),
                 assets: scene.assets,
+                libraryItems: scene.libraryItems || [],
                 background: scene.background,
                 appState: scene.appState,
                 metadata: scene.metadata,
@@ -1175,6 +1178,23 @@ export const createScene = initialData => {
             // If not, check clipboard
             return getTextFromClipboard()
                 .then(content => parseTextDataToScene(scene, content, x, y));
+        },
+
+        // @description add a new library item
+        addLibraryItem: libraryItem => {
+            if (!scene.hasLibraryItem(libraryItem.id)) {
+                return scene.libraryItems.push({
+                    id: libraryItem.id,
+                    name: libraryItem.name,
+                    elements: libraryItem.elements,
+                    width: libraryItem.width,
+                    height: libraryItem.height,
+                });
+            }
+        },
+        // @description check if we have a library item registered
+        hasLibraryItem: id => {
+            return !!scene.libraryItems.find(item => item.id === id);
         },
     };
 

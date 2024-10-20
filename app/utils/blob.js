@@ -55,3 +55,13 @@ export const blobToDataUrl = blob => {
         return file.readAsDataURL(blob);
     });
 };
+
+// Read from blob as text
+export const blobToText = blob => {
+    const file = new FileReader();
+    return (new Promise((resolve, reject) => {
+        file.onload = event => resolve(event.target.result);
+        file.onerror = error => reject(error);
+        file.readAsText(blob, "utf8");
+    }));
+};

@@ -33,6 +33,7 @@ import {
     getPointProjectionToLine,
     getPointInQuadraticCurve,
     getPointsBounds,
+    getRectangleBounds,
 } from "./utils/math.js";
 import {getCurvePath, getConnectorPath} from "./utils/paths.js";
 import {isCornerHandler} from "./handlers.js";
@@ -486,6 +487,26 @@ export const elementsConfig = {
             element.y2 = element.y2 + STICKER_HEIGHT / 2;
         },
     },
+    [ELEMENTS.LIBRARY_ITEM]: {
+        displayName: "Library Item",
+        initialize: values => ({
+            [FIELDS.LIBRARY_ITEM_ID]: values?.[FIELDS.LIBRARY_ITEM_ID] ?? "",
+            [FIELDS.OPACITY]: values?.[FIELDS.OPACITY] ?? DEFAULTS.OPACITY,
+        }),
+        onCreateMove: element => {
+            element.x1 = element.x2;
+            element.y1 = element.y2;
+        },
+        onCreateEnd: (element, event) => {
+            if (event?.detail?.editorState?.selectedLibraryItem) {
+                const {width, height} = event.detail.editorState.selectedLibraryItem;
+                element.x1 = element.x1 - width / 2;
+                element.y1 = element.y1 - height / 2;
+                element.x2 = element.x1 + width;
+                element.y2 = element.y1 + height;
+            }
+        },
+    },
 };
 
 export const getElementConfig = element => {
@@ -600,4 +621,15 @@ export const getElementSnappingPoints = (element, snapEdge) => {
 // @public generate display name for the provided element
 export const getElementDisplayName = (element, index = 0) => {
     return [getElementConfig(element).displayName, index + 1].join(" ");
+};
+
+// @public get the bounds of the provided elements
+export const getElementsBounds = (elements = []) => {
+    return getRectangleBounds(elements.map(el => {
+        const elementConfig = getElementConfig(el);
+        if (typeof elementConfig.getBoundingRectangle === "function") {
+            return elementConfig.getBoundingRectangle(el);
+        }
+        return el;
+    }));
 };

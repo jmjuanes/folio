@@ -50,6 +50,7 @@ export default {
     "form.range.title": "text-neutral-900",
     "form.range.input": "bg-neutral-200",
     "form.separator": "bg-neutral-200",
+    "form.text.input": "bg-white border border-neutral-200 text-neutral-900",
 
     "hint": "",
     "hint.content": "",
@@ -68,6 +69,9 @@ export default {
     "layers.item.action": "text-neutral-500 hover:text-neutral-900",
     "layers.item.name": "text-neutral-900",
     "layers.item.preview": "border border-neutral-300 bg-white",
+
+    "libraries.item.action": "text-neutral-500 hover:text-neutral-900",
+    "libraries.item.empty": "text-neutral-800 bg-neutral-100",
 
     "pages": "",
     "pages.item": "hover:bg-neutral-200",
