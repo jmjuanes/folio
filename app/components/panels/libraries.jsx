@@ -41,7 +41,7 @@ const Library = props => {
                 <div className="text-xs font-bold">{props.library.name || "Untitled"}</div>
                 <div className="flex items-center gap-2">
                     <LibraryAction icon="pencil" />
-                    <LibraryAction icon="download" />
+                    <LibraryAction icon="download" onClick={props.onDownload} />
                     <LibraryAction icon="trash" onClick={props.onDelete} />
                 </div>
             </div>
@@ -92,6 +92,7 @@ export const LibrariesPanel = props => {
                                 key={library.id}
                                 library={library}
                                 onDelete={() => props.onDelete(library.id, library)}
+                                onDownload={() => props.onDownload(library.id, library)}
                                 onInsert={(id, item) => props.onInsert(id, item, library)}
                             />
                         ))}
