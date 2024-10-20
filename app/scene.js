@@ -1188,7 +1188,11 @@ export const createScene = initialData => {
                     elements: libraryItem.elements,
                     width: libraryItem.width,
                     height: libraryItem.height,
-                    source: {},
+                    metadata: {
+                        library: library.id,
+                        libraryName: library.name,
+                        libraryAuthor: library.author,
+                    },
                 });
             }
         },
