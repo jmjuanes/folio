@@ -75,9 +75,9 @@ export const LibraryCreateDialog = props => {
 export const LibraryItemAddDialog = props => {
     const scene = useScene();
     const libraries = useLibraries();
-    const privateLibraries = libraries.getPrivate();
+    const editableLibraries = libraries.getAll().filter(library => !library.readonly);
     const [data, setData] = useFormData({
-        library: privateLibraries.length === 1 ? privateLibraries[0].id : "",
+        library: editableLibraries.length === 1 ? editableLibraries[0].id : "",
     });
     const selectedElements = scene.getSelection();
     const thumbnail = useLibraryItemThumbnail(selectedElements, 2);
@@ -114,7 +114,9 @@ export const LibraryItemAddDialog = props => {
                                             type: FORM_OPTIONS.SELECT_DROPDOWN,
                                             title: "Library",
                                             placeholder: "Select a library",
-                                            values: privateLibraries.map(library => ({value: library.id, text: library.name})),
+                                            values: editableLibraries.map(library => {
+                                                return {value: library.id, text: library.name};
+                                            }),
                                         },
                                         name: {
                                             type: FORM_OPTIONS.TEXT,
