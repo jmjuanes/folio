@@ -1,16 +1,42 @@
 import React from "react";
+import {ELEMENTS} from "../constants.js";
 import {ContextMenu as Menu} from "./ui/context-menu.jsx";
 import {useScene} from "../contexts/scene.jsx";
+import {useLibraries} from "../contexts/libraries.jsx";
+
+// Not allowed elements
+const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
+    ELEMENTS.LIBRARY_ITEM,
+    ELEMENTS.NOTE,
+    ELEMENTS.BOOKMARK,
+    ELEMENTS.STICKER,
+    ELEMENTS.IMAGE,
+];
 
 export const ContextMenu = props => {
     const scene = useScene();
+    const libraries = useLibraries();
     const selectedElements = scene.getSelection();
     const style = {
         top: props.top,
         left: props.left,
         transform: props.top > scene.height / 2 ? "translateY(-100%)" : "",
     };
-    const hasLibraryItemsOnSelection = false; // TODO
+    const addLibraryItem = React.useMemo(() => {
+        // 1. check if user does not have any library or selected elements
+        if (libraries.count() === 0 || selectedElements.length === 0) {
+            return false;
+        }
+        // 2. check if user has all libraries as readonly
+        if (libraries.getAll().every(library => library.readonly)) {
+            return false;
+        }
+        // 3. check if selected elements are allowed to be added into library
+        const hasNotAllowedElements = selectedElements.some(element => {
+            return NOT_ALLOWED_ELEMENTS_IN_LIBRARY.includes(element.type);
+        });
+        return !hasNotAllowedElements;
+    }, [selectedElements.length, libraries.count()]);
     return (
         <Menu className="absolute z-40 w-48" style={style}>
             {selectedElements.length > 0 && (
@@ -50,9 +76,9 @@ export const ContextMenu = props => {
                     <Menu.Separator />
                 </React.Fragment>
             )} 
-            {selectedElements.length > 0 && !hasLibraryItemsOnSelection && (
+            {selectedElements.length > 0 && (
                 <React.Fragment>
-                    <Menu.Item onClick={props.onAddToLibrary}>
+                    <Menu.Item disabled={!addLibraryItem} onClick={props.onAddToLibrary}>
                         <Menu.Icon icon="album" />
                         <span>Add to library...</span>
                     </Menu.Item>
