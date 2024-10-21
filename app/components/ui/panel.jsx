@@ -65,8 +65,6 @@ Panel.HeaderButton = ({active, className, children, onClick}) => {
 };
 
 // panel body content
-Panel.Body = props => (
-    <div className={themed("p-2", "panel.body", props.className)}>
-        {props.children}
-    </div>
+Panel.Body = ({className, ...props}) => (
+    <div className={themed("p-2", "panel.body", className)} {...props} />
 );
