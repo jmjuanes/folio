@@ -48,11 +48,10 @@ export default () => ({
             await idb.set(STORE_KEYS.VERSION, STORE_VERSION, store)
             await idb.set(STORE_KEYS.DATA, newData, store);
             await idb.set(STORE_KEYS.SETTINGS, {}, store);
-            await idb.set(STORE_KEYS.LIBRARY, [], store);
         }
         // Check if library is not initialized
         if (!keys.includes(STORE_KEYS.LIBRARY)) {
-            await idb.set(STORE_KEYS.LIBRARY, [], store);
+            await idb.set(STORE_KEYS.LIBRARY, {}, store);
         }
         // Store initialized
         return true;
