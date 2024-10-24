@@ -8,7 +8,6 @@ import {
     STATES,
     ZOOM_STEP,
     TRANSPARENT,
-    FIELDS,
 } from "../constants.js";
 import {saveAsJson, loadFromJson} from "../json.js";
 import {blobToDataUrl} from "../utils/blob.js";
@@ -26,7 +25,8 @@ import {Title} from "./title.jsx";
 import {Hint} from "./hint.jsx";
 import {Screenshot} from "./screenshot.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
-import {LibraryCreateDialog, LibraryItemAddDialog} from "./dialogs/library.jsx";
+import {LibraryAddDialog} from "./dialogs/library-add.jsx";
+import {LibraryExportDialog} from "./dialogs/library-export.jsx";
 import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
 import {EditionPanel} from "./panels/edition.jsx";
@@ -42,7 +42,7 @@ import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
 import {convertRegionToSceneCoordinates} from "../scene.js";
-import {createLibrary, loadLibraryFromJson, saveLibraryAsJson} from "../library.js";
+import {loadLibraryFromJson, saveLibraryAsJson} from "../library.js";
 
 // @description export modes
 const EXPORT_MODES = {
@@ -179,7 +179,6 @@ const EditorWithScene = props => {
                 id={scene.id}
                 elements={scene.page.elements}
                 assets={scene.assets}
-                libraryItems={scene.libraryItems}
                 backgroundColor={scene.background}
                 cursor={cursor}
                 translateX={scene.page.translateX}
@@ -278,7 +277,7 @@ const EditorWithScene = props => {
                         editor.update();
                     }}
                     onAddToLibrary={() => {
-                        editor.state.libraryItemAddVisible = true;
+                        editor.state.libraryAddVisible = true;
                         editor.state.contextMenu = false;
                         editor.update();
                     }}
@@ -324,7 +323,7 @@ const EditorWithScene = props => {
                     )}
                 </div>
             )}
-            {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.librariesVisible && selectedElements.length > 0 && (
+            {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
                         <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
@@ -378,9 +377,9 @@ const EditorWithScene = props => {
                             editor.update();
                         }}
                         onLoad={() => {
-                            return loadLibraryFromJson()
-                                .then(data => {
-                                    libraries.add(data);
+                            loadLibraryFromJson()
+                                .then(importedLibrary => {
+                                    library.importLibrary(importedLibrary);
                                     editor.dispatchLibraryChange();
                                     editor.update();
                                 })
@@ -388,26 +387,48 @@ const EditorWithScene = props => {
                                     console.error(error);
                                 });
                         }}
-                        onDelete={(id, library) => {
+                        onClear={() => {
                             showConfirm({
                                 title: "Delete library",
-                                message: `Do you want to delete the library '${library.name}'? This action can not be undone.`,
+                                message: `Do you want to delete your library? This action can not be undone.`,
                                 callback: () => {
-                                    libraries.delete(id);
+                                    library.clear();
                                     editor.dispatchLibraryChange();
                                     editor.update();
                                 },
                             });
                         }}
-                        onDownload={(id, library) => {
-                            saveLibraryAsJson(library)
-                                .then(() => console.log("Library saved"))
-                                .catch(error => console.error(error));
+                        onExport={() => {
+                            editor.state.libraryExportVisible = true;
+                            editor.update();
                         }}
-                        onInsert={(id, item) => {
-                            scene.addLibraryItem(item);
-                            scene.defaults[FIELDS.LIBRARY_ITEM_ID] = id;
-                            handleToolOrActionChange(ELEMENTS.LIBRARY_ITEM, null);
+                        onInsertItem={(item, tx, ty) => {
+                            scene.addLibraryItem(item, tx, ty);
+                            editor.state.libraryVisible = false; // hide library panel
+                            editor.dispatchChange();
+                            editor.update();
+                        }}
+                        onDeleteItem={item => {
+                            showConfirm({
+                                title: "Delete library item",
+                                message: `Do you want to delete '${item.name}'? This action can not be undone.`,
+                                callback: () => {
+                                    library.delete(item.id);
+                                    editor.dispatchLibraryChange();
+                                    editor.update();
+                                },
+                            });
+                        }}
+                        onDeleteAll={ids => {
+                            showConfirm({
+                                title: "Delete library items",
+                                message: `Do you want to delete ${ids.length} items from the library? This action can not be undone.`,
+                                callback: () => {
+                                    library.delete(ids);
+                                    editor.dispatchLibraryChange();
+                                    editor.update();
+                                },
+                            });
                         }}
                     />
                 </div>
@@ -674,31 +695,37 @@ const EditorWithScene = props => {
                     }}
                 />
             )}
-            {editor.state.libraryCreateVisible && (
-                <LibraryCreateDialog
-                    onCreate={data => {
-                        libraries.add(createLibrary(data));
-                        editor.state.libraryCreateVisible = false;
-                        editor.dispatchLibraryChange();
-                        editor.update();
-                    }}
-                    onCancel={() => {
-                        editor.state.libraryCreateVisible = false;
-                        editor.update();
-                    }}
-                />
-            )}
-            {editor.state.libraryItemAddVisible && (
-                <LibraryItemAddDialog
-                    onAdd={(id, elements, data) => {
-                        libraries.addLibraryItem(id, elements, data).then(() => {
-                            editor.state.libraryItemAddVisible = false;
+            {editor.state.libraryAddVisible && (
+                <LibraryAddDialog
+                    onAdd={(elements, data) => {
+                        library.add(elements, data).then(() => {
+                            editor.state.libraryAddVisible = false;
                             editor.dispatchLibraryChange();
                             editor.update();
                         });
                     }}
                     onCancel={() => {
-                        editor.state.libraryItemAddVisible = false;
+                        editor.state.libraryAddVisible = false;
+                        editor.update();
+                    }}
+                />
+            )}
+            {editor.state.libraryExportVisible && (
+                <LibraryExportDialog
+                    onExport={data => {
+                        editor.state.libraryExportVisible = false;
+                        editor.update();
+                        const exportLibrary = Object.assign(library.toJSON(), {
+                            name: data.name,
+                            description: data.description,
+                            items: library.items.filter(item => data.selectedItems.has(item.id)),
+                        });
+                        saveLibraryAsJson(exportLibrary)
+                            .then(() => console.log("Library saved"))
+                            .catch(error => console.error(error));
+                    }}
+                    onCancel={() => {
+                        editor.state.libraryExportVisible = false;
                         editor.update();
                     }}
                 />

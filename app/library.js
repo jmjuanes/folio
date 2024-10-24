@@ -13,6 +13,9 @@ import {getElementsBounds} from "./elements.js";
 import {migrateElements} from "./migrate.js";
 import {blobToText} from "./utils/blob.js";
 
+// generate a random id for the library
+const generateLibraryId = () => "lib:" + uid(20);
+
 // @description migrate a library
 export const migrateLibrary = library => {
     return Object.assign({}, library, {
@@ -48,12 +51,15 @@ export const loadLibraryFromJson = async () => {
 
 // @description allow to save a library to a local file
 export const saveLibraryAsJson = library => {
+    const libraryName = library.name || "Untitled";
     const exportData = {
         type: MIME_TYPES.FOLIO_LIB,
         version: VERSION,
-        name: library.name || "Untitled",
+        name: libraryName,
         description: library.description || "",
-        items: library.items || [],
+        items: (library.items || []).map(item => {
+            return Object.assign({}, item, {id: generateLibraryId()});
+        }),
     };
     const dataStr = JSON.stringify(exportData, null, "    ");
     const blob = new Blob([dataStr], {type: MIME_TYPES.FOLIO_LIB});
@@ -103,11 +109,11 @@ export const createLibrary = initialData => {
         },
 
         // @description add a new item to the library
-        addItem: (elements, data) => {
+        add: (elements, data) => {
             const bounds = getElementsBounds(elements);
             return getLibraryItemThumbnail(elements).then(thumbnail => {
                 library.items.push({
-                    id: "lib:" + uid(20),
+                    id: generateLibraryId(),
                     name: data.name || "Untitled",
                     description: data.description || "",
                     elements: elements.map(element => {
@@ -127,17 +133,38 @@ export const createLibrary = initialData => {
                         return newElement;
                     }),
                     thumbnail: thumbnail,
-                    width: bounds.x2 - bounds.x1,
-                    height: bounds.y2 - bounds.y1,
+                    createdAt: Date.now(),
                 });
             });
-
         },
-        deleteItem: id => {
-            library.items = library.items.filter(item => item.id !== id);
+        delete: id => {
+            const idsToRemove = new Set([id].flat());
+            library.items = library.items.filter(item => !idsToRemove.has(item.id));
         },
-        getItem: id => {
+        get: id => {
             return library.items.find(item => item.id === id) || null;
+        },
+
+        // Import another library
+        importLibrary: newLibrary => {
+            const currentItems = new Set(library.items.map(item => item.id));
+            const itemsToInsert = newLibrary.items.filter(item => !currentItems.has(item.id));
+            if (itemsToInsert.length > 0) {
+                // 1. insert the items into the library
+                itemsToInsert.forEach(item => {
+                    return library.items.push({
+                        ...item,
+                        libraryId: newLibrary.id,
+                        libraryName: newLibrary.name,
+                    });
+                });
+                // 2. register this library as imported
+                // library.importedLibraries.push({
+                //     id: newLibrary.id,
+                //     name: newLibrary.name,
+                //     description: newLibrary.description || "",
+                // });
+            }
         },
     };
     // return library manager
