@@ -170,14 +170,6 @@ export const migrateAppState = (appState, version) => {
     return appState ?? {};
 };
 
-// @private migrate library items
-export const migrateLibraryItems = (libraryItems, version) => {
-    return (libraryItems || []).map(libraryItem => {
-        libraryItem.elements = migrateElements(libraryItem.elements, version);
-        return libraryItem;
-    });
-};
-
 // @public migrate data to latest version
 export const migrate = async (data = {}, version = "2") => {
     const assets = await migrateAssets(data?.assets , data?.version || version);
@@ -188,7 +180,6 @@ export const migrate = async (data = {}, version = "2") => {
         updatedAt: data?.updatedAt ?? Date.now(),
         pages: migratePages(data, data?.version || version),
         assets: assets,
-        libraryItems: migrateLibraryItems(data?.libraryItems || []),
         background: data.background ?? BACKGROUND_COLORS.gray,
         appState: migrateAppState(data?.appState, data?.version || version),
         metadata: data?.metadata ?? {},

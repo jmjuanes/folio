@@ -6,15 +6,6 @@ import {migrate} from "./migrate.js";
 
 export const saveAsJson = data => {
     const pages = data?.pages || [];
-    const libraryItemsUsed = new Set();
-    // fill libraryItemsUsed with libraryItemIds used in the pages
-    pages.forEach(page => {
-        (page?.elements || []).forEach(element => {
-            if (element.type === ELEMENTS.LIBRARY_ITEM) {
-                return libraryItemsUsed.add(element[FIELDS.LIBRARY_ITEM_ID]);
-            }
-        });
-    });
     const exportData = {
         type: MIME_TYPES.FOLIO,
         version: VERSION,
@@ -31,9 +22,6 @@ export const saveAsJson = data => {
             });
             return assets;
         }, {}),
-        libraryItems: (data?.libraryItems || []).filter(libraryItem => {
-            return libraryItemsUsed.has(libraryItem.id);
-        }),
         background: data?.background ?? BACKGROUND_COLORS.gray,
         appState: data?.appState ?? {},
         metadata: Object.assign(data?.metadata || {}, {
