@@ -24,6 +24,7 @@ import {
     createElement,
     measureTextInElement,
     getElementDisplayName,
+    getElementsBounds,
 } from "./elements.js";
 import {
     parseZoomValue,
@@ -247,7 +248,6 @@ const defaults = {
     opacity: DEFAULTS.OPACITY,
     [FIELDS.NOTE_COLOR]: DEFAULTS.NOTE_COLOR,
     [FIELDS.STICKER]: DEFAULTS.STICKER,
-    [FIELDS.LIBRARY_ITEM_ID]: "",
 };
 
 // @description Generate a scene state from initial data object
@@ -264,7 +264,6 @@ export const getSceneStateFromInitialData = initialData => {
         pages: pages,
         page: pages.find(page => page.index === 0) || pages[0],
         assets: initialData?.assets || {},
-        libraryItems: initialData?.libraryItems || [],
         appState: {
             grid: !!initialData?.appState?.grid,
             snapToElements: !!initialData?.appState?.snapToElements,
@@ -300,7 +299,6 @@ export const createScene = initialData => {
                     stats: page?.stats || {},
                 })),
                 assets: scene.assets,
-                libraryItems: scene.libraryItems || [],
                 background: scene.background,
                 appState: scene.appState,
                 metadata: scene.metadata,
@@ -919,6 +917,31 @@ export const createScene = initialData => {
             });
         },
 
+        // @description add a new library item element
+        addLibraryItem: (libraryItem, tx = null, ty = null) => {
+            scene.clearSelection();
+            const bounds = getElementsBounds(libraryItem.elements);
+            const group = generateRandomId();
+            const x = (tx ?? (scene.page.translateX + scene.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
+            const y = (ty ?? (scene.page.translateY + scene.height / 2)) - (bounds.y2 - bounds.y1) / 2;
+            const elements = libraryItem.elements.map(element => ({
+                ...element,
+                id: generateRandomId(),
+                [FIELDS.GROUP]: group,
+                [FIELDS.SELECTED]: true,
+                [FIELDS.EDITING]: false,
+                x1: element.x1 + x,
+                x2: element.x2 + x,
+                y1: element.y1 + y,
+                y2: element.y2 + y,
+            }));
+            // we have to execute the onCreateEnd method for each element
+            // elements.forEach(element => {
+            //     return getElementConfig(element)?.onCreateEnd?.(element);
+            // });
+            scene.addElements(elements);
+        },
+
         //
         // Selection api
         //
@@ -1178,23 +1201,6 @@ export const createScene = initialData => {
             // If not, check clipboard
             return getTextFromClipboard()
                 .then(content => parseTextDataToScene(scene, content, x, y));
-        },
-
-        // @description add a new library item
-        addLibraryItem: libraryItem => {
-            if (!scene.hasLibraryItem(libraryItem.id)) {
-                return scene.libraryItems.push({
-                    id: libraryItem.id,
-                    name: libraryItem.name,
-                    elements: libraryItem.elements,
-                    width: libraryItem.width,
-                    height: libraryItem.height,
-                });
-            }
-        },
-        // @description check if we have a library item registered
-        hasLibraryItem: id => {
-            return !!scene.libraryItems.find(item => item.id === id);
         },
     };
 
