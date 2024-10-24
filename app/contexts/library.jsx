@@ -18,11 +18,11 @@ export const LibraryProvider = props => {
     // on mount, import library data
     useMount(() => {
         promisifyValue(props.initialData).then(value => {
-            if (typeof value === "object" && !!value && Array.isArray(value)) {
+            if (typeof value === "object" && value) {
                 return setLibrary(createLibrary(value));
             }
-            // Initialize with an empty library array
-            return setLibrary(createLibraryManager([]));
+            // Initialize with an empty library
+            return setLibrary(createLibrary({}));
         });
     });
     // if library is not available (yet), do not render
