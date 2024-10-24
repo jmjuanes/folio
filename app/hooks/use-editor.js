@@ -25,6 +25,7 @@ import {
 } from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
 import {useLibrary} from "../contexts/library.jsx";
+import { isNodeHandler } from "../handlers.js";
 
 // @private create a new editor state
 const createInitialEditorState = (props, scene) => {
@@ -134,6 +135,9 @@ export const useEditor = props => {
 
         // Internal variables
         let snapshot = [];
+        let snapshotRatio = 1;
+        let snapshotWidth = 0;
+        let snapshotHeight = 0;
         let snapshotBounds = null;
         let snapEdges = [];
         let activeSnapEdges = [];
@@ -240,6 +244,11 @@ export const useEditor = props => {
                             const elementConfig = getElementConfig(element);
                             if (typeof elementConfig.onResizeStart === "function") {
                                 elementConfig.onResizeStart(element, snapshot[0], event);
+                            }
+                            if (event.shiftKey && !isNodeHandler(event.handler)) {
+                                snapshotWidth = snapshot[0].x2 - snapshot[0].x1;
+                                snapshotHeight = snapshot[0].y2 - snapshot[0].y1;
+                                snapshotRatio = Math.max(snapshotHeight) / Math.max(1, snapshotWidth);
                             }
                         }
                     }
@@ -358,15 +367,31 @@ export const useEditor = props => {
                     }
                     else if (event.handler === HANDLERS.EDGE_TOP) {
                         element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                        if (event.shiftKey) {
+                            element.x1 = snapshot[0].x1 + (snapshotWidth / 2) - ((element.y2 - element.y1) / (2 * snapshotRatio));
+                            element.x2 = snapshot[0].x2 - (snapshotWidth / 2) + ((element.y2 - element.y1) / (2 * snapshotRatio));
+                        }
                     }
                     else if (event.handler === HANDLERS.EDGE_BOTTOM) {
                         element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                        if (event.shiftKey) {
+                            element.x1 = snapshot[0].x1 + (snapshotWidth / 2) - ((element.y2 - element.y1) / (2 * snapshotRatio));
+                            element.x2 = snapshot[0].x2 - (snapshotWidth / 2) + ((element.y2 - element.y1) / (2 * snapshotRatio));
+                        }
                     }
                     else if (event.handler === HANDLERS.EDGE_LEFT) {
                         element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
+                        if (event.shiftKey) {
+                            element.y1 = snapshot[0].y1 + (snapshotHeight / 2) - ((element.x2 - element.x1) * snapshotRatio) / 2;
+                            element.y2 = snapshot[0].y2 - (snapshotHeight / 2) + ((element.x2 - element.x1) * snapshotRatio) / 2;
+                        }
                     }
                     else if (event.handler === HANDLERS.EDGE_RIGHT) {
                         element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
+                        if (event.shiftKey) {
+                            element.y1 = snapshot[0].y1 + (snapshotHeight / 2) - ((element.x2 - element.x1) * snapshotRatio) / 2;
+                            element.y2 = snapshot[0].y2 - (snapshotHeight / 2) + ((element.x2 - element.x1) * snapshotRatio) / 2;
+                        }
                     }
                     else if (event.handler === HANDLERS.NODE_START) {
                         element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
