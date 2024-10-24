@@ -50,12 +50,13 @@ Panel.HeaderTitle = props => (
 );
 
 // panel header button
-Panel.HeaderButton = ({active, className, children, onClick}) => {
+Panel.HeaderButton = ({active, disabled = false, className, children, onClick}) => {
     const classList = themed({
         "flex items-center rounded-md cursor-pointer p-2": true,
         "panel.header.button": true,
         "panel.header.button.active": active,
         "panel.header.button.inactive": !active,
+        "opacity-50 pointer-events-none": disabled,
     }, className);
     return (
         <div className={classList} onClick={onClick}>
