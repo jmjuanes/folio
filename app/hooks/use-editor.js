@@ -56,7 +56,7 @@ const createInitialEditorState = (props, scene) => {
         layersVisible: false,
         libraryVisible: false,
         libraryCreateVisible: false,
-        libraryItemAddVisible: false,
+        libraryAddVisible: false,
 
         // @description state for welcome items
         hintsVisible: props.showHints && isSceneEmpty,
@@ -220,7 +220,6 @@ export const useEditor = props => {
                         y2: getPosition(event.originalY),
                         creating: true,
                     });
-                    event.detail.editorState = editorState;
                     elementConfig.onCreateStart?.(element, event),
                     activeElement = element; // Save element reference
                     // state.activeGroup = null; // Reset current group
