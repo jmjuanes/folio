@@ -76,7 +76,6 @@ export const CURSORS = {
 export const FORM_OPTIONS = {
     COLOR: "color",
     SELECT: "select",
-    SELECT_DROPDOWN: "select-dropdown",
     LABELED_SELECT: "labeled-select",
     COLOR_SELECT: "color-select",
     FONT: "font",
@@ -86,6 +85,7 @@ export const FORM_OPTIONS = {
     SEPARATOR: "separator",
     IMAGE_SELECT: "image-select",
     TEXT: "text",
+    CUSTOM: "custom",
 };
 
 export const ELEMENTS = {
@@ -98,7 +98,6 @@ export const ELEMENTS = {
     NOTE: "note",
     BOOKMARK: "bookmark",
     STICKER: "sticker",
-    LIBRARY_ITEM: "library-item",
 };
 
 export const SHAPES = {
@@ -447,6 +446,9 @@ export const SCREENSHOT_STROKE_COLOR = PRIMARY;
 export const SCREENSHOT_STROKE_WIDTH = 3;
 
 // library constants
-export const LIBRARY_THUMBNAIL_WIDTH = 100;
-export const LIBRARY_THUMBNAIL_HEIGHT = 100;
+export const LIBRARY_THUMBNAIL_WIDTH = 50;
+export const LIBRARY_THUMBNAIL_HEIGHT = 50;
 export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
+// export const LIBRARY_SOURCES = {
+//     IMPORTED_FROM_FILE: "imported:file",
+// };
