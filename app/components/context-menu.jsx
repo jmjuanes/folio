@@ -2,7 +2,6 @@ import React from "react";
 import {ELEMENTS} from "../constants.js";
 import {ContextMenu as Menu} from "./ui/context-menu.jsx";
 import {useScene} from "../contexts/scene.jsx";
-import {useLibrary} from "../contexts/library.jsx";
 
 // Not allowed elements in library
 const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
@@ -15,7 +14,6 @@ const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
 
 export const ContextMenu = props => {
     const scene = useScene();
-    const library = useLibrary();
     const selectedElements = scene.getSelection();
     const style = {
         top: props.top,
