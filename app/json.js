@@ -1,17 +1,8 @@
 import {fileOpen, fileSave} from "browser-fs-access";
-import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "./constants.js";
+import {VERSION, MIME_TYPES, FILE_EXTENSIONS, FIELDS, ELEMENTS} from "./constants.js";
+import {blobToText} from "./utils/blob.js";
 import {BACKGROUND_COLORS} from "./utils/colors.js";
 import {migrate} from "./migrate.js";
-
-// Read from blob as text
-const readBlobAsText = blob => {
-    const file = new FileReader();
-    return (new Promise((resolve, reject) => {
-        file.onload = event => resolve(event.target.result);
-        file.onerror = error => reject(error);
-        file.readAsText(blob, "utf8");
-    }));
-};
 
 export const saveAsJson = data => {
     const pages = data?.pages || [];
@@ -62,6 +53,6 @@ export const loadFromJson = async () => {
         return Promise.reject(new Error("No file selected"));
     }
     // Load data from blob
-    const data = JSON.parse(await readBlobAsText(blob));
+    const data = JSON.parse(await blobToText(blob));
     return migrate(data, data?.version);
 };

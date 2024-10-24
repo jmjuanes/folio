@@ -1,6 +1,16 @@
 import React from "react";
+import {ELEMENTS} from "../constants.js";
 import {ContextMenu as Menu} from "./ui/context-menu.jsx";
 import {useScene} from "../contexts/scene.jsx";
+
+// Not allowed elements in library
+const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
+    ELEMENTS.LIBRARY_ITEM,
+    ELEMENTS.NOTE,
+    ELEMENTS.BOOKMARK,
+    ELEMENTS.STICKER,
+    ELEMENTS.IMAGE,
+];
 
 export const ContextMenu = props => {
     const scene = useScene();
@@ -10,7 +20,11 @@ export const ContextMenu = props => {
         left: props.left,
         transform: props.top > scene.height / 2 ? "translateY(-100%)" : "",
     };
-
+    const addLibraryItem = React.useMemo(() => {
+        return selectedElements.every(element => {
+            return !NOT_ALLOWED_ELEMENTS_IN_LIBRARY.includes(element.type);
+        });
+    }, [selectedElements.length]);
     return (
         <Menu className="absolute z-40 w-48" style={style}>
             {selectedElements.length > 0 && (
@@ -50,6 +64,15 @@ export const ContextMenu = props => {
                     <Menu.Separator />
                 </React.Fragment>
             )} 
+            {selectedElements.length > 0 && (
+                <React.Fragment>
+                    <Menu.Item disabled={!addLibraryItem} onClick={props.onAddToLibrary}>
+                        <Menu.Icon icon="album" />
+                        <span>Add to library...</span>
+                    </Menu.Item>
+                    <Menu.Separator />
+                </React.Fragment>
+            )}
             {selectedElements.length > 0 && (
                 <React.Fragment>
                     <Menu.Item onClick={props.onCut}>

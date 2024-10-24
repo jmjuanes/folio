@@ -68,6 +68,7 @@ export const Canvas = props => {
             originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             originalEvent: event.nativeEvent,
+            detail: {},
         };
 
         if (source && event.nativeEvent.target?.dataset?.[source]) {

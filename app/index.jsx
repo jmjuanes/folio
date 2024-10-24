@@ -22,6 +22,7 @@ const App = () => {
         <div className="fixed top-0 left-0 h-full w-full bg-white text-base flex">
             <Editor
                 initialData={() => client.data.get()}
+                initialLibraryData={() => client.library.get()}
                 links={[
                     {url: "./", text: "About Folio"},
                     {url: process.env.URL_ISSUES, text: "Report a bug"},
@@ -32,6 +33,9 @@ const App = () => {
                         ...newState,
                         updatedAt: Date.now(),
                     }));
+                }}
+                onLibraryChange={library => {
+                    return client.library.set(library);
                 }}
             />
         </div>

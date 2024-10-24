@@ -84,6 +84,8 @@ export const FORM_OPTIONS = {
     PIXELS: "pixels",
     SEPARATOR: "separator",
     IMAGE_SELECT: "image-select",
+    TEXT: "text",
+    CUSTOM: "custom",
 };
 
 export const ELEMENTS = {
@@ -156,6 +158,7 @@ export const SHAPE_PADDING = 2;
 
 export const MIME_TYPES = {
     FOLIO: "application/vnd.folio+json",
+    FOLIO_LIB: "application/vnd.foliolib+json",
     JSON: "application/json",
     PNG: "image/png",
     JPG: "image/jpeg",
@@ -164,6 +167,7 @@ export const MIME_TYPES = {
 
 export const FILE_EXTENSIONS = {
     FOLIO: ".folio",
+    FOLIO_LIB: ".foliolib",
     JSON: ".json",
     PNG: ".png",
     JPG: ".jpg",
@@ -311,6 +315,7 @@ export const FIELDS = {
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
     STICKER: "sticker",
+    LIBRARY_ITEM_ID: "libraryItemId",
 };
 
 // Deprecated fields
@@ -439,3 +444,11 @@ export const HANDLERS_STROKE_COLOR = PRIMARY;
 // screenshot constants
 export const SCREENSHOT_STROKE_COLOR = PRIMARY;
 export const SCREENSHOT_STROKE_WIDTH = 3;
+
+// library constants
+export const LIBRARY_THUMBNAIL_WIDTH = 50;
+export const LIBRARY_THUMBNAIL_HEIGHT = 50;
+export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
+// export const LIBRARY_SOURCES = {
+//     IMPORTED_FROM_FILE: "imported:file",
+// };

@@ -33,6 +33,7 @@ import {
     getPointProjectionToLine,
     getPointInQuadraticCurve,
     getPointsBounds,
+    getRectangleBounds,
 } from "./utils/math.js";
 import {getCurvePath, getConnectorPath} from "./utils/paths.js";
 import {isCornerHandler} from "./handlers.js";
@@ -509,7 +510,6 @@ export const createElement = elementType => {
         [FIELDS.X_END]: 0,
         [FIELDS.Y_END]: 0,
         [FIELDS.SELECTED]: false,
-        // [FIELDS.ERASED]: false,
         [FIELDS.CREATING]: false,
         [FIELDS.EDITING]: false,
         [FIELDS.LOCKED]: false,
@@ -600,4 +600,15 @@ export const getElementSnappingPoints = (element, snapEdge) => {
 // @public generate display name for the provided element
 export const getElementDisplayName = (element, index = 0) => {
     return [getElementConfig(element).displayName, index + 1].join(" ");
+};
+
+// @public get the bounds of the provided elements
+export const getElementsBounds = (elements = []) => {
+    return getRectangleBounds(elements.map(el => {
+        const elementConfig = getElementConfig(el);
+        if (typeof elementConfig.getBoundingRectangle === "function") {
+            return elementConfig.getBoundingRectangle(el);
+        }
+        return el;
+    }));
 };

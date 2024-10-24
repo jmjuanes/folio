@@ -25,6 +25,8 @@ import {Title} from "./title.jsx";
 import {Hint} from "./hint.jsx";
 import {Screenshot} from "./screenshot.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
+import {LibraryAddDialog} from "./dialogs/library-add.jsx";
+import {LibraryExportDialog} from "./dialogs/library-export.jsx";
 import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
 import {EditionPanel} from "./panels/edition.jsx";
@@ -32,12 +34,15 @@ import {ZoomPanel} from "./panels/zoom.jsx";
 import {HistoryPanel} from "./panels/history.jsx";
 import {PagesPanel} from "./panels/pages.jsx";
 import {LayersPanel} from "./panels/layers.jsx";
+import {LibraryPanel} from "./panels/library.jsx";
 import {SettingsPanel} from "./panels/settings.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
+import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
 import {convertRegionToSceneCoordinates} from "../scene.js";
+import {loadLibraryFromJson, saveLibraryAsJson} from "../library.js";
 
 // @description export modes
 const EXPORT_MODES = {
@@ -48,6 +53,7 @@ const EXPORT_MODES = {
 // @private
 const EditorWithScene = props => {
     const scene = useScene();
+    const library = useLibrary();
     const editor = useEditor(props);
     const {showConfirm} = useConfirm();
     const cursor = useCursor(editor.state);
@@ -270,6 +276,11 @@ const EditorWithScene = props => {
                         editor.dispatchChange();
                         editor.update();
                     }}
+                    onAddToLibrary={() => {
+                        editor.state.libraryAddVisible = true;
+                        editor.state.contextMenu = false;
+                        editor.update();
+                    }}
                 />
             )}
             {!isScreenshot && (
@@ -312,7 +323,7 @@ const EditorWithScene = props => {
                     )}
                 </div>
             )}
-            {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && selectedElements.length > 0 && (
+            {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
                         <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
@@ -353,6 +364,71 @@ const EditorWithScene = props => {
                         onElementRename={() => {
                             editor.dispatchChange();
                             editor.update();
+                        }}
+                    />
+                </div>
+            )}
+            {editor.state.libraryVisible && !isScreenshot && (
+                <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
+                    <LibraryPanel
+                        key={`library:${scene.id || ""}`}
+                        onCreate={() => {
+                            editor.state.libraryCreateVisible = true;
+                            editor.update();
+                        }}
+                        onLoad={() => {
+                            loadLibraryFromJson()
+                                .then(importedLibrary => {
+                                    library.importLibrary(importedLibrary);
+                                    editor.dispatchLibraryChange();
+                                    editor.update();
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                });
+                        }}
+                        onClear={() => {
+                            showConfirm({
+                                title: "Delete library",
+                                message: `Do you want to delete your library? This action can not be undone.`,
+                                callback: () => {
+                                    library.clear();
+                                    editor.dispatchLibraryChange();
+                                    editor.update();
+                                },
+                            });
+                        }}
+                        onExport={() => {
+                            editor.state.libraryExportVisible = true;
+                            editor.update();
+                        }}
+                        onInsertItem={(item, tx, ty) => {
+                            scene.addLibraryItem(item, tx, ty);
+                            editor.state.libraryVisible = false; // hide library panel
+                            editor.dispatchChange();
+                            editor.update();
+                        }}
+                        onDeleteItem={item => {
+                            showConfirm({
+                                title: "Delete library item",
+                                message: `Do you want to delete '${item.name}'? This action can not be undone.`,
+                                callback: () => {
+                                    library.delete(item.id);
+                                    editor.dispatchLibraryChange();
+                                    editor.update();
+                                },
+                            });
+                        }}
+                        onDeleteAll={ids => {
+                            showConfirm({
+                                title: "Delete library items",
+                                message: `Do you want to delete ${ids.length} items from the library? This action can not be undone.`,
+                                callback: () => {
+                                    library.delete(ids);
+                                    editor.dispatchLibraryChange();
+                                    editor.update();
+                                },
+                            });
                         }}
                     />
                 </div>
@@ -537,9 +613,10 @@ const EditorWithScene = props => {
                             <Island>
                                 <Island.Button
                                     icon="edit"
-                                    active={!editor.state.layersVisible}
+                                    active={!editor.state.layersVisible && !editor.state.libraryVisible}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
+                                        editor.state.libraryVisible = false;
                                         editor.update();
                                     }}
                                 />
@@ -548,6 +625,16 @@ const EditorWithScene = props => {
                                     active={editor.state.layersVisible}
                                     onClick={() => {
                                         editor.state.layersVisible = true;
+                                        editor.state.libraryVisible = false;
+                                        editor.update();
+                                    }}
+                                />
+                                <Island.Button
+                                    icon="album"
+                                    active={editor.state.libraryVisible}
+                                    onClick={() => {
+                                        editor.state.layersVisible = false;
+                                        editor.state.libraryVisible = true;
                                         editor.update();
                                     }}
                                 />
@@ -608,17 +695,54 @@ const EditorWithScene = props => {
                     }}
                 />
             )}
+            {editor.state.libraryAddVisible && (
+                <LibraryAddDialog
+                    onAdd={(elements, data) => {
+                        library.add(elements, data).then(() => {
+                            editor.state.libraryAddVisible = false;
+                            editor.dispatchLibraryChange();
+                            editor.update();
+                        });
+                    }}
+                    onCancel={() => {
+                        editor.state.libraryAddVisible = false;
+                        editor.update();
+                    }}
+                />
+            )}
+            {editor.state.libraryExportVisible && (
+                <LibraryExportDialog
+                    onExport={data => {
+                        editor.state.libraryExportVisible = false;
+                        editor.update();
+                        const exportLibrary = Object.assign(library.toJSON(), {
+                            name: data.name,
+                            description: data.description,
+                            items: library.items.filter(item => data.selectedItems.has(item.id)),
+                        });
+                        saveLibraryAsJson(exportLibrary)
+                            .then(() => console.log("Library saved"))
+                            .catch(error => console.error(error));
+                    }}
+                    onCancel={() => {
+                        editor.state.libraryExportVisible = false;
+                        editor.update();
+                    }}
+                />
+            )}
         </div>
     );
 };
 
 // @description Public editor
-export const Editor = ({initialData, ...props}) => {
+export const Editor = ({initialData, initialLibraryData, ...props}) => {
     return (
         <ThemeProvider theme="default">
-            <SceneProvider initialData={initialData}>
-                <EditorWithScene {...props} />
-            </SceneProvider>
+            <LibraryProvider initialData={initialLibraryData} onChange={props.onLibraryChange}>
+                <SceneProvider initialData={initialData}>
+                    <EditorWithScene {...props} />
+                </SceneProvider>
+            </LibraryProvider>
         </ThemeProvider>
     );
 };

@@ -24,6 +24,7 @@ import {
     getElementSnappingPoints,
 } from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
+import {useLibrary} from "../contexts/library.jsx";
 
 // @private create a new editor state
 const createInitialEditorState = (props, scene) => {
@@ -40,18 +41,22 @@ const createInitialEditorState = (props, scene) => {
         // @description current selection  
         selection: null,
 
+        // @description current library selection
+        selectedLibraryItemId: null,
+        selectedLibraryItem: null,
+
         // @description context menu configuration
         contextMenu: false,
         contextMenuTop: 0,
         contextMenuLeft: 0,
 
-        // @description export configuration
-        exportRegion: null,
-
         // @description state for dialogs
         exportVisible: false,
         pagesVisible: false,
         layersVisible: false,
+        libraryVisible: false,
+        libraryCreateVisible: false,
+        libraryAddVisible: false,
 
         // @description state for welcome items
         hintsVisible: props.showHints && isSceneEmpty,
@@ -64,11 +69,14 @@ const createInitialEditorState = (props, scene) => {
 export const useEditor = props => {
     const update = useUpdate();
     const scene = useScene();
+    const library = useLibrary();
     const editor = React.useRef(null);
     const onChangeRef = React.useRef(props?.onChange);
+    const onLibraryChangeRef = React.useRef(props?.onLibraryChange);
 
     // We need to update the reference to the onChange function
     onChangeRef.current = props?.onChange;
+    onLibraryChangeRef.current = props?.onLibraryChange;
 
     // Initialize editor state
     if (!editor.current) {
@@ -77,6 +85,13 @@ export const useEditor = props => {
         // @description dispatch an editor change
         const dispatchChange = () => {
             return onChangeRef.current(scene.toJSON());
+        };
+
+        // @description dispatch a library change
+        const dispatchLibraryChange = () => {
+            if (typeof onLibraryChangeRef.current === "function") {
+                return onLibraryChangeRef.current(library.toJSON());
+            }
         };
 
         // @private get position based on the grid state
@@ -494,10 +509,10 @@ export const useEditor = props => {
                         y2: Math.max(selection.y1, selection.y2),
                     });
                 }
-                else if (editorState.action === ACTIONS.SCREENSHOT) {
-                    editorState.exportVisible = true;
-                    editorState.exportRegion = {...editorState.selection};
-                }
+                // else if (editorState.action === ACTIONS.SCREENSHOT) {
+                //     editorState.exportVisible = true;
+                //     editorState.exportRegion = {...editorState.selection};
+                // }
                 editorState.selection = null;
                 editorState.action = null;
                 update();
@@ -693,6 +708,7 @@ export const useEditor = props => {
             update: update,
             state: editorState,
             dispatchChange: dispatchChange,
+            dispatchLibraryChange: dispatchLibraryChange,
             events: editorEvents,
         };
     }

@@ -9,6 +9,7 @@ const STORE_VERSION = "1";
 const STORE_KEYS = {
     VERSION: "folio:version",
     DATA: "folio:data",
+    LIBRARY: "folio:library",
     SETTINGS: "folio:settings",
 };
 
@@ -48,6 +49,10 @@ export default () => ({
             await idb.set(STORE_KEYS.DATA, newData, store);
             await idb.set(STORE_KEYS.SETTINGS, {}, store);
         }
+        // Check if library is not initialized
+        if (!keys.includes(STORE_KEYS.LIBRARY)) {
+            await idb.set(STORE_KEYS.LIBRARY, {}, store);
+        }
         // Store initialized
         return true;
     },
@@ -78,6 +83,16 @@ export default () => ({
         },
         set: newSettings => {
             return idb.update(STORE_KEYS.SETTINGS, prev => ({...prev, newSettings}), store);
+        },
+    },
+
+    // @description library manager
+    library: {
+        get: () => {
+            return idb.get(STORE_KEYS.LIBRARY, store);
+        },
+        set: library => {
+            return idb.set(STORE_KEYS.LIBRARY, library, store);
         },
     },
 });

@@ -24,6 +24,7 @@ import {
     createElement,
     measureTextInElement,
     getElementDisplayName,
+    getElementsBounds,
 } from "./elements.js";
 import {
     parseZoomValue,
@@ -914,6 +915,31 @@ export const createScene = initialData => {
                 scene.addElements([element]);
                 return element;
             });
+        },
+
+        // @description add a new library item element
+        addLibraryItem: (libraryItem, tx = null, ty = null) => {
+            scene.clearSelection();
+            const bounds = getElementsBounds(libraryItem.elements);
+            const group = generateRandomId();
+            const x = (tx ?? (scene.page.translateX + scene.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
+            const y = (ty ?? (scene.page.translateY + scene.height / 2)) - (bounds.y2 - bounds.y1) / 2;
+            const elements = libraryItem.elements.map(element => ({
+                ...element,
+                id: generateRandomId(),
+                [FIELDS.GROUP]: group,
+                [FIELDS.SELECTED]: true,
+                [FIELDS.EDITING]: false,
+                x1: element.x1 + x,
+                x2: element.x2 + x,
+                y1: element.y1 + y,
+                y2: element.y2 + y,
+            }));
+            // we have to execute the onCreateEnd method for each element
+            // elements.forEach(element => {
+            //     return getElementConfig(element)?.onCreateEnd?.(element);
+            // });
+            scene.addElements(elements);
         },
 
         //
