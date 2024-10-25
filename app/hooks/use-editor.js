@@ -352,18 +352,50 @@ export const useEditor = props => {
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
                         element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
                         element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                        if (event.shiftKey) {
+                            if (event.dx * snapshotRatio < event.dy) {
+                                element.y1 = snapshot[0].y1 + (event.dx * snapshotRatio);
+                            }
+                            else {
+                                element.x1 = snapshot[0].x1 + (event.dy / snapshotRatio);
+                            }
+                        }
                     }
                     else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
                         element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
                         element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                        if (event.shiftKey) {
+                            if ((-1) * event.dx * snapshotRatio < event.dy) {
+                                element.y1 = snapshot[0].y1 - (event.dx * snapshotRatio);
+                            }
+                            else {
+                                element.x2 = snapshot[0].x2 - (event.dy / snapshotRatio);
+                            }
+                        }
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
                         element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
                         element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                        if (event.shiftKey) {
+                            if ((-1) * event.dx * snapshotRatio > event.dy) {
+                                element.y2 = snapshot[0].y2 - (event.dx * snapshotRatio);
+                            }
+                            else {
+                                element.x1 = snapshot[0].x1 - (event.dy / snapshotRatio);
+                            }
+                        }
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
                         element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
                         element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                        if (event.shiftKey) {
+                            if (event.dx * snapshotRatio > event.dy) {
+                                element.y2 = snapshot[0].y2 + (event.dx * snapshotRatio);
+                            }
+                            else {
+                                element.x2 = snapshot[0].x2 + (event.dy / snapshotRatio);
+                            }
+                        }
                     }
                     else if (event.handler === HANDLERS.EDGE_TOP) {
                         element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
