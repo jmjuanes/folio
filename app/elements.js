@@ -28,6 +28,7 @@ import {
     ARROW_SHAPES,
 } from "./constants.js";
 import {
+    sign,
     measureText,
     getPointDistanceToLine,
     getPointProjectionToLine,
@@ -115,6 +116,13 @@ export const elementsConfig = {
                 textHeight: GRID_SIZE,
             };
         },
+        onCreateMove: (element, event, getPosition) => {
+            if (event.shiftKey) {
+                const d = Math.max(Math.abs(event.dx), Math.abs(event.dy));
+                element.x2 = getPosition(element.x1 + sign(event.dx) * d);
+                element.y2 = getPosition(element.y1 + sign(event.dy) * d);
+            }
+        },
         onCreateEnd: (element, event) => {
             // Prevent drawing 0-sized shapes
             if (!event.drag) {
@@ -128,6 +136,59 @@ export const elementsConfig = {
                 x2: Math.max(element.x1, element.x2),
                 y2: Math.max(element.y1, element.y2),
             });
+        },
+        onResize: (element, snapshot, event, getPosition) => {
+            if (event.shiftKey) {
+                const ratio = (snapshot.y2 - snapshot.y1) / Math.max(1, snapshot.x2 - snapshot.x1);
+                if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
+                    if (event.dx * ratio < event.dy) {
+                        element.y1 = snapshot.y1 + ((element.x1 - snapshot.x1) * ratio);
+                    }
+                    else {
+                        element.x1 = snapshot.x1 + ((element.y1 - snapshot.y1) / ratio);
+                    }
+                }
+                else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
+                    if ((-1) * event.dx * ratio < event.dy) {
+                        element.y1 = snapshot.y1 - ((element.x2 - snapshot.x2) * ratio);
+                    }
+                    else {
+                        element.x2 = snapshot.x2 - ((element.y1 - snapshot.y1) / ratio);
+                    }
+                }
+                else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                    if ((-1) * event.dx * ratio > event.dy) {
+                        element.y2 = snapshot.y2 - ((element.x1 - snapshot.x1) * ratio);
+                    }
+                    else {
+                        element.x1 = snapshot.x1 - ((element.y2 - snapshot.y2) / ratio);
+                    }
+                }
+                else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                    if (event.dx * ratio > event.dy) {
+                        element.y2 = snapshot.y2 + ((element.x2 - snapshot.x2) * ratio);
+                    }
+                    else {
+                        element.x2 = snapshot.x2 + ((element.y2 - snapshot.y2) / ratio);
+                    }
+                }
+                else if (event.handler === HANDLERS.EDGE_TOP) {
+                    element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
+                    element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
+                }
+                else if (event.handler === HANDLERS.EDGE_BOTTOM) {
+                    element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
+                    element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
+                }
+                else if (event.handler === HANDLERS.EDGE_LEFT) {
+                    element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
+                    element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
+                }
+                else if (event.handler === HANDLERS.EDGE_RIGHT) {
+                    element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
+                    element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
+                }
+            }
         },
         onUpdate: (element, changedKeys) => {
             if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
