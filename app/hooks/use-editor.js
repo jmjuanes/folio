@@ -14,7 +14,7 @@ import {
     SNAP_EDGE_Y,
     FIELDS,
 } from "../constants.js";
-import {normalizeBounds, getRectangleBounds} from "../utils/math.js";
+import {sign, normalizeBounds, getRectangleBounds} from "../utils/math.js";
 import {isArrowKey} from "../utils/keys.js";
 import {isInputTarget} from "../utils/events.js";
 import {
@@ -25,7 +25,7 @@ import {
 } from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
 import {useLibrary} from "../contexts/library.jsx";
-import { isNodeHandler } from "../handlers.js";
+import {isNodeHandler} from "../handlers.js";
 
 // @private create a new editor state
 const createInitialEditorState = (props, scene) => {
@@ -311,6 +311,14 @@ export const useEditor = props => {
                     // First, update the second point of the element
                     element.x2 = getPosition(event.currentX);
                     element.y2 = getPosition(event.currentY);
+                    // Preserve the aspect ratio of the element
+                    if (event.shiftKey) {
+                        if (element.type === ELEMENTS.SHAPE) {
+                            const d = Math.max(Math.abs(event.dx), Math.abs(event.dy));
+                            element.x2 = getPosition(element.x1 + sign(event.dx) * d);
+                            element.y2 = getPosition(element.y1 + sign(event.dy) * d);
+                        }
+                    }
                     // Second, call the onCreateMove listener of the element
                     getElementConfig(element)?.onCreateMove?.(element, event);
                 }
