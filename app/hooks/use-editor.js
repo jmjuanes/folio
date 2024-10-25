@@ -354,10 +354,10 @@ export const useEditor = props => {
                         element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
                         if (event.shiftKey) {
                             if (event.dx * snapshotRatio < event.dy) {
-                                element.y1 = snapshot[0].y1 + (event.dx * snapshotRatio);
+                                element.y1 = snapshot[0].y1 + ((element.x1 - snapshot[0].x1) * snapshotRatio);
                             }
                             else {
-                                element.x1 = snapshot[0].x1 + (event.dy / snapshotRatio);
+                                element.x1 = snapshot[0].x1 + ((element.y1 - snapshot[0].y1) / snapshotRatio);
                             }
                         }
                     }
@@ -366,10 +366,10 @@ export const useEditor = props => {
                         element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
                         if (event.shiftKey) {
                             if ((-1) * event.dx * snapshotRatio < event.dy) {
-                                element.y1 = snapshot[0].y1 - (event.dx * snapshotRatio);
+                                element.y1 = snapshot[0].y1 - ((element.x2 - snapshot[0].x2) * snapshotRatio);
                             }
                             else {
-                                element.x2 = snapshot[0].x2 - (event.dy / snapshotRatio);
+                                element.x2 = snapshot[0].x2 - ((element.y1 - snapshot[0].y1) / snapshotRatio);
                             }
                         }
                     }
@@ -378,10 +378,10 @@ export const useEditor = props => {
                         element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
                         if (event.shiftKey) {
                             if ((-1) * event.dx * snapshotRatio > event.dy) {
-                                element.y2 = snapshot[0].y2 - (event.dx * snapshotRatio);
+                                element.y2 = snapshot[0].y2 - ((element.x1 - snapshot[0].x1) * snapshotRatio);
                             }
                             else {
-                                element.x1 = snapshot[0].x1 - (event.dy / snapshotRatio);
+                                element.x1 = snapshot[0].x1 - ((element.y2 - snapshot[0].y2) / snapshotRatio);
                             }
                         }
                     }
@@ -390,10 +390,10 @@ export const useEditor = props => {
                         element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
                         if (event.shiftKey) {
                             if (event.dx * snapshotRatio > event.dy) {
-                                element.y2 = snapshot[0].y2 + (event.dx * snapshotRatio);
+                                element.y2 = snapshot[0].y2 + ((element.x2 - snapshot[0].x2) * snapshotRatio);
                             }
                             else {
-                                element.x2 = snapshot[0].x2 + (event.dy / snapshotRatio);
+                                element.x2 = snapshot[0].x2 + ((element.y2 - snapshot[0].y2) / snapshotRatio);
                             }
                         }
                     }
