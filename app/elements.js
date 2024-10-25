@@ -295,6 +295,20 @@ export const elementsConfig = {
                 strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULTS.STROKE_STYLE),
             };
         },
+        onCreateStart: (element, event) => {
+            // with SHIFT key pressed, we only allow creating a line arrow
+            if (event.shiftKey) {
+                element[FIELDS.ARROW_SHAPE] = ARROW_SHAPES.LINE;
+            }
+        },
+        onCreateMove: (element, event, getPosition) => {
+            if (event.shiftKey) {
+                const angle = Math.floor((Math.atan2(event.dy, event.dx) / (Math.PI / 6)) + (Math.PI / 6)) * (Math.PI / 6);
+                const d = Math.sqrt(event.dx * event.dx + event.dy * event.dy);
+                element.x2 = getPosition(element.x1 + Math.cos(angle) * d);
+                element.y2 = getPosition(element.y1 + Math.sin(angle) * d);
+            }
+        },
         onResizeStart: (element, snapshot, event) => {
             if (event.handler === HANDLERS.NODE_MIDDLE) {
                 if (typeof snapshot.xCenter !== "number") {
