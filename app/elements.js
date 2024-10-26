@@ -29,6 +29,7 @@ import {
 } from "./constants.js";
 import {
     sign,
+    hypotenuse,
     measureText,
     getPointDistanceToLine,
     getPointProjectionToLine,
@@ -295,6 +296,21 @@ export const elementsConfig = {
                 strokeStyle: checkStrokeStyleValue(values?.strokeStyle ?? DEFAULTS.STROKE_STYLE),
             };
         },
+        onCreateStart: (element, event) => {
+            // with SHIFT key pressed, we only allow creating a line arrow
+            // if (event.shiftKey) {
+            //     element[FIELDS.ARROW_SHAPE] = ARROW_SHAPES.LINE;
+            // }
+        },
+        onCreateMove: (element, event, getPosition) => {
+            if (event.shiftKey) {
+                const a = Math.PI / 12;
+                const angle = Math.round(Math.atan2(event.dy, event.dx) / a) * a;
+                const d = hypotenuse(event.dx, event.dy);
+                element.x2 = getPosition(element.x1 + Math.cos(angle) * d);
+                element.y2 = getPosition(element.y1 + Math.sin(angle) * d);
+            }
+        },
         onResizeStart: (element, snapshot, event) => {
             if (event.handler === HANDLERS.NODE_MIDDLE) {
                 if (typeof snapshot.xCenter !== "number") {
@@ -318,6 +334,21 @@ export const elementsConfig = {
                     element.yCenter = y;
                 }
             }
+            else if (event.shiftKey && !element.xCenter) {
+                const a = Math.PI / 12;
+                const dx = element.x2 - element.x1;
+                const dy = element.y2 - element.y1;
+                const angle = Math.round(Math.atan2(dy, dx) / a) * a;
+                const d = hypotenuse(dx, dy);
+                if (event.handler === HANDLERS.NODE_END) {
+                    element.x2 = getPosition(element.x1 + Math.cos(angle) * d);
+                    element.y2 = getPosition(element.y1 + Math.sin(angle) * d);
+                }   
+                else {
+                    element.x1 = getPosition(element.x2 - Math.cos(angle) * d);
+                    element.y1 = getPosition(element.y2 - Math.sin(angle) * d);
+                }
+            }   
         },
         onResizeEnd: (element, snapshot, event) => {
             if (event.handler === HANDLERS.NODE_MIDDLE) {
