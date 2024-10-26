@@ -89,6 +89,61 @@ const checkStrokeStyleValue = initialValue => {
     return initialValue === STROKES.NONE ? STROKES.SOLID : initialValue;
 };
 
+// allow to perserve the aspect ratio of the element
+const preserveAspectRatio = (element, snapshot, event) => {
+    if (event.shiftKey) {
+        const ratio = (snapshot.y2 - snapshot.y1) / Math.max(1, snapshot.x2 - snapshot.x1);
+        if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
+            if (event.dx * ratio < event.dy) {
+                element.y1 = snapshot.y1 + ((element.x1 - snapshot.x1) * ratio);
+            }
+            else {
+                element.x1 = snapshot.x1 + ((element.y1 - snapshot.y1) / ratio);
+            }
+        }
+        else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
+            if ((-1) * event.dx * ratio < event.dy) {
+                element.y1 = snapshot.y1 - ((element.x2 - snapshot.x2) * ratio);
+            }
+            else {
+                element.x2 = snapshot.x2 - ((element.y1 - snapshot.y1) / ratio);
+            }
+        }
+        else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+            if ((-1) * event.dx * ratio > event.dy) {
+                element.y2 = snapshot.y2 - ((element.x1 - snapshot.x1) * ratio);
+            }
+            else {
+                element.x1 = snapshot.x1 - ((element.y2 - snapshot.y2) / ratio);
+            }
+        }
+        else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+            if (event.dx * ratio > event.dy) {
+                element.y2 = snapshot.y2 + ((element.x2 - snapshot.x2) * ratio);
+            }
+            else {
+                element.x2 = snapshot.x2 + ((element.y2 - snapshot.y2) / ratio);
+            }
+        }
+        else if (event.handler === HANDLERS.EDGE_TOP) {
+            element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
+            element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
+        }
+        else if (event.handler === HANDLERS.EDGE_BOTTOM) {
+            element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
+            element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
+        }
+        else if (event.handler === HANDLERS.EDGE_LEFT) {
+            element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
+            element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
+        }
+        else if (event.handler === HANDLERS.EDGE_RIGHT) {
+            element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
+            element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
+        }
+    }
+};
+
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
         displayName: "Shape",
@@ -138,59 +193,7 @@ export const elementsConfig = {
                 y2: Math.max(element.y1, element.y2),
             });
         },
-        onResize: (element, snapshot, event, getPosition) => {
-            if (event.shiftKey) {
-                const ratio = (snapshot.y2 - snapshot.y1) / Math.max(1, snapshot.x2 - snapshot.x1);
-                if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                    if (event.dx * ratio < event.dy) {
-                        element.y1 = snapshot.y1 + ((element.x1 - snapshot.x1) * ratio);
-                    }
-                    else {
-                        element.x1 = snapshot.x1 + ((element.y1 - snapshot.y1) / ratio);
-                    }
-                }
-                else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                    if ((-1) * event.dx * ratio < event.dy) {
-                        element.y1 = snapshot.y1 - ((element.x2 - snapshot.x2) * ratio);
-                    }
-                    else {
-                        element.x2 = snapshot.x2 - ((element.y1 - snapshot.y1) / ratio);
-                    }
-                }
-                else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                    if ((-1) * event.dx * ratio > event.dy) {
-                        element.y2 = snapshot.y2 - ((element.x1 - snapshot.x1) * ratio);
-                    }
-                    else {
-                        element.x1 = snapshot.x1 - ((element.y2 - snapshot.y2) / ratio);
-                    }
-                }
-                else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                    if (event.dx * ratio > event.dy) {
-                        element.y2 = snapshot.y2 + ((element.x2 - snapshot.x2) * ratio);
-                    }
-                    else {
-                        element.x2 = snapshot.x2 + ((element.y2 - snapshot.y2) / ratio);
-                    }
-                }
-                else if (event.handler === HANDLERS.EDGE_TOP) {
-                    element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
-                    element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
-                }
-                else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-                    element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
-                    element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
-                }
-                else if (event.handler === HANDLERS.EDGE_LEFT) {
-                    element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
-                    element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
-                }
-                else if (event.handler === HANDLERS.EDGE_RIGHT) {
-                    element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
-                    element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
-                }
-            }
-        },
+        onResize: preserveAspectRatio,
         onUpdate: (element, changedKeys) => {
             if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
                 const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont);
