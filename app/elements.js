@@ -456,6 +456,7 @@ export const elementsConfig = {
                 const sizes = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = sizes[0];
                 element.textHeight = sizes[1];
+                element.y2 = element.y1 + element.textHeight; // fix height
             }
             // Terrible hack to prevent having 0px text elements
             if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
