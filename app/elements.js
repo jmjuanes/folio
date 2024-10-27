@@ -524,6 +524,7 @@ export const elementsConfig = {
             element.drawWidth = Math.abs(element.x2 - element.x1);
             element.drawHeight = Math.abs(element.y2 - element.y1);
         },
+        onResize: preserveAspectRatio,
     },
     [ELEMENTS.IMAGE]: {
         displayName: "Image",
@@ -532,6 +533,7 @@ export const elementsConfig = {
             [FIELDS.ASSET_ID]: "",
             [FIELDS.OPACITY]: DEFAULTS.OPACITY,
         }),
+        onResize: preserveAspectRatio,
     },
     [ELEMENTS.NOTE]: {
         displayName: "Note",
