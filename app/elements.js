@@ -435,9 +435,10 @@ export const elementsConfig = {
         },
         onResize: (element, snapshot, event) => {
             const handler = event.handler || "";
-            const width = Math.abs(element.x2 - element.x1);
-            const height = Math.abs(element.y2 - element.y1);
             if (isCornerHandler(handler) || handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.EDGE_TOP) {
+                preserveAspectRatio(element, snapshot, event);
+                const width = Math.abs(element.x2 - element.x1);
+                const height = Math.abs(element.y2 - element.y1);
                 let textSize = TEXT_SIZE_MIN;
                 while (textSize <= TEXT_SIZE_MAX) {
                     const size = measureText(element.text || " ", textSize, element.textFont, width + "px");
@@ -450,19 +451,20 @@ export const elementsConfig = {
                     textSize = textSize + TEXT_SIZE_STEP;
                 }
                 // Terrible hack to prevent having 0px text elements
-                if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                    element.y2 = element.y1 + Math.max(height, element.textHeight, GRID_SIZE);
-                }
-                else {
-                    element.y1 = element.y2 - Math.max(height, element.textHeight, GRID_SIZE);
-                }
+                // if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                //     element.y2 = element.y1 + Math.max(height, element.textHeight, GRID_SIZE);
+                // }
+                // else {
+                //     element.y1 = element.y2 - Math.max(height, element.textHeight, GRID_SIZE);
+                // }
             }
             else if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
+                const width = Math.abs(element.x2 - element.x1);
                 const sizes = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = sizes[0];
                 element.textHeight = sizes[1];
-                element.y1 = snapshot.y1;
-                element.y2 = element.y1 + Math.ceil(sizes[1] / GRID_SIZE) * GRID_SIZE;
+                // element.y1 = snapshot.y1;
+                // element.y2 = element.y1 + Math.ceil(sizes[1] / GRID_SIZE) * GRID_SIZE;
             }
             // Terrible hack to prevent having 0px text elements
             if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
