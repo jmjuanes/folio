@@ -450,21 +450,12 @@ export const elementsConfig = {
                     element.textHeight = size[1];
                     textSize = textSize + TEXT_SIZE_STEP;
                 }
-                // Terrible hack to prevent having 0px text elements
-                // if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                //     element.y2 = element.y1 + Math.max(height, element.textHeight, GRID_SIZE);
-                // }
-                // else {
-                //     element.y1 = element.y2 - Math.max(height, element.textHeight, GRID_SIZE);
-                // }
             }
             else if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
                 const width = Math.abs(element.x2 - element.x1);
                 const sizes = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = sizes[0];
                 element.textHeight = sizes[1];
-                // element.y1 = snapshot.y1;
-                // element.y2 = element.y1 + Math.ceil(sizes[1] / GRID_SIZE) * GRID_SIZE;
             }
             // Terrible hack to prevent having 0px text elements
             if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
