@@ -13,15 +13,16 @@ export const EditableText = props => {
     const previewStyles = {
         width: props.width + "px",
         height: props.height + "px",
-        whiteSpace: "pre-wrap", // "pre-wrap",
+        whiteSpace: "pre-wrap",
         color: props.textColor,
         fontFamily: props.textFont,
         fontSize: props.textSize + "px",
         lineHeight: "normal",
         textAlign: props.textAlign,
         userSelect: "none",
-        wordBreak: "break-all",
+        // wordBreak: "break-all",
         overflow: "hidden",
+        overflowWrap: "break-word",
     };
 
     // Enable autofocus when element changes to editable
@@ -65,7 +66,8 @@ export const EditableText = props => {
                             textAlign: props.textAlign,
                             // transform: "translateX(-50%) translateY(-50%)",
                             whiteSpace: "pre-wrap",
-                            wordBreak: "break-all",
+                            // wordBreak: "break-all",
+                            overflowWrap: "break-word",
                         }}
                         onPointerDown={stopEventPropagation}
                         onMouseDown={stopEventPropagation}
