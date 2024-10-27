@@ -237,7 +237,7 @@ export const TEXT_SIZES = {
     XLARGE: 64,
 };
 
-export const TEXT_SIZE_STEP = 8;
+export const TEXT_SIZE_STEP = 4;
 export const TEXT_SIZE_MIN = 8;
 export const TEXT_SIZE_MAX = 256;
 
