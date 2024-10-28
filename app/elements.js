@@ -193,15 +193,26 @@ export const elementsConfig = {
         },
         onResize: (element, snapshot, event) => {
             if (event.shiftKey) {
-                return preserveAspectRatio(element, snapshot, event);
+                preserveAspectRatio(element, snapshot, event);
+            }
+            // Check if we have a text inside the shape
+            if (element.text) {
+                const width = Math.abs(element.x2 - element.x1);
+                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                element.textWidth = textWidth;
+                element.textHeight = textHeight;
             }
         },
         onUpdate: (element, changedKeys) => {
             if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
-                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont);
+                const width = Math.abs(element.x2 - element.x1);
+                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = textWidth;
                 element.textHeight = textHeight;
             }
+        },
+        getUpdatedFields: element => {
+            return element.text ? ["textWidth", "textHeight"] : [];
         },
     },
     [ELEMENTS.ARROW]: {
