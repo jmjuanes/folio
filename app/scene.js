@@ -190,24 +190,9 @@ const fixPagesIndex = pages => {
         });
 };
 
-// @private fix elements names in provided page
-const fixElementsNamesInPage = page => {
-    // Check if we have to initialize page counts
-    if (page.elements.length > 0 && Object.keys(page.stats?.elementCounts || {}).length === 0) {
-        page.stats.elementCounts = {};
-        page.elements.forEach(element => {
-            const type = element[FIELDS.TYPE];
-            const index = page.stats.elementCounts[type] ?? 0;
-            element[FIELDS.NAME] = element[FIELDS.NAME] || getElementDisplayName(element, index);
-            page.stats.elementCounts[type] = index + 1;
-        });
-    }
-    return page;
-};
-
 // @private create a new page
 const createPage = (page, index = 0) => {
-    return fixElementsNamesInPage({
+    return {
         id: page?.id || generateRandomId(),
         title: page?.title || `Page ${index + 1}`,
         elements: (page?.elements || []).map(element => ({
@@ -216,6 +201,7 @@ const createPage = (page, index = 0) => {
             [FIELDS.EDITING]: false,
             [FIELDS.CREATING]: false,
             [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
+            [FIELDS.NAME]: element[FIELDS.NAME] || getElementDisplayName(element),
         })),
         history: page?.history || [],
         historyIndex: page?.historyIndex ?? 0,
@@ -223,11 +209,7 @@ const createPage = (page, index = 0) => {
         translateY: page?.translateY ?? 0,
         zoom: page?.zoom ?? ZOOM_DEFAULT,
         activeGroup: null,
-        stats: {
-            elementCounts: {},
-            ...(page?.stats || {}),
-        },
-    });
+    };
 };
 
 // Default values for new elements
@@ -296,7 +278,6 @@ export const createScene = initialData => {
                     id: page.id,
                     title: page.title,
                     elements: page.elements,
-                    stats: page?.stats || {},
                 })),
                 assets: scene.assets,
                 background: scene.background,
@@ -360,7 +341,6 @@ export const createScene = initialData => {
             scene.addPage({
                 title:"Copy of " + (page?.title || "-"),
                 elements: page?.elements || [],
-                stats: page?.stats || {},
             }, setAsActive);
         },
 
@@ -446,11 +426,8 @@ export const createScene = initialData => {
                 const numElements = scene.page.elements.length;
                 // 1. Fix elements values
                 elements.forEach((element, index) => {
-                    const type = element[FIELDS.TYPE];
-                    const count = scene.page.stats.elementCounts[type] ?? 0;
-                    element[FIELDS.NAME] = element[FIELDS.NAME] || getElementDisplayName(element, count);
+                    element[FIELDS.NAME] = element[FIELDS.NAME] || getElementDisplayName(element);
                     element[FIELDS.ORDER] = numElements + index;
-                    scene.page.stats.elementCounts[type] = count + 1;
                 });
                 // 2. Register element create in the history
                 scene.addHistory({
@@ -652,7 +629,6 @@ export const createScene = initialData => {
             // 3. insert new elements
             newElements.forEach(element => {
                 scene.page.elements.push(element);
-                scene.page.stats.elementCounts[element.type] = (scene.page.stats.elementCounts[element.type] ?? 0) + 1;
             });
             // 4.1 Register CREATE change
             changes.push({
