@@ -710,8 +710,8 @@ export const getElementSnappingPoints = (element, snapEdge) => {
 };
 
 // @public generate display name for the provided element
-export const getElementDisplayName = (element, index = 0) => {
-    return [getElementConfig(element).displayName, index + 1].join(" ");
+export const getElementDisplayName = element => {
+    return getElementConfig(element).displayName;
 };
 
 // @public get the bounds of the provided elements
