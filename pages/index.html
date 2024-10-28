@@ -26,12 +26,18 @@ features:
     title: "Boundless Canvas."
     content:
         - "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
-  - subtitle: "Introducing Pages."
+  - subtitle: "Pages."
     icon: "files"
     title: "Organize your ideas."
     content:
       - "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
       - "Whether you are storyboarding or brainstorming, the Pages feature provides a structured canvas for your creativity."
+  - subtitle: "Library."
+    icon: "album"
+    title: "Save, Organize, and Reuse Elements"
+    content:
+      - "Use the <b>Library</b> to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
+      - "Perfect for templates, icons, and frequently used designs—ready at a click!"
 price:
   title: "Free"
   description: "Everything you need for sketching and prototyping, forever free."
@@ -51,7 +57,7 @@ faq:
     answer: "Currently, the best way is to download your drawing as a <code>.folio</code> file. Then, simply share it with your colleague via email or your favorite cloud service. We are working on even more ways to share and collaborate in the future, so stay tuned for updates!"
 ---
 <!-- Presentation -->
-<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-1 py-20 md:py-28">
+<div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-1 py-20 md:py-28">
     <div class="w-full">
         <div class="mb-8 font-extrabold text-5xl md:text-6xl leading-none text-neutral-950">
             Sketch Freely on an Infinite Canvas.
@@ -71,20 +77,20 @@ faq:
             <span>No signup. Start in less than 5 seconds.</span>
         </div>
     </div>
-    <div class="w-full">
-        <img class="w-full" src="/illustration-hero.png">
+    <div class="w-full hidden lg:flex items-center justify-center">
+        <img class="w-full max-w-lg" src="/illustration-hero.png">
     </div>
 </div>
 <div data-role="screenshots" class="w-full pb-16 select-none">
     <div class="w-full mb-8">
         <div data-role="screenshots:tabs" class="grid md:grid-cols-4 gap-2">
             {{#each page.data.screenshots}}
-            <div data-role="screenshot:tab" data-screenshot="" class="w-full p-6 text-neutral-950 border-2 border-neutral-100 bg-neutral-100 hover:bg-neutral-100 rounded-xl">
+            <div data-role="screenshot:tab" data-screenshot="" class="w-full p-5 text-neutral-950 border-2 border-neutral-100 bg-neutral-100 hover:bg-neutral-100 rounded-xl">
                 <div class="flex items-center mb-3">
                     {{=icon icon=icon size="6"}}
                 </div>
                 <div class="font-bold text-xl">{{title}}</div>
-                <div class="text-sm">{{description}}</div>
+                <div class="text-xs max-w-48">{{description}}</div>
             </div>
             {{/each}}
         </div>
@@ -102,13 +108,13 @@ faq:
             All the features that you need for sketching, planning, and visualizing your projects with no limits.
         </div>
     </div>
-    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
         {{#each page.data.features}}
         <div class="w-full bg-neutral-100 p-8 rounded-xl mb-2">
             {{#if icon}}
             <div class="flex mb-6">
                 <div class="flex items-center text-neutral-950">
-                    {{=icon icon=icon size="8"}}
+                    {{=icon icon=icon size="10"}}
                 </div>
             </div>
             {{/if}}
