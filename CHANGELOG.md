@@ -1,3 +1,29 @@
+# v0.23.0 (October 28, 2024) Enhanced Precision and New Library Feature
+
+> This release introduces the Library feature, allowing users to manage, export, and import design elements effortlessly. Additionally, new Shift key functionalities enable users to preserve aspect ratios while resizing and snap lines and arrows to 15° increments. We have also improved text elements to prevent word breaks and maintain their aspect ratio during resizing.
+
+## Library: Your Personal Design Hub
+
+We are excited to introduce **Folio Library**! This powerful new feature allows you to save, organize, and manage frequently used elements, making it easier than ever to streamline your creative process. Here is what you can do with the Library:
+
+- **Manage your library items**: Store elements you often use and organize them right within Folio. With the Library, you can quickly add saved items to any board with just a click, ensuring consistency across your projects.
+- **Export your library items**: Need to share or back up specific elements? Folio lets you choose which items to export and even give a custom name to your exported collection. This makes it simple to transfer specific design assets between projects or share them with colleagues.
+- **Import items to your Library**: When you import items, they are automatically grouped as a collection within your Library, making them easy to find and manage. This means you can seamlessly bring in design assets from previous projects or collections and keep everything organized.
+
+The Library feature adds a new level of efficiency, allowing you to create, reuse, and organize elements effortlessly. It is designed to make your creative workflow smoother and more adaptable than ever.
+
+## Shift Key Enhancements
+
+The Shift key now unlocks even more functionality for enhanced control over your designs:
+
+- **Aspect Ratio Preservation**: When resizing shapes, images, and drawings, hold down the Shift key to maintain their original aspect ratio. Say goodbye to unintentional distortions!
+- **Snap Lines and Arrows to Key Angles**: Adjusting the start or end point of lines and arrows with the Shift key pressed will now snap them to 15° increments. Perfect for creating clean and organized diagrams with precise alignment.
+
+## Text Element Improvements
+
+Text elements now prevent unexpected word breaks, keeping your text neat and readable. Resizing text elements will maintain the aspect ratio, so your text looks consistent. Horizontal resizing remains flexible, allowing adjustments in width as needed.
+
+
 # v0.22.0 (October 13, 2024) New settings menu and enhanced screenshot tool
 
 > In this release, we have improved the screenshot mode with editable regions, streamlined the main menu by moving board settings to a new Settings menu, enhanced element handlers for easier adjustments, and gave our website a fresh new design.
