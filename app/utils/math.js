@@ -123,7 +123,8 @@ export const measureText = (text, textSize, textFont, maxWidth) => {
             measureText.container.style.left = "-9999px";
             measureText.container.style.lineHeight = "normal"; // Set line-height as normal
             measureText.container.style.whiteSpace = "pre-wrap";
-            measureText.container.style.wordBreak = "break-all";
+            // measureText.container.style.wordBreak = "keep-all";
+            measureText.container.style.overflowWrap = "break-word";
             measureText.container.style.minHeight = "1em";
             measureText.container.style.minWidth = "1em";
             measureText.container.style.margin = "0";
