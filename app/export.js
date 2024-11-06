@@ -8,9 +8,10 @@ import {
     FILE_EXTENSIONS,
     FONT_SOURCES,
 } from "./constants.js";
+import {renderStaticElement} from "./components/elements/index.jsx";
 import {getRectangleBounds} from "./utils/math.js";
 import {getElementConfig} from "./elements.js";
-import {renderStaticElement} from "./components/elements/index.jsx";
+import {getFontsCss} from "./fonts.js";
 
 // Convert a blob to file
 const blobToFile = (blob, filename) => {
@@ -41,43 +42,11 @@ const blobToDataUrl = blob => {
     });
 };
 
-const importFontsFromCss = cssText => {
-    const output = {
-        css: cssText,
-    };
-    const fontFilesToImport = cssText.match(/https:\/\/[^)]+/g);
-    const fontFilesPromises = fontFilesToImport.map(fileUrl => {
-        return fetch(fileUrl)
-            .then(response => response.blob())
-            .then(blob => blobToDataUrl(blob))
-            .then(data => {
-                output.css = output.css.replace(fileUrl, data);
-                return true;
-            });
-    });
-    return Promise.all(fontFilesPromises)
-        .then(() => output.css);
-};
-
-const getFonts = (fonts, embedFonts) => {
-    if (!embedFonts) {
-        const fontsImports = fonts.map(font => `@import url('${font}');`);
-        return Promise.resolve(fontsImports.join("\n"))
-    }
-    const fontsPromises = fonts.map(fontUrl => {
-        return fetch(fontUrl)
-            .then(response => response.text())
-            .then(cssText => importFontsFromCss(cssText))
-    });
-    return Promise.all(fontsPromises)
-        .then(result => result.join("\n"));
-};
-
 // Get image in SVG
 const getSvgImage = (elements = [], options = {}) => {
     const padding = options?.padding ?? EXPORT_PADDING;
     const fonts = options?.fonts || Object.values(FONT_SOURCES);
-    return getFonts(fonts, !!options.embedFonts).then(fontsCss => {
+    return getFontsCss(fonts, !!options.embedFonts).then(fontsCss => {
         const bounds = getRectangleBounds(elements.map(el => {
             const elementConfig = getElementConfig(el);
             if (typeof elementConfig.getBoundingRectangle === "function") {
