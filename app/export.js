@@ -9,38 +9,10 @@ import {
     FONT_SOURCES,
 } from "./constants.js";
 import {renderStaticElement} from "./components/elements/index.jsx";
+import {blobToFile, blobToClipboard, blobToDataUrl} from "./utils/blob.js";
 import {getRectangleBounds} from "./utils/math.js";
 import {getElementConfig} from "./elements.js";
 import {getFontsCss} from "./fonts.js";
-
-// Convert a blob to file
-const blobToFile = (blob, filename) => {
-    return fileSave(blob, {
-        description: "Folio Export",
-        fileName: filename,
-    });
-};
-
-// Save Blob to clopboard
-// Based on https://stackoverflow.com/a/57546936
-const blobToClipboard = blob => {
-    return navigator.clipboard.write([
-        new ClipboardItem({
-            [blob.type]: blob,
-        }),
-    ]);
-};
-
-// Convert blob to dataurl
-const blobToDataUrl = blob => {
-    return new Promise(resolve => {
-        const file = new FileReader();
-        file.onload = event => {
-            return resolve(event.target.result);
-        };
-        return file.readAsDataURL(blob);
-    });
-};
 
 // Get image in SVG
 const getSvgImage = (elements = [], options = {}) => {
