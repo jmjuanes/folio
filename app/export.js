@@ -1,3 +1,4 @@
+import {renderToStaticMarkup} from "react-dom/server";
 import {fileSave} from "browser-fs-access";
 import {
     EXPORT_FORMATS,
@@ -8,14 +9,8 @@ import {
     FONT_SOURCES,
 } from "./constants.js";
 import {getRectangleBounds} from "./utils/math.js";
-import {exportElementSvg, getElementConfig} from "./elements.js";
-
-// Append a new DOM node element
-const appendChildNode = (parent, newNode) => {
-    if (newNode) {
-        parent.appendChild(newNode);
-    }
-};
+import {getElementConfig} from "./elements.js";
+import {renderStaticElement} from "./components/elements/index.jsx";
 
 // Convert a blob to file
 const blobToFile = (blob, filename) => {
@@ -110,7 +105,9 @@ const getSvgImage = (elements = [], options = {}) => {
         group.setAttribute("transform", `translate(${padding - bounds.x1} ${padding - bounds.y1})`);
         // 6. Append elements into  group
         elements.forEach(element => {
-            appendChildNode(group, exportElementSvg(element));
+            const html = renderToStaticMarkup(renderStaticElement(element, options.assets));
+            group.innerHTML = group.innerHTML + html;
+            // appendChildNode(group, exportElementSvg(element));
         });
         // 7. return SVG
         const content = (new XMLSerializer()).serializeToString(svg);
