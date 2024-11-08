@@ -23,7 +23,7 @@ const App = () => {
             <Editor
                 initialData={() => client.data.get()}
                 initialLibraryData={() => client.library.get()}
-                initiapPreferences={() => client.preferences.get()}
+                initialPreferences={() => client.preferences.get()}
                 links={[
                     {url: "./", text: "About Folio"},
                     {url: process.env.URL_ISSUES, text: "Report a bug"},
