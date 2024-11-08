@@ -14,18 +14,27 @@ import {getRectangleBounds} from "./utils/math.js";
 import {getElementConfig} from "./elements.js";
 import {getFontsCss} from "./fonts.js";
 
+// get bounds for provided elements
+// this method prevents returning inf values when there are no elements
+const getElementsBounds = (elements = []) => {
+    if (elements.length === 0) {
+        return {x1: 0, y1: 0, x2: 0, y2: 0};
+    }
+    return getRectangleBounds(elements.map(el => {
+        const elementConfig = getElementConfig(el);
+        if (typeof elementConfig.getBoundingRectangle === "function") {
+            return elementConfig.getBoundingRectangle(el);
+        }
+        return el;
+    }));
+};
+
 // Get image in SVG
 const getSvgImage = (elements = [], options = {}) => {
     const padding = options?.padding ?? EXPORT_PADDING;
     const fonts = options?.fonts || Object.values(FONT_SOURCES);
     return getFontsCss(fonts, !!options.embedFonts).then(fontsCss => {
-        const bounds = getRectangleBounds(elements.map(el => {
-            const elementConfig = getElementConfig(el);
-            if (typeof elementConfig.getBoundingRectangle === "function") {
-                return elementConfig.getBoundingRectangle(el);
-            }
-            return el;
-        }));
+        const bounds = getElementsBounds(elements);
         // 1. Create a new SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -69,7 +78,7 @@ const getPngImage = (elements = [], options = {}) => {
             let x = 0, y = 0;
             const padding = (options.padding ?? EXPORT_PADDING) + EXPORT_OFFSET;
             // 1. We have selected a region to crop
-            if (options.crop) {
+            if (options.crop && elements.length > 0) {
                 const bounds = getRectangleBounds(elements);
                 x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2) - padding;
                 y = bounds.y1 - Math.min(options.crop.y1, options.crop.y2) - padding;
