@@ -85,6 +85,7 @@ export const useEditor = props => {
 
         // @description dispatch an editor change
         const dispatchChange = () => {
+            scene.updatedAt = Date.now(); // save the last update time
             return onChangeRef.current(scene.toJSON());
         };
 

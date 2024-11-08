@@ -261,6 +261,7 @@ export const createScene = initialData => {
     const scene = {
         ...getSceneStateFromInitialData(initialData || {}),
         defaults: {...defaults},
+        updatedAt: Date.now(),
         width: 0,
         height: 0,
 
