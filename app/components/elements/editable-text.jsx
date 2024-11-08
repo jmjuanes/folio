@@ -34,7 +34,7 @@ export const EditableText = props => {
 
     return (
         <g opacity={opacity}>
-            <foreignObject x={props.x} y={props.y} width={width} height={height}>
+            <foreignobject x={props.x} y={props.y} width={width} height={height}>
                 {!props.editing && (
                     <div style={previewStyles}>
                         {props.text ? props.text : (<Placeholder value={props.placeholder} />)}
@@ -76,7 +76,7 @@ export const EditableText = props => {
                         onBlur={props.onBlur}
                     />
                 )}
-            </foreignObject>
+            </foreignobject>
         </g>
     );
 };
