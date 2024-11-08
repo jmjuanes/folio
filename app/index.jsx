@@ -23,6 +23,7 @@ const App = () => {
             <Editor
                 initialData={() => client.data.get()}
                 initialLibraryData={() => client.library.get()}
+                initiapPreferences={() => client.preferences.get()}
                 links={[
                     {url: "./", text: "About Folio"},
                     {url: process.env.URL_ISSUES, text: "Report a bug"},
@@ -36,6 +37,9 @@ const App = () => {
                 }}
                 onLibraryChange={library => {
                     return client.library.set(library);
+                }}
+                onPreferencesChange={preferences => {
+                    return client.preferences.set(preferences);
                 }}
             />
         </div>

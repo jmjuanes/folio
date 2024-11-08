@@ -452,3 +452,8 @@ export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
 // export const LIBRARY_SOURCES = {
 //     IMPORTED_FROM_FILE: "imported:file",
 // };
+
+// preferences fields
+export const PREFERENCES_FIELDS = {
+    PAGES_GALLERY_MODE: "pages.galleryMode",
+};
