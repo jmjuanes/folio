@@ -1,4 +1,5 @@
 import React from "react";
+import {uid} from "uid/secure";
 import {
     EVENTS,
     CURSORS,
@@ -6,15 +7,28 @@ import {
     POINTER_COLOR,
     POINTER_DELAY,
     POINTER_INTERVAL_DELAY,
-    POINTER_WIDTH,
     TRANSPARENT,
     POINTER_TENSION,
+    POINTER_SIZE,
 } from "../constants.js";
 import {hypotenuse} from "../utils/math.js";
 import {SvgContainer} from "./svg.jsx";
 
+// alias for setInterval
 const createInterval = (ms, listener) => setInterval(listener, ms);
 
+// @private method to group points by id
+const groupPoints = points => {
+    return points.reduce((acc, point) => {
+        if (acc.length === 0 || acc[acc.length - 1].id !== point.id) {
+            acc.push({id: point.id, points: []});
+        }
+        acc[acc.length - 1].points.push(point);
+        return acc;
+    }, []);
+};
+
+// @private laser brush component
 const LaserBrush = props => {
     const points = props.points;
     const steps = [];
@@ -56,16 +70,32 @@ const LaserBrush = props => {
             d={step.path}
             fill={NONE}
             stroke={props.color}
-            strokeWidth={props.width * (0.5 + 0.5 * (step.length / lastLength))}
+            strokeWidth={props.size * (0.5 + 0.5 * (step.length / lastLength))}
             strokeLinecap={"butt"}
             strokeLinejoin="round"
         />
     ))
 };
 
+// @private
+const pointerStyle = {
+    backgroundColor: TRANSPARENT,
+    cursor: CURSORS.CROSS,
+    display: "block",
+    left: "0px",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+    top: "0px",
+    touchAction: "none",
+    userSelect: "none",
+    WebkitTouchCallout: "none",
+};
+
+// @public pointer component
 export const Pointer = props => {
     const [points, setPoints] = React.useState([]);
-    const lastPoint = React.useRef(null);
     const timer = React.useRef(null);
     // When component is unmounted, clear current interval
     React.useEffect(() => {
@@ -76,7 +106,7 @@ export const Pointer = props => {
         if (points.length > 0) {
             timer.current = createInterval(POINTER_INTERVAL_DELAY, () => {
                 return setPoints(prevPoints => {
-                    const threshold = Date.now() - props.delay;
+                    const threshold = Date.now() - (props.delay ?? POINTER_DELAY);
                     let sliceIndex = -1;
                     // remove timeout points
                     for (let index = 0; index < prevPoints.length; index++) {
@@ -97,14 +127,15 @@ export const Pointer = props => {
     // Handle pointer down
     const handlePointerDown = event => {
         const target = event.target;
-        const handlePointerMove = e => {
+        const id = uid(20); // generate a unique id for this points group
+        const handlePointerMove = moveEvent => {
             return setPoints(prevPoints => {
-                lastPoint.current = {
-                    x: e.clientX, // - left,
-                    y: e.clientY, // - top,
+                return [...prevPoints, {
+                    x: moveEvent.clientX, // - left,
+                    y: moveEvent.clientY, // - top,
+                    id: id,
                     time: Date.now(),
-                };
-                return [...prevPoints, lastPoint.current];
+                }];
             });
         };
         const handlePointerUp = () => {
@@ -114,51 +145,31 @@ export const Pointer = props => {
         // Register events listeners
         target.addEventListener(EVENTS.POINTER_MOVE, handlePointerMove);
         target.addEventListener(EVENTS.POINTER_UP, handlePointerUp);
-        // Clear current points list
-        setPoints([]);
     };
     return (
-        <div style={props.style} onPointerDown={handlePointerDown}>
-            <SvgContainer>
-                {points.length > 2 && (
-                    <LaserBrush
-                        points={points}
-                        color={props.color}
-                        width={props.width}
-                    />
-                )}
-                {lastPoint.current && points.length > 0 && (
-                    <ellipse
-                        cx={lastPoint.current.x}
-                        cy={lastPoint.current.y}
-                        rx={props.width / 2}
-                        ry={props.width / 2}
-                        fill={props.color}
-                        stroke={NONE}
-                        opacity={0.8}
-                    />
-                )}
-            </SvgContainer>
+        <div style={pointerStyle} onPointerDown={handlePointerDown}>
+            {groupPoints(points).map(group => (
+                <SvgContainer key={group.id}>
+                    {group.points.length > 2 && (
+                        <LaserBrush
+                            points={group.points}
+                            color={props.color ?? POINTER_COLOR}
+                            size={props.size ?? POINTER_SIZE}
+                        />
+                    )}
+                    {group.points.length > 0 && (
+                        <ellipse
+                            cx={group.points[group.points.length - 1].x}
+                            cy={group.points[group.points.length - 1].y}
+                            rx={(props.size ?? POINTER_SIZE) / 2}
+                            ry={(props.size ?? POINTER_SIZE) / 2}
+                            fill={props.color ?? POINTER_COLOR}
+                            stroke={NONE}
+                            opacity={0.8}
+                        />
+                    )}
+                </SvgContainer>
+            ))}
         </div>
     );
-};
-
-Pointer.defaultProps = {
-    color: POINTER_COLOR,
-    width: POINTER_WIDTH,
-    delay: POINTER_DELAY,
-    style: {
-        backgroundColor: TRANSPARENT,
-        cursor: CURSORS.CROSS,
-        display: "block",
-        left: "0px",
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-        top: "0px",
-        touchAction: "none",
-        userSelect: "none",
-        WebkitTouchCallout: "none",
-    },
 };

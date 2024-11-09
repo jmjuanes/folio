@@ -385,8 +385,8 @@ export const NOTE_PLACEHOLDER = "Type something...";
 
 // Laser pointer constants
 export const POINTER_COLOR = "#e01010";
-export const POINTER_WIDTH = 5;
-export const POINTER_DELAY = 750;
+export const POINTER_SIZE = 5;
+export const POINTER_DELAY = 1000;
 export const POINTER_INTERVAL_DELAY = 50;
 export const POINTER_TENSION = 0.5 * 12;
 
