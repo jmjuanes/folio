@@ -27,6 +27,7 @@ import {Screenshot} from "./screenshot.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
 import {LibraryAddDialog} from "./dialogs/library-add.jsx";
 import {LibraryExportDialog} from "./dialogs/library-export.jsx";
+import {PageRenameDialog} from "./dialogs/page-rename.jsx";
 import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
 import {EditionPanel} from "./panels/edition.jsx";
@@ -448,8 +449,10 @@ const EditorWithScene = props => {
                             editor.dispatchChange();
                             editor.update();
                         }}
-                        onPageEdit={() => {
-                            editor.dispatchChange();
+                        onPageRename={page => {
+                            editor.state.selectedPage = page;
+                            editor.state.pageRenameVisible = true;
+                            editor.update();
                         }}
                         onPageDuplicate={page => {
                             scene.duplicatePage(page);
@@ -727,6 +730,23 @@ const EditorWithScene = props => {
                     }}
                     onCancel={() => {
                         editor.state.libraryExportVisible = false;
+                        editor.update();
+                    }}
+                />
+            )}
+            {editor.state.pageRenameVisible && (
+                <PageRenameDialog
+                    title={editor.state.selectedPage?.title || ""}
+                    onSubmit={title => {
+                        editor.state.selectedPage.title = title;
+                        editor.state.selectedPage = null; // reset selected page
+                        editor.state.pageRenameVisible = false;
+                        editor.dispatchChange();
+                        editor.update();
+                    }}
+                    onCancel={() => {
+                        editor.state.pageRenameVisible = false;
+                        editor.state.selectedPage = null;
                         editor.update();
                     }}
                 />

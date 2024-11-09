@@ -6,7 +6,7 @@ import {Loading} from "../components/loading.jsx";
 
 // default preferences object
 const DEFAULT_PREFERENCES = {
-    [PREFERENCES_FIELDS.PAGES_GALLERY_MODE]: false,
+    [PREFERENCES_FIELDS.PAGES_VIEW]: "list",
 };
 
 // internal context for user preferences
@@ -26,12 +26,6 @@ export const PreferencesProvider = props => {
             return setPreferences({...DEFAULT_PREFERENCES, ...(value || {})});
         });
     });
-    // Internal method to update preferences
-    const updatePreferences = React.useCallback((key, value) => {
-        setPreferences(prevPreferences => {
-            return {...prevPreferences, [key]: value};
-        });
-    }, [setPreferences]);
     // call the onChangePreferences method when preferences change
     React.useEffect(() => {
         if (preferences && typeof props.onChange === "function") {
@@ -43,7 +37,7 @@ export const PreferencesProvider = props => {
         return <Loading />;
     }
     return (
-        <PreferencesContext.Provider value={[preferences, updatePreferences]}>
+        <PreferencesContext.Provider value={[preferences, setPreferences]}>
             {props.children}
         </PreferencesContext.Provider>
     );

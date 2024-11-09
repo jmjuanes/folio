@@ -455,5 +455,5 @@ export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
 
 // preferences fields
 export const PREFERENCES_FIELDS = {
-    PAGES_GALLERY_MODE: "pages.galleryMode",
+    PAGES_VIEW: "pages.view",
 };

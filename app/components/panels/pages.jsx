@@ -1,9 +1,9 @@
 import React from "react";
+import classNames from "classnames";
 import {
     TrashIcon,
     CheckIcon,
     PencilIcon,
-    CloseIcon,
     CopyIcon,
     BarsIcon,
     PlusIcon,
@@ -20,6 +20,10 @@ import {EXPORT_PADDING, PREFERENCES_FIELDS} from "../../constants.js";
 const PAGES_ITEM_HEIGHT = 37;
 const PAGES_PREVIEW_WIDTH = 140;
 const PAGES_PREVIEW_HEIGHT = 80;
+const PAGES_VIEW = {
+    LIST: "list",
+    GALLERY: "gallery",
+};
 
 // Tiny hook to generate the preview of the page
 const usePagePreview = page => {
@@ -50,7 +54,9 @@ const PageGalleryItem = ({page, active, onClick}) => {
     });
     return (
         <div className="p-1" onClick={onClick}>
-            <div className="text-2xs mb-1 text-neutral-600 font-medium">{page.title}</div>
+            <div className="text-2xs mb-1 text-neutral-600 font-medium truncate w-40">
+                {page.title}
+            </div>
             <div className={previewClass}>
                 <img src={previewImage} width="100%" height="100%" />
             </div>
@@ -66,13 +72,7 @@ const PageActionButton = ({children, onClick}) => (
 );
 
 // @private page item component
-const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
-    const inputRef = React.useRef(null);
-    React.useEffect(() => {
-        if (editable && editing && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [editing]);
+const Page = ({title, active, editable, style, onClick, ...props}) => {
     const moveButtonStyle = {
         cursor: props.moving ? "grabbing" : "grab",
         touchAction: "none",
@@ -87,57 +87,28 @@ const Page = ({title, active, editable, editing, style, onClick, ...props}) => {
             <div className="flex items-center text-xs text-neutral-400" style={moveButtonStyle} onPointerDown={props.onMove}>
                 <BarsIcon />
             </div>
-            {!editing && (
-                <React.Fragment>
-                    <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-6" onClick={onClick}>
-                        <div className="font-medium text-sm w-32 truncate" title={title}>
-                            <span>{title}</span>
-                        </div>
-                    </div>
-                    <div className="flex items-center opacity-0 group-hover:opacity-100">
-                        {editable && (
-                            <PageActionButton onClick={props.onEdit}>
-                                <PencilIcon />
-                            </PageActionButton>
-                        )}
-                        {editable && (
-                            <PageActionButton onClick={props.onDuplicate}>
-                                <CopyIcon />
-                            </PageActionButton>
-                        )}
-                        {editable && !active  && (
-                            <PageActionButton onClick={props.onDelete}>
-                                <TrashIcon />
-                            </PageActionButton>
-                        )}
-                    </div>
-                </React.Fragment>
-            )}
-            {editing && (
-                <React.Fragment>
-                    <input
-                        ref={inputRef}
-                        className="w-full bg-transparent border-none outline-none p-0 text-sm ml-6"
-                        defaultValue={title}
-                        onKeyUp={event => {
-                            // Check for enter key --> submit new page title
-                            if (event.key === "Enter") {
-                                return props.onEditSubmit(inputRef.current.value);
-                            }
-                            // Check for ESC key --> Cancel editing page
-                            else if (event.key === "Escape") {
-                                return props.onEditCancel();
-                            }
-                        }}
-                    />
-                    <PageActionButton onClick={() => props.onEditSubmit(inputRef.current.value || "")}>
-                        <CheckIcon />
+            <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-6" onClick={onClick}>
+                <div className="font-medium text-sm w-32 truncate" title={title}>
+                    <span>{title}</span>
+                </div>
+            </div>
+            <div className="flex items-center opacity-0 group-hover:opacity-100">
+                {editable && (
+                    <PageActionButton onClick={props.onRename}>
+                        <PencilIcon />
                     </PageActionButton>
-                    <PageActionButton onClick={() => props.onEditCancel()}>
-                        <CloseIcon />
+                )}
+                {editable && (
+                    <PageActionButton onClick={props.onDuplicate}>
+                        <CopyIcon />
                     </PageActionButton>
-                </React.Fragment>
-            )}
+                )}
+                {editable && !active  && (
+                    <PageActionButton onClick={props.onDelete}>
+                        <TrashIcon />
+                    </PageActionButton>
+                )}
+            </div>
         </div>
     );
 };
@@ -152,19 +123,12 @@ const initializeSortedPages = pages => {
 // @public pages panel component
 export const PagesPanel = props => {
     const scene = useScene();
-    const [preferences, updatePreferences] = usePreferences();
-    const [editingPage, setEditingPage] = React.useState("");
+    const [preferences, setPreferences] = usePreferences();
     const [sortedPages, setSortedPages] = React.useState(() => {
         return initializeSortedPages(scene.pages);
     });
     const activePage = scene.getActivePage();
-
-    // Handle creating a new page: cancel current edition and call 'onPageCreate'.
-    const handlePageCreate = React.useCallback(() => {
-        setEditingPage("");
-        props.onPageCreate();
-    }, [editingPage, props.onPageCreate]);
-
+    const view = preferences[PREFERENCES_FIELDS.PAGES_VIEW] || PAGES_VIEW.LIST;
     // Handle page move
     const handlePageMove = React.useCallback((event, page) => {
         event.preventDefault();
@@ -172,7 +136,6 @@ export const PagesPanel = props => {
         sortedPages[page.id].selected = true;
         setSortedPages({...sortedPages});
         let currentIndex = sortedPages[page.id].index;
-
         // Handle pointer move
         const handlePointerMove = e => {
             e.preventDefault();
@@ -193,7 +156,6 @@ export const PagesPanel = props => {
             });
             setSortedPages(nextSortedPages);
         };
-
         // Handle pointer up
         const handlePointerUp = e => {
             e.preventDefault();
@@ -216,35 +178,34 @@ export const PagesPanel = props => {
         document.addEventListener("pointerup", handlePointerUp);
         document.addEventListener("pointerleave", handlePointerUp);
         // Check to reset the current editing page
-        if (editingPage) {
-            setEditingPage("");
-        }
-    }, [props.onPagesUpdate, editingPage]);
-
+    }, [props.onPagesUpdate]);
+    // handle change view mode
     const handleViewModeChange = () => {
-        updatePreferences(PREFERENCES_FIELDS.PAGES_GALLERY_MODE, !preferences[PREFERENCES_FIELDS.PAGES_GALLERY_MODE]);
-        if (editingPage) {
-            setEditingPage("");
-        }
+        setPreferences(Object.assign({}, preferences, {
+            [PREFERENCES_FIELDS.PAGES_VIEW]: view === PAGES_VIEW.LIST ? PAGES_VIEW.GALLERY : PAGES_VIEW.LIST,
+        }));
     };
-
+    const panelClassName = classNames({
+        "w-48": view === PAGES_VIEW.GALLERY,
+        "w-64": view === PAGES_VIEW.LIST,
+    });
     return (
-        <Panel className="w-48">
+        <Panel className={panelClassName}>
             <Panel.Header className="sticky top-0">
                 <Panel.HeaderTitle>Pages</Panel.HeaderTitle>
                 <div className="flex items-center gap-0">
                     {props.editable && (
-                        <Panel.HeaderButton onClick={handlePageCreate}>
+                        <Panel.HeaderButton onClick={props.onPageCreate}>
                             <PlusIcon />
                         </Panel.HeaderButton>
                     )}
                     <Panel.HeaderButton onClick={handleViewModeChange}>
-                        {preferences[PREFERENCES_FIELDS.PAGES_GALLERY_MODE] ? <ListIcon /> : <GalleryVerticalIcon />}
+                        {view === PAGES_VIEW.GALLERY ? <ListIcon /> : <GalleryVerticalIcon />}
                     </Panel.HeaderButton>
                 </div>
             </Panel.Header>
             <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
-                {!preferences[PREFERENCES_FIELDS.PAGES_GALLERY_MODE] && (
+                {view === PAGES_VIEW.LIST && (
                     <div className="relative w-full" style={{height: scene.pages.length * PAGES_ITEM_HEIGHT}}>
                         {scene.pages.map(page => (
                             <Page
@@ -252,7 +213,6 @@ export const PagesPanel = props => {
                                 title={page.title}
                                 active={page.id === activePage.id}
                                 editable={props.editable}
-                                editing={editingPage === page.id}
                                 moving={sortedPages[page.id].selected}
                                 style={{
                                     top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
@@ -260,30 +220,25 @@ export const PagesPanel = props => {
                                     zIndex: sortedPages[page.id].selected ? 100 : 0,
                                 }}
                                 onClick={() => {
-                                    setEditingPage("");
                                     props.onChangeActivePage(page);
                                 }}
                                 onDelete={() => {
-                                    setEditingPage("");
                                     props.onPageDelete(page);
                                 }}
                                 onDuplicate={() => {
-                                    setEditingPage("");
                                     props?.onPageDuplicate?.(page);
                                 }}
-                                onEdit={() => setEditingPage(page.id)}
-                                onEditSubmit={title => {
-                                    page.title = title || page.title;
-                                    setEditingPage("");
-                                    props.onPageEdit(page);
+                                onRename={() => {
+                                    props?.onPageRename?.(page);
                                 }}
-                                onEditCancel={() => setEditingPage("")}
-                                onMove={event => handlePageMove(event, page)}
+                                onMove={event => {
+                                    handlePageMove(event, page);
+                                }}
                             />
                         ))}
                     </div>
                 )}
-                {preferences[PREFERENCES_FIELDS.PAGES_GALLERY_MODE] && (
+                {view === PAGES_VIEW.GALLERY && (
                     <div className="grid grid-cols-1 gap-1">
                         {scene.pages.map(page => (
                             <PageGalleryItem
@@ -291,7 +246,6 @@ export const PagesPanel = props => {
                                 page={page}
                                 active={page.id === activePage.id}
                                 onClick={() => {
-                                    setEditingPage("");
                                     props.onChangeActivePage(page);
                                 }}
                             />
