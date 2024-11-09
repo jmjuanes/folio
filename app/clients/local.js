@@ -10,7 +10,7 @@ const STORE_KEYS = {
     VERSION: "folio:version",
     DATA: "folio:data",
     LIBRARY: "folio:library",
-    SETTINGS: "folio:settings",
+    PREFERENCES: "folio:preferences",
 };
 
 // @private internal IDB store
@@ -47,7 +47,7 @@ export default () => ({
             // Create new store keys
             await idb.set(STORE_KEYS.VERSION, STORE_VERSION, store)
             await idb.set(STORE_KEYS.DATA, newData, store);
-            await idb.set(STORE_KEYS.SETTINGS, {}, store);
+            await idb.set(STORE_KEYS.PREFERENCES, {}, store);
         }
         // Check if library is not initialized
         if (!keys.includes(STORE_KEYS.LIBRARY)) {
@@ -76,13 +76,13 @@ export default () => ({
         },
     },
 
-    // @description settings manager
-    settings: {
+    // @description preferences manager
+    preferences: {
         get: () => {
-            return idb.get(STORE_KEYS.SETTINGS, store);
+            return idb.get(STORE_KEYS.PREFERENCES, store);
         },
-        set: newSettings => {
-            return idb.update(STORE_KEYS.SETTINGS, prev => ({...prev, newSettings}), store);
+        set: (newPreferences = {}) => {
+            return idb.update(STORE_KEYS.PREFERENCES, (prev = {}) => ({...prev, ...newPreferences}), store);
         },
     },
 

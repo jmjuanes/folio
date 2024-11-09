@@ -1,6 +1,6 @@
 import React from "react";
 import {ELEMENTS, SHAPE_PADDING} from "../../constants.js";
-import {SvgContainer} from "../svg.jsx";
+import {AssetsProvider} from "../../contexts/assets.jsx";
 import {ArrowElement} from "./arrow.jsx";
 import {DrawElement} from "./draw.jsx";
 import {TextElement} from "./text.jsx";
@@ -11,11 +11,9 @@ import {BookmarkElement} from "./bookmark.jsx";
 import {StickerElement} from "./sticker.jsx";
 
 const ElementContainer = props => (
-    <SvgContainer>
-        <g data-role="element" data-element={props.id}>
-            {props.children}
-        </g>
-    </SvgContainer>
+    <g data-role="element" data-element={props.id}>
+        {props.children}
+    </g>
 );
 
 // Map each element with its renderer function
@@ -70,3 +68,9 @@ const elementsRenderer = {
 export const renderElement = (element, props) => {
     return elementsRenderer[element.type](props);
 };
+
+export const renderStaticElement = (element, assets = {}) => (
+    <AssetsProvider value={assets}>
+        {renderElement(element, element)}
+    </AssetsProvider>
+);

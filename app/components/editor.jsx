@@ -27,6 +27,7 @@ import {Screenshot} from "./screenshot.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
 import {LibraryAddDialog} from "./dialogs/library-add.jsx";
 import {LibraryExportDialog} from "./dialogs/library-export.jsx";
+import {PageRenameDialog} from "./dialogs/page-rename.jsx";
 import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
 import {EditionPanel} from "./panels/edition.jsx";
@@ -40,6 +41,7 @@ import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
+import {PreferencesProvider} from "../contexts/preferences.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
 import {convertRegionToSceneCoordinates} from "../scene.js";
 import {loadLibraryFromJson, saveLibraryAsJson} from "../library.js";
@@ -447,8 +449,10 @@ const EditorWithScene = props => {
                             editor.dispatchChange();
                             editor.update();
                         }}
-                        onPageEdit={() => {
-                            editor.dispatchChange();
+                        onPageRename={page => {
+                            editor.state.selectedPage = page;
+                            editor.state.pageRenameVisible = true;
+                            editor.update();
                         }}
                         onPageDuplicate={page => {
                             scene.duplicatePage(page);
@@ -730,20 +734,39 @@ const EditorWithScene = props => {
                     }}
                 />
             )}
+            {editor.state.pageRenameVisible && (
+                <PageRenameDialog
+                    title={editor.state.selectedPage?.title || ""}
+                    onSubmit={title => {
+                        editor.state.selectedPage.title = title;
+                        editor.state.selectedPage = null; // reset selected page
+                        editor.state.pageRenameVisible = false;
+                        editor.dispatchChange();
+                        editor.update();
+                    }}
+                    onCancel={() => {
+                        editor.state.pageRenameVisible = false;
+                        editor.state.selectedPage = null;
+                        editor.update();
+                    }}
+                />
+            )}
         </div>
     );
 };
 
 // @description Public editor
-export const Editor = ({initialData, initialLibraryData, ...props}) => {
+export const Editor = ({initialData, initialLibraryData, initialPreferences, ...props}) => {
     return (
-        <ThemeProvider theme="default">
-            <LibraryProvider initialData={initialLibraryData} onChange={props.onLibraryChange}>
-                <SceneProvider initialData={initialData}>
-                    <EditorWithScene {...props} />
-                </SceneProvider>
-            </LibraryProvider>
-        </ThemeProvider>
+        <PreferencesProvider initialData={initialPreferences} onChange={props.onPreferencesChange}>
+            <ThemeProvider theme="default">
+                <LibraryProvider initialData={initialLibraryData} onChange={props.onLibraryChange}>
+                    <SceneProvider initialData={initialData}>
+                        <EditorWithScene {...props} />
+                    </SceneProvider>
+                </LibraryProvider>
+            </ThemeProvider>
+        </PreferencesProvider>
     );
 };
 

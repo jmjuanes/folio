@@ -31,6 +31,7 @@ export const ExportDialog = props => {
             return options.onlySelectedElements ? el.selected : true;
         });
         const exportOptions = {
+            assets: scene.assets,
             format: EXPORT_FORMATS.PNG,
             background: options.includeBackground ? scene.background : TRANSPARENT,
             padding: EXPORT_PADDING,

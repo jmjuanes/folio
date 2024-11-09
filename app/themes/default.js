@@ -76,6 +76,8 @@ export default {
     "pages": "",
     "pages.item": "hover:bg-neutral-200",
     "pages.item.action": "text-neutral-500 hover:text-neutral-900",
+    "pages.gallery.item": "border-2 border-neutral-200",
+    "pages.gallery.item.active": "border-neutral-950",
 
     "panel": "border border-neutral-200 shadow-sm bg-white",
     "panel.body": "",

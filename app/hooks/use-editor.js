@@ -42,9 +42,9 @@ const createInitialEditorState = (props, scene) => {
         // @description current selection  
         selection: null,
 
-        // @description current library selection
         selectedLibraryItemId: null,
         selectedLibraryItem: null,
+        selectedPage: null,
 
         // @description context menu configuration
         contextMenu: false,
@@ -54,6 +54,7 @@ const createInitialEditorState = (props, scene) => {
         // @description state for dialogs
         exportVisible: false,
         pagesVisible: false,
+        pageRenameVisible: false,
         layersVisible: false,
         libraryVisible: false,
         libraryCreateVisible: false,
@@ -85,6 +86,7 @@ export const useEditor = props => {
 
         // @description dispatch an editor change
         const dispatchChange = () => {
+            scene.updatedAt = Date.now(); // save the last update time
             return onChangeRef.current(scene.toJSON());
         };
 

@@ -15,10 +15,12 @@ const LAYER_PREVIEW_BACKGROUND = TRANSPARENT;
 
 // Tiny hook to generate the preview of the element
 const useElementPreview = (elements, dependencies = []) => {
+    const scene = useScene();
     const [previewImage, setPreviewImage] = React.useState(null);
     React.useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
+                assets: scene.assets,
                 width: LAYER_PREVIEW_SIZE,
                 height: LAYER_PREVIEW_SIZE,
                 background: LAYER_PREVIEW_BACKGROUND,

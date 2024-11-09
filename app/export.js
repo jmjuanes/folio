@@ -1,3 +1,4 @@
+import {renderToStaticMarkup} from "react-dom/server";
 import {fileSave} from "browser-fs-access";
 import {
     EXPORT_FORMATS,
@@ -7,89 +8,33 @@ import {
     FILE_EXTENSIONS,
     FONT_SOURCES,
 } from "./constants.js";
+import {renderStaticElement} from "./components/elements/index.jsx";
+import {blobToFile, blobToClipboard, blobToDataUrl} from "./utils/blob.js";
 import {getRectangleBounds} from "./utils/math.js";
-import {exportElementSvg, getElementConfig} from "./elements.js";
+import {getElementConfig} from "./elements.js";
+import {getFontsCss} from "./fonts.js";
 
-// Append a new DOM node element
-const appendChildNode = (parent, newNode) => {
-    if (newNode) {
-        parent.appendChild(newNode);
+// get bounds for provided elements
+// this method prevents returning inf values when there are no elements
+const getElementsBounds = (elements = []) => {
+    if (elements.length === 0) {
+        return {x1: 0, y1: 0, x2: 0, y2: 0};
     }
-};
-
-// Convert a blob to file
-const blobToFile = (blob, filename) => {
-    return fileSave(blob, {
-        description: "Folio Export",
-        fileName: filename,
-    });
-};
-
-// Save Blob to clopboard
-// Based on https://stackoverflow.com/a/57546936
-const blobToClipboard = blob => {
-    return navigator.clipboard.write([
-        new ClipboardItem({
-            [blob.type]: blob,
-        }),
-    ]);
-};
-
-// Convert blob to dataurl
-const blobToDataUrl = blob => {
-    return new Promise(resolve => {
-        const file = new FileReader();
-        file.onload = event => {
-            return resolve(event.target.result);
-        };
-        return file.readAsDataURL(blob);
-    });
-};
-
-const importFontsFromCss = cssText => {
-    const output = {
-        css: cssText,
-    };
-    const fontFilesToImport = cssText.match(/https:\/\/[^)]+/g);
-    const fontFilesPromises = fontFilesToImport.map(fileUrl => {
-        return fetch(fileUrl)
-            .then(response => response.blob())
-            .then(blob => blobToDataUrl(blob))
-            .then(data => {
-                output.css = output.css.replace(fileUrl, data);
-                return true;
-            });
-    });
-    return Promise.all(fontFilesPromises)
-        .then(() => output.css);
-};
-
-const getFonts = (fonts, embedFonts) => {
-    if (!embedFonts) {
-        const fontsImports = fonts.map(font => `@import url('${font}');`);
-        return Promise.resolve(fontsImports.join("\n"))
-    }
-    const fontsPromises = fonts.map(fontUrl => {
-        return fetch(fontUrl)
-            .then(response => response.text())
-            .then(cssText => importFontsFromCss(cssText))
-    });
-    return Promise.all(fontsPromises)
-        .then(result => result.join("\n"));
+    return getRectangleBounds(elements.map(el => {
+        const elementConfig = getElementConfig(el);
+        if (typeof elementConfig.getBoundingRectangle === "function") {
+            return elementConfig.getBoundingRectangle(el);
+        }
+        return el;
+    }));
 };
 
 // Get image in SVG
 const getSvgImage = (elements = [], options = {}) => {
     const padding = options?.padding ?? EXPORT_PADDING;
     const fonts = options?.fonts || Object.values(FONT_SOURCES);
-    return getFonts(fonts, !!options.embedFonts).then(fontsCss => {
-        const bounds = getRectangleBounds(elements.map(el => {
-            const elementConfig = getElementConfig(el);
-            if (typeof elementConfig.getBoundingRectangle === "function") {
-                return elementConfig.getBoundingRectangle(el);
-            }
-            return el;
-        }));
+    return getFontsCss(fonts, !!options.embedFonts).then(fontsCss => {
+        const bounds = getElementsBounds(elements);
         // 1. Create a new SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -110,7 +55,9 @@ const getSvgImage = (elements = [], options = {}) => {
         group.setAttribute("transform", `translate(${padding - bounds.x1} ${padding - bounds.y1})`);
         // 6. Append elements into  group
         elements.forEach(element => {
-            appendChildNode(group, exportElementSvg(element));
+            const html = renderToStaticMarkup(renderStaticElement(element, options.assets));
+            group.innerHTML = group.innerHTML + html;
+            // appendChildNode(group, exportElementSvg(element));
         });
         // 7. return SVG
         const content = (new XMLSerializer()).serializeToString(svg);
@@ -131,7 +78,7 @@ const getPngImage = (elements = [], options = {}) => {
             let x = 0, y = 0;
             const padding = (options.padding ?? EXPORT_PADDING) + EXPORT_OFFSET;
             // 1. We have selected a region to crop
-            if (options.crop) {
+            if (options.crop && elements.length > 0) {
                 const bounds = getRectangleBounds(elements);
                 x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2) - padding;
                 y = bounds.y1 - Math.min(options.crop.y1, options.crop.y2) - padding;
