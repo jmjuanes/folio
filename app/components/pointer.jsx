@@ -128,11 +128,11 @@ export const Pointer = props => {
     const handlePointerDown = event => {
         const target = event.target;
         const id = uid(20); // generate a unique id for this points group
-        const handlePointerMove = e => {
+        const handlePointerMove = moveEvent => {
             return setPoints(prevPoints => {
                 return [...prevPoints, {
-                    x: e.clientX, // - left,
-                    y: e.clientY, // - top,
+                    x: moveEvent.clientX, // - left,
+                    y: moveEvent.clientY, // - top,
                     id: id,
                     time: Date.now(),
                 }];
@@ -145,8 +145,6 @@ export const Pointer = props => {
         // Register events listeners
         target.addEventListener(EVENTS.POINTER_MOVE, handlePointerMove);
         target.addEventListener(EVENTS.POINTER_UP, handlePointerUp);
-        // Clear current points list
-        // setPoints([]);
     };
     return (
         <div style={pointerStyle} onPointerDown={handlePointerDown}>
