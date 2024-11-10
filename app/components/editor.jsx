@@ -538,6 +538,22 @@ const EditorWithScene = props => {
                                         />
                                     </div>
                                 </div>
+                                <Island.Button
+                                    icon="trash"
+                                    disabled={scene.getElements().length === 0}
+                                    onClick={() => {
+                                        return showConfirm({
+                                            title: "Clear Page",
+                                            message: "This will remove all elements of this page. Do you want to continue?",
+                                            confirmText: "Yes, clear page",
+                                            callback: () => {
+                                                scene.clearPage(scene.page.id);
+                                                editor.dispatchChange();
+                                                editor.update();
+                                            },
+                                        });
+                                    }}
+                                />
                                 {props.showScreenshot && (
                                     <Island.Button
                                         icon="camera"
