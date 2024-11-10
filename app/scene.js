@@ -345,6 +345,16 @@ export const createScene = initialData => {
             }, setAsActive);
         },
 
+        // @description clear the content of the provided page
+        clearPage: id => {
+            Object.assign(scene.getPage(id), {
+                elements: [],
+                history: [], // remove all history
+                historyIndex: 0,
+                activeGroup: null,
+            });
+        },
+
         // @description get active page
         getActivePage: () => scene.page,
 
