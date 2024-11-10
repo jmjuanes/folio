@@ -37,6 +37,7 @@ import {PagesPanel} from "./panels/pages.jsx";
 import {LayersPanel} from "./panels/layers.jsx";
 import {LibraryPanel} from "./panels/library.jsx";
 import {SettingsPanel} from "./panels/settings.jsx";
+import {MinimapPanel} from "./panels/minimap.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
@@ -323,6 +324,11 @@ const EditorWithScene = props => {
                             content="All the available tools. Pick one and start drawing!"
                         />
                     )}
+                </div>
+            )}
+            {!isScreenshot && (
+                <div className="absolute z-20 left-0 bottom-0 mb-4 ml-4">
+                    <MinimapPanel />
                 </div>
             )}
             {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
