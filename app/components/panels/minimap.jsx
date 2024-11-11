@@ -18,13 +18,13 @@ const useMinimap = isVisible => {
         if (isVisible && scene.page.elements.length > 0) {
             const bounds = getRectangleBounds(scene.page.elements);
             // calculate the start and end points for the minimap
-            const x1 = Math.min(bounds.x1, scene.page.translateX);
-            const y1 = Math.min(bounds.y1, scene.page.translateY);
-            const x2 = Math.max(bounds.x2, scene.page.translateX + scene.width);
-            const y2 = Math.max(bounds.y2, scene.page.translateY + scene.height);
+            const x1 = Math.min(bounds.x1, (-1) * scene.page.translateX);
+            const y1 = Math.min(bounds.y1, (-1) * scene.page.translateY);
+            const x2 = Math.max(bounds.x2, (-1) * scene.page.translateX + scene.width);
+            const y2 = Math.max(bounds.y2, (-1) * scene.page.translateY + scene.height);
             const width = x2 - x1, height = y2 - y1;
             // calculate the scale factor for the minimap
-            const ratio = width > height ? (MINIMAP_WIDTH / width) : (MINIMAP_HEIGHT / height);
+            const ratio = Math.min(MINIMAP_WIDTH / width, MINIMAP_HEIGHT / height);
             // calculate the position of all elements in the minimap
             minimap.elements = scene.page.elements.map(element => ({
                 id: element.id,
@@ -34,8 +34,8 @@ const useMinimap = isVisible => {
                 y2: (element.y2 - y1) * ratio,
             }));
             minimap.width = width * ratio; // update the width of the minimap
-            minimap.visibleX = (scene.page.translateX - x1) * ratio; // update the visible x position
-            minimap.visibleY = (scene.page.translateY - y1) * ratio; // update the visible y position
+            minimap.visibleX = ((-1) * scene.page.translateX - x1) * ratio; // update the visible x position
+            minimap.visibleY = ((-1) * scene.page.translateY - y1) * ratio; // update the visible y position
             minimap.visibleWidth = scene.width * ratio; // update the visible width
             minimap.visibleHeight = scene.height * ratio; // update the visible height
         }
