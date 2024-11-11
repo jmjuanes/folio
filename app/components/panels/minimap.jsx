@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames";
+import {NONE} from "../../constants.js";
 import {Island} from "../island.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 import {getRectangleBounds} from "../../utils/math.js";
@@ -7,61 +7,58 @@ import {getRectangleBounds} from "../../utils/math.js";
 const MINIMAP_WIDTH = 180;
 const MINIMAP_HEIGHT = 100;
 
-const useMinimap = isVisible => {
-    const scene = useScene();
-    return React.useMemo(() => {
-        const minimap = {
-            width: MINIMAP_WIDTH,
-            height: MINIMAP_HEIGHT,
-            elements: [],
-        };
-        if (isVisible && scene.page.elements.length > 0) {
-            const bounds = getRectangleBounds(scene.page.elements);
-            // calculate the start and end points for the minimap
-            const x1 = Math.min(bounds.x1, (-1) * scene.page.translateX);
-            const y1 = Math.min(bounds.y1, (-1) * scene.page.translateY);
-            const x2 = Math.max(bounds.x2, (-1) * scene.page.translateX + scene.width);
-            const y2 = Math.max(bounds.y2, (-1) * scene.page.translateY + scene.height);
-            const width = x2 - x1, height = y2 - y1;
-            // calculate the scale factor for the minimap
-            const ratio = Math.min(MINIMAP_WIDTH / width, MINIMAP_HEIGHT / height);
-            // calculate the position of all elements in the minimap
-            minimap.elements = scene.page.elements.map(element => ({
-                id: element.id,
-                x1: (element.x1 - x1) * ratio,
-                y1: (element.y1 - y1) * ratio,
-                x2: (element.x2 - x1) * ratio,
-                y2: (element.y2 - y1) * ratio,
-            }));
-            minimap.width = width * ratio; // update the width of the minimap
-            minimap.visibleX = ((-1) * scene.page.translateX - x1) * ratio; // update the visible x position
-            minimap.visibleY = ((-1) * scene.page.translateY - y1) * ratio; // update the visible y position
-            minimap.visibleWidth = scene.width * ratio; // update the visible width
-            minimap.visibleHeight = scene.height * ratio; // update the visible height
-        }
-        return minimap;
-    }, [isVisible, scene.updatedAt, scene.page.id, scene.width, scene.height, scene.page.translateX, scene.page.translateY]);
-};
+const MINIMAL_ELEMENT_FILL = "#ABABAB";
+const MINIMAP_ELEMENT_RADIUS = 3;
+const MINIMAP_VISIBLE_FILL = "#F3F4F5";
+const MINIMAP_VISIBLE_RADIUS = 8;
 
 // @public mini map panel component
 export const MinimapPanel = () => {
-    const [visible, setVisible] = React.useState(false);
-    const minimap = useMinimap(visible);
-    const panelClass = classNames("flex-col", {
-        "w-48": !!visible,
-    });
+    const scene = useScene();
+    const minimap = React.useMemo(() => {
+        if (!scene.width || !scene.height) {
+            return null;
+        }
+        const bounds = scene.page.elements.length > 0 ? getRectangleBounds(scene.page.elements) : {};
+        // calculate the start and end points for the minimap
+        const x1 = Math.min(bounds.x1 ?? Infinity, (-1) * scene.page.translateX);
+        const y1 = Math.min(bounds.y1 ?? Infinity, (-1) * scene.page.translateY);
+        const x2 = Math.max(bounds.x2 ?? 0, (-1) * scene.page.translateX + (scene.width / scene.page.zoom));
+        const y2 = Math.max(bounds.y2 ?? 0, (-1) * scene.page.translateY + (scene.height / scene.page.zoom));
+        const width = x2 - x1, height = y2 - y1;
+        // calculate the scale factor for the minimap
+        const ratio = Math.min(MINIMAP_WIDTH / width, MINIMAP_HEIGHT / height);
+        return {
+            width: Math.min(MINIMAP_WIDTH, width * ratio),
+            height: Math.min(MINIMAP_HEIGHT, height * ratio),
+            ratio: ratio,
+            elements: scene.page.elements.map(element => ({
+                id: element.id,
+                x1: (Math.min(element.x1, element.x2) - x1) * ratio,
+                y1: (Math.min(element.y1, element.y2) - y1) * ratio,
+                x2: (Math.max(element.x1, element.x2) - x1) * ratio,
+                y2: (Math.max(element.y1, element.y2) - y1) * ratio,
+            })),
+            visibleX: ((-1) * scene.page.translateX - x1) * ratio, // update the visible x position
+            visibleY: ((-1) * scene.page.translateY - y1) * ratio, // update the visible y position
+            visibleWidth: scene.width * ratio / scene.page.zoom, // update the visible width
+            visibleHeight: scene.height * ratio / scene.page.zoom, // update the visible height
+        };
+    }, [scene.updatedAt, scene.page.id, scene.width, scene.height, scene.page.translateX, scene.page.translateY]);
     return (
-        <Island className={panelClass}>
-            <div className="flex items-center justify-between gap-1">
-                <div className="text-sm font-medium px-1">Minimap</div>
-                <Island.Button
-                    icon={!visible ? "arrow-up-right" : "arrow-down-left"} 
-                    onClick={() => setVisible(!visible)}
-                />
-            </div>
-            {visible && (
-                <div className="flex items-center justify-center bg-neutral-100 rounded-lg overflow-hidden shrink-0">
+        <Island className="w-48 items-center justify-center">
+            <div className="flex items-center justify-center bg-white">
+                {!!minimap && (
                     <svg width={minimap.width} height={minimap.height}>
+                        <rect
+                            x={minimap.visibleX}
+                            y={minimap.visibleY}
+                            width={minimap.visibleWidth}
+                            height={minimap.visibleHeight}
+                            fill={MINIMAP_VISIBLE_FILL}
+                            stroke={NONE}
+                            rx={MINIMAP_VISIBLE_RADIUS}
+                        />
                         {minimap.elements.map(element => (
                             <rect
                                 key={element.id}
@@ -69,25 +66,14 @@ export const MinimapPanel = () => {
                                 y={element.y1}
                                 width={element.x2 - element.x1}
                                 height={element.y2 - element.y1}
-                                fill="transparent"
-                                stroke="black"
-                                strokeWidth="0.5"
+                                fill={MINIMAL_ELEMENT_FILL}
+                                stroke={NONE}
+                                rx={MINIMAP_ELEMENT_RADIUS}
                             />
                         ))}
-                        {minimap.elements.length > 0 && (
-                            <rect
-                                x={minimap.visibleX}
-                                y={minimap.visibleY}
-                                width={minimap.visibleWidth}
-                                height={minimap.visibleHeight}
-                                fill="transparent"
-                                stroke="black"
-                                strokeWidth="1"
-                            />
-                        )}
                     </svg>
-                </div>
-            )}
+                )}
+            </div>
         </Island>
     );
 };
