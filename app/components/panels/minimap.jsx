@@ -47,8 +47,8 @@ export const MinimapPanel = () => {
     }, [scene.updatedAt, scene.page.id, scene.width, scene.height, scene.page.translateX, scene.page.translateY]);
     return (
         <Island className="w-48 items-center justify-center">
-            <div className="flex items-center justify-center bg-white">
-                {!!minimap && (
+            {!!minimap && (
+                <div className="flex items-center justify-center bg-white" style={{height: MINIMAP_HEIGHT}}>
                     <svg width={minimap.width} height={minimap.height}>
                         <rect
                             x={minimap.visibleX}
@@ -72,8 +72,8 @@ export const MinimapPanel = () => {
                             />
                         ))}
                     </svg>
-                )}
-            </div>
+                </div>
+            )}
         </Island>
     );
 };
