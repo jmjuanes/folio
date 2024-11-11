@@ -1,16 +1,16 @@
 import React from "react";
-import {NONE} from "../../constants.js";
+import {
+    NONE,
+    MINIMAP_WIDTH,
+    MINIMAP_HEIGHT,
+    MINIMAP_VISIBLE_FILL,
+    MINIMAP_VISIBLE_RADIUS,
+    MINIMAL_ELEMENT_FILL,
+    MINIMAP_ELEMENT_RADIUS,
+} from "../../constants.js";
 import {Island} from "../island.jsx";
 import {useScene} from "../../contexts/scene.jsx";
 import {getRectangleBounds} from "../../utils/math.js";
-
-const MINIMAP_WIDTH = 180;
-const MINIMAP_HEIGHT = 100;
-
-const MINIMAL_ELEMENT_FILL = "#ABABAB";
-const MINIMAP_ELEMENT_RADIUS = 3;
-const MINIMAP_VISIBLE_FILL = "#F3F4F5";
-const MINIMAP_VISIBLE_RADIUS = 8;
 
 // @public mini map panel component
 export const MinimapPanel = () => {
