@@ -455,6 +455,7 @@ export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
 
 // preferences fields
 export const PREFERENCES_FIELDS = {
+    MINIMAP_VISIBLE: "minimap.visible",
     PAGES_VIEW: "pages.view",
 };
 
