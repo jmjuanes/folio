@@ -59,6 +59,7 @@ const createInitialEditorState = (props, scene) => {
         libraryVisible: false,
         libraryCreateVisible: false,
         libraryAddVisible: false,
+        preferencesVisible: false,
 
         // @description state for welcome items
         hintsVisible: props.showHints && isSceneEmpty,

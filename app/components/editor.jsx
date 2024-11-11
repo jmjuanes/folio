@@ -8,6 +8,7 @@ import {
     STATES,
     ZOOM_STEP,
     TRANSPARENT,
+    PREFERENCES_FIELDS,
 } from "../constants.js";
 import {saveAsJson, loadFromJson} from "../json.js";
 import {blobToDataUrl} from "../utils/blob.js";
@@ -28,6 +29,7 @@ import {ExportDialog} from "./dialogs/export.jsx";
 import {LibraryAddDialog} from "./dialogs/library-add.jsx";
 import {LibraryExportDialog} from "./dialogs/library-export.jsx";
 import {PageRenameDialog} from "./dialogs/page-rename.jsx";
+import {PreferencesDialog} from "./dialogs/preferences.jsx";
 import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
 import {EditionPanel} from "./panels/edition.jsx";
@@ -42,7 +44,7 @@ import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
-import {PreferencesProvider} from "../contexts/preferences.jsx";
+import {PreferencesProvider, usePreferences} from "../contexts/preferences.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
 import {convertRegionToSceneCoordinates} from "../scene.js";
 import {loadLibraryFromJson, saveLibraryAsJson} from "../library.js";
@@ -58,6 +60,7 @@ const EditorWithScene = props => {
     const scene = useScene();
     const library = useLibrary();
     const editor = useEditor(props);
+    const [preferences, setPreferences] = usePreferences();
     const {showConfirm} = useConfirm();
     const cursor = useCursor(editor.state);
     const bounds = useBounds(editor.state);
@@ -326,7 +329,7 @@ const EditorWithScene = props => {
                     )}
                 </div>
             )}
-            {!isScreenshot && (
+            {!isScreenshot && preferences[PREFERENCES_FIELDS.MINIMAP_VISIBLE] && (
                 <div className="absolute z-20 left-0 bottom-0 mb-4 ml-4">
                     <MinimapPanel />
                 </div>
@@ -500,6 +503,10 @@ const EditorWithScene = props => {
                                     onClear={handleClear}
                                     onExport={() => {
                                         editor.state.exportVisible = true;
+                                        editor.update();
+                                    }}
+                                    onPreferences={() => {
+                                        editor.state.preferencesVisible = true;
                                         editor.update();
                                     }}
                                 />
@@ -769,6 +776,19 @@ const EditorWithScene = props => {
                     onCancel={() => {
                         editor.state.pageRenameVisible = false;
                         editor.state.selectedPage = null;
+                        editor.update();
+                    }}
+                />
+            )}
+            {editor.state.preferencesVisible && (
+                <PreferencesDialog
+                    onSubmit={data => {
+                        setPreferences(data);
+                        editor.state.preferencesVisible = false;
+                        editor.update();
+                    }}
+                    onCancel={() => {
+                        editor.state.preferencesVisible = false;
                         editor.update();
                     }}
                 />
