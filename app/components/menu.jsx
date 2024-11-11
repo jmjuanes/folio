@@ -43,7 +43,6 @@ export const Menu = props => {
                         <span>Export as image</span>
                     </Dropdown.Item>
                 )}
-                <Dropdown.Separator />
                 {props.showClear && (
                     <Dropdown.Item
                         disabled={elements.length === 0}
@@ -56,6 +55,11 @@ export const Menu = props => {
                         <span>Reset the board</span>
                     </Dropdown.Item>
                 )}
+                <Dropdown.Separator />
+                <Dropdown.Item onClick={props.onPreferences}>
+                    <Dropdown.Icon icon="tools" />
+                    <span>Preferences</span>
+                </Dropdown.Item>
                 {(props.links && props.links?.length > 0) && (
                     <React.Fragment>
                         <Dropdown.Separator />
