@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import {fileOpen} from "browser-fs-access";
 import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
 import {
@@ -8,6 +9,10 @@ import {
     STATES,
     ZOOM_STEP,
     TRANSPARENT,
+    PREFERENCES_FIELDS,
+    MINIMAP_WIDTH,
+    MINIMAP_HEIGHT,
+    MINIMAP_POSITION,
 } from "../constants.js";
 import {saveAsJson, loadFromJson} from "../json.js";
 import {blobToDataUrl} from "../utils/blob.js";
@@ -28,6 +33,7 @@ import {ExportDialog} from "./dialogs/export.jsx";
 import {LibraryAddDialog} from "./dialogs/library-add.jsx";
 import {LibraryExportDialog} from "./dialogs/library-export.jsx";
 import {PageRenameDialog} from "./dialogs/page-rename.jsx";
+import {PreferencesDialog} from "./dialogs/preferences.jsx";
 import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
 import {EditionPanel} from "./panels/edition.jsx";
@@ -37,11 +43,12 @@ import {PagesPanel} from "./panels/pages.jsx";
 import {LayersPanel} from "./panels/layers.jsx";
 import {LibraryPanel} from "./panels/library.jsx";
 import {SettingsPanel} from "./panels/settings.jsx";
+import {MinimapPanel} from "./panels/minimap.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
-import {PreferencesProvider} from "../contexts/preferences.jsx";
+import {PreferencesProvider, usePreferences} from "../contexts/preferences.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
 import {convertRegionToSceneCoordinates} from "../scene.js";
 import {loadLibraryFromJson, saveLibraryAsJson} from "../library.js";
@@ -57,6 +64,7 @@ const EditorWithScene = props => {
     const scene = useScene();
     const library = useLibrary();
     const editor = useEditor(props);
+    const [preferences, setPreferences] = usePreferences();
     const {showConfirm} = useConfirm();
     const cursor = useCursor(editor.state);
     const bounds = useBounds(editor.state);
@@ -325,6 +333,19 @@ const EditorWithScene = props => {
                     )}
                 </div>
             )}
+            {!isScreenshot && preferences[PREFERENCES_FIELDS.MINIMAP_VISIBLE] && (
+                <div
+                    className={classNames("absolute z-20 bottom-0 mb-4", {
+                        "left-0 ml-4": preferences[PREFERENCES_FIELDS.MINIMAP_POSITION] === MINIMAP_POSITION.BOTTOM_LEFT,
+                        "right-0 mr-4": preferences[PREFERENCES_FIELDS.MINIMAP_POSITION] === MINIMAP_POSITION.BOTTOM_RIGHT,
+                    })}
+                >
+                    <MinimapPanel
+                        width={preferences[PREFERENCES_FIELDS.MINIMAP_WIDTH] ?? MINIMAP_WIDTH}
+                        height={preferences[PREFERENCES_FIELDS.MINIMAP_HEIGHT] ?? MINIMAP_HEIGHT}
+                    />
+                </div>
+            )}
             {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
@@ -494,6 +515,10 @@ const EditorWithScene = props => {
                                     onClear={handleClear}
                                     onExport={() => {
                                         editor.state.exportVisible = true;
+                                        editor.update();
+                                    }}
+                                    onPreferences={() => {
+                                        editor.state.preferencesVisible = true;
                                         editor.update();
                                     }}
                                 />
@@ -763,6 +788,19 @@ const EditorWithScene = props => {
                     onCancel={() => {
                         editor.state.pageRenameVisible = false;
                         editor.state.selectedPage = null;
+                        editor.update();
+                    }}
+                />
+            )}
+            {editor.state.preferencesVisible && (
+                <PreferencesDialog
+                    onSubmit={data => {
+                        setPreferences(data);
+                        editor.state.preferencesVisible = false;
+                        editor.update();
+                    }}
+                    onCancel={() => {
+                        editor.state.preferencesVisible = false;
                         editor.update();
                     }}
                 />

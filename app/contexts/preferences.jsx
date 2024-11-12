@@ -1,12 +1,14 @@
 import React from "react";
 import {useMount} from "react-use";
-import {PREFERENCES_FIELDS} from "../constants.js";
+import {MINIMAP_POSITION, PREFERENCES_FIELDS} from "../constants.js";
 import {promisifyValue} from "../utils/promises.js";
 import {Loading} from "../components/loading.jsx";
 
 // default preferences object
 const DEFAULT_PREFERENCES = {
     [PREFERENCES_FIELDS.PAGES_VIEW]: "list",
+    [PREFERENCES_FIELDS.MINIMAP_VISIBLE]: false,
+    [PREFERENCES_FIELDS.MINIMAP_POSITION]: MINIMAP_POSITION.BOTTOM_LEFT,
 };
 
 // internal context for user preferences

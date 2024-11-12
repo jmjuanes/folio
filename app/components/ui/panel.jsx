@@ -10,7 +10,7 @@ export const Panel = props => (
 
 // separator for buttons
 Panel.Separator = () => (
-    <div className={themed("w-full h-px", "panel.separator")} />
+    <div className={themed("w-full h-px shrink-0", "panel.separator")} />
 );
 
 // panel tabs container
