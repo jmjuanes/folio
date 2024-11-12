@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import {fileOpen} from "browser-fs-access";
 import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
 import {
@@ -9,6 +10,9 @@ import {
     ZOOM_STEP,
     TRANSPARENT,
     PREFERENCES_FIELDS,
+    MINIMAP_WIDTH,
+    MINIMAP_HEIGHT,
+    MINIMAP_POSITION,
 } from "../constants.js";
 import {saveAsJson, loadFromJson} from "../json.js";
 import {blobToDataUrl} from "../utils/blob.js";
@@ -330,8 +334,16 @@ const EditorWithScene = props => {
                 </div>
             )}
             {!isScreenshot && preferences[PREFERENCES_FIELDS.MINIMAP_VISIBLE] && (
-                <div className="absolute z-20 left-0 bottom-0 mb-4 ml-4">
-                    <MinimapPanel />
+                <div
+                    className={classNames("absolute z-20 bottom-0 mb-4", {
+                        "left-0 ml-4": preferences[PREFERENCES_FIELDS.MINIMAP_POSITION] === MINIMAP_POSITION.BOTTOM_LEFT,
+                        "right-0 mr-4": preferences[PREFERENCES_FIELDS.MINIMAP_POSITION] === MINIMAP_POSITION.BOTTOM_RIGHT,
+                    })}
+                >
+                    <MinimapPanel
+                        width={preferences[PREFERENCES_FIELDS.MINIMAP_WIDTH] ?? MINIMAP_WIDTH}
+                        height={preferences[PREFERENCES_FIELDS.MINIMAP_HEIGHT] ?? MINIMAP_HEIGHT}
+                    />
                 </div>
             )}
             {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (

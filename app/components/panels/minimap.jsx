@@ -13,7 +13,7 @@ import {useScene} from "../../contexts/scene.jsx";
 import {getRectangleBounds} from "../../utils/math.js";
 
 // @public mini map panel component
-export const MinimapPanel = () => {
+export const MinimapPanel = ({width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT}) => {
     const scene = useScene();
     const minimap = React.useMemo(() => {
         if (!scene.width || !scene.height) {
@@ -25,12 +25,12 @@ export const MinimapPanel = () => {
         const y1 = Math.min(bounds.y1 ?? Infinity, (-1) * scene.page.translateY);
         const x2 = Math.max(bounds.x2 ?? 0, (-1) * scene.page.translateX + (scene.width / scene.page.zoom));
         const y2 = Math.max(bounds.y2 ?? 0, (-1) * scene.page.translateY + (scene.height / scene.page.zoom));
-        const width = x2 - x1, height = y2 - y1;
+        // const width = x2 - x1, height = y2 - y1;
         // calculate the scale factor for the minimap
-        const ratio = Math.min(MINIMAP_WIDTH / width, MINIMAP_HEIGHT / height);
+        const ratio = Math.min(width / Math.max(1, x2 - x1), height / Math.max(1, y2 - y1));
         return {
-            width: Math.min(MINIMAP_WIDTH, width * ratio),
-            height: Math.min(MINIMAP_HEIGHT, height * ratio),
+            width: Math.min(width, (x2 - x1) * ratio),
+            height: Math.min(height, (y2 - y1) * ratio),
             ratio: ratio,
             elements: scene.page.elements.map(element => ({
                 id: element.id,
@@ -46,9 +46,9 @@ export const MinimapPanel = () => {
         };
     }, [scene.updatedAt, scene.page.id, scene.width, scene.height, scene.page.translateX, scene.page.translateY]);
     return (
-        <Island className="w-48 items-center justify-center">
+        <Island className="items-center justify-center">
             {!!minimap && (
-                <div className="flex items-center justify-center bg-white" style={{height: MINIMAP_HEIGHT}}>
+                <div className="flex items-center justify-center bg-white" style={{width: width, height: height}}>
                     <svg width={minimap.width} height={minimap.height}>
                         <rect
                             x={minimap.visibleX}

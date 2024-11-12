@@ -456,6 +456,9 @@ export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
 // preferences fields
 export const PREFERENCES_FIELDS = {
     MINIMAP_VISIBLE: "minimap.visible",
+    MINIMAP_POSITION: "minimap.position",
+    MINIMAP_WIDTH: "minimap.width",
+    MINIMAP_HEIGHT: "minimap.height",
     PAGES_VIEW: "pages.view",
 };
 
@@ -466,3 +469,7 @@ export const MINIMAL_ELEMENT_FILL = "#ABABAB";
 export const MINIMAP_ELEMENT_RADIUS = 3;
 export const MINIMAP_VISIBLE_FILL = "#F3F4F5";
 export const MINIMAP_VISIBLE_RADIUS = 8;
+export const MINIMAP_POSITION = {
+    BOTTOM_LEFT: "bottom-left",
+    BOTTOM_RIGHT: "bottom-right",
+};

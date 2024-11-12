@@ -394,7 +394,7 @@ export const EditionPanel = props => {
                     </div>
                 )}
             </Panel.Header>
-            <Panel.Body className="flex flex-col gap-2">
+            <Panel.Body className="flex flex-col gap-2 overflow-y-auto" style={{maxHeight: "calc(75vh - 8rem)"}}>
                 {visibleSections.style.length > 0 && (
                     <Form
                         key={currentSection}

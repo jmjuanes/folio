@@ -99,9 +99,10 @@ const optionTypes = {
                     "cursor-pointer": item.value !== props.value,
                     "form.labeledselect.item.active": item.value === props.value,
                     "form.labeledselect.item.inactive": item.value !== props.value,
+                    "cursor-not-allowed opacity-60": props.disabled,
                 });
                 return (
-                    <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
+                    <div key={item.value} className={itemClass} onClick={() => !props.disabled && props.onChange(item.value)}>
                         <div className={classNames("flex items-center", item.iconClass)}>
                             {item.icon}
                         </div>
@@ -213,7 +214,7 @@ const optionTypes = {
         return props.render?.(props);
     },
     [FORM_OPTIONS.SEPARATOR]: () => (
-        <div className={themed("w-full h-px", "form.separator")} />
+        <div className={themed("w-full h-px shrink-0", "form.separator")} />
     ),
 };
 

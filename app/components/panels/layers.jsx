@@ -187,7 +187,7 @@ export const LayersPanel = props => {
             <Panel.Header className="">
                 <Panel.HeaderTitle>Layers</Panel.HeaderTitle>
             </Panel.Header>
-            <Panel.Body className="overflow-y-auto" style={{maxHeight:"calc(100vh - 8rem)"}}>
+            <Panel.Body className="overflow-y-auto" style={{maxHeight:"calc(75vh - 8rem)"}}>
                 <div className="flex flex-col-reverse gap-0">
                     {scene.page.elements.map(element => (
                         <React.Fragment key={element.id + "." + (element.group || "")}>

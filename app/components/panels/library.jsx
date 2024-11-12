@@ -84,7 +84,7 @@ export const LibraryPanel = props => {
                     </Panel.HeaderButton>
                 </div>
             </Panel.Header>
-            <Panel.Body className="overflow-y-auto" style={{maxHeight:"calc(100vh - 8rem)"}}>
+            <Panel.Body className="overflow-y-auto" style={{maxHeight:"calc(75vh - 8rem)"}}>
                 {getGroupsNames(itemsGroups).map(source => {
                     const handleDeleteAll = () => {
                         return props.onDeleteAll(itemsGroups[source].items.map(item => item.id));
