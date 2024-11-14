@@ -209,6 +209,7 @@ const createPage = (page, index = 0) => {
         translateY: page?.translateY ?? 0,
         zoom: page?.zoom ?? ZOOM_DEFAULT,
         activeGroup: null,
+        readonly: !!page?.readonly,
     };
 };
 
@@ -279,6 +280,7 @@ export const createScene = initialData => {
                     id: page.id,
                     title: page.title,
                     elements: page.elements,
+                    readonly: !!page.readonly,
                 })),
                 assets: scene.assets,
                 background: scene.background,
