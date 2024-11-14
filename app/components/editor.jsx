@@ -357,7 +357,7 @@ const EditorWithScene = props => {
                     />
                 </div>
             )}
-            {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
+            {!scene.page.readonly && editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
                         <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
@@ -372,7 +372,7 @@ const EditorWithScene = props => {
                     )}
                 </React.Fragment>
             )}
-            {editor.state.layersVisible && !isScreenshot && (
+            {!scene.page.readonly && editor.state.layersVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                     <LayersPanel
                         key={`layers:${scene.id || ""}:${scene.page.id || ""}`}
@@ -402,7 +402,7 @@ const EditorWithScene = props => {
                     />
                 </div>
             )}
-            {editor.state.libraryVisible && !isScreenshot && (
+            {!scene.page.readonly && editor.state.libraryVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                     <LibraryPanel
                         key={`library:${scene.id || ""}`}
@@ -576,7 +576,7 @@ const EditorWithScene = props => {
                                 </div>
                                 <Island.Button
                                     icon="trash"
-                                    disabled={scene.getElements().length === 0}
+                                    disabled={scene.page.readonly || scene.getElements().length === 0}
                                     onClick={() => {
                                         return showConfirm({
                                             title: "Clear Page",
@@ -622,8 +622,8 @@ const EditorWithScene = props => {
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-20 flex gap-2">
                         <div className="flex relative">
                             <HistoryPanel
-                                undoDisabled={!scene.canUndo()}
-                                redoDisabled={!scene.canRedo()}
+                                undoDisabled={scene.page.readonly || !scene.canUndo()}
+                                redoDisabled={scene.page.readonly || !scene.canRedo()}
                                 onUndoClick={() => {
                                     scene.undo();
                                     editor.dispatchChange();
@@ -669,7 +669,8 @@ const EditorWithScene = props => {
                             <Island>
                                 <Island.Button
                                     icon="edit"
-                                    active={!editor.state.layersVisible && !editor.state.libraryVisible}
+                                    active={!scene.page.readonly && !editor.state.layersVisible && !editor.state.libraryVisible}
+                                    disabled={scene.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
                                         editor.state.libraryVisible = false;
@@ -678,7 +679,8 @@ const EditorWithScene = props => {
                                 />
                                 <Island.Button
                                     icon="stack"
-                                    active={editor.state.layersVisible}
+                                    active={!scene.page.readonly && editor.state.layersVisible}
+                                    disabled={scene.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = true;
                                         editor.state.libraryVisible = false;
@@ -687,7 +689,8 @@ const EditorWithScene = props => {
                                 />
                                 <Island.Button
                                     icon="album"
-                                    active={editor.state.libraryVisible}
+                                    active={!scene.page.readonly && editor.state.libraryVisible}
+                                    disabled={scene.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
                                         editor.state.libraryVisible = true;
