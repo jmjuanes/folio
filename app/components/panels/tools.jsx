@@ -195,6 +195,7 @@ const PanelButton = props => {
         "toolbar.button": true,
         "toolbar.button.active": props.active,
         "toolbar.button.inactive": !props.active,
+        "pointer-events-none opacity-60 cursor-not-allowed": props.disabled,
     }, props.className);
     return (
         <div className={classList} onClick={props.onClick}>
@@ -240,6 +241,7 @@ export const ToolsPanel = props => {
                         text="Select"
                         icon={(<PointerIcon />)}
                         active={!props.tool && isSelectEnabled(props.action)}
+                        disabled={props.readonly}
                         onClick={props.onSelectionClick}
                     />
                 )}
@@ -253,6 +255,7 @@ export const ToolsPanel = props => {
                                     text={tools[key].text}
                                     icon={tools[key].icon}
                                     active={props.tool === key}
+                                    disabled={props.readonly}
                                     onClick={() => props.onToolClick(key)}
                                 />
                                 {tools[key].quickPicks && key === props.tool && (
@@ -284,6 +287,7 @@ export const ToolsPanel = props => {
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
                                     checked={props.tool === ELEMENTS.NOTE}
+                                    disabled={props.readonly}
                                     onClick={() => props.onToolClick(ELEMENTS.NOTE)}
                                 >
                                     <Dropdown.Icon icon="note" />
@@ -291,6 +295,7 @@ export const ToolsPanel = props => {
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
                                     checked={props.action === ACTIONS.ERASE}
+                                    disabled={props.readonly}
                                     onClick={props.onEraseClick}
                                 >
                                     <Dropdown.Icon icon="erase" />
@@ -307,6 +312,7 @@ export const ToolsPanel = props => {
                         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
                         "toolbar.lock.active": props.toolLocked,
                         "toolbar.lock.inactive": !props.toolLocked,
+                        "pointer-events-none opacity-40 cursor-not-allowed": props.readonly,
                     })}
                     onClick={props.onToolLockClick}
                 >
@@ -315,16 +321,4 @@ export const ToolsPanel = props => {
             )}
         </div>
     );
-};
-
-ToolsPanel.defaultProps = {
-    showTools: true,
-    showLock: true,
-    showSelect: true,
-    onMoveClick: null,
-    onSelectionClick: null,
-    onPointerClick: null,
-    onEraseClick: null,
-    onToolClick: null,
-    onToolLockClick: null,
 };
