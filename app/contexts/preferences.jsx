@@ -6,7 +6,7 @@ import {Loading} from "../components/loading.jsx";
 
 // default preferences object
 const DEFAULT_PREFERENCES = {
-    [PREFERENCES_FIELDS.PAGES_VIEW]: "list",
+    // [PREFERENCES_FIELDS.PAGES_VIEW]: "list",
     [PREFERENCES_FIELDS.MINIMAP_VISIBLE]: false,
     [PREFERENCES_FIELDS.MINIMAP_POSITION]: MINIMAP_POSITION.BOTTOM_LEFT,
 };
