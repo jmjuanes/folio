@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import {fileOpen} from "browser-fs-access";
-import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
+import {BarsIcon, CameraIcon, FilesIcon, LockIcon} from "@josemi-icons/react";
 import {
     ACTIONS,
     ELEMENTS,
@@ -701,6 +701,16 @@ const EditorWithScene = props => {
                         </div>
                         {props.headerRightContent}
                     </div>
+                    {scene.page.readonly && (
+                        <div className="absolute top-0 left-half pt-4 z-30 flex gap-2 translate-x-half-n">
+                            <div className="rounded-xl shadow-sm border border-yellow-200 bg-yellow-100 text-yellow-900 p-2 flex gap-2 items-center">
+                                <div className="flex items-center p-0">
+                                    <LockIcon />
+                                </div>
+                                <div className="text-sm">Page is on Read-Only mode.</div>
+                            </div>
+                        </div>
+                    )}
                 </React.Fragment>
             )}
             {editor.state.action === ACTIONS.SCREENSHOT && (
