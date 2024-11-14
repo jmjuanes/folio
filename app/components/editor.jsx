@@ -708,7 +708,7 @@ const EditorWithScene = props => {
                                 <div className="flex items-center p-0">
                                     <LockIcon />
                                 </div>
-                                <div className="text-sm">Page is on Read-Only mode.</div>
+                                <div className="text-sm">This page is on <b>Read-Only</b> mode.</div>
                             </div>
                         </div>
                     )}
