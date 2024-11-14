@@ -6,32 +6,40 @@ import {Overlay} from "../ui/overlay.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
+import {useScene} from "../../contexts/scene.jsx";
 
 // @private list of form fields
 const pageEditFields = {
     title: {
         type: FORM_OPTIONS.TEXT,
+        title: "Page Name",
         placeholder: "Untitled Page",
+        helper: "Give your page a name.",
+    },
+    readonly: {
+        type: FORM_OPTIONS.CHECKBOX,
+        title: "Read-Only",
+        helper: "Prevent any changes to the page.",
     },
 };
 
-// @public component to edit the page title
-export const PageRenameDialog = ({title, onSubmit, onCancel}) => {
+// @public component to customize the page
+export const PageConfigureDialog = props => {
+    const scene = useScene();
+    const page = scene.getPage(props.page);
     const [data, setData] = useFormData({
-        title: title,
+        title: page.title,
+        readonly: !!page.readonly,
     });
-    const submitDisabled = !data.title || data.title === title;
-    const handleSubmit = () => {
-        return onSubmit(data.title);
-    };
+    const isSubmitEnabled = !!data.title;
     return (
         <React.Fragment>
             <Overlay className="z-50" />
             <Centered className="fixed z-50 h-full">
                 <Dialog className="max-w-md relative">
-                    <Dialog.Close onClick={onCancel} />
+                    <Dialog.Close onClick={props.onCancel} />
                     <Dialog.Header>
-                        <Dialog.Title>Rename Page</Dialog.Title>
+                        <Dialog.Title>Configure Page</Dialog.Title>
                     </Dialog.Header>
                     <Dialog.Body>
                         <Form
@@ -41,11 +49,11 @@ export const PageRenameDialog = ({title, onSubmit, onCancel}) => {
                         />
                     </Dialog.Body>
                     <Dialog.Footer>
-                        <Button variant="secondary" onClick={onCancel}>
+                        <Button variant="secondary" onClick={props.onCancel}>
                             <span>Cancel</span>
                         </Button>
-                        <Button variant="primary" disabled={submitDisabled} onClick={handleSubmit}>
-                            <span>Rename</span>
+                        <Button variant="primary" disabled={!isSubmitEnabled} onClick={() => props.onSubmit(data)}>
+                            <span>Save Changes</span>
                         </Button>
                     </Dialog.Footer>
                 </Dialog>
