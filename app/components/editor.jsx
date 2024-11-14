@@ -186,9 +186,11 @@ const EditorWithScene = props => {
     // Hook to reset the action and tool when we change the active page
     React.useEffect(() => {
         if (scene.page.readonly) {
-            handleToolOrActionChange(null, ACTIONS.MOVE);
+            if (editor.state.action !== ACTIONS.MOVE && editor.state.action !== ACTIONS.POINTER) {
+                handleToolOrActionChange(null, ACTIONS.MOVE);
+            }
         }
-    }, [scene.page.id, scene.page.readonly]);
+    }, [scene.page.id, scene.page.readonly, editor.state.action]);
 
     return (
         <div className={themed("relative overflow-hidden h-full w-full select-none", "editor")}>
