@@ -19,7 +19,7 @@ const pageEditFields = {
     readonly: {
         type: FORM_OPTIONS.CHECKBOX,
         title: "Read-Only",
-        helper: "Prevent any changes to the page.",
+        helper: "Prevent performing changes to the page.",
     },
 };
 
@@ -41,7 +41,7 @@ export const PageConfigureDialog = props => {
                     <Dialog.Header>
                         <Dialog.Title>Configure Page</Dialog.Title>
                     </Dialog.Header>
-                    <Dialog.Body>
+                    <Dialog.Body className="my-6">
                         <Form
                             data={data}
                             items={pageEditFields}
