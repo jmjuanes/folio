@@ -54,7 +54,7 @@ const createInitialEditorState = (props, scene) => {
         // @description state for dialogs
         exportVisible: false,
         pagesVisible: false,
-        pageRenameVisible: false,
+        pageSettingsVisible: false,
         layersVisible: false,
         libraryVisible: false,
         libraryCreateVisible: false,
