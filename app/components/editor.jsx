@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import {fileOpen} from "browser-fs-access";
-import {BarsIcon, CameraIcon, FilesIcon, LockIcon} from "@josemi-icons/react";
+import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
 import {
     ACTIONS,
     ELEMENTS,
@@ -44,6 +44,7 @@ import {LayersPanel} from "./panels/layers.jsx";
 import {LibraryPanel} from "./panels/library.jsx";
 import {SettingsPanel} from "./panels/settings.jsx";
 import {MinimapPanel} from "./panels/minimap.jsx";
+import {Alert} from "./ui/alert.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
@@ -704,12 +705,9 @@ const EditorWithScene = props => {
                     </div>
                     {scene.page.readonly && (
                         <div className="absolute top-0 left-half pt-4 z-30 flex gap-2 translate-x-half-n pointer-events-none">
-                            <div className="rounded-xl shadow-sm border border-yellow-200 bg-yellow-100 text-yellow-900 p-2 flex gap-2 items-center">
-                                <div className="flex items-center p-0">
-                                    <LockIcon />
-                                </div>
-                                <div className="text-sm">This page is on <b>Read-Only</b> mode.</div>
-                            </div>
+                            <Alert variant="warning" icon="lock">
+                                This page is on <b>Read-Only</b> mode.
+                            </Alert>
                         </div>
                     )}
                 </React.Fragment>
