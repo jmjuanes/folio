@@ -94,7 +94,7 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
             </div>
             <div className="flex items-center opacity-0 group-hover:opacity-100">
                 {editable && (
-                    <PageActionButton onClick={props.onRename}>
+                    <PageActionButton onClick={props.onConfigure}>
                         <PencilIcon />
                     </PageActionButton>
                 )}
@@ -103,7 +103,7 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
                         <CopyIcon />
                     </PageActionButton>
                 )}
-                {editable && !active  && (
+                {editable && !active && (
                     <PageActionButton onClick={props.onDelete}>
                         <TrashIcon />
                     </PageActionButton>
@@ -228,8 +228,8 @@ export const PagesPanel = props => {
                                 onDuplicate={() => {
                                     props?.onPageDuplicate?.(page);
                                 }}
-                                onRename={() => {
-                                    props?.onPageRename?.(page);
+                                onConfigure={() => {
+                                    props?.onPageConfigure?.(page);
                                 }}
                                 onMove={event => {
                                     handlePageMove(event, page);
