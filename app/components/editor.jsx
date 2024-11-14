@@ -185,10 +185,9 @@ const EditorWithScene = props => {
 
     // Hook to reset the action and tool when we change the active page
     React.useEffect(() => {
-        if (scene.page.readonly) {
-            if (editor.state.action !== ACTIONS.MOVE && editor.state.action !== ACTIONS.POINTER) {
-                handleToolOrActionChange(null, ACTIONS.MOVE);
-            }
+        const action = editor.state.action;
+        if (scene.page.readonly && action !== ACTIONS.MOVE && action !== ACTIONS.POINTER && action !== ACTIONS.SCREENSHOT) {
+            handleToolOrActionChange(null, ACTIONS.MOVE);
         }
     }, [scene.page.id, scene.page.readonly, editor.state.action]);
 
