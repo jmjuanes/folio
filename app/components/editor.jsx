@@ -703,7 +703,7 @@ const EditorWithScene = props => {
                         {props.headerRightContent}
                     </div>
                     {scene.page.readonly && (
-                        <div className="absolute top-0 left-half pt-4 z-30 flex gap-2 translate-x-half-n">
+                        <div className="absolute top-0 left-half pt-4 z-30 flex gap-2 translate-x-half-n pointer-events-none">
                             <div className="rounded-xl shadow-sm border border-yellow-200 bg-yellow-100 text-yellow-900 p-2 flex gap-2 items-center">
                                 <div className="flex items-center p-0">
                                     <LockIcon />
