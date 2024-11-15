@@ -7,23 +7,21 @@ import {
     CopyIcon,
     BarsIcon,
     PlusIcon,
-    ListIcon,
-    GalleryVerticalIcon,
+    LockIcon,
 } from "@josemi-icons/react";
 import {Panel} from "../ui/panel.jsx";
 import {useScene} from "../../contexts/scene.jsx";
-import {usePreferences} from "../../contexts/preferences.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import {exportToDataURL} from "../../export.js";
-import {EXPORT_PADDING, PREFERENCES_FIELDS} from "../../constants.js";
+import {EXPORT_PADDING} from "../../constants.js";
 
 const PAGES_ITEM_HEIGHT = 37;
 const PAGES_PREVIEW_WIDTH = 140;
 const PAGES_PREVIEW_HEIGHT = 80;
-const PAGES_VIEW = {
-    LIST: "list",
-    GALLERY: "gallery",
-};
+// const PAGES_VIEW = {
+//     LIST: "list",
+//     GALLERY: "gallery",
+// };
 
 // Tiny hook to generate the preview of the page
 const usePagePreview = page => {
@@ -88,13 +86,18 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
                 <BarsIcon />
             </div>
             <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-6" onClick={onClick}>
-                <div className="font-medium text-sm w-32 truncate" title={title}>
+                <div className="font-medium text-sm w-content max-w-32 truncate leading-none" title={title}>
                     <span>{title}</span>
                 </div>
+                {props.readonly && (
+                    <div className="flex items-center text-yellow-700 text-sm">
+                        <LockIcon />
+                    </div>
+                )}
             </div>
             <div className="flex items-center opacity-0 group-hover:opacity-100">
                 {editable && (
-                    <PageActionButton onClick={props.onRename}>
+                    <PageActionButton onClick={props.onConfigure}>
                         <PencilIcon />
                     </PageActionButton>
                 )}
@@ -103,7 +106,7 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
                         <CopyIcon />
                     </PageActionButton>
                 )}
-                {editable && !active  && (
+                {editable && !active && (
                     <PageActionButton onClick={props.onDelete}>
                         <TrashIcon />
                     </PageActionButton>
@@ -123,12 +126,12 @@ const initializeSortedPages = pages => {
 // @public pages panel component
 export const PagesPanel = props => {
     const scene = useScene();
-    const [preferences, setPreferences] = usePreferences();
+    // const [preferences, setPreferences] = usePreferences();
     const [sortedPages, setSortedPages] = React.useState(() => {
         return initializeSortedPages(scene.pages);
     });
     const activePage = scene.getActivePage();
-    const view = preferences[PREFERENCES_FIELDS.PAGES_VIEW] || PAGES_VIEW.LIST;
+    // const view = preferences[PREFERENCES_FIELDS.PAGES_VIEW] || PAGES_VIEW.LIST;
     // Handle page move
     const handlePageMove = React.useCallback((event, page) => {
         event.preventDefault();
@@ -180,17 +183,13 @@ export const PagesPanel = props => {
         // Check to reset the current editing page
     }, [props.onPagesUpdate]);
     // handle change view mode
-    const handleViewModeChange = () => {
-        setPreferences(Object.assign({}, preferences, {
-            [PREFERENCES_FIELDS.PAGES_VIEW]: view === PAGES_VIEW.LIST ? PAGES_VIEW.GALLERY : PAGES_VIEW.LIST,
-        }));
-    };
-    const panelClassName = classNames({
-        "w-48": view === PAGES_VIEW.GALLERY,
-        "w-64": view === PAGES_VIEW.LIST,
-    });
+    // const handleViewModeChange = () => {
+    //     setPreferences(Object.assign({}, preferences, {
+    //         [PREFERENCES_FIELDS.PAGES_VIEW]: view === PAGES_VIEW.LIST ? PAGES_VIEW.GALLERY : PAGES_VIEW.LIST,
+    //     }));
+    // };
     return (
-        <Panel className={panelClassName}>
+        <Panel className="w-72">
             <Panel.Header className="sticky top-0">
                 <Panel.HeaderTitle>Pages</Panel.HeaderTitle>
                 <div className="flex items-center gap-0">
@@ -199,59 +198,41 @@ export const PagesPanel = props => {
                             <PlusIcon />
                         </Panel.HeaderButton>
                     )}
-                    <Panel.HeaderButton onClick={handleViewModeChange}>
-                        {view === PAGES_VIEW.GALLERY ? <ListIcon /> : <GalleryVerticalIcon />}
-                    </Panel.HeaderButton>
                 </div>
             </Panel.Header>
             <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
-                {view === PAGES_VIEW.LIST && (
-                    <div className="relative w-full" style={{height: scene.pages.length * PAGES_ITEM_HEIGHT}}>
-                        {scene.pages.map(page => (
-                            <Page
-                                key={`page:${page.id}`}
-                                title={page.title}
-                                active={page.id === activePage.id}
-                                editable={props.editable}
-                                moving={sortedPages[page.id].selected}
-                                style={{
-                                    top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
-                                    transform: sortedPages[page.id].selected ? `translate(0px, ${sortedPages[page.id].y}px)` : null,
-                                    zIndex: sortedPages[page.id].selected ? 100 : 0,
-                                }}
-                                onClick={() => {
-                                    props.onChangeActivePage(page);
-                                }}
-                                onDelete={() => {
-                                    props.onPageDelete(page);
-                                }}
-                                onDuplicate={() => {
-                                    props?.onPageDuplicate?.(page);
-                                }}
-                                onRename={() => {
-                                    props?.onPageRename?.(page);
-                                }}
-                                onMove={event => {
-                                    handlePageMove(event, page);
-                                }}
-                            />
-                        ))}
-                    </div>
-                )}
-                {view === PAGES_VIEW.GALLERY && (
-                    <div className="grid grid-cols-1 gap-1">
-                        {scene.pages.map(page => (
-                            <PageGalleryItem
-                                key={`page:${page.id}`}
-                                page={page}
-                                active={page.id === activePage.id}
-                                onClick={() => {
-                                    props.onChangeActivePage(page);
-                                }}
-                            />
-                        ))}
-                    </div>
-                )}
+                <div className="relative w-full" style={{height: scene.pages.length * PAGES_ITEM_HEIGHT}}>
+                    {scene.pages.map(page => (
+                        <Page
+                            key={`page:${page.id}`}
+                            title={page.title}
+                            readonly={page.readonly}
+                            active={page.id === activePage.id}
+                            editable={props.editable}
+                            moving={sortedPages[page.id].selected}
+                            style={{
+                                top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
+                                transform: sortedPages[page.id].selected ? `translate(0px, ${sortedPages[page.id].y}px)` : null,
+                                zIndex: sortedPages[page.id].selected ? 100 : 0,
+                            }}
+                            onClick={() => {
+                                props.onChangeActivePage(page);
+                            }}
+                            onDelete={() => {
+                                props.onPageDelete(page);
+                            }}
+                            onDuplicate={() => {
+                                props?.onPageDuplicate?.(page);
+                            }}
+                            onConfigure={() => {
+                                props?.onPageConfigure?.(page);
+                            }}
+                            onMove={event => {
+                                handlePageMove(event, page);
+                            }}
+                        />
+                    ))}
+                </div>
             </div>
         </Panel>
     );

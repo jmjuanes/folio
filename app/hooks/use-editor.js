@@ -54,7 +54,7 @@ const createInitialEditorState = (props, scene) => {
         // @description state for dialogs
         exportVisible: false,
         pagesVisible: false,
-        pageRenameVisible: false,
+        pageSettingsVisible: false,
         layersVisible: false,
         libraryVisible: false,
         libraryCreateVisible: false,
@@ -524,7 +524,7 @@ export const useEditor = props => {
 
             // @description double click 
             onDoubleClickElement: event => {
-                if (!editorState.action && !editorState.tool) {
+                if (!scene.page.readonly && !editorState.action && !editorState.tool) {
                     // board.clearSelectedElements();
                     const element = scene.getElement(event.element);
                     // Check for entering in group edition mode
@@ -544,6 +544,9 @@ export const useEditor = props => {
             
             // @description handle key down
             onKeyDown: event => {
+                if (scene.page.readonly) {
+                    return null;
+                }
                 const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
                 // Check if we are in an input target and input element is active
                 if (isInputTarget(event)) {
@@ -697,7 +700,7 @@ export const useEditor = props => {
 
             // @description handle paste event
             onPaste: event => {
-                if (!isInputTarget(event)) {
+                if (!isInputTarget(event) && !scene.page.readonly) {
                     scene.page.activeGroup = null;
                     scene.pasteElementsFromClipboard(event).then(() => {
                         dispatchChange();

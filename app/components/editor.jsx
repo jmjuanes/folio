@@ -32,7 +32,7 @@ import {Screenshot} from "./screenshot.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
 import {LibraryAddDialog} from "./dialogs/library-add.jsx";
 import {LibraryExportDialog} from "./dialogs/library-export.jsx";
-import {PageRenameDialog} from "./dialogs/page-rename.jsx";
+import {PageConfigureDialog} from "./dialogs/page-configure.jsx";
 import {PreferencesDialog} from "./dialogs/preferences.jsx";
 import {WelcomeDialog} from "./dialogs/welcome.jsx";
 import {ToolsPanel} from "./panels/tools.jsx";
@@ -44,6 +44,7 @@ import {LayersPanel} from "./panels/layers.jsx";
 import {LibraryPanel} from "./panels/library.jsx";
 import {SettingsPanel} from "./panels/settings.jsx";
 import {MinimapPanel} from "./panels/minimap.jsx";
+import {Alert} from "./ui/alert.jsx";
 import {SceneProvider, useScene} from "../contexts/scene.jsx";
 import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
@@ -183,6 +184,14 @@ const EditorWithScene = props => {
         }
     }, [scene?.page?.elements?.length]);
 
+    // Hook to reset the action and tool when we change the active page
+    React.useEffect(() => {
+        const action = editor.state.action;
+        if (scene.page.readonly && action !== ACTIONS.MOVE && action !== ACTIONS.POINTER && action !== ACTIONS.SCREENSHOT) {
+            handleToolOrActionChange(null, ACTIONS.MOVE);
+        }
+    }, [scene.page.id, scene.page.readonly, editor.state.action]);
+
     return (
         <div className={themed("relative overflow-hidden h-full w-full select-none", "editor")}>
             <Canvas
@@ -299,6 +308,10 @@ const EditorWithScene = props => {
                         action={editor.state.action}
                         tool={editor.state.tool}
                         toolLocked={editor.state.toolLocked}
+                        readonly={!!scene.page.readonly}
+                        showSelect={true}
+                        showTools={true}
+                        showLock={true}
                         onMoveClick={() => {
                             handleToolOrActionChange(null, ACTIONS.MOVE);
                         }}
@@ -346,7 +359,7 @@ const EditorWithScene = props => {
                     />
                 </div>
             )}
-            {editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
+            {!scene.page.readonly && editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
                         <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
@@ -361,7 +374,7 @@ const EditorWithScene = props => {
                     )}
                 </React.Fragment>
             )}
-            {editor.state.layersVisible && !isScreenshot && (
+            {!scene.page.readonly && editor.state.layersVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                     <LayersPanel
                         key={`layers:${scene.id || ""}:${scene.page.id || ""}`}
@@ -391,7 +404,7 @@ const EditorWithScene = props => {
                     />
                 </div>
             )}
-            {editor.state.libraryVisible && !isScreenshot && (
+            {!scene.page.readonly && editor.state.libraryVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                     <LibraryPanel
                         key={`library:${scene.id || ""}`}
@@ -470,9 +483,9 @@ const EditorWithScene = props => {
                             editor.dispatchChange();
                             editor.update();
                         }}
-                        onPageRename={page => {
+                        onPageConfigure={page => {
                             editor.state.selectedPage = page;
-                            editor.state.pageRenameVisible = true;
+                            editor.state.pageConfigureVisible = true;
                             editor.update();
                         }}
                         onPageDuplicate={page => {
@@ -565,7 +578,7 @@ const EditorWithScene = props => {
                                 </div>
                                 <Island.Button
                                     icon="trash"
-                                    disabled={scene.getElements().length === 0}
+                                    disabled={scene.page.readonly || scene.getElements().length === 0}
                                     onClick={() => {
                                         return showConfirm({
                                             title: "Clear Page",
@@ -611,8 +624,8 @@ const EditorWithScene = props => {
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-20 flex gap-2">
                         <div className="flex relative">
                             <HistoryPanel
-                                undoDisabled={!scene.canUndo()}
-                                redoDisabled={!scene.canRedo()}
+                                undoDisabled={scene.page.readonly || !scene.canUndo()}
+                                redoDisabled={scene.page.readonly || !scene.canRedo()}
                                 onUndoClick={() => {
                                     scene.undo();
                                     editor.dispatchChange();
@@ -658,7 +671,8 @@ const EditorWithScene = props => {
                             <Island>
                                 <Island.Button
                                     icon="edit"
-                                    active={!editor.state.layersVisible && !editor.state.libraryVisible}
+                                    active={!scene.page.readonly && !editor.state.layersVisible && !editor.state.libraryVisible}
+                                    disabled={scene.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
                                         editor.state.libraryVisible = false;
@@ -667,7 +681,8 @@ const EditorWithScene = props => {
                                 />
                                 <Island.Button
                                     icon="stack"
-                                    active={editor.state.layersVisible}
+                                    active={!scene.page.readonly && editor.state.layersVisible}
+                                    disabled={scene.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = true;
                                         editor.state.libraryVisible = false;
@@ -676,7 +691,8 @@ const EditorWithScene = props => {
                                 />
                                 <Island.Button
                                     icon="album"
-                                    active={editor.state.libraryVisible}
+                                    active={!scene.page.readonly && editor.state.libraryVisible}
+                                    disabled={scene.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
                                         editor.state.libraryVisible = true;
@@ -687,6 +703,13 @@ const EditorWithScene = props => {
                         </div>
                         {props.headerRightContent}
                     </div>
+                    {scene.page.readonly && (
+                        <div className="absolute top-0 left-half pt-4 z-30 flex gap-2 translate-x-half-n pointer-events-none">
+                            <Alert variant="warning" icon="lock">
+                                This page is on <b>Read-Only</b> mode.
+                            </Alert>
+                        </div>
+                    )}
                 </React.Fragment>
             )}
             {editor.state.action === ACTIONS.SCREENSHOT && (
@@ -775,18 +798,32 @@ const EditorWithScene = props => {
                     }}
                 />
             )}
-            {editor.state.pageRenameVisible && (
-                <PageRenameDialog
+            {editor.state.pageConfigureVisible && (
+                <PageConfigureDialog
+                    page={editor.state.selectedPage?.id}
                     title={editor.state.selectedPage?.title || ""}
-                    onSubmit={title => {
-                        editor.state.selectedPage.title = title;
+                    onSubmit={data => {
+                        Object.assign(editor.state.selectedPage, data);
+                        // Check if the edited page is the active page
+                        if (scene.page.id === editor.state.selectedPage.id) {
+                            editor.state.tool = null;
+                            editor.state.contextMenu = false;
+                            if (editor.state.action !== ACTIONS.MOVE && editor.state.action !== ACTIONS.POINTER) {
+                                editor.state.action = ACTIONS.MOVE;
+                            }
+                            // Reset selected elements and editing state
+                            scene.getElements().forEach(element => {
+                                element.selected = false;
+                                element.editing = false;
+                            });
+                        }
                         editor.state.selectedPage = null; // reset selected page
-                        editor.state.pageRenameVisible = false;
+                        editor.state.pageConfigureVisible = false;
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onCancel={() => {
-                        editor.state.pageRenameVisible = false;
+                        editor.state.pageConfigureVisible = false;
                         editor.state.selectedPage = null;
                         editor.update();
                     }}
