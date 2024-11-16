@@ -1,3 +1,24 @@
+# v0.24.0 (November 16, 2024) Minimap and Read-Only Pages
+
+> This update introduces the **Minimap** for effortless navigation across your board and the ability to set pages as **Read-Only**, ensuring your work stays protected. We have also improved the **Laser Pointer Tool** to support multiple paths, and added a new button to clear the content of the current page.
+
+## Added Minimap
+
+We have added a **Minimap** to help you navigate your infinite canvas effortlessly! The minimap gives you a bird’s-eye view of your board. You can enable this feature by going to **Menu → Preferences → Show Minimap**.
+
+## Allow to set Pages as Read-Only 
+
+Need to prevent changes to specific pages? You can now set any page as **Read-Only**! This feature is perfect for locking finalized designs or protecting key content from accidental edits. Simply go to **Pages Panel → Configure Page → Set as Read-Only** to enable this.
+
+## New Clear Page Button
+
+We have added a convenient new Clear Page button to the main menu, allowing you to quickly remove all content from the current page with just one click. Perfect for starting fresh without manually deleting elements.
+
+## Laser Pointer Tool Improvements
+
+We have enhanced the **Laser Pointer Tool** to allow multiple paths during a single session.
+
+
 # v0.23.0 (October 28, 2024) Enhanced Precision and New Library Feature
 
 > This release introduces the Library feature, allowing users to manage, export, and import design elements effortlessly. Additionally, new Shift key functionalities enable users to preserve aspect ratios while resizing and snap lines and arrows to 15° increments. We have also improved text elements to prevent word breaks and maintain their aspect ratio during resizing.
