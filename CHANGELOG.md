@@ -1,6 +1,6 @@
 # v0.24.0 (November 16, 2024) Minimap and Read-Only Pages
 
-> This update introduces the **Minimap** for effortless navigation across your board and the ability to set pages as **Read-Only**, ensuring your work stays protected. We have also improved the **Laser Pointer Tool** to support multiple paths, and added a new button to clear the content of the current page.
+> This update introduces the Minimap for effortless navigation across your board and the ability to set pages as Read-Only, ensuring your work stays protected. We have also improved the Laser Pointer Tool to support multiple paths, and added a new button to clear the content of the current page.
 
 ## Added Minimap
 
