@@ -86,7 +86,7 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
                 <BarsIcon />
             </div>
             <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-6" onClick={onClick}>
-                <div className="font-medium text-sm w-content max-w-32 truncate leading-none" title={title}>
+                <div className="font-medium text-sm w-content max-w-32 truncate" title={title}>
                     <span>{title}</span>
                 </div>
                 {props.readonly && (
