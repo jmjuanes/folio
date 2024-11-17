@@ -195,6 +195,7 @@ const createPage = (page, index = 0) => {
     return {
         id: page?.id || generateRandomId(),
         title: page?.title || `Page ${index + 1}`,
+        description: page?.description || "",
         elements: (page?.elements || []).map(element => ({
             ...element,
             [FIELDS.SELECTED]: false,
@@ -279,6 +280,7 @@ export const createScene = initialData => {
                 pages: scene.pages.map(page => ({
                     id: page.id,
                     title: page.title,
+                    description: page.description || "",
                     elements: page.elements,
                     readonly: !!page.readonly,
                 })),

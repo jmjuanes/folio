@@ -16,6 +16,12 @@ const pageEditFields = {
         placeholder: "Untitled Page",
         helper: "Give your page a name.",
     },
+    description: {
+        type: FORM_OPTIONS.TEXTAREA,
+        title: "Description",
+        // placeholder: "Add a description",
+        helper: "Add a description to your page.",
+    },
     readonly: {
         type: FORM_OPTIONS.CHECKBOX,
         title: "Read-Only",
@@ -29,6 +35,7 @@ export const PageConfigureDialog = props => {
     const page = scene.getPage(props.page);
     const [data, setData] = useFormData({
         title: page.title,
+        description: page.description,
         readonly: !!page.readonly,
     });
     const isSubmitEnabled = !!data.title;

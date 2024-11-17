@@ -85,6 +85,7 @@ export const FORM_OPTIONS = {
     SEPARATOR: "separator",
     IMAGE_SELECT: "image-select",
     TEXT: "text",
+    TEXTAREA: "textarea",
     CUSTOM: "custom",
 };
 
