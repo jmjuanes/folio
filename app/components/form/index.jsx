@@ -210,6 +210,15 @@ const optionTypes = {
             onChange={event => props.onChange(event.target.value)}
         />
     ),
+    [FORM_OPTIONS.TEXTAREA]: props => (
+        <textarea
+            className={themed("w-full px-2 py-1 rounded-md outline-0 text-xs", "form.text.input")}
+            defaultValue={props.value}
+            placeholder={props.placeholder}
+            rows={props.rows ?? 3}
+            onChange={event => props.onChange(event.target.value)}
+        />
+    ),
     [FORM_OPTIONS.CUSTOM]: props => {
         return props.render?.(props);
     },
