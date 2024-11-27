@@ -166,6 +166,7 @@ export const elementsConfig = {
                 textFont: values?.textFont ?? DEFAULTS.TEXT_FONT,
                 textSize: values?.textSize ?? DEFAULTS.TEXT_SIZE,
                 textAlign: values?.textAlign ?? DEFAULTS.TEXT_ALIGN,
+                [FIELDS.TEXT_VERTICAL_ALIGN]: values?.[FIELDS.TEXT_VERTICAL_ALIGN] ?? DEFAULTS.TEXT_VERTICAL_ALIGN,
                 textWidth: GRID_SIZE,
                 textHeight: GRID_SIZE,
             };
