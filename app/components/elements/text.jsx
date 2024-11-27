@@ -4,9 +4,21 @@ import {
     FONT_FACES,
     GRID_SIZE,
     TEXT_ALIGNS,
+    TEXT_VERTICAL_ALIGNS,
 } from "../../constants.js";
 import {measureText} from "../../utils/math.js";
 import {EditableText} from "./editable-text.jsx";
+
+const getTextVerticalPosition = (align, height, textHeight) => {
+    if (align === TEXT_VERTICAL_ALIGNS.TOP) {
+        return (-1) * height / 2;
+    }
+    if (align === TEXT_VERTICAL_ALIGNS.BOTTOM) {
+        return (height / 2) - textHeight;
+    }
+    // Other case, align to center
+    return (-1) * textHeight / 2;
+};
 
 export const TextElement = props => {
     const padding = props.padding ?? 0;
@@ -38,9 +50,9 @@ export const TextElement = props => {
                 editing={props.editing}
                 autofocus={true}
                 x={(-1) * width / 2}
-                y={Math.max(-height / 2, (-1) * (props.verticalAlign === "top" ? height : props.textHeight) / 2)}
+                y={getTextVerticalPosition(props.textVerticalAlign, height, props.textHeight)}
                 width={width}
-                height={Math.min(props.textHeight, height)}
+                height={props.textHeight}
                 text={props.text || ""}
                 textFont={textFont}
                 textSize={textSize}
