@@ -13,6 +13,7 @@ import {
     NOTE_PADDING,
     NOTE_TEXT_FONT,
     NOTE_TEXT_SIZE,
+    TEXT_VERTICAL_ALIGNS,
     TRANSPARENT,
     BLACK,
     ASSETS,
@@ -114,6 +115,11 @@ export const migrateElements = (elements, version) => {
                 // Arrows now have an 'arrowShape' field
                 if (element.type === ELEMENTS.ARROW) {
                     element[FIELDS.ARROW_SHAPE] = element[FIELDS.ARROW_SHAPE] ?? ARROW_SHAPES.LINE;
+                }
+            case "12":
+                // add text vertical align field to shape elements
+                if (element.type === ELEMENTS.SHAPE) {
+                    element[FIELDS.TEXT_VERTICAL_ALIGN] = element[FIELDS.TEXT_VERTICAL_ALIGN] ?? TEXT_VERTICAL_ALIGNS.MIDDLE;
                 }
         }
         return element;

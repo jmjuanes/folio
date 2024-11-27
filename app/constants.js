@@ -1,6 +1,6 @@
 import {STICKYNOTE_COLORS} from "./utils/colors.js";
 
-export const VERSION = "12";
+export const VERSION = "13";
 
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
@@ -249,6 +249,11 @@ export const TEXT_ALIGNS = {
     RIGHT: "right",
     JUSTIFY: "justify",
 };
+export const TEXT_VERTICAL_ALIGNS = {
+    TOP: "top",
+    MIDDLE: "middle",
+    BOTTOM: "bottom",
+};
 
 // Allowed stroke styles
 export const STROKES = {
@@ -269,6 +274,7 @@ export const DEFAULTS = {
     TEXT_SIZE: TEXT_SIZES.MEDIUM,
     TEXT_COLOR: BLACK,
     TEXT_ALIGN: TEXT_ALIGNS.CENTER,
+    TEXT_VERTICAL_ALIGN: TEXT_VERTICAL_ALIGNS.MIDDLE,
     SHAPE: SHAPES.RECTANGLE,
     ARROW_SHAPE: ARROW_SHAPES.LINE,
     ARROWHEAD_START: ARROWHEADS.NONE,
@@ -305,6 +311,7 @@ export const FIELDS = {
     TEXT_FONT: "textFont",
     TEXT_SIZE: "textSize",
     TEXT_ALIGN: "textAlign",
+    TEXT_VERTICAL_ALIGN: "textVerticalAlign",
     SHAPE: "shape",
     ARROW_SHAPE: "arrowShape",
     START_ARROWHEAD: "startArrowhead",
