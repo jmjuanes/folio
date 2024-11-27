@@ -26,9 +26,11 @@ Island.Button = props => {
     return (
         <div className={classList} onClick={handleClick}>
             <div className="flex items-center gap-1">
-                <div className="flex items-center text-xl">
-                    {renderIcon(props.icon)}
-                </div>
+                {props.icon && (
+                    <div className="flex items-center text-xl">
+                        {renderIcon(props.icon)}
+                    </div>
+                )}
                 {props.text && (
                     <div className="flex items-center text-sm font-medium">
                         {props.text}
