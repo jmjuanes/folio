@@ -1,5 +1,8 @@
 import React from "react";
 import {
+    AlignBottomIcon,
+    AlignMiddleIcon,
+    AlignTopIcon,
     BanIcon,
     BringForwardIcon,
     BringFrontIcon,
@@ -26,6 +29,7 @@ import {
     TEXT_SIZES,
     FONT_FACES,
     TEXT_ALIGNS,
+    TEXT_VERTICAL_ALIGNS,
     STROKES,
     STROKE_WIDTHS,
     OPACITY_MIN,
@@ -204,6 +208,16 @@ const styleSections = {
                     {value: TEXT_ALIGNS.JUSTIFY, icon: TextJustifyIcon()},
                 ],
                 test: data => typeof data[FIELDS.TEXT_ALIGN] !== "undefined",
+            },
+            [FIELDS.TEXT_VERTICAL_ALIGN]: {
+                title: "Text vertical align",
+                type: FORM_OPTIONS.SELECT,
+                values: [
+                    {value: TEXT_VERTICAL_ALIGNS.TOP, icon: AlignTopIcon()},
+                    {value: TEXT_VERTICAL_ALIGNS.MIDDLE, icon: AlignMiddleIcon()},
+                    {value: TEXT_VERTICAL_ALIGNS.BOTTOM, icon: AlignBottomIcon()},
+                ],
+                test: data => typeof data[FIELDS.TEXT_VERTICAL_ALIGN] !== "undefined",
             },
         },
     },
