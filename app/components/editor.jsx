@@ -621,7 +621,7 @@ const EditorWithScene = props => {
                         </div>
                         {props.headerLeftContent}
                     </div>
-                    <div className="absolute top-0 right-0 pt-4 pr-4 z-20 flex gap-2">
+                    <div className="absolute top-0 right-0 pt-4 pr-4 z-40 flex gap-2">
                         <div className="flex relative">
                             <HistoryPanel
                                 undoDisabled={scene.page.readonly || !scene.canUndo()}
@@ -649,6 +649,10 @@ const EditorWithScene = props => {
                         <div className="flex relative">
                             <ZoomPanel
                                 zoom={scene.getZoom()}
+                                onZoomResetClick={() => {
+                                    scene.resetZoom();
+                                    editor.update();
+                                }}
                                 onZoomInClick={() => {
                                     scene.setZoom(scene.page.zoom + ZOOM_STEP);
                                     editor.update();
