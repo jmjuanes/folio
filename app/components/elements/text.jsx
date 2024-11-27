@@ -10,14 +10,18 @@ import {measureText} from "../../utils/math.js";
 import {EditableText} from "./editable-text.jsx";
 
 const getTextVerticalPosition = (align, height, textHeight) => {
+    // align text to top
     if (align === TEXT_VERTICAL_ALIGNS.TOP) {
         return (-1) * height / 2;
     }
-    if (align === TEXT_VERTICAL_ALIGNS.BOTTOM) {
+    // align text to bottom
+    else if (align === TEXT_VERTICAL_ALIGNS.BOTTOM) {
         return (height / 2) - textHeight;
     }
     // Other case, align to center
-    return (-1) * textHeight / 2;
+    else {
+        return (-1) * textHeight / 2;
+    }
 };
 
 export const TextElement = props => {
