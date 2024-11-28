@@ -11,7 +11,6 @@ export const ZoomPanel = props => {
         <Island>
             <Island.Button
                 icon="zoom-out"
-                roundedEnd={false}
                 disabled={props.zoom <= ZOOM_MIN}
                 onClick={props.onZoomOutClick}
             />
@@ -38,7 +37,6 @@ export const ZoomPanel = props => {
             </div>
             <Island.Button
                 icon="zoom-in"
-                roundedStart={false}
                 disabled={ZOOM_MAX <= props.zoom}
                 onClick={props.onZoomInClick}
             />
