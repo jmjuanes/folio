@@ -1125,7 +1125,7 @@ export const createScene = initialData => {
 
         // @description set current zoom
         setZoom: (value = ZOOM_DEFAULT) => {
-            const newZoom = parseZoomValue(value);
+            const newZoom = Math.round(parseZoomValue(value, true) * 10) / 10;
             const {translateX, translateY} = getTranslateCoordinatesForNewZoom(newZoom, {
                 width: scene.width,
                 height: scene.height,
