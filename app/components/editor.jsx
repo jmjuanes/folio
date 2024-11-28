@@ -653,6 +653,14 @@ const EditorWithScene = props => {
                                     scene.resetZoom();
                                     editor.update();
                                 }}
+                                onZoomToFitClick={() => {
+                                    scene.fitZoomToSelection();
+                                    editor.update();
+                                }}
+                                onZoomToSelectionClick={() => {
+                                    scene.fitZoomToSelection(selectedElements);
+                                    editor.update();
+                                }}
                                 onZoomInClick={() => {
                                     scene.setZoom(scene.page.zoom + ZOOM_STEP);
                                     editor.update();
