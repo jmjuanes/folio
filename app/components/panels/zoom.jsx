@@ -26,7 +26,7 @@ export const ZoomPanel = props => {
                         <Dropdown.Icon icon="search-check" />
                         <span>Zoom to 100%</span>
                     </Dropdown.Item>
-                    <Dropdown.Item disabled={true} onClick={props.onZoomToFitClick}>
+                    <Dropdown.Item disabled={scene.page.elements.length === 0} onClick={props.onZoomToFitClick}>
                         <Dropdown.Icon icon="arrows-maximize" />
                         <span>Zoom to fit</span>
                     </Dropdown.Item>
