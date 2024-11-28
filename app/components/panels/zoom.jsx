@@ -45,9 +45,3 @@ export const ZoomPanel = props => {
         </Island>
     );
 };
-
-ZoomPanel.defaultProps = {
-    zoom: 1,
-    onZoomInClick: null,
-    onZoomOutClick: null,
-};
