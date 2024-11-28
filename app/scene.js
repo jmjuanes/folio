@@ -29,6 +29,7 @@ import {
 import {
     parseZoomValue,
     getTranslateCoordinatesForNewZoom,
+    getZoomToFitElements,
 } from "./zoom.js";
 
 // @private clipboard key
@@ -1124,7 +1125,7 @@ export const createScene = initialData => {
 
         // @description set current zoom
         setZoom: (value = ZOOM_DEFAULT) => {
-            const newZoom = parseZoomValue(value);
+            const newZoom = Math.round(parseZoomValue(value, true) * 10) / 10;
             const {translateX, translateY} = getTranslateCoordinatesForNewZoom(newZoom, {
                 width: scene.width,
                 height: scene.height,
@@ -1140,6 +1141,20 @@ export const createScene = initialData => {
 
         // @description reset zoom to the default value
         resetZoom: () => scene.setZoom(ZOOM_DEFAULT),
+
+        // @description fit zoom to the provided selection
+        fitZoomToSelection: (elements = []) => {
+            const selection = elements.length > 0 ? elements : scene.page.elements;
+            if (selection.length > 0) {
+                const {zoom, translateX, translateY} = getZoomToFitElements(selection, {
+                    width: scene.width,
+                    height: scene.height,
+                });
+                scene.page.zoom = zoom;
+                scene.page.translateX = translateX;
+                scene.page.translateY = translateY;
+            }
+        },
 
         //
         // Scene size api
