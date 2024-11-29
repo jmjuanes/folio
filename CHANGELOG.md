@@ -1,3 +1,26 @@
+# v0.25.0 (November 29, 2024) Smarter zooming and better text control
+
+> This update introduces vertical text alignment inside shapes for more design flexibility and enhanced zooming options to reset, fit elements, or improve your view effortlessly. Plus, we have fixed minimap viewport issues for a smoother navigation experience.
+
+## Vertical text alignment in shapes
+
+We have added the ability to **align text vertically inside shapes**. You can now choose between **top**, **middle**, or **bottom** alignment to ensure your designs look exactly how you want them.
+
+## Enhanced Zooming
+
+Zooming just got smarter! We have added new options to make navigation and presentation more seamless:  
+
+- Easily **reset the zoom to 100%** with a single click.
+- Use the new **Zoom to fit** option to adjust the zoom to fit all elements on the canvas.
+- Focus on specific elements with the **Zoom to selection** feature, perfectly centering your view.
+
+These updates make adjusting your workspace faster and more intuitive.
+
+## Bug Fixes
+
+We have fixed the size and position of the viewport in the minimap when zooming is applied to the board, ensuring an accurate representation of your current view.
+
+
 # v0.24.0 (November 16, 2024) Minimap and Read-Only Pages
 
 > This update introduces the Minimap for effortless navigation across your board and the ability to set pages as Read-Only, ensuring your work stays protected. We have also improved the Laser Pointer Tool to support multiple paths, and added a new button to clear the content of the current page.
