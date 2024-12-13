@@ -143,7 +143,9 @@ export const useEditor = props => {
         let activeSnapEdges = [];
         let activeElement = null;
         let isDragged = false, isResized = false, isPrevSelected = false;
-        let lastTranslateX = 0, lastTranslateY = 0;
+        let lastTranslateX = 0, lastTranslateY = 0, lastZoom = 1;
+        let lastPinchDiff = -1;
+        let lastAction = null;
 
         // Editor events
         const editorEvents = {
@@ -201,6 +203,10 @@ export const useEditor = props => {
             onPointerDown: event => {
                 isDragged = false;
                 isResized = false;
+                lastTranslateX = scene.page.translateX;
+                lastTranslateY = scene.page.translateY;
+                lastZoom = scene.page.zoom;
+                lastPinchDiff = -1; // reset pinch diff
                 const selectedElements = scene.getSelection();
                 // First we need to check if we are in a edit action
                 if (editorState.action === ACTIONS.EDIT) {
@@ -259,10 +265,8 @@ export const useEditor = props => {
                     scene.clearSelection();
                 }
                 // We need to update the last translated point before start moving the board
-                else if (editorState.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.page.translateX;
-                    lastTranslateY = scene.page.translateY;
-                }
+                // else if (editorState.action === ACTIONS.MOVE) {
+                // }
                 // else if (editorState.action === ACTIONS.ERASE) {
                 //     editorState.erase = {
                 //         x: event.originalX,
@@ -279,6 +283,7 @@ export const useEditor = props => {
                         snapEdges = getElementsSnappingEdges(scene.getElements());
                     }
                 }
+                lastAction = editorState.action;
                 update();
             },
             onPointerMove: event => {
@@ -406,9 +411,16 @@ export const useEditor = props => {
             onPointerUp: event => {
                 editorState.visibleSnapEdges = [];
                 editorState.currentState = STATES.IDLE;
+                // update translate and zoom
+                // lastTranslateX = scene.page.translateX;
+                // lastTranslateY = scene.page.translateY;
+                // lastZoom = scene.page.zoom;
                 if (editorState.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.page.translateX;
-                    lastTranslateY = scene.page.translateY;
+                    // check if we have to reset the current action
+                    if (event.pinch && editorState.action !== lastAction) {
+                        editorState.action = lastAction
+                    }
+                    // force an update
                     return update();
                 }
                 else if (editorState.action === ACTIONS.ERASE) {
@@ -504,7 +516,7 @@ export const useEditor = props => {
                     isDragged = false;
                     isResized = false;
                 }
-                else if (editorState.action === ACTIONS.SELECT) {
+                else if (editorState.action === ACTIONS.SELECT && !event.pinch) {
                     const selection = editorState.selection;
                     scene.setSelection({
                         x1: Math.min(selection.x1, selection.x2),
@@ -519,6 +531,18 @@ export const useEditor = props => {
                 // }
                 editorState.selection = null;
                 editorState.action = null;
+                update();
+            },
+
+            // @descript hand epinch
+            onPinch: event => {
+                if (lastPinchDiff > 0) {
+                    const sign = (event.pinchDiff > lastPinchDiff) ? +1 : -1; // zoom-in/zoom-out
+                    const delta = sign * event.pinchDiff / 100; // calculate delta
+                    scene.page.zoom = lastZoom + delta;
+                }
+                lastPinchDiff = event.pinchDiff; // update pinch diff
+                editorState.action = ACTIONS.MOVE; // change action to move
                 update();
             },
 
