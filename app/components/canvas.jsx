@@ -23,11 +23,13 @@ import {Grid} from "./grid.jsx";
 import {ObjectDimensions} from "./object-dimensions.jsx";
 import {clearFocus} from "../utils/dom.js";
 import {preventDefault, isTouchOrPenEvent} from "../utils/events.js";
+import {hypotenuse} from "../utils/math.js";
 
 const delay = (timeout, cb) => window.setTimeout(cb, timeout);
 
 export const Canvas = props => {
     const canvasRef = React.useRef(null);
+    const eventsCache = React.useRef([]);
     const longPressTimerRef = React.useRef(0);
     const clearLongPressTimer = React.useCallback(() => window.clearTimeout(longPressTimerRef.current), []);
     const [canvasSize, setCanvasSize] = React.useState([100, 100]);
@@ -64,6 +66,7 @@ export const Canvas = props => {
         const {top, left} = canvasRef.current.getBoundingClientRect();
         const eventInfo = {
             drag: false,
+            pinch: false,
             originalX: (event.nativeEvent.clientX - left - props.translateX) / props.zoom,
             originalY: (event.nativeEvent.clientY - top - props.translateY) / props.zoom,
             shiftKey: event.nativeEvent.shiftKey,
@@ -80,6 +83,10 @@ export const Canvas = props => {
             pointListener(eventInfo);
         }
 
+        // Save this event in the events cache
+        eventsCache.current.push(event);
+        let eventIndex = eventsCache.current.length - 1;
+
         // Emit pointer down event
         props.onPointerDown?.({...eventInfo});
 
@@ -87,6 +94,31 @@ export const Canvas = props => {
         const handlePointerMove = event => {
             clearLongPressTimer();
             event.preventDefault();
+            // check the number of events in cache
+            if (eventsCache.current.length === 2) {
+                // update the saved event
+                // for (let i = 0; i < eventsCache.current.length; i++) {
+                //     if (event.pointerId === eventsCache.current[i]) {
+                //         eventsCache.current[i] = event;
+                //         break;
+                //     }
+                // }
+                eventsCache.current[eventIndex] = event;
+                // execute the onPinchZoom event
+                return props.onPinch(Object.assign(eventInfo, {
+                    pinch: true,
+                    currentEvent: event,
+                    currentX: (event.clientX - left - props.translateX) / props.zoom,
+                    currentY: (event.clientY - top - props.translateY) / props.zoom,
+                    dx: (event.clientX - eventInfo.originalEvent.clientX) / props.zoom,
+                    dy: (event.clientY - eventInfo.originalEvent.clientY) / props.zoom,
+                    pinchDiff: hypotenuse(
+                        eventsCache.current[1].clientX - eventsCache.current[0].clientX,
+                        eventsCache.cirrent[1].clientY - eventsCache.current[0].clientY,
+                    ),
+                }));
+            }
+            // execute pointer move event
             props.onPointerMove?.(Object.assign(eventInfo, {
                 drag: true,
                 currentEvent: event,
@@ -102,6 +134,7 @@ export const Canvas = props => {
         // Handle pointer up
         const handlePointerUp = event => {
             clearLongPressTimer();
+            eventsCache.current = []; // reset events cache
             event.preventDefault();
             props.onPointerUp?.(eventInfo);
 
