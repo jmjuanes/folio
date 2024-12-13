@@ -537,12 +537,14 @@ export const useEditor = props => {
             // @descript hand epinch
             onPinch: event => {
                 if (lastPinchDiff > 0) {
-                    const sign = (event.pinchDiff > lastPinchDiff) ? +1 : -1; // zoom-in/zoom-out
-                    const delta = sign * event.pinchDiff / 100; // calculate delta
-                    scene.page.zoom = lastZoom + delta;
+                    // const sign = (event.pinchDiff > lastPinchDiff) ? +1 : -1; // zoom-in/zoom-out
+                    const delta = event.pinchDiff - lastPinchDiff; // calculate delta
+                    scene.page.zoom = lastZoom + (delta / 1000);
                 }
-                lastPinchDiff = event.pinchDiff; // update pinch diff
-                editorState.action = ACTIONS.MOVE; // change action to move
+                else {
+                    lastPinchDiff = event.pinchDiff; // update pinch diff
+                    // editorState.action = ACTIONS.MOVE; // change action to move
+                }
                 update();
             },
 

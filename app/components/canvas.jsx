@@ -53,7 +53,7 @@ export const Canvas = props => {
             return;
         }
         // Register timer function
-        if (isTouchOrPenEvent(event)) {
+        if (isTouchOrPenEvent(event) && eventsCache.current.length === 0) {
             longPressTimerRef.current = delay(props.longPressDelay, () => {
                 document.removeEventListener("pointermove", handlePointerMove);
                 document.removeEventListener("pointerup", handlePointerUp);
@@ -78,14 +78,16 @@ export const Canvas = props => {
             eventInfo[source] = event.nativeEvent.target.dataset[source];
         }
 
+        // Save this event in the events cache
+        eventsCache.current.push(event);
+        if (eventsCache.current.length > 1) {
+            return;
+        }
+
         // Call the listener provided as an argument
         if (typeof pointListener === "function") {
             pointListener(eventInfo);
         }
-
-        // Save this event in the events cache
-        eventsCache.current.push(event);
-        let eventIndex = eventsCache.current.length - 1;
 
         // Emit pointer down event
         props.onPointerDown?.({...eventInfo});
@@ -96,6 +98,7 @@ export const Canvas = props => {
             event.preventDefault();
             // check the number of events in cache
             if (eventsCache.current.length === 2) {
+                eventsCache.current[0] = event;
                 // update the saved event
                 // for (let i = 0; i < eventsCache.current.length; i++) {
                 //     if (event.pointerId === eventsCache.current[i]) {
@@ -103,7 +106,6 @@ export const Canvas = props => {
                 //         break;
                 //     }
                 // }
-                eventsCache.current[eventIndex] = event;
                 // execute the onPinchZoom event
                 return props.onPinch(Object.assign(eventInfo, {
                     pinch: true,
@@ -114,7 +116,7 @@ export const Canvas = props => {
                     dy: (event.clientY - eventInfo.originalEvent.clientY) / props.zoom,
                     pinchDiff: hypotenuse(
                         eventsCache.current[1].clientX - eventsCache.current[0].clientX,
-                        eventsCache.cirrent[1].clientY - eventsCache.current[0].clientY,
+                        eventsCache.current[1].clientY - eventsCache.current[0].clientY,
                     ),
                 }));
             }
