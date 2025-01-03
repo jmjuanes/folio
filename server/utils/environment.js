@@ -1,6 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const dotenv = require("dotenv");
+import fs from "node:fs";
+import path from "node:path";
+import dotenv from "dotenv";
 
 // Utility method to read the provided env
 const parseEnvFile = envPath => {
@@ -22,7 +22,7 @@ environments.forEach(name => {
 });
 
 // Export parsed env
-module.exports = {
+export default {
     ...parseEnvFile(path.resolve(process.cwd(), ".env")),
     ...environment,
 };
