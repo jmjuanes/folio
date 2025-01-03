@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
     <link rel="stylesheet" href="./low.css">
+    {{#each assets.css}}
+    <link rel="stylesheet" href="{{.}}" />
+    {{/each}}
     <title>{{page.data.title}} | {{site.title}}</title>
     <style>
         .font-brand {
@@ -137,5 +140,8 @@
             element.addEventListener("click", () => toggleMenu());
         });
     </script>
+    {{#each assets.js}}
+    <script defer src="{{.}}"></script>
+    {{/each}}
 </body>
 </html>

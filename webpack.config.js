@@ -1,16 +1,48 @@
 import fs from "node:fs";
 import path from "node:path";
 import webpack from "webpack";
-import HtmlWebpackPlugin from "html-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
-// const MikelWbpackPlugin = require("mikel-webpack-plugin");
+import MikelWebpackPlugin from "mikel-webpack-plugin";
+import {getChangelogData} from "./scripts/changelog.js";
+import {getPages} from "./scripts/pages.js";
 import env from "./server/utils/environment.js";
 
+// read package.json
 const pkg = JSON.parse(fs.readFileSync("./package.json"));
 
+// available clients for folio
 const CLIENTS = {
     LOCAL: path.join(process.cwd(), "app/clients/local.js"),
     REMOTE: path.join(process.cwd(), "app/clients/remote.js"),
+};
+
+// @description global data configuration
+// @field site: site configuration
+// @field page: current page configuration
+const globalData = {
+    site: {
+        title: "Folio",
+        repository: pkg.repository,
+        version: pkg.version,
+        navbar: {
+            links: [
+                {link: "/#features", text: "Features"},
+                {link: "/#pricing", text: "Pricing"},
+                {link: "/changelog", text: "Changelog"},
+            ],
+        },
+        footer: {
+            links: [
+                {link: "/privacy", target: "_self", text: "Privacy"},
+                {link: "https://github.com/jmjuanes/folio/issues", target: "_blank", text: "Report a bug"},
+            ],
+        },
+    },
+    pages: getPages(path.join(process.cwd(), "pages"), ".html"),
+    page: null,
+    data: {
+        changelog: getChangelogData(path.join(process.cwd(), "CHANGELOG.md")),
+    },
 };
 
 export default {
@@ -66,10 +98,6 @@ export default {
                     presets: [
                         "@babel/preset-react",
                     ],
-                    // plugins: [
-                    //     "@babel/plugin-transform-react-jsx",
-                    //     "@babel/plugin-transform-runtime",
-                    // ],
                 },
             },
             {
@@ -103,10 +131,30 @@ export default {
                 path.join(process.cwd(), "node_modules/lowcss/low.css"),
             ],
         }),
-        new HtmlWebpackPlugin({
-            template: path.join(process.cwd(), "app", "template.html"),
-            filename: "app.html",
-            minify: true,
+        // new HtmlWebpackPlugin({
+        //     template: path.join(process.cwd(), "app", "template.html"),
+        //     filename: "app.html",
+        //     minify: true,
+        // }),
+        ...globalData.pages.map(page => {
+            return new MikelWebpackPlugin({
+                template: path.join(process.cwd(), "layout.html"),
+                filename: page.url,
+                chunks: page.data.chunks || [],
+                templateData: Object.assign({}, globalData, {
+                    page: page,
+                }),
+                templateOptions: {
+                    partials: {
+                        content: page.content,
+                    },
+                    functions: {
+                        icon: ({opt}) => {
+                            return `<svg class="size-${opt.size || "4"}"><use xlink:href="sprite.svg#${opt.icon}"></use></svg>`;
+                        },
+                    },
+                },
+            });
         }),
     ],
 };
