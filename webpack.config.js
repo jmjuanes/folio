@@ -129,6 +129,7 @@ export default {
         new CopyWebpackPlugin({
             patterns: [
                 path.join(process.cwd(), "node_modules/lowcss/low.css"),
+                path.join(process.cwd(), "node_modules/@josemi-icons/svg/sprite.svg"),
             ],
         }),
         // new HtmlWebpackPlugin({
