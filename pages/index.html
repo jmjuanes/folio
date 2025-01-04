@@ -81,50 +81,32 @@ faq:
         <img class="w-full max-w-lg" src="/illustration-hero.png">
     </div>
 </div>
-<div data-role="screenshots" class="w-full pb-16 select-none">
-    <div class="w-full mb-8">
-        <div data-role="screenshots:tabs" class="grid md:grid-cols-4 gap-2">
-            {{#each page.data.screenshots}}
-            <div data-role="screenshot:tab" data-screenshot="" class="w-full p-5 text-neutral-950 border-2 border-neutral-100 bg-neutral-100 hover:bg-neutral-100 rounded-xl">
-                <div class="flex items-center mb-3">
-                    {{=icon icon=icon size="6"}}
-                </div>
-                <div class="font-bold text-xl">{{title}}</div>
-                <div class="text-xs max-w-48">{{description}}</div>
-            </div>
-            {{/each}}
-        </div>
-    </div>
-    <img data-role="screenshots:image" class="rounded-2xl border border-neutral-200 shadow-sm" width="100%" src="./screenshot-wireframes.png">
-</div>
 <!-- Features -->
-<div class="py-16 md:py-20">
+<div class="px-6 py-10 md:py-20 md:px-20 mb-10 bg-neutral-950 text-white rounded-3xl">
     <a href="#features" name="features" class=""></a>
     <div class="mb-16">
-        <div class="font-extrabold text-4xl md:text-5xl text-neutral-950 leading-none mb-4">
+        <div class="font-extrabold text-4xl md:text-6xl leading-tight mb-4">
             <span>Everything you need.</span>
         </div>
-        <div class="text-xl text-neutral-800 font-medium max-w-xl">
+        <div class="text-xl opacity-80 font-medium max-w-xl">
             All the features that you need for sketching, planning, and visualizing your projects with no limits.
         </div>
     </div>
-    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
         {{#each page.data.features}}
-        <div class="w-full bg-neutral-100 p-8 rounded-xl mb-2">
+        <div class="w-full mb-4">
             {{#if icon}}
-            <div class="flex mb-6">
-                <div class="flex items-center text-neutral-950">
-                    {{=icon icon=icon size="10"}}
-                </div>
+            <div class="flex items-center mb-4">
+                {{=icon icon=icon size="12"}}
             </div>
             {{/if}}
-            <div class="mb-0 font-bold text-xs text-neutral-800">
+            <div class="mb-0 font-bold text-xs opacity-70">
                 <span class="">{{!subtitle}}</span>
             </div>
-            <div class="font-bold text-neutral-950 text-2xl leading-tight mb-4">
+            <div class="font-bold text-2xl md:text-3xl leading-tight mb-4">
                 {{!title}}
             </div>
-            <div class="flex flex-col gap-2 text-base">
+            <div class="flex flex-col gap-2 text-base opacity-90">
                 {{#each content}}<div>{{!.}}</div>{{/each}}
             </div>
         </div>
@@ -134,17 +116,20 @@ faq:
 <!-- latest news -->
 <div class="w-full py-16 md:py-20">
     <div class="mb-16">
-        <div class="font-extrabold text-4xl md:text-5xl text-neutral-950 leading-none mb-4">
+        <div class="font-extrabold text-4xl md:text-6xl text-neutral-950 leading-tight mb-4">
             What's new in folio?
         </div>
-        <div class="text-xl text-neutral-800 font-medium max-w-xl">
+        <div class="text-xl font-medium max-w-xl">
             Stay up to date with the latest improvements and enhancements in <b>folio</b>.
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         {{#each data.changelog limit=2}}
-        <div class="p-8 rounded-xl bg-neutral-100">
-            <div class="flex gap-2 mb-4">
+        <div class="p-8 rounded-2xl bg-white border border-neutral-200">
+            <div class="flex items-center justify-center w-full h-32 bg-neutral-950 rounded-xl mb-6">
+                <span class="text-white font-bold text-4xl">{{version}}</span>
+            </div>
+            <div class="hidden gap-2 mb-4">
                 <div class="flex items-center bg-white border border-neutral-200 rounded-full px-3 py-1">
                     <span class="font-medium leading-none text-xs text-neutral-800">{{version}}</span>
                 </div>
@@ -154,7 +139,7 @@ faq:
                 </div>
                 {{/if}}
             </div>
-            <a href="/changelog#{{url}}" class="flex text-neutral-950 leading-tight text-xl hover:underline mb-2">
+            <a href="/changelog#{{url}}" class="flex text-neutral-950 leading-tight text-2xl hover:underline mb-3">
                 <div class="font-bold">{{title}}</div>
             </a>
             {{#if description}}
@@ -200,35 +185,3 @@ faq:
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    const state = {
-        activeTab: -1,
-    };
-    const activeTabClass = ["bg-neutral-950", "text-white"];
-    const inactiveTabClass = ["bg-white", "text-neutral-950"];
-    const delay = 5000;
-    // const image = document.querySelector(`img[data-role="screenshots:image"]`);
-    // const tabsItems = Array.from(document.querySelectorAll(`div[data-role="screenshot:tab"]`));
-    // loop to change tab
-    const changeActiveTab = index => {
-        const nextTab = index % tabsItems.length;
-        if (state.activeTab !== -1) {
-            tabsItems[state.activeTab].classList.remove(...activeTabClass);
-            tabsItems[state.activeTab].classList.add(...inactiveTabClass);
-        }
-        tabsItems[nextTab].classList.remove(...inactiveTabClass);
-        tabsItems[nextTab].classList.add(...activeTabClass);
-        state.activeTab = nextTab;
-    };
-    // register click events for each tab 
-    // tabsItems.forEach((tabElement, tabIndex) => {
-    //     return tabElement.addEventListener("click", event => {
-    //         event.preventDefault();
-    //         window.clearInterval(timer);
-    //         changeActiveTab(tabIndex);
-    //     });
-    // });
-    // initialize
-    // const timer = window.setInterval(() => changeActiveTab(state.activeTab + 1), delay);
-    // changeActiveTab(0);
-</script>
