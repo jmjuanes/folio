@@ -1,21 +1,56 @@
-const path = require("node:path");
-const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const package = require("./package.json");
-const env = require("./server/utils/environment.js");
+import fs from "node:fs";
+import path from "node:path";
+import webpack from "webpack";
+import CopyWebpackPlugin from "copy-webpack-plugin";
+import MikelWebpackPlugin from "mikel-webpack-plugin";
+import {getChangelogData} from "./scripts/changelog.js";
+import {getPages} from "./scripts/pages.js";
+import env from "./server/utils/environment.js";
 
+// read package.json
+const pkg = JSON.parse(fs.readFileSync("./package.json"));
+
+// available clients for folio
 const CLIENTS = {
-    LOCAL: path.join(__dirname, "app/clients/local.js"),
-    REMOTE: path.join(__dirname, "app/clients/remote.js"),
+    LOCAL: path.join(process.cwd(), "app/clients/local.js"),
+    REMOTE: path.join(process.cwd(), "app/clients/remote.js"),
 };
 
-module.exports = {
+// @description global data configuration
+// @field site: site configuration
+// @field page: current page configuration
+const globalData = {
+    site: {
+        title: "Folio",
+        repository: pkg.repository,
+        version: pkg.version,
+        navbar: {
+            links: [
+                {link: "/#features", text: "Features"},
+                {link: "/#pricing", text: "Pricing"},
+                {link: "/changelog", text: "Changelog"},
+            ],
+        },
+        footer: {
+            links: [
+                {link: "/privacy", target: "_self", text: "Privacy"},
+                {link: "https://github.com/jmjuanes/folio/issues", target: "_blank", text: "Report a bug"},
+            ],
+        },
+    },
+    pages: getPages(path.join(process.cwd(), "pages"), ".html"),
+    page: null,
+    data: {
+        changelog: getChangelogData(path.join(process.cwd(), "CHANGELOG.md")),
+    },
+};
+
+export default {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: path.join(__dirname, "app", "index.jsx"),
+    entry: path.join(process.cwd(), "app", "index.jsx"),
     output: {
-        path: path.join(__dirname, "www"),
+        path: path.join(process.cwd(), "www"),
         publicPath: "./",
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].chunk.js",
@@ -34,7 +69,7 @@ module.exports = {
     devServer: {
         hot: false,
         static: {
-            directory: path.join(__dirname, "www"),
+            directory: path.join(process.cwd(), "www"),
             staticOptions: {
                 extensions: ["html"],
             },
@@ -54,19 +89,14 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    path.join(__dirname, "app"),
-                    path.join(__dirname, "packages"),
+                    path.join(process.cwd(), "app"),
+                    path.join(process.cwd(), "pkgs"),
                 ],
                 exclude: /(node_modules|www)/,
                 loader: "babel-loader",
                 options: {
                     presets: [
-                        "@babel/preset-env", 
                         "@babel/preset-react",
-                    ],
-                    plugins: [
-                        "@babel/plugin-transform-react-jsx",
-                        "@babel/plugin-transform-runtime",
                     ],
                 },
             },
@@ -88,23 +118,44 @@ module.exports = {
         new webpack.ProgressPlugin(),
         new webpack.DefinePlugin({
             // Global values
-            "process.env.VERSION": JSON.stringify(package.version),
-            "process.env.URL_REPOSITORY": JSON.stringify(package.repository),
-            "process.env.URL_ISSUES": JSON.stringify(package.bugs),
-            "process.env.URL_HOMEPAGE": JSON.stringify(package.homepage),
+            "process.env.VERSION": JSON.stringify(pkg.version),
+            "process.env.URL_REPOSITORY": JSON.stringify(pkg.repository),
+            "process.env.URL_ISSUES": JSON.stringify(pkg.bugs),
+            "process.env.URL_HOMEPAGE": JSON.stringify(pkg.homepage),
             // ENV values
             "process.env.APP": JSON.stringify(env.APP || "LITE"),
             "process.env.CLIENT": JSON.stringify(env.CLIENT || "LOCAL"),
         }),
         new CopyWebpackPlugin({
             patterns: [
-                path.join(__dirname, "node_modules/lowcss/low.css"),
+                path.join(process.cwd(), "node_modules/lowcss/low.css"),
+                path.join(process.cwd(), "node_modules/@josemi-icons/svg/sprite.svg"),
             ],
         }),
-        new HtmlWebpackPlugin({
-            template: path.join(__dirname, "app", "template.html"),
-            filename: "app.html",
-            minify: true,
+        // new HtmlWebpackPlugin({
+        //     template: path.join(process.cwd(), "app", "template.html"),
+        //     filename: "app.html",
+        //     minify: true,
+        // }),
+        ...globalData.pages.map(page => {
+            return new MikelWebpackPlugin({
+                template: path.join(process.cwd(), "layout.html"),
+                filename: page.url,
+                chunks: page.data.chunks || [],
+                templateData: Object.assign({}, globalData, {
+                    page: page,
+                }),
+                templateOptions: {
+                    partials: {
+                        content: page.content,
+                    },
+                    functions: {
+                        icon: ({opt}) => {
+                            return `<svg class="size-${opt.size || "4"}"><use xlink:href="sprite.svg#${opt.icon}"></use></svg>`;
+                        },
+                    },
+                },
+            });
         }),
     ],
 };

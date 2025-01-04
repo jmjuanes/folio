@@ -1,3 +1,4 @@
+import {jest} from "@jest/globals";
 import {createScene} from "../scene.js";
 
 jest.mock("../elements.js", () => ({

@@ -10,7 +10,7 @@ layout: "default"
         <span>Stay up-to-date with the latest improvements and enhancements to <b>folio</b>.</span>
     </div>
 </div>
-{{#site.data.changelog}}
+{{#each data.changelog}}
 <div class="flex flex-col md:flex-row gap-4 md:gap-8 w-full mb-16">
     <div class="md:w-72 md:mt-4">
         <div class="font-bold text-lg text-neutral-800 leading-none mb-1">{{date}}</div>
@@ -27,4 +27,4 @@ layout: "default"
         <div class="text-neutral-900 markup text-lg">{{!content}}</div>
     </div>
 </div>
-{{/site.data.changelog}}
+{{/each}}
