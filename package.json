@@ -13,7 +13,7 @@
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
         "serve": "yarn dev",
-        "test": "echo 'tests temporally disabled' && exit 0"
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
     },
     "dependencies": {
         "@josemi-icons/react": "^0.6.1",
