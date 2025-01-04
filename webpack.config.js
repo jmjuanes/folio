@@ -128,6 +128,9 @@ export default {
         }),
         new CopyWebpackPlugin({
             patterns: [
+                // application assets
+                path.join(process.cwd(), "public/folio.css"),
+                // vendor files
                 path.join(process.cwd(), "node_modules/lowcss/low.css"),
                 path.join(process.cwd(), "node_modules/@josemi-icons/svg/sprite.svg"),
             ],
