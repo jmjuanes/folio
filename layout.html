@@ -22,8 +22,8 @@
     {{/eq}}
     {{#ne page.data.layout "empty"}}
     <!-- Header -->
-    <header class="flex items-center w-full max-w-8xl mx-auto h-16 px-6 select-none">
-        <div class="flex items-center gap-2 mr-auto">
+    <header class="flex items-center justify-between w-full max-w-8xl mx-auto h-16 px-6 select-none">
+        <div class="flex items-center gap-2">
             <a href="./" class="flex items-center gap-2 text-neutral-950 hover:underline">
                 <div class="font-brand leading-none text-2xl tracking-tight">
                     <span>folio.</span>
@@ -33,7 +33,7 @@
                 <span class="font-medium leading-none text-sm">beta</span>
             </div>
         </div>
-        <div class="hidden md:flex items-center gap-1 mr-3">
+        <div class="hidden md:flex items-center gap-1">
             {{#site.navbar.links}}
             <a href="{{link}}" class="inline-flex items-center px-3 py-2 rounded-lg hover:bg-neutral-100 text-neutral-900 text-sm">
                 <span class="font-medium">{{text}}</span>

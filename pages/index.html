@@ -34,20 +34,23 @@ features:
       - "Whether you are storyboarding or brainstorming, the Pages feature provides a structured canvas for your creativity."
   - subtitle: "Library."
     icon: "album"
-    title: "Save, Organize, and Reuse Elements"
+    title: "Save, Organize, and Reuse Elements."
     content:
       - "Use the <b>Library</b> to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
       - "Perfect for templates, icons, and frequently used designs—ready at a click!"
-price:
-  title: "Free"
-  description: "Everything you need for sketching and prototyping, forever free."
-  features:
-    - title: "Privacy-First Storage"
-      description: "Your artwork is securely stored on your device using the local storage of your browser, enhancing data privacy and security."
-    - title: "Comprehensive set of drawing tools"
-      description: "Folio provides a full set of drawing tools, from shapes to arrows and notes!"
-    - title: "Organize your drawings into pages"
-      description: "Seamlessly divide your drawings into pages, allowing for structured layouts and easy navigation."
+plans:
+  - title: "Lite"
+    price: "Free"
+    description: "Everything you need for sketching and prototyping, forever free."
+    features:
+      - title: "Privacy-First Storage"
+        description: "Your artwork is securely stored on your device using the local storage of your browser, enhancing data privacy and security."
+      - title: "Comprehensive set of drawing tools"
+        description: "Folio provides a full set of drawing tools, from shapes to arrows and notes!"
+      - title: "1 board"
+        description: "The Lite version of Folio allows you to create and manage a single board at a time."
+      - title: "Unlimited pages"
+        description: "Seamlessly divide your drawings into pages, allowing for structured layouts and easy navigation."
 faq:
   - question: "Does Folio save drawings on the server?"
     answer: "<b>Nope</b>! Folio values your privacy like a secret sketchbook. Your drawings are securely saved right on your device."
@@ -57,32 +60,27 @@ faq:
     answer: "Currently, the best way is to download your drawing as a <code>.folio</code> file. Then, simply share it with your colleague via email or your favorite cloud service. We are working on even more ways to share and collaborate in the future, so stay tuned for updates!"
 ---
 <!-- Presentation -->
-<div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-1 py-20 md:py-28">
-    <div class="w-full">
-        <div class="mb-8 font-extrabold text-5xl md:text-6xl leading-none text-neutral-950">
-            Sketch Freely on an Infinite Canvas.
-        </div>
-        <div class="mb-10 text-xl text-neutral-800">
-            <span>Sketch, design, and prototype without limitations. </span>
-            <span><b>Folio</b> offers an infinite canvas for your creative journey, enabling you to bring your ideas to life with ease.</span>
-        </div>
-        <div class="flex mb-2">
-            <a href="/app" class="w-full max-w-md flex grow md:grow-0 justify-center items-center gap-1 px-8 py-3 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white cursor-pointer">
-                <span class="text-lg font-medium">Start Sketching</span>
-                <span class="text-lg">-</span>
-                <span class="text-lg italic">it's free!</span>
-            </a>
-        </div>
-        <div class="text-xs text-neutral-700 select-none">
-            <span>No signup. Start in less than 5 seconds.</span>
-        </div>
+<div class="w-full py-20 md:py-28">
+    <div class="max-w-4xl mb-8 font-extrabold text-5xl md:text-8xl leading-none text-neutral-950">
+        Sketch <span class="text-neutral-700">Freely</span> on an <span class="text-neutral-700">Infinite</span> Canvas.
     </div>
-    <div class="w-full hidden lg:flex items-center justify-center">
-        <img class="w-full max-w-lg" src="/illustration-hero.png">
+    <div class="max-w-2xl mb-10 text-xl text-neutral-800">
+        <span>Sketch, design, and prototype without limitations. </span>
+        <span><b>Folio</b> offers an infinite canvas for your creative journey, enabling you to bring your ideas to life with ease.</span>
+    </div>
+    <div class="flex mb-2">
+        <a href="/app" class="w-full max-w-md flex grow md:grow-0 justify-center items-center gap-1 px-8 py-3 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white cursor-pointer">
+            <span class="text-lg font-medium">Start Sketching</span>
+            <span class="text-lg">-</span>
+            <span class="text-lg italic">it's free!</span>
+        </a>
+    </div>
+    <div class="text-xs text-neutral-700 select-none">
+        <span>No signup. Start in less than 5 seconds.</span>
     </div>
 </div>
 <!-- Features -->
-<div class="px-6 py-10 md:py-20 md:px-20 mb-10 bg-neutral-950 text-white rounded-3xl">
+<div class="px-6 py-10 md:py-20 md:px-20 my-10 bg-neutral-950 text-white rounded-3xl">
     <a href="#features" name="features" class=""></a>
     <div class="mb-16">
         <div class="font-extrabold text-4xl md:text-6xl leading-tight mb-4">
@@ -113,6 +111,67 @@ faq:
         {{/each}}
     </div>
 </div>
+<!-- pricing and features -->
+<div class="w-full py-16 md:py-20">
+    <a href="#pricing" name="pricing" class=""></a>
+    <div class="mb-16">
+        <div class="font-extrabold text-4xl md:text-6xl text-neutral-950 leading-tight mb-4">
+            <span>Plans and features.</span>
+        </div>
+        <div class="text-xl text-neutral-800 font-medium max-w-2xl">
+            <span>Choose the <b>folio</b> version that better fits your needs: start with the lite version </span>
+            <span>and then migrate to a hosted version.</span>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
+        {{#each page.data.plans}}
+        <div class="w-full p-0 rounded-2xl border border-neutral-200 bg-white overflow-hidden">
+            <div class="px-8 my-8">
+                <div class="font-black text-4xl md:text-5xl text-neutral-950 leading-none mb-4">{{price}}</div>
+                <div class="text-lg text-neutral-800 font-medium">{{description}}</div>
+            </div>
+            <div class="w-full h-0 border-b-1 border-neutral-200 mb-8"></div>
+            {{#each features}}
+            <div class="px-8 my-4">
+                <div class="flex flex-row items-center gap-2 mb-2">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6"><use xlink:href="sprite.svg#check-circle"></use></svg>
+                    </div>
+                    <div class="font-bold">{{title}}</div>
+                </div>
+                {{#if description}}
+                <div class="text-sm o-80 pl-8">{{description}}</div>
+                {{/if}}
+            </div>
+            {{/each}}
+            <div class="w-full h-0 border-b-1 border-neutral-200 mt-8"></div>
+            <div class="px-8 py-8 bg-white">
+                <a href="./app" class="flex items-center justify-center gap-2 bg-neutral-950 text-white px-4 py-3 rounded-xl">
+                    <div class="font-bold">Start with Folio</div>
+                    <div class="flex text-xl">
+                        <svg width="1em" height="1em"><use xlink:href="sprite.svg#arrow-right"></use></svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+<!-- Faq -->
+<div class="w-full py-16 md:py-20">
+    <a href="#faq" name="faq" class=""></a>
+    <div class="font-extrabold text-4xl md:text-6xl text-neutral-950 leading-tight mb-10">
+        <span>Frequently asked questions.</span>
+    </div>
+    <div class="flex flex-col">
+        {{#each page.data.faq}}
+        <div class="border-t-1 border-neutral-200 py-6">
+            <div class="w-full mb-2 font-medium text-xl text-neutral-950">{{!question}}</div>
+            <div class="w-full">{{!answer}}</div>
+        </div>
+        {{/each}}
+    </div>
+</div>
 <!-- latest news -->
 <div class="w-full py-16 md:py-20">
     <div class="mb-16">
@@ -123,28 +182,21 @@ faq:
             Stay up to date with the latest improvements and enhancements in <b>folio</b>.
         </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-        {{#each data.changelog limit=2}}
-        <div class="p-8 rounded-2xl bg-white border border-neutral-200">
-            <div class="flex items-center justify-center w-full h-32 bg-neutral-950 rounded-xl mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+        {{#each data.changelog limit=3}}
+        <div class="p-4 rounded-2xl bg-white border border-neutral-200">
+            <div class="flex items-center justify-center w-full h-32 bg-neutral-950 rounded-xl mb-2">
                 <span class="text-white font-bold text-4xl">{{version}}</span>
             </div>
-            <div class="hidden gap-2 mb-4">
-                <div class="flex items-center bg-white border border-neutral-200 rounded-full px-3 py-1">
-                    <span class="font-medium leading-none text-xs text-neutral-800">{{version}}</span>
-                </div>
-                {{#if @first}}
-                <div class="flex items-center bg-white border border-neutral-200 rounded-full px-3 py-1">
-                    <span class="font-bold leading-none text-xs text-neutral-800">CURRENT</span>
-                </div>
+            <div class="p-4">
+                <a href="/changelog#{{url}}" class="flex text-neutral-950 leading-tight text-2xl hover:underline mb-1">
+                    <div class="font-bold">{{title}}</div>
+                </a>
+                <div class="text-neutral-700 text-sm mb-4">{{date}}</div>
+                {{#if description}}
+                <div class="">{{description}}</div>
                 {{/if}}
             </div>
-            <a href="/changelog#{{url}}" class="flex text-neutral-950 leading-tight text-2xl hover:underline mb-3">
-                <div class="font-bold">{{title}}</div>
-            </a>
-            {{#if description}}
-            <div class="">{{description}}</div>
-            {{/if}}
         </div>
         {{/each}}
     </div>
@@ -158,9 +210,8 @@ faq:
     </div>
 </div>
 <!-- Open source -->
-<div class="py-20 md:py-20 w-full flex flex-col items-center">
+<div class="hidden py-20 md:py-20 w-full flex-col items-center">
     <div class="mb-4">
-        <img src="/illustration-oss.png" class="h-20" />
     </div>
     <div class="font-extrabold text-4xl leading-none text-center text-neutral-950 mb-6">
         <span>Proudly <u>Open Source</u>.</span>
@@ -172,8 +223,8 @@ faq:
 </div>
 <!-- Work in progress warning -->
 <div class="py-8 w-full min-w-0">
-    <div class="p-8 w-full bg-neutral-100 rounded-xl flex gap-4 items-start min-w-0 flex-nowrap">
-        <div class="flex text-neutral-800 animation-pulse">
+    <div class="p-8 w-full bg-neutral-950 text-white rounded-xl flex gap-4 items-start min-w-0 flex-nowrap">
+        <div class="flex animation-pulse">
             <svg class="w-6 h-6"><use xlink:href="sprite.svg#exclamation-triangle"></use></svg>
         </div>
         <div class="w-full min-w-0">

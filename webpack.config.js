@@ -28,6 +28,7 @@ const globalData = {
             links: [
                 {link: "/#features", text: "Features"},
                 {link: "/#pricing", text: "Pricing"},
+                {link: "/#faq", text: "FAQ"},
                 {link: "/changelog", text: "Changelog"},
             ],
         },
