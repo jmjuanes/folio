@@ -13,8 +13,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
     <link rel="stylesheet" href="/low.css">
-    <link rel="stylesheet" href="/folio.css">
     <title>{{page.data.title}} | {{site.title}}</title>
+    <style>
+        .font-brand {
+            font-family: Poppins, serif;
+            font-weight: 700 !important;
+        }
+    </style>
 </head>
 <body class="m-0 p-0 font-inter leading-normal text-neutral-900 min-h-screen">
     {{#eq page.data.layout "empty"}}
@@ -22,10 +27,10 @@
     {{/eq}}
     {{#ne page.data.layout "empty"}}
     <!-- Header -->
-    <header class="flex items-center justify-between w-full max-w-8xl mx-auto h-16 px-6 my-12 select-none">
+    <header class="flex items-center justify-between w-full max-w-8xl mx-auto h-16 px-6 md:px-8 my-6 select-none">
         <div class="flex items-center gap-2">
             <a href="./" class="flex items-center gap-2 text-neutral-950 hover:underline">
-                <div class="font-brand leading-none text-2xl tracking-tight">
+                <div class="font-brand leading-none text-3xl tracking-tight">
                     <span>folio.</span>
                 </div>
             </a>
@@ -33,14 +38,14 @@
                 <span class="font-medium leading-none text-sm">beta</span>
             </div>
         </div>
-        <div class="hidden md:flex items-center gap-1">
-            {{#site.navbar.links}}
-            <a href="{{link}}" class="inline-flex items-center px-3 py-2 rounded-lg hover:bg-neutral-100 text-neutral-900 text-sm">
-                <span class="font-medium">{{text}}</span>
-            </a>
-            {{/site.navbar.links}}
-        </div>
         <div class="flex items-center gap-2">
+            <div class="hidden md:flex items-center gap-1">
+                {{#site.navbar.links}}
+                <a href="{{link}}" class="inline-flex items-center px-3 py-2 rounded-lg hover:bg-neutral-100 text-neutral-900 text-base">
+                    <span class="font-medium">{{text}}</span>
+                </a>
+                {{/site.navbar.links}}
+            </div>
             <div class="hidden md:flex items-center">
                 <a href="./app" class="cursor-pointer flex items-center px-4 py-2 rounded-xl bg-neutral-950 hover:bg-neutral-800 no-underline text-sm">
                     <strong class="text-white">Try Folio</strong>
@@ -49,16 +54,16 @@
             </div>
             <a id="menu-open" class="flex md:hidden items-center text-neutral-950 hover:bg-neutral-100 cursor-pointer p-2 rounded-lg">
                 <svg data-menu="open" class="w-6 h-6">
-                    <use xlink:href="sprite.svg#bars"></use>
+                    <use xlink:href="/sprite.svg#bars"></use>
                 </svg>
                 <svg data-menu="close" class="hidden w-6 h-6">
-                    <use xlink:href="sprite.svg#close"></use>
+                    <use xlink:href="/sprite.svg#close"></use>
                 </svg>
             </a>
         </div>
     </header>
     <!-- Menu -->
-    <div id="menu" class="hidden md:hidden px-4 py-4 border-b border-neutral-200 mb-4">
+    <div id="menu" class="hidden md:hidden px-6 pb-4 border-b border-neutral-200 mb-4">
         {{#site.navbar.links}}
         <div class="first:hidden h-0 w-full border-b border-neutral-200"></div>
         <a href="{{link}}" class="block py-4 text-neutral-950 hover:bg-neutral-50 rounded-lg">
@@ -74,18 +79,18 @@
     </div>
     <!-- Main content -->
     {{#eq page.data.layout "default"}}
-    <main class="w-full max-w-7xl mx-auto px-6">
+    <main class="w-full max-w-7xl mx-auto px-6 md:px-8">
         {{>content}}
     </main>
     {{/eq}}
     {{#eq page.data.layout "page"}}
-    <main class="w-full max-w-5xl mx-auto px-6 py-16 markup">
+    <main class="w-full max-w-5xl mx-auto px-6 md:px-8 py-16 markup">
         {{>content}}
     </main>
     {{/eq}}
     <!--Footer -->
-    <footer class="w-full max-w-7xl mx-auto px-6 pt-10 pb-20">
-        <div class="font-brand leading-none text-2xl mb-3 tracking-tight text-neutral-950">
+    <footer class="w-full max-w-7xl mx-auto px-6 md:px-8 pt-32 pb-10">
+        <div class="font-brand leading-none text-6xl mb-3 tracking-tight text-neutral-950">
             <span>folio.</span>
         </div>
         <div class="flex gap-3 mb-4 text-sm">
