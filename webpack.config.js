@@ -27,8 +27,8 @@ const globalData = {
         navbar: {
             links: [
                 {link: "/dashboard", text: "Dashboard"},
-                {link: "/settings", text: "Settings"},
-                {link: "/templates", text: "Templates"},
+                // {link: "/settings", text: "Settings"},
+                // {link: "/templates", text: "Templates"},
             ],
         },
         footer: {
