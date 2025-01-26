@@ -3,7 +3,7 @@ import path from "node:path";
 import webpack from "webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import MikelWebpackPlugin from "mikel-webpack-plugin";
-import {getChangelogData} from "./scripts/changelog.js";
+import * as marked from "marked";
 import {getPages} from "./scripts/pages.js";
 import env from "./server/utils/environment.js";
 
@@ -26,23 +26,26 @@ const globalData = {
         version: pkg.version,
         navbar: {
             links: [
-                {link: "/#features", text: "Features"},
-                {link: "/#pricing", text: "Pricing"},
-                {link: "/#faq", text: "FAQ"},
-                {link: "/changelog", text: "Changelog"},
+                {link: "/dashboard", text: "Dashboard"},
+                {link: "/settings", text: "Settings"},
+                {link: "/templates", text: "Templates"},
             ],
         },
         footer: {
             links: [
+                {link: "/changelog", target: "_self", text: "Changelog"},
                 {link: "/privacy", target: "_self", text: "Privacy"},
                 {link: "https://github.com/jmjuanes/folio/issues", target: "_blank", text: "Report a bug"},
             ],
         },
     },
-    pages: getPages(path.join(process.cwd(), "pages"), ".html"),
+    pages: [
+        ...getPages(path.join(process.cwd(), "pages"), ".html", c => c),
+        ...getPages(path.join(process.cwd(), "docs"), ".md", c => marked.parse(c)),
+    ],
     page: null,
     data: {
-        changelog: getChangelogData(path.join(process.cwd(), "CHANGELOG.md")),
+        // changelog: getChangelogData(path.join(process.cwd(), "CHANGELOG.md")),
     },
 };
 
@@ -130,7 +133,7 @@ export default {
         new CopyWebpackPlugin({
             patterns: [
                 // application assets
-                path.join(process.cwd(), "public/folio.css"),
+                path.join(process.cwd(), "public/og.png"),
                 // vendor files
                 path.join(process.cwd(), "node_modules/lowcss/low.css"),
                 path.join(process.cwd(), "node_modules/@josemi-icons/svg/sprite.svg"),
@@ -155,7 +158,7 @@ export default {
                     },
                     functions: {
                         icon: ({opt}) => {
-                            return `<svg class="size-${opt.size || "4"}"><use xlink:href="sprite.svg#${opt.icon}"></use></svg>`;
+                            return `<svg class="size-${opt.size || "4"}"><use xlink:href="/sprite.svg#${opt.icon}"></use></svg>`;
                         },
                     },
                 },
