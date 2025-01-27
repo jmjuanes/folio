@@ -16,7 +16,7 @@
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
         "site": "yarn clean && yarn build:site && yarn copy-assets",
-        "test": "jest"
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
     },
     "dependencies": {
         "@josemi-icons/react": "^0.6.1",
