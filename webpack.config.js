@@ -1,21 +1,24 @@
-const path = require("node:path");
-const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const package = require("./package.json");
-const env = require("./server/utils/environment.js");
+import fs from "node:fs";
+import path from "node:path";
+import webpack from "webpack";
+import CopyWebpackPlugin from "copy-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+// import env from "./server/utils/environment.js";
 
-const CLIENTS = {
-    LOCAL: path.join(__dirname, "app/clients/local.js"),
-    REMOTE: path.join(__dirname, "app/clients/remote.js"),
-};
+// read package.json
+const pkg = JSON.parse(fs.readFileSync("./package.json"));
+
+// const CLIENTS = {
+//     LOCAL: path.join(__dirname, "app/clients/local.js"),
+//     REMOTE: path.join(__dirname, "app/clients/remote.js"),
+// };
 
 module.exports = {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
-    entry: path.join(__dirname, "app", "index.jsx"),
+    entry: path.resolve("app/index.jsx"),
     output: {
-        path: path.join(__dirname, "www"),
+        path: path.resolve("www"),
         publicPath: "./",
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].chunk.js",
@@ -23,7 +26,8 @@ module.exports = {
     },
     resolve:{
         alias: {
-            "@folio/client": CLIENTS[(env?.CLIENT || "LOCAL").toUpperCase()],
+            // "@folio/client": CLIENTS[(env?.CLIENT || "LOCAL").toUpperCase()],
+            "@folio/client": path.resolve("app/clients/local.js"),
         },
     },
     optimization: {
@@ -34,7 +38,7 @@ module.exports = {
     devServer: {
         hot: false,
         static: {
-            directory: path.join(__dirname, "www"),
+            directory: path.resolve("www"),
             staticOptions: {
                 extensions: ["html"],
             },
@@ -54,8 +58,7 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    path.join(__dirname, "app"),
-                    path.join(__dirname, "packages"),
+                    path.resolve("app"),
                 ],
                 exclude: /(node_modules|www)/,
                 loader: "babel-loader",
@@ -88,21 +91,21 @@ module.exports = {
         new webpack.ProgressPlugin(),
         new webpack.DefinePlugin({
             // Global values
-            "process.env.VERSION": JSON.stringify(package.version),
-            "process.env.URL_REPOSITORY": JSON.stringify(package.repository),
-            "process.env.URL_ISSUES": JSON.stringify(package.bugs),
-            "process.env.URL_HOMEPAGE": JSON.stringify(package.homepage),
+            "process.env.VERSION": JSON.stringify(pkg.version),
+            "process.env.URL_REPOSITORY": JSON.stringify(pkg.repository),
+            "process.env.URL_ISSUES": JSON.stringify(pkg.bugs),
+            "process.env.URL_HOMEPAGE": JSON.stringify(pkg.homepage),
             // ENV values
-            "process.env.APP": JSON.stringify(env.APP || "LITE"),
-            "process.env.CLIENT": JSON.stringify(env.CLIENT || "LOCAL"),
+            // "process.env.APP": JSON.stringify(env.APP || "LITE"),
+            // "process.env.CLIENT": JSON.stringify(env.CLIENT || "LOCAL"),
         }),
         new CopyWebpackPlugin({
             patterns: [
-                path.join(__dirname, "node_modules/lowcss/low.css"),
+                path.resolve("node_modules/lowcss/low.css"),
             ],
         }),
         new HtmlWebpackPlugin({
-            template: path.join(__dirname, "app", "template.html"),
+            template: path.resolve("app/template.html"),
             filename: "app.html",
             minify: true,
         }),
