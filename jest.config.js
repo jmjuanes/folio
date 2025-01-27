@@ -1,10 +1,9 @@
 /** @type {import("jest").Config} */
-const config = {
+export default {
     testEnvironment: "jsdom",
+    transform: {},
     moduleNameMapper: {
         "^@lib(.*)$": "<rootDir>/lib$1",
         "^@components(.*)$": "<rootDir>/components$1",
     }
 };
-
-module.exports = config;
