@@ -13,7 +13,7 @@ const pkg = JSON.parse(fs.readFileSync("./package.json"));
 //     REMOTE: path.join(__dirname, "app/clients/remote.js"),
 // };
 
-module.exports = {
+export default {
     mode: process.env.NODE_ENV || "development", // "production",
     target: "web",
     entry: path.resolve("app/index.jsx"),
