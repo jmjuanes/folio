@@ -29,6 +29,7 @@ import {Menu} from "./menu.jsx";
 import {Title} from "./title.jsx";
 import {Hint} from "./hint.jsx";
 import {Screenshot} from "./screenshot.jsx";
+import {Preview} from "./preview.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
 import {LibraryAddDialog} from "./dialogs/library-add.jsx";
 import {LibraryExportDialog} from "./dialogs/library-export.jsx";
@@ -601,6 +602,12 @@ const EditorWithScene = props => {
                                         }}
                                     />
                                 )}
+                                <Island.Button
+                                    icon="grid"
+                                    onClick={() => {
+                                        handleToolOrActionChange(null, ACTIONS.PREVIEW);
+                                    }}
+                                />
                             </Island>
                             {(editor.state.hintsVisible && !editor.state.tool && !editor.state.pagesVisible) && (
                                 <Hint position="bottom" title="Actions" contentClassName="w-48">
@@ -740,6 +747,44 @@ const EditorWithScene = props => {
                             crop: convertRegionToSceneCoordinates(scene, region),
                         });
                         editor.state.action = null;
+                        editor.update();
+                    }}
+                    onCancel={() => {
+                        editor.state.action = null;
+                        editor.update();
+                    }}
+                />
+            )}
+            {editor.state.action === ACTIONS.PREVIEW && (
+                <Preview
+                    onChangeActivePage={page => {
+                        scene.setActivePage(page);
+                        editor.update();
+                    }}
+                    onPageCreate={index => {
+                        scene.addPage({}, index, true);
+                        editor.dispatchChange();
+                        editor.update();
+                    }}
+                    onPageDuplicate={page => {
+                        scene.duplicatePage(page);
+                        editor.dispatchChange();
+                        editor.update();
+                    }}
+                    onPageDelete={page => {
+                        return showConfirm({
+                            title: "Delete page",
+                            message: `Do you want to delete '${page.title}'? This action can not be undone.`,
+                            callback: () => {
+                                scene.removePage(page);
+                                editor.dispatchChange();
+                                editor.update();
+                            },
+                        });
+                    }}
+                    onPageMove={(page, nextIndex) => {
+                        scene.movePage(page, nextIndex);
+                        editor.dispatchChange();
                         editor.update();
                     }}
                     onCancel={() => {
