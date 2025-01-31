@@ -767,16 +767,17 @@ const EditorWithScene = props => {
                         editor.update();
                     }}
                     onPageDuplicate={page => {
-                        scene.duplicatePage(page);
+                        [page].flat().forEach(page => scene.duplicatePage(page));
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onPageDelete={page => {
+                        const pages = [page].flat();
                         return showConfirm({
                             title: "Delete page",
-                            message: `Do you want to delete '${page.title}'? This action can not be undone.`,
+                            message: `Do you want to delete ${pages.length === 1 ? `'${pages[0].title}'` : `${pages.length} pages`}? This action can not be undone.`,
                             callback: () => {
-                                scene.removePage(page);
+                                pages.forEach(page => scene.removePage(page));
                                 editor.dispatchChange();
                                 editor.update();
                             },
