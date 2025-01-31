@@ -201,18 +201,65 @@ export const Preview = props => {
         }
     };
 
+    // check if all pages have been selected
+    const allPagesSelected = scene.pages.length === selectedPages.size;
+
     return (
         <div className="absolute top-0 left-0 w-full h-full z-50 bg-neutral-100" style={containerStyle}>
-            <div className="absolute right-0 top-0 mt-4 mr-4 z-50">
+            <div className="absolute left-0 top-0 mt-4 ml-4 z-50">
                 <Island>
-                    <div className="flex items-center px-2 text-sm font-medium">
+                    <div className="flex items-center justify-center px-2 text-sm font-medium opacity-80 w-28">
                         <span>{selectedPages.size} Selected</span>
                     </div>
+                    <Island.Button
+                        icon="check-square"
+                        text="Select All"
+                        disabled={allPagesSelected}
+                        onClick={() => {
+                            scene.pages.forEach(page => selectedPages.add(page.id));
+                            forceUpdate();
+                        }}
+                    />
+                    <Island.Button
+                        icon="x-square"
+                        text="Deselect All"
+                        disabled={selectedPages.size === 1}
+                        onClick={() => {
+                            selectedPages.clear();
+                            selectedPages.add(scene.page.id);
+                            forceUpdate();
+                        }}
+                    />
                     <Island.Separator />
+                    <Island.Button
+                        icon="copy"
+                        text="Duplicate"
+                        onClick={() => {
+                            props.onPageDuplicate(scene.pages.filter(page => selectedPages.has(page.id)));
+                        }}
+                    />
+                    <Island.Button
+                        icon="trash"
+                        text="Delete"
+                        disabled={allPagesSelected}
+                        onClick={() => {
+                            props.onPageDelete(scene.pages.filter(page => selectedPages.has(page.id)));
+                        }}
+                    />
+                    <Island.Separator />
+                    <Island.Button
+                        icon="plus-circle"
+                        text="Add New"
+                        onClick={() => props.onPageCreate(scene.pages.length)}
+                    />
+                </Island>
+            </div>
+            <div className="absolute right-0 top-0 mt-4 mr-4 z-50">
+                <Island>
                     <Island.Button icon="x" onClick={props.onCancel} />
                 </Island>
             </div>
-            <div className="flex flex-wrap items-center px-12 pt-20 pb-12">
+            <div className="flex flex-wrap items-center px-4 pt-20 pb-12">
                 {scene.pages.map((page, index) => (
                     <div className="flex items-center flex-no-wrap" key={page.id}>
                         {draggedIndex.current === null && (
