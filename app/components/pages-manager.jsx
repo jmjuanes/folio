@@ -136,7 +136,7 @@ const PageAddSeparator = ({onClick}) => (
     </div>
 );
 
-export const Preview = props => {
+export const PagesManager = props => {
     const scene = useScene();
     const forceUpdate = useUpdate();
     const draggedIndex = React.useRef(null);

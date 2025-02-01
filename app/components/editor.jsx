@@ -29,7 +29,7 @@ import {Menu} from "./menu.jsx";
 import {Title} from "./title.jsx";
 import {Hint} from "./hint.jsx";
 import {Screenshot} from "./screenshot.jsx";
-import {Preview} from "./preview.jsx";
+import {PagesManager} from "./pages-manager.jsx";
 import {ExportDialog} from "./dialogs/export.jsx";
 import {LibraryAddDialog} from "./dialogs/library-add.jsx";
 import {LibraryExportDialog} from "./dialogs/library-export.jsx";
@@ -605,7 +605,7 @@ const EditorWithScene = props => {
                                 <Island.Button
                                     icon="grid"
                                     onClick={() => {
-                                        handleToolOrActionChange(null, ACTIONS.PREVIEW);
+                                        handleToolOrActionChange(null, ACTIONS.PAGES_MANAGER);
                                     }}
                                 />
                             </Island>
@@ -755,8 +755,8 @@ const EditorWithScene = props => {
                     }}
                 />
             )}
-            {editor.state.action === ACTIONS.PREVIEW && (
-                <Preview
+            {editor.state.action === ACTIONS.PAGES_MANAGER && (
+                <PagesManager
                     onChangeActivePage={page => {
                         scene.setActivePage(page);
                         editor.update();
