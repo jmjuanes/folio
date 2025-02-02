@@ -51,25 +51,27 @@ const PageItem = ({page, dragging, onDragStart, onDelete, onDuplicate, ...props}
     };
     return (
         <div className="p-1">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-2 h-6">
                 <div className="text-xs text-neutral-900 font-bold truncate w-40">
                     {page.title}
                 </div>
-                <div className="flex relative group" tabIndex="0">
-                    <div className="flex items-center p-1 group-hover:bg-neutral-200 group-focus-within:bg-neutral-200 rounded-md cursor-pointer">
-                        <DotsVerticalIcon />
+                {props.showDropdown && (
+                    <div className="flex relative group" tabIndex="0">
+                        <div className="flex items-center p-1 group-hover:bg-neutral-200 group-focus-within:bg-neutral-200 rounded-md cursor-pointer">
+                            <DotsVerticalIcon />
+                        </div>
+                        <Dropdown className="hidden group-focus-within:block top-full right-0 mt-1 w-32 z-50">
+                            <Dropdown.Item disabled={false} onClick={onDelete}>
+                                <Dropdown.Icon icon="trash" />
+                                <span>Delete</span>
+                            </Dropdown.Item>
+                            <Dropdown.Item disabled={false} onClick={onDuplicate}>
+                                <Dropdown.Icon icon="copy" />
+                                <span>Duplicate</span>
+                            </Dropdown.Item>
+                        </Dropdown>
                     </div>
-                    <Dropdown className="hidden group-focus-within:block top-full right-0 mt-1 w-32 z-50">
-                        <Dropdown.Item disabled={false} onClick={onDelete}>
-                            <Dropdown.Icon icon="trash" />
-                            <span>Delete</span>
-                        </Dropdown.Item>
-                        <Dropdown.Item disabled={false} onClick={onDuplicate}>
-                            <Dropdown.Icon icon="copy" />
-                            <span>Duplicate</span>
-                        </Dropdown.Item>
-                    </Dropdown>
-                </div>
+                )}
             </div>
             <div className="group relative">
                 {props.showCheckbox && (
@@ -278,6 +280,7 @@ export const PagesManager = props => {
                             page={page}
                             dragging={draggedIndex.current === index}
                             selected={draggedIndex.current !== null ? draggedIndex.current === index : (editEnabled ? selectedPages.has(page.id) : scene.page.id === page.id)}
+                            showDropdown={!editEnabled}
                             showCheckbox={false}
                             onDragStart={event => handleDragStart(event, index)}
                             onDuplicate={() => {
