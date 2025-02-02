@@ -103,16 +103,16 @@ const PageDraggingPreview = ({page, x, y}) => {
 };
 
 // @private page separator
-const PageSeparator = ({active = false, visible = false, onPointerEnter, onPointerLeave}) => {
-    const separatorClass = themed({
-        "flex items-center justify-center w-16 h-48": true,
+const PageSeparator = ({className, active = false, visible = false, onPointerEnter, onPointerLeave}) => {
+    const separatorClass = themed(className, {
+        "flex items-center w-4 h-48": true,
         "opacity-0 pointer-events-none": !visible,
     });
     return (
         <div className={separatorClass} onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
             <div
                 className={themed({
-                    "w-1 rounded": true,
+                    "w-1": true,
                     "h-20 bg-neutral-200": !active,
                     "h-40 bg-neutral-900": active,
                 })}
@@ -126,8 +126,9 @@ export const PagesManager = props => {
     const forceUpdate = useUpdate();
     const draggedIndex = React.useRef(null);
     const dropIndex = React.useRef(null);
+    const [editEnabled, setEditEnabled] = React.useState(false);
     const [cursorPosition, setCursorPosition] = React.useState(null);
-    const selectedPages = React.useMemo(() => new Set([scene.page.id]), [scene.pages.length, scene.page.id]);
+    const selectedPages = React.useMemo(() => new Set(), [scene.pages.length, editEnabled]);
 
     const setDropIndex = React.useCallback(index => {
         // note: we don't allow to drop the page on itself
@@ -141,11 +142,16 @@ export const PagesManager = props => {
         event.stopPropagation();
         clearFocus();
 
-        // check if we have clicked the shift key to select multiple pages
-        if (event.shiftKey) {
+        // check if we are in edit mode
+        if (editEnabled) {
             const id = scene.pages[index].id;
-            if (scene.page.id !== id) {
+            // check if we have clicked the shift key to select multiple pages
+            if (event.shiftKey) {
                 selectedPages.has(id) ? selectedPages.delete(id) : selectedPages.add(id);
+            }
+            else {
+                selectedPages.clear(); // clear the selection
+                selectedPages.add(id);
             }
             return forceUpdate();
         }
@@ -186,7 +192,6 @@ export const PagesManager = props => {
 
     // check if all pages have been selected
     const allPagesSelected = scene.pages.length === selectedPages.size;
-    const separatorVisible = draggedIndex.current !== null;
 
     return (
         <div className="absolute top-0 left-0 w-full h-full z-50 bg-neutral-100" style={containerStyle}>
@@ -197,33 +202,9 @@ export const PagesManager = props => {
                         disabled={true}
                     />
                     <Island.Button
-                        icon="grid-horizontal"
+                        icon="grid"
                         disabled={false}
                         active={true}
-                    />
-                </Island>
-                <Island>
-                    <div className="flex items-center justify-center px-2 text-sm font-medium opacity-80 w-28">
-                        <span>{selectedPages.size} Selected</span>
-                    </div>
-                    <Island.Button
-                        icon="check-square"
-                        text="Select All"
-                        disabled={allPagesSelected}
-                        onClick={() => {
-                            scene.pages.forEach(page => selectedPages.add(page.id));
-                            forceUpdate();
-                        }}
-                    />
-                    <Island.Button
-                        icon="x-square"
-                        text="Deselect All"
-                        disabled={selectedPages.size === 1}
-                        onClick={() => {
-                            selectedPages.clear();
-                            selectedPages.add(scene.page.id);
-                            forceUpdate();
-                        }}
                     />
                 </Island>
             </div>
@@ -232,37 +213,66 @@ export const PagesManager = props => {
                     <Island.Button icon="x" onClick={props.onCancel} />
                 </Island>
             </div>
-            <div className="absolute left-half bottom-0 mb-4 translate-x-half-n z-50 flex gap-2">
-                <Island>
-                    <Island.Button
-                        icon="copy"
-                        text="Duplicate"
-                        onClick={() => {
-                            props.onPageDuplicate(scene.pages.filter(page => selectedPages.has(page.id)));
-                        }}
-                    />
-                    <Island.Button
-                        icon="trash"
-                        text="Delete"
-                        disabled={allPagesSelected}
-                        onClick={() => {
-                            props.onPageDelete(scene.pages.filter(page => selectedPages.has(page.id)));
-                        }}
-                    />
-                </Island>
-                <Island>
-                    <Island.Button
-                        icon="plus"
-                        onClick={() => props.onPageCreate(scene.pages.length)}
-                    />
-                </Island>
+            <div className="absolute left-half bottom-0 mb-4 translate-x-half-n z-50 flex flex-col gap-2 justify-center">
+                {!editEnabled && (
+                    <div className="flex gap-2">
+                        <Island>
+                            <Island.Button
+                                icon="grid-plus"
+                                onClick={() => setEditEnabled(true)}
+                            />
+                        </Island>
+                        <Island>
+                            <Island.Button
+                                icon="plus"
+                                text="New Page"
+                                onClick={() => props.onPageCreate(scene.pages.length)}
+                            />
+                        </Island>
+                    </div>
+                )}
+                {editEnabled && (
+                    <React.Fragment>
+                        <div className="text-xs font-medium opacity-60 text-center">
+                            <span>{selectedPages.size === 0 ? "Touch a page to select it" : `${selectedPages.size} pages selected`}</span>
+                        </div>
+                        <div className="flex gap-2">
+                            <Island>
+                                <Island.Button
+                                    icon="copy"
+                                    text="Duplicate"
+                                    disabled={selectedPages.size === 0}
+                                    onClick={() => {
+                                        props.onPageDuplicate(scene.pages.filter(page => selectedPages.has(page.id)));
+                                    }}
+                                />
+                                <Island.Button
+                                    icon="trash"
+                                    text="Delete"
+                                    disabled={selectedPages.size === 0 || allPagesSelected}
+                                    onClick={() => {
+                                        props.onPageDelete(scene.pages.filter(page => selectedPages.has(page.id)));
+                                    }}
+                                />
+                            </Island>
+                            <Island>
+                                <Island.Button
+                                    icon="x"
+                                    text="Cancel"
+                                    onClick={() => setEditEnabled(false)}
+                                />
+                            </Island>
+                        </div>
+                    </React.Fragment>
+                )}
             </div>
-            <div className="flex flex-wrap items-center px-4 pt-20 pb-12">
+            <div className="flex flex-wrap justify-center px-4 pt-20 pb-12">
                 {scene.pages.map((page, index) => (
                     <div className="flex items-center flex-no-wrap" key={page.id}>
                         <PageSeparator
+                            className="justify-start"
                             active={dropIndex.current === index}
-                            visible={separatorVisible}
+                            visible={draggedIndex.current !== null}
                             onPointerEnter={() => setDropIndex(index)}
                             onPointerLeave={() => setDropIndex(null)}
                         />
@@ -270,9 +280,8 @@ export const PagesManager = props => {
                             key={page.id}
                             page={page}
                             dragging={draggedIndex.current === index}
-                            selected={draggedIndex.current !== null ? draggedIndex.current === index : selectedPages.has(page.id)}
-                            selectedDisabled={scene.page.id === page.id}
-                            showCheckbox={draggedIndex.current === null && (scene.page.id !== page.id || selectedPages.size > 1)}
+                            selected={draggedIndex.current !== null ? draggedIndex.current === index : (editEnabled ? selectedPages.has(page.id) : scene.page.id === page.id)}
+                            showCheckbox={false}
                             onDragStart={event => handleDragStart(event, index)}
                             onDuplicate={() => {
                                 props.onPageDuplicate(page);
@@ -286,14 +295,15 @@ export const PagesManager = props => {
                                 forceUpdate();
                             }}
                         />
+                        <PageSeparator
+                            className="justify-end"
+                            active={dropIndex.current === index + 1}
+                            visible={draggedIndex.current !== null}
+                            onPointerEnter={() => setDropIndex(index + 1)}
+                            onPointerLeave={() => setDropIndex(null)}
+                        />
                     </div>
                 ))}
-                <PageSeparator
-                    active={dropIndex.current === scene.pages.length}
-                    visible={separatorVisible}
-                    onPointerEnter={() => setDropIndex(scene.pages.length)}
-                    onPointerLeave={() => setDropIndex(null)}
-                />
             </div>
             {draggedIndex.current !== null && !!cursorPosition && (
                 <PageDraggingPreview
