@@ -190,9 +190,6 @@ export const PagesManager = props => {
         }
     };
 
-    // check if all pages have been selected
-    const allPagesSelected = scene.pages.length === selectedPages.size;
-
     return (
         <div className="absolute top-0 left-0 w-full h-full z-50 bg-neutral-100" style={containerStyle}>
             <div className="absolute left-0 top-0 mt-4 ml-4 z-50 flex gap-2">
@@ -249,7 +246,7 @@ export const PagesManager = props => {
                                 <Island.Button
                                     icon="trash"
                                     text="Delete"
-                                    disabled={selectedPages.size === 0 || allPagesSelected}
+                                    disabled={selectedPages.size === 0 || scene.pages.length === selectedPages.size}
                                     onClick={() => {
                                         props.onPageDelete(scene.pages.filter(page => selectedPages.has(page.id)));
                                     }}
