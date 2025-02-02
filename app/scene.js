@@ -311,10 +311,18 @@ export const createScene = initialData => {
         },
 
         // @description add a new page
-        addPage: (newPage = {}, setNewPageAsActive = true) => {
-            scene.pages.push(createPage(newPage, scene.pages.length));
+        addPage: (data = {}, index = null, setNewPageAsActive = true) => {
+            const newPage = createPage(data, scene.pages.length);
+            // 1. Insert the page in the specified index (if provided)
+            if (index !== null && index >= 0 && index < scene.pages.length) {
+                scene.pages.splice(index, 0, newPage);
+            }
+            else {
+                scene.pages.push(newPage);
+            }
+            // 2. check if we need to set the new page as active
             if (setNewPageAsActive) {
-                scene.setActivePage(scene.pages[scene.pages.length - 1].id);
+                scene.setActivePage(newPage.id);
             }
         },
 
@@ -343,12 +351,13 @@ export const createScene = initialData => {
         },
 
         // @description duplicate the provided page
-        duplicatePage: (id, setAsActive = true) => {
+        duplicatePage: (id, index = null, setAsActive = true) => {
             const page = scene.getPage(id);
-            scene.addPage({
-                title:"Copy of " + (page?.title || "-"),
+            const newPageData = {
+                title: "Copy of " + (page?.title || "-"),
                 elements: page?.elements || [],
-            }, setAsActive);
+            };
+            scene.addPage(newPageData, index, setAsActive);
         },
 
         // @description clear the content of the provided page

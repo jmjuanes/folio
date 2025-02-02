@@ -359,6 +359,7 @@ export const ACTIONS = {
     ERASE: "action:erase",
     SCREENSHOT: "action:screenshot",
     POINTER: "action:pointer",
+    PAGES_MANAGER: "action:pages_manager",
 };
 
 export const CHANGES = {
