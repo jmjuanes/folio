@@ -1,16 +1,7 @@
 import React from "react";
 import {useUpdate} from "react-use";
-import classNames from "classnames";
-import {
-    DotsVerticalIcon,
-    TrashIcon,
-    CheckIcon,
-    PencilIcon,
-    CopyIcon,
-    BarsIcon,
-    PlusIcon,
-    LockIcon,
-} from "@josemi-icons/react";
+// import classNames from "classnames";
+import {DotsVerticalIcon, CheckIcon} from "@josemi-icons/react";
 import {Island} from "./island.jsx";
 import {Dropdown} from "./ui/dropdown.jsx";
 import {useScene} from "../contexts/scene.jsx";
@@ -112,37 +103,29 @@ const PageDraggingPreview = ({page, x, y}) => {
 };
 
 // @private page separator
-const PageDropSeparator = ({active, onPointerEnter, onPointerLeave}) => (
-    <div className="flex items-center justify-center w-16 h-48" onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
-        <div
-            className={themed({
-                "w-1 rounded": true,
-                "h-20 bg-neutral-200": !active,
-                "h-40 bg-neutral-900": active,
-            })}
-        />
-    </div>
-);
-
-// @private page add separator
-const PageAddSeparator = ({onClick}) => (
-    <div className="group flex items-center justify-center w-16 h-48">
-        <div
-            className="flex items-center justify-center w-10 h-10 bg-white border border-neutral-200 rounded-full cursor-pointer shadow-sm opacity-20 group-hover:opacity-100"
-            onClick={onClick}
-        >
-            <PlusIcon />
+const PageSeparator = ({active = false, visible = false, onPointerEnter, onPointerLeave}) => {
+    const separatorClass = themed({
+        "flex items-center justify-center w-16 h-48": true,
+        "opacity-0 pointer-events-none": !visible,
+    });
+    return (
+        <div className={separatorClass} onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
+            <div
+                className={themed({
+                    "w-1 rounded": true,
+                    "h-20 bg-neutral-200": !active,
+                    "h-40 bg-neutral-900": active,
+                })}
+            />
         </div>
-    </div>
-);
+    );
+};
 
 export const PagesManager = props => {
     const scene = useScene();
     const forceUpdate = useUpdate();
     const draggedIndex = React.useRef(null);
     const dropIndex = React.useRef(null);
-    // const [draggedIndex, setDraggedIndex] = React.useState(null);
-    // const [dropIndex, setDropIndex] = React.useState(null);
     const [cursorPosition, setCursorPosition] = React.useState(null);
     const selectedPages = React.useMemo(() => new Set([scene.page.id]), [scene.pages.length, scene.page.id]);
 
@@ -203,10 +186,22 @@ export const PagesManager = props => {
 
     // check if all pages have been selected
     const allPagesSelected = scene.pages.length === selectedPages.size;
+    const separatorVisible = draggedIndex.current !== null;
 
     return (
         <div className="absolute top-0 left-0 w-full h-full z-50 bg-neutral-100" style={containerStyle}>
-            <div className="absolute left-0 top-0 mt-4 ml-4 z-50">
+            <div className="absolute left-0 top-0 mt-4 ml-4 z-50 flex gap-2">
+                <Island>
+                    <Island.Button
+                        icon="book-open"
+                        disabled={true}
+                    />
+                    <Island.Button
+                        icon="grid-horizontal"
+                        disabled={false}
+                        active={true}
+                    />
+                </Island>
                 <Island>
                     <div className="flex items-center justify-center px-2 text-sm font-medium opacity-80 w-28">
                         <span>{selectedPages.size} Selected</span>
@@ -230,7 +225,15 @@ export const PagesManager = props => {
                             forceUpdate();
                         }}
                     />
-                    <Island.Separator />
+                </Island>
+            </div>
+            <div className="absolute right-0 top-0 mt-4 mr-4 z-50">
+                <Island>
+                    <Island.Button icon="x" onClick={props.onCancel} />
+                </Island>
+            </div>
+            <div className="absolute left-half bottom-0 mb-4 translate-x-half-n z-50 flex gap-2">
+                <Island>
                     <Island.Button
                         icon="copy"
                         text="Duplicate"
@@ -246,32 +249,23 @@ export const PagesManager = props => {
                             props.onPageDelete(scene.pages.filter(page => selectedPages.has(page.id)));
                         }}
                     />
-                    <Island.Separator />
+                </Island>
+                <Island>
                     <Island.Button
-                        icon="plus-circle"
-                        text="Add New"
+                        icon="plus"
                         onClick={() => props.onPageCreate(scene.pages.length)}
                     />
-                </Island>
-            </div>
-            <div className="absolute right-0 top-0 mt-4 mr-4 z-50">
-                <Island>
-                    <Island.Button icon="x" onClick={props.onCancel} />
                 </Island>
             </div>
             <div className="flex flex-wrap items-center px-4 pt-20 pb-12">
                 {scene.pages.map((page, index) => (
                     <div className="flex items-center flex-no-wrap" key={page.id}>
-                        {draggedIndex.current === null && (
-                            <PageAddSeparator onClick={() => props.onPageCreate(index)} />
-                        )}
-                        {draggedIndex.current !== null && (
-                            <PageDropSeparator
-                                active={dropIndex.current === index}
-                                onPointerEnter={() => setDropIndex(index)}
-                                onPointerLeave={() => setDropIndex(null)}
-                            />
-                        )}
+                        <PageSeparator
+                            active={dropIndex.current === index}
+                            visible={separatorVisible}
+                            onPointerEnter={() => setDropIndex(index)}
+                            onPointerLeave={() => setDropIndex(null)}
+                        />
                         <PageItem
                             key={page.id}
                             page={page}
@@ -294,16 +288,12 @@ export const PagesManager = props => {
                         />
                     </div>
                 ))}
-                {draggedIndex.current === null && (
-                    <PageAddSeparator onClick={() => props.onPageCreate(scene.pages.length)} />
-                )}
-                {draggedIndex.current !== null && (
-                    <PageDropSeparator
-                        active={dropIndex.current === scene.pages.length}
-                        onPointerEnter={() => setDropIndex(scene.pages.length)}
-                        onPointerLeave={() => setDropIndex(null)}
-                    />
-                )}
+                <PageSeparator
+                    active={dropIndex.current === scene.pages.length}
+                    visible={separatorVisible}
+                    onPointerEnter={() => setDropIndex(scene.pages.length)}
+                    onPointerLeave={() => setDropIndex(null)}
+                />
             </div>
             {draggedIndex.current !== null && !!cursorPosition && (
                 <PageDraggingPreview
