@@ -189,7 +189,7 @@ export const PagesPanel = props => {
     //     }));
     // };
     return (
-        <Panel className="w-72">
+        <Panel className="w-72 h-full">
             <Panel.Header className="sticky top-0">
                 <Panel.HeaderTitle>Pages</Panel.HeaderTitle>
                 <div className="flex items-center gap-0">

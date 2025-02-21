@@ -21,6 +21,7 @@ import {useBounds} from "../hooks/use-bounds.js";
 import {useCursor} from "../hooks/use-cursor.js";
 import {useEditor} from "../hooks/use-editor.js";
 import {useDimensions} from "../hooks/use-dimensions.js";
+import {useValueToggle} from "../hooks/index.js";
 import {Island} from "./island.jsx";
 import {Canvas} from "./canvas.jsx";
 import {Pointer} from "./pointer.jsx";
@@ -72,6 +73,8 @@ const EditorWithScene = props => {
     const bounds = useBounds(editor.state);
     const handlers = useHandlers(editor.state);
     const dimensions = useDimensions(editor.state);
+
+    const [activeLeftPanel, setActiveLeftPanel] = useValueToggle("");
 
     const selectedElements = scene.getSelection();
     const isScreenshot = editor.state.action === ACTIONS.SCREENSHOT;
@@ -471,7 +474,7 @@ const EditorWithScene = props => {
                 </div>
             )}
             {editor.state.pagesVisible && !isScreenshot && (
-                <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4">
+                <div className="absolute z-20 top-0 bottom-0 mt-16 mb-4 left-0 pt-1 pl-4">
                     <PagesPanel
                         key={`pages:${scene.id || ""}:${scene.pages.length}`}
                         editable={true}
