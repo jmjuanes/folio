@@ -5,7 +5,6 @@ import {
     HANDLERS,
     GRID_SIZE,
     IS_DARWIN,
-    ACTIONS,
     TOOLS,
     CHANGES,
     KEYS,
@@ -44,7 +43,7 @@ const createInitialEditorState = (props, scene) => {
         visibleSnapEdges: [],
 
         // @description active tool state
-        tool: null,
+        tool: TOOLS.SELECT,
         toolLocked: false,
 
         // @description current selection  
@@ -172,7 +171,7 @@ export const useEditor = props => {
                     scene.page.activeGroup = null;
                     update();
                 }
-                if (!editorState.tool) {
+                if (editorState.tool === TOOLS.SELECT) {
                     scene.clearSelection();
                     update();
                 }
@@ -210,6 +209,7 @@ export const useEditor = props => {
             onPointerDown: event => {
                 isDragged = false;
                 isResized = false;
+                snapshot = []; // reset snapshot
                 const selectedElements = scene.getSelection();
                 // First we need to check if we are in a edit action
                 if (activeElement?.editing) {
@@ -261,7 +261,7 @@ export const useEditor = props => {
                 }
                 // 3. we are in selection tool without selected elements
                 // else if (!editorState.action || editorState.action === ACTIONS.SELECT || editorState.action === ACTIONS.SCREENSHOT) {
-                else if (editorState.tool === TOOLS.SELECT) {
+                else if (editorState.tool === TOOLS.SELECT && selectedElements.length === 0) {
                     // editorState.action = editorState.action || ACTIONS.SELECT;
                     editorState.selection = {
                         x1: event.originalX,
@@ -269,7 +269,7 @@ export const useEditor = props => {
                         x2: event.originalX,
                         y2: event.originalY,
                     };
-                    scene.clearSelection();
+                    // scene.clearSelection();
                 }
                 // 4. we are in drag mode
                 else if (editorState.tool === TOOLS.DRAG) {
@@ -327,7 +327,7 @@ export const useEditor = props => {
                     getElementConfig(element)?.onCreateMove?.(element, event, getPosition);
                 }
                 // else if (action === ACTIONS.TRANSLATE) {
-                else if (editorState.tool === TOOLS.SELECT && !event.handler) {
+                else if (editorState.tool === TOOLS.SELECT && snapshot.length > 0 && !event.handler) {
                     editorState.visibleSnapEdges = [];
                     activeSnapEdges = [];
                     editorState.currentState = STATES.TRANSLATING;
@@ -460,7 +460,7 @@ export const useEditor = props => {
                     // Check if the tool is not the handdraw
                     // TODO: we need also to check if lock is enabled
                     if (!editorState.toolLocked && editorState.tool !== ELEMENTS.DRAW) {
-                        editorState.tool = null;
+                        editorState.tool = TOOLS.SELECT;
                     }
                     else {
                         // If tool is locked, we need to reset the current selection
@@ -543,7 +543,7 @@ export const useEditor = props => {
                 //     editorState.exportRegion = {...editorState.selection};
                 // }
                 editorState.selection = null;
-                action = null;
+                // action = null;
                 update();
             },
 
@@ -561,7 +561,7 @@ export const useEditor = props => {
                     else if (element && !element.locked) {
                         activeElement = element;
                         activeElement.editing = true;
-                        editorState.action = ACTIONS.EDIT;
+                        // editorState.action = ACTIONS.EDIT;
                     }
                     update();
                 }
@@ -575,17 +575,14 @@ export const useEditor = props => {
                 const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
                 // Check if we are in an input target and input element is active
                 if (isInputTarget(event)) {
-                    if (action === ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
+                    if (activeElement?.editing && event.key === KEYS.ESCAPE) {
                         event.preventDefault();
-                        if (activeElement?.editing) {
-                            activeElement.editing = false; // Stopediting element
-                            if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
-                                removeTextElement(activeElement);
-                            }
-                            // Force to reset the active element
-                            activeElement = null;
+                        activeElement.editing = false; // Stopediting element
+                        if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
+                            removeTextElement(activeElement);
                         }
-                        action = null;
+                        // Force to reset the active element
+                        activeElement = null;
                         update();
                     }
                 }
