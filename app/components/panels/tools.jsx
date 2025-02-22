@@ -17,7 +17,7 @@ import {
 } from "@josemi-icons/react";
 import {
     ELEMENTS,
-    ACTIONS,
+    TOOLS,
     FIELDS,
     SHAPES,
     ARROW_SHAPES,
@@ -217,10 +217,6 @@ const PanelSeparator = () => (
     <div className={themed("w-px h-12", "toolbar.separator")} />
 );
 
-const isSelectEnabled = a => {
-    return a !== ACTIONS.MOVE && a !== ACTIONS.ERASE && a !== ACTIONS.POINTER;
-};
-
 // Tools Panel component
 export const ToolsPanel = props => {
     const update = useUpdate();
@@ -232,17 +228,17 @@ export const ToolsPanel = props => {
                     testid="drag"
                     text="Drag"
                     icon={(<HandGrabIcon />)}
-                    active={props.action === ACTIONS.MOVE}
-                    onClick={props.onMoveClick}
+                    active={props.tool === TOOLS.DRAG}
+                    onClick={() => props.onToolClick(TOOLS.DRAG)}
                 />
                 {props.showSelect && (
                     <PanelButton
                         testid="select"
                         text="Select"
                         icon={(<PointerIcon />)}
-                        active={!props.tool && isSelectEnabled(props.action)}
+                        active={props.tool === TOOLS.SELECT}
                         disabled={props.readonly}
-                        onClick={props.onSelectionClick}
+                        onClick={() => props.onToolClick(TOOLS.SELECT)}
                     />
                 )}
                 {props.showTools && (
@@ -281,7 +277,9 @@ export const ToolsPanel = props => {
                                 </div>
                             </div>
                             <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
-                                <Dropdown.CheckItem checked={props.action === ACTIONS.POINTER} onClick={props.onPointerClick}>
+                                <Dropdown.CheckItem
+                                    checked={props.tool === TOOLS.POINTER}
+                                    onClick={() => props.onToolClick(TOOLS.POINTER)}>
                                     <Dropdown.Icon icon="laser-pointer" />
                                     <span>Laser Pointer</span>
                                 </Dropdown.CheckItem>
@@ -294,9 +292,9 @@ export const ToolsPanel = props => {
                                     <span>Note</span>
                                 </Dropdown.CheckItem>
                                 <Dropdown.CheckItem
-                                    checked={props.action === ACTIONS.ERASE}
+                                    checked={props.tool === TOOLS.ERASER}
                                     disabled={props.readonly}
-                                    onClick={props.onEraseClick}
+                                    onClick={() => props.onToolClick(TOOLS.ERASER)}
                                 >
                                     <Dropdown.Icon icon="erase" />
                                     <span>Erase</span>

@@ -3,7 +3,7 @@ import classNames from "classnames";
 import {fileOpen} from "browser-fs-access";
 import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
 import {
-    ACTIONS,
+    TOOLS,
     ELEMENTS,
     FILE_EXTENSIONS,
     STATES,
@@ -74,7 +74,7 @@ const EditorWithScene = props => {
     const dimensions = useDimensions(editor.state);
 
     const selectedElements = scene.getSelection();
-    const isScreenshot = editor.state.action === ACTIONS.SCREENSHOT;
+    const isScreenshot = false; // editor.state.action === ACTIONS.SCREENSHOT;
 
     // Handle loading a new drawing
     // We will check first if the onLoad function has been provided as props. If yes,
@@ -155,7 +155,7 @@ const EditorWithScene = props => {
     // Handle tool or action change
     const handleToolOrActionChange = React.useCallback((newTool, newAction) => {
         editor.state.tool = newTool;
-        editor.state.action = newAction;
+        // editor.state.action = newAction;
         editor.state.contextMenu = false;
         scene.getElements().forEach(element => {
             element.selected = false;
@@ -187,11 +187,12 @@ const EditorWithScene = props => {
 
     // Hook to reset the action and tool when we change the active page
     React.useEffect(() => {
-        const action = editor.state.action;
-        if (scene.page.readonly && action !== ACTIONS.MOVE && action !== ACTIONS.POINTER && action !== ACTIONS.SCREENSHOT) {
-            handleToolOrActionChange(null, ACTIONS.MOVE);
+        // const action = editor.state.action;
+        // if (scene.page.readonly && action !== ACTIONS.MOVE && action !== ACTIONS.POINTER && action !== ACTIONS.SCREENSHOT) {
+        if (scene.page.readonly && editor.state.tool !== TOOLS.DRAG) {
+            handleToolOrActionChange(TOOLS.DRAG);
         }
-    }, [scene.page.id, scene.page.readonly, editor.state.action]);
+    }, [scene.page.id, scene.page.readonly, editor.state.tool]);
 
     return (
         <div className={themed("relative overflow-hidden h-full w-full select-none", "editor")}>
@@ -210,14 +211,14 @@ const EditorWithScene = props => {
                 handlers={handlers}
                 brush={editor.state.selection}
                 dimensions={dimensions}
-                showBrush={editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT}
-                showPointer={editor.state.action === ACTIONS.ERASE}
+                showBrush={editor.state.tool === TOOLS.SELECT}
+                showPointer={editor.state.tool === TOOLS.ERASER}
                 showGrid={scene.appState.grid}
                 showSnaps={scene.appState.snapToElements}
                 showObjectDimensions={scene.appState.objectDimensions}
                 {...editor.events}
             />
-            {editor.state.action === ACTIONS.POINTER && (
+            {editor.state.tool === TOOLS.POINTER && (
                 <Pointer />
             )}
             {editor.state.contextMenu &&  (
@@ -306,25 +307,12 @@ const EditorWithScene = props => {
             {!isScreenshot && (
                 <div className="absolute z-20 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
                     <ToolsPanel
-                        action={editor.state.action}
                         tool={editor.state.tool}
                         toolLocked={editor.state.toolLocked}
                         readonly={!!scene.page.readonly}
                         showSelect={true}
                         showTools={true}
                         showLock={true}
-                        onMoveClick={() => {
-                            handleToolOrActionChange(null, ACTIONS.MOVE);
-                        }}
-                        onEraseClick={() => {
-                            handleToolOrActionChange(null, ACTIONS.ERASE);
-                        }}
-                        onPointerClick={() => {
-                            handleToolOrActionChange(null, ACTIONS.POINTER);
-                        }}
-                        onSelectionClick={() => {
-                            handleToolOrActionChange(null, ACTIONS.SELECT);
-                        }}
                         onToolClick={tool => {
                             // Special action if the image tool is activated
                             if (tool === ELEMENTS.IMAGE) {
@@ -380,7 +368,8 @@ const EditorWithScene = props => {
                     <LayersPanel
                         key={`layers:${scene.id || ""}:${scene.page.id || ""}`}
                         onElementSelect={element => {
-                            if (!editor.state.action || editor.state.action === ACTIONS.SELECT) {
+                            // if (!editor.state.action || editor.state.action === ACTIONS.SELECT) {
+                            if (editor.state.tool === TOOLS.SELECT) {
                                 if (element?.group) {
                                     scene.page.activeGroup = element.group;
                                 }
@@ -598,14 +587,14 @@ const EditorWithScene = props => {
                                         icon="camera"
                                         disabled={scene.getElements().length === 0}
                                         onClick={() => {
-                                            handleToolOrActionChange(null, ACTIONS.SCREENSHOT);
+                                            // handleToolOrActionChange(null, ACTIONS.SCREENSHOT);
                                         }}
                                     />
                                 )}
                                 <Island.Button
                                     icon="grid"
                                     onClick={() => {
-                                        handleToolOrActionChange(null, ACTIONS.PAGES_MANAGER);
+                                        // handleToolOrActionChange(null, ACTIONS.PAGES_MANAGER);
                                     }}
                                 />
                             </Island>
@@ -731,14 +720,14 @@ const EditorWithScene = props => {
                     )}
                 </React.Fragment>
             )}
-            {editor.state.action === ACTIONS.SCREENSHOT && (
+            {isScreenshot && (
                 <Screenshot
                     onDownload={(region, options) => {
                         handleExport(EXPORT_MODES.FILE, scene.getElements(), {
                             background: options?.background ? scene.background : TRANSPARENT,
                             crop: convertRegionToSceneCoordinates(scene, region),
                         });
-                        editor.state.action = null;
+                        // editor.state.action = null;
                         editor.update();
                     }}
                     onCopyToClipboard={(region, options) => {
@@ -746,16 +735,16 @@ const EditorWithScene = props => {
                             background: options?.background ? scene.background : TRANSPARENT,
                             crop: convertRegionToSceneCoordinates(scene, region),
                         });
-                        editor.state.action = null;
+                        // editor.state.action = null;
                         editor.update();
                     }}
                     onCancel={() => {
-                        editor.state.action = null;
+                        // editor.state.action = null;
                         editor.update();
                     }}
                 />
             )}
-            {editor.state.action === ACTIONS.PAGES_MANAGER && (
+            {false && (
                 <PagesManager
                     onChangeActivePage={page => {
                         scene.setActivePage(page);
@@ -789,7 +778,7 @@ const EditorWithScene = props => {
                         editor.update();
                     }}
                     onCancel={() => {
-                        editor.state.action = null;
+                        // editor.state.action = null;
                         editor.update();
                     }}
                 />
@@ -864,11 +853,11 @@ const EditorWithScene = props => {
                         Object.assign(editor.state.selectedPage, data);
                         // Check if the edited page is the active page
                         if (scene.page.id === editor.state.selectedPage.id) {
-                            editor.state.tool = null;
+                            // editor.state.tool = null;
                             editor.state.contextMenu = false;
-                            if (editor.state.action !== ACTIONS.MOVE && editor.state.action !== ACTIONS.POINTER) {
-                                editor.state.action = ACTIONS.MOVE;
-                            }
+                            // if (editor.state.action !== ACTIONS.MOVE && editor.state.action !== ACTIONS.POINTER) {
+                            //     editor.state.action = ACTIONS.MOVE;
+                            // }
                             // Reset selected elements and editing state
                             scene.getElements().forEach(element => {
                                 element.selected = false;

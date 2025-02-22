@@ -349,17 +349,24 @@ export const KEYS = {
     Y: "y",
 };
 
-export const ACTIONS = {
-    MOVE: "action:move",
-    SELECT: "action:select",
-    CREATE: "action:create",
-    TRANSLATE: "action:translate",
-    RESIZE: "actionresize",
-    EDIT: "action:edit",
-    ERASE: "action:erase",
-    SCREENSHOT: "action:screenshot",
-    POINTER: "action:pointer",
-    PAGES_MANAGER: "action:pages_manager",
+// export const ACTIONS = {
+//     MOVE: "action:move",
+//     SELECT: "action:select",
+//     CREATE: "action:create",
+//     TRANSLATE: "action:translate",
+//     RESIZE: "actionresize",
+//     EDIT: "action:edit",
+//     ERASE: "action:erase",
+//     SCREENSHOT: "action:screenshot",
+//     POINTER: "action:pointer",
+//     PAGES_MANAGER: "action:pages_manager",
+// };
+
+export const TOOLS = {
+    DRAG: "drag",
+    SELECT: "select",
+    ERASER: "erase",
+    POINTER: "pointer",
 };
 
 export const CHANGES = {

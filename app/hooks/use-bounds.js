@@ -1,4 +1,4 @@
-import {ACTIONS} from "../constants.js";
+import {TOOLS} from "../constants.js";
 import {getRectanglePath} from "../utils/paths.js";
 import {getElementConfig, getElementsBounds} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
@@ -7,7 +7,8 @@ export const useBounds = ({action, tool}) => {
     const scene = useScene();
     const bounds = [];
     let hasCustomBounds = false;
-    if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
+    // if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
+    if (tool === TOOLS.SELECT) {
         const selectedElements = scene.getSelection();
         // 1. Check for active group
         if (scene.page.activeGroup) {

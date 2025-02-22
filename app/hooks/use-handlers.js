@@ -1,11 +1,12 @@
-import {ACTIONS} from "../constants.js";
+import {TOOLS} from "../constants.js";
 import {getElementConfig} from "../elements.js";
 import {useScene} from "../contexts/scene.jsx";
 
-export const useHandlers = ({action, tool}) => {
+export const useHandlers = ({tool}) => {
     const scene = useScene();
 
-    if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
+    // if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
+    if (tool === TOOLS.SELECT) {
         // Get current selection in scene
         const selectedElements = scene.getSelection();
 
