@@ -1,18 +1,19 @@
 import {TOOLS} from "../constants.js";
 import {getRectanglePath} from "../utils/paths.js";
 import {getElementConfig, getElementsBounds} from "../elements.js";
-import {useScene} from "../contexts/scene.jsx";
+import {useEditor} from "../contexts/editor.jsx";
+import {useActiveTool} from "../contexts/tools.jsx";
 
-export const useBounds = ({action, tool}) => {
-    const scene = useScene();
+export const useBounds = () => {
+    const editor = useEditor();
+    const [tool] = useActiveTool();
     const bounds = [];
     let hasCustomBounds = false;
-    // if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
     if (tool === TOOLS.SELECT) {
-        const selectedElements = scene.getSelection();
+        const selectedElements = editor.getSelection();
         // 1. Check for active group
-        if (scene.page.activeGroup) {
-            const elementsInGroup = scene.getElements().filter(el => el.group === scene.page.activeGroup);
+        if (editor.page.activeGroup) {
+            const elementsInGroup = editor.getElements().filter(el => el.group === editor.page.activeGroup);
             if (elementsInGroup.length > 0) {
                 const p = getElementsBounds(elementsInGroup);
                 bounds.push({
@@ -34,7 +35,7 @@ export const useBounds = ({action, tool}) => {
         }
         // 3. Generate default bounds for selected elements
         if (selectedElements.length > 0) {
-            const hasGroupInSelection = selectedElements.some(el => el.group && el.group !== scene.page.activeGroup);
+            const hasGroupInSelection = selectedElements.some(el => el.group && el.group !== editor.page.activeGroup);
             if (hasGroupInSelection) {
                 const groups = new Set(selectedElements.map(el => el.group).filter(g => !!g));
                 Array.from(groups).forEach(group => {

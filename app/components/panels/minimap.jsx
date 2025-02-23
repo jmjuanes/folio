@@ -9,41 +9,41 @@ import {
     MINIMAP_ELEMENT_RADIUS,
 } from "../../constants.js";
 import {Island} from "../island.jsx";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 import {getRectangleBounds} from "../../utils/math.js";
 
 // @public mini map panel component
 export const MinimapPanel = ({width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT}) => {
-    const scene = useScene();
+    const editor = useEditor();
     const minimap = React.useMemo(() => {
-        if (!scene.width || !scene.height) {
+        if (!editor.width || !editor.height) {
             return null;
         }
-        const bounds = scene.page.elements.length > 0 ? getRectangleBounds(scene.page.elements) : {};
+        const bounds = editor.page.elements.length > 0 ? getRectangleBounds(editor.page.elements) : {};
         // calculate the start and end points for the minimap
-        const x1 = Math.min(bounds.x1 ?? Infinity, (-1) * scene.page.translateX / scene.page.zoom);
-        const y1 = Math.min(bounds.y1 ?? Infinity, (-1) * scene.page.translateY / scene.page.zoom);
-        const x2 = Math.max(bounds.x2 ?? -Infinity, ((-1) * scene.page.translateX + scene.width) / scene.page.zoom);
-        const y2 = Math.max(bounds.y2 ?? -Infinity, ((-1) * scene.page.translateY + scene.height) / scene.page.zoom);
+        const x1 = Math.min(bounds.x1 ?? Infinity, (-1) * editor.page.translateX / editor.page.zoom);
+        const y1 = Math.min(bounds.y1 ?? Infinity, (-1) * editor.page.translateY / editor.page.zoom);
+        const x2 = Math.max(bounds.x2 ?? -Infinity, ((-1) * editor.page.translateX + editor.width) / editor.page.zoom);
+        const y2 = Math.max(bounds.y2 ?? -Infinity, ((-1) * editor.page.translateY + editor.height) / editor.page.zoom);
         // calculate the scale factor for the minimap
         const ratio = Math.min(width / Math.max(1, x2 - x1), height / Math.max(1, y2 - y1));
         return {
             width: Math.min(width, (x2 - x1) * ratio),
             height: Math.min(height, (y2 - y1) * ratio),
             // ratio: ratio,
-            elements: scene.page.elements.map(element => ({
+            elements: editor.page.elements.map(element => ({
                 id: element.id,
                 x1: (Math.min(element.x1, element.x2) - x1) * ratio,
                 y1: (Math.min(element.y1, element.y2) - y1) * ratio,
                 x2: (Math.max(element.x1, element.x2) - x1) * ratio,
                 y2: (Math.max(element.y1, element.y2) - y1) * ratio,
             })),
-            visibleX: (((-1) * scene.page.translateX / scene.page.zoom) - x1) * ratio, // update the visible x position
-            visibleY: (((-1) * scene.page.translateY / scene.page.zoom) - y1) * ratio, // update the visible y position
-            visibleWidth: scene.width * ratio / scene.page.zoom, // update the visible width
-            visibleHeight: scene.height * ratio / scene.page.zoom, // update the visible height
+            visibleX: (((-1) * editor.page.translateX / editor.page.zoom) - x1) * ratio, // update the visible x position
+            visibleY: (((-1) * editor.page.translateY / editor.page.zoom) - y1) * ratio, // update the visible y position
+            visibleWidth: editor.width * ratio / editor.page.zoom, // update the visible width
+            visibleHeight: editor.height * ratio / editor.page.zoom, // update the visible height
         };
-    }, [scene.updatedAt, scene.page.id, scene.width, scene.height, scene.page.zoom, scene.page.translateX, scene.page.translateY]);
+    }, [editor.updatedAt, editor.page.id, editor.width, editor.height, editor.page.zoom, editor.page.translateX, editor.page.translateY]);
     return (
         <Island className="items-center justify-center">
             {!!minimap && (

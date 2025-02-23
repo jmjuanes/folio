@@ -1,173 +1,13 @@
 import React from "react";
 import classNames from "classnames";
 import {useUpdate} from "react-use";
-import {
-    LockIcon,
-    UnlockIcon,
-    PenIcon,
-    ImageIcon,
-    TextIcon,
-    PointerIcon,
-    HandGrabIcon,
-    SquareIcon,
-    CircleIcon,
-    TriangleIcon,
-    DotsVerticalIcon,
-    StickerIcon,
-} from "@josemi-icons/react";
-import {
-    ELEMENTS,
-    TOOLS,
-    FIELDS,
-    SHAPES,
-    ARROW_SHAPES,
-    STICKERS,
-    ARROWHEADS,
-    STROKE_WIDTHS,
-    FORM_OPTIONS,
-} from "../../constants.js";
-import {
-    STROKE_COLOR_PICK,
-    TEXT_COLOR_PICK,
-} from "../../utils/colors.js";
-import {
-    ArrowIcon,
-    ArrowConnectorIcon,
-    WidthLargeIcon,
-    WidthSmallIcon,
-} from "../icons.jsx";
+import {LockIcon, UnlockIcon, DotsVerticalIcon} from "@josemi-icons/react";
+import {ELEMENTS, TOOLS} from "../../constants.js";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Form} from "../form/index.jsx";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 import {themed} from "../../contexts/theme.jsx";
-import {getStickerImage} from "../../stickers.js";
-
-const tools = {
-    [ELEMENTS.SHAPE]: {
-        icon: (<SquareIcon />),
-        text: "Shape",
-        quickPicks: {
-            [FIELDS.SHAPE]: {
-                type: FORM_OPTIONS.SELECT,
-                className: "flex flex-nowrap w-32 gap-1",
-                values: [
-                    {value: SHAPES.RECTANGLE, icon: <SquareIcon />},
-                    {value: SHAPES.ELLIPSE, icon: <CircleIcon />},
-                    {value: SHAPES.TRIANGLE, icon: <TriangleIcon />},
-                ],
-            },
-            [FIELDS.STROKE_COLOR]: {
-                type: FORM_OPTIONS.COLOR_SELECT,
-                className: "flex flex-nowrap w-48 gap-1",
-                values: STROKE_COLOR_PICK,
-            },
-        },
-    },
-    [ELEMENTS.ARROW]: {
-        icon: (<ArrowIcon />),
-        text: "Arrow",
-        quickPicks: {
-            // [FIELDS.END_ARROWHEAD]: {
-            //     type: FORM_OPTIONS.SELECT,
-            //     className: "flex flex-nowrap w-24 gap-1",
-            //     isActive: (value, currentValue, data) => {
-            //         return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
-            //     },
-            //     values: [
-            //         {value: ARROWHEADS.NONE, icon: <LineIcon />},
-            //         {value: ARROWHEADS.ARROW, icon: <ArrowIcon />},
-            //     ],
-            // },
-            [FIELDS.ARROW_SHAPE]: {
-                type: FORM_OPTIONS.SELECT,
-                className: "flex flex-nowrap w-24 gap-1",
-                // isActive: (value, currentValue, data) => {
-                //     return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
-                // },
-                values: [
-                    {value: ARROW_SHAPES.LINE, icon: <ArrowIcon />},
-                    {value: ARROW_SHAPES.CONNECTOR, icon: <ArrowConnectorIcon />},
-                ],
-            },
-            [FIELDS.STROKE_WIDTH]: {
-                type: FORM_OPTIONS.SELECT,
-                className: "flex flex-nowrap w-24 gap-1",
-                values: [
-                    {value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon />},
-                    {value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon />},
-                ],
-            },
-            [FIELDS.STROKE_COLOR]: {
-                type: FORM_OPTIONS.COLOR_SELECT,
-                className: "flex flex-nowrap w-48 gap-1",
-                values: STROKE_COLOR_PICK,
-            },
-        },
-        onQuickPickChange: (defaults, field, value) => {
-            // Make sure that we remove the start arrowhead value
-            if (field === FIELDS.END_ARROWHEAD) {
-                defaults[FIELDS.START_ARROWHEAD] = ARROWHEADS.NONE;
-            }
-        },
-    },
-    [ELEMENTS.TEXT]: {
-        icon: (<TextIcon />),
-        text: "Text",
-        quickPicks: {
-            // [FIELDS.TEXT_SIZE]: {
-            //     type: FORM_OPTIONS.SELECT,
-            //     className: "flex flex-nowrap w-24 gap-1",
-            //     values: [
-            //         {value: TEXT_SIZES.MEDIUM, icon: <WidthSmallIcon />},
-            //         {value: TEXT_SIZES.XLARGE, icon: <WidthLargeIcon />},
-            //     ],
-            // },
-            [FIELDS.TEXT_COLOR]: {
-                type: FORM_OPTIONS.COLOR_SELECT,
-                className: "flex flex-nowrap w-48 gap-1",
-                values: TEXT_COLOR_PICK,
-            },
-        },
-    },
-    [ELEMENTS.DRAW]: {
-        icon: (<PenIcon />),
-        text: "Draw",
-        quickPicks: {
-            [FIELDS.STROKE_WIDTH]: {
-                type: FORM_OPTIONS.SELECT,
-                className: "flex flex-nowrap w-24 gap-1",
-                values: [
-                    {value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon />},
-                    {value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon />},
-                ],
-            },
-            [FIELDS.STROKE_COLOR]: {
-                type: FORM_OPTIONS.COLOR_SELECT,
-                className: "flex flex-nowrap w-48 gap-1",
-                values: STROKE_COLOR_PICK,
-            },
-        },
-    },
-    [ELEMENTS.IMAGE]: {
-        icon: (<ImageIcon />),
-        text: "Image",
-        quickPicks: null,
-    },
-    [ELEMENTS.STICKER]: {
-        icon: (<StickerIcon />),
-        text: "Sticker",
-        quickPicks: {
-            [FIELDS.STICKER]: {
-                type: FORM_OPTIONS.IMAGE_SELECT,
-                className: "w-72 grid grid-cols-8 gap-1",
-                values: Object.values(STICKERS).map(stickerName => ({
-                    value: stickerName,
-                    image: getStickerImage(stickerName),
-                })),
-            },
-        },
-    },
-};
+import {useTools} from "../../hooks/use-tools.js";
 
 const PickPanel = props => (
     <div
@@ -197,6 +37,7 @@ const PanelButton = props => {
         "toolbar.button.inactive": !props.active,
         "pointer-events-none opacity-60 cursor-not-allowed": props.disabled,
     }, props.className);
+
     return (
         <div className={classList} onClick={props.onClick}>
             {props.icon && (
@@ -213,110 +54,94 @@ const PanelButton = props => {
     );
 };
 
-const PanelSeparator = () => (
-    <div className={themed("w-px h-12", "toolbar.separator")} />
-);
+// default visible tools
+const defaultAlwaysVisibleTools = [
+    TOOLS.DRAG,
+    TOOLS.SELECT,
+    ELEMENTS.SHAPE,
+    ELEMENTS.ARROW,
+    ELEMENTS.TEXT,
+    ELEMENTS.DRAW,
+    ELEMENTS.IMAGE,
+    ELEMENTS.STICKER,
+];
+
+// default hidden tools (will be displayed in the more menu)
+const defaultHiddenTools = [
+    TOOLS.POINTER,
+    ELEMENTS.NOTE,
+    TOOLS.ERASER,
+];
 
 // Tools Panel component
-export const ToolsPanel = props => {
+export const ToolsPanel = () => {
     const update = useUpdate();
-    const scene = useScene();
+    const editor = useEditor();
+    const tools = useTools();
+
+    const handleLockClick = React.useCallback(() => {
+        editor.state.toolLocked = !editor.state.toolLocked;
+        update();
+    }, []);
+
+    const lockButtonClass = themed({
+        "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
+        "toolbar.lock.active": editor.state.toolLocked,
+        "toolbar.lock.inactive": !editor.state.toolLocked,
+        "pointer-events-none opacity-40 cursor-not-allowed": editor.page.readonly,
+    });
+
     return (
         <div className="flex items-center relative select-none">
             <div className={themed("rounded-2xl items-center flex gap-2 p-1", "toolbar", props.className)}>
-                <PanelButton
-                    testid="drag"
-                    text="Drag"
-                    icon={(<HandGrabIcon />)}
-                    active={props.tool === TOOLS.DRAG}
-                    onClick={() => props.onToolClick(TOOLS.DRAG)}
-                />
-                {props.showSelect && (
-                    <PanelButton
-                        testid="select"
-                        text="Select"
-                        icon={(<PointerIcon />)}
-                        active={props.tool === TOOLS.SELECT}
-                        disabled={props.readonly}
-                        onClick={() => props.onToolClick(TOOLS.SELECT)}
-                    />
-                )}
-                {props.showTools && (
-                    <React.Fragment>
-                        <PanelSeparator />
-                        {Object.keys(tools).map(key => (
-                            <div key={key} className="flex relative">
-                                <PanelButton
-                                    testid={key}
-                                    text={tools[key].text}
-                                    icon={tools[key].icon}
-                                    active={props.tool === key}
-                                    disabled={props.readonly}
-                                    onClick={() => props.onToolClick(key)}
-                                />
-                                {tools[key].quickPicks && key === props.tool && (
-                                    <PickPanel
-                                        values={scene.defaults}
-                                        items={tools[key].quickPicks}
-                                        onChange={(field, value) => {
-                                            scene.defaults[field] = value;
-                                            if (typeof tools[key].onQuickPickChange === "function") {
-                                                tools[key].onQuickPickChange(scene.defaults, field, value);
-                                            }
-                                            // Force and update of the component
-                                            update();
-                                        }}
-                                    />
-                                )}
-                            </div>
-                        ))}
-                        <div className="flex self-stretch relative group" tabIndex="0">
-                            <div className={themed("flex items-center cursor-pointer rounded-xl px-1", "toolbar.dots")}>
-                                <div className="flex items-center text-xl">
-                                    <DotsVerticalIcon />
-                                </div>
-                            </div>
-                            <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
-                                <Dropdown.CheckItem
-                                    checked={props.tool === TOOLS.POINTER}
-                                    onClick={() => props.onToolClick(TOOLS.POINTER)}>
-                                    <Dropdown.Icon icon="laser-pointer" />
-                                    <span>Laser Pointer</span>
-                                </Dropdown.CheckItem>
-                                <Dropdown.CheckItem
-                                    checked={props.tool === ELEMENTS.NOTE}
-                                    disabled={props.readonly}
-                                    onClick={() => props.onToolClick(ELEMENTS.NOTE)}
-                                >
-                                    <Dropdown.Icon icon="note" />
-                                    <span>Note</span>
-                                </Dropdown.CheckItem>
-                                <Dropdown.CheckItem
-                                    checked={props.tool === TOOLS.ERASER}
-                                    disabled={props.readonly}
-                                    onClick={() => props.onToolClick(TOOLS.ERASER)}
-                                >
-                                    <Dropdown.Icon icon="erase" />
-                                    <span>Erase</span>
-                                </Dropdown.CheckItem>
-                            </Dropdown>
+                {defaultAlwaysVisibleTools.map(key => (
+                    <div key={key} className="flex relative">
+                        <PanelButton
+                            text={tools[key].name || tools[key].text}
+                            icon={tools[key].icon}
+                            active={editor.state.tool === key}
+                            disabled={editor.page.readonly}
+                            onClick={tools[key.onSelect]}
+                        />
+                        {tools[key].quickPicks && key === editor.state.tool && (
+                            <PickPanel
+                                values={editor.defaults}
+                                items={tools[key].quickPicks}
+                                onChange={(field, value) => {
+                                    editor.defaults[field] = value;
+                                    if (typeof tools[key].onQuickPickChange === "function") {
+                                        tools[key].onQuickPickChange(editor.defaults, field, value);
+                                    }
+                                    // Force and update of the component
+                                    update();
+                                }}
+                            />
+                        )}
+                    </div>
+                ))}
+                <div className="flex self-stretch relative group" tabIndex="0">
+                    <div className={themed("flex items-center cursor-pointer rounded-xl px-1", "toolbar.dots")}>
+                        <div className="flex items-center text-xl">
+                            <DotsVerticalIcon />
                         </div>
-                    </React.Fragment>
-                )}
-            </div>
-            {props.showLock && (
-                <div
-                    className={themed({
-                        "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-                        "toolbar.lock.active": props.toolLocked,
-                        "toolbar.lock.inactive": !props.toolLocked,
-                        "pointer-events-none opacity-40 cursor-not-allowed": props.readonly,
-                    })}
-                    onClick={props.onToolLockClick}
-                >
-                    {props.toolLocked ? <LockIcon /> : <UnlockIcon />}
+                    </div>
+                    <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
+                        {defaultHiddenTools.map(key => (
+                            <React.Fragment key={key}>
+                                <Dropdown.CheckItem
+                                    checked={editor.state.tool === key}
+                                    onClick={tools[key].onSelect}>
+                                    <Dropdown.Icon icon={tools[key].icon} />
+                                    <span>{tools[key].name}</span>
+                                </Dropdown.CheckItem>
+                            </React.Fragment>
+                        ))}
+                    </Dropdown>
                 </div>
-            )}
+            </div>
+            <div className={lockButtonClass} onClick={handleLockClick}>
+                {editor.state.toolLocked ? <LockIcon /> : <UnlockIcon />}
+            </div>
         </div>
     );
 };

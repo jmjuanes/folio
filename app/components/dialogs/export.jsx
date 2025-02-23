@@ -7,7 +7,7 @@ import {Centered} from "../ui/centered.jsx";
 import {Dialog} from "../ui/dialog.jsx";
 import {Overlay} from "../ui/overlay.jsx";
 import {Form} from "../form/index.jsx";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import transparentBg from "../../assets/transparent.svg";
 
@@ -18,8 +18,8 @@ const previewStyle = {
 };
 
 export const ExportDialog = props => {
-    const scene = useScene();
-    const elements = scene.getElements();
+    const editor = useEditor();
+    const elements = editor.getElements();
     const [previewImage, setPreviewImage] = React.useState(null);
     const [options, setOptions] = React.useState({
         includeBackground: true,
@@ -31,9 +31,9 @@ export const ExportDialog = props => {
             return options.onlySelectedElements ? el.selected : true;
         });
         const exportOptions = {
-            assets: scene.assets,
+            assets: editor.assets,
             format: EXPORT_FORMATS.PNG,
-            background: options.includeBackground ? scene.background : TRANSPARENT,
+            background: options.includeBackground ? editor.background : TRANSPARENT,
             padding: EXPORT_PADDING,
         };
         return [exportElements, exportOptions];
@@ -46,7 +46,7 @@ export const ExportDialog = props => {
             includeBackground: {
                 type: FORM_OPTIONS.CHECKBOX,
                 title: "Include background",
-                helper: "Include the scene background in the exported image.",
+                helper: "Include the editor background in the exported image.",
             },
             onlySelectedElements: {
                 type: FORM_OPTIONS.CHECKBOX,

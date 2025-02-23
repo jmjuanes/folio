@@ -4,7 +4,7 @@ import classNames from "classnames";
 import {renderIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {Panel} from "../ui/panel.jsx";
 import {themed} from "../../contexts/theme.jsx";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 import {exportToDataURL} from "../../export.js";
 import {FIELDS, TRANSPARENT} from "../../constants.js";
 import transparentBg from "../../assets/transparent.svg";
@@ -15,12 +15,12 @@ const LAYER_PREVIEW_BACKGROUND = TRANSPARENT;
 
 // Tiny hook to generate the preview of the element
 const useElementPreview = (elements, dependencies = []) => {
-    const scene = useScene();
+    const editor = useEditor();
     const [previewImage, setPreviewImage] = React.useState(null);
     React.useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
-                assets: scene.assets,
+                assets: editor.assets,
                 width: LAYER_PREVIEW_SIZE,
                 height: LAYER_PREVIEW_SIZE,
                 background: LAYER_PREVIEW_BACKGROUND,
@@ -143,13 +143,13 @@ const EmptyLayers = () => (
 export const LayersPanel = props => {
     const [editingLayer, setEditingLayer] = React.useState("");
     const expandedGroups = React.useRef(new Set());
-    const scene = useScene();
+    const editor = useEditor();
     const update = useUpdate();
-    const key = scene.page.elements.map(el => el.id + "." + (el.group || ".")).join("-");
+    const key = editor.page.elements.map(el => el.id + "." + (el.group || ".")).join("-");
     const groups = React.useMemo(() => {
         const groupsMap = new Map();
         let currentGroupIndex = 1;
-        scene.page.elements.forEach(element => {
+        editor.page.elements.forEach(element => {
             if (element.group) {
                 if (!groupsMap.has(element.group)) {
                     groupsMap.set(element.group, {
@@ -169,8 +169,8 @@ export const LayersPanel = props => {
     React.useEffect(() => {
         let shouldUpdate = false;
         // 1. Check if there is a selected element inside a group
-        scene.page.elements.forEach(element => {
-            if (element.group && element.selected && scene.page.activeGroup === element.group) {
+        editor.page.elements.forEach(element => {
+            if (element.group && element.selected && editor.page.activeGroup === element.group) {
                 expandedGroups.current.add(element.group);
                 shouldUpdate = true;
             }
@@ -181,7 +181,7 @@ export const LayersPanel = props => {
             // setEditingLayer("");
             update();
         }
-    }, [scene.page.activeGroup]);
+    }, [editor.page.activeGroup]);
     return (
         <Panel className={themed("w-64", "layers", props.className)}>
             <Panel.Header className="">
@@ -189,7 +189,7 @@ export const LayersPanel = props => {
             </Panel.Header>
             <Panel.Body className="overflow-y-auto" style={{maxHeight:"calc(75vh - 8rem)"}}>
                 <div className="flex flex-col-reverse gap-0">
-                    {scene.page.elements.map(element => (
+                    {editor.page.elements.map(element => (
                         <React.Fragment key={element.id + "." + (element.group || "")}>
                             {(!element.group || expandedGroups.current.has(element.group)) && (
                                 <div className={classNames(!!element.group && "ml-4")}>
@@ -249,7 +249,7 @@ export const LayersPanel = props => {
                             )}
                         </React.Fragment>
                     ))}
-                    {scene.page.elements.length === 0 && (
+                    {editor.page.elements.length === 0 && (
                         <EmptyLayers />
                     )}
                 </div>

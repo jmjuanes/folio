@@ -375,7 +375,7 @@ export const CHANGES = {
     REMOVE: "change:remove",
 };
 
-export const STATES = {
+export const STATUS = {
     IDLE: "idle",
     POINTING: "pointing",
     DRAGGING: "dragging",

@@ -1,25 +1,18 @@
 import React from "react";
 import classNames from "classnames";
-import {fileOpen} from "browser-fs-access";
 import {BarsIcon, CameraIcon, FilesIcon} from "@josemi-icons/react";
 import {
     TOOLS,
-    ELEMENTS,
-    FILE_EXTENSIONS,
-    STATES,
-    ZOOM_STEP,
     TRANSPARENT,
     PREFERENCES_FIELDS,
     MINIMAP_WIDTH,
     MINIMAP_HEIGHT,
     MINIMAP_POSITION,
 } from "../constants.js";
-import {saveAsJson, loadFromJson} from "../json.js";
-import {blobToDataUrl} from "../utils/blob.js";
 import {useHandlers} from "../hooks/use-handlers.js";
 import {useBounds} from "../hooks/use-bounds.js";
 import {useCursor} from "../hooks/use-cursor.js";
-import {useEditor} from "../hooks/use-editor.js";
+import {useListeners} from "../hooks/use-editor.js";
 import {useDimensions} from "../hooks/use-dimensions.js";
 import {Island} from "./island.jsx";
 import {Canvas} from "./canvas.jsx";
@@ -46,13 +39,13 @@ import {LibraryPanel} from "./panels/library.jsx";
 import {SettingsPanel} from "./panels/settings.jsx";
 import {MinimapPanel} from "./panels/minimap.jsx";
 import {Alert} from "./ui/alert.jsx";
-import {SceneProvider, useScene} from "../contexts/scene.jsx";
+import {EditorProvider, useEditor} from "../contexts/editor.jsx";
 import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {ThemeProvider, themed} from "../contexts/theme.jsx";
 import {PreferencesProvider, usePreferences} from "../contexts/preferences.jsx";
 import {exportToFile, exportToClipboard} from "../export.js";
-import {convertRegionToSceneCoordinates} from "../scene.js";
+import {convertRegionToEditorCoordinates} from "../editor.js";
 import {loadLibraryFromJson, saveLibraryAsJson} from "../library.js";
 
 // @description export modes
@@ -61,107 +54,30 @@ const EXPORT_MODES = {
     CLIPBOARD: "export-to-clipboard",
 };
 
-// @private
-const EditorWithScene = props => {
-    const scene = useScene();
+// @private inner editor component
+const InnerEditor = props => {
+    const editor = useEditor();
+    const listeners = useListeners();
     const library = useLibrary();
-    const editor = useEditor(props);
     const [preferences, setPreferences] = usePreferences();
     const {showConfirm} = useConfirm();
-    const cursor = useCursor(editor.state);
-    const bounds = useBounds(editor.state);
-    const handlers = useHandlers(editor.state);
-    const dimensions = useDimensions(editor.state);
+    const cursor = useCursor();
+    const bounds = useBounds();
+    const handlers = useHandlers();
+    const dimensions = useDimensions();
+    const [contextMenuPosition, setContextMenuPosition] = React.useState(null);
 
-    const selectedElements = scene.getSelection();
+    const selectedElements = editor.getSelection();
     const isScreenshot = false; // editor.state.action === ACTIONS.SCREENSHOT;
 
-    // Handle loading a new drawing
-    // We will check first if the onLoad function has been provided as props. If yes,
-    // we will call this function instead of loading a canvas from file
-    const handleLoad = React.useCallback(() => {
-        if (typeof props.onLoad === "function") {
-            return props.onLoad();
-        }
-        const loadDrawing = () => {
-            return loadFromJson()
-                .then(data => {
-                    scene.fromJSON(data);
-                    editor.state.welcomeVisible = false;
-                    editor.dispatchChange();
-                    editor.update();
-                })
-                .catch(error => console.error(error));
-        };
-        // Check if scene is empty
-        if (scene.pages.length === 1 && scene.page.elements.length === 0) {
-            return loadDrawing();
-        }
-        // If is not empty, display confirmation
-        return showConfirm({
-            title: "Load new drawing",
-            message: "Changes made in this drawing will be lost. Do you want to continue?",
-            callback: () => loadDrawing(),
-        });
-    },  [props.onLoad]);
-
-    // Handle save canvas to a file
-    // If a onSave function has been provided as prop, we will execute it instead of loading a
-    // canvas from file
-    const handleSave = React.useCallback(() => {
-        if (typeof props.onSave === "function") {
-            return props.onSave();
-        }
-        // Default action: save canvas to file
-        return saveAsJson(scene.toJSON())
-            .then(() => console.log("Folio file saved"))
-            .catch(error => console.error(error));
-    }, [props.onSave]);
-
-    // Handle clear drawing
-    const handleClear = React.useCallback(() => {
-        return showConfirm({
-            title: "Delete all data",
-            message: "This will delete all the information of this board, including all pages and drawings. Do you want to continue?",
-            confirmText: "Yes, delete all data",
-            callback: () => {
-                scene.reset();
-                editor.dispatchChange();
-                editor.update();
-            },
-        });
-    }, []);
-
-    // Handle image load
-    const handleImageLoad = React.useCallback(() => {
-        const options = {
-            description: "Folio Board",
-            extensions: [
-                FILE_EXTENSIONS.PNG,
-                FILE_EXTENSIONS.JPG,
-            ],
-            multiple: false,
-        };
-        fileOpen(options)
-            .then(blob => blobToDataUrl(blob))
-            .then(data => scene.addImageElement(data))
-            .then(() => {
-                editor.dispatchChange();
-                editor.update();
-            })
-            .catch(error => console.error(error));
-    }, []);
-
     // Handle tool or action change
-    const handleToolOrActionChange = React.useCallback((newTool, newAction) => {
+    const handleToolOrActionChange = React.useCallback(newTool => {
         editor.state.tool = newTool;
-        // editor.state.action = newAction;
-        editor.state.contextMenu = false;
-        scene.getElements().forEach(element => {
+        editor.getElements().forEach(element => {
             element.selected = false;
             element.editing = false;
         });
-        editor.update();
+        setContextMenuPosition(null);
     }, []);
 
     // handle export to file or clipboard
@@ -177,35 +93,52 @@ const EditorWithScene = props => {
         return exportPromise.catch(error => console.error(error));
     }, []);
 
+    // handle context menu in canvas
+    const handleContextMenu = React.useCallback(event => {
+        if (editor.state.tool === TOOLS.SELECT) {
+            // editor.state.status = STATUS.IDLE;
+            setContextMenuPosition({
+                top: event.y,
+                left: event.x,
+            });
+        }
+    }, []);
+
     // Effect to disable the visibility of the welcome elements
     React.useEffect(() => {
-        if (editor.state.hintsVisible && scene?.page?.elements?.length > 0) {
-            editor.state.hintsVisible = false;
-            editor.update();
-        }
-    }, [scene?.page?.elements?.length]);
+        // if (editor.state.hintsVisible && editor?.page?.elements?.length > 0) {
+        //     editor.state.hintsVisible = false;
+        //     editor.update();
+        // }
+    }, [editor?.page?.elements?.length]);
 
     // Hook to reset the action and tool when we change the active page
     React.useEffect(() => {
         // const action = editor.state.action;
-        // if (scene.page.readonly && action !== ACTIONS.MOVE && action !== ACTIONS.POINTER && action !== ACTIONS.SCREENSHOT) {
-        if (scene.page.readonly && editor.state.tool !== TOOLS.DRAG) {
+        if (editor.page.readonly && editor.state.tool !== TOOLS.DRAG) {
             handleToolOrActionChange(TOOLS.DRAG);
         }
-    }, [scene.page.id, scene.page.readonly, editor.state.tool]);
+    }, [editor.page.id, editor.page.readonly, editor.state.tool]);
+
+    // Hook to hide the context menu
+    React.useEffect(() => {
+        if (contextMenuPosition) {
+            setContextMenuPosition(null);
+        }
+    }, [editor.state.tool]);
 
     return (
         <div className={themed("relative overflow-hidden h-full w-full select-none", "editor")}>
             <Canvas
-                id={scene.id}
-                elements={scene.page.elements}
-                assets={scene.assets}
-                backgroundColor={scene.background}
+                id={editor.id}
+                elements={editor.page.elements}
+                assets={editor.assets}
+                backgroundColor={editor.background}
                 cursor={cursor}
-                translateX={scene.page.translateX}
-                translateY={scene.page.translateY}
-                zoom={scene.page.zoom}
-                snaps={editor.state.visibleSnapEdges}
+                translateX={editor.page.translateX}
+                translateY={editor.page.translateY}
+                zoom={editor.page.zoom}
+                snaps={editor.state.snapEdges}
                 bounds={bounds}
                 showBounds={!!bounds}
                 handlers={handlers}
@@ -213,118 +146,94 @@ const EditorWithScene = props => {
                 dimensions={dimensions}
                 showBrush={editor.state.tool === TOOLS.SELECT}
                 showPointer={editor.state.tool === TOOLS.ERASER}
-                showGrid={scene.appState.grid}
-                showSnaps={scene.appState.snapToElements}
-                showObjectDimensions={scene.appState.objectDimensions}
-                {...editor.events}
+                showGrid={editor.appState.grid}
+                showSnaps={editor.appState.snapToElements}
+                showObjectDimensions={editor.appState.objectDimensions}
+                onContextMenu={handleContextMenu}
+                {...listeners}
             />
             {editor.state.tool === TOOLS.POINTER && (
                 <Pointer />
             )}
-            {editor.state.contextMenu &&  (
+            {!!contextMenuPosition &&  (
                 <ContextMenu
-                    top={editor.state.contextMenuTop}
-                    left={editor.state.contextMenuLeft}
+                    top={contextMenuPosition.top}
+                    left={contextMenuPosition.left}
                     onDuplicate={() => {
-                        scene.duplicateElements(scene.getSelection());
-                        editor.state.contextMenu = false;
+                        editor.duplicateElements(editor.getSelection());
                         editor.dispatchChange();
-                        editor.update();
+                        setContextMenuPosition(null);
                     }}
                     onLock={() => {
-                        scene.lockElements(scene.getSelection());
+                        editor.lockElements(editor.getSelection());
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onUnlock={() => {
-                        scene.unlockElements(scene.getSelection());
+                        editor.unlockElements(editor.getSelection());
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onGroup={() => {
-                        scene.groupElements(scene.getSelection());
+                        editor.groupElements(editor.getSelection());
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onUngroup={() => {
-                        scene.ungroupElements(scene.getSelection());
+                        editor.ungroupElements(editor.getSelection());
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onCut={() => {
-                        const elements = scene.getSelection();
-                        scene.cutElementsToClipboard(elements).then(() => {
-                            editor.state.contextMenu = false;
+                        const elements = editor.getSelection();
+                        editor.cutElementsToClipboard(elements).then(() => {
                             editor.dispatchChange();
-                            editor.update();
+                            setContextMenuPosition(null);
                         });
                     }}
                     onCopy={() => {
-                        const elements = scene.getSelection();
-                        scene.copyElementsToClipboard(elements).then(() => {
-                            editor.state.contextMenu = false;
+                        const elements = editor.getSelection();
+                        editor.copyElementsToClipboard(elements).then(() => {
                             editor.dispatchChange();
-                            editor.update();
+                            setContextMenuPosition(null);
                         });
                     }}
                     onPaste={() => {
-                        const x = editor.state.contextMenuLeft;
-                        const y = editor.state.contextMenuTop;
-                        scene.pasteElementsFromClipboard(null, {x, y}).then(() => {
-                            editor.state.contextMenu = false;
+                        const x = contextMenuPosition.left;
+                        const y = contextMenuPosition.top;
+                        editor.pasteElementsFromClipboard(null, {x, y}).then(() => {
                             editor.dispatchChange();
-                            editor.update();
+                            setContextMenuPosition(null);
                         });
                     }}
                     onSendBackward={() => {
-                        scene.sendElementsBackward(scene.getSelection());
+                        editor.sendElementsBackward(editor.getSelection());
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onBringForward={() => {
-                        scene.bringElementsForward(scene.getSelection());
+                        editor.bringElementsForward(editor.getSelection());
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onSelectAll={() => {
-                        scene.getElements().forEach(el => el.selected = true);
-                        editor.state.contextMenu = false;
-                        editor.update();
+                        editor.getElements().forEach(el => el.selected = true);
+                        setContextMenuPosition(null);
                     }}
                     onDelete={() => {
-                        scene.removeElements(scene.getSelection());
-                        editor.state.contextMenu = false;
+                        editor.removeElements(editor.getSelection());
                         editor.dispatchChange();
-                        editor.update();
+                        setContextMenuPosition(null);
                     }}
                     onAddToLibrary={() => {
                         editor.state.libraryAddVisible = true;
-                        editor.state.contextMenu = false;
-                        editor.update();
+                        setContextMenuPosition(null);
                     }}
                 />
             )}
             {!isScreenshot && (
                 <div className="absolute z-20 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
-                    <ToolsPanel
-                        tool={editor.state.tool}
-                        toolLocked={editor.state.toolLocked}
-                        readonly={!!scene.page.readonly}
-                        showSelect={true}
-                        showTools={true}
-                        showLock={true}
-                        onToolClick={tool => {
-                            // Special action if the image tool is activated
-                            if (tool === ELEMENTS.IMAGE) {
-                                return handleImageLoad();
-                            }
-                            handleToolOrActionChange(tool, null);
-                        }}
-                        onToolLockClick={() => {
-                            editor.state.toolLocked = !editor.state.toolLocked;
-                            editor.update();
-                        }}
-                    />
+                    <ToolsPanel />
                     {(editor.state.hintsVisible && !editor.state.tool) && (
                         <Hint
                             position="top"
@@ -348,7 +257,7 @@ const EditorWithScene = props => {
                     />
                 </div>
             )}
-            {!scene.page.readonly && editor.state.currentState === STATES.IDLE && !editor.state.layersVisible && !editor.state.libraryVisible && selectedElements.length > 0 && (
+            {!editor.page.readonly && selectedElements.length > 0 && (
                 <React.Fragment>
                     {(selectedElements.length > 1 || !selectedElements[0].editing) && (
                         <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
@@ -363,27 +272,27 @@ const EditorWithScene = props => {
                     )}
                 </React.Fragment>
             )}
-            {!scene.page.readonly && editor.state.layersVisible && !isScreenshot && (
+            {!editor.page.readonly && editor.state.layersVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                     <LayersPanel
-                        key={`layers:${scene.id || ""}:${scene.page.id || ""}`}
+                        key={`layers:${editor.id || ""}:${editor.page.id || ""}`}
                         onElementSelect={element => {
                             // if (!editor.state.action || editor.state.action === ACTIONS.SELECT) {
                             if (editor.state.tool === TOOLS.SELECT) {
                                 if (element?.group) {
-                                    scene.page.activeGroup = element.group;
+                                    editor.page.activeGroup = element.group;
                                 }
-                                scene.selectElements([element]);
+                                editor.selectElements([element]);
                                 editor.update();
                             }
                         }}
                         onElementDuplicate={element => {
-                            scene.duplicateElements([element]);
+                            editor.duplicateElements([element]);
                             editor.dispatchChange();
                             editor.update();
                         }}
                         onElementDelete={element => {
-                            scene.removeElements([element]);
+                            editor.removeElements([element]);
                             editor.dispatchChange();
                             editor.update();
                         }}
@@ -394,10 +303,10 @@ const EditorWithScene = props => {
                     />
                 </div>
             )}
-            {!scene.page.readonly && editor.state.libraryVisible && !isScreenshot && (
+            {!editor.page.readonly && editor.state.libraryVisible && !isScreenshot && (
                 <div className="absolute z-30 top-0 mt-16 right-0 pt-1 pr-4">
                     <LibraryPanel
-                        key={`library:${scene.id || ""}`}
+                        key={`library:${editor.id || ""}`}
                         onCreate={() => {
                             editor.state.libraryCreateVisible = true;
                             editor.update();
@@ -429,7 +338,7 @@ const EditorWithScene = props => {
                             editor.update();
                         }}
                         onInsertItem={(item, tx, ty) => {
-                            scene.addLibraryItem(item, tx, ty);
+                            editor.addLibraryItem(item, tx, ty);
                             editor.state.libraryVisible = false; // hide library panel
                             editor.dispatchChange();
                             editor.update();
@@ -462,14 +371,14 @@ const EditorWithScene = props => {
             {editor.state.pagesVisible && !isScreenshot && (
                 <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4">
                     <PagesPanel
-                        key={`pages:${scene.id || ""}:${scene.pages.length}`}
+                        key={`pages:${editor.id || ""}:${editor.pages.length}`}
                         editable={true}
                         onChangeActivePage={page => {
-                            scene.setActivePage(page);
+                            editor.setActivePage(page);
                             editor.update();
                         }}
                         onPageCreate={() => {
-                            scene.addPage({});
+                            editor.addPage({});
                             editor.dispatchChange();
                             editor.update();
                         }}
@@ -479,7 +388,7 @@ const EditorWithScene = props => {
                             editor.update();
                         }}
                         onPageDuplicate={page => {
-                            scene.duplicatePage(page);
+                            editor.duplicatePage(page);
                             editor.dispatchChange();
                             editor.update();
                         }}
@@ -488,14 +397,14 @@ const EditorWithScene = props => {
                                 title: "Delete page",
                                 message: `Do you want to delete '${page.title}'? This action can not be undone.`,
                                 callback: () => {
-                                    scene.removePage(page);
+                                    editor.removePage(page);
                                     editor.dispatchChange();
                                     editor.update();
                                 },
                             });
                         }}
                         onPageMove={(page, nextIndex) => {
-                            scene.movePage(page, nextIndex);
+                            editor.movePage(page, nextIndex);
                             editor.dispatchChange();
                             editor.update();
                         }}
@@ -507,44 +416,19 @@ const EditorWithScene = props => {
                     <div className="absolute top-0 left-0 pt-4 pl-4 z-20 flex gap-2">
                         <div className="relative flex">
                             <Island>
-                                <Menu
-                                    links={props.links}
-                                    showLoad={props.showLoad}
-                                    showSave={props.showSave}
-                                    showClear={props.showClear}
-                                    showExport={props.showExport}
-                                    onSave={handleSave}
-                                    onLoad={handleLoad}
-                                    onClear={handleClear}
-                                    onExport={() => {
-                                        editor.state.exportVisible = true;
-                                        editor.update();
-                                    }}
-                                    onPreferences={() => {
-                                        editor.state.preferencesVisible = true;
-                                        editor.update();
-                                    }}
-                                />
+                                <Menu />
                                 <Island.Separator />
                                 {props.showTitle && (
-                                    <Title
-                                        key={scene.title}
-                                        editable={true}
-                                        onChange={newTitle => {
-                                            // Prevent dispatching a new update if the new title is the same as the prev title
-                                            if (newTitle !== scene.title) {
-                                                scene.title = newTitle;
-                                                editor.dispatchChange();
-                                            }
-                                        }}
-                                    />
+                                    <React.Fragment>
+                                        <Title />
+                                        <Island.Separator />
+                                    </React.Fragment>
                                 )}
-                                {props.showTitle && <Island.Separator />}
                                 <Island.Button
                                     icon="files"
                                     text={(
                                         <div className="w-32 truncate">
-                                            <span>{scene.getActivePage().title}</span>
+                                            <span>{editor.getActivePage().title}</span>
                                         </div>
                                     )}
                                     showChevron={true}
@@ -568,14 +452,14 @@ const EditorWithScene = props => {
                                 </div>
                                 <Island.Button
                                     icon="trash"
-                                    disabled={scene.page.readonly || scene.getElements().length === 0}
+                                    disabled={editor.page.readonly || editor.getElements().length === 0}
                                     onClick={() => {
                                         return showConfirm({
                                             title: "Clear Page",
                                             message: "This will remove all elements of this page. Do you want to continue?",
                                             confirmText: "Yes, clear page",
                                             callback: () => {
-                                                scene.clearPage(scene.page.id);
+                                                editor.clearPage(editor.page.id);
                                                 editor.dispatchChange();
                                                 editor.update();
                                             },
@@ -585,7 +469,7 @@ const EditorWithScene = props => {
                                 {props.showScreenshot && (
                                     <Island.Button
                                         icon="camera"
-                                        disabled={scene.getElements().length === 0}
+                                        disabled={editor.getElements().length === 0}
                                         onClick={() => {
                                             // handleToolOrActionChange(null, ACTIONS.SCREENSHOT);
                                         }}
@@ -619,20 +503,7 @@ const EditorWithScene = props => {
                     </div>
                     <div className="absolute top-0 right-0 pt-4 pr-4 z-40 flex gap-2">
                         <div className="flex relative">
-                            <HistoryPanel
-                                undoDisabled={scene.page.readonly || !scene.canUndo()}
-                                redoDisabled={scene.page.readonly || !scene.canRedo()}
-                                onUndoClick={() => {
-                                    scene.undo();
-                                    editor.dispatchChange();
-                                    editor.update();
-                                }}
-                                onRedoClick={() => {
-                                    scene.redo();
-                                    editor.dispatchChange();
-                                    editor.update();
-                                }}
-                            />
+                            <HistoryPanel />
                             {(editor.state.hintsVisible && !editor.state.tool && !editor.state.layersVisible) && (
                                 <Hint
                                     position="bottom"
@@ -643,29 +514,7 @@ const EditorWithScene = props => {
                             )}
                         </div>
                         <div className="flex relative">
-                            <ZoomPanel
-                                zoom={scene.getZoom()}
-                                onZoomResetClick={() => {
-                                    scene.resetZoom();
-                                    editor.update();
-                                }}
-                                onZoomToFitClick={() => {
-                                    scene.fitZoomToSelection();
-                                    editor.update();
-                                }}
-                                onZoomToSelectionClick={() => {
-                                    scene.fitZoomToSelection(selectedElements);
-                                    editor.update();
-                                }}
-                                onZoomInClick={() => {
-                                    scene.setZoom(scene.page.zoom + ZOOM_STEP);
-                                    editor.update();
-                                }}
-                                onZoomOutClick={() => {
-                                    scene.setZoom(scene.page.zoom - ZOOM_STEP);
-                                    editor.update();
-                                }}
-                            />
+                            <ZoomPanel />
                             {(editor.state.hintsVisible && !editor.state.tool && !editor.state.layersVisible) && (
                                 <Hint
                                     position="bottom"
@@ -679,8 +528,8 @@ const EditorWithScene = props => {
                             <Island>
                                 <Island.Button
                                     icon="edit"
-                                    active={!scene.page.readonly && !editor.state.layersVisible && !editor.state.libraryVisible}
-                                    disabled={scene.page.readonly}
+                                    active={!editor.page.readonly && !editor.state.layersVisible && !editor.state.libraryVisible}
+                                    disabled={editor.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
                                         editor.state.libraryVisible = false;
@@ -689,8 +538,8 @@ const EditorWithScene = props => {
                                 />
                                 <Island.Button
                                     icon="stack"
-                                    active={!scene.page.readonly && editor.state.layersVisible}
-                                    disabled={scene.page.readonly}
+                                    active={!editor.page.readonly && editor.state.layersVisible}
+                                    disabled={editor.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = true;
                                         editor.state.libraryVisible = false;
@@ -699,8 +548,8 @@ const EditorWithScene = props => {
                                 />
                                 <Island.Button
                                     icon="album"
-                                    active={!scene.page.readonly && editor.state.libraryVisible}
-                                    disabled={scene.page.readonly}
+                                    active={!editor.page.readonly && editor.state.libraryVisible}
+                                    disabled={editor.page.readonly}
                                     onClick={() => {
                                         editor.state.layersVisible = false;
                                         editor.state.libraryVisible = true;
@@ -711,7 +560,7 @@ const EditorWithScene = props => {
                         </div>
                         {props.headerRightContent}
                     </div>
-                    {scene.page.readonly && (
+                    {editor.page.readonly && (
                         <div className="absolute top-0 left-half pt-4 z-30 flex gap-2 translate-x-half-n pointer-events-none">
                             <Alert variant="warning" icon="lock">
                                 This page is <b>Read-Only</b>.
@@ -723,17 +572,17 @@ const EditorWithScene = props => {
             {isScreenshot && (
                 <Screenshot
                     onDownload={(region, options) => {
-                        handleExport(EXPORT_MODES.FILE, scene.getElements(), {
-                            background: options?.background ? scene.background : TRANSPARENT,
-                            crop: convertRegionToSceneCoordinates(scene, region),
+                        handleExport(EXPORT_MODES.FILE, editor.getElements(), {
+                            background: options?.background ? editor.background : TRANSPARENT,
+                            crop: convertRegionToEditorCoordinates(editor, region),
                         });
                         // editor.state.action = null;
                         editor.update();
                     }}
                     onCopyToClipboard={(region, options) => {
-                        handleExport(EXPORT_MODES.CLIPBOARD, scene.getElements(), {
-                            background: options?.background ? scene.background : TRANSPARENT,
-                            crop: convertRegionToSceneCoordinates(scene, region),
+                        handleExport(EXPORT_MODES.CLIPBOARD, editor.getElements(), {
+                            background: options?.background ? editor.background : TRANSPARENT,
+                            crop: convertRegionToEditorCoordinates(editor, region),
                         });
                         // editor.state.action = null;
                         editor.update();
@@ -747,16 +596,16 @@ const EditorWithScene = props => {
             {false && (
                 <PagesManager
                     onChangeActivePage={page => {
-                        scene.setActivePage(page);
+                        editor.setActivePage(page);
                         editor.update();
                     }}
                     onPageCreate={index => {
-                        scene.addPage({}, index, true);
+                        editor.addPage({}, index, true);
                         editor.dispatchChange();
                         editor.update();
                     }}
                     onPageDuplicate={page => {
-                        [page].flat().forEach(page => scene.duplicatePage(page));
+                        [page].flat().forEach(page => editor.duplicatePage(page));
                         editor.dispatchChange();
                         editor.update();
                     }}
@@ -766,14 +615,14 @@ const EditorWithScene = props => {
                             title: "Delete page",
                             message: `Do you want to delete ${pages.length === 1 ? `'${pages[0].title}'` : `${pages.length} pages`}? This action can not be undone.`,
                             callback: () => {
-                                pages.forEach(page => scene.removePage(page));
+                                pages.forEach(page => editor.removePage(page));
                                 editor.dispatchChange();
                                 editor.update();
                             },
                         });
                     }}
                     onPageMove={(page, nextIndex) => {
-                        scene.movePage(page, nextIndex);
+                        editor.movePage(page, nextIndex);
                         editor.dispatchChange();
                         editor.update();
                     }}
@@ -852,14 +701,14 @@ const EditorWithScene = props => {
                     onSubmit={data => {
                         Object.assign(editor.state.selectedPage, data);
                         // Check if the edited page is the active page
-                        if (scene.page.id === editor.state.selectedPage.id) {
+                        if (editor.page.id === editor.state.selectedPage.id) {
                             // editor.state.tool = null;
                             editor.state.contextMenu = false;
                             // if (editor.state.action !== ACTIONS.MOVE && editor.state.action !== ACTIONS.POINTER) {
                             //     editor.state.action = ACTIONS.MOVE;
                             // }
                             // Reset selected elements and editing state
-                            scene.getElements().forEach(element => {
+                            editor.getElements().forEach(element => {
                                 element.selected = false;
                                 element.editing = false;
                             });
@@ -899,9 +748,9 @@ export const Editor = ({initialData, initialLibraryData, initialPreferences, ...
         <PreferencesProvider initialData={initialPreferences} onChange={props.onPreferencesChange}>
             <ThemeProvider theme="default">
                 <LibraryProvider initialData={initialLibraryData} onChange={props.onLibraryChange}>
-                    <SceneProvider initialData={initialData}>
-                        <EditorWithScene {...props} />
-                    </SceneProvider>
+                    <EditorProvider initialData={initialData} onChange={props.onChange}>
+                        <InnerEditor {...props} />
+                    </EditorProvider>
                 </LibraryProvider>
             </ThemeProvider>
         </PreferencesProvider>

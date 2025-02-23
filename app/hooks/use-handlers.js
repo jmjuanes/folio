@@ -1,14 +1,16 @@
 import {TOOLS} from "../constants.js";
 import {getElementConfig} from "../elements.js";
-import {useScene} from "../contexts/scene.jsx";
+import {useEditor} from "../contexts/editor.jsx";
+import {useActiveTool} from "../contexts/tools.jsx";
 
-export const useHandlers = ({tool}) => {
-    const scene = useScene();
+export const useHandlers = () => {
+    const editor = useEditor();
+    const [tool] = useActiveTool();
 
     // if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
     if (tool === TOOLS.SELECT) {
-        // Get current selection in scene
-        const selectedElements = scene.getSelection();
+        // Get current selection in editor
+        const selectedElements = editor.getSelection();
 
         // Handlers are only visible when the number of selected elements is exactly 1,
         // and also only if this element is not locked and is not in editing mode

@@ -1,7 +1,7 @@
 import React from "react";
 import {ELEMENTS} from "../constants.js";
 import {ContextMenu as Menu} from "./ui/context-menu.jsx";
-import {useScene} from "../contexts/scene.jsx";
+import {useEditor} from "../contexts/editor.jsx";
 
 // Not allowed elements in library
 const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
@@ -13,12 +13,12 @@ const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
 ];
 
 export const ContextMenu = props => {
-    const scene = useScene();
-    const selectedElements = scene.getSelection();
+    const editor = useEditor();
+    const selectedElements = editor.getSelection();
     const style = {
         top: props.top,
         left: props.left,
-        transform: props.top > scene.height / 2 ? "translateY(-100%)" : "",
+        transform: props.top > editor.height / 2 ? "translateY(-100%)" : "",
     };
     const addLibraryItem = React.useMemo(() => {
         return selectedElements.every(element => {
@@ -45,7 +45,7 @@ export const ContextMenu = props => {
                             <span>Unlock</span>
                         </Menu.Item>
                     )}
-                    {(!scene.page.activeGroup && selectedElements.length > 1) && (
+                    {(!editor.page.activeGroup && selectedElements.length > 1) && (
                         <React.Fragment>
                             {selectedElements.some(el => !el.group || el.group !== selectedElements[0].group) && (
                                 <Menu.Item onClick={props.onGroup}>
@@ -102,7 +102,7 @@ export const ContextMenu = props => {
                     </Menu.Item>
                 </React.Fragment>
             )}
-            {selectedElements.length !== scene.getElements().length && (
+            {selectedElements.length !== editor.getElements().length && (
                 <React.Fragment>
                     <Menu.Separator />
                     <Menu.Item onClick={props.onSelectAll}>
