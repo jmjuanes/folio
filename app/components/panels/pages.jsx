@@ -10,7 +10,7 @@ import {
     LockIcon,
 } from "@josemi-icons/react";
 import {Panel} from "../ui/panel.jsx";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import {exportToDataURL} from "../../export.js";
 import {EXPORT_PADDING} from "../../constants.js";
@@ -25,20 +25,20 @@ const PAGES_PREVIEW_HEIGHT = 80;
 
 // Tiny hook to generate the preview of the page
 const usePagePreview = page => {
-    const scene = useScene();
+    const editor = useEditor();
     const [previewImage, setPreviewImage] = React.useState(null);
     React.useEffect(() => {
         const previewOptions = {
-            assets: scene.assets,
+            assets: editor.assets,
             width: PAGES_PREVIEW_WIDTH * 2,
             height: PAGES_PREVIEW_HEIGHT * 2,
-            background: scene.background,
+            background: editor.background,
             padding: EXPORT_PADDING * 4,
         };
         exportToDataURL(page.elements, previewOptions).then(image => {
             return setPreviewImage(image);
         });
-    }, [page.id, page.id === scene.page.id ? scene.updatedAt : null]);
+    }, [page.id, page.id === editor.page.id ? editor.updatedAt : null]);
     return previewImage;
 };
 
@@ -125,12 +125,12 @@ const initializeSortedPages = pages => {
 
 // @public pages panel component
 export const PagesPanel = props => {
-    const scene = useScene();
+    const editor = useEditor();
     // const [preferences, setPreferences] = usePreferences();
     const [sortedPages, setSortedPages] = React.useState(() => {
-        return initializeSortedPages(scene.pages);
+        return initializeSortedPages(editor.pages);
     });
-    const activePage = scene.getActivePage();
+    const activePage = editor.getActivePage();
     // const view = preferences[PREFERENCES_FIELDS.PAGES_VIEW] || PAGES_VIEW.LIST;
     // Handle page move
     const handlePageMove = React.useCallback((event, page) => {
@@ -147,8 +147,8 @@ export const PagesPanel = props => {
             nextSortedPages[page.id].y = e.clientY - event.nativeEvent.clientY;
             // Fix position of all pages
             const currentY = (nextSortedPages[page.id].index * PAGES_ITEM_HEIGHT) + nextSortedPages[page.id].y;
-            const nextIndex = Math.max(0, Math.min(Math.round(currentY / PAGES_ITEM_HEIGHT), scene.pages.length));
-            scene.pages.forEach(item => {
+            const nextIndex = Math.max(0, Math.min(Math.round(currentY / PAGES_ITEM_HEIGHT), editor.pages.length));
+            editor.pages.forEach(item => {
                 if (item.id !== page.id) {
                     const index = nextSortedPages[item.id].index;
                     if (nextIndex === index) {
@@ -201,8 +201,8 @@ export const PagesPanel = props => {
                 </div>
             </Panel.Header>
             <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
-                <div className="relative w-full" style={{height: scene.pages.length * PAGES_ITEM_HEIGHT}}>
-                    {scene.pages.map(page => (
+                <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
+                    {editor.pages.map(page => (
                         <Page
                             key={`page:${page.id}`}
                             title={page.title}

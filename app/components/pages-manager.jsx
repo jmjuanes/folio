@@ -4,7 +4,7 @@ import {useUpdate} from "react-use";
 import {DotsVerticalIcon, CheckIcon} from "@josemi-icons/react";
 import {Island} from "./island.jsx";
 import {Dropdown} from "./ui/dropdown.jsx";
-import {useScene} from "../contexts/scene.jsx";
+import {useEditor} from "../contexts/editor.jsx";
 import {themed} from "../contexts/theme.jsx";
 import {usePagePreview} from "../hooks/use-page-preview.js";
 import {clearFocus} from "../utils/dom.js";
@@ -124,13 +124,13 @@ const PageSeparator = ({className, active = false, visible = false, onPointerEnt
 };
 
 export const PagesManager = props => {
-    const scene = useScene();
+    const editor = useEditor();
     const forceUpdate = useUpdate();
     const draggedIndex = React.useRef(null);
     const dropIndex = React.useRef(null);
     const [editEnabled, setEditEnabled] = React.useState(false);
     const [cursorPosition, setCursorPosition] = React.useState(null);
-    const selectedPages = React.useMemo(() => new Set(), [scene.pages.length, editEnabled]);
+    const selectedPages = React.useMemo(() => new Set(), [editor.pages.length, editEnabled]);
 
     const setDropIndex = React.useCallback(index => {
         // note: we don't allow to drop the page on itself
@@ -146,7 +146,7 @@ export const PagesManager = props => {
 
         // check if we are in edit mode
         if (editEnabled) {
-            const id = scene.pages[index].id;
+            const id = editor.pages[index].id;
             // check if we have clicked the shift key to select multiple pages
             if (event.shiftKey) {
                 selectedPages.has(id) ? selectedPages.delete(id) : selectedPages.add(id);
@@ -159,7 +159,7 @@ export const PagesManager = props => {
         }
 
         // dragging is only enabled if we have more than one page and we have not selected multiple pages
-        if (scene.pages.length > 1) {
+        if (editor.pages.length > 1) {
             let hasDragged = false;
             draggedIndex.current = index;
             dropIndex.current = null;
@@ -175,11 +175,11 @@ export const PagesManager = props => {
 
                 // check if the page does not have been dragged, and in this case we select it
                 if (!hasDragged) {
-                    props.onChangeActivePage(scene.pages[index]);
+                    props.onChangeActivePage(editor.pages[index]);
                 }
                 // check if the page has been dragged and dropped
                 else if (dropIndex.current !== null) {
-                    props.onPageMove(scene.pages[index], dropIndex.current);
+                    props.onPageMove(editor.pages[index], dropIndex.current);
                 }
                 // reset the dragged index and clear the cursor position
                 draggedIndex.current = null;
@@ -225,7 +225,7 @@ export const PagesManager = props => {
                             <Island.Button
                                 icon="plus"
                                 text="New Page"
-                                onClick={() => props.onPageCreate(scene.pages.length)}
+                                onClick={() => props.onPageCreate(editor.pages.length)}
                             />
                         </Island>
                     </div>
@@ -242,15 +242,15 @@ export const PagesManager = props => {
                                     text="Duplicate"
                                     disabled={selectedPages.size === 0}
                                     onClick={() => {
-                                        props.onPageDuplicate(scene.pages.filter(page => selectedPages.has(page.id)));
+                                        props.onPageDuplicate(editor.pages.filter(page => selectedPages.has(page.id)));
                                     }}
                                 />
                                 <Island.Button
                                     icon="trash"
                                     text="Delete"
-                                    disabled={selectedPages.size === 0 || scene.pages.length === selectedPages.size}
+                                    disabled={selectedPages.size === 0 || editor.pages.length === selectedPages.size}
                                     onClick={() => {
-                                        props.onPageDelete(scene.pages.filter(page => selectedPages.has(page.id)));
+                                        props.onPageDelete(editor.pages.filter(page => selectedPages.has(page.id)));
                                     }}
                                 />
                             </Island>
@@ -266,7 +266,7 @@ export const PagesManager = props => {
                 )}
             </div>
             <div className="flex flex-wrap justify-center px-4 pt-20 pb-12">
-                {scene.pages.map((page, index) => (
+                {editor.pages.map((page, index) => (
                     <div className="flex items-center flex-no-wrap" key={page.id}>
                         <PageSeparator
                             className="justify-start"
@@ -279,7 +279,7 @@ export const PagesManager = props => {
                             key={page.id}
                             page={page}
                             dragging={draggedIndex.current === index}
-                            selected={draggedIndex.current !== null ? draggedIndex.current === index : (editEnabled ? selectedPages.has(page.id) : scene.page.id === page.id)}
+                            selected={draggedIndex.current !== null ? draggedIndex.current === index : (editEnabled ? selectedPages.has(page.id) : editor.page.id === page.id)}
                             showDropdown={!editEnabled}
                             showCheckbox={false}
                             onDragStart={event => handleDragStart(event, index)}
@@ -307,7 +307,7 @@ export const PagesManager = props => {
             </div>
             {draggedIndex.current !== null && !!cursorPosition && (
                 <PageDraggingPreview
-                    page={scene.pages[draggedIndex.current]}
+                    page={editor.pages[draggedIndex.current]}
                     x={cursorPosition.x}
                     y={cursorPosition.y}
                 />

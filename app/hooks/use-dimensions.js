@@ -1,23 +1,28 @@
-import {ACTIONS, ELEMENTS, FIELDS} from "../constants.js";
-// import {getElementConfig} from "../elements.js";
-import {useScene} from "../contexts/scene.jsx";
+import {ELEMENTS, FIELDS, TOOLS} from "../constants.js";
+import {useEditor} from "../contexts/editor.jsx";
+import {useActiveTool} from "../contexts/tools.jsx";
 import {getRectangleBounds} from "../utils/math.js";
 
 const generateDimensionLabel = el => ({
-    value: [Math.floor(Math.abs(el.x2 - el.x1)), Math.floor(Math.abs(el.y2 - el.y1))].join(" x "),
+    value: [
+        Math.floor(Math.abs(el.x2 - el.x1)),
+        Math.floor(Math.abs(el.y2 - el.y1)),
+    ].join(" x "),
     x: Math.max(el.x1, el.x2),
     y: Math.max(el.y1, el.y2),
     // translateX: "-100%",
     // translateY: "0.5rem",
 });
 
-export const useDimensions = ({action, tool}) => {
-    const scene = useScene();
+export const useDimensions = () => {
+    const [tool] = useActiveTool();
+    const editor = useEditor();
     const dimensions = [];
-    if (scene?.appState?.objectDimensions) {
+    if (editor?.appState?.objectDimensions) {
         // Case 1. No tool or action or we are translating or resizing the element
-        if ((!tool && !action) || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {
-            const selectedElements = scene.getSelection();
+        // if ((!tool && !action) || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {
+        if (!tool || tool === TOOLS.SELECT) {
+            const selectedElements = editor.getSelection();
             // Case 1.1. Just one single element to calculate the size
             // In this case, we only want to display the dimension for shapes, drawings, text or images
             if (selectedElements.length === 1) {
@@ -34,8 +39,9 @@ export const useDimensions = ({action, tool}) => {
         }
         // Case 2. We are creating an element
         // In this case, only for shapes or text will be displayed
-        else if (action === ACTIONS.CREATE && (tool === ELEMENTS.SHAPE || tool === ELEMENTS.TEXT)) {
-            const el = scene.getElements().find(element => element[FIELDS.CREATING]);
+        // else if (action === ACTIONS.CREATE && (tool === ELEMENTS.SHAPE || tool === ELEMENTS.TEXT)) {
+        else if (tool === ELEMENTS.SHAPE || tool === ELEMENTS.TEXT) {
+            const el = editor.getElements().find(element => element[FIELDS.CREATING]);
             if (el) {
                 dimensions.push(generateDimensionLabel(el));
             }

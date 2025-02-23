@@ -5,16 +5,16 @@ import {
     HANDLERS,
     GRID_SIZE,
     IS_DARWIN,
-    ACTIONS,
+    TOOLS,
     CHANGES,
     KEYS,
-    STATES,
+    STATUS,
     SNAP_THRESHOLD,
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
     FIELDS,
 } from "../constants.js";
-import {sign, normalizeBounds, getRectangleBounds} from "../utils/math.js";
+import {normalizeBounds, getRectangleBounds} from "../utils/math.js";
 import {isArrowKey} from "../utils/keys.js";
 import {isInputTarget} from "../utils/events.js";
 import {
@@ -23,21 +23,25 @@ import {
     getElementsSnappingEdges,
     getElementSnappingPoints,
 } from "../elements.js";
-import {useScene} from "../contexts/scene.jsx";
-import {useLibrary} from "../contexts/library.jsx";
-import {isNodeHandler} from "../handlers.js";
+import {useEditor} from "../contexts/editor.jsx";
+
+// internal list with all elements
+const elementsNames = new Set(Object.values(ELEMENTS));
+
+// @private internal utility to check if the tool is an element
+const isElementTool = toolName => {
+    return toolName && elementsNames.has(toolName);
+};
 
 // @private create a new editor state
-const createInitialEditorState = (props, scene) => {
-    const isSceneEmpty = scene.pages.length === 1 && scene.page.elements.length === 0;
+const createInitialEditorState = (props, editor) => {
+    const isEditorEmpty = editor.pages.length === 1 && editor.page.elements.length === 0;
     const editorState = {
-        currentState: STATES.IDLE,
-        action: null,
-        visibleSnapEdges: [],
-
-        // @description active tool state
-        tool: null,
+        status: STATUS.IDLE,
+        tool: TOOLS.SELECT,
         toolLocked: false,
+
+        visibleSnapEdges: [],
 
         // @description current selection  
         selection: null,
@@ -45,11 +49,6 @@ const createInitialEditorState = (props, scene) => {
         selectedLibraryItemId: null,
         selectedLibraryItem: null,
         selectedPage: null,
-
-        // @description context menu configuration
-        contextMenu: false,
-        contextMenuTop: 0,
-        contextMenuLeft: 0,
 
         // @description state for dialogs
         exportVisible: false,
@@ -62,34 +61,21 @@ const createInitialEditorState = (props, scene) => {
         preferencesVisible: false,
 
         // @description state for welcome items
-        hintsVisible: props.showHints && isSceneEmpty,
-        welcomeVisible: props.showWelcome && isSceneEmpty,
+        hintsVisible: props.showHints && isEditorEmpty,
+        welcomeVisible: props.showWelcome && isEditorEmpty,
     };
     return editorState;
 };
 
-// @public use editor
-export const useEditor = props => {
+// @public use editor events listeners
+export const useListeners = props => {
     const update = useUpdate();
-    const scene = useScene();
-    const library = useLibrary();
-    const editor = React.useRef(null);
-    const onChangeRef = React.useRef(props?.onChange);
-    const onLibraryChangeRef = React.useRef(props?.onLibraryChange);
+    const editor = useEditor();
+    const listeners = React.useRef(null);
 
-    // We need to update the reference to the onChange function
-    onChangeRef.current = props?.onChange;
-    onLibraryChangeRef.current = props?.onLibraryChange;
-
-    // Initialize editor state
-    if (!editor.current) {
-        const editorState = createInitialEditorState(props, scene);
-
-        // @description dispatch an editor change
-        const dispatchChange = () => {
-            scene.updatedAt = Date.now(); // save the last update time
-            return onChangeRef.current(scene.toJSON());
-        };
+    // Initialize editor listeners
+    if (!listeners.current) {
+        const editorState = createInitialEditorState(props, editor);
 
         // @description dispatch a library change
         const dispatchLibraryChange = () => {
@@ -101,11 +87,11 @@ export const useEditor = props => {
         // @private get position based on the grid state
         const getPosition = (pos, edge = null, size = 0, includeCenter = false) => {
             // 1. Check if grid mode is enabled
-            if (scene?.appState?.grid) {
+            if (editor?.appState?.grid) {
                 return Math.round(pos / GRID_SIZE) * GRID_SIZE;
             }
             // 2. check if snap mode is enabled
-            if (edge && scene?.appState?.snapToElements) {
+            if (edge && editor?.appState?.snapToElements) {
                 const edges = size > 0 ? (includeCenter ? [0, size / 2, size] : [0, size]) : [0];
                 for (let i = 0; i < snapEdges.length; i++) {
                     const item = snapEdges[i];
@@ -127,11 +113,11 @@ export const useEditor = props => {
         const removeTextElement = element => {
             // Check if this element has been just created
             // Just remove this history entry
-            const history = scene.getHistory();
+            const history = editor.getHistory();
             if (history[0]?.type === CHANGES.CREATE && history[0]?.elements?.[0]?.id === element.id) {
                 history.shift();
             }
-            scene.removeElements([element]);
+            editor.removeElements([element]);
             dispatchChange();
             update();
         };
@@ -149,7 +135,8 @@ export const useEditor = props => {
         const editorEvents = {
             onPointCanvas: () => {
                 editorState.visibleSnapEdges = [];
-                if (editorState.action === ACTIONS.EDIT) {
+                // if (action === ACTIONS.EDIT) {
+                if (activeElement) {
                     if (activeElement?.editing) {
                         if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
                             removeTextElement(activeElement);
@@ -157,67 +144,66 @@ export const useEditor = props => {
                     }
                     activeElement.editing = false; // Disable editing
                     activeElement = null;
-                    editorState.action = null;
                 }
                 // Check if we have an active group
-                if (scene.page.activeGroup) {
-                    scene.page.activeGroup = null;
+                if (editor.page.activeGroup) {
+                    editor.page.activeGroup = null;
                     update();
                 }
-                if (!editorState.tool) {
-                    scene.clearSelection();
+                if (editorState.tool === TOOLS.SELECT) {
+                    editor.clearSelection();
                     update();
                 }
             },
             onPointElement: event => {
-                if (!editorState.tool && !editorState.action) {
-                    const element = scene.getElement(event.element);
+                // if (editorState.tool === TOOLS.SELECT && !action) {
+                if (editorState.tool === TOOLS.SELECT) {
+                    const element = editor.getElement(event.element);
                     isPrevSelected = element.selected;
                     // Check to reset active group
-                    if (scene.page.activeGroup && element.group !== scene.page.activeGroup) {
-                        scene.getElements().forEach(el => {
-                            el.selected = el.group === scene.page.activeGroup || el.selected;
+                    if (editor.page.activeGroup && element.group !== editor.page.activeGroup) {
+                        editor.getElements().forEach(el => {
+                            el.selected = el.group === editor.page.activeGroup || el.selected;
                         });
-                        scene.page.activeGroup = null;
+                        editor.page.activeGroup = null;
                     }
-                    const inCurrentSelection = scene.getSelection().some(el => {
+                    const inCurrentSelection = editor.getSelection().some(el => {
                         return el.id === element.id;
                     });
                     if (!inCurrentSelection && !event.shiftKey) {
-                        scene.clearSelection();
+                        editor.clearSelection();
                     }
                     element.selected = true;
-                    if (!scene.page.activeGroup && element.group) {
-                        scene.getElements().forEach(el => {
+                    if (!editor.page.activeGroup && element.group) {
+                        editor.getElements().forEach(el => {
                             el.selected = el.selected || (el.group && el.group === element.group);
                         });
                     }
                     update();
                 }
             },
-            onPointHandler: () => {
-                editorState.action = ACTIONS.RESIZE;
-            },
+            // onPointHandler: () => {
+            //     action = ACTIONS.RESIZE;
+            // },
             onPointerDown: event => {
                 isDragged = false;
                 isResized = false;
-                const selectedElements = scene.getSelection();
+                snapshot = []; // reset snapshot
+                const selectedElements = editor.getSelection();
                 // First we need to check if we are in a edit action
-                if (editorState.action === ACTIONS.EDIT) {
-                    if (activeElement?.editing) {
-                        if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
-                            removeTextElement(activeElement);
-                        }
+                if (activeElement?.editing) {
+                    if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
+                        removeTextElement(activeElement);
                     }
-                    editorState.action = null;
+                    activeElement = null;
                 }
-                if (editorState.tool) {
-                    editorState.action = ACTIONS.CREATE;
+                // 1. check for element tool --> set action to create
+                if (isElementTool(editorState.tool)) {
                     const element = createElement(editorState.tool);
                     const elementConfig = getElementConfig(element);
                     // Override element attributes
                     Object.assign(element, {
-                        ...(elementConfig.initialize?.(scene.defaults) || {}),
+                        ...(elementConfig.initialize?.(editor.defaults) || {}),
                         x1: getPosition(event.originalX),
                         y1: getPosition(event.originalY),
                         x2: getPosition(event.originalX),
@@ -227,20 +213,24 @@ export const useEditor = props => {
                     elementConfig.onCreateStart?.(element, event),
                     activeElement = element; // Save element reference
                     // state.activeGroup = null; // Reset current group
-                    scene.clearSelection();
-                    scene.addElements([element]);
+                    editor.clearSelection();
+                    editor.addElements([element]);
                 }
-                else if (selectedElements.length > 0) {
+                // 2. check if tool is select and we have an active selection enabled
+                else if (editorState.tool === TOOLS.SELECT && selectedElements.length > 0) {
                     if (!selectedElements.some(el => el.locked)) {
-                        if (!editorState.action) {
-                            editorState.action = ACTIONS.TRANSLATE;
-                        }
+                        // make sure that action is defined
+                        // action = action || ACTIONS.TRANSLATE;
+                        // if (!action) {
+                        //     action = ACTIONS.TRANSLATE;
+                        // }
                         // Save a snapshot of the current selection for calculating the correct element position
-                        snapshot = scene.getSelection().map(el => ({...el}));
+                        snapshot = editor.getSelection().map(el => ({...el}));
                         snapshotBounds = getRectangleBounds(snapshot);
                         // Check for calling the onResizeStart listener
-                        if (editorState.action === ACTIONS.RESIZE && snapshot.length === 1) {
-                            const element = scene.getElement(snapshot[0].id);
+                        // if (action === ACTIONS.RESIZE && snapshot.length === 1) {
+                        if (event.handler && snapshot.length === 1) {
+                            const element = editor.getElement(snapshot[0].id);
                             const elementConfig = getElementConfig(element);
                             if (typeof elementConfig.onResizeStart === "function") {
                                 elementConfig.onResizeStart(element, snapshot[0], event);
@@ -248,50 +238,56 @@ export const useEditor = props => {
                         }
                     }
                 }
-                else if (!editorState.action || editorState.action === ACTIONS.SELECT || editorState.action === ACTIONS.SCREENSHOT) {
-                    editorState.action = editorState.action || ACTIONS.SELECT;
+                // 3. we are in selection tool without selected elements
+                // else if (!editorState.action || editorState.action === ACTIONS.SELECT || editorState.action === ACTIONS.SCREENSHOT) {
+                else if (editorState.tool === TOOLS.SELECT && selectedElements.length === 0) {
+                    // editorState.action = editorState.action || ACTIONS.SELECT;
                     editorState.selection = {
                         x1: event.originalX,
                         y1: event.originalY,
                         x2: event.originalX,
                         y2: event.originalY,
                     };
-                    scene.clearSelection();
+                    // editor.clearSelection();
                 }
-                // We need to update the last translated point before start moving the board
-                else if (editorState.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.page.translateX;
-                    lastTranslateY = scene.page.translateY;
+                // 4. we are in drag mode
+                else if (editorState.tool === TOOLS.DRAG) {
+                    // action = ACTIONS.MOVE;
+                    // We need to update the last translated point before start moving the board
+                    lastTranslateX = editor.page.translateX;
+                    lastTranslateY = editor.page.translateY;
                 }
+                // 5. we are in erase tool
                 // else if (editorState.action === ACTIONS.ERASE) {
                 //     editorState.erase = {
                 //         x: event.originalX,
                 //         y: event.originalY,
                 //     };
                 // }
-                editorState.currentState = STATES.POINTING;
-                editorState.contextMenu = false;
+                editorState.status = STATUS.POINTING;
+                // editorState.contextMenu = false;
                 editorState.visibleSnapEdges = [];
                 snapEdges = [];
                 activeSnapEdges = [];
-                if (editorState.action === ACTIONS.TRANSLATE || editorState.action === ACTIONS.RESIZE) {
-                    if (scene?.appState?.snapToElements) {
-                        snapEdges = getElementsSnappingEdges(scene.getElements());
+                // if (action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {
+                if (editorState.tool === TOOLS.SELECT && selectedElements.length > 0) {
+                    if (editor?.appState?.snapToElements) {
+                        snapEdges = getElementsSnappingEdges(editor.getElements());
                     }
                 }
                 update();
             },
             onPointerMove: event => {
-                if (editorState.action === ACTIONS.MOVE) {
-                    editorState.currentState = STATES.DRAGGING;
-                    scene.page.translateX = Math.floor(lastTranslateX + event.dx * scene.page.zoom);
-                    scene.page.translateY = Math.floor(lastTranslateY + event.dy * scene.page.zoom);
+                if (editorState.tool === TOOLS.DRAG) {
+                    editorState.status = STATUS.DRAGGING;
+                    editor.page.translateX = Math.floor(lastTranslateX + event.dx * editor.page.zoom);
+                    editor.page.translateY = Math.floor(lastTranslateY + event.dy * editor.page.zoom);
                 }
-                else if (editorState.action === ACTIONS.ERASE) {
-                    editorState.currentState = STATES.ERASING;
+                else if (editorState.tool === TOOLS.ERASER) {
+                    editorState.status = STATUS.ERASING;
                     const x = event.originalX + event.dx;
                     const y = event.originalY + event.dy;
-                    scene.getElements().forEach(element => {
+                    editor.getElements().forEach(element => {
                         if (!element.erased) {
                             const b = element.type === ELEMENTS.ARROW ? normalizeBounds(element) : element;
                             if (b.x1 <= x && x <= b.x2 && b.y1 <= y && y <= b.y2) {
@@ -300,8 +296,8 @@ export const useEditor = props => {
                         }
                     });
                 }
-                else if (editorState.action === ACTIONS.CREATE) {
-                    editorState.currentState = STATES.CREATING;
+                else if (isElementTool(editorState.tool)) {
+                    editorState.status = STATUS.CREATING;
                     const element = activeElement;
                     // First, update the second point of the element
                     element.x2 = getPosition(event.currentX);
@@ -309,12 +305,13 @@ export const useEditor = props => {
                     // Second, call the onCreateMove listener of the element
                     getElementConfig(element)?.onCreateMove?.(element, event, getPosition);
                 }
-                else if (editorState.action === ACTIONS.TRANSLATE) {
+                // else if (action === ACTIONS.TRANSLATE) {
+                else if (editorState.tool === TOOLS.SELECT && snapshot.length > 0 && !event.handler) {
                     editorState.visibleSnapEdges = [];
                     activeSnapEdges = [];
-                    editorState.currentState = STATES.TRANSLATING;
+                    editorState.status = STATUS.TRANSLATING;
                     isDragged = true;
-                    const elements = scene.getSelection();
+                    const elements = editor.getSelection();
                     const includeCenter = elements.length > 1 || elements[0].type !== ELEMENTS.ARROW;
                     const dx = getPosition(snapshotBounds.x1 + event.dx, SNAP_EDGE_X, snapshotBounds.x2 - snapshotBounds.x1, includeCenter) - snapshotBounds.x1;
                     const dy = getPosition(snapshotBounds.y1 + event.dy, SNAP_EDGE_Y, snapshotBounds.y2 - snapshotBounds.y1, includeCenter) - snapshotBounds.y1;
@@ -326,7 +323,7 @@ export const useEditor = props => {
                         // Execute the onDrag function
                         getElementConfig(element)?.onDrag?.(element, snapshot[index], event);
                     });
-                    if (scene?.appState?.snapToElements && activeSnapEdges.length > 0) {
+                    if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
                         const bounds = elements.length === 1 ? elements[0] : getRectangleBounds(elements);
                         editorState.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
                             // ...snapEdge,
@@ -337,12 +334,13 @@ export const useEditor = props => {
                         }));
                     }
                 }
-                else if (editorState.action === ACTIONS.RESIZE) {
+                // else if (action === ACTIONS.RESIZE) {
+                else if (editorState.tool === TOOLS.SELECT && event.handler) {
                     editorState.visibleSnapEdges = [];
-                    editorState.currentState = STATES.RESIZING;
+                    editorState.status = STATUS.RESIZING;
                     activeSnapEdges = [];
                     isResized = true;
-                    const element = scene.getElement(snapshot[0].id);
+                    const element = editor.getElement(snapshot[0].id);
                     const elementConfig = getElementConfig(element);
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
                         element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
@@ -383,7 +381,7 @@ export const useEditor = props => {
                     // Execute onResize handler
                     elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
                     // Set visible snap edges
-                    if (scene?.appState?.snapToElements && activeSnapEdges.length > 0) {
+                    if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
                         editorState.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
                             // ...snapEdge,
                             points: [
@@ -393,8 +391,9 @@ export const useEditor = props => {
                         }));
                     }
                 }
-                else if (editorState.action === ACTIONS.SELECT || editorState.action === ACTIONS.SCREENSHOT) {
-                    editorState.currentState = STATES.BRUSHING;
+                // else if (editorState.action === ACTIONS.SELECT || editorState.action === ACTIONS.SCREENSHOT) {
+                else if (editorState.tool === TOOLS.SELECT) {
+                    editorState.status = STATUS.BRUSHING;
                     editorState.selection.x2 = event.currentX;
                     editorState.selection.y2 = event.currentY;
                 }
@@ -405,26 +404,29 @@ export const useEditor = props => {
             // @description handle pointer up
             onPointerUp: event => {
                 editorState.visibleSnapEdges = [];
-                editorState.currentState = STATES.IDLE;
-                if (editorState.action === ACTIONS.MOVE) {
-                    lastTranslateX = scene.page.translateX;
-                    lastTranslateY = scene.page.translateY;
+                editorState.status = STATUS.IDLE;
+                // if (editorState.action === ACTIONS.MOVE) {
+                if (editorState.tool === TOOLS.DRAG) {
+                    lastTranslateX = editor.page.translateX;
+                    lastTranslateY = editor.page.translateY;
                     return update();
                 }
-                else if (editorState.action === ACTIONS.ERASE) {
-                    const erasedElements = scene.getErasedElements();
-                    scene.removeElements(erasedElements);
+                // else if (editorState.action === ACTIONS.ERASE) {
+                else if (editorState.tool === TOOLS.ERASER) {
+                    const erasedElements = editor.getErasedElements();
+                    editor.removeElements(erasedElements);
                     dispatchChange();
                     return update();
                 }
-                else if (editorState.action === ACTIONS.CREATE && activeElement) {
+                // else if (editorState.action === ACTIONS.CREATE && activeElement) {
+                else if (activeElement && isElementTool(editorState.tool)) {
                     const element = activeElement;
                     element.creating = false;
                     element.selected = true; // By default select this element
                     element[FIELDS.VERSION] = 1; // Set as initial version of this element
                     getElementConfig(element)?.onCreateEnd?.(element, event);
                     // We need to patch the history to save the new element values
-                    const last = scene.page.history[0] || {};
+                    const last = editor.page.history[0] || {};
                     if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
                         last.elements[0].newValues = {
                             ...element,
@@ -437,7 +439,7 @@ export const useEditor = props => {
                     // Check if the tool is not the handdraw
                     // TODO: we need also to check if lock is enabled
                     if (!editorState.toolLocked && editorState.tool !== ELEMENTS.DRAW) {
-                        editorState.tool = null;
+                        editorState.tool = TOOLS.SELECT;
                     }
                     else {
                         // If tool is locked, we need to reset the current selection
@@ -447,22 +449,23 @@ export const useEditor = props => {
                     if (element.type === ELEMENTS.TEXT) {
                         element.editing = true;
                         activeElement = element;
-                        editorState.action = ACTIONS.EDIT;
+                        // action = ACTIONS.EDIT;
                         return update();
                     }
                 }
-                else if (editorState.action === ACTIONS.TRANSLATE || editorState.action === ACTIONS.RESIZE) {
+                // else if (action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {
+                else if (editorState.tool === TOOLS.SELECT && snapshot.length > 0) {
                     if (isDragged || isResized) {
-                        if (editorState.action === ACTIONS.RESIZE && snapshot.length === 1) {
-                            const element = scene.getElement(snapshot[0].id);
+                        if (event.handler && snapshot.length === 1) {
+                            const element = editor.getElement(snapshot[0].id);
                             const elementConfig = getElementConfig(element);
                             if (typeof elementConfig.onResizeEnd === "function") {
                                 elementConfig.onResizeEnd(element, snapshot[0], event);
                             }
                         }
-                        const selectedElements = scene.getSelection();
+                        const selectedElements = editor.getSelection();
                         selectedElements.forEach(el => el[FIELDS.VERSION] = el[FIELDS.VERSION] + 1);
-                        scene.addHistory({
+                        editor.addHistory({
                             type: CHANGES.UPDATE,
                             elements: selectedElements.map((element, index) => {
                                 const updatedFields = new Set(["x1", "x2", "y1", "y2", "version"]);
@@ -485,9 +488,9 @@ export const useEditor = props => {
                         dispatchChange();
                     }
                     else if (event.element) {
-                        const element = scene.getElement(event.element);
+                        const element = editor.getElement(event.element);
                         if (!event.shiftKey) {
-                            scene.clearSelection();
+                            editor.clearSelection();
                             element.selected = true;
                         }
                         else {
@@ -495,8 +498,8 @@ export const useEditor = props => {
                             element.selected = !isPrevSelected;
                         }
                         // Select all elements of this group
-                        if (element.group && !scene.page.activeGroup) {
-                            scene.getElements().forEach(el => {
+                        if (element.group && !editor.page.activeGroup) {
+                            editor.getElements().forEach(el => {
                                 el.selected = el.group === element.group ? element.selected : el.selected;
                             });
                         }
@@ -504,9 +507,10 @@ export const useEditor = props => {
                     isDragged = false;
                     isResized = false;
                 }
-                else if (editorState.action === ACTIONS.SELECT) {
+                // else if (editorState.action === ACTIONS.SELECT) {
+                else if (editorState.tool === TOOLS.SELECT) {
                     const selection = editorState.selection;
-                    scene.setSelection({
+                    editor.setSelection({
                         x1: Math.min(selection.x1, selection.x2),
                         x2: Math.max(selection.x1, selection.x2),
                         y1: Math.min(selection.y1, selection.y2),
@@ -518,25 +522,25 @@ export const useEditor = props => {
                 //     editorState.exportRegion = {...editorState.selection};
                 // }
                 editorState.selection = null;
-                editorState.action = null;
+                // action = null;
                 update();
             },
 
             // @description double click 
             onDoubleClickElement: event => {
-                if (!scene.page.readonly && !editorState.action && !editorState.tool) {
+                if (!editor.page.readonly && editorState.tool === TOOLS.SELECT) {
                     // board.clearSelectedElements();
-                    const element = scene.getElement(event.element);
+                    const element = editor.getElement(event.element);
                     // Check for entering in group edition mode
-                    if (!scene.page.activeGroup && element.group) {
-                        scene.page.activeGroup = element.group;
-                        scene.clearSelection();
+                    if (!editor.page.activeGroup && element.group) {
+                        editor.page.activeGroup = element.group;
+                        editor.clearSelection();
                         element.selected = true; // Mark this element as selected
                     }
                     else if (element && !element.locked) {
                         activeElement = element;
                         activeElement.editing = true;
-                        editorState.action = ACTIONS.EDIT;
+                        // editorState.action = ACTIONS.EDIT;
                     }
                     update();
                 }
@@ -544,58 +548,53 @@ export const useEditor = props => {
             
             // @description handle key down
             onKeyDown: event => {
-                if (scene.page.readonly) {
+                if (editor.page.readonly) {
                     return null;
                 }
                 const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
                 // Check if we are in an input target and input element is active
                 if (isInputTarget(event)) {
-                    if (editorState.action === ACTIONS.EDIT && event.key === KEYS.ESCAPE) {
+                    if (activeElement?.editing && event.key === KEYS.ESCAPE) {
                         event.preventDefault();
-                        if (activeElement?.editing) {
-                            activeElement.editing = false; // Stopediting element
-                            if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
-                                removeTextElement(activeElement);
-                            }
-                            // Force to reset the active element
-                            activeElement = null;
+                        activeElement.editing = false; // Stopediting element
+                        if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
+                            removeTextElement(activeElement);
                         }
-                        editorState.action = null;
+                        // Force to reset the active element
+                        activeElement = null;
                         update();
                     }
                 }
                 else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
                     event.preventDefault();
                     if (event.key === KEYS.X || event.key === KEYS.C) {
-                        scene.copyElementsToClipboard(scene.getSelection());
+                        editor.copyElementsToClipboard(editor.getSelection());
                     }
                     // Check for backspace key or cut --> remove elements
                     if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
-                        scene.removeSelection();
+                        editor.removeSelection();
                         dispatchChange();
                     }
                     update();
                 }
                 // Undo or redo key
                 else if (isCtrlKey && (event.key === KEYS.Z || event.key === KEYS.Y)) {
-                    // editor.setAction(null);
-                    // sceneActions.clearSelection(editor.scene);
                     activeElement = null;
-                    event.key === KEYS.Z ? scene.undo() : scene.redo();
+                    event.key === KEYS.Z ? editor.undo() : editor.redo();
                     dispatchChange();
                     update();
                 }
                 // Check ESCAPE key
                 else if (event.key === KEYS.ESCAPE) {
-                    if (editorState.action === ACTIONS.SCREENSHOT) {
-                        editorState.action = null;
-                    }
+                    // if (editorState.action === ACTIONS.SCREENSHOT) {
+                    //     editorState.action = null;
+                    // }
                     // Check for active group enabled --> exit group edition
                     // if (board.activeGroup) {
                     //     board.activeGroup = null;
                     // }
                     event.preventDefault();
-                    scene.clearSelection();
+                    editor.clearSelection();
                     update();
                 }
                 // Check for arrow keys --> move elements
@@ -604,8 +603,8 @@ export const useEditor = props => {
                     // const step = event.shiftKey ? (props.gridSize || 10) : 1;
                     const dir = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
                     const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
-                    const selectedElements = scene.getSelection();
-                    scene.addHistory({
+                    const selectedElements = editor.getSelection();
+                    editor.addHistory({
                         type: CHANGES.UPDATE,
                         ids: selectedElements.map(el => el.id).join(","),
                         keys: `${dir}1,${dir}2`,
@@ -647,7 +646,7 @@ export const useEditor = props => {
             // @description handle element change
             onElementChange: (id, keys, values) => {
                 if (activeElement?.id === id && activeElement?.editing) {
-                    scene.updateElements([activeElement], keys, values, true);
+                    editor.updateElements([activeElement], keys, values, true);
                     dispatchChange();
                     update();
                 }
@@ -655,7 +654,7 @@ export const useEditor = props => {
 
             // @description handle element blur
             onElementBlur: () => {
-                scene.getElements().forEach(element => {
+                editor.getElements().forEach(element => {
                     element.editing = false;
                 });
                 update();
@@ -680,29 +679,28 @@ export const useEditor = props => {
             // @description handle canvas resize
             onResize: event => {
                 if (event?.canvasWidth && event?.canvasHeight) {
-                    scene.setSize(event.canvasWidth, event.canvasHeight);
+                    editor.setSize(event.canvasWidth, event.canvasHeight);
                     update();
                 }
             },
             
             // @description handle context menu
-            onContextMenu: event => {
-                const {action, tool} = editorState;
-                if ((!action || action === ACTIONS.SELECT || action === ACTIONS.TRANSLATE) && !tool) {
-                    editorState.currentState = STATES.IDLE;
-                    editorState.action = null;
-                    editorState.contextMenu = true;
-                    editorState.contextMenuTop = event.y;
-                    editorState.contextMenuLeft = event.x;
-                    update();
-                }
-            },
+            // onContextMenu: event => {
+            //     // if ((!action || action === ACTIONS.SELECT || action === ACTIONS.TRANSLATE) && !tool) {
+            //     if (editorState.tool === TOOLS.SELECT) {
+            //         editorState.status = STATUS.IDLE;
+            //         editorState.contextMenu = true;
+            //         editorState.contextMenuTop = event.y;
+            //         editorState.contextMenuLeft = event.x;
+            //         update();
+            //     }
+            // },
 
             // @description handle paste event
             onPaste: event => {
-                if (!isInputTarget(event) && !scene.page.readonly) {
-                    scene.page.activeGroup = null;
-                    scene.pasteElementsFromClipboard(event).then(() => {
+                if (!isInputTarget(event) && !editor.page.readonly) {
+                    editor.page.activeGroup = null;
+                    editor.pasteElementsFromClipboard(event).then(() => {
                         dispatchChange();
                         update();
                     });

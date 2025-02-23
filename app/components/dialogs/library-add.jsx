@@ -6,7 +6,7 @@ import {Overlay} from "../ui/overlay.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 import {getLibraryItemThumbnail} from "../../library.js";
 
 // Tiny hook to generate the thumbnail for the library item
@@ -20,9 +20,9 @@ const useLibraryItemThumbnail = (elements, scale = 1) => {
 
 // @description Display a dialog for adding a new element into the library
 export const LibraryAddDialog = props => {
-    const scene = useScene();
+    const editor = useEditor();
     const [data, setData] = useFormData({});
-    const selectedElements = scene.getSelection();
+    const selectedElements = editor.getSelection();
     const thumbnail = useLibraryItemThumbnail(selectedElements, 2);
     const handleSubmit = () => {
         return props.onAdd(selectedElements, data);

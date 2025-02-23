@@ -6,7 +6,7 @@ import {Overlay} from "../ui/overlay.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 
 // @private list of form fields
 const pageEditFields = {
@@ -31,8 +31,8 @@ const pageEditFields = {
 
 // @public component to customize the page
 export const PageConfigureDialog = props => {
-    const scene = useScene();
-    const page = scene.getPage(props.page);
+    const editor = useEditor();
+    const page = editor.getPage(props.page);
     const [data, setData] = useFormData({
         title: page.title,
         description: page.description,

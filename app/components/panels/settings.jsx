@@ -5,7 +5,7 @@ import {
 import {BACKGROUND_COLOR_PALETTE} from "../../utils/colors.js";
 import {Panel} from "../ui/panel.jsx";
 import {Form} from "../form/index.jsx";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 
 // settings fields
 const FIELDS = {
@@ -58,12 +58,12 @@ const setValue = (obj, path, value) => {
 };
 
 export const SettingsPanel = props => {
-    const scene = useScene();
+    const editor = useEditor();
     const values = Object.fromEntries(Object.values(FIELDS).map(key => {
-        return [key, getValue(scene, key)];
+        return [key, getValue(editor, key)];
     }));
     const handleChange = (key, value) => {
-        setValue(scene, key, value);
+        setValue(editor, key, value);
         props.onChange();
     };
 
