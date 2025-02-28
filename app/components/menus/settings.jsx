@@ -75,7 +75,7 @@ export const SettingsMenu = () => {
             <Island.Button icon="sliders" />
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-60 z-40">
                 <Form
-                    className="flex flex-col gap-2"
+                    className="flex flex-col gap-2 p-1"
                     data={values}
                     items={sections}
                     onChange={handleChange}
