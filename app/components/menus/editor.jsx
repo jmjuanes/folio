@@ -106,12 +106,9 @@ export const EditorMenu = () => {
                     })}
                     onClick={handleClear}
                 />
+                {/*
                 <Dropdown.Separator />
-                <MenuDropdownItem
-                    icon="tools"
-                    text="Preferences"
-                    onClick={null}
-                />
+                */}
             </Dropdown>
         </div>
     );
