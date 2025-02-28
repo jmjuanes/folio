@@ -332,7 +332,7 @@ const getVisibleSections = (sections, values) => {
     });
 };
 
-export const EditionPanel = props => {
+export const EditionPanel = () => {
     const editor = useEditor();
     const selectedElements = editor.getSelection();
     const [activeSection, setActiveSection] = React.useState("");
@@ -380,8 +380,10 @@ export const EditionPanel = props => {
         else {
             editor.updateElements(selectedElements, [key], [value], true);
         }
-        props.onChange();
-    }, [selectedElements.length, props.onChange]);
+        // TODO
+        // editor.dispatchChange();
+        editor.update();
+    }, [selectedElements.length, editor]);
 
     // Handle active section change
     const handleSectionChange = newSection => {

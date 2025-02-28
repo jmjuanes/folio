@@ -242,10 +242,10 @@ export const Canvas = props => {
                     {props.elements.map(element => {
                         const content = renderElement(element, {
                             ...element,
-                            onChange: (k, v) => {
-                                return props?.onElementChange?.(element.id, k, v);
+                            onChange: (keys, values) => {
+                                return props?.onElementChange?.({element: element.id, keys, values});
                             },
-                            onBlur: () => props?.onElementBlur?.(element.id),
+                            onBlur: () => props?.onElementBlur?.({element: element.id}),
                             onPointerDown: e => {
                                 return handlePointerDown(e, "element", props.onPointElement);
                             },

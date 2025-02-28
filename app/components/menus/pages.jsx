@@ -9,11 +9,15 @@ import {
     PlusIcon,
     LockIcon,
 } from "@josemi-icons/react";
-import {Panel} from "../ui/panel.jsx";
+import {Dropdown} from "../ui/dropdown.jsx";
+import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
+import {useConfirm} from "../../contexts/confirm.jsx";
+import {useDialog} from "../../contexts/dialogs.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import {exportToDataURL} from "../../export.js";
 import {EXPORT_PADDING} from "../../constants.js";
+import {clearFocus} from "../../utils/dom.js";
 
 const PAGES_ITEM_HEIGHT = 37;
 const PAGES_PREVIEW_WIDTH = 140;
@@ -123,15 +127,18 @@ const initializeSortedPages = pages => {
     }));
 };
 
-// @public pages panel component
-export const PagesPanel = props => {
+// @description pages menu component
+export const PagesMenu = () => {
     const editor = useEditor();
+    const {showConfirm} = useConfirm();
+    const {showDialog} = useDialog();
     // const [preferences, setPreferences] = usePreferences();
     const [sortedPages, setSortedPages] = React.useState(() => {
         return initializeSortedPages(editor.pages);
     });
     const activePage = editor.getActivePage();
     // const view = preferences[PREFERENCES_FIELDS.PAGES_VIEW] || PAGES_VIEW.LIST;
+
     // Handle page move
     const handlePageMove = React.useCallback((event, page) => {
         event.preventDefault();
@@ -139,6 +146,7 @@ export const PagesPanel = props => {
         sortedPages[page.id].selected = true;
         setSortedPages({...sortedPages});
         let currentIndex = sortedPages[page.id].index;
+
         // Handle pointer move
         const handlePointerMove = e => {
             e.preventDefault();
@@ -159,6 +167,7 @@ export const PagesPanel = props => {
             });
             setSortedPages(nextSortedPages);
         };
+
         // Handle pointer up
         const handlePointerUp = e => {
             e.preventDefault();
@@ -172,68 +181,99 @@ export const PagesPanel = props => {
             // Check if we need to update indexes
             if (nextSortedPages[page.id].index !== currentIndex) {
                 nextSortedPages[page.id].index = currentIndex;
-                props?.onPageMove?.(page, currentIndex);
+                // dispatch page move
+                // props?.onPageMove?.(page, currentIndex);
+                editor.movePage(page, nextIndex);
+                editor.dispatchChange();
+                editor.update();
             }
             setSortedPages(nextSortedPages);
         };
+
         // Register event listeners
         document.addEventListener("pointermove", handlePointerMove);
         document.addEventListener("pointerup", handlePointerUp);
         document.addEventListener("pointerleave", handlePointerUp);
-        // Check to reset the current editing page
-    }, [props.onPagesUpdate]);
+    }, [editor]);
+
     // handle change view mode
     // const handleViewModeChange = () => {
     //     setPreferences(Object.assign({}, preferences, {
     //         [PREFERENCES_FIELDS.PAGES_VIEW]: view === PAGES_VIEW.LIST ? PAGES_VIEW.GALLERY : PAGES_VIEW.LIST,
     //     }));
     // };
+
+    // handle page delete callback
+    const handlePageDelete = React.useCallback(page => {
+        return showConfirm({
+            title: "Delete page",
+            message: `Do you want to delete '${page.title}'? This action can not be undone.`,
+            callback: () => {
+                editor.removePage(page);
+                editor.dispatchChange();
+                editor.update();
+            },
+        });
+    }, [editor]);
+
+    // handle page create
+    const handlePageCreate = React.useCallback(() => {
+        editor.addPage({});
+        editor.dispatchChange();
+        editor.update();
+    }, [editor]);
+
     return (
-        <Panel className="w-72">
-            <Panel.Header className="sticky top-0">
-                <Panel.HeaderTitle>Pages</Panel.HeaderTitle>
-                <div className="flex items-center gap-0">
-                    {props.editable && (
-                        <Panel.HeaderButton onClick={props.onPageCreate}>
-                            <PlusIcon />
-                        </Panel.HeaderButton>
-                    )}
+        <div className="flex relative group" tabIndex="0">
+            <Island.Button
+                icon="files"
+                text={(
+                    <div className="w-32 truncate">
+                        <span>{activePage.title}</span>
+                    </div>
+                )}
+                showChevron={true}
+            />
+            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-60 z-40">
+                <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
+                    <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
+                        {editor.pages.map(page => (
+                            <Page
+                                key={`page:${page.id}`}
+                                title={page.title}
+                                readonly={page.readonly}
+                                active={page.id === activePage.id}
+                                editable={true}
+                                moving={sortedPages[page.id].selected}
+                                style={{
+                                    top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
+                                    transform: sortedPages[page.id].selected ? `translate(0px, ${sortedPages[page.id].y}px)` : null,
+                                    zIndex: sortedPages[page.id].selected ? 100 : 0,
+                                }}
+                                onClick={() => {
+                                    editor.setActivePage(page);
+                                    editor.update();
+                                }}
+                                onDelete={() => {
+                                    handlePageDelete(page);
+                                }}
+                                onDuplicate={() => {
+                                    editor.duplicatePage(page);
+                                    editor.dispatchChange();
+                                    editor.update();
+                                }}
+                                onConfigure={() => {
+                                    showDialog("page-edit", {page});
+                                    clearFocus();
+                                }}
+                                onMove={event => {
+                                    handlePageMove(event, page);
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </Panel.Header>
-            <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
-                <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
-                    {editor.pages.map(page => (
-                        <Page
-                            key={`page:${page.id}`}
-                            title={page.title}
-                            readonly={page.readonly}
-                            active={page.id === activePage.id}
-                            editable={props.editable}
-                            moving={sortedPages[page.id].selected}
-                            style={{
-                                top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
-                                transform: sortedPages[page.id].selected ? `translate(0px, ${sortedPages[page.id].y}px)` : null,
-                                zIndex: sortedPages[page.id].selected ? 100 : 0,
-                            }}
-                            onClick={() => {
-                                props.onChangeActivePage(page);
-                            }}
-                            onDelete={() => {
-                                props.onPageDelete(page);
-                            }}
-                            onDuplicate={() => {
-                                props?.onPageDuplicate?.(page);
-                            }}
-                            onConfigure={() => {
-                                props?.onPageConfigure?.(page);
-                            }}
-                            onMove={event => {
-                                handlePageMove(event, page);
-                            }}
-                        />
-                    ))}
-                </div>
-            </div>
-        </Panel>
+            </Dropdown>
+        </div>
     );
 };

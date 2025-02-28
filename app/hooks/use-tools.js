@@ -1,5 +1,6 @@
 import React from "react";
 import {fileOpen} from "browser-fs-access";
+import {SquareIcon, CircleIcon, TriangleIcon} from "@josemi-icons/react";
 import {
     ELEMENTS,
     TOOLS,
@@ -10,6 +11,7 @@ import {
     ARROWHEADS,
     STROKE_WIDTHS,
     FORM_OPTIONS,
+    FILE_EXTENSIONS,
 } from "../constants.js";
 import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
 import {
@@ -84,7 +86,7 @@ export const useTools = () => {
             },
         },
         [ELEMENTS.ARROW]: {
-            icon: "arrow",
+            icon: "arrow-up-right",
             name: "Arrow",
             quickPicks: {
                 // [FIELDS.END_ARROWHEAD]: {
@@ -176,7 +178,7 @@ export const useTools = () => {
                 },
             },
             onSelect: () => {
-                editor.state.tool = ELEMENTS.TEXT;
+                editor.state.tool = ELEMENTS.DRAW;
                 editor.update();
             },
         },

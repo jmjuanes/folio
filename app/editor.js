@@ -272,8 +272,8 @@ export const createEditor = initialData => {
         state: {
             tool: TOOLS.SELECT,
             toolLocked: false,
-            selection: [],
-            snapEdges: [],
+            selection: null,
+            snapEdges: null,
         },
 
         // @description editor size
@@ -1229,6 +1229,22 @@ export const createEditor = initialData => {
             return getTextFromClipboard()
                 .then(content => parseTextDataToEditor(editor, content, x, y));
         },
+
+        //
+        // Tool API
+        //
+
+        // @description change the active tool
+        setTool: newTool => {
+            editor.state.tool = newTool;
+            editor.getElements().forEach(element => {
+                element.selected = false;
+                element.editing = false;
+            });
+        },
+
+        // @description get the current active tool
+        getTool: () => editor.state.tool,
     };
 
     return editor;

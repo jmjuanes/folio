@@ -8,13 +8,15 @@ import {
     MINIMAL_ELEMENT_FILL,
     MINIMAP_ELEMENT_RADIUS,
 } from "../../constants.js";
-import {Island} from "../island.jsx";
+import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
 import {getRectangleBounds} from "../../utils/math.js";
 
-// @public mini map panel component
+// @description minimap panel component
 export const MinimapPanel = ({width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT}) => {
     const editor = useEditor();
+    // TODO: handle if minimap is not visible
+
     const minimap = React.useMemo(() => {
         if (!editor.width || !editor.height) {
             return null;
@@ -44,6 +46,7 @@ export const MinimapPanel = ({width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT}) =
             visibleHeight: editor.height * ratio / editor.page.zoom, // update the visible height
         };
     }, [editor.updatedAt, editor.page.id, editor.width, editor.height, editor.page.zoom, editor.page.translateX, editor.page.translateY]);
+
     return (
         <Island className="items-center justify-center">
             {!!minimap && (

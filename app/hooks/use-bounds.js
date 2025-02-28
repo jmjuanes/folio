@@ -2,14 +2,12 @@ import {TOOLS} from "../constants.js";
 import {getRectanglePath} from "../utils/paths.js";
 import {getElementConfig, getElementsBounds} from "../elements.js";
 import {useEditor} from "../contexts/editor.jsx";
-import {useActiveTool} from "../contexts/tools.jsx";
 
 export const useBounds = () => {
     const editor = useEditor();
-    const [tool] = useActiveTool();
     const bounds = [];
     let hasCustomBounds = false;
-    if (tool === TOOLS.SELECT) {
+    if (editor.state.tool === TOOLS.SELECT) {
         const selectedElements = editor.getSelection();
         // 1. Check for active group
         if (editor.page.activeGroup) {

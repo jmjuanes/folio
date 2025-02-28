@@ -1,5 +1,5 @@
 import React from "react";
-import {useMount, useUpdate} from "react-use";
+import {useMount} from "react-use";
 import {createEditor} from "../editor.js";
 import {promisifyValue} from "../utils/promises.js";
 import {Loading} from "../components/loading.jsx";
@@ -9,7 +9,7 @@ export const EditorContext = React.createContext(null);
 
 // @description use editor hook
 export const useEditor = () => {
-    return React.useContext(EditorContext);
+    return React.useContext(EditorContext)[0];
 };
 
 // @description Editor provider component
@@ -18,11 +18,18 @@ export const useEditor = () => {
 // @param {React Children} children React children to render
 export const EditorProvider = ({initialData, onChange, children}) => {
     const [editor, setEditor] = React.useState(null);
-    const update = useUpdate();
+    const [update, setUpdate] = React.useState(0);
+
+    // dispatch a change event
     const dispatchChange = React.useCallback(() => {
         editor.updatedAt = Date.now(); // save the last update time
-        return onChange(editor.toJSON());
+        // return onChange(editor.toJSON());
     }, [editor, onChange]);
+
+    // dispatch an update event
+    const dispatchUpdate = React.useCallback(() => {
+        setUpdate((-1) * update);
+    }, [update, setUpdate]);
 
     // const [error, setError] = React.useState(null);
     // On mount, import data to create the editor
@@ -40,12 +47,14 @@ export const EditorProvider = ({initialData, onChange, children}) => {
 
     // assign additional editor methods
     editor.dispatchChange = dispatchChange;
-    editor.update = update;
+    editor.update = dispatchUpdate;
 
     // Render editor context provider
     return (
-        <EditorContext.Provider value={editor}>
-            {children}
+        <EditorContext.Provider value={[editor, update]}>
+            <div className={"relative overflow-hidden h-full w-full select-none"}>
+                {children}
+            </div>
         </EditorContext.Provider>
     );
 };

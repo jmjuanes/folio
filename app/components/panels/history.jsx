@@ -1,6 +1,6 @@
 import React from "react";
 import {useEditor} from "../../contexts/editor.jsx";
-import {Island} from "../island.jsx";
+import {Island} from "../ui/island.jsx";
 
 // History panel component
 export const HistoryPanel = () => {

@@ -1,14 +1,12 @@
 import {TOOLS} from "../constants.js";
 import {getElementConfig} from "../elements.js";
 import {useEditor} from "../contexts/editor.jsx";
-import {useActiveTool} from "../contexts/tools.jsx";
 
 export const useHandlers = () => {
     const editor = useEditor();
-    const [tool] = useActiveTool();
 
     // if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
-    if (tool === TOOLS.SELECT) {
+    if (editor.state.tool === TOOLS.SELECT) {
         // Get current selection in editor
         const selectedElements = editor.getSelection();
 

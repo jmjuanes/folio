@@ -1,11 +1,12 @@
 import React from "react";
 import classNames from "classnames";
 import {useUpdate} from "react-use";
-import {LockIcon, UnlockIcon, DotsVerticalIcon} from "@josemi-icons/react";
+import {LockIcon, UnlockIcon, DotsVerticalIcon, renderIcon} from "@josemi-icons/react";
 import {ELEMENTS, TOOLS} from "../../constants.js";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Form} from "../form/index.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
+import {useContextMenu} from "../../contexts/context-menu.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import {useTools} from "../../hooks/use-tools.js";
 
@@ -42,7 +43,7 @@ const PanelButton = props => {
         <div className={classList} onClick={props.onClick}>
             {props.icon && (
                 <div className="text-xl flex items-center">
-                    {props.icon}
+                    {typeof props.icon === "string" ? renderIcon(props.icon) : props.icon}
                 </div>
             )}
             {props.text && (
@@ -73,11 +74,21 @@ const defaultHiddenTools = [
     TOOLS.ERASER,
 ];
 
-// Tools Panel component
-export const ToolsPanel = () => {
+// @description Toolbar panel component
+export const ToolbarPanel = () => {
     const update = useUpdate();
     const editor = useEditor();
     const tools = useTools();
+    const {hideContextMenu} = useContextMenu();
+    const prevSelectedTool = React.useRef(editor.state.tool);
+
+    // when a tool is selected, make sure to hide the context menu
+    React.useEffect(() => {
+        if (prevSelectedTool.current !== editor.state.tool) {
+            prevSelectedTool.current = editor.state.tool;
+            hideContextMenu();
+        }
+    }, [editor.state.tool]);
 
     const handleLockClick = React.useCallback(() => {
         editor.state.toolLocked = !editor.state.toolLocked;
@@ -93,7 +104,7 @@ export const ToolsPanel = () => {
 
     return (
         <div className="flex items-center relative select-none">
-            <div className={themed("rounded-2xl items-center flex gap-2 p-1", "toolbar", props.className)}>
+            <div className={themed("rounded-2xl items-center flex gap-2 p-1", "toolbar")}>
                 {defaultAlwaysVisibleTools.map(key => (
                     <div key={key} className="flex relative">
                         <PanelButton
@@ -101,7 +112,7 @@ export const ToolsPanel = () => {
                             icon={tools[key].icon}
                             active={editor.state.tool === key}
                             disabled={editor.page.readonly}
-                            onClick={tools[key.onSelect]}
+                            onClick={tools[key].onSelect}
                         />
                         {tools[key].quickPicks && key === editor.state.tool && (
                             <PickPanel

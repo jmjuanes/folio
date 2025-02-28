@@ -1,10 +1,11 @@
 import React from "react";
 import classnames from "classnames";
-import {Dropdown} from "./ui/dropdown.jsx";
-import {Island} from "./island.jsx";
-import {useEditor} from "../contexts/editor.jsx";
-import {useConfirm} from "../contexts/confirm.jsx";
-import {saveAsJson, loadFromJson} from "../json.js";
+import {Dropdown} from "../ui/dropdown.jsx";
+import {Island} from "../ui/island.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
+import {useConfirm} from "../../contexts/confirm.jsx";
+import {useDialog} from "../../contexts/dialogs.jsx";
+import {saveAsJson, loadFromJson} from "../../json.js";
 
 // @private menu link component
 const MenuLinkItem = ({text, url}) => (
@@ -22,8 +23,10 @@ const MenuDropdownItem = props => (
     </Dropdown.Item>
 );
 
-export const Menu = () => {
+// @description export main editor menu
+export const EditorMenu = () => {
     const {showConfirm} = useConfirm();
+    const {showDialog} = useDialog();
     const editor = useEditor();
     const elements = editor.getElements();
 
@@ -91,7 +94,7 @@ export const Menu = () => {
                         "pointer-events-none": elements.length === 0,
                     })}
                     onClick={() => {
-                        console.log("export...");
+                        showDialog("export", {elements});
                     }}
                 />
                 <MenuDropdownItem

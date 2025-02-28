@@ -1,6 +1,6 @@
 import React from "react";
 import {ZOOM_MIN, ZOOM_MAX, ZOOM_STEP} from "../../constants.js";
-import {Island} from "../island.jsx";
+import {Island} from "../ui/island.jsx";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
 
@@ -59,7 +59,7 @@ export const ZoomPanel = () => {
                         text="Zoom to selection"
                         disabled={selection.length === 0}
                         onClick={() => {
-                            editor.fitZoomToSelection(selectedElements);
+                            editor.fitZoomToSelection(selection);
                             editor.update();
                         }}
                     />

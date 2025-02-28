@@ -1,6 +1,5 @@
 import {ELEMENTS, FIELDS, TOOLS} from "../constants.js";
 import {useEditor} from "../contexts/editor.jsx";
-import {useActiveTool} from "../contexts/tools.jsx";
 import {getRectangleBounds} from "../utils/math.js";
 
 const generateDimensionLabel = el => ({
@@ -14,14 +13,18 @@ const generateDimensionLabel = el => ({
     // translateY: "0.5rem",
 });
 
+// @description returns the dimensions of the selected elements
+// @returns {object} dimensions
+// @returns {string} dimensions.value label to be displayed in the dimension badge
+// @returns {number} dimensions.x x position of the dimension badge
+// @returns {number} dimensions.y y position of the dimension badge
 export const useDimensions = () => {
-    const [tool] = useActiveTool();
     const editor = useEditor();
     const dimensions = [];
     if (editor?.appState?.objectDimensions) {
         // Case 1. No tool or action or we are translating or resizing the element
         // if ((!tool && !action) || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {
-        if (!tool || tool === TOOLS.SELECT) {
+        if (editor.state.tool === TOOLS.SELECT) {
             const selectedElements = editor.getSelection();
             // Case 1.1. Just one single element to calculate the size
             // In this case, we only want to display the dimension for shapes, drawings, text or images
@@ -40,7 +43,7 @@ export const useDimensions = () => {
         // Case 2. We are creating an element
         // In this case, only for shapes or text will be displayed
         // else if (action === ACTIONS.CREATE && (tool === ELEMENTS.SHAPE || tool === ELEMENTS.TEXT)) {
-        else if (tool === ELEMENTS.SHAPE || tool === ELEMENTS.TEXT) {
+        else if (editor.state.tool === ELEMENTS.SHAPE || editor.state.tool === ELEMENTS.TEXT) {
             const el = editor.getElements().find(element => element[FIELDS.CREATING]);
             if (el) {
                 dimensions.push(generateDimensionLabel(el));
