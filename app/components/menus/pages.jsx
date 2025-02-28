@@ -6,7 +6,6 @@ import {
     PencilIcon,
     CopyIcon,
     BarsIcon,
-    PlusIcon,
     LockIcon,
 } from "@josemi-icons/react";
 import {Dropdown} from "../ui/dropdown.jsx";
@@ -128,7 +127,7 @@ const initializeSortedPages = pages => {
 };
 
 // @description pages menu component
-export const PagesMenu = () => {
+export const ControlledPagesMenu = () => {
     const editor = useEditor();
     const {showConfirm} = useConfirm();
     const {showDialog} = useDialog();
@@ -183,9 +182,8 @@ export const PagesMenu = () => {
                 nextSortedPages[page.id].index = currentIndex;
                 // dispatch page move
                 // props?.onPageMove?.(page, currentIndex);
-                editor.movePage(page, nextIndex);
+                editor.movePage(page, currentIndex);
                 editor.dispatchChange();
-                editor.update();
             }
             setSortedPages(nextSortedPages);
         };
@@ -227,15 +225,15 @@ export const PagesMenu = () => {
         <div className="flex relative group" tabIndex="0">
             <Island.Button
                 icon="files"
-                text={(
-                    <div className="w-32 truncate">
-                        <span>{activePage.title}</span>
-                    </div>
-                )}
+                text={(<div className="w-32 truncate">{activePage.title}</div>)}
                 showChevron={true}
             />
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-60 z-40">
-                <div className="p-1 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
+            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
+                <Dropdown.Header>
+                    <div className="text-sm font-bold mr-auto">Pages</div>
+                    <Dropdown.HeaderButton icon="plus" onClick={handlePageCreate} />
+                </Dropdown.Header>
+                <div className="p-0 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
                     <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
                         {editor.pages.map(page => (
                             <Page
@@ -275,5 +273,13 @@ export const PagesMenu = () => {
                 </div>
             </Dropdown>
         </div>
+    );
+};
+
+// @description pages menu wrapper
+export const PagesMenu = () => {
+    const editor = useEditor();
+    return (
+        <ControlledPagesMenu key={editor.page.id + "." + editor.pages.length} />
     );
 };
