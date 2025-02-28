@@ -27,6 +27,9 @@ const InnerEditor = () => {
     const {showContextMenu} = useContextMenu();
     const {Layout} = useEditorComponents();
 
+    // used to track the current page id
+    const currentPageId = React.useRef(editor.page.id);
+
     // handle context menu in canvas
     const handleContextMenu = React.useCallback(event => {
         if (editor.state.tool === TOOLS.SELECT) {
@@ -42,13 +45,21 @@ const InnerEditor = () => {
         }
     }, [editor]);
     
-    // Hook to reset the action and tool when we change the active page
-    // React.useEffect(() => {
-    //     // const action = editor.state.action;
-    //     if (editor.page.readonly && editor.state.tool !== TOOLS.DRAG) {
-    //         handleToolOrActionChange(TOOLS.DRAG);
-    //     }
-    // }, [editor.page.id, editor.page.readonly, editor.state.tool]);
+    // reset the current tool when we change the current page or the readonly state
+    React.useEffect(() => {
+        // case 1: page is now in readonly mode and we have an edit tool selected
+        if (editor.page.readonly && !(editor.state.tool === TOOLS.DRAG || editor.state.tool === TOOLS.POINTER)) {
+            editor.state.tool = TOOLS.DRAG;
+            editor.update();
+        }
+        // case 2: we have changed to a new page
+        if (!editor.page.readonly && currentPageId.current !== editor.page.id) {
+            editor.state.tool = TOOLS.SELECT;
+            editor.update();
+        }
+        // make sure that we update the current page id reference
+        currentPageId.current = editor.page.id;
+    }, [editor.page.id, editor.page.readonly]);
 
     return (
         <Layout>

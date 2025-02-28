@@ -1,11 +1,9 @@
 import React from "react";
-import {TOOLS} from "../../constants.js";
 import {Button} from "../ui/button.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
 import {useEditor} from "../../contexts/editor.jsx";
-import {useContextMenu} from "../../contexts/context-menu.jsx";
 
 // @private list of form fields
 const pageEditFields = {
@@ -34,7 +32,6 @@ const pageEditFields = {
 // @param {function} props.onClose close dialog callback
 export const PagesEditDialog = props => {
     const editor = useEditor();
-    const {hideContextMenu} = useContextMenu();
     const page = editor.getPage(props.page.id);
 
     const [data, setData] = useFormData({
@@ -47,20 +44,10 @@ export const PagesEditDialog = props => {
     const handleSubmit = React.useCallback(data => {
         // currently the only way to update page properties is using object.assign to the page object
         Object.assign(page, data);
-        // Check if the edited page is the active page and we have marked it as readonly
-        if (editor.page.id === page.id && data.readonly) {
-            editor.state.tool = TOOLS.DRAG; // Set the tool to drag
-            hideContextMenu();
-            // Reset selected elements and editing state
-            editor.getElements().forEach(element => {
-                element.selected = false;
-                element.editing = false;
-            });
-        }
         editor.dispatchChange();
         editor.update();
         props.onClose();
-    }, [editor, editor.page.id, hideContextMenu, props.page.id]);
+    }, [editor, editor.page.id, props.page.id]);
 
     const isSubmitEnabled = !!data.title;
     return (
