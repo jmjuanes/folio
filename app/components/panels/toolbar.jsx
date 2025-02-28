@@ -111,7 +111,7 @@ export const ToolbarPanel = () => {
                             text={tools[key].name || tools[key].text}
                             icon={tools[key].icon}
                             active={editor.state.tool === key}
-                            disabled={editor.page.readonly}
+                            disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
                             onClick={tools[key].onSelect}
                         />
                         {tools[key].quickPicks && key === editor.state.tool && (
@@ -141,6 +141,7 @@ export const ToolbarPanel = () => {
                             <React.Fragment key={key}>
                                 <Dropdown.CheckItem
                                     checked={editor.state.tool === key}
+                                    disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
                                     onClick={tools[key].onSelect}>
                                     <Dropdown.Icon icon={tools[key].icon} />
                                     <span>{tools[key].name}</span>

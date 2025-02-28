@@ -32,6 +32,7 @@ export const useTools = () => {
         [TOOLS.DRAG]: {
             name: "Drag",
             icon: "hand-grab",
+            toolEnabledOnReadOnly: true,
             onSelect: () => {
                 editor.state.tool = TOOLS.DRAG;
                 editor.update();
@@ -48,6 +49,7 @@ export const useTools = () => {
         [TOOLS.POINTER]: {
             icon: "laser-pointer",
             name: "Laser Pointer",
+            toolEnabledOnReadOnly: true,
             onSelect: () => {
                 editor.state.tool = TOOLS.POINTER;
                 editor.update();
