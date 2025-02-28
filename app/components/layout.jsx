@@ -1,4 +1,5 @@
 import React from "react";
+import {Alert} from "./ui/alert.jsx";
 import {useEditorComponents} from "../contexts/editor-components.jsx";
 import {useEditor} from "../contexts/editor.jsx";
 
@@ -33,6 +34,13 @@ export const Layout = props => {
                         <div className="absolute top-0 right-0 pt-4 pr-4 z-40 flex gap-2">
                             {!!HistoryPanel && <HistoryPanel />}
                             {!!ZoomPanel && <ZoomPanel />}
+                        </div>
+                    )}
+                    {!!editor.page.readonly && (
+                        <div className="absolute top-0 left-half pt-4 z-30 flex gap-2 translate-x-half-n pointer-events-none">
+                            <Alert variant="warning" icon="lock">
+                                This page is <b>Read-Only</b>.
+                            </Alert>
                         </div>
                     )}
                     {!!Toolbar && (
