@@ -261,7 +261,7 @@ export const ControlledPagesMenu = () => {
                                     editor.update();
                                 }}
                                 onConfigure={() => {
-                                    showDialog("page-edit", {page});
+                                    showDialog("pages-edit", {page});
                                     clearFocus();
                                 }}
                                 onMove={event => {
@@ -280,6 +280,6 @@ export const ControlledPagesMenu = () => {
 export const PagesMenu = () => {
     const editor = useEditor();
     return (
-        <ControlledPagesMenu key={editor.page.id + "." + editor.pages.length} />
+        <ControlledPagesMenu key={"pages:" + editor.pages.length} />
     );
 };

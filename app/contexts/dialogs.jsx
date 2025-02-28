@@ -21,14 +21,18 @@ export const useDialog = () => {
 // @param {React Children} props.children React children to render
 export const DialogsProvider = ({dialogs, children}) => {
     const [activeDialog, setActiveDialog] = React.useState(null);
-    const {ExportDialog} = useEditorComponents();
+    const {ExportDialog, PagesEditDialog} = useEditorComponents();
 
     // internal list of all available dialogs in the editor
     const allDialogs = React.useMemo(() => {
         return {
-            export: {
+            "export": {
                 title: "Export Image",
                 component: ExportDialog,
+            },
+            "pages-edit": {
+                title: "Edit Page",
+                component: PagesEditDialog,
             },
             ...dialogs,
         };
