@@ -395,21 +395,18 @@ export const EditionPanel = () => {
     const currentSection = activeSection || visibleSections.style[0];
     return (
         <Panel className="w-64">
-            <Panel.Header>
-                <Panel.HeaderTitle>Edit</Panel.HeaderTitle>
-                {visibleSections.style.length > 1 && (
-                    <div className="flex items-center gap-1">
-                        {visibleSections.style.map(key => (
-                            <Panel.HeaderButton
-                                key={key}
-                                active={currentSection === key}
-                                onClick={() => handleSectionChange(key)}>
-                                {styleSections[key].icon}
-                            </Panel.HeaderButton>
-                        ))}
-                    </div>
-                )}
-            </Panel.Header>
+            {visibleSections.style.length > 1 && (
+                <Panel.Tabs>
+                    {visibleSections.style.map(key => (
+                        <Panel.TabsItem
+                            key={key}
+                            active={currentSection === key}
+                            onClick={() => handleSectionChange(key)}>
+                            {styleSections[key].icon}
+                        </Panel.TabsItem>
+                    ))}
+                </Panel.Tabs>
+            )}
             <Panel.Body className="flex flex-col gap-2 overflow-y-auto" style={{maxHeight: "calc(75vh - 8rem)"}}>
                 {visibleSections.style.length > 0 && (
                     <Form
