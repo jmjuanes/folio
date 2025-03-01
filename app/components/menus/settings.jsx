@@ -1,11 +1,10 @@
 import React from "react";
-import {
-    FORM_OPTIONS,
-} from "../../constants.js";
+import {FORM_OPTIONS} from "../../constants.js";
 import {BACKGROUND_COLOR_PALETTE} from "../../utils/colors.js";
-import {Panel} from "../ui/panel.jsx";
+import {Dropdown} from "../ui/dropdown.jsx";
+import {Island} from "../ui/island.jsx";
 import {Form} from "../form/index.jsx";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 
 // settings fields
 const FIELDS = {
@@ -57,29 +56,31 @@ const setValue = (obj, path, value) => {
     obj[pathItems[i]] = value;
 };
 
-export const SettingsPanel = props => {
-    const scene = useScene();
+// @description settings menu
+export const SettingsMenu = () => {
+    const editor = useEditor();
     const values = Object.fromEntries(Object.values(FIELDS).map(key => {
-        return [key, getValue(scene, key)];
+        return [key, getValue(editor, key)];
     }));
-    const handleChange = (key, value) => {
-        setValue(scene, key, value);
-        props.onChange();
-    };
+
+    // perform a change in the editor configuration
+    const handleChange = React.useCallback((key, value) => {
+        setValue(editor, key, value);
+        editor.dispatchChange();
+        editor.update();
+    }, []);
 
     return (
-        <Panel className="w-60">
-            <Panel.Header>
-                <Panel.HeaderTitle>Settings</Panel.HeaderTitle>
-            </Panel.Header>
-            <Panel.Body className="">
+        <div className="flex relative group" tabIndex="0">
+            <Island.Button icon="sliders" />
+            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-60 z-40">
                 <Form
-                    className="flex flex-col gap-2"
+                    className="flex flex-col gap-2 p-1"
                     data={values}
                     items={sections}
                     onChange={handleChange}
                 />
-            </Panel.Body>
-        </Panel>
+            </Dropdown>
+        </div>
     );
 };

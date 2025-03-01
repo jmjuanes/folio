@@ -8,6 +8,7 @@ import {
     ZOOM_DEFAULT,
     ASSETS,
     VERSION,
+    TOOLS,
 } from "./constants.js";
 import {BACKGROUND_COLORS} from "./utils/colors.js";
 import {loadImage} from "./utils/image.js";
@@ -38,12 +39,12 @@ const CLIPBOARD_KEY = "folio:::";
 // @private generate a random ID
 const generateRandomId = () => uid(20);
 
-// @private helper method to change order of provided elements in scene
-const setElementsOrderInScene = (scene, elements, sign, absolute) => {
-    let allElements = scene.page.elements;
-    if (scene.page.activeGroup && elements.every(el => el.group === scene.page.activeGroup)) {
-        allElements = scene.page.elements.filter(el => {
-            return el.group === scene.page.activeGroup;
+// @private helper method to change order of provided elements in editor
+const setElementsOrderInEditor = (editor, elements, sign, absolute) => {
+    let allElements = editor.page.elements;
+    if (editor.page.activeGroup && elements.every(el => el.group === editor.page.activeGroup)) {
+        allElements = editor.page.elements.filter(el => {
+            return el.group === editor.page.activeGroup;
         });
     }
     const changedElements = new Set();
@@ -52,7 +53,7 @@ const setElementsOrderInScene = (scene, elements, sign, absolute) => {
     const minOrder = Math.min(...allElements.map(el => el[FIELDS.ORDER]));
     const maxOrder = Math.max(...allElements.map(el => el[FIELDS.ORDER]));
     // 1. Save current elements position
-    scene.page.elements.forEach(element => {
+    editor.page.elements.forEach(element => {
         prevElementsPosition.set(element.id, element[FIELDS.ORDER]);
     });
     // 2. Fix order position of elements using the sign
@@ -66,7 +67,7 @@ const setElementsOrderInScene = (scene, elements, sign, absolute) => {
             if (absolute) {
                 const currentOrder = element[FIELDS.ORDER];
                 element[FIELDS.ORDER] = sign > 0 ? maxOrder - index : minOrder + index;
-                scene.page.elements.forEach(el => {
+                editor.page.elements.forEach(el => {
                     const condition = sign > 0 ? el[FIELDS.ORDER] >= currentOrder : currentOrder >= el[FIELDS.ORDER];
                     if (el.id !== element.id && condition) {
                         el[FIELDS.ORDER] = el[FIELDS.ORDER] - sign;
@@ -82,22 +83,22 @@ const setElementsOrderInScene = (scene, elements, sign, absolute) => {
                 let oldPosition = element[FIELDS.ORDER];
                 let newPosition = element[FIELDS.ORDER] + sign;
                 if (minOrder <= newPosition && newPosition <= maxOrder) {
-                    let nextElement = scene.page.elements[newPosition];
+                    let nextElement = editor.page.elements[newPosition];
                     const nextElementGroup = nextElement[FIELDS.GROUP];
-                    if (!scene.page?.activeGroup && nextElementGroup) {
-                        while((minOrder <= newPosition + sign) && (newPosition + sign <= maxOrder) && scene.page.elements[newPosition + sign]?.[FIELDS.GROUP] === nextElementGroup) {
+                    if (!editor.page?.activeGroup && nextElementGroup) {
+                        while((minOrder <= newPosition + sign) && (newPosition + sign <= maxOrder) && editor.page.elements[newPosition + sign]?.[FIELDS.GROUP] === nextElementGroup) {
                             nextElement[FIELDS.ORDER] = oldPosition;
                             changedElements.add(nextElement.id);
                             oldPosition = oldPosition + sign;
                             newPosition = newPosition + sign;
-                            nextElement = scene.page.elements[newPosition];
+                            nextElement = editor.page.elements[newPosition];
                         }
                     }
                     // 2.2. Set the new position
                     element[FIELDS.ORDER] = newPosition;
                     nextElement[FIELDS.ORDER] = oldPosition;
                     // 2.3. Sort elements by order
-                    scene.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+                    editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
                     // 2.4. Set both elements as changed
                     changedElements.add(element.id);
                     changedElements.add(nextElement.id);
@@ -105,19 +106,19 @@ const setElementsOrderInScene = (scene, elements, sign, absolute) => {
             }
         });
     // 3. Fix order in case of moving all elements to front or back
-    scene.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
-    scene.page.elements.forEach((element, index) => {
+    editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+    editor.page.elements.forEach((element, index) => {
         element[FIELDS.ORDER] = index;
     });
     // 4. Get new positions
-    scene.page.elements.forEach(element => {
+    editor.page.elements.forEach(element => {
         nextElementsPosition.set(element.id, element[FIELDS.ORDER]);
         if (element[FIELDS.ORDER] !== prevElementsPosition.get(element.id)) {
             changedElements.add(element.id);
         }
     });
     // 5. Register history change
-    scene.addHistory({
+    editor.addHistory({
         type: CHANGES.UPDATE,
         elements: Array.from(changedElements).map(id => ({
             id: id,
@@ -131,8 +132,8 @@ const setElementsOrderInScene = (scene, elements, sign, absolute) => {
     });
 };
 
-// @private parse text data to scene
-const parseTextDataToScene = (scene, content = "", x = null, y = null) => {
+// @private parse text data to editor
+const parseTextDataToEditor = (editor, content = "", x = null, y = null) => {
     if (typeof content === "string") {
         if (content?.startsWith(CLIPBOARD_KEY)) {
             const data = JSON.parse(content.split(CLIPBOARD_KEY)[1].trim());
@@ -142,7 +143,7 @@ const parseTextDataToScene = (scene, content = "", x = null, y = null) => {
             const assetMap = {};
             Object.values(data?.assets || {}).forEach(asset => {
                 if (asset && asset.id && asset.dataUrl) {
-                    assetMap[asset.id] = scene.addAsset(asset.dataUrl, asset.type);
+                    assetMap[asset.id] = editor.addAsset(asset.dataUrl, asset.type);
                 }
             });
             // Paste provided elements
@@ -156,15 +157,15 @@ const parseTextDataToScene = (scene, content = "", x = null, y = null) => {
             const bounds = getRectangleBounds(data?.elements || []);
             const dx = x ? x - bounds.x1 : 0;
             const dy = y ? y - bounds.y1 : 0;
-            scene.importElements(elements, dx, dy);
+            editor.importElements(elements, dx, dy);
             return Promise.resolve(true);
         }
         // Check for text containing a link
         else if (isLink(content.trim())) {
-            return scene.addBookmarkElement(content.trim(), x, y);
+            return editor.addBookmarkElement(content.trim(), x, y);
         }
         // Create a new text element
-        return scene.addTextElement(content, x, y);
+        return editor.addTextElement(content, x, y);
     }
     // No valid text, reject promise
     return Promise.reject(null);
@@ -236,8 +237,8 @@ const defaults = {
     [FIELDS.STICKER]: DEFAULTS.STICKER,
 };
 
-// @description Generate a scene state from initial data object
-export const getSceneStateFromInitialData = initialData => {
+// @description Generate a editor state from initial data object
+export const getEditorStateFromInitialData = initialData => {
     // Parse pages list from initialData object
     // If no pages are available, a new empty page will be automatically created
     const pages = parseInitialPages(initialData?.pages).map((page, index) => {
@@ -260,42 +261,52 @@ export const getSceneStateFromInitialData = initialData => {
     };
 };
 
-// @description Create a new scene
-export const createScene = initialData => {
-    const scene = {
-        ...getSceneStateFromInitialData(initialData || {}),
+// @description Create a new editor
+export const createEditor = initialData => {
+    const editor = {
+        ...getEditorStateFromInitialData(initialData || {}),
         defaults: {...defaults},
         updatedAt: Date.now(),
+
+        // @description internal editor state
+        state: {
+            tool: TOOLS.SELECT,
+            toolLocked: false,
+            selection: null,
+            snapEdges: null,
+        },
+
+        // @description editor size
         width: 0,
         height: 0,
 
-        // @description load scene from JSON
+        // @description load editor from JSON
         fromJSON: data => {
-            Object.assign(scene, getSceneStateFromInitialData(data));
+            Object.assign(editor, getEditorStateFromInitialData(data));
         },
 
-        // @description export scene to JSON
+        // @description export editor to JSON
         toJSON: () => {
             return {
-                version: scene.version || VERSION,
-                title: scene.title,
-                pages: scene.pages.map(page => ({
+                version: editor.version || VERSION,
+                title: editor.title,
+                pages: editor.pages.map(page => ({
                     id: page.id,
                     title: page.title,
                     description: page.description || "",
                     elements: page.elements,
                     readonly: !!page.readonly,
                 })),
-                assets: scene.assets,
-                background: scene.background,
-                appState: scene.appState,
-                metadata: scene.metadata,
+                assets: editor.assets,
+                background: editor.background,
+                appState: editor.appState,
+                metadata: editor.metadata,
             };
         },
 
-        // @description reset scene
+        // @description reset editor
         reset: () => {
-            scene.fromJSON({});
+            editor.fromJSON({});
         },
 
         //
@@ -303,66 +314,66 @@ export const createScene = initialData => {
         //
 
         // @description Get the list of available pages
-        getPages: () => scene.pages,
+        getPages: () => editor.pages,
 
         // @description Get a page by id
         getPage: id => {
-            return scene.pages.find(page => page.id === id || page === id);
+            return editor.pages.find(page => page.id === id || page === id);
         },
 
         // @description add a new page
         addPage: (data = {}, index = null, setNewPageAsActive = true) => {
-            const newPage = createPage(data, scene.pages.length);
+            const newPage = createPage(data, editor.pages.length);
             // 1. Insert the page in the specified index (if provided)
-            if (index !== null && index >= 0 && index < scene.pages.length) {
-                scene.pages.splice(index, 0, newPage);
+            if (index !== null && index >= 0 && index < editor.pages.length) {
+                editor.pages.splice(index, 0, newPage);
             }
             else {
-                scene.pages.push(newPage);
+                editor.pages.push(newPage);
             }
             // 2. check if we need to set the new page as active
             if (setNewPageAsActive) {
-                scene.setActivePage(newPage.id);
+                editor.setActivePage(newPage.id);
             }
         },
 
         // @description remove the provided page
         removePage: id => {
             // Removing pages is only supported if we have more than one page
-            if (scene.pages.length > 1) {
-                scene.pages = scene.pages.filter(page => {
+            if (editor.pages.length > 1) {
+                editor.pages = editor.pages.filter(page => {
                     return page.id !== id && page !== id;
                 });
                 // Check if the removed page is the current active page
-                if (scene.page === id || scene.page.id === id) {
-                    scene.page = scene.pages[0];
+                if (editor.page === id || editor.page.id === id) {
+                    editor.page = editor.pages[0];
                 }
             }
         },
 
         // @description move page to the specified index
         movePage: (id, nextIndex) => {
-            const prevIndex = scene.pages.findIndex(p => p.id === id || p === id);
+            const prevIndex = editor.pages.findIndex(p => p.id === id || p === id);
             if (prevIndex !== nextIndex) {
-                const page = scene.pages[prevIndex];
-                scene.pages.splice(prevIndex, 1);
-                scene.pages.splice(nextIndex, 0, page);
+                const page = editor.pages[prevIndex];
+                editor.pages.splice(prevIndex, 1);
+                editor.pages.splice(nextIndex, 0, page);
             }
         },
 
         // @description duplicate the provided page
         duplicatePage: (id, index = null, setAsActive = true) => {
-            const page = scene.getPage(id);
+            const page = editor.getPage(id);
             const newPageData = {
                 title: "Copy of " + (page?.title || "-"),
                 elements: page?.elements || [],
             };
-            scene.addPage(newPageData, index, setAsActive);
+            editor.addPage(newPageData, index, setAsActive);
         },
 
         // @description clear the content of the provided page
         clearPage: id => {
-            Object.assign(scene.getPage(id), {
+            Object.assign(editor.getPage(id), {
                 elements: [],
                 history: [], // remove all history
                 historyIndex: 0,
@@ -371,18 +382,18 @@ export const createScene = initialData => {
         },
 
         // @description get active page
-        getActivePage: () => scene.page,
+        getActivePage: () => editor.page,
 
         // @description set active page
         setActivePage: id => {
             // 1. Reset state in all active pages
-            scene.page.elements.forEach(element => {
+            editor.page.elements.forEach(element => {
                 element[FIELDS.SELECTED] = false;
                 element[FIELDS.EDITING] = false;
             });
             // 2. Find and set active page
             // Note: we support both providing the ID or the full page object
-            scene.page = scene.pages.find(page => page.id === id || page === id);
+            editor.page = editor.pages.find(page => page.id === id || page === id);
         },
 
         // 
@@ -391,20 +402,20 @@ export const createScene = initialData => {
 
         // @description Get an asset by ID
         getAsset: id => {
-            return scene.assets[id] || null;
+            return editor.assets[id] || null;
         },
 
         // @description add a new asset
         addAsset: (type, data = {}) => {
             // First we need to check if this asset is already registered
-            let assetId = Object.keys(scene.assets)
+            let assetId = Object.keys(editor.assets)
                 .find(id => {
-                    return scene.assets[id].type === type && scene.assets[id].data?.src === data?.src;
+                    return editor.assets[id].type === type && editor.assets[id].data?.src === data?.src;
                 });
             if (!assetId) {
                 // Register this asset using a new identifier
                 assetId = generateRandomId();
-                scene.assets[assetId] = {
+                editor.assets[assetId] = {
                     type: type || ASSETS.IMAGE,
                     data: data,
                 };
@@ -418,45 +429,45 @@ export const createScene = initialData => {
 
         // @description Get an element by ID
         getElement: id => {
-            return scene.page.elements.find(el => el.id === id);
+            return editor.page.elements.find(el => el.id === id);
         },
 
-        // @description Get all elements in scene
+        // @description Get all elements in editor
         getElements: () => {
-            return scene.page.elements;
+            return editor.page.elements;
         },
 
         // @description Get only erased elements
         getErasedElements: () => {
-            return scene.page.elements.filter(element => element.erased);
+            return editor.page.elements.filter(element => element.erased);
         },
 
         // @description Create a new element
         // @deprecated: use createNewElement instead
         createElement: type => {
-            console.warn(`scene.createElement is deprecated. Please use createElement from 'elements.js' instead`);
+            console.warn(`editor.createElement is deprecated. Please use createElement from 'elements.js' instead`);
             return {
                 ...createElement(type),
-                [FIELDS.ORDER]: scene.page.elements.length,
+                [FIELDS.ORDER]: editor.page.elements.length,
             };
         },
 
-        // @description clear elements in scene
+        // @description clear elements in editor
         clearElements: () => {
-            scene.page.elements = [];
+            editor.page.elements = [];
         },
 
-        // @description Add new elements into scene
+        // @description Add new elements into editor
         addElements: elements => {
             if (elements && elements.length > 0) {
-                const numElements = scene.page.elements.length;
+                const numElements = editor.page.elements.length;
                 // 1. Fix elements values
                 elements.forEach((element, index) => {
                     element[FIELDS.NAME] = element[FIELDS.NAME] || getElementDisplayName(element);
                     element[FIELDS.ORDER] = numElements + index;
                 });
                 // 2. Register element create in the history
-                scene.addHistory({
+                editor.addHistory({
                     type: CHANGES.CREATE,
                     elements: elements.map(element => ({
                         id: element.id,
@@ -469,7 +480,7 @@ export const createScene = initialData => {
                 });
                 // 3. Add new elements
                 elements.forEach(element => {
-                    return scene.page.elements.push(element);
+                    return editor.page.elements.push(element);
                 });
             }
         },
@@ -480,20 +491,20 @@ export const createScene = initialData => {
             const selectedElements = new Set(elements.map(el => el.id));
             const hasElementsWithoutGroup = elements.some(el => !el.group);
             // 1. select the elements using the selection area
-            scene.page.elements.forEach(element => {
+            editor.page.elements.forEach(element => {
                 element.selected = selectedElements.has(element.id);
             });
             // 2. Select the elements based on the groups set
             if (groups.size > 0 || hasElementsWithoutGroup) {
                 // Check if we are selecting elements in the active group
-                if (scene.page.activeGroup && groups.size === 1 && groups.has(scene.page.activeGroup)) {
+                if (editor.page.activeGroup && groups.size === 1 && groups.has(editor.page.activeGroup)) {
                     // Nothing to do 
                 }
                 // Other case, reset active group and select elements in all groups
                 else {
-                    scene.page.activeGroup = null;
+                    editor.page.activeGroup = null;
                     if (groups.size > 0) {
-                        scene.page.elements.forEach(element => {
+                        editor.page.elements.forEach(element => {
                             if (element.group && groups.has(element.group)) {
                                 element.selected = true;
                             }
@@ -503,7 +514,7 @@ export const createScene = initialData => {
             }
         },
 
-        // @description remove provided elements from scene
+        // @description remove provided elements from editor
         removeElements: elements => {
             if (elements && elements.length > 0) {
                 const changes = [];
@@ -522,7 +533,7 @@ export const createScene = initialData => {
                 });
                 // 2. Remove the elements for this.elements
                 const elementsToRemove = new Set(elements.map(element => element.id));
-                scene.page.elements = scene.page.elements.filter(element => {
+                editor.page.elements = editor.page.elements.filter(element => {
                     return !elementsToRemove.has(element.id);
                 });
                 // 3. Check if we have removed elements from any group and we have groups with only one element
@@ -530,7 +541,7 @@ export const createScene = initialData => {
                 if (removedGroups.size > 0) {
                     Array.from(removedGroups).forEach(group => {
                         // 3.1. Get the elements that are still on this group
-                        const elementsInGroup = scene.page.elements.filter(el => el.group === group);
+                        const elementsInGroup = editor.page.elements.filter(el => el.group === group);
                         if (elementsInGroup.length === 1) {
                             // 3.2.1. Register an update change
                             changes.push({
@@ -548,18 +559,18 @@ export const createScene = initialData => {
                             // 3.2.2. Remove group attribute
                             elementsInGroup[0][FIELDS.GROUP] = null;
                             // 3.2.3. Reset active group
-                            if (scene.page.activeGroup === group) {
-                                scene.page.activeGroup = null;
+                            if (editor.page.activeGroup === group) {
+                                editor.page.activeGroup = null;
                             }
                         }
                     });
                 }
                 // 4. Reset elements order
-                scene.page.elements.forEach((element, index) => {
+                editor.page.elements.forEach((element, index) => {
                     element[FIELDS.ORDER] = index;
                 });
                 // 5. Register history changes
-                scene.addHistory(changes);
+                editor.addHistory(changes);
             }
         },
 
@@ -580,7 +591,7 @@ export const createScene = initialData => {
             });
             if (elementsToChange.length > 0) {
                 // 1. Register element update in the history
-                scene.addHistory({
+                editor.addHistory({
                     type: CHANGES.UPDATE,
                     ids: groupChanges && elementsToChange.map(element => element.id).join(","),
                     keys: groupChanges && keys.join(","),
@@ -603,24 +614,24 @@ export const createScene = initialData => {
             }
             // 3. Update defaults
             keys.forEach((key, index) => {
-                scene.defaults[key] = values[index];
+                editor.defaults[key] = values[index];
             });
         },
 
-        // @description import elements into scene
+        // @description import elements into editor
         importElements: (elements, dx = 0, dy = 0) => {
-            scene.clearSelection();
+            editor.clearSelection();
             // 1. Process new elements
             const changes = [];
             const groups = new Map();
-            const originalElementsOrder = new Map(scene.page.elements.map(element => ([element.id, element[FIELDS.ORDER]])));
+            const originalElementsOrder = new Map(editor.page.elements.map(element => ([element.id, element[FIELDS.ORDER]])));
             const changedElementsOrder = new Map();
-            const maxOrder = Math.max.apply(null, scene.page.elements.map(el => {
-                return (!scene.page?.activeGroup || scene.page.activeGroup === el[FIELDS.GROUP]) ? el[FIELDS.ORDER] : 0;
+            const maxOrder = Math.max.apply(null, editor.page.elements.map(el => {
+                return (!editor.page?.activeGroup || editor.page.activeGroup === el[FIELDS.GROUP]) ? el[FIELDS.ORDER] : 0;
             }));
             const newElements = elements.map((element, index) => {
                 // 1.1. Check if this element is part of a group
-                if (elements.length > 1 && !scene.page?.activeGroup && !!element.group && !groups.has(element.group)) {
+                if (elements.length > 1 && !editor.page?.activeGroup && !!element.group && !groups.has(element.group)) {
                     groups.set(element.group, generateRandomId());
                 }
                 // 1.2 Prepare new element configuration
@@ -633,7 +644,7 @@ export const createScene = initialData => {
                     y1: element.y1 + dy,
                     y2: element.y2 + dy,
                     selected: true,
-                    [FIELDS.GROUP]: scene.page?.activeGroup || groups.get(element.group) || null,
+                    [FIELDS.GROUP]: editor.page?.activeGroup || groups.get(element.group) || null,
                     [FIELDS.ORDER]: maxOrder + index + 1,
                     [FIELDS.NAME]: "Copy of " + (element[FIELDS.NAME] || ""),
                 };
@@ -646,15 +657,15 @@ export const createScene = initialData => {
                 return newElement;
             });
             // 2. Check if activeGroup is enabled
-            if (scene.page?.activeGroup) {
-                for (let i = maxOrder + 1; i < scene.page.elements.length; i++) {
-                    scene.page.elements[i][FIELDS.ORDER] = i + newElements.length;
-                    changedElementsOrder.set(scene.page.elements[i].id, scene.page.elements[i][FIELDS.ORDER]);
+            if (editor.page?.activeGroup) {
+                for (let i = maxOrder + 1; i < editor.page.elements.length; i++) {
+                    editor.page.elements[i][FIELDS.ORDER] = i + newElements.length;
+                    changedElementsOrder.set(editor.page.elements[i].id, editor.page.elements[i][FIELDS.ORDER]);
                 }
             }
             // 3. insert new elements
             newElements.forEach(element => {
-                scene.page.elements.push(element);
+                editor.page.elements.push(element);
             });
             // 4.1 Register CREATE change
             changes.push({
@@ -684,31 +695,31 @@ export const createScene = initialData => {
                 });
             }
             // 4.3 Register history change
-            scene.addHistory(changes);
+            editor.addHistory(changes);
             // 5. Fix Elements order
-            scene.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+            editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
         },
 
         // @description export elements as JSON
         exportElements: (elementsToExport = null) => {
-            const elements = elementsToExport || scene.getElements();
+            const elements = elementsToExport || editor.getElements();
             return {
                 elements: elements,
                 assets: elements.reduce((assets, element) => {
                     // Copy only assets in the current selection
-                    if (element.assetId && scene.assets[element.assetId]) {
-                        assets[element.assetId] = scene.assets[element.assetId];
+                    if (element.assetId && editor.assets[element.assetId]) {
+                        assets[element.assetId] = editor.assets[element.assetId];
                     }
                     return assets;
                 }, {}),
-                // background: scene.background,
+                // background: editor.background,
             };
         },
 
         // @description duplicate provided elements
         duplicateElements: elements => {
             const bounds = getRectangleBounds(elements);
-            return scene.importElements(elements, (bounds.x2 + PASTE_OFFSET) - bounds.x1, 0);
+            return editor.importElements(elements, (bounds.x2 + PASTE_OFFSET) - bounds.x1, 0);
         },
 
         // @description lock elements
@@ -716,7 +727,7 @@ export const createScene = initialData => {
             // 1. Get elements to lock
             const elementsToUpdate = elements.filter(el => !el.locked);
             // 2. Register history change
-            scene.addHistory({
+            editor.addHistory({
                 type: CHANGES.UPDATE,
                 elements: elementsToUpdate.map(element => ({
                     id: element.id,
@@ -737,7 +748,7 @@ export const createScene = initialData => {
             // 1. Get elements to unlock
             const elementsToUpdate = elements.filter(el => el.locked);
             // 2. Register history change
-            scene.addHistory({
+            editor.addHistory({
                 type: CHANGES.UPDATE,
                 elements: elementsToUpdate.map(element => ({
                     id: element.id,
@@ -755,22 +766,22 @@ export const createScene = initialData => {
 
         // @description bring provided elements forward
         bringElementsForward: elements => {
-            return setElementsOrderInScene(scene, elements, +1, false);
+            return setElementsOrderInEditor(editor, elements, +1, false);
         },
 
         // @description send provided elements backward
         sendElementsBackward: elements => {
-            return setElementsOrderInScene(scene, elements, -1, false);
+            return setElementsOrderInEditor(editor, elements, -1, false);
         },
 
         // @description bring provided elements to front
         bringElementsToFront: elements => {
-            return setElementsOrderInScene(scene, elements, +1, true);
+            return setElementsOrderInEditor(editor, elements, +1, true);
         },
 
         // @description send provided elements to back
         sendElementsToBack: elements => {
-            return setElementsOrderInScene(scene, elements, -1, true);
+            return setElementsOrderInEditor(editor, elements, -1, true);
         },
 
         // @description group elements in the current selection
@@ -778,22 +789,22 @@ export const createScene = initialData => {
             const groupId = generateRandomId();
             const selectedElements = new Set(elements.map(element => element.id));
             const updatedElements = [...elements];
-            const prevElementsOrder = new Map(scene.page.elements.map(element => {
+            const prevElementsOrder = new Map(editor.page.elements.map(element => {
                 return [element.id, element[FIELDS.ORDER]];
             }));
-            const prevElementsGroup = new Map(scene.page.elements.map(element => {
+            const prevElementsGroup = new Map(editor.page.elements.map(element => {
                 return [element.id, element[FIELDS.GROUP] || null];
             }));
             const minOrder = Math.min(...elements.map(element => element[FIELDS.ORDER]));
             const maxOrder = Math.max(...elements.map(element => element[FIELDS.ORDER]));
             // TODO: we should check if there is an element that belongs to a non selected group?
             // 1. Find the elements index with the minimum and maximum order
-            const maxOrderIndex = scene.page.elements.findIndex(element => element[FIELDS.ORDER] === maxOrder);
-            const minOrderIndex = scene.page.elements.findIndex(element => element[FIELDS.ORDER] === minOrder);
+            const maxOrderIndex = editor.page.elements.findIndex(element => element[FIELDS.ORDER] === maxOrder);
+            const minOrderIndex = editor.page.elements.findIndex(element => element[FIELDS.ORDER] === minOrder);
             // 2. Fix the order of all elements between [minOrderIndex, maxOrderIndex] that are not selected
             let index = 0;
             for (let i = minOrderIndex + 1; i < maxOrderIndex; i++) {
-                const element = scene.page.elements[i];
+                const element = editor.page.elements[i];
                 if (!selectedElements.has(element.id)) {
                     element[FIELDS.ORDER] = minOrder + index;
                     index = index + 1;
@@ -806,7 +817,7 @@ export const createScene = initialData => {
                 elements[elements.length - i - 1][FIELDS.GROUP] = groupId;
             }
             // 4. Add new history change
-            scene.addHistory({
+            editor.addHistory({
                 type: CHANGES.UPDATE,
                 elements: updatedElements.map(element => {
                     const entry = {
@@ -827,29 +838,29 @@ export const createScene = initialData => {
                 }),
             });
             // Sort elements
-            scene.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+            editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
         },
 
         // @description ungroup elements
         ungroupElements: elements => {
-            scene.updateElements(elements, [FIELDS.GROUP], [null], false);
+            editor.updateElements(elements, [FIELDS.GROUP], [null], false);
         },
 
         // 
         // Create new elements
         //
 
-        // @description add a new text element into scene
+        // @description add a new text element into editor
         addTextElement: (text, tx = null, ty = null) => {
-            scene.clearSelection();
-            const x = tx ?? (scene.page.translateX + scene.width / 2);
-            const y = ty ?? (scene.page.translateY + scene.height / 2);
+            editor.clearSelection();
+            const x = tx ?? (editor.page.translateX + editor.width / 2);
+            const y = ty ?? (editor.page.translateY + editor.height / 2);
             const element = createElement(ELEMENTS.TEXT);
             const elementConfig = getElementConfig(element);
 
             // We need to assign initial text values to this element
             Object.assign(element, {
-                ...(elementConfig.initialize?.(scene.defaults) || {}),
+                ...(elementConfig.initialize?.(editor.defaults) || {}),
                 text: text,
                 selected: true,
                 [FIELDS.GROUP]: null,
@@ -864,22 +875,22 @@ export const createScene = initialData => {
                 textWidth: textWidth,
                 textHeight: textHeight,
             });
-            scene.addElements([element]);
+            editor.addElements([element]);
             // this.update();
             return Promise.resolve(element);
         },
 
-        // @description adds a new image into the scene as an element
+        // @description adds a new image into the editor as an element
         addImageElement: (image, tx = null, ty = null) => {
-            scene.clearSelection();
+            editor.clearSelection();
             return loadImage(image).then(img => {
-                const x = tx ?? (scene.page.translateX + scene.width / 2);
-                const y = ty ?? (scene.page.translateY + scene.height / 2);
+                const x = tx ?? (editor.page.translateX + editor.width / 2);
+                const y = ty ?? (editor.page.translateY + editor.height / 2);
                 const element = createElement(ELEMENTS.IMAGE);
                 const elementConfig = getElementConfig(element);
                 Object.assign(element, {
-                    ...(elementConfig.initialize?.(scene.defaults) || {}),
-                    assetId: scene.addAsset(ASSETS.IMAGE, {
+                    ...(elementConfig.initialize?.(editor.defaults) || {}),
+                    assetId: editor.addAsset(ASSETS.IMAGE, {
                         mimeType: image.substring(image.indexOf(":") + 1, image.indexOf(";")),
                         src: image,
                         width: img.width,
@@ -893,7 +904,7 @@ export const createScene = initialData => {
                     selected: true,
                     [FIELDS.GROUP]: null,
                 });
-                scene.addElements([element]);
+                editor.addElements([element]);
                 // this.update();
                 return element;
             });
@@ -901,31 +912,31 @@ export const createScene = initialData => {
 
         // @description adds a new bookmark element
         addBookmarkElement: (src, tx = null, ty = null) => {
-            scene.clearSelection();
+            editor.clearSelection();
             return getLinkMetadata(src).then(linkMetadata => {
                 const element = createElement(ELEMENTS.BOOKMARK);
                 const elementConfig = getElementConfig(element);
                 Object.assign(element, {
-                    ...(elementConfig.initialize?.(scene.defaults) || {}),
-                    assetId: scene.addAsset(ASSETS.BOOKMARK, linkMetadata),
-                    x1: tx ?? (scene.page.translateX + scene.width / 2),
-                    y1: ty ?? (scene.page.translateY + scene.height / 2),
+                    ...(elementConfig.initialize?.(editor.defaults) || {}),
+                    assetId: editor.addAsset(ASSETS.BOOKMARK, linkMetadata),
+                    x1: tx ?? (editor.page.translateX + editor.width / 2),
+                    y1: ty ?? (editor.page.translateY + editor.height / 2),
                     selected: true,
                     [FIELDS.GROUP]: null,
                 });
                 elementConfig.onCreateEnd?.(element);
-                scene.addElements([element]);
+                editor.addElements([element]);
                 return element;
             });
         },
 
         // @description add a new library item element
         addLibraryItem: (libraryItem, tx = null, ty = null) => {
-            scene.clearSelection();
+            editor.clearSelection();
             const bounds = getElementsBounds(libraryItem.elements);
             const group = generateRandomId();
-            const x = (tx ?? (scene.page.translateX + scene.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
-            const y = (ty ?? (scene.page.translateY + scene.height / 2)) - (bounds.y2 - bounds.y1) / 2;
+            const x = (tx ?? (editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
+            const y = (ty ?? (editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
             const elements = libraryItem.elements.map(element => ({
                 ...element,
                 id: generateRandomId(),
@@ -941,7 +952,7 @@ export const createScene = initialData => {
             // elements.forEach(element => {
             //     return getElementConfig(element)?.onCreateEnd?.(element);
             // });
-            scene.addElements(elements);
+            editor.addElements(elements);
         },
 
         //
@@ -950,25 +961,25 @@ export const createScene = initialData => {
 
         // @description clear current selection
         clearSelection: () => {
-            scene.page.elements.forEach(element => element.selected = false);
+            editor.page.elements.forEach(element => element.selected = false);
         },
 
         // @description get selected elements
         getSelection: () => {
-            return scene.page.elements.filter(element => element.selected);
+            return editor.page.elements.filter(element => element.selected);
         },
 
         // @description set selected elements
         setSelection: selection => {
             const groups = new Set();
             // 1. select the elements using the selection area
-            scene.page.elements.forEach(element => {
+            editor.page.elements.forEach(element => {
                 element.selected = false;
                 if (!element.locked) {
                     if (element.x1 < selection.x2 && selection.x1 < element.x2) {
                         if (element.y1 < selection.y2 && selection.y1 < element.y2) {
                             element.selected = true;
-                            if (element.group && !scene.page.activeGroup) {
+                            if (element.group && !editor.page.activeGroup) {
                                 groups.add(element.group);
                             }
                         }
@@ -976,8 +987,8 @@ export const createScene = initialData => {
                 }
             });
             // 2. Select the elements based on the groups set
-            if (!scene.page.activeGroup && groups.size > 0) {
-                scene.page.elements.forEach(element => {
+            if (!editor.page.activeGroup && groups.size > 0) {
+                editor.page.elements.forEach(element => {
                     if (element.group && groups.has(element.group)) {
                         element.selected = true;
                     }
@@ -986,21 +997,21 @@ export const createScene = initialData => {
         },
 
         // @description remove selected elements
-        // @deprecated use scene.removeElements() instead
+        // @deprecated use editor.removeElements() instead
         removeSelection: () => {
-            return scene.removeElements(scene.getSelection());
+            return editor.removeElements(editor.getSelection());
         },
 
         // @description get an snapshot from the current selection
         // @deprecated use map instead
         snapshotSelection: () => {
-            return scene.getSelection().map(el => ({...el}));
+            return editor.getSelection().map(el => ({...el}));
         },
 
         // @description update a key and a value in the current selection
-        // @deprecated use scene.updateElements instead
+        // @deprecated use editor.updateElements instead
         updateSelection: (key, value) => {
-            return scene.updateElements(scene.getSelection(), [key], [value], false);
+            return editor.updateElements(editor.getSelection(), [key], [value], false);
         },
 
         //
@@ -1009,25 +1020,25 @@ export const createScene = initialData => {
 
         // @description Get current history
         getHistory: () => {
-            return scene.page.history;
+            return editor.page.history;
         },
 
         // @description Clear history
         clearHistory: () => {
-            scene.page.history = [];
-            scene.page.historyIndex = 0;
+            editor.page.history = [];
+            editor.page.historyIndex = 0;
         },
 
         // @description Adds a new history item
         addHistory: entry => {
             // 1. Check the current history index
-            if (scene.page.historyIndex > 0) {
-                scene.page.history = scene.page.history.slice(scene.page.historyIndex);
-                scene.page.historyIndex = 0;
+            if (editor.page.historyIndex > 0) {
+                editor.page.history = editor.page.history.slice(editor.page.historyIndex);
+                editor.page.historyIndex = 0;
             }
             // 2. Check for updating the same elements and the same keys
-            if (entry.ids && scene.page.history.length > 0) {
-                const last = scene.page.history[0];
+            if (entry.ids && editor.page.history.length > 0) {
+                const last = editor.page.history[0];
                 if (last.ids === entry.ids && last.keys === entry.keys) {
                     return last.elements.forEach((element, index) => {
                         // Note: we are using the keys defined in the newValues object instead of using
@@ -1039,28 +1050,28 @@ export const createScene = initialData => {
                 }
             }
             // Register new history entry
-            scene.page.history.unshift(entry);
+            editor.page.history.unshift(entry);
         },
 
-        // @description Perform an undo change to the scene
+        // @description Perform an undo change to the editor
         undo: () => {
-            if (scene.page.historyIndex < scene.page.history.length) {
-                // const entry = scene.page.history[scene.page.historyIndex];
-                [scene.page.history[scene.page.historyIndex]].flat().forEach(entry => {
+            if (editor.page.historyIndex < editor.page.history.length) {
+                // const entry = editor.page.history[editor.page.historyIndex];
+                [editor.page.history[editor.page.historyIndex]].flat().forEach(entry => {
                     if (entry.type === CHANGES.CREATE) {
                         const removeElements = new Set(entry.elements.map(el => el.id));
-                        scene.page.elements = scene.page.elements.filter(el => {
+                        editor.page.elements = editor.page.elements.filter(el => {
                             return !removeElements.has(el.id);
                         });
                     } else if (entry.type === CHANGES.REMOVE) {
                         // We need to restore elements in the current order
                         entry.elements.forEach(el => {
-                            scene.page.elements.splice(el.prevValues[FIELDS.ORDER], 0, {...el.prevValues});
+                            editor.page.elements.splice(el.prevValues[FIELDS.ORDER], 0, {...el.prevValues});
                         });
                     } else if (entry.type === CHANGES.UPDATE) {
                         entry.elements.forEach(item => {
                             // 1. Update element values
-                            const element = scene.page.elements.find(el => el.id === item.id);
+                            const element = editor.page.elements.find(el => el.id === item.id);
                             Object.assign(element, item.prevValues);
                             // 2. Apply element update
                             const changedKeys = new Set(Object.keys(item.prevValues));
@@ -1069,32 +1080,32 @@ export const createScene = initialData => {
                     }
                 });
                 // Sort elements by order
-                scene.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
-                scene.page.elements.forEach(el => {
+                editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+                editor.page.elements.forEach(el => {
                     el.selected = false;
                     el.editing = false;
                 });
-                scene.page.historyIndex = scene.page.historyIndex + 1;
+                editor.page.historyIndex = editor.page.historyIndex + 1;
             }
         },
 
-        // @description Perform a redo action to the scene
+        // @description Perform a redo action to the editor
         redo: () => {
-            if (scene.page.historyIndex > 0 && scene.page.history.length > 0) {
-                scene.page.historyIndex = scene.page.historyIndex - 1;
-                // const entry = scene.page.history[scene.page.historyIndex];
-                [scene.page.history[scene.page.historyIndex]].flat().forEach(entry => {
+            if (editor.page.historyIndex > 0 && editor.page.history.length > 0) {
+                editor.page.historyIndex = editor.page.historyIndex - 1;
+                // const entry = editor.page.history[editor.page.historyIndex];
+                [editor.page.history[editor.page.historyIndex]].flat().forEach(entry => {
                     if (entry.type === CHANGES.CREATE) {
                         entry.elements.forEach(el => {
-                            scene.page.elements.splice(el.newValues[FIELDS.ORDER], 0, {...el.newValues});
+                            editor.page.elements.splice(el.newValues[FIELDS.ORDER], 0, {...el.newValues});
                         });
                     } else if (entry.type === CHANGES.REMOVE) {
                         const removeElements = new Set(entry.elements.map(el => el.id));
-                        scene.page.elements = scene.page.elements.filter(el => !removeElements.has(el.id));
+                        editor.page.elements = editor.page.elements.filter(el => !removeElements.has(el.id));
                     } else if (entry.type === CHANGES.UPDATE) {
                         entry.elements.forEach(item => {
                             // 1. Update element values
-                            const element = scene.page.elements.find(el => el.id === item.id);
+                            const element = editor.page.elements.find(el => el.id === item.id);
                             Object.assign(element, item.newValues);
                             // 2. Apply element update
                             const changedKeys = new Set(Object.keys(item.newValues));
@@ -1103,7 +1114,7 @@ export const createScene = initialData => {
                     }
                 });
                 // sort elements by order
-                scene.page.elements
+                editor.page.elements
                     .sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER])
                     .forEach(element => {
                         element.selected = false;
@@ -1117,12 +1128,12 @@ export const createScene = initialData => {
 
         // @description check if undo action is enabled
         canUndo: () => {
-            return !(scene.page.historyIndex >= scene.page.history.length);
+            return !(editor.page.historyIndex >= editor.page.history.length);
         },
 
         // @description Check if redo action is enabled
         canRedo: () => {
-            return !(scene.page.historyIndex === 0 || scene.page.history.length < 1);
+            return !(editor.page.historyIndex === 0 || editor.page.history.length < 1);
         },
 
         //
@@ -1130,49 +1141,49 @@ export const createScene = initialData => {
         //
 
         // @description get current zoom
-        getZoom: () => scene.page.zoom,
+        getZoom: () => editor.page.zoom,
 
         // @description set current zoom
         setZoom: (value = ZOOM_DEFAULT) => {
             const newZoom = Math.round(parseZoomValue(value, true) * 10) / 10;
             const {translateX, translateY} = getTranslateCoordinatesForNewZoom(newZoom, {
-                width: scene.width,
-                height: scene.height,
-                translateX: scene.page.translateX,
-                translateY: scene.page.translateY,
-                zoom: scene.page.zoom,
+                width: editor.width,
+                height: editor.height,
+                translateX: editor.page.translateX,
+                translateY: editor.page.translateY,
+                zoom: editor.page.zoom,
             });
-            // Update scene values
-            scene.page.zoom = newZoom;
-            scene.page.translateX = translateX;
-            scene.page.translateY = translateY;
+            // Update editor values
+            editor.page.zoom = newZoom;
+            editor.page.translateX = translateX;
+            editor.page.translateY = translateY;
         },
 
         // @description reset zoom to the default value
-        resetZoom: () => scene.setZoom(ZOOM_DEFAULT),
+        resetZoom: () => editor.setZoom(ZOOM_DEFAULT),
 
         // @description fit zoom to the provided selection
         fitZoomToSelection: (elements = []) => {
-            const selection = elements.length > 0 ? elements : scene.page.elements;
+            const selection = elements.length > 0 ? elements : editor.page.elements;
             if (selection.length > 0) {
                 const {zoom, translateX, translateY} = getZoomToFitElements(selection, {
-                    width: scene.width,
-                    height: scene.height,
+                    width: editor.width,
+                    height: editor.height,
                 });
-                scene.page.zoom = zoom;
-                scene.page.translateX = translateX;
-                scene.page.translateY = translateY;
+                editor.page.zoom = zoom;
+                editor.page.translateX = translateX;
+                editor.page.translateY = translateY;
             }
         },
 
         //
-        // Scene size api
+        // Editor size api
         // 
 
-        // @description set scene size
+        // @description set editor size
         setSize: (newWidth = 0, newHeight = 0) => {
-            scene.width = +newWidth;
-            scene.height = +newHeight;
+            editor.width = +newWidth;
+            editor.height = +newHeight;
         },
 
         //
@@ -1181,21 +1192,21 @@ export const createScene = initialData => {
 
         // @description Copy current selection to clipboard
         copyElementsToClipboard: elements => {
-            const data = scene.exportElements(elements);  
+            const data = editor.exportElements(elements);  
             return copyTextToClipboard(`${CLIPBOARD_KEY}${JSON.stringify(data)}`);
         },
 
         // @description Copy current selection to clipboard and remove selection
         cutElementsToClipboard: elements => {
-            return scene.copyElementsToClipboard(elements).then(() => {
-                return scene.removeElements(elements);
+            return editor.copyElementsToClipboard(elements).then(() => {
+                return editor.removeElements(elements);
             });
         },
 
-        // @description Get data from clipboard and add it to the scene
+        // @description Get data from clipboard and add it to the editor
         pasteElementsFromClipboard: (event, point) => {
-            const x = point ? (point.x - scene.page.translateX) / scene.page.zoom : null;
-            const y = point ? (point.y - scene.page.translateY) / scene.page.zoom : null;
+            const x = point ? (point.x - editor.page.translateX) / editor.page.zoom : null;
+            const y = point ? (point.y - editor.page.translateY) / editor.page.zoom : null;
 
             // Check for paste event
             if (event?.clipboardData) {
@@ -1205,30 +1216,46 @@ export const createScene = initialData => {
                     // Check for image data (image/png, image/jpg)
                     if (item.type.startsWith("image/")) {
                         return getBlobFromClipboardItem(item)
-                            .then(content => scene.addImageElement(content, x, y));
+                            .then(content => editor.addImageElement(content, x, y));
                     }
                     // Check for text data
                     else if (item.type === "text/plain") {
                         return getTextFromClipboardItem(item)
-                            .then(content => parseTextDataToScene(scene, content, x, y));
+                            .then(content => parseTextDataToEditor(editor, content, x, y));
                     }
                 }
             }
             // If not, check clipboard
             return getTextFromClipboard()
-                .then(content => parseTextDataToScene(scene, content, x, y));
+                .then(content => parseTextDataToEditor(editor, content, x, y));
         },
+
+        //
+        // Tool API
+        //
+
+        // @description change the active tool
+        setTool: newTool => {
+            editor.state.tool = newTool;
+            editor.getElements().forEach(element => {
+                element.selected = false;
+                element.editing = false;
+            });
+        },
+
+        // @description get the current active tool
+        getTool: () => editor.state.tool,
     };
 
-    return scene;
+    return editor;
 };
 
-// @description convert a region into scene coordinates
-export const convertRegionToSceneCoordinates = (scene, region) => {
+// @description convert a region into editor coordinates
+export const convertRegionToEditorCoordinates = (editor, region) => {
     return {
-        x1: (region.x1 - scene.page.translateX) / scene.page.zoom,
-        y1: (region.y1 - scene.page.translateY) / scene.page.zoom,
-        x2: (region.x2 - scene.page.translateX) / scene.page.zoom,
-        y2: (region.y2 - scene.page.translateY) / scene.page.zoom,
+        x1: (region.x1 - editor.page.translateX) / editor.page.zoom,
+        y1: (region.y1 - editor.page.translateY) / editor.page.zoom,
+        x2: (region.x2 - editor.page.translateX) / editor.page.zoom,
+        y2: (region.y2 - editor.page.translateY) / editor.page.zoom,
     };
 };

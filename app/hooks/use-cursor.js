@@ -1,13 +1,17 @@
-import {ACTIONS, STATES, CURSORS} from "../constants.js";
+import {CURSORS, TOOLS} from "../constants.js";
+import {useEditor} from "../contexts/editor.jsx";
 
-export const useCursor = ({action, tool, currentState}) => {
+export const useCursor = () => {
+    const editor = useEditor();
+
     // Move action --> grab or grabbing cursor
-    if (action === ACTIONS.MOVE) {
-        return currentState === STATES.DRAGGING ? CURSORS.GRABBING : CURSORS.GRAB;
+    if (editor.state.tool === TOOLS.DRAG) {
+        // return status === STATUS.DRAGGING ? CURSORS.GRABBING : CURSORS.GRAB;
+        return CURSORS.GRAB;
     }
 
     // Check for active tool or erase action --> cross cursor
-    else if (tool || action === ACTIONS.ERASE || action === ACTIONS.SCREENSHOT) {
+    else if (editor.state.tool !== TOOLS.SELECT) {
         return CURSORS.CROSS;
     }
 

@@ -22,7 +22,7 @@ export const usePreferences = () => {
 // user preferences provider
 export const PreferencesProvider = props => {
     const [preferences, setPreferences] = React.useState(null);
-    // TODO: we would need to handle errors when importing scene data
+    // TODO: we would need to handle errors when importing editor data
     useMount(() => {
         promisifyValue(props.initialData).then(value => {
             return setPreferences({...DEFAULT_PREFERENCES, ...(value || {})});

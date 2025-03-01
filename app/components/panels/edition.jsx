@@ -65,7 +65,7 @@ import {
 } from "../icons.jsx";
 import {Panel} from "../ui/panel.jsx";
 import {Form} from "../form/index.jsx";
-import {useScene} from "../../contexts/scene.jsx";
+import {useEditor} from "../../contexts/editor.jsx";
 
 // Available sections
 const SECTIONS = {
@@ -332,9 +332,9 @@ const getVisibleSections = (sections, values) => {
     });
 };
 
-export const EditionPanel = props => {
-    const scene = useScene();
-    const selectedElements = scene.getSelection();
+export const EditionPanel = () => {
+    const editor = useEditor();
+    const selectedElements = editor.getSelection();
     const [activeSection, setActiveSection] = React.useState("");
     const values = useValues(selectedElements);
     const keys = Object.keys(values);
@@ -352,36 +352,38 @@ export const EditionPanel = props => {
         if (key === "actions" || key === "layers") {
             switch (value) {
                 case ACTIONS.REMOVE:
-                    scene.removeElements(selectedElements);
+                    editor.removeElements(selectedElements);
                     break;
                 case ACTIONS.DUPLICATE:
-                    scene.duplicateElements(selectedElements);
+                    editor.duplicateElements(selectedElements);
                     break;
                 case ACTIONS.SEND_BACK:
-                    scene.sendElementsToBack(selectedElements);
+                    editor.sendElementsToBack(selectedElements);
                     break;
                 case ACTIONS.SEND_BACKWARD:
-                    scene.sendElementsBackward(selectedElements);
+                    editor.sendElementsBackward(selectedElements);
                     break;
                 case ACTIONS.BRING_FORWARD:
-                    scene.bringElementsForward(selectedElements);
+                    editor.bringElementsForward(selectedElements);
                     break;
                 case ACTIONS.BRING_FRONT:
-                    scene.bringElementsToFront(selectedElements);
+                    editor.bringElementsToFront(selectedElements);
                     break;
                 case ACTIONS.LOCK:
-                    scene.lockElements(selectedElements);
+                    editor.lockElements(selectedElements);
                     break;
                 case ACTIONS.UNLOCK:
-                    scene.unlockElements(selectedElements);
+                    editor.unlockElements(selectedElements);
                     break;
             }
         }
         else {
-            scene.updateElements(selectedElements, [key], [value], true);
+            editor.updateElements(selectedElements, [key], [value], true);
         }
-        props.onChange();
-    }, [selectedElements.length, props.onChange]);
+        // TODO
+        // editor.dispatchChange();
+        editor.update();
+    }, [selectedElements.length, editor]);
 
     // Handle active section change
     const handleSectionChange = newSection => {
@@ -393,21 +395,18 @@ export const EditionPanel = props => {
     const currentSection = activeSection || visibleSections.style[0];
     return (
         <Panel className="w-64">
-            <Panel.Header>
-                <Panel.HeaderTitle>Edit</Panel.HeaderTitle>
-                {visibleSections.style.length > 1 && (
-                    <div className="flex items-center gap-1">
-                        {visibleSections.style.map(key => (
-                            <Panel.HeaderButton
-                                key={key}
-                                active={currentSection === key}
-                                onClick={() => handleSectionChange(key)}>
-                                {styleSections[key].icon}
-                            </Panel.HeaderButton>
-                        ))}
-                    </div>
-                )}
-            </Panel.Header>
+            {visibleSections.style.length > 1 && (
+                <Panel.Tabs>
+                    {visibleSections.style.map(key => (
+                        <Panel.TabsItem
+                            key={key}
+                            active={currentSection === key}
+                            onClick={() => handleSectionChange(key)}>
+                            {styleSections[key].icon}
+                        </Panel.TabsItem>
+                    ))}
+                </Panel.Tabs>
+            )}
             <Panel.Body className="flex flex-col gap-2 overflow-y-auto" style={{maxHeight: "calc(75vh - 8rem)"}}>
                 {visibleSections.style.length > 0 && (
                     <Form

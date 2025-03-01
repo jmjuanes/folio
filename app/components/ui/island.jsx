@@ -1,6 +1,6 @@
 import React from "react";
 import {renderIcon, ChevronDownIcon} from "@josemi-icons/react";
-import {themed} from "../contexts/theme.jsx";
+import {themed} from "../../contexts/theme.jsx";
 
 export const Island = props => (
     <div className={themed("flex gap-1 p-1 rounded-xl", "island", props.className)}>

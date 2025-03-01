@@ -1,71 +1,76 @@
 import React from "react";
-import {themed} from "../../contexts/theme.jsx";
+import classNames from "classnames";
 
-// panel component
-export const Panel = props => (
-    <div className={themed("rounded-xl relative", "panel", props.className)}>
-        {props.children}
+// @description main panel component
+export const Panel = ({className, children}) => (
+    <div className={classNames("rounded-xl relative border border-neutral-200 shadow-sm bg-white", className)}>
+        {children}
     </div>
 );
 
 // separator for buttons
 Panel.Separator = () => (
-    <div className={themed("w-full h-px shrink-0", "panel.separator")} />
+    <div className="w-full h-px shrink-0 bg-neutral-200" />
 );
 
 // panel tabs container
-Panel.Tabs = props => (
-    <div className={themed("flex gap-1 items-center flex-nowrap rounded-lg p-1", "panel.tabs")}>
-        {props.children}
+Panel.Tabs = ({className, children}) => (
+    <div className={classNames("flex items-center flex-nowrap px-2 pt-2", className)}>
+        {children}
     </div>
 );
 
+// @description tab item for the panel header
+// @param {object} props React props object
+// @param {string} props.className custom class string
+// @param {object} props.style custom style for the tab item
+// @param {boolean} props.active to display the tab as active
+// @param {function} props.onClick click listener
 Panel.TabsItem = props => {
-    const classList = themed({
-        "rounded-md flex justify-center items-center flex gap-0 p-2 cursor-pointer w-full": true,
-        "panel.tabs.item.inactive": !props.active,
-        "panel.tabs.item.active": props.active,
+    const classList = classNames({
+        "rounded-lg flex justify-center items-center flex p-2 w-full": true,
+        "text-neutral-900 hover:bg-neutral-200 cursor-pointer": !props.active,
+        "text-white bg-neutral-900": props.active,
     }, props.className);
+    
     return (
         <div className={classList} style={props.style} onClick={props.onClick}>
-            <div className="flex items-center">
-                {props.children}
-            </div>
+            {props.children}
         </div>
     );
 };
 
-// panel header
-Panel.Header = props => (
-    <div className={themed("flex items-center justify-between p-2 h-12", "panel.header", props.className)}>
-        {props.children}
-    </div>
-);
+// // panel header
+// Panel.Header = props => (
+//     <div className={themed("flex items-center justify-between p-2 h-12", "panel.header", props.className)}>
+//         {props.children}
+//     </div>
+// );
+// 
+// // panel header title
+// Panel.HeaderTitle = props => (
+//     <div className={themed("text-sm select-none", "panel.header.title", props.className)}>
+//         {props.children}
+//     </div>
+// );
+// 
+// // panel header button
+// Panel.HeaderButton = ({active, disabled = false, className, children, onClick}) => {
+//     const classList = themed({
+//         "flex items-center rounded-md cursor-pointer p-2": true,
+//         "panel.header.button": true,
+//         "panel.header.button.active": active,
+//         "panel.header.button.inactive": !active,
+//         "opacity-50 pointer-events-none": disabled,
+//     }, className);
+//     return (
+//         <div className={classList} onClick={onClick}>
+//             {children}
+//         </div>
+//     );
+// };
 
-// panel header title
-Panel.HeaderTitle = props => (
-    <div className={themed("text-sm select-none", "panel.header.title", props.className)}>
-        {props.children}
-    </div>
-);
-
-// panel header button
-Panel.HeaderButton = ({active, disabled = false, className, children, onClick}) => {
-    const classList = themed({
-        "flex items-center rounded-md cursor-pointer p-2": true,
-        "panel.header.button": true,
-        "panel.header.button.active": active,
-        "panel.header.button.inactive": !active,
-        "opacity-50 pointer-events-none": disabled,
-    }, className);
-    return (
-        <div className={classList} onClick={onClick}>
-            {children}
-        </div>
-    );
-};
-
-// panel body content
+// @description panel body content
 Panel.Body = ({className, ...props}) => (
-    <div className={themed("p-2", "panel.body", className)} {...props} />
+    <div className={classNames("p-2", className)} {...props} />
 );
