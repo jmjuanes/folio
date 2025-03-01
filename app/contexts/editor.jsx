@@ -1,8 +1,8 @@
 import React from "react";
-import {useMount} from "react-use";
+import {useMount, useDebounce} from "react-use";
 import {createEditor} from "../editor.js";
-import {promisifyValue} from "../utils/promises.js";
 import {Loading} from "../components/loading.jsx";
+// import {promisifyValue} from "../utils/promises.js";
 
 // @private Shared editor context
 export const EditorContext = React.createContext(null);
@@ -13,18 +13,25 @@ export const useEditor = () => {
 };
 
 // @description Editor provider component
-// @param {object|function|null} initialData Initial data for editor
-// @param {function} callback to execute after any change in the editor data
+// @param {object} store store instace for accessing and saving data
 // @param {React Children} children React children to render
-export const EditorProvider = ({initialData, onChange, children}) => {
+export const EditorProvider = ({store, children}) => {
     const [editor, setEditor] = React.useState(null);
     const [update, setUpdate] = React.useState(0);
+    const [dataToDispatch, setDataToDispatch] = React.useState(null);
+
+    // debounce saving data into the store
+    useDebounce(() => {
+        if (dataToDispatch && store?.data) {
+            store.data.set(dataToDispatch);
+        }
+    }, 250, [editor, dataToDispatch, store]);
 
     // dispatch a change event
-    const dispatchChange = React.useCallback(() => {
+    const dispatchDataChange = React.useCallback(() => {
         editor.updatedAt = Date.now(); // save the last update time
-        // return onChange(editor.toJSON());
-    }, [editor, onChange]);
+        setDataToDispatch(editor.toJSON());
+    }, [editor, setDataToDispatch]);
 
     // dispatch an update event
     const dispatchUpdate = React.useCallback(() => {
@@ -35,9 +42,23 @@ export const EditorProvider = ({initialData, onChange, children}) => {
     // On mount, import data to create the editor
     // TODO: we would need to handle errors when importing editor data
     useMount(() => {
-        promisifyValue(initialData).then(value => {
-            return setEditor(createEditor(value || {}));
-        });
+        store.initialize()
+            .then(() => {
+                const allPromises = [];
+                if (typeof store.data?.get === "function") {
+                    allPromises.push(store.data.get());
+                }
+                if (typeof store.library?.get === "function") {
+                    allPromises.push(store.libraries.get());
+                }
+                return Promise.all(allPromises);
+            })
+            .then(results => {
+                setEditor(createEditor(results[0] || {}));
+            })
+            .catch(error => {
+                console.error(error);
+            });
     });
 
     // If editor is not available (yet), do not render
@@ -46,8 +67,9 @@ export const EditorProvider = ({initialData, onChange, children}) => {
     }
 
     // assign additional editor methods
-    editor.dispatchChange = dispatchChange;
+    editor.dispatchChange = dispatchDataChange;
     editor.update = dispatchUpdate;
+    editor.store = store; // save store object as a reference in the editor
 
     // Render editor context provider
     return (
