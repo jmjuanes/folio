@@ -15,7 +15,7 @@ Panel.Separator = () => (
 
 // panel tabs container
 Panel.Tabs = ({className, children}) => (
-    <div className={classNames("flex gap-1 items-center flex-nowrap rounded-lg p-1", className)}>
+    <div className={classNames("flex items-center flex-nowrap px-2 pt-2", className)}>
         {children}
     </div>
 );
@@ -28,8 +28,8 @@ Panel.Tabs = ({className, children}) => (
 // @param {function} props.onClick click listener
 Panel.TabsItem = props => {
     const classList = classNames({
-        "rounded-md flex justify-center items-center flex gap-0 p-2 cursor-pointer w-full": true,
-        "text-neutral-900 hover:bg-neutral-200": !props.active,
+        "rounded-lg flex justify-center items-center flex p-2 w-full": true,
+        "text-neutral-900 hover:bg-neutral-200 cursor-pointer": !props.active,
         "text-white bg-neutral-900": props.active,
     }, props.className);
     
