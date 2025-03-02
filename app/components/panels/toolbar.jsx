@@ -2,7 +2,6 @@ import React from "react";
 import classNames from "classnames";
 import {useUpdate} from "react-use";
 import {LockIcon, UnlockIcon, DotsVerticalIcon, renderIcon} from "@josemi-icons/react";
-import {ELEMENTS, TOOLS} from "../../constants.js";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Form} from "../form/index.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
@@ -63,25 +62,6 @@ const ToolbarDropdownItem = ({checked, disabled, onClick, icon, text}) => (
     </Dropdown.CheckItem>
 );
 
-// default visible tools
-const defaultAlwaysVisibleTools = [
-    TOOLS.DRAG,
-    TOOLS.SELECT,
-    ELEMENTS.SHAPE,
-    ELEMENTS.ARROW,
-    ELEMENTS.TEXT,
-    ELEMENTS.DRAW,
-    ELEMENTS.IMAGE,
-    ELEMENTS.STICKER,
-];
-
-// default hidden tools (will be displayed in the more menu)
-const defaultHiddenTools = [
-    TOOLS.POINTER,
-    ELEMENTS.NOTE,
-    TOOLS.ERASER,
-];
-
 // @description Toolbar panel component
 export const ToolbarPanel = () => {
     const update = useUpdate();
@@ -89,6 +69,13 @@ export const ToolbarPanel = () => {
     const tools = useTools();
     const {hideContextMenu} = useContextMenu();
     const prevSelectedTool = React.useRef(editor.state.tool);
+    const [primaryTools, secondaryTools] = React.useMemo(() => {
+        const keys = Object.keys(tools);
+        return [
+            keys.filter(key => tools[key].primary),
+            keys.filter(key =>!tools[key].primary),
+        ];
+    }, [tools]);
 
     // when a tool is selected, make sure to hide the context menu
     React.useEffect(() => {
@@ -113,7 +100,7 @@ export const ToolbarPanel = () => {
     return (
         <div className="flex items-center relative select-none">
             <div className={themed("rounded-2xl items-center flex gap-2 p-1", "toolbar")}>
-                {defaultAlwaysVisibleTools.map(key => (
+                {primaryTools.map(key => (
                     <div key={key} className="flex relative">
                         <ToolbarButton
                             text={tools[key].name || tools[key].text}
@@ -140,27 +127,29 @@ export const ToolbarPanel = () => {
                         )}
                     </div>
                 ))}
-                <div className="flex self-stretch relative group" tabIndex="0">
-                    <div className={themed("flex items-center cursor-pointer rounded-xl px-1", "toolbar.dots")}>
-                        <div className="flex items-center text-xl">
-                            <DotsVerticalIcon />
+                {secondaryTools.length > 0 && (
+                    <div className="flex self-stretch relative group" tabIndex="0">
+                        <div className={themed("flex items-center cursor-pointer rounded-xl px-1", "toolbar.dots")}>
+                            <div className="flex items-center text-xl">
+                                <DotsVerticalIcon />
+                            </div>
                         </div>
+                        <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
+                            {secondaryTools.map(key => (
+                                <ToolbarDropdownItem
+                                    key={key}
+                                    checked={editor.state.tool === key}
+                                    disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
+                                    onClick={() => {
+                                        tools[key].onSelect(editor);
+                                    }}
+                                    icon={tools[key].icon}
+                                    text={tools[key].name}
+                                />
+                            ))}
+                        </Dropdown>
                     </div>
-                    <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
-                        {defaultHiddenTools.map(key => (
-                            <ToolbarDropdownItem
-                                key={key}
-                                checked={editor.state.tool === key}
-                                disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
-                                onClick={() => {
-                                    tools[key].onSelect(editor);
-                                }}
-                                icon={tools[key].icon}
-                                text={tools[key].name}
-                            />
-                        ))}
-                    </Dropdown>
-                </div>
+                )}
             </div>
             <div className={lockButtonClass} onClick={handleLockClick}>
                 {editor.state.toolLocked ? <LockIcon /> : <UnlockIcon />}
