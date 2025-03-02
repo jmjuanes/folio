@@ -1,8 +1,8 @@
 import React from "react";
 import {useMount, useDebounce} from "react-use";
 import {createEditor} from "../editor.js";
+import {createMemoryStore} from "../store/memory.js";
 import {Loading} from "../components/loading.jsx";
-// import {promisifyValue} from "../utils/promises.js";
 
 // @private Shared editor context
 export const EditorContext = React.createContext(null);
@@ -15,10 +15,13 @@ export const useEditor = () => {
 // @description Editor provider component
 // @param {object} store store instace for accessing and saving data
 // @param {React Children} children React children to render
-export const EditorProvider = ({store, children}) => {
+export const EditorProvider = props => {
     const [editor, setEditor] = React.useState(null);
     const [update, setUpdate] = React.useState(0);
     const [dataToDispatch, setDataToDispatch] = React.useState(null);
+    const store = React.useMemo(() => {
+        return props.store || createMemoryStore();
+    }, [props.store]);
 
     // debounce saving data into the store
     useDebounce(() => {
@@ -49,7 +52,7 @@ export const EditorProvider = ({store, children}) => {
                     allPromises.push(store.data.get());
                 }
                 if (typeof store.library?.get === "function") {
-                    allPromises.push(store.libraries.get());
+                    allPromises.push(store.library.get());
                 }
                 return Promise.all(allPromises);
             })
@@ -75,7 +78,7 @@ export const EditorProvider = ({store, children}) => {
     return (
         <EditorContext.Provider value={[editor, update]}>
             <div className={"relative overflow-hidden h-full w-full select-none"}>
-                {children}
+                {props.children}
             </div>
         </EditorContext.Provider>
     );
