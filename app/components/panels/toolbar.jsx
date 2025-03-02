@@ -29,7 +29,7 @@ const PickPanel = props => (
     </div>
 );
 
-const PanelButton = props => {
+const ToolbarButton = props => {
     const classList = themed({
         "flex flex-col justify-center items-center flex px-4 py-2 gap-1 rounded-xl": true,
         "cursor-pointer": !props.active,
@@ -54,6 +54,14 @@ const PanelButton = props => {
         </div>
     );
 };
+
+// @description toolbar panel dropdown item
+const ToolbarDropdownItem = ({checked, disabled, onClick, icon, text}) => (
+    <Dropdown.CheckItem checked={checked} disabled={disabled} onClick={onClick}>
+        <Dropdown.Icon icon={icon} />
+        <span>{text}</span>
+    </Dropdown.CheckItem>
+);
 
 // default visible tools
 const defaultAlwaysVisibleTools = [
@@ -107,12 +115,14 @@ export const ToolbarPanel = () => {
             <div className={themed("rounded-2xl items-center flex gap-2 p-1", "toolbar")}>
                 {defaultAlwaysVisibleTools.map(key => (
                     <div key={key} className="flex relative">
-                        <PanelButton
+                        <ToolbarButton
                             text={tools[key].name || tools[key].text}
                             icon={tools[key].icon}
                             active={editor.state.tool === key}
                             disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
-                            onClick={tools[key].onSelect}
+                            onClick={() => {
+                                tools[key].onSelect(editor);
+                            }}
                         />
                         {tools[key].quickPicks && key === editor.state.tool && (
                             <PickPanel
@@ -138,15 +148,16 @@ export const ToolbarPanel = () => {
                     </div>
                     <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
                         {defaultHiddenTools.map(key => (
-                            <React.Fragment key={key}>
-                                <Dropdown.CheckItem
-                                    checked={editor.state.tool === key}
-                                    disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
-                                    onClick={tools[key].onSelect}>
-                                    <Dropdown.Icon icon={tools[key].icon} />
-                                    <span>{tools[key].name}</span>
-                                </Dropdown.CheckItem>
-                            </React.Fragment>
+                            <ToolbarDropdownItem
+                                key={key}
+                                checked={editor.state.tool === key}
+                                disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
+                                onClick={() => {
+                                    tools[key].onSelect(editor);
+                                }}
+                                icon={tools[key].icon}
+                                text={tools[key].name}
+                            />
                         ))}
                     </Dropdown>
                 </div>
