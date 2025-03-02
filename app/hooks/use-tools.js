@@ -34,7 +34,7 @@ export const useTools = () => {
             icon: "hand-grab",
             toolEnabledOnReadOnly: true,
             onSelect: () => {
-                editor.state.tool = TOOLS.DRAG;
+                editor.setTool(TOOLS.DRAG);
                 editor.update();
             },
         },
@@ -42,7 +42,7 @@ export const useTools = () => {
             name: "Select",
             icon: "pointer",
             onSelect: () => {
-                editor.state.tool = TOOLS.SELECT;
+                editor.setTool(TOOLS.SELECT);
                 editor.update();
             },
         },
@@ -51,7 +51,7 @@ export const useTools = () => {
             name: "Laser Pointer",
             toolEnabledOnReadOnly: true,
             onSelect: () => {
-                editor.state.tool = TOOLS.POINTER;
+                editor.setTool(TOOLS.POINTER);
                 editor.update();
             },
         },
@@ -59,7 +59,7 @@ export const useTools = () => {
             icon: "erase",
             name: "Erase",
             onSelect: () => {
-                editor.state.tool = TOOLS.ERASER;
+                editor.setTool(TOOLS.ERASER);
                 editor.update();
             },
         },
@@ -83,7 +83,7 @@ export const useTools = () => {
                 },
             },
             onSelect: () => {
-                editor.state.tool = ELEMENTS.SHAPE;
+                editor.setTool(ELEMENTS.SHAPE);
                 editor.update();
             },
         },
@@ -134,7 +134,7 @@ export const useTools = () => {
                 }
             },
             onSelect: () => {
-                editor.state.tool = ELEMENTS.ARROW;
+                editor.setTool(ELEMENTS.ARROW);
                 editor.update();
             },
         },
@@ -157,7 +157,7 @@ export const useTools = () => {
                 },
             },
             onSelect: () => {
-                editor.state.tool = ELEMENTS.TEXT;
+                editor.setTool(ELEMENTS.TEXT);
                 editor.update();
             },
         },
@@ -180,7 +180,7 @@ export const useTools = () => {
                 },
             },
             onSelect: () => {
-                editor.state.tool = ELEMENTS.DRAW;
+                editor.setTool(ELEMENTS.DRAW);
                 editor.update();
             },
         },
@@ -188,6 +188,11 @@ export const useTools = () => {
             icon: "image",
             name: "Image",
             onSelect: () => {
+                // first we have to make sure that no elements have been selected
+                editor.getElements().forEach(element => {
+                    element.selected = false;
+                    element.editing = false;
+                });
                 const options = {
                     description: "Folio Board",
                     extensions: [
@@ -220,7 +225,7 @@ export const useTools = () => {
                 },
             },
             onSelect: () => {
-                editor.state.tool = ELEMENTS.STICKER;
+                editor.setTool(ELEMENTS.STICKER);
                 editor.update();
             },
         },
@@ -228,7 +233,7 @@ export const useTools = () => {
             name: "Note",
             icon: "note",
             onSelect: () => {
-                editor.state.tool = ELEMENTS.NOTE;
+                editor.setTool(ELEMENTS.NOTE);
                 editor.update();
             },
         },
