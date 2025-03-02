@@ -8,7 +8,7 @@ import {useConfirm} from "../../contexts/confirm.jsx";
 export const Menu = () => {
     const editor = useEditor();
     const {showConfirm} = useConfirm();
-    const {EditorMenu, PagesMenu, SettingsMenu} = useEditorComponents();
+    const {EditorMenu, PagesMenu, SettingsMenu, LibraryMenu} = useEditorComponents();
 
     // callback to handle clearing the current page
     const handlePageClear = React.useCallback(() => {
@@ -28,6 +28,7 @@ export const Menu = () => {
         <Island>
             {!!EditorMenu && <EditorMenu />}
             {!!PagesMenu && <PagesMenu />}
+            {!!LibraryMenu && <LibraryMenu />}
             {!!SettingsMenu && <SettingsMenu />}
             <Island.Button
                 icon="trash"

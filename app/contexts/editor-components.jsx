@@ -4,7 +4,7 @@ import {Loading} from "../components/loading.jsx";
 import {ContextMenu} from "../components/context-menu.jsx";
 import {ExportDialog} from "../components/dialogs/export.jsx";
 import {PagesEditDialog} from "../components/dialogs/pages-edit.jsx";
-// import {LibraryMenu} from "../components/menus/library.jsx";
+import {LibraryMenu} from "../components/menus/library.jsx";
 import {EditorMenu} from "../components/menus/editor.jsx";
 import {PagesMenu} from "../components/menus/pages.jsx";
 import {SettingsMenu} from "../components/menus/settings.jsx";
@@ -38,7 +38,7 @@ export const EditorComponentsProvider = ({components = {}, children}) => {
             ExportDialog: ExportDialog,
             PagesEditDialog: PagesEditDialog,
             // menus
-            // LibraryMenu: LibraryMenu,
+            LibraryMenu: LibraryMenu,
             EditorMenu: EditorMenu,
             PagesMenu: PagesMenu,
             SettingsMenu: SettingsMenu,
