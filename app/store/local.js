@@ -15,16 +15,14 @@ const STORE_KEYS = {
 
 // @description create a new local store instance
 // @param {object} options local store options
-// @param {string} options.databaseName name of the IDB database to use
-// @param {string} options.storeName name of the IDB store to use
+// @param {string} options.key key to use for the IDB store (aka database name)
 // @returns {object} store local store manager
 // @returns {function} store.initialize method to initialize the store
 // @returns {object} store.data data namager that implements the get and set methods
 // @returns {object} store.library library manager that implements the get and set methods
 export const createLocalStore = (options = {}) => {
-    const databaseName = options.databaseName || "folio"; // database to use
-    const storeName = options?.storeName || "folio-store"; // store to use
-    const store = idb.createStore(databaseName, storeName);
+    const databaseName = options.key || "folio"; // database to use
+    const store = idb.createStore(databaseName, "folio-store");
     return {
         // @description initialize local store and perform migration
         initialize: async () => {
