@@ -19,6 +19,7 @@ export const EditorProvider = props => {
     const [editor, setEditor] = React.useState(null);
     const [update, setUpdate] = React.useState(0);
     const [dataToDispatch, setDataToDispatch] = React.useState(null);
+    // const [error, setError] = React.useState(null);
     const store = React.useMemo(() => {
         return props.store || createMemoryStore();
     }, [props.store]);
@@ -36,12 +37,16 @@ export const EditorProvider = props => {
         setDataToDispatch(editor.toJSON());
     }, [editor, setDataToDispatch]);
 
+    // dispatch a library change event
+    const dispatchLibraryChange = React.useCallback(() => {
+        store.library.set(editor.libraryToJSON());
+    }, [store, editor]);
+
     // dispatch an update event
     const dispatchUpdate = React.useCallback(() => {
         setUpdate((-1) * update);
     }, [update, setUpdate]);
 
-    // const [error, setError] = React.useState(null);
     // On mount, import data to create the editor
     // TODO: we would need to handle errors when importing editor data
     useMount(() => {
@@ -56,8 +61,8 @@ export const EditorProvider = props => {
                 }
                 return Promise.all(allPromises);
             })
-            .then(results => {
-                setEditor(createEditor(results[0] || {}));
+            .then(([initialData, initialLibrary]) => {
+                return setEditor(createEditor(initialData, initialLibrary));
             })
             .catch(error => {
                 console.error(error);
@@ -71,6 +76,7 @@ export const EditorProvider = props => {
 
     // assign additional editor methods
     editor.dispatchChange = dispatchDataChange;
+    editor.dispatchLibraryChange = dispatchLibraryChange;
     editor.update = dispatchUpdate;
     editor.store = store; // save store object as a reference in the editor
 
