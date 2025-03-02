@@ -33,6 +33,7 @@ export const useTools = () => {
             name: "Drag",
             icon: "hand-grab",
             toolEnabledOnReadOnly: true,
+            primary: true,
             onSelect: () => {
                 editor.setTool(TOOLS.DRAG);
                 editor.update();
@@ -41,6 +42,7 @@ export const useTools = () => {
         [TOOLS.SELECT]: {
             name: "Select",
             icon: "pointer",
+            primary: true,
             onSelect: () => {
                 editor.setTool(TOOLS.SELECT);
                 editor.update();
@@ -66,6 +68,7 @@ export const useTools = () => {
         [ELEMENTS.SHAPE]: {
             icon: "square",
             name: "Shape",
+            primary: true,
             quickPicks: {
                 [FIELDS.SHAPE]: {
                     type: FORM_OPTIONS.SELECT,
@@ -90,6 +93,7 @@ export const useTools = () => {
         [ELEMENTS.ARROW]: {
             icon: "arrow-up-right",
             name: "Arrow",
+            primary: true,
             quickPicks: {
                 // [FIELDS.END_ARROWHEAD]: {
                 //     type: FORM_OPTIONS.SELECT,
@@ -141,6 +145,7 @@ export const useTools = () => {
         [ELEMENTS.TEXT]: {
             icon: "text",
             name: "Text",
+            primary: true,
             quickPicks: {
                 // [FIELDS.TEXT_SIZE]: {
                 //     type: FORM_OPTIONS.SELECT,
@@ -164,6 +169,7 @@ export const useTools = () => {
         [ELEMENTS.DRAW]: {
             icon: "pen",
             name: "Draw",
+            primary: true,
             quickPicks: {
                 [FIELDS.STROKE_WIDTH]: {
                     type: FORM_OPTIONS.SELECT,
@@ -214,6 +220,7 @@ export const useTools = () => {
         [ELEMENTS.STICKER]: {
             icon: "sticker",
             name: "Sticker",
+            primary: true,
             quickPicks: {
                 [FIELDS.STICKER]: {
                     type: FORM_OPTIONS.IMAGE_SELECT,
