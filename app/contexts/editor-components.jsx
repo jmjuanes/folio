@@ -3,6 +3,7 @@ import {Layout} from "../components/layout.jsx";
 import {Loading} from "../components/loading.jsx";
 import {ContextMenu} from "../components/context-menu.jsx";
 import {ExportDialog} from "../components/dialogs/export.jsx";
+import {LibraryAddDialog} from "../components/dialogs/library-add.jsx";
 import {PagesEditDialog} from "../components/dialogs/pages-edit.jsx";
 import {LibraryMenu} from "../components/menus/library.jsx";
 import {EditorMenu} from "../components/menus/editor.jsx";
@@ -36,6 +37,7 @@ export const EditorComponentsProvider = ({components = {}, children}) => {
             ContextMenu: ContextMenu,
             // dialogs components
             ExportDialog: ExportDialog,
+            LibraryAddDialog: LibraryAddDialog,
             PagesEditDialog: PagesEditDialog,
             // menus
             LibraryMenu: LibraryMenu,
