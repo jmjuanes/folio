@@ -97,11 +97,12 @@ const InnerEditor = () => {
 // @description Public editor
 // @param {object} props React props
 // @param {object} props.components Map of editor components to override
+// @param {object} props.store Store instance to get and set data
 export const Editor = props => {
     return (
         <ThemeProvider theme="default">
             <EditorComponentsProvider components={props.components}>
-                <EditorProvider initialData={props.initialData} onChange={props.onChange}>
+                <EditorProvider store={props.store}>
                     <ContextMenuProvider>
                         <ConfirmProvider>
                             <DialogsProvider>
