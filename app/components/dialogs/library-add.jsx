@@ -49,12 +49,12 @@ export const LibraryAddDialog = () => {
 
     return (
         <React.Fragment>
-            <div className="flex flex-col gap-4 w-full mb-8">
-                {thumbnail && (
-                    <div className="rounded-lg border border-neutral-200 overflow-hidden">
-                        <img src={thumbnail} width="100%" height="100%" />
-                    </div>
-                )}
+            <div className="flex flex-col gap-2 w-full mb-8">
+                <div className="h-40 flex items-center justify-center rounded-lg border border-neutral-200">
+                    {thumbnail && (
+                        <img src={thumbnail} height="100%" />
+                    )}
+                </div>
                 <Form
                     data={data}
                     items={libraryAddFields}
