@@ -24,6 +24,7 @@ export const DialogsProvider = ({dialogs, children}) => {
     const {
         ExportDialog,
         LibraryAddDialog,
+        LibraryExportDialog,
         PagesEditDialog,
     } = useEditorComponents();
 
@@ -37,6 +38,10 @@ export const DialogsProvider = ({dialogs, children}) => {
             "library-add": {
                 title: "Add to Library",
                 component: LibraryAddDialog,
+            },
+            "library-export": {
+                title: "Export Library",
+                component: LibraryExportDialog,
             },
             "pages-edit": {
                 title: "Edit Page",
