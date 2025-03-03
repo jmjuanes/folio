@@ -22,23 +22,41 @@ const EmptyLibrary = () => (
 );
 
 // @description library item
-const LibraryItem = ({thumbnail, onInsert, onDelete}) => (
-    <div className="relative">
-        <div className="relative border border-neutral-200 rounded-lg overflow-hidden cursor-pointer" onClick={onInsert}> 
-            <img src={thumbnail} width="100%" height="100%" />
-            <div className="absolute top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-0 hover:opacity-80 flex items-center justify-center z-10">
-                <div className="text-white text-lg flex">
-                    <PlusIcon />
+const LibraryItem = ({thumbnail, onInsert, onDelete}) => {
+    // this is a TEMPORARY solution to show the delete button on hover
+    // this should be replaced with a proper context menu or something similar that works on touch devices
+    const [isHovered, setIsHovered] = React.useState(false);
+
+    // when the user hovers over the library item, show the delete button
+    const handleMouseEnter = React.useCallback(() => {
+        setIsHovered(true);
+    }, []);
+
+    // when the user stops hovering over the library item, hide the delete button
+    const handleMouseLeave = React.useCallback(() => {
+        setIsHovered(false);
+    }, []);
+
+    return (
+        <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <div className="relative border border-neutral-200 rounded-lg overflow-hidden cursor-pointer" onClick={onInsert}> 
+                <img src={thumbnail} width="100%" height="100%" />
+                <div className="absolute top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-0 hover:opacity-80 flex items-center justify-center z-10">
+                    <div className="text-white text-lg flex">
+                        <PlusIcon />
+                    </div>
                 </div>
             </div>
+            {isHovered && (
+                <div className="absolute z-20" style={{top:"-0.3rem",right:"-0.3rem"}} onClick={onDelete}>
+                    <div className="flex p-1 rounded-full bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-950 cursor-pointer">
+                        <CloseIcon />
+                    </div>
+                </div>
+            )}
         </div>
-        <div className="absolute group-hover:opacity-100 opacity-0 z-20" style={{top:"-0.5rem",right:"-0.5rem"}} onClick={onDelete}>
-            <div className="flex p-1 rounded-full bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-950 cursor-pointer">
-                <CloseIcon />
-            </div>
-        </div>
-    </div>
-);
+    );
+};
 
 // @description library menu
 export const LibraryMenu = () => {
@@ -125,7 +143,7 @@ export const LibraryMenu = () => {
                     />
                 </Dropdown.Header>
                 <div className="overflow-x-hidden overflow-y-auto scrollbar" style={{maxHeight:"50vh"}}>
-                    <div className="grid gap-2 grid-cols-4">
+                    <div className="grid gap-2 grid-cols-4 pt-2">
                         {editor.getLibraryItems().map(item => (
                             <LibraryItem
                                 key={item.id}

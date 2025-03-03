@@ -23,7 +23,7 @@ export const Dropdown = ({className, ...props}) => (
 // @returns {React.ReactNode} React component
 Dropdown.Header = ({className, ...props}) => (
     <div
-        className={classNames("flex items-center gap-1 p-1", className)}
+        className={classNames("flex items-center gap-1 p-1 h-8", className)}
         {...props}
     />
 );
