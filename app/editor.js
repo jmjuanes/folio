@@ -862,9 +862,10 @@ export const createEditor = (initialData = {}, initialLibrary = {}) => {
 
         // @description add a new text element into editor
         addTextElement: (text, tx = null, ty = null) => {
-            editor.clearSelection();
-            const x = tx ?? (editor.page.translateX + editor.width / 2);
-            const y = ty ?? (editor.page.translateY + editor.height / 2);
+            // editor.clearSelection();
+            editor.setTool(TOOLS.SELECT);
+            const x = tx ?? ((-1) * editor.page.translateX + editor.width / 2);
+            const y = ty ?? ((-1) * editor.page.translateY + editor.height / 2);
             const element = createElement(ELEMENTS.TEXT);
             const elementConfig = getElementConfig(element);
 
@@ -892,10 +893,11 @@ export const createEditor = (initialData = {}, initialLibrary = {}) => {
 
         // @description adds a new image into the editor as an element
         addImageElement: (image, tx = null, ty = null) => {
-            editor.clearSelection();
+            // editor.clearSelection();
+            editor.setTool(TOOLS.SELECT);
             return loadImage(image).then(img => {
-                const x = tx ?? (editor.page.translateX + editor.width / 2);
-                const y = ty ?? (editor.page.translateY + editor.height / 2);
+                const x = tx ?? ((-1) * editor.page.translateX + editor.width / 2);
+                const y = ty ?? ((-1) * editor.page.translateY + editor.height / 2);
                 const element = createElement(ELEMENTS.IMAGE);
                 const elementConfig = getElementConfig(element);
                 Object.assign(element, {
@@ -922,15 +924,16 @@ export const createEditor = (initialData = {}, initialLibrary = {}) => {
 
         // @description adds a new bookmark element
         addBookmarkElement: (src, tx = null, ty = null) => {
-            editor.clearSelection();
+            // editor.clearSelection();
+            editor.setTool(TOOLS.SELECT);
             return getLinkMetadata(src).then(linkMetadata => {
                 const element = createElement(ELEMENTS.BOOKMARK);
                 const elementConfig = getElementConfig(element);
                 Object.assign(element, {
                     ...(elementConfig.initialize?.(editor.defaults) || {}),
                     assetId: editor.addAsset(ASSETS.BOOKMARK, linkMetadata),
-                    x1: tx ?? (editor.page.translateX + editor.width / 2),
-                    y1: ty ?? (editor.page.translateY + editor.height / 2),
+                    x1: tx ?? ((-1) * editor.page.translateX + editor.width / 2),
+                    y1: ty ?? ((-1) * editor.page.translateY + editor.height / 2),
                     selected: true,
                     [FIELDS.GROUP]: null,
                 });
@@ -942,11 +945,12 @@ export const createEditor = (initialData = {}, initialLibrary = {}) => {
 
         // @description add a new library item element
         addLibraryElement: (libraryItem, tx = null, ty = null) => {
-            editor.clearSelection();
+            // editor.clearSelection();
+            editor.setTool(TOOLS.SELECT);
             const bounds = getElementsBounds(libraryItem.elements);
             const group = generateRandomId();
-            const x = (tx ?? (editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
-            const y = (ty ?? (editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
+            const x = (tx ?? ((-1) * editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
+            const y = (ty ?? ((-1) * editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
             const elements = libraryItem.elements.map(element => ({
                 ...element,
                 id: generateRandomId(),
