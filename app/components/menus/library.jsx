@@ -61,7 +61,6 @@ export const LibraryMenu = () => {
 
     // handle clearing the library
     const handleLibraryClear = React.useCallback(() => {
-        clearFocus();
         showConfirm({
             title: "Delete library",
             message: `Do you want to delete your library? This action can not be undone.`,
@@ -93,10 +92,9 @@ export const LibraryMenu = () => {
     // handle deleting an item from the library
     // @param {object} item library item to delete
     const handleDeleteItem = React.useCallback(item => {
-        clearFocus();
         showConfirm({
             title: "Delete library item",
-            message: `Do you want to delete '${item.name}'? This action can not be undone.`,
+            message: `Do you want to delete this item from the library? This action can not be undone.`,
             callback: () => {
                 editor.removeLibraryItem(item.id);
                 editor.dispatchLibraryChange();
