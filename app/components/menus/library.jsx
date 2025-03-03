@@ -23,10 +23,10 @@ const EmptyLibrary = () => (
 
 // @description library item
 const LibraryItem = ({thumbnail, onInsert, onDelete}) => (
-    <div className="group relative">
+    <div className="relative">
         <div className="relative border border-neutral-200 rounded-lg overflow-hidden cursor-pointer" onClick={onInsert}> 
             <img src={thumbnail} width="100%" height="100%" />
-            <div className="absolute top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-0 group-hover:opacity-80 flex items-center justify-center z-10">
+            <div className="absolute top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-0 hover:opacity-80 flex items-center justify-center z-10">
                 <div className="text-white text-lg flex">
                     <PlusIcon />
                 </div>
@@ -50,7 +50,7 @@ export const LibraryMenu = () => {
     const handleLibraryLoad = React.useCallback(() => {
         return loadLibraryFromJson()
             .then(importedLibrary => {
-                editor.library.importLibrary(importedLibrary);
+                editor.importLibrary(importedLibrary);
                 editor.dispatchLibraryChange();
                 editor.update();
             })
@@ -126,7 +126,7 @@ export const LibraryMenu = () => {
                         onClick={handleLibraryClear}
                     />
                 </Dropdown.Header>
-                <div className="overflow-y-auto scrollbar" style={{maxHeight:"50vh"}}>
+                <div className="overflow-x-hidden overflow-y-auto scrollbar" style={{maxHeight:"50vh"}}>
                     <div className="grid gap-2 grid-cols-4">
                         {editor.getLibraryItems().map(item => (
                             <LibraryItem
