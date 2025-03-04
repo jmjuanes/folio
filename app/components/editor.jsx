@@ -102,13 +102,13 @@ export const Editor = props => {
         <ThemeProvider theme="default">
             <EditorComponentsProvider components={props.components}>
                 <EditorProvider store={props.store}>
-                    <DialogsProvider>
-                        <ContextMenuProvider>
-                            <ConfirmProvider>
+                    <ConfirmProvider>
+                        <DialogsProvider>
+                            <ContextMenuProvider>
                                 <InnerEditor />
-                            </ConfirmProvider>
-                        </ContextMenuProvider>
-                    </DialogsProvider>
+                            </ContextMenuProvider>
+                        </DialogsProvider>
+                    </ConfirmProvider>
                 </EditorProvider>
             </EditorComponentsProvider>
         </ThemeProvider>
