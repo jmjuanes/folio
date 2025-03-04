@@ -1,16 +1,34 @@
 import {jest} from "@jest/globals";
-import {createEditor} from "../editor.js";
 
-jest.mock("../elements.js", () => ({
+jest.unstable_mockModule("../elements.js", () => ({
     getElementConfig: () => null,
     createElement: () => ({
         id: ""
     }),
+    getElementsBounds: jest.fn(),
+    measureTextInElement: jest.fn(),
+    getElementDisplayName: jest.fn(),
+}));
+jest.unstable_mockModule("../export.js", () => ({
+    exportToDataURL: jest.fn(),
+}));
+jest.unstable_mockModule("../migrate.js", () => ({
+    migrateElements: jest.fn(),
+}));
+jest.unstable_mockModule("../library.js", () => ({
+    getLibraryStateFromInitialData: jest.fn(),
+    createLibraryItem: jest.fn(),
 }));
 
-jest.mock("uid/secure", () => ({
+jest.unstable_mockModule("browser-fs-access", () => ({
+    fileOpen: jest.fn(),
+    fileSave: jest.fn(),
+}));
+jest.unstable_mockModule("uid/secure", () => ({
     uid: () => "id" + Math.floor(Math.random() * 1000).toString(6),
 }));
+
+const {createEditor} = await import("../editor.js");
 
 describe("editor", () => {
     let editor = null;

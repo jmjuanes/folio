@@ -32,6 +32,10 @@ import {
     getTranslateCoordinatesForNewZoom,
     getZoomToFitElements,
 } from "./zoom.js";
+import {
+    getLibraryStateFromInitialData,
+    createLibraryItem,
+} from "./library.js";
 
 // @private clipboard key
 const CLIPBOARD_KEY = "folio:::";
@@ -216,25 +220,27 @@ const createPage = (page, index = 0) => {
     };
 };
 
-// Default values for new elements
-const defaults = {
-    fillColor: DEFAULTS.FILL_COLOR,
-    fillStyle: DEFAULTS.FILL_STYLE,
-    strokeWidth: DEFAULTS.STROKE_WIDTH,
-    strokeColor: DEFAULTS.STROKE_COLOR,
-    strokeStyle: DEFAULTS.STROKE_STYLE,
-    textColor: DEFAULTS.TEXT_COLOR,
-    textFont: DEFAULTS.TEXT_FONT,
-    textSize: DEFAULTS.TEXT_SIZE,
-    textAlign: DEFAULTS.TEXT_ALIGN,
-    [FIELDS.TEXT_VERTICAL_ALIGN]: DEFAULTS.TEXT_VERTICAL_ALIGN,
-    shape: DEFAULTS.SHAPE,
-    [FIELDS.ARROW_SHAPE]: DEFAULTS.ARROW_SHAPE,
-    startArrowhead: DEFAULTS.ARROWHEAD_START,
-    endArrowhead: DEFAULTS.ARROWHEAD_END,
-    opacity: DEFAULTS.OPACITY,
-    [FIELDS.NOTE_COLOR]: DEFAULTS.NOTE_COLOR,
-    [FIELDS.STICKER]: DEFAULTS.STICKER,
+// @description generate default values for new elements
+export const getDefaults = () => {
+    return {
+        fillColor: DEFAULTS.FILL_COLOR,
+        fillStyle: DEFAULTS.FILL_STYLE,
+        strokeWidth: DEFAULTS.STROKE_WIDTH,
+        strokeColor: DEFAULTS.STROKE_COLOR,
+        strokeStyle: DEFAULTS.STROKE_STYLE,
+        textColor: DEFAULTS.TEXT_COLOR,
+        textFont: DEFAULTS.TEXT_FONT,
+        textSize: DEFAULTS.TEXT_SIZE,
+        textAlign: DEFAULTS.TEXT_ALIGN,
+        [FIELDS.TEXT_VERTICAL_ALIGN]: DEFAULTS.TEXT_VERTICAL_ALIGN,
+        shape: DEFAULTS.SHAPE,
+        [FIELDS.ARROW_SHAPE]: DEFAULTS.ARROW_SHAPE,
+        startArrowhead: DEFAULTS.ARROWHEAD_START,
+        endArrowhead: DEFAULTS.ARROWHEAD_END,
+        opacity: DEFAULTS.OPACITY,
+        [FIELDS.NOTE_COLOR]: DEFAULTS.NOTE_COLOR,
+        [FIELDS.STICKER]: DEFAULTS.STICKER,
+    };
 };
 
 // @description Generate a editor state from initial data object
@@ -262,11 +268,15 @@ export const getEditorStateFromInitialData = initialData => {
 };
 
 // @description Create a new editor
-export const createEditor = initialData => {
+export const createEditor = (initialData = {}, initialLibrary = {}) => {
     const editor = {
         ...getEditorStateFromInitialData(initialData || {}),
-        defaults: {...defaults},
+        defaults: getDefaults(),
         updatedAt: Date.now(),
+
+        // @description library state
+        // @param {object} library.items list of items in the library
+        library: getLibraryStateFromInitialData(initialLibrary || {}),
 
         // @description internal editor state
         state: {
@@ -852,9 +862,10 @@ export const createEditor = initialData => {
 
         // @description add a new text element into editor
         addTextElement: (text, tx = null, ty = null) => {
-            editor.clearSelection();
-            const x = tx ?? (editor.page.translateX + editor.width / 2);
-            const y = ty ?? (editor.page.translateY + editor.height / 2);
+            // editor.clearSelection();
+            editor.setTool(TOOLS.SELECT);
+            const x = tx ?? ((-1) * editor.page.translateX + editor.width / 2);
+            const y = ty ?? ((-1) * editor.page.translateY + editor.height / 2);
             const element = createElement(ELEMENTS.TEXT);
             const elementConfig = getElementConfig(element);
 
@@ -882,10 +893,11 @@ export const createEditor = initialData => {
 
         // @description adds a new image into the editor as an element
         addImageElement: (image, tx = null, ty = null) => {
-            editor.clearSelection();
+            // editor.clearSelection();
+            editor.setTool(TOOLS.SELECT);
             return loadImage(image).then(img => {
-                const x = tx ?? (editor.page.translateX + editor.width / 2);
-                const y = ty ?? (editor.page.translateY + editor.height / 2);
+                const x = tx ?? ((-1) * editor.page.translateX + editor.width / 2);
+                const y = ty ?? ((-1) * editor.page.translateY + editor.height / 2);
                 const element = createElement(ELEMENTS.IMAGE);
                 const elementConfig = getElementConfig(element);
                 Object.assign(element, {
@@ -912,15 +924,16 @@ export const createEditor = initialData => {
 
         // @description adds a new bookmark element
         addBookmarkElement: (src, tx = null, ty = null) => {
-            editor.clearSelection();
+            // editor.clearSelection();
+            editor.setTool(TOOLS.SELECT);
             return getLinkMetadata(src).then(linkMetadata => {
                 const element = createElement(ELEMENTS.BOOKMARK);
                 const elementConfig = getElementConfig(element);
                 Object.assign(element, {
                     ...(elementConfig.initialize?.(editor.defaults) || {}),
                     assetId: editor.addAsset(ASSETS.BOOKMARK, linkMetadata),
-                    x1: tx ?? (editor.page.translateX + editor.width / 2),
-                    y1: ty ?? (editor.page.translateY + editor.height / 2),
+                    x1: tx ?? ((-1) * editor.page.translateX + editor.width / 2),
+                    y1: ty ?? ((-1) * editor.page.translateY + editor.height / 2),
                     selected: true,
                     [FIELDS.GROUP]: null,
                 });
@@ -931,12 +944,13 @@ export const createEditor = initialData => {
         },
 
         // @description add a new library item element
-        addLibraryItem: (libraryItem, tx = null, ty = null) => {
-            editor.clearSelection();
+        addLibraryElement: (libraryItem, tx = null, ty = null) => {
+            // editor.clearSelection();
+            editor.setTool(TOOLS.SELECT);
             const bounds = getElementsBounds(libraryItem.elements);
             const group = generateRandomId();
-            const x = (tx ?? (editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
-            const y = (ty ?? (editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
+            const x = (tx ?? ((-1) * editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
+            const y = (ty ?? ((-1) * editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
             const elements = libraryItem.elements.map(element => ({
                 ...element,
                 id: generateRandomId(),
@@ -1245,6 +1259,68 @@ export const createEditor = initialData => {
 
         // @description get the current active tool
         getTool: () => editor.state.tool,
+
+        // 
+        // Library API
+        //
+
+        // @description export library to JSON
+        // @returns {object} library library exported data
+        // @returns {string} library.version verion of the exported library
+        // @returns {object} library.items list of items in the library
+        libraryToJSON: () => {
+            return {
+                version: VERSION,
+                items: editor.library?.items || [],
+            };
+        },
+
+        // @description load library data from a JSON object
+        libraryFromJSON: data => {
+            Object.assign(editor.library, getLibraryStateFromInitialData(data || {}));
+        },
+
+        // @description import library items from another library
+        importLibrary: newLibrary => {
+            const currentItems = new Set((editor.library?.items || []).map(item => item.id));
+            const itemsToInsert = newLibrary.items.filter(item => {
+                return !currentItems.has(item.id);
+            });
+            // insert items into library
+            if (itemsToInsert.length > 0) {
+                editor.library.items = editor.library.items.concat(itemsToInsert);
+            }
+        },
+
+        // @description clear library
+        clearLibrary: () => {
+            return editor.libraryFromJSON({});
+        },
+
+        // @description add a new item to the library
+        addLibraryItem: (elements, data) => {
+            return createLibraryItem(elements, data).then(libraryItem => {
+                editor.library.items.push(libraryItem);
+            });
+        },
+
+        // @description remove a library item
+        removeLibraryItem: id => {
+            const idsToRemove = new Set([id].flat());
+            editor.library.items = editor.library.items.filter(item => {
+                return !idsToRemove.has(item.id);
+            });
+        },
+
+        // @description get a library item
+        getLibraryItem: id => {
+            return editor.library.items.find(item => item.id === id) || null;
+        },
+
+        // @description get all library items
+        getLibraryItems: () => {
+            return editor.library.items || [];
+        },
     };
 
     return editor;

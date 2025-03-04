@@ -1,12 +1,10 @@
 import React from "react";
 import {Button} from "../ui/button.jsx";
-import {Centered} from "../ui/centered.jsx";
-import {Dialog} from "../ui/dialog.jsx";
-import {Overlay} from "../ui/overlay.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
 import {useEditor} from "../../contexts/editor.jsx";
+import {useDialog} from "../../contexts/dialogs.jsx";
 import {getLibraryItemThumbnail} from "../../library.js";
 
 // Tiny hook to generate the thumbnail for the library item
@@ -18,63 +16,59 @@ const useLibraryItemThumbnail = (elements, scale = 1) => {
     return thumbnail;
 };
 
+// library add fields
+const libraryAddFields = {
+    name: {
+        type: FORM_OPTIONS.TEXT,
+        title: "Name",
+        placeholder: "My Awesome Element",
+    },
+    description: {
+        type: FORM_OPTIONS.TEXT,
+        title: "Description",
+        placeholder: "A description of the element",
+    },
+};
+
 // @description Display a dialog for adding a new element into the library
-export const LibraryAddDialog = props => {
+export const LibraryAddDialog = () => {
     const editor = useEditor();
     const [data, setData] = useFormData({});
+    const {hideDialog} = useDialog();
     const selectedElements = editor.getSelection();
-    const thumbnail = useLibraryItemThumbnail(selectedElements, 2);
-    const handleSubmit = () => {
-        return props.onAdd(selectedElements, data);
-    };
+    const thumbnail = useLibraryItemThumbnail(selectedElements, 3);
+
+    // handle submit --> save the selected elments as a new library item 
+    const handleSubmit = React.useCallback(() => {
+        editor.addLibraryItem(selectedElements, data).then(() => {
+            editor.dispatchLibraryChange();
+            editor.update();
+            hideDialog();
+        });
+    }, [editor, data, selectedElements.length]);
+
     return (
         <React.Fragment>
-            <Overlay className="z-50" />
-            <Centered className="fixed z-50 h-full">
-                <Dialog className="max-w-lg relative">
-                    <Dialog.Close onClick={props.onCancel} />
-                    <Dialog.Header className="mb-4">
-                        <Dialog.Title>Add to Library</Dialog.Title>
-                    </Dialog.Header>
-                    <Dialog.Body>
-                        <div className="flex gap-4 w-full mb-8">
-                            <div className="w-32 shrink-0">
-                                {thumbnail && (
-                                    <div className="rounded-lg border border-neutral-200 overflow-hidden">
-                                        <img src={thumbnail} width="100%" height="100%" />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="w-full">
-                                <Form
-                                    data={data}
-                                    items={{
-                                        name: {
-                                            type: FORM_OPTIONS.TEXT,
-                                            title: "Name",
-                                            placeholder: "My Awesome Element",
-                                        },
-                                        description: {
-                                            type: FORM_OPTIONS.TEXT,
-                                            title: "Description",
-                                            placeholder: "A description of the element",
-                                        },
-                                    }}
-                                    onChange={setData}
-                                />
-                            </div>
-                        </div>
-                    </Dialog.Body>
-                    <Dialog.Footer>
-                        <Button variant="secondary" onClick={props.onCancel}>
-                            <span>Cancel</span>
-                        </Button>
-                        <Button variant="primary" onClick={handleSubmit}>
-                            <span>Add to Library</span>
-                        </Button>
-                    </Dialog.Footer>
-                </Dialog>
-            </Centered>
+            <div className="flex flex-col gap-2 w-full mb-8">
+                <div className="h-40 flex items-center justify-center rounded-lg border border-neutral-200">
+                    {thumbnail && (
+                        <img src={thumbnail} height="100%" />
+                    )}
+                </div>
+                <Form
+                    data={data}
+                    items={libraryAddFields}
+                    onChange={setData}
+                />
+            </div>
+            <div className="flex items-center gap-2 justify-end">
+                <Button variant="secondary" onClick={() => hideDialog()}>
+                    <span>Cancel</span>
+                </Button>
+                <Button variant="primary" onClick={handleSubmit}>
+                    <span>Add to Library</span>
+                </Button>
+            </div>
         </React.Fragment>
     );
 };

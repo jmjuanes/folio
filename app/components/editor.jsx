@@ -10,7 +10,6 @@ import {Canvas} from "./canvas.jsx";
 import {Pointer} from "./pointer.jsx";
 import {EditorProvider, useEditor} from "../contexts/editor.jsx";
 import {ThemeProvider} from "../contexts/theme.jsx";
-// import {LibraryProvider, useLibrary} from "../contexts/library.jsx";
 import {ContextMenuProvider, useContextMenu} from "../contexts/context-menu.jsx";
 import {EditorComponentsProvider, useEditorComponents} from "../contexts/editor-components.jsx";
 import {ConfirmProvider} from "../contexts/confirm.jsx";
@@ -103,13 +102,13 @@ export const Editor = props => {
         <ThemeProvider theme="default">
             <EditorComponentsProvider components={props.components}>
                 <EditorProvider store={props.store}>
-                    <ContextMenuProvider>
-                        <ConfirmProvider>
-                            <DialogsProvider>
+                    <DialogsProvider>
+                        <ContextMenuProvider>
+                            <ConfirmProvider>
                                 <InnerEditor />
-                            </DialogsProvider>
-                        </ConfirmProvider>
-                    </ContextMenuProvider>
+                            </ConfirmProvider>
+                        </ContextMenuProvider>
+                    </DialogsProvider>
                 </EditorProvider>
             </EditorComponentsProvider>
         </ThemeProvider>
