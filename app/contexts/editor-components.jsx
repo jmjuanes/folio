@@ -15,6 +15,7 @@ import {HistoryPanel} from "../components/panels/history.jsx";
 import {MinimapPanel} from "../components/panels/minimap.jsx";
 import {ToolbarPanel} from "../components/panels/toolbar.jsx";
 import {ZoomPanel} from "../components/panels/zoom.jsx";
+import {LayersPanel} from "../components/panels/layers.jsx";
 import {Menu} from "../components/panels/menu.jsx";
 
 // @description editor components context
@@ -51,8 +52,9 @@ export const EditorComponentsProvider = ({components = {}, children}) => {
             EditionPanel: EditionPanel,
             HistoryPanel: HistoryPanel,
             MinimapPanel: MinimapPanel,
-            Toolbar: ToolbarPanel,
             ZoomPanel: ZoomPanel,
+            Toolbar: ToolbarPanel,
+            Layers: LayersPanel,
             ...components,
         };
     }, [components]);
