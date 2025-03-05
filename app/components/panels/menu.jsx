@@ -25,16 +25,22 @@ export const Menu = () => {
     }, [editor, showConfirm, editor.page.id]);
 
     return (
-        <Island>
-            {!!EditorMenu && <EditorMenu />}
-            {!!PagesMenu && <PagesMenu />}
-            {!!LibraryMenu && <LibraryMenu />}
-            {!!SettingsMenu && <SettingsMenu />}
-            <Island.Button
-                icon="trash"
-                onClick={handlePageClear}
-                disabled={editor.page.readonly}
-            />
-        </Island>
+        <React.Fragment>
+            {!!EditorMenu && (
+                <Island>
+                    <EditorMenu />
+                </Island>
+            )}
+            <Island>
+                {!!PagesMenu && <PagesMenu />}
+                {!!LibraryMenu && <LibraryMenu />}
+                {!!SettingsMenu && <SettingsMenu />}
+                <Island.Button
+                    icon="trash"
+                    onClick={handlePageClear}
+                    disabled={editor.page.readonly}
+                />
+            </Island>
+        </React.Fragment>
     );
 };
