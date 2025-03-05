@@ -98,6 +98,24 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
         editor.update();
     }, [editor]);
 
+    // handle click on a layer item
+    const handleClick = React.useCallback(elements => {
+        if (!editor.page.readonly) {
+            editor.setTool(TOOLS.SELECT);
+            editor.setSelection(elements.map(el => el.id));
+            editor.update();
+        }
+    }, [editor, editor.page, editor.page.readonly]);
+
+    // handle double click on a group item
+    const handleDoubleClick = React.useCallback(groupId => {
+        if (!editor.page.readonly) {
+            editor.setTool(TOOLS.SELECT);
+            editor.page.activeGroup = groupId;
+            editor.update();
+        }
+    }, [editor, editor.page, editor.page.readonly]);
+
     // calculate the container style
     const containerStyle = React.useMemo(() => {
         return {
@@ -105,24 +123,6 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
             scrollbarWidth: "none",
         };
     }, [activeGroup, maxHeight]);
-
-    // Automatically expand groups with selected items
-    // React.useEffect(() => {
-    //     let shouldUpdate = false;
-    //     // 1. Check if there is a selected element inside a group
-    //     editor.page.elements.forEach(element => {
-    //         if (element.group && element.selected && editor.page.activeGroup === element.group) {
-    //             expandedGroups.current.add(element.group);
-    //             shouldUpdate = true;
-    //         }
-    //     });
-    //     // 2. Trigger an update if we have added at least one group
-    //     // in the list of expanded groups
-    //     if (expandedGroups.current.size > 0 && shouldUpdate) {
-    //         // setEditingLayer("");
-    //         update();
-    //     }
-    // }, [editor.page.activeGroup]);
 
     return (
         <React.Fragment>
@@ -134,11 +134,7 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
                                 key={element.id}
                                 elements={[element]}
                                 active={element.selected}
-                                onClick={() => {
-                                    editor.setTool(TOOLS.SELECT);
-                                    editor.setSelection(element.id);
-                                    editor.update();
-                                }}
+                                onClick={() => handleClick([element])}
                             />
                         )}
                         {!activeGroup && element.group && groups.get(element.group).lastElement === element.id && (
@@ -146,16 +142,8 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
                                 key={element.group}
                                 elements={groups.get(element.group).elements}
                                 active={groups.get(element.group).elements.some(el => el.selected)}
-                                onClick={() => {
-                                    editor.setTool(TOOLS.SELECT);
-                                    editor.setSelection(groups.get(element.group).elements.map(el => el.id));
-                                    editor.update();
-                                }}
-                                onDoubleClick={() => {
-                                    editor.setTool(TOOLS.SELECT);
-                                    editor.page.activeGroup = element.group;
-                                    editor.update();
-                                }}
+                                onClick={() => handleClick(groups.get(element.group).elements)}
+                                onDoubleClick={() => handleDoubleClick(element.group)}
                             />
                         )}
                     </React.Fragment>
