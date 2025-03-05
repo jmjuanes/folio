@@ -983,11 +983,34 @@ export const createEditor = (initialData = {}, initialLibrary = {}) => {
             return editor.page.elements.filter(element => element.selected);
         },
 
-        // @description set selected elements
-        setSelection: selection => {
+        // @description set selected elements by elements ids
+        setSelection: elements => {
+            const selectedElements = new Set([elements].flat().map(el => el.id || el));
+            const groups = new Set();
+            // 1. set selected elements based on the provided ids
+            editor.page.elements.forEach(element => {
+                element.editing = false;
+                element.selected = selectedElements.has(element.id);
+                if (element.selected && !editor.page.activeGroup && element.group) {
+                    groups.add(element.group);
+                }
+            });
+            // 2. Select the elements based on the groups set
+            if (!editor.page.activeGroup && groups.size > 0) {
+                editor.page.elements.forEach(element => {
+                    if (element.group && groups.has(element.group)) {
+                        element.selected = true;
+                    }
+                });
+            }
+        },
+
+        // @description set selected elements using a selection area
+        setSelectionArea: selection => {
             const groups = new Set();
             // 1. select the elements using the selection area
             editor.page.elements.forEach(element => {
+                element.editing = false;
                 element.selected = false;
                 if (!element.locked) {
                     if (element.x1 < selection.x2 && selection.x1 < element.x2) {
