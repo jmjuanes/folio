@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import {Alert} from "./ui/alert.jsx";
 import {Island} from "./ui/island.jsx";
 import {useEditorComponents} from "../contexts/editor-components.jsx";
@@ -21,6 +22,7 @@ export const Layout = props => {
         ZoomPanel,
     } = useEditorComponents();
 
+    // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
 
     return (
@@ -29,7 +31,7 @@ export const Layout = props => {
             {!hideUi && (
                 <React.Fragment>
                     {!!Menu && (
-                        <div className="absolute top-0 left-0 pt-4 pl-4 z-20 flex gap-2">
+                        <div className="absolute top-0 left-0 pt-4 pl-4 z-40 flex gap-2">
                             <Menu />
                         </div>
                     )}
@@ -68,7 +70,7 @@ export const Layout = props => {
                     {!editor.page.readonly && selectedElements.length > 0 && (
                         <React.Fragment>
                             {(selectedElements.length > 1 || !selectedElements[0].editing) && (
-                                <div className="absolute z-30 top-0 mt-16 mr-16 right-0 pt-1 pr-4">
+                                <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4">
                                     <EditionPanel
                                         key={selectedElements.map(el => el.id).join("-")}
                                     />
