@@ -4,7 +4,6 @@ import {CloseIcon} from "@josemi-icons/react";
 import {useEditor} from "../../contexts/editor.jsx";
 import {exportToDataURL} from "../../export.js";
 import {FIELDS, TOOLS, TRANSPARENT} from "../../constants.js";
-import transparentBg from "../../assets/transparent.svg";
 
 // Layers preview variables
 const LAYER_PREVIEW_SIZE = 64;
@@ -30,39 +29,28 @@ const useElementPreview = (elements, dependencies = []) => {
     return previewImage;
 };
 
-const previewStyle = {
-    backgroundImage: `url('${transparentBg}')`,
-    backgroundSize: "10px 10px",
-    backgroundRepeat: "repeat",
-};
-
-const LayerItem = ({element, onClick}) => {
-    const previewImage = useElementPreview([element], [
-        element[FIELDS.CREATING],
-        element[FIELDS.EDITING],
-        element[FIELDS.VERSION],
-    ]);
-    return (
-        <div className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white border-2 border-neutral-200" onClick={onClick}>
-            {previewImage && (
-                <img src={previewImage} width="100%" height="100%" />
-            )}
-        </div>
-    );
-};
-
-const LayerGroupItem = ({elements, onClick}) => {
+const LayerItem = ({elements, active = false, onClick, onDoubleClick}) => {
     const previewImage = useElementPreview(elements, elements.map(el => el.version));
+    const layerClass = classNames({
+        "relative shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white border-2 p-2": true,
+        "border-neutral-950": active,
+        "hover:bg-neutral-200 border-neutral-200 cursor-pointer": !active,
+    });
     return (
-        <div className="shrink-0 w-14 h-14 rounded-lg bg-white" onClick={onClick}>
+        <div className={layerClass} onClick={onClick} onDoubleClick={onDoubleClick}>
             {previewImage && (
                 <img src={previewImage} width="100%" height="100%" />
+            )}
+            {elements.length > 1 && (
+                <div className="absolute bottom-0 right-0 bg-neutral-950 flex items-center justify-center h-4 w-4 rounded-full mb-1 mr-1">
+                    <span className="text-white text-2xs leading-none font-bold">{elements.length}</span>
+                </div>
             )}
         </div>
     );
 };
 
-export const LayersPanel = () => {
+export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
     // const [activeGroup, setActiveGroup] = React.useState("");
     const editor = useEditor();
     const activeGroup = editor.page.activeGroup || "";
@@ -103,6 +91,21 @@ export const LayersPanel = () => {
         return editor.page.elements;
     }, [editor, key, activeGroup]);
 
+    // exit the current active group
+    const handleCloseActiveGroup = React.useCallback(() => {
+        editor.setTool(TOOLS.SELECT);
+        editor.page.activeGroup = "";
+        editor.update();
+    }, [editor]);
+
+    // calculate the container style
+    const containerStyle = React.useMemo(() => {
+        return {
+            maxHeight: `calc(${maxHeight} - ${activeGroup ? "3rem" : "0rem"})`,
+            scrollbarWidth: "none",
+        };
+    }, [activeGroup, maxHeight]);
+
     // Automatically expand groups with selected items
     // React.useEffect(() => {
     //     let shouldUpdate = false;
@@ -122,31 +125,49 @@ export const LayersPanel = () => {
     // }, [editor.page.activeGroup]);
 
     return (
-        <div className="flex flex-col-reverse gap-2 overflow-y-auto" style={{maxHeight:"calc(75vh - 8rem)"}}>
-            {visibleElements.map(element => (
-                <React.Fragment key={element.id + "." + (element.group || "")}>
-                    {(!element.group || activeGroup) && (
-                        <LayerItem
-                            key={element.id}
-                            element={element}
-                            onClick={() => {
-                                // TODO
-                            }}
-                        />
-                    )}
-                    {!activeGroup && element.group && groups.get(element.group).lastElement === element.id && (
-                        <LayerGroupItem
-                            key={element.group}
-                            elements={groups.get(element.group).elements}
-                            onClick={() => {
-                                editor.setTool(TOOLS.SELECT);
-                                editor.page.activeGroup = element.group;
-                                editor.update();
-                            }}
-                        />
-                    )}
-                </React.Fragment>
-            ))}
-        </div>
+        <React.Fragment>
+            <div className="flex flex-col-reverse gap-2 overflow-y-auto" style={containerStyle}>
+                {visibleElements.map(element => (
+                    <React.Fragment key={element.id + "." + (element.group || "")}>
+                        {(!element.group || activeGroup) && (
+                            <LayerItem
+                                key={element.id}
+                                elements={[element]}
+                                active={element.selected}
+                                onClick={() => {
+                                    editor.setTool(TOOLS.SELECT);
+                                    editor.setSelection(element.id);
+                                    editor.update();
+                                }}
+                            />
+                        )}
+                        {!activeGroup && element.group && groups.get(element.group).lastElement === element.id && (
+                            <LayerItem
+                                key={element.group}
+                                elements={groups.get(element.group).elements}
+                                active={groups.get(element.group).elements.some(el => el.selected)}
+                                onClick={() => {
+                                    editor.setTool(TOOLS.SELECT);
+                                    editor.setSelection(groups.get(element.group).elements.map(el => el.id));
+                                    editor.update();
+                                }}
+                                onDoubleClick={() => {
+                                    editor.setTool(TOOLS.SELECT);
+                                    editor.page.activeGroup = element.group;
+                                    editor.update();
+                                }}
+                            />
+                        )}
+                    </React.Fragment>
+                ))}
+            </div>
+            {activeGroup && (
+                <div className="flex items-center justify-center mt-2">
+                    <div className="cursor-pointer flex items-center justify-center h-8 w-8 rounded-full bg-white shadow-sm border border-neutral-200" onClick={handleCloseActiveGroup}>
+                        <CloseIcon />
+                    </div>
+                </div>
+            )}
+        </React.Fragment>
     );
 };
