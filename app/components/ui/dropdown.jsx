@@ -8,13 +8,14 @@ import {themed} from "../../contexts/theme.jsx";
 // @param {React.ReactNode} props.children React children
 // @param {string} props.className CSS class name
 // @returns {React.ReactNode} React component
-export const Dropdown = ({className, ...props}) => (
+export const Dropdown = React.forwardRef(({className, ...props}, ref) => (
     <div
+        ref={ref}
         data-testid="dropdown"
         className={themed("absolute p-1 rounded-xl", "dropdown", className)}
         {...props}
     />
-);
+));
 
 // @description dropdown header
 // @param {object} props React props

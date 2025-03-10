@@ -1,13 +1,7 @@
 import React from "react";
+import {createPortal} from "react-dom";
 import classNames from "classnames";
-import {
-    TrashIcon,
-    CheckIcon,
-    PencilIcon,
-    CopyIcon,
-    BarsIcon,
-    LockIcon,
-} from "@josemi-icons/react";
+import {BarsIcon, LockIcon, DotsIcon} from "@josemi-icons/react";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
@@ -21,10 +15,6 @@ import {clearFocus} from "../../utils/dom.js";
 const PAGES_ITEM_HEIGHT = 37;
 const PAGES_PREVIEW_WIDTH = 140;
 const PAGES_PREVIEW_HEIGHT = 80;
-// const PAGES_VIEW = {
-//     LIST: "list",
-//     GALLERY: "gallery",
-// };
 
 // Tiny hook to generate the preview of the page
 const usePagePreview = page => {
@@ -65,30 +55,74 @@ const PageGalleryItem = ({page, active, onClick}) => {
     );
 };
 
-// @private page action button
-const PageActionButton = ({children, onClick}) => (
-    <div className={themed("cursor-pointer flex items-center px-1", "pages.item.action")} onClick={onClick}>
-        {children}
-    </div>
-);
-
 // @private page item component
 const Page = ({title, active, editable, style, onClick, ...props}) => {
-    const moveButtonStyle = {
-        cursor: props.moving ? "grabbing" : "grab",
-        touchAction: "none",
-    };
+    const [actionsMenuOpen, setActionsMenuOpen] = React.useState(false);
+    const actionsMenuRef = React.useRef(null);
+    const position = React.useRef(null);
+    const moveButtonStyle = React.useMemo(() => {
+        return {
+            cursor: props.moving ? "grabbing" : "grab",
+            touchAction: "none",
+        };
+    }, [props.moving]);
+
+    // when clicking on the action item
+    const handleActionsMenuClick = React.useCallback(event => {
+        if (event.currentTarget) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            position.current = [rect.bottom + window.scrollY, rect.left + window.scrollX];
+            setActionsMenuOpen(true);
+        }
+    }, [setActionsMenuOpen]);
+
+    // handle edition the page
+    const handleEdit = React.useCallback(() => {
+        setActionsMenuOpen(false);
+        props.onEdit();
+    }, [props.onEdit, setActionsMenuOpen]);
+
+    // handle duplicate the page
+    const handleDuplicate = React.useCallback(() => {
+        setActionsMenuOpen(false);
+        props.onDuplicate();
+    }, [props.onDuplicate, setActionsMenuOpen]);
+
+    // handle delete the page
+    const handleDelete = React.useCallback(() => {
+        setActionsMenuOpen(false);
+        props.onDelete();
+    }, [props.onDelete, setActionsMenuOpen]);
+
+    React.useEffect(() => {
+        if (actionsMenuOpen) {
+            const handleClickOutside = event => {
+                event.preventDefault();
+                if (actionsMenuRef.current && !actionsMenuRef.current.contains(event.target)) {
+                    setActionsMenuOpen(false);
+                }
+            };
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }
+    }, [actionsMenuOpen]);
+
+    // page classname
+    const pageClassName = classNames({
+        "absolute group flex items-center rounded-md p-2 w-full": true,
+        "hover:bg-neutral-200": !active,
+        "bg-neutral-200": active,
+        "bg-neutral-100": !active && actionsMenuOpen,
+    });
+
     return (
-        <div className={themed("absolute group flex items-center rounded-md p-2 w-full", "pages.item")} style={style}>
-            {active && (
-                <div className="absolute flex text-sm" style={{left:"1.5rem"}}>
-                    <CheckIcon />
-                </div>
-            )}
+        <div className={pageClassName} style={style}>
             <div className="flex items-center text-xs text-neutral-400" style={moveButtonStyle} onPointerDown={props.onMove}>
                 <BarsIcon />
             </div>
-            <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-6" onClick={onClick}>
+            <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-2" onClick={onClick}>
                 <div className="font-medium text-sm w-content max-w-32 truncate" title={title}>
                     <span>{title}</span>
                 </div>
@@ -98,23 +132,28 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
                     </div>
                 )}
             </div>
-            <div className="flex items-center opacity-0 group-hover:opacity-100">
-                {editable && (
-                    <PageActionButton onClick={props.onConfigure}>
-                        <PencilIcon />
-                    </PageActionButton>
-                )}
-                {editable && (
-                    <PageActionButton onClick={props.onDuplicate}>
-                        <CopyIcon />
-                    </PageActionButton>
-                )}
-                {editable && !active && (
-                    <PageActionButton onClick={props.onDelete}>
-                        <TrashIcon />
-                    </PageActionButton>
-                )}
+            <div className="flex items-center">
+                <div className="cursor-pointer flex items-center px-1 text-neutral-500 hover:text-neutral-900" onClick={handleActionsMenuClick}>
+                    <DotsIcon />
+                </div>
             </div>
+            {actionsMenuOpen && createPortal([
+                <div key="pages:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
+                <Dropdown key="pages:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={{top: position.current[0], left: position.current[1]}}>
+                    <Dropdown.Item onClick={handleEdit}>
+                        <Dropdown.Icon icon="edit" />
+                        <span>Edit</span>
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={handleDuplicate}>
+                        <Dropdown.Icon icon="copy" />
+                        <span>Duplicate</span>
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={handleDelete}>
+                        <Dropdown.Icon icon="trash" />
+                        <span>Delete</span>
+                    </Dropdown.Item>
+                </Dropdown>,
+            ], document.body)}
         </div>
     );
 };
@@ -233,7 +272,7 @@ export const ControlledPagesMenu = () => {
                     <div className="text-sm font-bold mr-auto">Pages</div>
                     <Dropdown.HeaderButton icon="plus" onClick={handlePageCreate} />
                 </Dropdown.Header>
-                <div className="p-0 scrollbar w-full overflow-y-auto" style={{maxHeight: "50vh"}}>
+                <div className="p-0 scrollbar w-full overflow-y-auto" style={{maxHeight: "240px"}}>
                     <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
                         {editor.pages.map(page => (
                             <Page
@@ -260,7 +299,7 @@ export const ControlledPagesMenu = () => {
                                     editor.dispatchChange();
                                     editor.update();
                                 }}
-                                onConfigure={() => {
+                                onEdit={() => {
                                     showDialog("pages-edit", {page});
                                     clearFocus();
                                 }}
