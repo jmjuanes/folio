@@ -8,10 +8,10 @@ import {useDialog} from "../../contexts/dialogs.jsx";
 import {saveAsJson, loadFromJson} from "../../json.js";
 
 // @private menu link component
-const MenuLinkItem = ({text, url}) => (
-    <Dropdown.Item as="a" href={url} target="_blank">
-        <Dropdown.Icon icon="external-link" />
-        <span>{text}</span>
+const MenuLinkItem = props => (
+    <Dropdown.Item as="a" href={props.url} target="_blank">
+        <Dropdown.Icon icon={props.icon || "external-link"} />
+        <span>{props.text}</span>
     </Dropdown.Item>
 );
 
@@ -106,9 +106,22 @@ export const EditorMenu = () => {
                     })}
                     onClick={handleClear}
                 />
-                {/*
                 <Dropdown.Separator />
-                */}
+                <MenuLinkItem
+                    url={process.env.URL_HOMEPAGE}
+                    icon="info-circle"
+                    text="About folio"
+                />
+                <MenuLinkItem
+                    url={process.env.URL_ISSUES}
+                    icon="bug"
+                    text="Report an issue"
+                />
+                <MenuLinkItem
+                    url={process.env.URL_REPOSITORY}
+                    icon="code"
+                    text="Source code"
+                />
             </Dropdown>
         </div>
     );
