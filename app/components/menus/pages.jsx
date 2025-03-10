@@ -1,12 +1,7 @@
 import React from "react";
 import {createPortal} from "react-dom";
 import classNames from "classnames";
-import {
-    CheckIcon,
-    BarsIcon,
-    LockIcon,
-    DotsIcon,
-} from "@josemi-icons/react";
+import {BarsIcon, LockIcon, DotsIcon} from "@josemi-icons/react";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
@@ -20,10 +15,6 @@ import {clearFocus} from "../../utils/dom.js";
 const PAGES_ITEM_HEIGHT = 37;
 const PAGES_PREVIEW_WIDTH = 140;
 const PAGES_PREVIEW_HEIGHT = 80;
-// const PAGES_VIEW = {
-//     LIST: "list",
-//     GALLERY: "gallery",
-// };
 
 // Tiny hook to generate the preview of the page
 const usePagePreview = page => {
@@ -63,13 +54,6 @@ const PageGalleryItem = ({page, active, onClick}) => {
         </div>
     );
 };
-
-// @private page action button
-const PageActionButton = ({children, onClick}) => (
-    <div className={themed("cursor-pointer flex items-center px-1", "pages.item.action")} onClick={onClick}>
-        {children}
-    </div>
-);
 
 // @private page item component
 const Page = ({title, active, editable, style, onClick, ...props}) => {
@@ -113,6 +97,7 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
     React.useEffect(() => {
         if (actionsMenuOpen) {
             const handleClickOutside = event => {
+                event.preventDefault();
                 if (actionsMenuRef.current && !actionsMenuRef.current.contains(event.target)) {
                     setActionsMenuOpen(false);
                 }
@@ -124,17 +109,20 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
         }
     }, [actionsMenuOpen]);
 
+    // page classname
+    const pageClassName = classNames({
+        "absolute group flex items-center rounded-md p-2 w-full": true,
+        "hover:bg-neutral-200": !active,
+        "bg-neutral-200": active,
+        "bg-neutral-100": !active && actionsMenuOpen,
+    });
+
     return (
-        <div className={themed("absolute group flex items-center rounded-md p-2 w-full", "pages.item")} style={style}>
-            {active && (
-                <div className="absolute flex text-sm" style={{left:"1.5rem"}}>
-                    <CheckIcon />
-                </div>
-            )}
+        <div className={pageClassName} style={style}>
             <div className="flex items-center text-xs text-neutral-400" style={moveButtonStyle} onPointerDown={props.onMove}>
                 <BarsIcon />
             </div>
-            <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-6" onClick={onClick}>
+            <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-2" onClick={onClick}>
                 <div className="font-medium text-sm w-content max-w-32 truncate" title={title}>
                     <span>{title}</span>
                 </div>
