@@ -107,6 +107,14 @@ export const EditorMenu = () => {
                     onClick={handleClear}
                 />
                 <Dropdown.Separator />
+                <MenuDropdownItem
+                    icon="tools"
+                    text="Preferences"
+                    onClick={() => {
+                        showDialog("preferences");
+                    }}
+                />
+                <Dropdown.Separator />
                 <MenuLinkItem
                     url={process.env.URL_HOMEPAGE}
                     icon="info-circle"
