@@ -318,7 +318,12 @@ export const ControlledPagesMenu = () => {
 // @description pages menu wrapper
 export const PagesMenu = () => {
     const editor = useEditor();
+
+    // note: using the pages ids as a key instead of the number of pages
+    // this fixes a bug when clearing the editor data with only one page
+    const pagesKey = (editor?.pages || []).map(page => page.id).join("-");
+
     return (
-        <ControlledPagesMenu key={"pages:" + editor.pages.length} />
+        <ControlledPagesMenu key={"pages:" + pagesKey} />
     );
 };
