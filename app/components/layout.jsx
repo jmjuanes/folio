@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import {PREFERENCES_FIELDS} from "../constants.js";
 import {Alert} from "./ui/alert.jsx";
 import {Island} from "./ui/island.jsx";
 import {useEditorComponents} from "../contexts/editor-components.jsx";
@@ -62,7 +63,7 @@ export const Layout = props => {
                             <Toolbar />
                         </div>
                     )}
-                    {!!MinimapPanel && true && (
+                    {!!MinimapPanel && !!editor.preferences[PREFERENCES_FIELDS.MINIMAP_VISIBLE] && (
                         <div className="absolute z-20 bottom-0 mb-4 left-0 ml-4">
                             <MinimapPanel />
                         </div>

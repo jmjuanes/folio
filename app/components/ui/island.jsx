@@ -7,7 +7,7 @@ import {renderIcon, ChevronDownIcon} from "@josemi-icons/react";
 // @param {React.ReactNode} props.children React children
 // @param {string} props.className additional class name
 export const Island = props => (
-    <div className={classNames("flex gap-1 p-1 rounded-xl shadow-sm bg-white border-neutral-200", props.className)}>
+    <div className={classNames("flex gap-1 p-1 rounded-xl shadow-sm bg-white border border-neutral-200", props.className)}>
         {props.children}
     </div>
 );

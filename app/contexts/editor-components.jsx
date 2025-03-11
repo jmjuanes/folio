@@ -6,6 +6,7 @@ import {ExportDialog} from "../components/dialogs/export.jsx";
 import {LibraryAddDialog} from "../components/dialogs/library-add.jsx";
 import {LibraryExportDialog} from "../components/dialogs/library-export.jsx";
 import {PagesEditDialog} from "../components/dialogs/pages-edit.jsx";
+import {PreferencesDialog} from "../components/dialogs/preferences.jsx";
 import {LibraryMenu} from "../components/menus/library.jsx";
 import {EditorMenu} from "../components/menus/editor.jsx";
 import {PagesMenu} from "../components/menus/pages.jsx";
@@ -42,6 +43,7 @@ export const EditorComponentsProvider = ({components = {}, children}) => {
             LibraryAddDialog: LibraryAddDialog,
             LibraryExportDialog: LibraryExportDialog,
             PagesEditDialog: PagesEditDialog,
+            PreferencesDialog: PreferencesDialog,
             // menus
             LibraryMenu: LibraryMenu,
             EditorMenu: EditorMenu,

@@ -20,6 +20,7 @@ export const EditorProvider = props => {
     const [update, setUpdate] = React.useState(0);
     const [dataToDispatch, setDataToDispatch] = React.useState(null);
     // const [error, setError] = React.useState(null);
+
     const store = React.useMemo(() => {
         return props.store || createMemoryStore();
     }, [props.store]);
@@ -42,6 +43,11 @@ export const EditorProvider = props => {
         store.library.set(editor.libraryToJSON());
     }, [store, editor]);
 
+    // dispatch a preferences change event
+    const dispatchPreferencesChange = React.useCallback(() => {
+        store.preferences.set(editor.preferences);
+    }, [store, editor]);
+
     // dispatch an update event
     const dispatchUpdate = React.useCallback(() => {
         setUpdate((-1) * update);
@@ -59,10 +65,17 @@ export const EditorProvider = props => {
                 if (typeof store.library?.get === "function") {
                     allPromises.push(store.library.get());
                 }
+                if (typeof store.preferences?.get === "function") {
+                    allPromises.push(store.preferences.get());
+                }
                 return Promise.all(allPromises);
             })
-            .then(([initialData, initialLibrary]) => {
-                return setEditor(createEditor(initialData, initialLibrary));
+            .then(([initialData, initialLibrary, initialPreferences]) => {
+                return setEditor(createEditor({
+                    data: initialData,
+                    library: initialLibrary, 
+                    preferences: initialPreferences,
+                }));
             })
             .catch(error => {
                 console.error(error);
@@ -77,6 +90,7 @@ export const EditorProvider = props => {
     // assign additional editor methods
     editor.dispatchChange = dispatchDataChange;
     editor.dispatchLibraryChange = dispatchLibraryChange;
+    editor.dispatchPreferencesChange = dispatchPreferencesChange;
     editor.update = dispatchUpdate;
     editor.store = store; // save store object as a reference in the editor
 
