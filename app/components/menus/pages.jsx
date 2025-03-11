@@ -318,7 +318,8 @@ export const ControlledPagesMenu = () => {
 // @description pages menu wrapper
 export const PagesMenu = () => {
     const editor = useEditor();
+    const pagesKey = editor.pages.map(page => page.id).join("-");
     return (
-        <ControlledPagesMenu key={"pages:" + editor.pages.length} />
+        <ControlledPagesMenu key={"pages:" + pagesKey} />
     );
 };
