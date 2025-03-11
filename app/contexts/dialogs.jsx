@@ -26,6 +26,7 @@ export const DialogsProvider = ({dialogs, children}) => {
         LibraryAddDialog,
         LibraryExportDialog,
         PagesEditDialog,
+        PreferencesDialog,
     } = useEditorComponents();
 
     // internal list of all available dialogs in the editor
@@ -46,6 +47,10 @@ export const DialogsProvider = ({dialogs, children}) => {
             "pages-edit": {
                 title: "Edit Page",
                 component: PagesEditDialog,
+            },
+            "preferences": {
+                title: "Preferences",
+                component: PreferencesDialog,
             },
             ...dialogs,
         };
