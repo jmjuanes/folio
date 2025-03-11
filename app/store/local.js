@@ -20,6 +20,7 @@ const STORE_KEYS = {
 // @returns {function} store.initialize method to initialize the store
 // @returns {object} store.data data namager that implements the get and set methods
 // @returns {object} store.library library manager that implements the get and set methods
+// @returns {object} store.preferences preferences manager that implements the get and set methods
 export const createLocalStore = (options = {}) => {
     const databaseName = options.key || "folio"; // database to use
     const store = idb.createStore(databaseName, "folio-store");
@@ -50,6 +51,7 @@ export const createLocalStore = (options = {}) => {
                 // Create new store keys
                 await idb.set(STORE_KEYS.VERSION, STORE_VERSION, store)
                 await idb.set(STORE_KEYS.DATA, newData, store);
+                await idb.set(STORE_KEYS.PREFERENCES, {}, store);
             }
             // Check if library is not initialized
             if (!keys.includes(STORE_KEYS.LIBRARY)) {
@@ -83,6 +85,16 @@ export const createLocalStore = (options = {}) => {
             },
             set: library => {
                 return idb.set(STORE_KEYS.LIBRARY, library, store);
+            },
+        },
+
+        // @description preferences manager
+        preferences: {
+            get: () => {
+                return idb.get(STORE_KEYS.PREFERENCES, store);
+            },
+            set: newPreferences => {
+                return idb.set(STORE_KEYS.PREFERENCES, newPreferences, store);
             },
         },
     };
