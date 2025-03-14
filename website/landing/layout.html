@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" style="overscroll-behavior-x:none;">
+<head>
+    <meta charSet="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta name="title" content="{{global.title}}">
+    <meta name="description" content="{{global.description}}">
+    <meta property="og:site_name" content="Folio - Digital whiteboard">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://folio.josemi.xyz">
+    <meta property="og:image" content="https://folio.josemi.xyy/og.png">
+    <meta property="og:description" content="Folio is a digital whiteboard for sketching and prototyping">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
+    <link rel="stylesheet" href="./low.css">
+    <title>{{global.title}}</title>
+    <style>
+        .font-brand {
+            font-family: Poppins, serif;
+            font-weight: 700 !important;
+        }
+    </style>
+</head>
+<body class="m-0 p-0 font-inter leading-normal bg-neutral-950 text-white min-h-screen">
+    <header class="flex items-center justify-between w-full px-6 py-4 absolute top-0 left-0 right-0">
+        <a href="/" class="flex items-center gap-2 cursor-pointer">
+            <div class="text-4xl font-brand">folio.</div>
+        </a>
+        <div class="flex gap-4 items-center">
+            <a href="https://github.com/jmjuanes/folio" class="cursor-pointer font-bold hover:underline text-white text-xl md:text-3xl">GitHub</a>
+        </div>
+
+    </header>
+    <section class="min-h-screen px-6 pt-10 pb-32 md:py-40 flex flex-col justify-center items-center">
+        <div class="mb-8">
+            {{=icon icon="drawing" className="size-24 md:size-40"}}
+        </div>
+        <div class="mb-6 font-extrabold text-6xl md:text-8xl leading-none text-center">
+            <span>Instant Sketching.</span>
+        </div>
+        <div class="max-w-4xl mb-10 text-2xl md:text-3xl text-center text-neutral-200">
+            <span class=""><b>Folio</b> is an infinite canvas for your creative journey. </span>
+            <span class="">Sketch, prototype, and bring your ideas to life with ease.</span>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+            <a href="/app" class="flex gap-4 items-center cursor-pointer font-bold hover:underline text-white text-3xl md:text-5xl">
+                <span>Try folio &rarr;</span>
+            </a>
+            <div class="text-sm select-none text-center text-neutral-500">
+                <span>No signup. Start in less than 5 seconds.</span>
+            </div>
+        </div>
+    </section>
+    <div class="w-32 mx-auto h-px bg-white"></div>
+    <section class="mx-auto max-w-6xl px-6 py-32 flex flex-col justify-center items-center">
+        <div class="max-w-xl font-extrabold text-4xl md:text-5xl leading-tight mb-24 text-center">
+            <span>{{features.title}}</span>
+        </div>
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+            {{#each features.highlights}}
+            <div class="mb-2">
+                {{#if icon}}
+                <div class="flex mb-6">
+                    <div class="flex items-center">
+                        {{=icon icon=icon className="size-12"}}
+                    </div>
+                </div>
+                {{/if}}
+                <div class="font-bold text-2xl leading-tight mb-4">{{!title}}</div>
+                <div class="text-neutral-500">{{!description}}</div>
+            </div>
+            {{/each}}
+        </div>
+    </section>
+    <footer class="pt-20 pb-0 px-6 flex flex-col md:flex-row md:justify-between md:items-center gap-8">
+        <div class="text-9xl font-brand text-white leading-none mb-8 md:mb-0">folio.</div>
+        <div class="flex flex-col md:text-right order-first md:order-last">
+            <div class="flex gap-3 mb-4 text-sm">
+                {{#site.footer.links}}
+                <a href="{{link}}" target="{{target}}" class="hover:underline text-neutral-900 font-bold">{{text}}</a>
+                {{/site.footer.links}}
+            </div>
+            <div class="mb-1 text-sm text-neutral-400">
+                <div>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-white font-bold">Josemi</a> in Valencia, Spain.</div>
+                <div>Source code is available on <a href="{{site.repository}}" class="hover:underline text-white font-bold">GitHub</a>.</div>
+            </div>
+            <div class="text-xs text-neutral-600">
+                <span>This site does not track you.</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
