@@ -11,7 +11,7 @@ const assets = [
     },
     {
         from: "node_modules/@josemi-icons/svg/sprite.svg",
-        to: "./sprite.svg",
+        to: "sprite.svg",
     },
     {
         from: "public/og.png",
