@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
     <meta name="title" content="{{global.title}}">
     <meta name="description" content="{{global.description}}">
-    <meta property="og:site_name" content="Folio - Digital whiteboard">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://folio.josemi.xyz">
-    <meta property="og:image" content="https://folio.josemi.xyy/og.png">
-    <meta property="og:description" content="Folio is a digital whiteboard for sketching and prototyping">
+    {{#each site.meta}}
+    <meta name="{{name}}" content="{{value}}">
+    {{/each}}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
     <link rel="stylesheet" href="./low.css">
@@ -27,17 +25,21 @@
             <div class="text-4xl font-brand">folio.</div>
         </a>
         <div class="flex gap-4 items-center">
-            <a href="https://github.com/jmjuanes/folio" class="cursor-pointer font-bold hover:underline text-white text-xl md:text-3xl">GitHub</a>
+            {{#each site.navigation}}
+            <a href="{{url}}" class="cursor-pointer font-bold hover:underline text-white text-xl md:text-3xl">
+                <span>{{title}}</span>
+            </a>
+            {{/each}}
         </div>
     </header>
     {{>content}}
     <footer class="pt-20 pb-0 px-6 flex flex-col md:flex-row md:justify-between md:items-center gap-8">
         <div class="text-9xl font-brand text-white leading-none mb-8 md:mb-0">folio.</div>
         <div class="flex flex-col md:text-right order-first md:order-last">
-            <div class="flex gap-3 mb-4 text-sm">
-                {{#site.footer.links}}
-                <a href="{{link}}" target="{{target}}" class="hover:underline text-neutral-900 font-bold">{{text}}</a>
-                {{/site.footer.links}}
+            <div class="flex gap-3 md:justify-end mb-4 text-sm">
+                {{#each site.footer.links}}
+                <a href="{{url}}" class="hover:underline text-white font-bold">{{title}}</a>
+                {{/each}}
             </div>
             <div class="mb-1 text-sm text-neutral-400">
                 <div>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-white font-bold">Josemi</a> in Valencia, Spain.</div>
