@@ -37,8 +37,8 @@ press.build({
                     to: "sprite.svg",
                 },
                 {
-                    from: "public/og.png",
-                    to: "og.png",
+                    from: "public/og-image.png",
+                    to: "og-image.png",
                 },
             ],
         }),
