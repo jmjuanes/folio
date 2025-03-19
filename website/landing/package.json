@@ -4,22 +4,18 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "node ./scripts/main.js build",
-        "clean": "rm -rf www",
-        "dev": "node ./scripts/main.js serve"
+        "build": "node ./scripts/build.js",
+        "clean": "rm -rf www"
     },
     "dependencies": {
         "@josemi-icons/svg": "^0.6.1",
         "lowcss": "^0.28.0"
     },
     "devDependencies": {
-        "cross-env": "^7.0.3",
-        "dotenv": "^16.4.5",
         "js-yaml": "^4.1.0",
         "marked": "^15.0.6",
-        "mikel": "^0.18.1",
-        "mikel-press": "^0.18.1",
-        "mime": "^4.0.6"
+        "mikel": "^0.18.2",
+        "mikel-press": "^0.18.2"
     },
     "license": "MIT"
 }
