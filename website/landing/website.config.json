@@ -5,8 +5,45 @@
         "url": "https://folio.josemi.xyz"
     },
     "meta": [
-
+        {
+            "name": "og:type",
+            "value": "website"
+        },
+        {
+            "name": "og:site_name",
+            "value": "Sandpack"
+        },
+        {
+            "name": "og:description",
+            "value": "Folio is a digital whiteboard for sketching and prototyping"
+        },
+        {
+            "name": "og:image",
+            "value": "/og-image.png"
+        },
+        {
+            "name": "og:url",
+            "value": "https://folio.josemi.xyz"
+        }
     ],
+    "navigation": [
+        {
+            "title": "GitHub",
+            "url": "https://github.com/jmjuanes/folio"
+        }
+    ],
+    "footer": {
+        "links": [
+            {
+                "title": "Privacy",
+                "url": "/privacy"
+            },
+            {
+                "title": "Report a bug",
+                "url": "https://github.com/jmjuanes/folio/issues"
+            }
+        ]
+    },
     "features": {
         "title": "Sketch and Design with freedom.",
         "highlights": [
