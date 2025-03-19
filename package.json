@@ -15,7 +15,7 @@
         "build": "yarn clean && yarn build:app && yarn build:site && yarn copy-assets",
         "build:app": "cross-env NODE_ENV=production webpack build",
         "build:site": "node ./scripts/site.js",
-        "build:landing": "node ./scripts/landing.js build",
+        "build:landing": "yarn workspace folio-landing build",
         "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
