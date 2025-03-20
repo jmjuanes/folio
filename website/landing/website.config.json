@@ -28,6 +28,10 @@
     ],
     "navigation": [
         {
+            "title": "Try",
+            "url": "/app"
+        },
+        {
             "title": "GitHub",
             "url": "https://github.com/jmjuanes/folio"
         }

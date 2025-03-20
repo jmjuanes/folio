@@ -25,28 +25,28 @@
         <a href="/" class="flex items-center gap-2 cursor-pointer">
             <div class="text-4xl font-brand">folio.</div>
         </a>
-        <div class="flex gap-4 items-center">
+        <div class="flex gap-6 items-center">
             {{#each site.navigation}}
-            <a href="{{url}}" class="cursor-pointer font-bold hover:underline text-white text-xl md:text-3xl">
+            <a href="{{url}}" class="cursor-pointer font-bold hover:underline text-white text-lg md:text-3xl">
                 <span>{{title}}</span>
             </a>
             {{/each}}
         </div>
     </header>
     {{>content}}
-    <footer class="pt-20 pb-0 px-6 flex flex-col md:flex-row md:justify-between md:items-center gap-8">
-        <div class="text-9xl font-brand text-white leading-none mb-8 md:mb-0">folio.</div>
-        <div class="flex flex-col md:text-right order-first md:order-last">
-            <div class="flex gap-3 md:justify-end mb-4 text-sm">
+    <footer class="py-32 px-6 flex flex-col justify-between items-center gap-8">
+        <div class="text-6xl md:text-7xl font-brand leading-none">folio.</div>
+        <div class="flex flex-col justify-center">
+            <div class="flex gap-3 justify-center mb-4 text-sm">
                 {{#each site.footer.links}}
                 <a href="{{url}}" class="hover:underline text-white font-bold">{{title}}</a>
                 {{/each}}
             </div>
-            <div class="mb-1 text-sm text-neutral-400">
+            <div class="mb-1 text-sm text-neutral-400 text-center">
                 <div>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-white font-bold">Josemi</a> in Valencia, Spain.</div>
                 <div>Source code is available on <a href="{{site.repository}}" class="hover:underline text-white font-bold">GitHub</a>.</div>
             </div>
-            <div class="text-xs text-neutral-600">
+            <div class="text-xs text-neutral-600 text-center">
                 <span>This site does not track you.</span>
             </div>
         </div>
