@@ -40,6 +40,10 @@ press.build({
                     from: "public/og-image.png",
                     to: "og-image.png",
                 },
+                {
+                    from: "public/icon.png",
+                    to: "icon.png",
+                },
             ],
         }),
     ],
