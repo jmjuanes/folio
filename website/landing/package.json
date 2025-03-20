@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "build": "node ./scripts/build.js",
-        "clean": "rm -rf www"
+        "clean": "rm -rf www",
+        "dev": "serve www -p 8081"
     },
     "dependencies": {
         "@josemi-icons/svg": "^0.6.1",
@@ -15,7 +16,8 @@
         "js-yaml": "^4.1.0",
         "marked": "^15.0.6",
         "mikel": "^0.18.2",
-        "mikel-press": "^0.18.2"
+        "mikel-press": "^0.18.2",
+        "serve": "^14.2.4"
     },
     "license": "MIT"
 }

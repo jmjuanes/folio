@@ -19,6 +19,7 @@
         "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
         "dev": "yarn clean && webpack serve",
+        "dev:landing": "yarn workspace folio-landing dev",
         "site": "yarn clean && yarn build:site && yarn copy-assets",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
     },
