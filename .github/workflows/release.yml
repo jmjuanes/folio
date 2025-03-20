@@ -16,5 +16,5 @@ jobs:
     runs-on: ubuntu-latest
     name: Release
     steps:
-      - uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v2
  
