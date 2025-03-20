@@ -1,0 +1,23 @@
+{
+    "name": "folio-landing",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "node ./scripts/build.js",
+        "clean": "rm -rf www",
+        "dev": "serve www -p 8081"
+    },
+    "dependencies": {
+        "@josemi-icons/svg": "^0.6.1",
+        "lowcss": "^0.28.0"
+    },
+    "devDependencies": {
+        "js-yaml": "^4.1.0",
+        "marked": "^15.0.6",
+        "mikel": "^0.18.2",
+        "mikel-press": "^0.18.2",
+        "serve": "^14.2.4"
+    },
+    "license": "MIT"
+}

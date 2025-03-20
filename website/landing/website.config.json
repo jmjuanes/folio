@@ -1,0 +1,80 @@
+{
+    "global": {
+        "title": "Minimal whiteboard for sketching and prototyping",
+        "description": "Folio is a minimalistic digital whiteboard for sketching and prototyping. It is designed to be simple and easy to use, with a focus on speed and efficiency.",
+        "url": "https://folio.josemi.xyz"
+    },
+    "meta": [
+        {
+            "name": "og:type",
+            "value": "website"
+        },
+        {
+            "name": "og:site_name",
+            "value": "Sandpack"
+        },
+        {
+            "name": "og:description",
+            "value": "Folio is a digital whiteboard for sketching and prototyping"
+        },
+        {
+            "name": "og:image",
+            "value": "/og-image.png"
+        },
+        {
+            "name": "og:url",
+            "value": "https://folio.josemi.xyz"
+        }
+    ],
+    "navigation": [
+        {
+            "title": "Try",
+            "url": "/app"
+        },
+        {
+            "title": "GitHub",
+            "url": "https://github.com/jmjuanes/folio"
+        }
+    ],
+    "footer": {
+        "links": [
+            {
+                "title": "Privacy",
+                "url": "/privacy"
+            },
+            {
+                "title": "Report a bug",
+                "url": "https://github.com/jmjuanes/folio/issues"
+            },
+            {
+                "title": "Changelog",
+                "url": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
+            }
+        ]
+    },
+    "features": {
+        "title": "Sketch and Design with freedom.",
+        "highlights": [
+            {
+                "icon": "shield",
+                "title": "Design with total Privacy.",
+                "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
+            },
+            {
+                "icon": "drawing",
+                "title": "Boundless Canvas.",
+                "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
+            },
+            {
+                "icon": "files",
+                "title": "Organize your ideas.",
+                "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
+            },
+            {
+                "icon": "album",
+                "title": "Save, Organize, and Reuse Elements",
+                "description": "Use the <b>Library</b> to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
+            }
+        ]
+    }
+}
