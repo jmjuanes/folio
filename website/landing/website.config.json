@@ -45,6 +45,10 @@
             {
                 "title": "Report a bug",
                 "url": "https://github.com/jmjuanes/folio/issues"
+            },
+            {
+                "title": "Changelog",
+                "url": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
             }
         ]
     },
