@@ -10,12 +10,12 @@ export default {
     entry: {
         "folio-react": {
             import: path.resolve("folio-react/index.jsx"),
-            filename: "folio-react/folio-react.js",
+            filename: "folio-react/folio.js",
             layer: "folio-react",
         },
     },
     output: {
-        path: path.resolve("dist"),
+        path: path.resolve("."),
         publicPath: "./",
         clean: false,
         library: {
