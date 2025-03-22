@@ -28,7 +28,7 @@ jest.unstable_mockModule("uid/secure", () => ({
     uid: () => "id" + Math.floor(Math.random() * 1000).toString(6),
 }));
 
-const {createEditor} = await import("./editor.js");
+const {createEditor} = await import("../lib/editor.js");
 
 describe("editor", () => {
     let editor = null;
