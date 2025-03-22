@@ -9,12 +9,12 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
+        "folio-react",
         "website/*"
     ],
     "scripts": {
         "build": "yarn clean && yarn build:app && yarn build:site && yarn copy-assets",
-        "build:app": "cross-env NODE_ENV=production webpack build",
-        "build:site": "node ./scripts/site.js",
+        "build:dist": "cross-env NODE_ENV=production webpack build",
         "build:landing": "yarn workspace folio-landing build",
         "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
@@ -24,16 +24,8 @@
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
     },
     "dependencies": {
-        "@josemi-icons/react": "^0.6.1",
-        "@josemi-icons/svg": "^0.6.1",
-        "browser-fs-access": "^0.35.0",
-        "classnames": "^2.3.2",
-        "idb-keyval": "^6.2.1",
-        "lowcss": "^0.27.1",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-use": "^17.5.1",
-        "uid": "^2.0.2"
+        "react-dom": "^18.2.0"
     },
     "devDependencies": {
         "@babel/core": "^7.25.7",
@@ -50,6 +42,7 @@
         "html-webpack-plugin": "^5.6.3",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
+        "mini-css-extract-plugin": "^2.9.2",
         "picomatch": "^4.0.2",
         "react-test-renderer": "^18.2.0",
         "webpack": "^5.95.0",

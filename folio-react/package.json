@@ -1,0 +1,36 @@
+{
+    "name": "folio-react",
+    "version": "0.25.0",
+    "description": "A minimalistic digital whiteboard for sketching and prototyping",
+    "private": true,
+    "type": "module",
+    "homepage": "https://www.josemi.xyz/folio",
+    "repository": "https://github.com/jmjuanes/folio",
+    "author": "Josemi Juanes <hello@josemi.xyz>",
+    "bugs": "https://github.com/jmjuanes/folio/issues",
+    "main": "folio.js",
+    "exports": {
+        ".": "./folio.js",
+        "./folio.js": "./folio.js",
+        "./folio.css": "./folio.css",
+        "./package.json": "./package.json"
+    },
+    "peerDependencies": {
+        "react": ">=18",
+        "react-dom": ">=18"
+    },
+    "devDependencies": {
+        "@josemi-icons/react": "^0.6.1",
+        "browser-fs-access": "^0.35.0",
+        "classnames": "^2.3.2",
+        "react-use": "^17.5.1",
+        "uid": "^2.0.2"
+    },
+    "files": [
+        "README.md",
+        "package.json",
+        "folio.js",
+        "folio.css"
+    ],
+    "license": "MIT"
+}
