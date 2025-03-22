@@ -21,9 +21,6 @@ export default {
         library: {
             type: "module",
         },
-        // filename: "[name].[contenthash].js",
-        // chunkFilename: "[name].[contenthash].chunk.js",
-        // assetModuleFilename: "assets/[hash][ext][query]",
     },
     optimization: {
         minimize: true,
@@ -68,14 +65,6 @@ export default {
             },
             {
                 test: /\.(png|jpg|jpeg|svg)$/,
-                type: "asset/inline",
-            },
-            // {
-            //     test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-            //     type: "asset/inline",
-            // },
-            {
-                test: /resources\/stickers\/([\w-]+)\.svg$/,
                 type: "asset/inline",
             },
         ],
