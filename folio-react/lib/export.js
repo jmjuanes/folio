@@ -1,5 +1,4 @@
 import {renderToStaticMarkup} from "react-dom/server";
-import {fileSave} from "browser-fs-access";
 import {
     EXPORT_FORMATS,
     EXPORT_OFFSET,
