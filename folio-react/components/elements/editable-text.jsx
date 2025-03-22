@@ -9,7 +9,7 @@ export const EditableText = props => {
     const input = React.useRef(null);
     const width = Math.max(1, props.width);
     const height = Math.max(1, props.height);
-    const opacity = props.editing ? 1 : props.opacity;
+    const opacity = props.editing ? 1 : props.opacity ?? 1;
     const previewStyles = {
         width: props.width + "px",
         height: props.height + "px",
@@ -79,11 +79,4 @@ export const EditableText = props => {
             </foreignObject>
         </g>
     );
-};
-
-EditableText.defaultProps = {
-    autofocus: false,
-    editing: false,
-    placeholder: "",
-    opacity: 1,
 };

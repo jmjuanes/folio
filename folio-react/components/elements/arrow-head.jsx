@@ -55,6 +55,3 @@ export const Arrowhead = props => {
         />
     );
 };
-
-Arrowhead.defaultProps = {};
-
