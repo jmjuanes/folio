@@ -83,7 +83,7 @@ export {NoteElement} from "./components/elements/note.jsx";
 export {ShapeElement} from "./components/elements/shape.jsx";
 export {StickerElement} from "./components/elements/sticker.jsx";
 export {TextElement} from "./components/elements/text.jsx";
-export {ArrowHead} from "./components/elements/arrow-head.jsx";
+export {Arrowhead} from "./components/elements/arrow-head.jsx";
 export {EditableText} from "./components/elements/editable-text.jsx";
 
 export {Alert} from "./components/ui/alert.jsx";
