@@ -1,6 +1,6 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
-import {Editor} from "./components/editor.jsx";
+import {Editor} from "folio-react/components/editor.jsx";
 import {createLocalStore} from "./store/local.js";
 
 const App = () => {
