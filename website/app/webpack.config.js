@@ -5,7 +5,7 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import pkg from "../../package.json" with {type: "json"};
 
 export default {
-    mode: process.env.NODE_ENV || "development", // "production",
+    mode: process.env.NODE_ENV || "development",
     target: "web",
     entry: path.resolve("index.jsx"),
     output: {
@@ -13,7 +13,11 @@ export default {
         publicPath: "./",
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].chunk.js",
-        assetModuleFilename: "assets/[hash][ext][query]",
+    },
+    resolve: {
+        alias: {
+            "folio-react": path.resolve("../../folio-react/"),
+        },
     },
     optimization: {
         splitChunks: {
@@ -43,7 +47,8 @@ export default {
             {
                 test: /\.(js|jsx)$/,
                 include: [
-                    path.resolve("app"),
+                    path.resolve("."),
+                    path.resolve("../../folio-react"),
                 ],
                 exclude: /(node_modules|www)/,
                 loader: "babel-loader",
@@ -60,14 +65,6 @@ export default {
             },
             {
                 test: /\.(png|jpg|jpeg|svg)$/,
-                type: "asset/resource",
-            },
-            {
-                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-                type: "asset/resource",
-            },
-            {
-                test: /resources\/stickers\/([\w-]+)\.svg$/,
                 type: "asset/inline",
             },
         ],
