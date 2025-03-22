@@ -7,14 +7,14 @@ const App = () => {
     const store = React.useMemo(() => {
         return createLocalStore();
     }, []);
-
+    
     return (
-        <div className="fixed top-0 left-0 h-full w-full bg-white text-base flex">
-            <Editor store={store} />
-        </div>
+        <Editor store={store} />
     );
 };
 
 createRoot(document.getElementById("root")).render((
-    <App />
+    <div className="fixed top-0 left-0 h-full w-full bg-white text-base flex">
+        <App />
+    </div>
 ));
