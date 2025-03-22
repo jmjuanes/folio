@@ -1,6 +1,5 @@
 import React from "react";
 import {renderIcon, DrawingIcon, FolderIcon, ExternalLinkIcon, ExclamationTriangleIcon} from "@josemi-icons/react";
-import {themed} from "../../contexts/theme.jsx";
 import {Button} from "../ui/button.jsx";
 import {Centered} from "../ui/centered.jsx";
 import {Overlay} from "../ui/overlay.jsx";
