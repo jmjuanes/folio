@@ -1,8 +1,12 @@
 import React from "react";
-import {renderIcon, DrawingIcon, FolderIcon, ExternalLinkIcon, ExclamationTriangleIcon} from "@josemi-icons/react";
-import {Button} from "../ui/button.jsx";
-import {Centered} from "../ui/centered.jsx";
-import {Overlay} from "../ui/overlay.jsx";
+import {
+    renderIcon,
+    DrawingIcon,
+    FolderIcon,
+} from "@josemi-icons/react";
+import {Button} from "folio-react/components/ui/button.jsx";
+import {Centered} from "folio-react/components/ui/centered.jsx";
+import {Overlay} from "folio-react/components/ui/overlay.jsx";
 
 const defaultWelcomeFeatures = [
     {
@@ -31,7 +35,7 @@ export const WelcomeDialog = props => (
                     </div>
                 </div>
                 <div className="flex gap-2 w-full pb-6">
-                    {(props.features || []).map(feature => (
+                    {defaultWelcomeFeatures.map(feature => (
                         <div key={feature.title} className={themed("rounded-md p-4 w-full", "welcome.feature")}>
                             <div className={themed("text-3xl flex mb-1", "welcome.feature.icon")}>
                                 {renderIcon(feature.icon)}
@@ -66,7 +70,3 @@ export const WelcomeDialog = props => (
         </Centered>
     </React.Fragment>
 );
-
-WelcomeDialog.defaultProps = {
-    features: defaultWelcomeFeatures,
-};
