@@ -79,7 +79,7 @@ export default {
         }),
         new CopyWebpackPlugin({
             patterns: [
-                path.resolve("node_modules/lowcss/low.css"),
+                path.resolve("../../node_modules/lowcss/low.css"),
             ],
         }),
         new HtmlWebpackPlugin({
