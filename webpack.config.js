@@ -40,8 +40,9 @@ export default {
     externals: {
         byLayer: {
             "folio-react": {
-                "react": "React",
-                "react-dom": "ReactDOM",
+                "react": "react",
+                "react-dom": "react-dom",
+                "react-dom/server": "react-dom/server",
             },
         },
     },
