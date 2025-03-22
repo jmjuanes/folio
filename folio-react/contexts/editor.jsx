@@ -1,6 +1,6 @@
 import React from "react";
 import {useMount, useDebounce} from "react-use";
-import {createEditor} from "../editor.js";
+import {createEditor} from "../lib/editor.js";
 import {createMemoryStore} from "../store/memory.js";
 import {Loading} from "../components/loading.jsx";
 

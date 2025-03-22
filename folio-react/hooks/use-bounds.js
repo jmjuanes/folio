@@ -1,6 +1,6 @@
 import {TOOLS} from "../constants.js";
 import {getRectanglePath} from "../utils/paths.js";
-import {getElementConfig, getElementsBounds} from "../elements.js";
+import {getElementConfig, getElementsBounds} from "../lib/elements.js";
 import {useEditor} from "../contexts/editor.jsx";
 
 export const useBounds = () => {

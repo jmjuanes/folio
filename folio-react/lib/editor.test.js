@@ -1,6 +1,6 @@
 import {jest} from "@jest/globals";
 
-jest.unstable_mockModule("../elements.js", () => ({
+jest.unstable_mockModule("./elements.js", () => ({
     getElementConfig: () => null,
     createElement: () => ({
         id: ""
@@ -9,13 +9,13 @@ jest.unstable_mockModule("../elements.js", () => ({
     measureTextInElement: jest.fn(),
     getElementDisplayName: jest.fn(),
 }));
-jest.unstable_mockModule("../export.js", () => ({
+jest.unstable_mockModule("./export.js", () => ({
     exportToDataURL: jest.fn(),
 }));
-jest.unstable_mockModule("../migrate.js", () => ({
+jest.unstable_mockModule("./migrate.js", () => ({
     migrateElements: jest.fn(),
 }));
-jest.unstable_mockModule("../library.js", () => ({
+jest.unstable_mockModule("./library.js", () => ({
     getLibraryStateFromInitialData: jest.fn(),
     createLibraryItem: jest.fn(),
 }));
@@ -28,7 +28,7 @@ jest.unstable_mockModule("uid/secure", () => ({
     uid: () => "id" + Math.floor(Math.random() * 1000).toString(6),
 }));
 
-const {createEditor} = await import("../editor.js");
+const {createEditor} = await import("./editor.js");
 
 describe("editor", () => {
     let editor = null;

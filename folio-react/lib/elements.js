@@ -26,7 +26,7 @@ import {
     STICKER_WIDTH,
     STICKER_HEIGHT,
     ARROW_SHAPES,
-} from "./constants.js";
+} from "../constants.js";
 import {
     sign,
     hypotenuse,
@@ -36,8 +36,8 @@ import {
     getPointInQuadraticCurve,
     getPointsBounds,
     getRectangleBounds,
-} from "./utils/math.js";
-import {getCurvePath, getConnectorPath} from "./utils/paths.js";
+} from "../utils/math.js";
+import {getCurvePath, getConnectorPath} from "../utils/paths.js";
 import {isCornerHandler} from "./handlers.js";
 
 // Generate default handlers

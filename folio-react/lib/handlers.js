@@ -1,4 +1,4 @@
-import {HANDLERS} from "./constants.js";
+import {HANDLERS} from "../constants.js";
 
 export const isCornerHandler = handler => {
     return handler.startsWith("corner");

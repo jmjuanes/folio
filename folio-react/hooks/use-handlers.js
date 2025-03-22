@@ -1,5 +1,5 @@
 import {TOOLS} from "../constants.js";
-import {getElementConfig} from "../elements.js";
+import {getElementConfig} from "../lib/elements.js";
 import {useEditor} from "../contexts/editor.jsx";
 
 export const useHandlers = () => {

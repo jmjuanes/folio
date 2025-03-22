@@ -7,10 +7,10 @@ import {
     TRANSPARENT,
     FILE_EXTENSIONS,
     FONT_SOURCES,
-} from "./constants.js";
-import {renderStaticElement} from "./components/elements/index.jsx";
-import {blobToFile, blobToClipboard, blobToDataUrl} from "./utils/blob.js";
-import {getRectangleBounds} from "./utils/math.js";
+} from "../constants.js";
+import {renderStaticElement} from "../components/elements/index.jsx";
+import {blobToFile, blobToClipboard, blobToDataUrl} from "../utils/blob.js";
+import {getRectangleBounds} from "../utils/math.js";
 import {getElementConfig} from "./elements.js";
 import {getFontsCss} from "./fonts.js";
 

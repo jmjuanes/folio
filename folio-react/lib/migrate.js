@@ -19,10 +19,10 @@ import {
     ASSETS,
     MIME_TYPES,
     ARROW_SHAPES,
-} from "./constants.js";
-import {BACKGROUND_COLORS} from "./utils/colors.js";
-import {measureText} from "./utils/math.js";
-import {loadImage} from "./utils/image.js";
+} from "../constants.js";
+import {BACKGROUND_COLORS} from "../utils/colors.js";
+import {measureText} from "../utils/math.js";
+import {loadImage} from "../utils/image.js";
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map((element, index) => {

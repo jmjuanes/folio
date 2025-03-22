@@ -22,7 +22,7 @@ import {
     createElement,
     getElementsSnappingEdges,
     getElementSnappingPoints,
-} from "../elements.js";
+} from "../lib/elements.js";
 import {useEditor} from "../contexts/editor.jsx";
 import {useContextMenu} from "../contexts/context-menu.jsx";
 

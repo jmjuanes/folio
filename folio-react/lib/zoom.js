@@ -1,5 +1,5 @@
-import {ZOOM_MAX, ZOOM_MIN} from "./constants.js";
-import {getRectangleBounds} from "./utils/math.js";
+import {ZOOM_MAX, ZOOM_MIN} from "../constants.js";
+import {getRectangleBounds} from "../utils/math.js";
 
 export const parseZoomValue = value => {
     return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, value));

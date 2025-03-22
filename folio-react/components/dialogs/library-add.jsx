@@ -5,7 +5,7 @@ import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
 import {useEditor} from "../../contexts/editor.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
-import {getLibraryItemThumbnail} from "../../library.js";
+import {getLibraryItemThumbnail} from "../../lib/library.js";
 
 // Tiny hook to generate the thumbnail for the library item
 const useLibraryItemThumbnail = (elements, scale = 1) => {

@@ -5,7 +5,7 @@ import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
 import {useConfirm} from "../../contexts/confirm.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
-import {saveAsJson, loadFromJson} from "../../json.js";
+import {saveAsJson, loadFromJson} from "../../lib/json.js";
 
 // @private menu link component
 const MenuLinkItem = props => (

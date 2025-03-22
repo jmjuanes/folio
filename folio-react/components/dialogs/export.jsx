@@ -1,7 +1,7 @@
 import React from "react";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
 import {EXPORT_FORMATS, EXPORT_PADDING, FORM_OPTIONS, TRANSPARENT} from "../../constants.js";
-import {exportToDataURL, exportToFile, exportToClipboard} from "../../export.js";
+import {exportToDataURL, exportToFile, exportToClipboard} from "../../lib/export.js";
 import {Button} from "../ui/button.jsx";
 import {Form} from "../form/index.jsx";
 import {useEditor} from "../../contexts/editor.jsx";

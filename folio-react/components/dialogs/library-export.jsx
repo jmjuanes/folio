@@ -6,7 +6,7 @@ import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
 import {useDialog} from "../../contexts/dialogs.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
-import {saveLibraryAsJson} from "../../library.js";
+import {saveLibraryAsJson} from "../../lib/library.js";
 
 // @description library items grid
 const LibraryItemsGrid = ({items, selectedItems, onChange}) => {

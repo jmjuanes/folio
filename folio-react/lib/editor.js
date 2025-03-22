@@ -10,17 +10,17 @@ import {
     ASSETS,
     VERSION,
     TOOLS,
-} from "./constants.js";
-import {BACKGROUND_COLORS} from "./utils/colors.js";
-import {loadImage} from "./utils/image.js";
-import {isLink, getLinkMetadata} from "./utils/link.js";
-import {getRectangleBounds} from "./utils/math.js";
+} from "../constants.js";
+import {BACKGROUND_COLORS} from "../utils/colors.js";
+import {loadImage} from "../utils/image.js";
+import {isLink, getLinkMetadata} from "../utils/link.js";
+import {getRectangleBounds} from "../utils/math.js";
 import {
     getTextFromClipboard,
     copyTextToClipboard,
     getTextFromClipboardItem,
     getBlobFromClipboardItem,
-} from "./utils/clipboard.js";
+} from "../utils/clipboard.js";
 import {
     getElementConfig,
     createElement,

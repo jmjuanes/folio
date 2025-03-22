@@ -21,7 +21,7 @@ import {
     WidthSmallIcon,
 } from "../components/icons.jsx";
 import {useEditor} from "../contexts/editor.jsx";
-import {getStickerImage} from "../stickers.js";
+import {getStickerImage} from "../lib/stickers.js";
 import {blobToDataUrl} from "../utils/blob.js";
 
 // @description use tools list

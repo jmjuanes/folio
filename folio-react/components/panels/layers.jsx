@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import {CloseIcon} from "@josemi-icons/react";
 import {useEditor} from "../../contexts/editor.jsx";
-import {exportToDataURL} from "../../export.js";
+import {exportToDataURL} from "../../lib/export.js";
 import {FIELDS, TOOLS, TRANSPARENT} from "../../constants.js";
 
 // Layers preview variables

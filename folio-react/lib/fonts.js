@@ -1,4 +1,4 @@
-import {blobToDataUrl} from "./utils/blob.js";
+import {blobToDataUrl} from "../utils/blob.js";
 
 // we keep a cache of the imported fonts to avoid fetching them multiple times
 const fontsCache = {};

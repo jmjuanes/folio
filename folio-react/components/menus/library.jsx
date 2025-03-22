@@ -5,7 +5,7 @@ import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
 import {useConfirm} from "../../contexts/confirm.jsx";
-import {loadLibraryFromJson} from "../../library.js";
+import {loadLibraryFromJson} from "../../lib/library.js";
 import {clearFocus} from "../../utils/dom.js";
 
 // @description display an empty library message

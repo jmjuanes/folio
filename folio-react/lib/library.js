@@ -7,11 +7,11 @@ import {
     LIBRARY_THUMBNAIL_BACKGROUND,
     LIBRARY_THUMBNAIL_HEIGHT,
     LIBRARY_THUMBNAIL_WIDTH,
-} from "./constants.js";
+} from "../constants.js";
 import {exportToDataURL} from "./export.js";
 import {getElementsBounds} from "./elements.js";
 import {migrateElements} from "./migrate.js";
-import {blobToText} from "./utils/blob.js";
+import {blobToText} from "../utils/blob.js";
 
 // @description generate a random id for the library
 // @returns {string} libraryId an unique identifier for a library item

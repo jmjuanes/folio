@@ -1,6 +1,6 @@
 import React from "react";
 import {FIELDS, STICKER_WIDTH, STICKER_HEIGHT} from "../../constants.js";
-import {getStickerImage} from "../../stickers.js";
+import {getStickerImage} from "../../lib/stickers.js";
 
 export const StickerElement = props => {
     const x = props.creating ? (props.x1 - STICKER_WIDTH / 2) : Math.min(props.x1, props.x2);

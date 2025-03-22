@@ -1,7 +1,7 @@
 import React from "react";
 import {EXPORT_PADDING} from "../constants.js";
 import {useEditor} from "../contexts/editor.jsx";
-import {exportToDataURL} from "../export.js";
+import {exportToDataURL} from "../lib/export.js";
 
 export const PAGE_PREVIEW_WIDTH = 140;
 export const PAGE_PREVIEW_HEIGHT = 80;

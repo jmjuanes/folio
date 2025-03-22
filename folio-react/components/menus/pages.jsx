@@ -8,7 +8,7 @@ import {useEditor} from "../../contexts/editor.jsx";
 import {useConfirm} from "../../contexts/confirm.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
 import {themed} from "../../contexts/theme.jsx";
-import {exportToDataURL} from "../../export.js";
+import {exportToDataURL} from "../../lib/export.js";
 import {EXPORT_PADDING} from "../../constants.js";
 import {clearFocus} from "../../utils/dom.js";
 
