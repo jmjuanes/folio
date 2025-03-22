@@ -1,6 +1,6 @@
 import {jest} from "@jest/globals";
 
-jest.unstable_mockModule("./elements.js", () => ({
+jest.unstable_mockModule("../lib/elements.js", () => ({
     getElementConfig: () => null,
     createElement: () => ({
         id: ""
@@ -9,13 +9,13 @@ jest.unstable_mockModule("./elements.js", () => ({
     measureTextInElement: jest.fn(),
     getElementDisplayName: jest.fn(),
 }));
-jest.unstable_mockModule("./export.js", () => ({
+jest.unstable_mockModule("../lib/export.js", () => ({
     exportToDataURL: jest.fn(),
 }));
-jest.unstable_mockModule("./migrate.js", () => ({
+jest.unstable_mockModule("../lib/migrate.js", () => ({
     migrateElements: jest.fn(),
 }));
-jest.unstable_mockModule("./library.js", () => ({
+jest.unstable_mockModule("../lib/library.js", () => ({
     getLibraryStateFromInitialData: jest.fn(),
     createLibraryItem: jest.fn(),
 }));
