@@ -1,7 +1,7 @@
 import React from "react";
 import {CURSORS, HANDLERS, HANDLERS_FILL_COLOR, HANDLERS_STROKE_COLOR} from "../constants.js";
-import {isCornerHandler, isEdgeHandler, isNodeHandler} from "../handlers.js";
-import {isVerticalEdgeHandler, isHorizontalEdgeHandler} from "../handlers.js";
+import {isCornerHandler, isEdgeHandler, isNodeHandler} from "../lib/handlers.js";
+import {isVerticalEdgeHandler, isHorizontalEdgeHandler} from "../lib/handlers.js";
 import {SvgContainer} from "./svg.jsx";
 
 const cursorsByHandlerType = {
