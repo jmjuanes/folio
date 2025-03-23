@@ -66,7 +66,7 @@ export const Welcome = () => {
                     </div>
                     <div className="flex gap-2 w-full pb-6">
                         {defaultWelcomeFeatures.map(feature => (
-                            <div key={feature.title} className="rounded-md p-4 w-full">
+                            <div key={feature.title} className="rounded-md p-4 w-full bg-neutral-100">
                                 <div className="text-3xl flex mb-1">
                                     {renderIcon(feature.icon)}
                                 </div>
@@ -93,7 +93,7 @@ export const Welcome = () => {
                             <div className="font-medium">Load from file</div>
                         </Button>
                     </div>
-                    <div className="text-center text-xs select-none">
+                    <div className="text-center text-xs text-neutral-600 select-none">
                         <span><b>folio</b> v{process.env.VERSION}</span> 
                     </div>
                 </div>
