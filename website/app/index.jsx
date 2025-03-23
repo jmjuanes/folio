@@ -1,6 +1,7 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {Editor} from "folio-react/components/editor.jsx";
+import {WelcomeDialog} from "./components/welcome.jsx";
 import {createLocalStore} from "./store/local.js";
 
 const App = () => {
@@ -9,7 +10,12 @@ const App = () => {
     }, []);
     
     return (
-        <Editor store={store} />
+        <Editor
+            store={store}
+            components={{
+                OverTheCanvas: WelcomeDialog,
+            }}
+        />
     );
 };
 
