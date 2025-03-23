@@ -4,23 +4,20 @@ import {Editor} from "folio-react/components/editor.jsx";
 import {Welcome} from "./components/welcome.jsx";
 import {createLocalStore} from "./store/local.js";
 
-const App = () => {
-    const store = React.useMemo(() => {
-        return createLocalStore();
-    }, []);
-    
-    return (
-        <Editor
-            store={store}
-            components={{
-                OverTheCanvas: Welcome,
-            }}
-        />
-    );
+// 1. create a new instance of the local store
+const store = createLocalStore();
+
+// 2. components overrides
+const componentsOverrides = {
+    OverTheCanvas: Welcome,
 };
 
+// 3. render the folio app
 createRoot(document.getElementById("root")).render((
     <div className="fixed top-0 left-0 h-full w-full bg-white text-base flex">
-        <App />
+        <Editor
+            store={store}
+            components={componentsOverrides}
+        />
     </div>
 ));
