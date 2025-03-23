@@ -24,7 +24,11 @@ const InnerEditor = () => {
     const handlers = useHandlers();
     const dimensions = useDimensions();
     const {showContextMenu} = useContextMenu();
-    const {Layout} = useEditorComponents();
+    const {
+        Layout,
+        BehindTheCanvas,
+        OverTheCanvas,
+    } = useEditorComponents();
 
     // used to track the current page id
     const currentPageId = React.useRef(editor.page.id);
@@ -62,6 +66,9 @@ const InnerEditor = () => {
 
     return (
         <Layout>
+            {!!BehindTheCanvas && (
+                <BehindTheCanvas />
+            )}
             <Canvas
                 id={editor.id}
                 elements={editor.page.elements}
@@ -86,6 +93,9 @@ const InnerEditor = () => {
                 onResize={handleResize}
                 {...events}
             />
+            {!!OverTheCanvas && (
+                <OverTheCanvas />
+            )}
             {editor.state.tool === TOOLS.POINTER && (
                 <Pointer />
             )}
