@@ -1,6 +1,6 @@
 import * as idb from "idb-keyval";
-import {VERSION} from "folio-react";
-import {migrate} from "folio-react";
+import {VERSION} from "folio-react/constants.js";
+import {migrate} from "folio-react/lib/migrate.js";
 
 // @private internal store version
 const STORE_VERSION = "1";

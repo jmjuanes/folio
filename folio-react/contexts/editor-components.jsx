@@ -57,6 +57,10 @@ export const EditorComponentsProvider = ({components = {}, children}) => {
             ZoomPanel: ZoomPanel,
             Toolbar: ToolbarPanel,
             Layers: LayersPanel,
+            // canvas
+            BehindTheCanvas: null,
+            OverTheCanvas: null,
+            // overrides
             ...components,
         };
     }, [components]);
