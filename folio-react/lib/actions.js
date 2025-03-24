@@ -23,7 +23,10 @@ export const shortcutsMap = {
     [ACTIONS.CLEAR]: getShortcutKey("CtrlOrCmd+Shift+Delete"),
 
     [ACTIONS.SELECT_ALL]: getShortcutKey("CtrlOrCmd+A"),
-    [ACTIONS.DELETE_SELECTION]: getShortcutKey("Delete"),
+    [ACTIONS.DELETE_SELECTION]: [
+        getShortcutKey("Delete"),
+        getShortcutKey("Backspace"),
+    ],
     [ACTIONS.DUPLICATE_SELECTION]: getShortcutKey("CtrlOrCmd+D"),
     [ACTIONS.GROUP_SELECTION]: getShortcutKey("CtrlOrCmd+G"),
     [ACTIONS.UNGROUP_SELECTION]: getShortcutKey("CtrlOrCmd+Shift+G"),
@@ -64,6 +67,8 @@ export const getActionByKeysCombination = (key = "", shiftKey = false, ctrlKey =
     const shortcut = shortcutCommand.filter(Boolean).join("+");
     // find the action name by the shortcut
     return Object.keys(shortcutsMap).find(actionName => {
-        return shortcutsMap[actionName] === shortcut;
+        return [shortcutsMap[actionName]].flat().some(shortcutKey => {
+            return shortcutKey === shortcut || shortcutKey.toUpperCase() === shortcut;
+        });
     });
 };
