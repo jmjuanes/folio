@@ -1,5 +1,5 @@
 import React from "react";
-import {ACTIONS} from "../constants.js";
+import {ACTIONS, ZOOM_STEP} from "../constants.js";
 import {useEditor} from "../contexts/editor.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {useDialog} from "../contexts/dialogs.jsx";
@@ -63,6 +63,26 @@ export const useActions = () => {
             [ACTIONS.REDO]: () => {
                 editor.redo();
                 editor.dispatchChange();
+                editor.update();
+            },
+            [ACTIONS.ZOOM_IN]: () => {
+                editor.setZoom(editor.getZoom() + ZOOM_STEP);
+                editor.update();
+            },
+            [ACTIONS.ZOOM_OUT]: () => {
+                editor.setZoom(editor.getZoom() - ZOOM_STEP);
+                editor.update();
+            },
+            [ACTIONS.ZOOM_RESET]: () => {
+                editor.resetZoom();
+                editor.update();
+            },
+            [ACTIONS.ZOOM_FIT]: () => {
+                editor.fitZoomToSelection();
+                editor.update();
+            },
+            [ACTIONS.ZOOM_FIT_SELECTION]: () => {
+                editor.fitZoomToSelection(editor.getSelection());
                 editor.update();
             },
         };

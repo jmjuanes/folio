@@ -516,5 +516,5 @@ export const ACTIONS = {
     ZOOM_OUT: "zoom-out",
     ZOOM_RESET: "zoom-reset",
     ZOOM_FIT: "zoom-fit",
-    ZOOM_SELECTION: "zoom-selection",
+    ZOOM_FIT_SELECTION: "zoom-fit-selection",
 };

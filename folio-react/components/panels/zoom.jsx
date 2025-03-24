@@ -1,8 +1,9 @@
 import React from "react";
-import {ZOOM_MIN, ZOOM_MAX, ZOOM_STEP} from "../../constants.js";
+import {ACTIONS, ZOOM_MIN, ZOOM_MAX} from "../../constants.js";
 import {Island} from "../ui/island.jsx";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
+import {useActions} from "../../hooks/use-actions.js";
 
 const ZoomDropdownItem = props => (
     <Dropdown.Item disabled={props.disabled} onClick={props.onClick}>
@@ -13,6 +14,7 @@ const ZoomDropdownItem = props => (
 
 export const ZoomPanel = () => {
     const editor = useEditor();
+    const dispatchAction = useActions();
     const zoom = editor.getZoom();
     const selection = editor.getSelection();
     return (
@@ -21,8 +23,7 @@ export const ZoomPanel = () => {
                 icon="zoom-out"
                 disabled={zoom <= ZOOM_MIN}
                 onClick={() => {
-                    editor.setZoom(zoom - ZOOM_STEP);
-                    editor.update();
+                    dispatchAction(ACTIONS.ZOOM_OUT);
                 }}
             />
             <div className="flex items-center justify-center w-16 h-full select-none relative group" tabIndex="0">
@@ -41,8 +42,7 @@ export const ZoomPanel = () => {
                         text="Zoom to 100%"
                         disabled={zoom === 1}
                         onClick={() => {
-                            editor.resetZoom();
-                            editor.update();
+                            dispatchAction(ACTIONS.ZOOM_RESET);
                         }}
                     />
                     <ZoomDropdownItem
@@ -50,8 +50,7 @@ export const ZoomPanel = () => {
                         text="Zoom to fit"
                         disabled={editor.page.elements.length === 0}
                         onClick={() => {
-                            editor.fitZoomToSelection();
-                            editor.update();
+                            dispatchAction(ACTIONS.ZOOM_FIT);
                         }}
                     />
                     <ZoomDropdownItem
@@ -59,8 +58,7 @@ export const ZoomPanel = () => {
                         text="Zoom to selection"
                         disabled={selection.length === 0}
                         onClick={() => {
-                            editor.fitZoomToSelection(selection);
-                            editor.update();
+                            dispatchAction(ACTIONS.ZOOM_FIT_SELECTION);
                         }}
                     />
                 </Dropdown>
@@ -69,8 +67,7 @@ export const ZoomPanel = () => {
                 icon="zoom-in"
                 disabled={ZOOM_MAX <= zoom}
                 onClick={() => {
-                    editor.setZoom(zoom + ZOOM_STEP);
-                    editor.update();
+                    dispatchAction(ACTIONS.ZOOM_IN);
                 }}
             />
         </Island>

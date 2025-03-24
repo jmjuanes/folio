@@ -38,7 +38,7 @@ export const shortcutsMap = {
     [ACTIONS.ZOOM_OUT]: getShortcutKey("CtrlOrCmd+-"),
     [ACTIONS.ZOOM_RESET]: getShortcutKey("CtrlOrCmd+0"),
     [ACTIONS.ZOOM_FIT]: getShortcutKey("CtrlOrCmd+1"),
-    [ACTIONS.ZOOM_SELECTION]: getShortcutKey("CtrlOrCmd+2"),
+    [ACTIONS.ZOOM_FIT_SELECTION]: getShortcutKey("CtrlOrCmd+2"),
 };
 
 // @description get shortcut key for the provided action
