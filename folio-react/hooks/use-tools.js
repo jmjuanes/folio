@@ -257,3 +257,14 @@ export const useTools = () => {
         },
     }), []);
 };
+
+// @description get tool by the provided shortcut
+// @param {Array} tools - tools list
+// @param {string} shortcut - shortcut key
+// @returns {object} - tool configuration
+export const getToolByShortcut = (tools, shortcut = "") => {
+    const uppercaseShortcut = shortcut.toUpperCase();
+    return Object.values(tools).find(tool => {
+        return !!tool?.keyboardShortcut && tool.keyboardShortcut.toUpperCase() === uppercaseShortcut;
+    });
+};

@@ -27,6 +27,7 @@ import {
 import {useEditor} from "../contexts/editor.jsx";
 import {useContextMenu} from "../contexts/context-menu.jsx";
 import {useActions} from "./use-actions.js";
+import {useTools, getToolByShortcut} from "./use-tools.js";
 import {getActionByKeysCombination} from "../lib/actions.js";
 
 // internal list with all elements
@@ -41,8 +42,9 @@ const isElementTool = toolName => {
 export const useEvents = () => {
     const update = useUpdate();
     const {hideContextMenu} = useContextMenu();
-    const dispatchAction = useActions();
     const editor = useEditor();
+    const tools = useTools();
+    const dispatchAction = useActions();
 
     return React.useMemo(() => {
         let snapshot = [];
@@ -611,7 +613,13 @@ export const useEvents = () => {
                     return dispatchAction(action);
                 }
                 // 2. check if this combination is a tool shortcut
-                // TODO: implement tool shortcuts
+                if (!isCtrlKey && !event.shiftKey) {
+                    const tool = getToolByShortcut(tools, event.key);
+                    if (tool) {
+                        event.preventDefault();
+                        tool.onSelect();
+                    }
+                }
             }
         };
 
@@ -678,5 +686,5 @@ export const useEvents = () => {
             onPaste,
         };
 
-    }, [editor, update, hideContextMenu]);
+    }, [editor, update, hideContextMenu, tools]);
 };
