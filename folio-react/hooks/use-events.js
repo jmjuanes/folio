@@ -548,10 +548,6 @@ export const useEvents = () => {
                     update();
                 }
             }
-            // else if (event.key === KEYS.BACKSPACE) {
-            //     event.preventDefault();
-            //     dispatchAction(ACTIONS.DELETE_SELECTION);
-            // }
             // Check ESCAPE key
             else if (event.key === KEYS.ESCAPE) {
                 // if (editor.state.action === ACTIONS.SCREENSHOT) {
