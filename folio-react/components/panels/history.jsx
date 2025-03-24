@@ -1,10 +1,13 @@
 import React from "react";
+import {ACTIONS} from "../../constants.js";
 import {useEditor} from "../../contexts/editor.jsx";
+import {useActions} from "../../hooks/use-actions.js";
 import {Island} from "../ui/island.jsx";
 
 // History panel component
 export const HistoryPanel = () => {
     const editor = useEditor();
+    const dispatchAction = useActions();
     return (
         <Island>
             <Island.Button
@@ -12,9 +15,7 @@ export const HistoryPanel = () => {
                 roundedEnd={false}
                 disabled={editor.page.readonly || !editor.canUndo()}
                 onClick={() => {
-                    editor.undo();
-                    editor.dispatchChange();
-                    editor.update();
+                    dispatchAction(ACTIONS.UNDO);
                 }}
             />
             <Island.Button
@@ -22,9 +23,7 @@ export const HistoryPanel = () => {
                 roundedStart={false}
                 disabled={editor.page.readonly || !editor.canRedo()}
                 onClick={() => {
-                    editor.redo();
-                    editor.dispatchChange();
-                    editor.update();
+                    dispatchAction(ACTIONS.REDO);
                 }}
             />
         </Island>
