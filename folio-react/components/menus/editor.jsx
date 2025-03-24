@@ -1,11 +1,11 @@
 import React from "react";
 import classnames from "classnames";
+import {ACTIONS} from "../../constants.js";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
-import {useConfirm} from "../../contexts/confirm.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
-import {saveAsJson, loadFromJson} from "../../lib/json.js";
+import {useActions} from "../../hooks/use-actions.js";
 
 // @private menu link component
 const MenuLinkItem = props => (
@@ -25,48 +25,10 @@ const MenuDropdownItem = props => (
 
 // @description export main editor menu
 export const EditorMenu = () => {
-    const {showConfirm} = useConfirm();
     const {showDialog} = useDialog();
+    const dispatchAction = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
-
-    // handle loading new data
-    const handleLoad = React.useCallback(() => {
-        const loadDrawing = () => {
-            return loadFromJson()
-                .then(data => {
-                    editor.fromJSON(data);
-                    // editor.state.welcomeVisible = false;
-                    editor.dispatchChange();
-                    editor.update();
-                })
-                .catch(error => console.error(error));
-        };
-        // Check if editor is empty
-        if (editor.pages.length === 1 && editor.page.elements.length === 0) {
-            return loadDrawing();
-        }
-        // If is not empty, display confirmation
-        return showConfirm({
-            title: "Load new drawing",
-            message: "Changes made in this drawing will be lost. Do you want to continue?",
-            callback: () => loadDrawing(),
-        });
-    }, []);
-
-    // handle clear
-    const handleClear = React.useCallback(() => {
-        return showConfirm({
-            title: "Delete all data",
-            message: "This will delete all the information of this board, including all pages and drawings. Do you want to continue?",
-            confirmText: "Yes, delete all data",
-            callback: () => {
-                editor.reset();
-                editor.dispatchChange();
-                editor.update();
-            },
-        });
-    }, []);
 
     return (
         <div className="flex relative group" tabIndex="0">
@@ -75,15 +37,15 @@ export const EditorMenu = () => {
                 <MenuDropdownItem
                     icon="folder"
                     text="Open..."
-                    onClick={handleLoad}
+                    onClick={() => {
+                        dispatchAction(ACTIONS.OPEN);
+                    }}
                 />
                 <MenuDropdownItem
                     icon="download"
                     text="Save a copy"
                     onClick={() => {
-                        saveAsJson(editor.toJSON())
-                            .then(() => console.log("Folio file saved"))
-                            .catch(error => console.error(error));
+                        dispatchAction(ACTIONS.SAVE);
                     }}
                 />
                 <MenuDropdownItem
@@ -94,7 +56,7 @@ export const EditorMenu = () => {
                         "pointer-events-none": elements.length === 0,
                     })}
                     onClick={() => {
-                        showDialog("export", {elements});
+                        dispatchAction(ACTIONS.EXPORT_IMAGE, {elements});
                     }}
                 />
                 <MenuDropdownItem
@@ -104,7 +66,9 @@ export const EditorMenu = () => {
                     className={classnames({
                         "pointer-events-none": elements.length === 0,
                     })}
-                    onClick={handleClear}
+                    onClick={() => {
+                        dispatchAction(ACTIONS.CLEAR);
+                    }}
                 />
                 <Dropdown.Separator />
                 <MenuDropdownItem
