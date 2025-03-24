@@ -85,6 +85,114 @@ export const useActions = () => {
                 editor.fitZoomToSelection(editor.getSelection());
                 editor.update();
             },
+            [ACTIONS.SELECT_ALL]: () => {
+                editor.getElements().forEach(el => el.selected = true);
+                editor.update();
+            },
+            [ACTIONS.DELETE_SELECTION]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.removeElements(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.DUPLICATE_SELECTION]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.duplicateElements(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.LOCK_SELECTION]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.lockElements(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.UNLOCK_SELECTION]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.unlockElements(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.GROUP_SELECTION]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 1) {
+                    editor.groupElements(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.UNGROUP_SELECTION]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.ungroupElements(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.BRING_FORWARD]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.bringElementsForward(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.BRING_TO_FRONT]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.bringElementsToFront(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.SEND_BACKWARD]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.sendElementsBackward(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.SEND_TO_BACK]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.sendElementsToBack(selectedElements);
+                    editor.dispatchChange();
+                    editor.update();
+                }
+            },
+            [ACTIONS.CUT]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.cutElementsToClipboard(selectedElements).then(() => {
+                        editor.dispatchChange();
+                        editor.update();
+                    });
+                }
+            },
+            [ACTIONS.COPY]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    editor.copyElementsToClipboard(selectedElements).then(() => {
+                        editor.dispatchChange();
+                        editor.update();
+                    });
+                }
+            },
+            [ACTIONS.PASTE]: ({event = null, position = null}) => {
+                editor.pasteElementsFromClipboard(event, position).then(() => {
+                    editor.dispatchChange();
+                    editor.update();
+                });
+            },
         };
     }, [editor, showConfirm, showDialog]);
 

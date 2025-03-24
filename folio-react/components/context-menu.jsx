@@ -1,9 +1,10 @@
 import React from "react";
-import {ELEMENTS} from "../constants.js";
+import {ACTIONS, ELEMENTS} from "../constants.js";
 import {ContextMenu as Menu} from "./ui/context-menu.jsx";
 import {useEditor} from "../contexts/editor.jsx";
 import {useContextMenu} from "../contexts/context-menu.jsx";
 import {useDialog} from "../contexts/dialogs.jsx";
+import {useActions} from "../hooks/use-actions.js";
 
 // Not allowed elements in library
 const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
@@ -28,6 +29,7 @@ const ContextMenuItem = props => (
 // @param {number} props.left Left position of the context menu
 export const ContextMenu = props => {
     const editor = useEditor();
+    const dispatchAction = useActions();
     const {hideContextMenu} = useContextMenu();
     const {showDialog} = useDialog();
     const selectedElements = editor.getSelection();
@@ -54,8 +56,7 @@ export const ContextMenu = props => {
                         icon="copy"
                         text="Duplicate"
                         onClick={() => {
-                            editor.duplicateElements(selectedElements);
-                            editor.dispatchChange();
+                            dispatchAction(ACTIONS.DUPLICATE_SELECTION);
                             hideContextMenu();
                         }}
                     />
@@ -64,9 +65,7 @@ export const ContextMenu = props => {
                             icon="lock"
                             text="Lock"
                             onClick={() => {
-                                editor.lockElements(selectedElements);
-                                editor.dispatchChange();
-                                editor.update();
+                                dispatchAction(ACTIONS.LOCK_SELECTION);
                             }}
                         />
                     )}
@@ -75,9 +74,7 @@ export const ContextMenu = props => {
                             icon="unlock"
                             text="Unlock"
                             onClick={() => {
-                                editor.unlockElements(selectedElements);
-                                editor.dispatchChange();
-                                editor.update();
+                                dispatchAction(ACTIONS.UNLOCK_SELECTION);
                             }}
                         />
                     )}
@@ -88,9 +85,7 @@ export const ContextMenu = props => {
                                     icon="object-group"
                                     text="Group"
                                     onClick={() => {
-                                        editor.groupElements(selectedElements);
-                                        editor.dispatchChange();
-                                        editor.update();
+                                        dispatchAction(ACTIONS.GROUP_SELECTION);
                                     }}
                                 />
                             )}
@@ -99,9 +94,7 @@ export const ContextMenu = props => {
                                     icon="object-ungroup"
                                     text="Ungroup"
                                     onClick={() => {
-                                        editor.ungroupElements(selectedElements);
-                                        editor.dispatchChange();
-                                        editor.update();
+                                        dispatchAction(ACTIONS.UNGROUP_SELECTION);
                                     }}
                                 />
                             )}
@@ -130,20 +123,16 @@ export const ContextMenu = props => {
                         icon="cut"
                         text="Cut"
                         onClick={() => {
-                            editor.cutElementsToClipboard(selectedElements).then(() => {
-                                editor.dispatchChange();
-                                hideContextMenu();
-                            });
+                            dispatchAction(ACTIONS.CUT);
+                            hideContextMenu();
                         }}
                     />
                     <ContextMenuItem
                         icon="copy"
                         text="Copy"
                         onClick={() => {
-                            editor.copyElementsToClipboard(selectedElements).then(() => {
-                                editor.dispatchChange();
-                                hideContextMenu();
-                            });
+                            dispatchAction(ACTIONS.COPY);
+                            hideContextMenu();
                         }}
                     />
                 </React.Fragment>
@@ -152,10 +141,8 @@ export const ContextMenu = props => {
                 icon="clipboard"
                 text="Paste"
                 onClick={() => {
-                    editor.pasteElementsFromClipboard(null, {x: props.left, y: props.top}).then(() => {
-                        editor.dispatchChange();
-                        hideContextMenu();
-                    });
+                    dispatchAction(ACTIONS.PASTE, {x: props.left, y: props.top});
+                    hideContextMenu();
                 }}
             />
             {selectedElements.length > 0 && (
@@ -165,18 +152,14 @@ export const ContextMenu = props => {
                         icon="send-backward"
                         text="Send backward"
                         onClick={() => {
-                            editor.sendElementsBackward(selectedElements);
-                            editor.dispatchChange();
-                            editor.update();
+                            dispatchAction(ACTIONS.SEND_BACKWARD);
                         }}
                     />
                     <ContextMenuItem
                         icon="bring-forward"
                         text="Bring forward"
                         onClick={() => {
-                            editor.bringElementsForward(selectedElements);
-                            editor.dispatchChange();
-                            editor.update();
+                            dispatchAction(ACTIONS.BRING_FORWARD);
                         }}
                     />
                 </React.Fragment>
@@ -188,7 +171,7 @@ export const ContextMenu = props => {
                         icon="box-selection"
                         text="Select all"
                         onClick={() => {
-                            editor.getElements().forEach(el => el.selected = true);
+                            dispatchAction(ACTIONS.SELECT_ALL);
                             hideContextMenu();
                         }}
                     />
@@ -201,8 +184,7 @@ export const ContextMenu = props => {
                         icon="trash"
                         text="Delete"
                         onClick={() => {
-                            editor.removeElements(selectedElements);
-                            editor.dispatchChange();
+                            dispatchAction(ACTIONS.DELETE_SELECTION);
                             hideContextMenu();
                         }}
                     />

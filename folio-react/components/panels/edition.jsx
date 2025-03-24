@@ -25,6 +25,7 @@ import {
     UnlockIcon,
 } from "@josemi-icons/react";
 import {
+    ACTIONS,
     FIELDS,
     TEXT_SIZES,
     FONT_FACES,
@@ -66,6 +67,7 @@ import {
 import {Panel} from "../ui/panel.jsx";
 import {Form} from "../form/index.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
+import {useActions} from "../../hooks/use-actions.js";
 
 // Available sections
 const SECTIONS = {
@@ -80,16 +82,16 @@ const SECTIONS = {
 };
 
 // Available actions
-const ACTIONS = {
-    REMOVE: "action:remove",
-    DUPLICATE: "action:duplicate",
-    LOCK: "action:lock",
-    UNLOCK: "action:unlock",
-    BRING_FRONT: "layer:bringFront",
-    BRING_FORWARD: "layer:bringForward",
-    SEND_BACK: "layer:sendBack",
-    SEND_BACKWARD: "layer:sendBackward",
-};
+// const ACTIONS = {
+//     REMOVE: "action:remove",
+//     DUPLICATE: "action:duplicate",
+//     LOCK: "action:lock",
+//     UNLOCK: "action:unlock",
+//     BRING_FRONT: "layer:bringFront",
+//     BRING_FORWARD: "layer:bringForward",
+//     SEND_BACK: "layer:sendBack",
+//     SEND_BACKWARD: "layer:sendBackward",
+// };
 
 const arrowheadValues = [
     {value: ARROWHEADS.NONE, icon: ArrowheadNoneIcon()},
@@ -283,10 +285,10 @@ const displaySections = {
                 title: "Layers",
                 className: "grid grid-cols-4 gap-1 w-full",
                 values: [
-                    {value: ACTIONS.SEND_BACK, icon: SendBackIcon()},
+                    {value: ACTIONS.SEND_TO_BACK, icon: SendBackIcon()},
                     {value: ACTIONS.SEND_BACKWARD, icon: SendBackwardIcon()},
                     {value: ACTIONS.BRING_FORWARD, icon: BringForwardIcon()},
-                    {value: ACTIONS.BRING_FRONT, icon: BringFrontIcon()},
+                    {value: ACTIONS.BRING_TO_FRONT, icon: BringFrontIcon()},
                 ],
             },
             actions: {
@@ -294,23 +296,23 @@ const displaySections = {
                 title: "Actions",
                 className: "grid grid-cols-4 gap-1 w-full",
                 isVisible: (field, value, data) => {
-                    if (field === ACTIONS.LOCK) {
+                    if (field === ACTIONS.LOCK_SELECTION) {
                         return !data[FIELDS.LOCKED];
                     }
-                    else if (field === ACTIONS.UNLOCK) {
+                    else if (field === ACTIONS.UNLOCK_SELECTION) {
                         return !!data[FIELDS.LOCKED];
                     }
                     // Field is visible
                     return true;
                 },
                 isActive: (field, value, data) => {
-                    return field === ACTIONS.UNLOCK;
+                    return field === ACTIONS.UNLOCK_SELECTION;
                 },
                 values: [
-                    {value: ACTIONS.LOCK, icon: UnlockIcon()},
-                    {value: ACTIONS.UNLOCK, icon: LockIcon()},
-                    {value: ACTIONS.DUPLICATE, icon: CopyIcon()},
-                    {value: ACTIONS.REMOVE, icon: TrashIcon()},
+                    {value: ACTIONS.LOCK_SELECTION, icon: UnlockIcon()},
+                    {value: ACTIONS.UNLOCK_SELECTION, icon: LockIcon()},
+                    {value: ACTIONS.DUPLICATE_SELECTION, icon: CopyIcon()},
+                    {value: ACTIONS.DELETE_SELECTION, icon: TrashIcon()},
                 ],
             },
         },
@@ -334,6 +336,7 @@ const getVisibleSections = (sections, values) => {
 
 export const EditionPanel = () => {
     const editor = useEditor();
+    const dispatchAction = useActions();
     const selectedElements = editor.getSelection();
     const [activeSection, setActiveSection] = React.useState("");
     const values = useValues(selectedElements);
@@ -350,39 +353,13 @@ export const EditionPanel = () => {
     // Handle selection change
     const handleChange = React.useCallback((key, value) => {
         if (key === "actions" || key === "layers") {
-            switch (value) {
-                case ACTIONS.REMOVE:
-                    editor.removeElements(selectedElements);
-                    break;
-                case ACTIONS.DUPLICATE:
-                    editor.duplicateElements(selectedElements);
-                    break;
-                case ACTIONS.SEND_BACK:
-                    editor.sendElementsToBack(selectedElements);
-                    break;
-                case ACTIONS.SEND_BACKWARD:
-                    editor.sendElementsBackward(selectedElements);
-                    break;
-                case ACTIONS.BRING_FORWARD:
-                    editor.bringElementsForward(selectedElements);
-                    break;
-                case ACTIONS.BRING_FRONT:
-                    editor.bringElementsToFront(selectedElements);
-                    break;
-                case ACTIONS.LOCK:
-                    editor.lockElements(selectedElements);
-                    break;
-                case ACTIONS.UNLOCK:
-                    editor.unlockElements(selectedElements);
-                    break;
-            }
+            dispatchAction(value);
         }
         else {
             editor.updateElements(selectedElements, [key], [value], true);
+            editor.dispatchChange();
+            editor.update();
         }
-        // TODO
-        // editor.dispatchChange();
-        editor.update();
     }, [selectedElements.length, editor]);
 
     // Handle active section change
