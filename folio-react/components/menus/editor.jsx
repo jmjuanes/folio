@@ -6,6 +6,7 @@ import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
 import {useActions} from "../../hooks/use-actions.js";
+import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 
 // @private menu link component
 const MenuLinkItem = props => (
@@ -20,6 +21,11 @@ const MenuDropdownItem = props => (
     <Dropdown.Item className={props.className} disabled={!!props.disabled} onClick={props.onClick}>
         <Dropdown.Icon icon={props.icon} />
         <span>{props.text}</span>
+        {props.shortcut && (
+            <Dropdown.Shortcut>
+                {printShortcut(props.shortcut)}
+            </Dropdown.Shortcut>
+        )}
     </Dropdown.Item>
 );
 
@@ -37,6 +43,7 @@ export const EditorMenu = () => {
                 <MenuDropdownItem
                     icon="folder"
                     text="Open..."
+                    shortcut={getShortcutByAction(ACTIONS.OPEN)}
                     onClick={() => {
                         dispatchAction(ACTIONS.OPEN);
                     }}
@@ -44,6 +51,7 @@ export const EditorMenu = () => {
                 <MenuDropdownItem
                     icon="download"
                     text="Save a copy"
+                    shortcut={getShortcutByAction(ACTIONS.SAVE)}
                     onClick={() => {
                         dispatchAction(ACTIONS.SAVE);
                     }}
@@ -51,6 +59,7 @@ export const EditorMenu = () => {
                 <MenuDropdownItem
                     icon="image"
                     text="Export as image"
+                    shortcut={getShortcutByAction(ACTIONS.EXPORT_IMAGE)}
                     disabled={elements.length === 0}
                     className={classnames({
                         "pointer-events-none": elements.length === 0,
