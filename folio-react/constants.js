@@ -349,6 +349,11 @@ export const KEYS = {
     Y: "y",
 };
 
+export const KEY_CODES = {
+    D: "KeyD",
+    S: "KeyS",
+};
+
 // export const ACTIONS = {
 //     MOVE: "action:move",
 //     SELECT: "action:select",
@@ -488,4 +493,42 @@ export const MINIMAP_VISIBLE_RADIUS = 8;
 export const MINIMAP_POSITION = {
     BOTTOM_LEFT: "bottom-left",
     BOTTOM_RIGHT: "bottom-right",
+};
+
+// editor actions
+export const ACTIONS = {
+    CUT: "cut",
+    COPY: "copy",
+    PASTE: "paste",
+    UNDO: "undo",
+    REDO: "redo",
+    OPEN: "open",
+    SAVE: "save",
+    EXPORT_IMAGE: "export-image",
+    CLEAR: "clear",
+    SELECT_ALL: "select-all",
+    DELETE_SELECTION: "delete-selection",
+    DUPLICATE_SELECTION: "duplicate-selection",
+    GROUP_SELECTION: "group-selection",
+    UNGROUP_SELECTION: "ungroup-selection",
+    BRING_FORWARD: "bring-forward",
+    SEND_BACKWARD: "send-backward",
+    BRING_TO_FRONT: "bring-to-front",
+    SEND_TO_BACK: "send-to-back",
+    LOCK_SELECTION: "lock-selection",
+    UNLOCK_SELECTION: "unlock-selection",
+    ZOOM_IN: "zoom-in",
+    ZOOM_OUT: "zoom-out",
+    ZOOM_RESET: "zoom-reset",
+    ZOOM_FIT: "zoom-fit",
+    ZOOM_FIT_SELECTION: "zoom-fit-selection",
+    CREATE_PAGE: "create-page",
+    DELETE_PAGE: "delete-page",
+    DUPLICATE_PAGE: "duplicate-page",
+    CLEAR_PAGE: "clear-page",
+    NEXT_PAGE: "next-page",
+    PREVIOUS_PAGE: "prev-page",
+    TOGGLE_GRID: "toggle-grid",
+    TOGGLE_SNAP_TO_ELEMENTS: "toggle-snap-to-elements",
+    TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
 };

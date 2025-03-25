@@ -59,6 +59,8 @@ const setValue = (obj, path, value) => {
 // @description settings menu
 export const SettingsMenu = () => {
     const editor = useEditor();
+
+    // get values from the editor configuration
     const values = Object.fromEntries(Object.values(FIELDS).map(key => {
         return [key, getValue(editor, key)];
     }));

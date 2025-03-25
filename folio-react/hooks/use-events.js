@@ -1,6 +1,7 @@
 import React from "react";
 import {useUpdate} from "react-use";
 import {
+    ACTIONS,
     ELEMENTS,
     HANDLERS,
     GRID_SIZE,
@@ -25,6 +26,9 @@ import {
 } from "../lib/elements.js";
 import {useEditor} from "../contexts/editor.jsx";
 import {useContextMenu} from "../contexts/context-menu.jsx";
+import {useActions} from "./use-actions.js";
+import {useTools, getToolByShortcut} from "./use-tools.js";
+import {getActionByKeysCombination} from "../lib/actions.js";
 
 // internal list with all elements
 const elementsNames = new Set(Object.values(ELEMENTS));
@@ -39,6 +43,8 @@ export const useEvents = () => {
     const update = useUpdate();
     const {hideContextMenu} = useContextMenu();
     const editor = useEditor();
+    const tools = useTools();
+    const dispatchAction = useActions();
 
     return React.useMemo(() => {
         let snapshot = [];
@@ -544,25 +550,6 @@ export const useEvents = () => {
                     update();
                 }
             }
-            else if (event.key === KEYS.BACKSPACE || (isCtrlKey && (event.key === KEYS.C || event.key === KEYS.X))) {
-                event.preventDefault();
-                if (event.key === KEYS.X || event.key === KEYS.C) {
-                    editor.copyElementsToClipboard(editor.getSelection());
-                }
-                // Check for backspace key or cut --> remove elements
-                if (event.key === KEYS.BACKSPACE || event.key === KEYS.X) {
-                    editor.removeSelection();
-                    editor.dispatchChange();
-                }
-                update();
-            }
-            // Undo or redo key
-            else if (isCtrlKey && (event.key === KEYS.Z || event.key === KEYS.Y)) {
-                activeElement = null;
-                event.key === KEYS.Z ? editor.undo() : editor.redo();
-                editor.dispatchChange();
-                update();
-            }
             // Check ESCAPE key
             else if (event.key === KEYS.ESCAPE) {
                 // if (editor.state.action === ACTIONS.SCREENSHOT) {
@@ -577,7 +564,7 @@ export const useEvents = () => {
                 update();
             }
             // Check for arrow keys --> move elements
-            else if (isArrowKey(event.key)) {
+            else if (!isCtrlKey && isArrowKey(event.key)) {
                 event.preventDefault();
                 // const step = event.shiftKey ? (props.gridSize || 10) : 1;
                 const dir = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
@@ -617,6 +604,23 @@ export const useEvents = () => {
                 editor.dispatchChange();
                 update();
             }
+            // otherwhise check for the action by the key combination
+            else {
+                // 1. check if this combination is an action shortcut
+                const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
+                if (action) {
+                    event.preventDefault();
+                    return dispatchAction(action);
+                }
+                // 2. check if this combination is a tool shortcut
+                if (!isCtrlKey && !event.shiftKey) {
+                    const tool = getToolByShortcut(tools, event.key);
+                    if (tool) {
+                        event.preventDefault();
+                        tool.onSelect();
+                    }
+                }
+            }
         };
 
         // @description handle element change
@@ -648,10 +652,7 @@ export const useEvents = () => {
         const onPaste = event => {
             if (!isInputTarget(event) && !editor.page.readonly) {
                 editor.page.activeGroup = null;
-                editor.pasteElementsFromClipboard(event).then(() => {
-                    editor.dispatchChange();
-                    update();
-                });
+                dispatchAction(ACTIONS.PASTE, {event: event});
             }
         };
 
@@ -685,5 +686,5 @@ export const useEvents = () => {
             onPaste,
         };
 
-    }, [editor, update, hideContextMenu]);
+    }, [editor, update, hideContextMenu, tools]);
 };

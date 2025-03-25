@@ -2,14 +2,14 @@ import React from "react";
 import {createPortal} from "react-dom";
 import classNames from "classnames";
 import {BarsIcon, LockIcon, DotsIcon} from "@josemi-icons/react";
+import {ACTIONS, EXPORT_PADDING} from "../../constants.js";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Island} from "../ui/island.jsx";
+import {useActions} from "../../hooks/use-actions.js";
 import {useEditor} from "../../contexts/editor.jsx";
-import {useConfirm} from "../../contexts/confirm.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import {exportToDataURL} from "../../lib/export.js";
-import {EXPORT_PADDING} from "../../constants.js";
 import {clearFocus} from "../../utils/dom.js";
 
 const PAGES_ITEM_HEIGHT = 37;
@@ -168,7 +168,7 @@ const initializeSortedPages = pages => {
 // @description pages menu component
 export const ControlledPagesMenu = () => {
     const editor = useEditor();
-    const {showConfirm} = useConfirm();
+    const dispatchAction = useActions();
     const {showDialog} = useDialog();
     // const [preferences, setPreferences] = usePreferences();
     const [sortedPages, setSortedPages] = React.useState(() => {
@@ -240,26 +240,6 @@ export const ControlledPagesMenu = () => {
     //     }));
     // };
 
-    // handle page delete callback
-    const handlePageDelete = React.useCallback(page => {
-        return showConfirm({
-            title: "Delete page",
-            message: `Do you want to delete '${page.title}'? This action can not be undone.`,
-            callback: () => {
-                editor.removePage(page);
-                editor.dispatchChange();
-                editor.update();
-            },
-        });
-    }, [editor]);
-
-    // handle page create
-    const handlePageCreate = React.useCallback(() => {
-        editor.addPage({});
-        editor.dispatchChange();
-        editor.update();
-    }, [editor]);
-
     return (
         <div className="flex relative group" tabIndex="0">
             <Island.Button
@@ -270,7 +250,12 @@ export const ControlledPagesMenu = () => {
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
                 <Dropdown.Header>
                     <div className="text-sm font-bold mr-auto">Pages</div>
-                    <Dropdown.HeaderButton icon="plus" onClick={handlePageCreate} />
+                    <Dropdown.HeaderButton
+                        icon="plus"
+                        onClick={() => {
+                            dispatchAction(ACTIONS.CREATE_PAGE);
+                        }}
+                    />
                 </Dropdown.Header>
                 <div className="p-0 scrollbar w-full overflow-y-auto" style={{maxHeight: "240px"}}>
                     <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
@@ -292,12 +277,10 @@ export const ControlledPagesMenu = () => {
                                     editor.update();
                                 }}
                                 onDelete={() => {
-                                    handlePageDelete(page);
+                                    dispatchAction(ACTIONS.DELETE_PAGE, {page});
                                 }}
                                 onDuplicate={() => {
-                                    editor.duplicatePage(page);
-                                    editor.dispatchChange();
-                                    editor.update();
+                                    dispatchAction(ACTIONS.DUPLICATE_PAGE, {page});
                                 }}
                                 onEdit={() => {
                                     showDialog("pages-edit", {page});

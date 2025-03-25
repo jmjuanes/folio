@@ -34,6 +34,7 @@ export const useTools = () => {
             icon: "hand-grab",
             toolEnabledOnReadOnly: true,
             primary: true,
+            keyboardShortcut: "h",
             onSelect: () => {
                 editor.setTool(TOOLS.DRAG);
                 editor.update();
@@ -43,6 +44,7 @@ export const useTools = () => {
             name: "Select",
             icon: "pointer",
             primary: true,
+            keyboardShortcut: "v",
             onSelect: () => {
                 editor.setTool(TOOLS.SELECT);
                 editor.update();
@@ -52,6 +54,7 @@ export const useTools = () => {
             icon: "laser-pointer",
             name: "Laser Pointer",
             toolEnabledOnReadOnly: true,
+            keyboardShortcut: "l",
             onSelect: () => {
                 editor.setTool(TOOLS.POINTER);
                 editor.update();
@@ -60,6 +63,7 @@ export const useTools = () => {
         [TOOLS.ERASER]: {
             icon: "erase",
             name: "Erase",
+            keyboardShortcut: "e",
             onSelect: () => {
                 editor.setTool(TOOLS.ERASER);
                 editor.update();
@@ -69,6 +73,7 @@ export const useTools = () => {
             icon: "square",
             name: "Shape",
             primary: true,
+            keyboardShortcut: "s",
             quickPicks: {
                 [FIELDS.SHAPE]: {
                     type: FORM_OPTIONS.SELECT,
@@ -94,6 +99,7 @@ export const useTools = () => {
             icon: "arrow-up-right",
             name: "Arrow",
             primary: true,
+            keyboardShortcut: "a",
             quickPicks: {
                 // [FIELDS.END_ARROWHEAD]: {
                 //     type: FORM_OPTIONS.SELECT,
@@ -146,6 +152,7 @@ export const useTools = () => {
             icon: "text",
             name: "Text",
             primary: true,
+            keyboardShortcut: "t",
             quickPicks: {
                 // [FIELDS.TEXT_SIZE]: {
                 //     type: FORM_OPTIONS.SELECT,
@@ -170,6 +177,7 @@ export const useTools = () => {
             icon: "pen",
             name: "Draw",
             primary: true,
+            keyboardShortcut: "d",
             quickPicks: {
                 [FIELDS.STROKE_WIDTH]: {
                     type: FORM_OPTIONS.SELECT,
@@ -193,6 +201,7 @@ export const useTools = () => {
         [ELEMENTS.IMAGE]: {
             icon: "image",
             name: "Image",
+            keyboardShortcut: "i",
             onSelect: () => {
                 // first we have to make sure that no elements have been selected
                 editor.getElements().forEach(element => {
@@ -221,6 +230,7 @@ export const useTools = () => {
             icon: "sticker",
             name: "Sticker",
             primary: true,
+            keyboardShortcut: "k",
             quickPicks: {
                 [FIELDS.STICKER]: {
                     type: FORM_OPTIONS.IMAGE_SELECT,
@@ -239,10 +249,22 @@ export const useTools = () => {
         [ELEMENTS.NOTE]: {
             name: "Note",
             icon: "note",
+            keyboardShortcut: "n",
             onSelect: () => {
                 editor.setTool(ELEMENTS.NOTE);
                 editor.update();
             },
         },
     }), []);
+};
+
+// @description get tool by the provided shortcut
+// @param {Array} tools - tools list
+// @param {string} shortcut - shortcut key
+// @returns {object} - tool configuration
+export const getToolByShortcut = (tools, shortcut = "") => {
+    const uppercaseShortcut = shortcut.toUpperCase();
+    return Object.values(tools).find(tool => {
+        return !!tool?.keyboardShortcut && tool.keyboardShortcut.toUpperCase() === uppercaseShortcut;
+    });
 };

@@ -1,9 +1,11 @@
 import React from "react";
-import {ELEMENTS} from "../constants.js";
+import {ACTIONS, ELEMENTS} from "../constants.js";
 import {ContextMenu as Menu} from "./ui/context-menu.jsx";
 import {useEditor} from "../contexts/editor.jsx";
 import {useContextMenu} from "../contexts/context-menu.jsx";
 import {useDialog} from "../contexts/dialogs.jsx";
+import {useActions} from "../hooks/use-actions.js";
+import {getShortcutByAction, printShortcut} from "../lib/actions.js";
 
 // Not allowed elements in library
 const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
@@ -19,6 +21,9 @@ const ContextMenuItem = props => (
     <Menu.Item disabled={!!props.disabled} onClick={props.onClick}>
         <Menu.Icon icon={props.icon} />
         <span>{props.text}</span>
+        {props.shortcut && (
+            <Menu.Shortcut>{printShortcut(props.shortcut)}</Menu.Shortcut>
+        )}
     </Menu.Item>
 );
 
@@ -28,6 +33,7 @@ const ContextMenuItem = props => (
 // @param {number} props.left Left position of the context menu
 export const ContextMenu = props => {
     const editor = useEditor();
+    const dispatchAction = useActions();
     const {hideContextMenu} = useContextMenu();
     const {showDialog} = useDialog();
     const selectedElements = editor.getSelection();
@@ -53,9 +59,9 @@ export const ContextMenu = props => {
                     <ContextMenuItem
                         icon="copy"
                         text="Duplicate"
+                        shortcut={getShortcutByAction(ACTIONS.DUPLICATE_SELECTION)}
                         onClick={() => {
-                            editor.duplicateElements(selectedElements);
-                            editor.dispatchChange();
+                            dispatchAction(ACTIONS.DUPLICATE_SELECTION);
                             hideContextMenu();
                         }}
                     />
@@ -63,10 +69,9 @@ export const ContextMenu = props => {
                         <ContextMenuItem
                             icon="lock"
                             text="Lock"
+                            shortcut={getShortcutByAction(ACTIONS.LOCK_SELECTION)}
                             onClick={() => {
-                                editor.lockElements(selectedElements);
-                                editor.dispatchChange();
-                                editor.update();
+                                dispatchAction(ACTIONS.LOCK_SELECTION);
                             }}
                         />
                     )}
@@ -74,10 +79,9 @@ export const ContextMenu = props => {
                         <ContextMenuItem
                             icon="unlock"
                             text="Unlock"
+                            shortcut={getShortcutByAction(ACTIONS.UNLOCK_SELECTION)}
                             onClick={() => {
-                                editor.unlockElements(selectedElements);
-                                editor.dispatchChange();
-                                editor.update();
+                                dispatchAction(ACTIONS.UNLOCK_SELECTION);
                             }}
                         />
                     )}
@@ -87,10 +91,9 @@ export const ContextMenu = props => {
                                 <ContextMenuItem
                                     icon="object-group"
                                     text="Group"
+                                    shortcut={getShortcutByAction(ACTIONS.GROUP_SELECTION)}
                                     onClick={() => {
-                                        editor.groupElements(selectedElements);
-                                        editor.dispatchChange();
-                                        editor.update();
+                                        dispatchAction(ACTIONS.GROUP_SELECTION);
                                     }}
                                 />
                             )}
@@ -98,10 +101,9 @@ export const ContextMenu = props => {
                                 <ContextMenuItem
                                     icon="object-ungroup"
                                     text="Ungroup"
+                                    shortcut={getShortcutByAction(ACTIONS.UNGROUP_SELECTION)}
                                     onClick={() => {
-                                        editor.ungroupElements(selectedElements);
-                                        editor.dispatchChange();
-                                        editor.update();
+                                        dispatchAction(ACTIONS.UNGROUP_SELECTION);
                                     }}
                                 />
                             )}
@@ -129,21 +131,19 @@ export const ContextMenu = props => {
                     <ContextMenuItem
                         icon="cut"
                         text="Cut"
+                        shortcut={getShortcutByAction(ACTIONS.CUT)}
                         onClick={() => {
-                            editor.cutElementsToClipboard(selectedElements).then(() => {
-                                editor.dispatchChange();
-                                hideContextMenu();
-                            });
+                            dispatchAction(ACTIONS.CUT);
+                            hideContextMenu();
                         }}
                     />
                     <ContextMenuItem
                         icon="copy"
                         text="Copy"
+                        shortcut={getShortcutByAction(ACTIONS.COPY)}
                         onClick={() => {
-                            editor.copyElementsToClipboard(selectedElements).then(() => {
-                                editor.dispatchChange();
-                                hideContextMenu();
-                            });
+                            dispatchAction(ACTIONS.COPY);
+                            hideContextMenu();
                         }}
                     />
                 </React.Fragment>
@@ -151,11 +151,10 @@ export const ContextMenu = props => {
             <ContextMenuItem
                 icon="clipboard"
                 text="Paste"
+                shortcut={getShortcutByAction(ACTIONS.PASTE)}
                 onClick={() => {
-                    editor.pasteElementsFromClipboard(null, {x: props.left, y: props.top}).then(() => {
-                        editor.dispatchChange();
-                        hideContextMenu();
-                    });
+                    dispatchAction(ACTIONS.PASTE, {x: props.left, y: props.top});
+                    hideContextMenu();
                 }}
             />
             {selectedElements.length > 0 && (
@@ -164,19 +163,17 @@ export const ContextMenu = props => {
                     <ContextMenuItem
                         icon="send-backward"
                         text="Send backward"
+                        shortcut={getShortcutByAction(ACTIONS.SEND_BACKWARD)}
                         onClick={() => {
-                            editor.sendElementsBackward(selectedElements);
-                            editor.dispatchChange();
-                            editor.update();
+                            dispatchAction(ACTIONS.SEND_BACKWARD);
                         }}
                     />
                     <ContextMenuItem
                         icon="bring-forward"
                         text="Bring forward"
+                        shortcut={getShortcutByAction(ACTIONS.BRING_FORWARD)}
                         onClick={() => {
-                            editor.bringElementsForward(selectedElements);
-                            editor.dispatchChange();
-                            editor.update();
+                            dispatchAction(ACTIONS.BRING_FORWARD);
                         }}
                     />
                 </React.Fragment>
@@ -187,8 +184,9 @@ export const ContextMenu = props => {
                     <ContextMenuItem
                         icon="box-selection"
                         text="Select all"
+                        shortcut={getShortcutByAction(ACTIONS.SELECT_ALL)}
                         onClick={() => {
-                            editor.getElements().forEach(el => el.selected = true);
+                            dispatchAction(ACTIONS.SELECT_ALL);
                             hideContextMenu();
                         }}
                     />
@@ -200,9 +198,9 @@ export const ContextMenu = props => {
                     <ContextMenuItem
                         icon="trash"
                         text="Delete"
+                        shortcut={getShortcutByAction(ACTIONS.DELETE_SELECTION)}
                         onClick={() => {
-                            editor.removeElements(selectedElements);
-                            editor.dispatchChange();
+                            dispatchAction(ACTIONS.DELETE_SELECTION);
                             hideContextMenu();
                         }}
                     />
