@@ -1,9 +1,10 @@
 import {IS_DARWIN, ACTIONS} from "../constants.js";
+import {getKeyFromKeyCode} from "../utils/keys.js";
 
 // @description utility function to get the correct shortcut key
 const getShortcutKey = command => {
     if (IS_DARWIN) {
-        return command.replace(/\bCtrlOrCmd\b/gi, "Cmd");
+        return command.replace(/\bCtrlOrCmd\b/gi, "Cmd").replace(/\bAlt\b/gi, "Opt");
     }
     return command.replace(/\bCtrlOrCmd\b/gi, "Ctrl");
 };
@@ -49,6 +50,10 @@ export const shortcutsMap = {
     [ACTIONS.CLEAR_PAGE]: getShortcutKey("CtrlOrCmd+Shift+B"),
     [ACTIONS.PREVIOUS_PAGE]: getShortcutKey("CtrlOrCmd+{"),
     [ACTIONS.NEXT_PAGE]: getShortcutKey("CtrlOrCmd+}"),
+
+    [ACTIONS.TOGGLE_GRID]: getShortcutKey("CtrlOrCmd+'"),
+    [ACTIONS.TOGGLE_SNAP_TO_ELEMENTS]: getShortcutKey("Alt+S"),
+    [ACTIONS.TOGGLE_SHOW_DIMENSIONS]: getShortcutKey("Alt+D"),
 };
 
 // @description get shortcut key for the provided action
@@ -60,16 +65,19 @@ export const getShortcutByAction = actionName => {
 
 // @description get action name by the provided key combination
 // @param {string} key - key pressed by the user
-// @param {boolean} shiftKey - shift key pressed
 // @param {boolean} ctrlKey - ctrl key pressed (in DARWIN this is Cmd key)
+// @param {boolean} shiftKey - shift key pressed
+// @param {boolean} altKey - alt key pressed (in DARWIN this is Opt key)
 // @returns {string} - action name
-export const getActionByKeysCombination = (key = "", shiftKey = false, ctrlKey = false) => {
+export const getActionByKeysCombination = (key = "", keyCode = "", ctrlKey = false, altKey = false, shiftKey = false) => {
     // build the shortcut command
     const shortcutCommand = [
         ctrlKey && !IS_DARWIN ? "Ctrl" : "",
         ctrlKey && IS_DARWIN ? "Cmd" : "",
+        altKey && IS_DARWIN ? "Opt" : "",
+        altKey && !IS_DARWIN ? "Alt" : "",
         shiftKey ? "Shift" : "",
-        key.toUpperCase(),
+        (altKey ? getKeyFromKeyCode(keyCode) : key).toUpperCase(),
     ];
     const shortcut = shortcutCommand.filter(Boolean).join("+");
     // find the action name by the shortcut
@@ -88,6 +96,7 @@ export const printShortcut = shortcut => {
         return (s || "")
             .replace(/\b[+]/g, " ")
             .replace(/\bCmd\b/gi, "⌘")
+            .replace(/\bOpt\b/gi, "⌥")
             .replace(/\bCtrl\b/gi, "⌃")
             .replace(/\bShift\b/gi, "⇧")
             .replace(/\bBackspace\b/gi, "⌫");

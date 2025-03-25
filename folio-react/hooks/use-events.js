@@ -607,7 +607,7 @@ export const useEvents = () => {
             // otherwhise check for the action by the key combination
             else {
                 // 1. check if this combination is an action shortcut
-                const action = getActionByKeysCombination(event.key, event.shiftKey, isCtrlKey);
+                const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
                 if (action) {
                     event.preventDefault();
                     return dispatchAction(action);

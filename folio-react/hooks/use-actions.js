@@ -243,6 +243,21 @@ export const useActions = () => {
                     editor.update();
                 }
             },
+            [ACTIONS.TOGGLE_GRID]: () => {
+                editor.appState.grid = !editor.appState?.grid;
+                editor.dispatchChange();
+                editor.update();
+            },
+            [ACTIONS.TOGGLE_SNAP_TO_ELEMENTS]: () => {
+                editor.appState.snapToElements = !editor.appState?.snapToElements;
+                editor.dispatchChange();
+                editor.update();
+            },
+            [ACTIONS.TOGGLE_SHOW_DIMENSIONS]: () => {
+                editor.appState.objectDimensions = !editor.appState?.objectDimensions;
+                editor.dispatchChange();
+                editor.update();
+            },
         };
     }, [editor, showConfirm, showDialog]);
 

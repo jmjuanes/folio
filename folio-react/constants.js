@@ -349,6 +349,11 @@ export const KEYS = {
     Y: "y",
 };
 
+export const KEY_CODES = {
+    D: "KeyD",
+    S: "KeyS",
+};
+
 // export const ACTIONS = {
 //     MOVE: "action:move",
 //     SELECT: "action:select",
@@ -523,4 +528,7 @@ export const ACTIONS = {
     CLEAR_PAGE: "clear-page",
     NEXT_PAGE: "next-page",
     PREVIOUS_PAGE: "prev-page",
+    TOGGLE_GRID: "toggle-grid",
+    TOGGLE_SNAP_TO_ELEMENTS: "toggle-snap-to-elements",
+    TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
 };

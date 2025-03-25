@@ -78,7 +78,7 @@ export const KeyboardShortcutsDialogContent = () => {
             {toolsShortcuts.length > 0 && (
                 <KeyboardShortcutsGroup title="Tools">
                     {toolsShortcuts.map(tool => (
-                        <KeyboardShortcutsItem key={tool.name} label={tool.label} shortcut={tool.shortcut} />
+                        <KeyboardShortcutsItem key={tool.label} label={tool.label} shortcut={tool.shortcut} />
                     ))}
                 </KeyboardShortcutsGroup>
             )}
@@ -96,6 +96,11 @@ export const KeyboardShortcutsDialogContent = () => {
                 <KeyboardShortcutsItem action={ACTIONS.ZOOM_RESET} label="Reset Zoom" />
                 <KeyboardShortcutsItem action={ACTIONS.ZOOM_FIT} label="Fit" />
                 <KeyboardShortcutsItem action={ACTIONS.ZOOM_FIT_SELECTION} label="Fit to Selection" />
+            </KeyboardShortcutsGroup>
+            <KeyboardShortcutsGroup title="Settings">
+                <KeyboardShortcutsItem action={ACTIONS.TOGGLE_GRID} label="Grid" />
+                <KeyboardShortcutsItem action={ACTIONS.TOGGLE_SNAP_TO_ELEMENTS} label="Snap to Elements" />
+                <KeyboardShortcutsItem action={ACTIONS.TOGGLE_SHOW_DIMENSIONS} label="Object Dimensions" />
             </KeyboardShortcutsGroup>
         </React.Fragment>
     );
