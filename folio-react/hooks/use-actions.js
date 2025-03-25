@@ -193,11 +193,61 @@ export const useActions = () => {
                     editor.update();
                 });
             },
+            [ACTIONS.CREATE_PAGE]: () => {
+                editor.addPage({});
+                editor.dispatchChange();
+                editor.update();
+            },
+            [ACTIONS.DELETE_PAGE]: ({page = null}) => {
+                const pageToDelete = page || editor.page; // if no page is provided, use the current page
+                return showConfirm({
+                    title: "Delete page",
+                    message: `Do you want to delete '${pageToDelete.title}'? This action can not be undone.`,
+                    callback: () => {
+                        editor.removePage(pageToDelete);
+                        editor.dispatchChange();
+                        editor.update();
+                    },
+                });
+            },
+            [ACTIONS.DUPLICATE_PAGE]: ({page = null}) => {
+                const pageToDuplicate = page || editor.page; // if no page is provided, use the current page
+                editor.duplicatePage(pageToDuplicate);
+                editor.dispatchChange();
+                editor.update();
+            },
+            [ACTIONS.CLEAR_PAGE]: ({page = null}) => {
+                const pageToClear = page || editor.page; // if no page is provided, use the current page
+                return showConfirm({
+                    title: "Clear Page",
+                    message: "This will remove all elements of this page. Do you want to continue?",
+                    confirmText: "Yes, clear page",
+                    callback: () => {
+                        editor.clearPage(pageToClear.id);
+                        editor.dispatchChange();
+                        editor.update();
+                    },
+                });
+            },
+            [ACTIONS.NEXT_PAGE]: () => {
+                const currentPageIndex = editor.pages.findIndex(page => page.id === editor.page.id);
+                if (currentPageIndex < editor.pages.length - 1) {
+                    editor.setActivePage(editor.pages[currentPageIndex + 1]);
+                    editor.update();
+                }
+            },
+            [ACTIONS.PREVIOUS_PAGE]: () => {
+                const currentPageIndex = editor.pages.findIndex(page => page.id === editor.page.id);
+                if (currentPageIndex > 0) {
+                    editor.setActivePage(editor.pages[currentPageIndex - 1]);
+                    editor.update();
+                }
+            },
         };
     }, [editor, showConfirm, showDialog]);
 
     // @description dispatch a single action
-    return React.useCallback((actionName, payload) => {
+    return React.useCallback((actionName, payload = {}) => {
         if (actionsList[actionName]) {
             actionsList[actionName](payload);
         }

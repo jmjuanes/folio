@@ -42,6 +42,13 @@ export const shortcutsMap = {
     [ACTIONS.ZOOM_RESET]: getShortcutKey("CtrlOrCmd+0"),
     [ACTIONS.ZOOM_FIT]: getShortcutKey("CtrlOrCmd+1"),
     [ACTIONS.ZOOM_FIT_SELECTION]: getShortcutKey("CtrlOrCmd+2"),
+
+    [ACTIONS.CREATE_PAGE]: getShortcutKey("CtrlOrCmd+M"),
+    [ACTIONS.DUPLICATE_PAGE]: getShortcutKey("CtrlOrCmd+Shift+M"),
+    [ACTIONS.DELETE_PAGE]: getShortcutKey("CtrlOrCmd+B"),
+    [ACTIONS.CLEAR_PAGE]: getShortcutKey("CtrlOrCmd+Shift+B"),
+    [ACTIONS.PREVIOUS_PAGE]: getShortcutKey("CtrlOrCmd+{"),
+    [ACTIONS.NEXT_PAGE]: getShortcutKey("CtrlOrCmd+}"),
 };
 
 // @description get shortcut key for the provided action
@@ -71,4 +78,18 @@ export const getActionByKeysCombination = (key = "", shiftKey = false, ctrlKey =
             return shortcutKey === shortcut || shortcutKey.toUpperCase() === shortcut;
         });
     });
+};
+
+// @description print shortcut
+// @param {string} shortcut - shortcut key
+// @returns {string} - formatted shortcut
+export const printShortcut = shortcut => {
+    return [shortcut].flat().map(s => {
+        return (s || "")
+            .replace(/\b[+]/g, " ")
+            .replace(/\bCmd\b/gi, "⌘")
+            .replace(/\bCtrl\b/gi, "⌃")
+            .replace(/\bShift\b/gi, "⇧")
+            .replace(/\bBackspace\b/gi, "⌫");
+    }).join(", ");
 };

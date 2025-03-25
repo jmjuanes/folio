@@ -27,6 +27,7 @@ export const DialogsProvider = ({dialogs, children}) => {
         LibraryExportDialog,
         PagesEditDialog,
         PreferencesDialog,
+        KeyboardShortcutsDialog,
     } = useEditorComponents();
 
     // internal list of all available dialogs in the editor
@@ -51,6 +52,10 @@ export const DialogsProvider = ({dialogs, children}) => {
             "preferences": {
                 title: "Preferences",
                 component: PreferencesDialog,
+            },
+            "keyboard-shortcuts": {
+                title: "Keyboard Shortcuts",
+                component: KeyboardShortcutsDialog,
             },
             ...dialogs,
         };

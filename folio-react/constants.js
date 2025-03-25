@@ -517,4 +517,10 @@ export const ACTIONS = {
     ZOOM_RESET: "zoom-reset",
     ZOOM_FIT: "zoom-fit",
     ZOOM_FIT_SELECTION: "zoom-fit-selection",
+    CREATE_PAGE: "create-page",
+    DELETE_PAGE: "delete-page",
+    DUPLICATE_PAGE: "duplicate-page",
+    CLEAR_PAGE: "clear-page",
+    NEXT_PAGE: "next-page",
+    PREVIOUS_PAGE: "prev-page",
 };

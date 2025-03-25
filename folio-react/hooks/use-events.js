@@ -564,7 +564,7 @@ export const useEvents = () => {
                 update();
             }
             // Check for arrow keys --> move elements
-            else if (isArrowKey(event.key)) {
+            else if (!isCtrlKey && isArrowKey(event.key)) {
                 event.preventDefault();
                 // const step = event.shiftKey ? (props.gridSize || 10) : 1;
                 const dir = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
