@@ -78,6 +78,13 @@ export const EditorMenu = () => {
                         showDialog("preferences");
                     }}
                 />
+                <MenuDropdownItem
+                    icon="keyboard"
+                    text="Keyboard shortcuts"
+                    onClick={() => {
+                        showDialog("keyboard-shortcuts");
+                    }}
+                />
                 <Dropdown.Separator />
                 <MenuLinkItem
                     url={process.env.URL_HOMEPAGE}
