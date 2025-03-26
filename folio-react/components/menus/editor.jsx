@@ -1,6 +1,6 @@
 import React from "react";
 import classnames from "classnames";
-import {ACTIONS} from "../../constants.js";
+import {ACTIONS, PREFERENCES_FIELDS} from "../../constants.js";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
@@ -33,6 +33,7 @@ export const EditorMenu = () => {
     const dispatchAction = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
+    const shortcutsEnabled = !!editor?.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS];
 
     return (
         <div className="flex relative group" tabIndex="0">
@@ -41,7 +42,7 @@ export const EditorMenu = () => {
                 <MenuDropdownItem
                     icon="folder"
                     text="Open..."
-                    shortcut={getShortcutByAction(ACTIONS.OPEN)}
+                    shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.OPEN)}
                     onClick={() => {
                         dispatchAction(ACTIONS.OPEN);
                     }}
@@ -49,7 +50,7 @@ export const EditorMenu = () => {
                 <MenuDropdownItem
                     icon="download"
                     text="Save a copy"
-                    shortcut={getShortcutByAction(ACTIONS.SAVE)}
+                    shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.SAVE)}
                     onClick={() => {
                         dispatchAction(ACTIONS.SAVE);
                     }}
@@ -57,7 +58,7 @@ export const EditorMenu = () => {
                 <MenuDropdownItem
                     icon="image"
                     text="Export as image"
-                    shortcut={getShortcutByAction(ACTIONS.SHOW_EXPORT_DIALOG)}
+                    shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.SHOW_EXPORT_DIALOG)}
                     disabled={elements.length === 0}
                     className={classnames({
                         "pointer-events-none": elements.length === 0,
