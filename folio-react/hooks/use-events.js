@@ -14,6 +14,7 @@ import {
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
     FIELDS,
+    PREFERENCES_FIELDS,
 } from "../constants.js";
 import {normalizeBounds, getRectangleBounds} from "../utils/math.js";
 import {isArrowKey} from "../utils/keys.js";
@@ -556,9 +557,9 @@ export const useEvents = () => {
                 //     editor.state.action = null;
                 // }
                 // Check for active group enabled --> exit group edition
-                // if (board.activeGroup) {
-                //     board.activeGroup = null;
-                // }
+                if (editor?.page?.activeGroup) {
+                    editor.page.activeGroup = null;
+                }
                 event.preventDefault();
                 editor.clearSelection();
                 update();
@@ -605,7 +606,7 @@ export const useEvents = () => {
                 update();
             }
             // otherwhise check for the action by the key combination
-            else {
+            else if (!!editor.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS]) {
                 // 1. check if this combination is an action shortcut
                 const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
                 if (action) {
