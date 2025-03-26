@@ -504,7 +504,6 @@ export const ACTIONS = {
     REDO: "redo",
     OPEN: "open",
     SAVE: "save",
-    EXPORT_IMAGE: "export-image",
     CLEAR: "clear",
     SELECT_ALL: "select-all",
     DELETE_SELECTION: "delete-selection",
@@ -531,4 +530,10 @@ export const ACTIONS = {
     TOGGLE_GRID: "toggle-grid",
     TOGGLE_SNAP_TO_ELEMENTS: "toggle-snap-to-elements",
     TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
+    SHOW_PREFERENCES_DIALOG: "show-preferences-dialog",
+    SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
+    SHOW_EXPORT_DIALOG: "show-export-dialog",
+    SHOW_LIBRARY_ADD_DIALOG: "show-library-add-dialog",
+    SHOW_LIBRARY_EXPORT_DIALOG: "show-library-export-dialog",
+    SHOW_PAGE_EDIT_DIALOG: "show-page-edit-dialog",
 };

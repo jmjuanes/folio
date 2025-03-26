@@ -283,8 +283,7 @@ export const ControlledPagesMenu = () => {
                                     dispatchAction(ACTIONS.DUPLICATE_PAGE, {page});
                                 }}
                                 onEdit={() => {
-                                    showDialog("pages-edit", {page});
-                                    clearFocus();
+                                    dispatchAction(ACTIONS.SHOW_PAGE_EDIT_DIALOG, {page});
                                 }}
                                 onMove={event => {
                                     handlePageMove(event, page);

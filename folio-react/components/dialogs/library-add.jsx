@@ -1,5 +1,6 @@
 import React from "react";
 import {Button} from "../ui/button.jsx";
+import {Dialog} from "../ui/dialog.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
@@ -49,7 +50,10 @@ export const LibraryAddDialog = () => {
 
     return (
         <React.Fragment>
-            <div className="flex flex-col gap-2 w-full mb-8">
+            <Dialog.Header>
+                <Dialog.Title>Add to Library</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body className="flex flex-col gap-2 w-full mb-8">
                 <div className="h-40 flex items-center justify-center rounded-lg border border-neutral-200">
                     {thumbnail && (
                         <img src={thumbnail} height="100%" />
@@ -60,15 +64,15 @@ export const LibraryAddDialog = () => {
                     items={libraryAddFields}
                     onChange={setData}
                 />
-            </div>
-            <div className="flex items-center gap-2 justify-end">
+            </Dialog.Body>
+            <Dialog.Footer>
                 <Button variant="secondary" onClick={() => hideDialog()}>
                     <span>Cancel</span>
                 </Button>
                 <Button variant="primary" onClick={handleSubmit}>
                     <span>Add to Library</span>
                 </Button>
-            </div>
+            </Dialog.Footer>
         </React.Fragment>
     );
 };

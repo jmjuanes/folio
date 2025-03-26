@@ -3,7 +3,6 @@ import {ACTIONS, ELEMENTS} from "../constants.js";
 import {ContextMenu as Menu} from "./ui/context-menu.jsx";
 import {useEditor} from "../contexts/editor.jsx";
 import {useContextMenu} from "../contexts/context-menu.jsx";
-import {useDialog} from "../contexts/dialogs.jsx";
 import {useActions} from "../hooks/use-actions.js";
 import {getShortcutByAction, printShortcut} from "../lib/actions.js";
 
@@ -35,7 +34,6 @@ export const ContextMenu = props => {
     const editor = useEditor();
     const dispatchAction = useActions();
     const {hideContextMenu} = useContextMenu();
-    const {showDialog} = useDialog();
     const selectedElements = editor.getSelection();
 
     const contextMenuStyle = React.useMemo(() => {
@@ -119,7 +117,7 @@ export const ContextMenu = props => {
                         text="Add to library..."
                         disabled={!addLibraryItem}
                         onClick={() => {
-                            showDialog("library-add", {});
+                            dispatchAction(ACTIONS.SHOW_LIBRARY_ADD_DIALOG);
                             hideContextMenu();
                         }}
                     />

@@ -1,11 +1,13 @@
 import React from "react";
 import {PREFERENCES_FIELDS, FORM_OPTIONS} from "../../constants.js";
 import {Button} from "../ui/button.jsx";
+import {Dialog} from "../ui/dialog.jsx";
 import {Form} from "../form/index.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
 import {useFormData} from "../../hooks/use-form-data.js";
 
+// @description default preferences dialog content
 export const PreferencesDialog = () => {
     const editor = useEditor();
     const {hideDialog} = useDialog();
@@ -32,21 +34,24 @@ export const PreferencesDialog = () => {
 
     return (
         <React.Fragment>
-            <div className="mb-8">
+            <Dialog.Header>
+                <Dialog.Title>Preferences</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body className="mb-8">
                 <Form
                     data={data}
                     items={preferencesFields}
                     onChange={setData}
                 />
-            </div>
-            <div className="flex items-center gap-2 justify-end">
+            </Dialog.Body>
+            <Dialog.Footer className="">
                 <Button variant="secondary" onClick={hideDialog}>
                     <span>Cancel</span>
                 </Button>
                 <Button variant="primary" onClick={handleSubmit}>
                     <span>Save Preferences</span>
                 </Button>
-            </div>
+            </Dialog.Footer>
         </React.Fragment>
     );
 };
