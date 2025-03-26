@@ -3,6 +3,7 @@ import {ACTIONS, ZOOM_STEP} from "../constants.js";
 import {useEditor} from "../contexts/editor.jsx";
 import {useConfirm} from "../contexts/confirm.jsx";
 import {useDialog} from "../contexts/dialogs.jsx";
+import {useEditorComponents} from "../contexts/editor-components.jsx";
 import {loadFromJson, saveAsJson} from "../lib/json.js";
 
 // @description hook to dispatch an action in the editor
@@ -10,6 +11,14 @@ export const useActions = () => {
     const editor = useEditor();
     const {showConfirm} = useConfirm();
     const {showDialog} = useDialog();
+    const {
+        KeyboardShortcutsDialog,
+        PreferencesDialog,
+        ExportDialog,
+        LibraryAddDialog,
+        LibraryExportDialog,
+        PageEditDialog,
+    } = useEditorComponents();
 
     // @description list with all the available actions
     const actionsList = React.useMemo(() => {
@@ -51,9 +60,6 @@ export const useActions = () => {
                         editor.update();
                     },
                 });
-            },
-            [ACTIONS.EXPORT_IMAGE]: (exportOptions = {}) => {
-                showDialog("export", exportOptions);
             },
             [ACTIONS.UNDO]: () => {
                 editor.undo();
@@ -257,6 +263,46 @@ export const useActions = () => {
                 editor.appState.objectDimensions = !editor.appState?.objectDimensions;
                 editor.dispatchChange();
                 editor.update();
+            },
+            [ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG]: () => {
+                showDialog({
+                    dialogClassName: "w-full max-w-lg",
+                    component: KeyboardShortcutsDialog,
+                });
+            },
+            [ACTIONS.SHOW_PREFERENCES_DIALOG]: () => {
+                showDialog({
+                    dialogClassName: "w-full max-w-md",
+                    component: PreferencesDialog,
+                });
+            },
+            [ACTIONS.SHOW_EXPORT_DIALOG]: exportOptions => {
+                showDialog({
+                    dialogClassName: "w-full max-w-md",
+                    component: ExportDialog,
+                    props: exportOptions,
+                });
+            },
+            [ACTIONS.SHOW_LIBRARY_ADD_DIALOG]: () => {
+                showDialog({
+                    dialogClassName: "w-full max-w-md",
+                    component: LibraryAddDialog,
+                });
+            },
+            [ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG]: () => {
+                showDialog({
+                    dialogClassName: "w-full max-w-md",
+                    component: LibraryExportDialog,
+                });
+            },
+            [ACTIONS.SHOW_PAGE_EDIT_DIALOG]: pageOptions => {
+                if (pageOptions?.page?.id) {
+                    showDialog({
+                        dialogClassName: "w-full max-w-md",
+                        component: PageEditDialog,
+                        props: pageOptions,
+                    });
+                }
             },
         };
     }, [editor, showConfirm, showDialog]);

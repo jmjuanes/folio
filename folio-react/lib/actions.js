@@ -20,7 +20,6 @@ export const shortcutsMap = {
 
     [ACTIONS.OPEN]: getShortcutKey("CtrlOrCmd+O"),
     [ACTIONS.SAVE]: getShortcutKey("CtrlOrCmd+S"),
-    [ACTIONS.EXPORT_IMAGE]: getShortcutKey("CtrlOrCmd+Shift+E"),
     [ACTIONS.CLEAR]: getShortcutKey("CtrlOrCmd+Shift+Delete"),
 
     [ACTIONS.SELECT_ALL]: getShortcutKey("CtrlOrCmd+A"),
@@ -54,6 +53,8 @@ export const shortcutsMap = {
     [ACTIONS.TOGGLE_GRID]: getShortcutKey("CtrlOrCmd+'"),
     [ACTIONS.TOGGLE_SNAP_TO_ELEMENTS]: getShortcutKey("Alt+S"),
     [ACTIONS.TOGGLE_SHOW_DIMENSIONS]: getShortcutKey("Alt+D"),
+
+    [ACTIONS.SHOW_EXPORT_DIALOG]: getShortcutKey("CtrlOrCmd+Shift+E"),
 };
 
 // @description get shortcut key for the provided action
