@@ -1,8 +1,18 @@
 import React from "react";
 import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
-import {EXPORT_FORMATS, EXPORT_PADDING, FORM_OPTIONS, TRANSPARENT} from "../../constants.js";
-import {exportToDataURL, exportToFile, exportToClipboard} from "../../lib/export.js";
+import {
+    EXPORT_FORMATS,
+    EXPORT_PADDING,
+    FORM_OPTIONS,
+    TRANSPARENT,
+} from "../../constants.js";
+import {
+    exportToDataURL,
+    exportToFile,
+    exportToClipboard,
+} from "../../lib/export.js";
 import {Button} from "../ui/button.jsx";
+import {Dialog} from "../ui/dialog.jsx";
 import {Form} from "../form/index.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
 import {useDialog} from "../../contexts/dialogs.jsx";
@@ -15,6 +25,7 @@ const previewStyle = {
     backgroundRepeat: "repeat",
 };
 
+// @description content of the Export dialog
 export const ExportDialog = () => {
     const editor = useEditor();
     const {hideDialog} = useDialog();
@@ -61,22 +72,22 @@ export const ExportDialog = () => {
     // handle download action
     // @param {array} elements elements to export
     // @param {object} options export options
-    const handleDownload = React.useCallback((elements, options) => {
+    const handleDownload = React.useCallback(() => {
         // TODO: display a notification if the export is successful
         return exportToFile(elements, options)
             .catch(error => console.error(error))
             .finally(() => hideDialog());
-    }, [hideDialog]);
+    }, [hideDialog, elements, options]);
 
     // handle copy to clipboard action
     // @param {array} elements elements to export
     // @param {object} options export options
-    const handleCopyToClipboard = React.useCallback((elements, options) => {
+    const handleCopyToClipboard = React.useCallback(() => {
         // TODO: display a notification if the export is successful
         return exportToClipboard(elements, options)
             .catch(error => console.error(error))
             .finally(() => hideDialog());
-    }, [hideDialog]);
+    }, [hideDialog, elements, options]);
 
     // Handle preview update when an option is changed
     React.useEffect(() => {
@@ -89,41 +100,42 @@ export const ExportDialog = () => {
 
     return (
         <React.Fragment>
-            <div className={themed("select-none mb-4 rounded-lg overflow-hidden", "export.preview")}>
-                {!!previewImage && (
-                    <div className="flex items-center justify-center h-48" style={previewStyle}>
-                        <img src={previewImage} className="max-h-48" />
-                    </div>
-                )}
-                {!previewImage && (
-                    <div className="flex flex-col items-center justify-center gap-1 h-48">
-                        <div className="flex text-lg">
-                            <ImageIcon />
+            <Dialog.Header>
+                <Dialog.Title>Export as image</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body className="">
+                <div className={themed("select-none mb-4 rounded-lg overflow-hidden", "export.preview")}>
+                    {!!previewImage && (
+                        <div className="flex items-center justify-center h-48" style={previewStyle}>
+                            <img src={previewImage} className="max-h-48" />
                         </div>
-                        <span className="text-xs">
-                            Generating preview...
-                        </span>
-                    </div>
-                )}
-            </div>
-            <div className="mb-8">
-                <Form
-                    data={options}
-                    items={exportFields}
-                    onChange={(key, value) => {
-                        setOptions(prevOptions => ({
-                            ...prevOptions,
-                            [key]: value,
-                        }));
-                    }}
-                />
-            </div>
-            <div className="flex gap-2 w-full flex-col">
-                <Button
-                    variant="secondary"
-                    className="w-full"
-                    onClick={() => handleDownload(exportElements, exportOptions)}
-                >
+                    )}
+                    {!previewImage && (
+                        <div className="flex flex-col items-center justify-center gap-1 h-48">
+                            <div className="flex text-lg">
+                                <ImageIcon />
+                            </div>
+                            <span className="text-xs">
+                                Generating preview...
+                            </span>
+                        </div>
+                    )}
+                </div>
+                <div className="mb-8">
+                    <Form
+                        data={options}
+                        items={exportFields}
+                        onChange={(key, value) => {
+                            setOptions(prevOptions => ({
+                                ...prevOptions,
+                                [key]: value,
+                            }));
+                        }}
+                    />
+                </div>
+            </Dialog.Body>
+            <Dialog.Footer className="gap-2">
+                <Button variant="secondary" className="w-full" onClick={handleDownload}>
                     <div className="flex items-center text-lg">
                         <DownloadIcon />
                     </div>
@@ -131,11 +143,7 @@ export const ExportDialog = () => {
                         <span>Download PNG</span>
                     </div>
                 </Button>
-                <Button
-                    variant="secondary"
-                    className="w-full"
-                    onClick={() => handleCopyToClipboard(exportElements, exportOptions)}
-                >
+                <Button variant="secondary" className="w-full" onClick={handleCopyToClipboard}>
                     <div className="flex items-center text-lg">
                         <ClipboardIcon />
                     </div>
@@ -143,7 +151,7 @@ export const ExportDialog = () => {
                         <span>Copy to clipboard</span>
                     </div>
                 </Button>
-            </div>
+            </Dialog.Footer>
         </React.Fragment>
     );
 };

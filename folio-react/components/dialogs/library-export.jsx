@@ -1,5 +1,6 @@
 import React from "react";
 import {CheckIcon} from "@josemi-icons/react";
+import {Dialog} from "../ui/dialog.jsx";
 import {Button} from "../ui/button.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
@@ -36,7 +37,7 @@ const LibraryItemsGrid = ({items, selectedItems, onChange}) => {
 };
 
 // @description Library export dialog
-export const LibraryExportDialog = props => {
+export const LibraryExportDialog = () => {
     const editor = useEditor();
     const {hideDialog} = useDialog();
     const [data, setData] = useFormData({
@@ -67,7 +68,10 @@ export const LibraryExportDialog = props => {
 
     return (
         <React.Fragment>
-            <div className="mb-8">
+            <Dialog.Header>
+                <Dialog.Title>Export Library</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
                 <Form
                     data={data}
                     items={{
@@ -102,15 +106,15 @@ export const LibraryExportDialog = props => {
                     }}
                     onChange={setData}
                 />
-            </div>
-            <div className="flex items-center gap-2 justify-end">
+            </Dialog.Body>
+            <Dialog.Footer>
                 <Button variant="secondary" onClick={() => hideDialog()}>
                     <span>Cancel</span>
                 </Button>
                 <Button variant="primary" disabled={!isSubmitEnabled} onClick={handleSubmit}>
                     <span>Export Library</span>
                 </Button>
-            </div>
+            </Dialog.Footer>
         </React.Fragment>
     );
 };

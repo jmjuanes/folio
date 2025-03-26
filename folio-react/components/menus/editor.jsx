@@ -4,7 +4,6 @@ import {ACTIONS} from "../../constants.js";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
-import {useDialog} from "../../contexts/dialogs.jsx";
 import {useActions} from "../../hooks/use-actions.js";
 import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 
@@ -31,7 +30,6 @@ const MenuDropdownItem = props => (
 
 // @description export main editor menu
 export const EditorMenu = () => {
-    const {showDialog} = useDialog();
     const dispatchAction = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
@@ -59,13 +57,13 @@ export const EditorMenu = () => {
                 <MenuDropdownItem
                     icon="image"
                     text="Export as image"
-                    shortcut={getShortcutByAction(ACTIONS.EXPORT_IMAGE)}
+                    shortcut={getShortcutByAction(ACTIONS.SHOW_EXPORT_DIALOG)}
                     disabled={elements.length === 0}
                     className={classnames({
                         "pointer-events-none": elements.length === 0,
                     })}
                     onClick={() => {
-                        dispatchAction(ACTIONS.EXPORT_IMAGE, {elements});
+                        dispatchAction(ACTIONS.SHOW_EXPORT_DIALOG, {elements});
                     }}
                 />
                 <MenuDropdownItem
@@ -84,14 +82,14 @@ export const EditorMenu = () => {
                     icon="tools"
                     text="Preferences"
                     onClick={() => {
-                        showDialog("preferences");
+                        dispatchAction(ACTIONS.SHOW_PREFERENCES_DIALOG);
                     }}
                 />
                 <MenuDropdownItem
                     icon="keyboard"
                     text="Keyboard shortcuts"
                     onClick={() => {
-                        showDialog("keyboard-shortcuts");
+                        dispatchAction(ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG);
                     }}
                 />
                 <Dropdown.Separator />

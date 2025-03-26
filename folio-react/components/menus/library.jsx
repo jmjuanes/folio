@@ -1,10 +1,11 @@
 import React from "react";
 import {AlbumIcon, PlusIcon, CloseIcon} from "@josemi-icons/react";
+import {ACTIONS} from "../../constants.js";
 import {Dropdown} from "../ui/dropdown.jsx";
 import {Island} from "../ui/island.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
-import {useDialog} from "../../contexts/dialogs.jsx";
 import {useConfirm} from "../../contexts/confirm.jsx";
+import {useActions} from "../../hooks/use-actions.js";
 import {loadLibraryFromJson} from "../../lib/library.js";
 import {clearFocus} from "../../utils/dom.js";
 
@@ -61,8 +62,8 @@ const LibraryItem = ({thumbnail, onInsert, onDelete}) => {
 // @description library menu
 export const LibraryMenu = () => {
     const editor = useEditor();
+    const dispatchAction = useActions();
     const {showConfirm} = useConfirm();
-    const {showDialog} = useDialog();
 
     // handle loading a library from JSON
     const handleLibraryLoad = React.useCallback(() => {
@@ -93,8 +94,8 @@ export const LibraryMenu = () => {
     // handle exporting the library
     const handleLibraryExport = React.useCallback(() => {
         clearFocus();
-        showDialog("library-export", {});
-    }, [showDialog]);
+        dispatchAction(ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG, {});
+    }, [dispatchAction]);
 
     // inject an item into the editor
     // @param {object} item library item to insert

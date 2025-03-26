@@ -1,6 +1,7 @@
 import React from "react";
 import {ACTIONS} from "../../constants.js";
 import {useTools} from "../../hooks/use-tools.js";
+import {Dialog} from "../ui/dialog.jsx";
 import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 
 // @description keyboard shortcuts section
@@ -48,11 +49,11 @@ export const KeyboardShortcutsDialogContent = () => {
     }, [tools]);
 
     return (
-        <React.Fragment>
+        <div className="gap-4" style={{columns: "2", columnGap: "4rem"}}>
             <KeyboardShortcutsGroup title="Drawing">
                 <KeyboardShortcutsItem action={ACTIONS.OPEN} label="Open" />
                 <KeyboardShortcutsItem action={ACTIONS.SAVE} label="Save" />
-                <KeyboardShortcutsItem action={ACTIONS.EXPORT_IMAGE} label="Export as Image" />
+                <KeyboardShortcutsItem action={ACTIONS.SHOW_EXPORT_DIALOG} label="Export as Image" />
                 <KeyboardShortcutsItem action={ACTIONS.CLEAR} label="Clear all" />
             </KeyboardShortcutsGroup>
             <KeyboardShortcutsGroup title="Actions">
@@ -102,16 +103,19 @@ export const KeyboardShortcutsDialogContent = () => {
                 <KeyboardShortcutsItem action={ACTIONS.TOGGLE_SNAP_TO_ELEMENTS} label="Snap to Elements" />
                 <KeyboardShortcutsItem action={ACTIONS.TOGGLE_SHOW_DIMENSIONS} label="Object Dimensions" />
             </KeyboardShortcutsGroup>
-        </React.Fragment>
+        </div>
     );
 };
 
 export const KeyboardShortcutsDialog = () => {
     return (
-        <div className="max-h-96 overflow-y-auto">
-            <div className="gap-4" style={{columns: "2", columnGap: "4rem"}}>
+        <React.Fragment>
+            <Dialog.Header>
+                <Dialog.Title>Keyboard Shortcuts</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body className="max-h-96 overflow-y-auto">
                 <KeyboardShortcutsDialogContent />
-            </div>
-        </div>
+            </Dialog.Body>
+        </React.Fragment>
     );
 };
