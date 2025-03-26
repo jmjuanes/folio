@@ -476,11 +476,8 @@ export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
 
 // preferences fields
 export const PREFERENCES_FIELDS = {
-    MINIMAP_VISIBLE: "minimap.visible",
-    MINIMAP_POSITION: "minimap.position",
-    MINIMAP_WIDTH: "minimap.width",
-    MINIMAP_HEIGHT: "minimap.height",
-    PAGES_VIEW: "pages.view",
+    MINIMAP: "minimap",
+    KEYBOARD_SHORTCUTS: "keyboardShortcuts",
 };
 
 // minimap constants
