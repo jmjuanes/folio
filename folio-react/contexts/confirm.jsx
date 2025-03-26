@@ -26,29 +26,56 @@ const confirmReducer = (state, action) => {
     }
 };
 
+// @description confirm hook to access to confirm dialog
 export const useConfirm = () => {
     return React.useContext(ConfirmContext);
 };
 
+// @description confirm provider component
+// @param {object} props React props
+// @param {React.ReactNode} props.children React children to render
+// @param {string} props.confirmText default confirm button text
+// @param {string} props.cancelText default cancel button text
 export const ConfirmProvider = props => {
     const [confirm, dispatch] = React.useReducer(confirmReducer, {
         visible: false,
     });
-    const showConfirm = payload => {
+
+    // show a confirm dialog
+    // @param {object} payload confirm dialog properties
+    const showConfirm = React.useCallback(payload => {
         return dispatch({
             type: SHOW_CONFIRM,
             payload: payload,
         });
-    };
-    const hideConfirm = () => {
+    }, [dispatch]);
+
+    // hide the confirm dialog
+    const hideConfirm = React.useCallback(() => {
         return dispatch({
             type: HIDE_CONFIRM,
-        })
-    };
-    const submitConfirm = () => {
+        });
+    }, [dispatch]);
+
+    // submit the confirm dialog
+    const submitConfirm = React.useCallback(() => {
         confirm?.callback?.();
         hideConfirm();
-    };
+    }, [confirm, hideConfirm]);
+
+    // register an effect to listen for the escape key and hide the dialog
+    React.useEffect(() => {
+        const handleKeyDown = event => {
+            if (event.key === "Escape" && confirm?.visible) {
+                hideConfirm();
+            }
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [confirm, hideConfirm]);
+
     return (
         <ConfirmContext.Provider value={{confirm, showConfirm, hideConfirm}}>
             {props.children}
