@@ -5,7 +5,7 @@ import {ContextMenu} from "../components/context-menu.jsx";
 import {ExportDialog} from "../components/dialogs/export.jsx";
 import {LibraryAddDialog} from "../components/dialogs/library-add.jsx";
 import {LibraryExportDialog} from "../components/dialogs/library-export.jsx";
-import {PagesEditDialog} from "../components/dialogs/pages-edit.jsx";
+import {PageEditDialog} from "../components/dialogs/page-edit.jsx";
 import {PreferencesDialog} from "../components/dialogs/preferences.jsx";
 import {KeyboardShortcutsDialog} from "../components/dialogs/keyboard-shortcuts.jsx";
 import {LibraryMenu} from "../components/menus/library.jsx";
@@ -43,7 +43,7 @@ export const EditorComponentsProvider = ({components = {}, children}) => {
             ExportDialog: ExportDialog,
             LibraryAddDialog: LibraryAddDialog,
             LibraryExportDialog: LibraryExportDialog,
-            PagesEditDialog: PagesEditDialog,
+            PageEditDialog: PageEditDialog,
             PreferencesDialog: PreferencesDialog,
             KeyboardShortcutsDialog: KeyboardShortcutsDialog,
             // menus

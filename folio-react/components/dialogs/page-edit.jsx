@@ -1,5 +1,6 @@
 import React from "react";
 import {Button} from "../ui/button.jsx";
+import {Dialog} from "../ui/dialog.jsx";
 import {Form} from "../form/index.jsx";
 import {FORM_OPTIONS} from "../../constants.js";
 import {useFormData} from "../../hooks/use-form-data.js";
@@ -30,7 +31,7 @@ const pageEditFields = {
 // @param {object} props React props
 // @param {object} props.page page object
 // @param {function} props.onClose close dialog callback
-export const PagesEditDialog = props => {
+export const PageEditDialog = props => {
     const editor = useEditor();
     const page = editor.getPage(props.page.id);
 
@@ -52,19 +53,24 @@ export const PagesEditDialog = props => {
     const isSubmitEnabled = !!data.title;
     return (
         <React.Fragment>
-            <Form
-                data={data}
-                items={pageEditFields}
-                onChange={setData}
-            />
-            <div className="mt-6 flex gap-2 items-center justify-end">
+            <Dialog.Header>
+                <Dialog.Title>Edit Page</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+                <Form
+                    data={data}
+                    items={pageEditFields}
+                    onChange={setData}
+                />
+            </Dialog.Body>
+            <Dialog.Footer>
                 <Button variant="secondary" onClick={props.onClose}>
                     <span>Cancel</span>
                 </Button>
                 <Button variant="primary" disabled={!isSubmitEnabled} onClick={() => handleSubmit(data)}>
                     <span>Save Changes</span>
                 </Button>
-            </div>
+            </Dialog.Footer>
         </React.Fragment>
     );
 };
