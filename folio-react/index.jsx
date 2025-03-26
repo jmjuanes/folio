@@ -59,6 +59,8 @@ export {ExportDialog} from "./components/dialogs/export.jsx";
 export {LibraryAddDialog} from "./components/dialogs/library-add.jsx";
 export {LibraryExportDialog} from "./components/dialogs/library-export.jsx";
 export {PreferencesDialog} from "./components/dialogs/preferences.jsx";
+export {KeyboardShortcutsDialog} from "./components/dialogs/keyboard-shortcuts.jsx";
+export {PageEditDialog} from "./components/dialogs/page-edit.jsx";
 export {EditorMenu} from "./components/menus/editor.jsx";
 export {LibraryMenu} from "./components/menus/library.jsx";
 export {PagesMenu} from "./components/menus/pages.jsx";
