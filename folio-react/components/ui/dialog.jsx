@@ -1,61 +1,33 @@
 import React from "react";
+import cn from "classnames";
 import {CloseIcon} from "@josemi-icons/react";
-import {themed} from "../../contexts/theme.jsx";
 
 export const Dialog = ({className, ...props}) => (
-    <div
-        data-testid="dialog"
-        className={themed("w-full rounded-2xl px-6 pt-8 pb-6", "dialog", className)}
-        {...props}
-    />
+    <div className={cn("bg-white border border-neutral-200 shadow-sm rounded-2xl px-6 py-6", className)} {...props} />
 );
 
 Dialog.Title = ({className, ...props}) => (
-    <div
-        data-testid="dialog-title"
-        className={themed("dialog.title", className)}
-        {...props}
-    />
+    <div className={cn("font-bold text-lg text-neutral-950", className)} {...props} />
 );
 
 Dialog.Description = ({className, ...props}) => (
-    <div
-        data-testid="dialog-description"
-        className={themed("dialog.description", className)}
-        {...props}
-    />
+    <div className={cn("text-sm text-neutral-800", className)} {...props} />
 );
 
 Dialog.Close = ({className, ...props}) => (
-    <div
-        data-testid="dialog-close"
-        className={themed("flex cursor-pointer text-xl absolute top-0 right-0 mt-3 mr-3", "dialog.close", className)}
-        {...props}
-    >
+    <div className={cn("flex cursor-pointer text-2xl absolute top-0 right-0 mt-6 mr-5 text-neutral-700 hover:text-neutral-900", className)} {...props}>
         <CloseIcon />
     </div>
 );
 
 Dialog.Header = ({className, ...props}) => (
-    <div
-        data-testid="dialog-header"
-        className={themed("flex flex-col select-none mb-2", "dialog.header", className)}
-        {...props}
-    />
+    <div className={cn("flex flex-col select-none mb-6", className)} {...props} />
 );
 
 Dialog.Body = ({className, ...props}) => (
-    <div
-        data-testid="dialog-body"
-        className={themed("dialog.body", className)}
-        {...props}
-    />
+    <div className={className} {...props} />
 );
 
 Dialog.Footer = ({className, ...props}) => (
-    <div
-        data-testid="dialog-footer"
-        className={themed("flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4", "dialog.footer", className)}
-        {...props}
-    />
+    <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-6", className)} {...props} />
 );
