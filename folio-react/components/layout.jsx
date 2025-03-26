@@ -63,7 +63,7 @@ export const Layout = props => {
                             <Toolbar />
                         </div>
                     )}
-                    {!!MinimapPanel && !!editor.preferences[PREFERENCES_FIELDS.MINIMAP_VISIBLE] && (
+                    {!!MinimapPanel && !!editor.preferences[PREFERENCES_FIELDS.MINIMAP] && (
                         <div className="absolute z-20 bottom-0 mb-4 left-0 ml-4">
                             <MinimapPanel />
                         </div>

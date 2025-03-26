@@ -14,10 +14,15 @@ export const PreferencesDialog = () => {
     const [data, setData] = useFormData(editor.preferences || {});
     const preferencesFields = React.useMemo(() => {
         return {
-            [PREFERENCES_FIELDS.MINIMAP_VISIBLE]: {
+            [PREFERENCES_FIELDS.MINIMAP]: {
                 type: FORM_OPTIONS.CHECKBOX,
-                title: "Show Minimap",
+                title: "Minimap",
                 helper: "Show or hide a minimap in the bottom left corner of the board.",
+            },
+            [PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS]: {
+                type: FORM_OPTIONS.CHECKBOX,
+                title: "Keyboard Shortcuts",
+                helper: "Enable or disable keyboard shortcuts.",
             },
         };
     }, [data]);

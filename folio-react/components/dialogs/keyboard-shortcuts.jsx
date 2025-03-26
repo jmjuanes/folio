@@ -1,6 +1,8 @@
 import React from "react";
-import {ACTIONS} from "../../constants.js";
+import {ACTIONS, PREFERENCES_FIELDS} from "../../constants.js";
+import {useEditor} from "../../contexts/editor.jsx";
 import {useTools} from "../../hooks/use-tools.js";
+import {Alert} from "../ui/alert.jsx";
 import {Dialog} from "../ui/dialog.jsx";
 import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 
@@ -108,11 +110,19 @@ export const KeyboardShortcutsDialogContent = () => {
 };
 
 export const KeyboardShortcutsDialog = () => {
+    const editor = useEditor();
+    const shortcutsEnabled = !!editor?.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS];
+
     return (
         <React.Fragment>
             <Dialog.Header>
                 <Dialog.Title>Keyboard Shortcuts</Dialog.Title>
             </Dialog.Header>
+            {!shortcutsEnabled && (
+                <Alert className="mb-4" variant="warning" icon="exclamation-triangle">
+                    Enable keyboard shortcuts in Menu → Preferences.
+                </Alert>
+            )}
             <Dialog.Body className="max-h-96 overflow-y-auto">
                 <KeyboardShortcutsDialogContent />
             </Dialog.Body>

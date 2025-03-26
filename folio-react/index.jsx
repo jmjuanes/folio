@@ -2,6 +2,8 @@ export {
     ELEMENTS,
     TOOLS,
     VERSION,
+    PREFERENCES_FIELDS as PREFERENCES,
+    ACTIONS,
 } from "./constants.js";
 export {createMemoryStore} from "./store/memory.js";
 export {
