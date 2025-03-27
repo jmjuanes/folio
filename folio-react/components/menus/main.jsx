@@ -87,6 +87,7 @@ export const MainMenuContent = () => {
             <MenuDropdownItem
                 icon="keyboard"
                 text="Keyboard shortcuts"
+                disabled={!shortcutsEnabled}
                 onClick={() => {
                     dispatchAction(ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG);
                 }}
