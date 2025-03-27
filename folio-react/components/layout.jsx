@@ -14,7 +14,7 @@ export const Layout = props => {
     const [layersVisible, setLayersVisible] = React.useState(false);
     const editor = useEditor();
     const {
-        Menu,
+        MenuPanel,
         Toolbar,
         Layers,
         EditionPanel,
@@ -31,9 +31,9 @@ export const Layout = props => {
             {props.children}
             {!hideUi && (
                 <React.Fragment>
-                    {!!Menu && (
+                    {!!MenuPanel && (
                         <div className="absolute top-0 left-0 pt-4 pl-4 z-40 flex gap-2">
-                            <Menu />
+                            <MenuPanel />
                         </div>
                     )}
                     {(!!HistoryPanel || !!ZoomPanel || !!Layers) && (
