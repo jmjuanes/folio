@@ -370,7 +370,7 @@ export const useEvents = () => {
                 }
             }
             // else if (editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT) {
-            else if (editor.state.tool === TOOLS.SELECT) {
+            else if (editor.state.tool === TOOLS.SELECT && !!editor.state.selection) {
                 editor.state.status = STATUS.BRUSHING;
                 editor.state.selection.x2 = event.currentX;
                 editor.state.selection.y2 = event.currentY;
@@ -487,7 +487,7 @@ export const useEvents = () => {
                 isResized = false;
             }
             // else if (editor.state.action === ACTIONS.SELECT) {
-            else if (editor.state.tool === TOOLS.SELECT) {
+            else if (editor.state.tool === TOOLS.SELECT && !!editor.state.selection) {
                 const selection = editor.state.selection;
                 editor.setSelectionArea({
                     x1: Math.min(selection.x1, selection.x2),
