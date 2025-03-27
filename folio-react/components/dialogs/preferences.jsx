@@ -42,7 +42,7 @@ export const PreferencesDialog = () => {
             <Dialog.Header>
                 <Dialog.Title>Preferences</Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body className="mb-8">
+            <Dialog.Body className="">
                 <Form
                     data={data}
                     items={preferencesFields}

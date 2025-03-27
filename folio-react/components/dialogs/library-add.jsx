@@ -53,7 +53,7 @@ export const LibraryAddDialog = () => {
             <Dialog.Header>
                 <Dialog.Title>Add to Library</Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body className="flex flex-col gap-2 w-full mb-8">
+            <Dialog.Body className="flex flex-col gap-2 w-full">
                 <div className="h-40 flex items-center justify-center rounded-lg border border-neutral-200">
                     {thumbnail && (
                         <img src={thumbnail} height="100%" />
