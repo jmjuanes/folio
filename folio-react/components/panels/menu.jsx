@@ -6,16 +6,21 @@ import {useEditor} from "../../contexts/editor.jsx";
 import {useActions} from "../../hooks/use-actions.js";
 
 // @description: default menu panel
-export const Menu = () => {
+export const MenuPanel = () => {
     const editor = useEditor();
     const dispatchAction = useActions();
-    const {EditorMenu, PagesMenu, SettingsMenu, LibraryMenu} = useEditorComponents();
+    const {MainMenu, PagesMenu, SettingsMenu, LibraryMenu} = useEditorComponents();
+
+    // if no menus are available, do not render this panel
+    if (!MainMenu && !PagesMenu && !LibraryMenu && !SettingsMenu) {
+        return null;
+    }
 
     return (
         <React.Fragment>
-            {!!EditorMenu && (
+            {!!MainMenu && (
                 <Island>
-                    <EditorMenu />
+                    <MainMenu />
                 </Island>
             )}
             <Island>

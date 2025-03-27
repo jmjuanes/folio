@@ -1,18 +1,18 @@
 import React from "react";
-import {ACTIONS, PREFERENCES_FIELDS} from "../../constants.js";
-import {useEditor} from "../../contexts/editor.jsx";
+import {ACTIONS} from "../../constants.js";
 import {useTools} from "../../hooks/use-tools.js";
-import {Alert} from "../ui/alert.jsx";
 import {Dialog} from "../ui/dialog.jsx";
 import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 
 // @description keyboard shortcuts section
 const KeyboardShortcutsGroup = props => (
     <div className="mb-4" style={{breakInside: "avoid-column"}}>
-        <div className="text-2xs text-neutral-600 font-bold mb-1">
+        <div className="text-sm text-neutral-600 font-bold mb-1">
             {props.label || props.title || ""}
         </div>
-        {props.children}
+        <div className="border border-neutral-200 rounded-lg overflow-hidden">
+            {props.children}
+        </div>
     </div>
 );
 
@@ -23,12 +23,12 @@ const KeyboardShortcutsItem = props => {
     }, [props.action, props.shortcut]);
 
     return (
-        <div className="flex items-center justify-between py-1">
+        <div className="border-b last:border-b-0 border-neutral-200 flex items-center justify-between p-2">
             <div className="text-sm">
                 {props.label || ""}
             </div>
             {shortcut && (
-                <div className="text-2xs text-neutral-600 font-bold">
+                <div className="text-xs text-neutral-800 font-bold bg-neutral-100 px-2 py-1 rounded-md">
                     {printShortcut(shortcut)}
                 </div>
             )}
@@ -51,7 +51,7 @@ export const KeyboardShortcutsDialogContent = () => {
     }, [tools]);
 
     return (
-        <div className="gap-4" style={{columns: "2", columnGap: "4rem"}}>
+        <div className="fles flex-col gap-4">
             <KeyboardShortcutsGroup title="Drawing">
                 <KeyboardShortcutsItem action={ACTIONS.OPEN} label="Open" />
                 <KeyboardShortcutsItem action={ACTIONS.SAVE} label="Save" />
@@ -110,20 +110,12 @@ export const KeyboardShortcutsDialogContent = () => {
 };
 
 export const KeyboardShortcutsDialog = () => {
-    const editor = useEditor();
-    const shortcutsEnabled = !!editor?.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS];
-
     return (
         <React.Fragment>
-            <Dialog.Header>
+            <Dialog.Header className="pb-4">
                 <Dialog.Title>Keyboard Shortcuts</Dialog.Title>
             </Dialog.Header>
-            {!shortcutsEnabled && (
-                <Alert className="mb-4" variant="warning" icon="exclamation-triangle">
-                    Enable keyboard shortcuts in Menu → Preferences.
-                </Alert>
-            )}
-            <Dialog.Body className="max-h-96 overflow-y-auto">
+            <Dialog.Body className="pt-0 overflow-y-auto" style={{maxHeight: "min(75vh, 35rem)"}}>
                 <KeyboardShortcutsDialogContent />
             </Dialog.Body>
         </React.Fragment>

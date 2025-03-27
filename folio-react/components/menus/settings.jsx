@@ -56,8 +56,8 @@ const setValue = (obj, path, value) => {
     obj[pathItems[i]] = value;
 };
 
-// @description settings menu
-export const SettingsMenu = () => {
+// @description settings menu content
+export const SettingsMenuContent = () => {
     const editor = useEditor();
 
     // get values from the editor configuration
@@ -73,15 +73,25 @@ export const SettingsMenu = () => {
     }, []);
 
     return (
+        <Form
+            className="flex flex-col gap-2 p-1"
+            data={values}
+            items={sections}
+            onChange={handleChange}
+        />
+    );
+};
+
+// @description settings menu
+export const SettingsMenu = props => {
+    // use the default content if no children are provided
+    const content = props.children ?? <SettingsMenuContent />;
+
+    return (
         <div className="flex relative group" tabIndex="0">
             <Island.Button icon="sliders" />
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-60 z-40">
-                <Form
-                    className="flex flex-col gap-2 p-1"
-                    data={values}
-                    items={sections}
-                    onChange={handleChange}
-                />
+                {content}
             </Dropdown>
         </div>
     );

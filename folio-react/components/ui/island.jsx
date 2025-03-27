@@ -32,8 +32,8 @@ Island.Button = props => {
         "flex justify-between items-center gap-1 p-2 rounded-lg": true,
         "cursor-pointer": !props.disabled,
         "cursor-not-allowed opacity-40 pointer-events-none": props.disabled,
-        "hover:bg-neutral-200 text-neutral-900 group-focus-within:bg-neutral-950 group-focus-within:text-white": !props.active,
-        "bg-neutral-950 text-white": !props.disabled && props.active,
+        "hover:bg-neutral-200 text-neutral-900 group-focus-within:bg-neutral-200 group-focus-within:text-neutral-950": !props.active,
+        "bg-neutral-200 text-neutral-950": !props.disabled && props.active,
     }, props.className);
     const handleClick = () => {
         return !props.disabled && props?.onClick?.();

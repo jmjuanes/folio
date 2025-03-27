@@ -121,18 +121,16 @@ export const ExportDialog = () => {
                         </div>
                     )}
                 </div>
-                <div className="mb-8">
-                    <Form
-                        data={options}
-                        items={exportFields}
-                        onChange={(key, value) => {
-                            setOptions(prevOptions => ({
-                                ...prevOptions,
-                                [key]: value,
-                            }));
-                        }}
-                    />
-                </div>
+                <Form
+                    data={options}
+                    items={exportFields}
+                    onChange={(key, value) => {
+                        setOptions(prevOptions => ({
+                            ...prevOptions,
+                            [key]: value,
+                        }));
+                    }}
+                />
             </Dialog.Body>
             <Dialog.Footer className="gap-2">
                 <Button variant="secondary" className="w-full" onClick={handleDownload}>

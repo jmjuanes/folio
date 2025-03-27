@@ -3,7 +3,7 @@ import cn from "classnames";
 import {CloseIcon} from "@josemi-icons/react";
 
 export const Dialog = ({className, ...props}) => (
-    <div className={cn("bg-white border border-neutral-200 shadow-sm rounded-2xl px-6 py-6", className)} {...props} />
+    <div className={cn("bg-white border border-neutral-200 shadow-sm rounded-2xl", className)} {...props} />
 );
 
 Dialog.Title = ({className, ...props}) => (
@@ -21,13 +21,13 @@ Dialog.Close = ({className, ...props}) => (
 );
 
 Dialog.Header = ({className, ...props}) => (
-    <div className={cn("flex flex-col select-none mb-6", className)} {...props} />
+    <div className={cn("flex flex-col select-none px-6 pt-6", className)} {...props} />
 );
 
 Dialog.Body = ({className, ...props}) => (
-    <div className={className} {...props} />
+    <div className={cn("px-6 py-6", className)} {...props} />
 );
 
 Dialog.Footer = ({className, ...props}) => (
-    <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-6", className)} {...props} />
+    <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end gap-2 px-6 pb-6", className)} {...props} />
 );

@@ -63,14 +63,26 @@ export {LibraryExportDialog} from "./components/dialogs/library-export.jsx";
 export {PreferencesDialog} from "./components/dialogs/preferences.jsx";
 export {KeyboardShortcutsDialog} from "./components/dialogs/keyboard-shortcuts.jsx";
 export {PageEditDialog} from "./components/dialogs/page-edit.jsx";
-export {EditorMenu} from "./components/menus/editor.jsx";
-export {LibraryMenu} from "./components/menus/library.jsx";
-export {PagesMenu} from "./components/menus/pages.jsx";
-export {SettingsMenu} from "./components/menus/settings.jsx";
+export {
+    MainMenu,
+    MainMenuContent,
+} from "./components/menus/main.jsx";
+export {
+    LibraryMenu,
+    LibraryMenuContent,
+} from "./components/menus/library.jsx";
+export {
+    PagesMenu,
+    PagesMenuContent,
+} from "./components/menus/pages.jsx";
+export {
+    SettingsMenu,
+    SettingsMenuContent,
+} from "./components/menus/settings.jsx";
 export {EditionPanel} from "./components/panels/edition.jsx";
 export {HistoryPanel} from "./components/panels/history.jsx";
 export {LayersPanel} from "./components/panels/layers.jsx";
-export {Menu} from "./components/panels/menu.jsx";
+export {MenuPanel} from "./components/panels/menu.jsx";
 export {MinimapPanel} from "./components/panels/minimap.jsx";
 export {ToolbarPanel} from "./components/panels/toolbar.jsx";
 export {ZoomPanel} from "./components/panels/zoom.jsx";

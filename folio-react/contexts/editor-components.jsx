@@ -9,7 +9,7 @@ import {PageEditDialog} from "../components/dialogs/page-edit.jsx";
 import {PreferencesDialog} from "../components/dialogs/preferences.jsx";
 import {KeyboardShortcutsDialog} from "../components/dialogs/keyboard-shortcuts.jsx";
 import {LibraryMenu} from "../components/menus/library.jsx";
-import {EditorMenu} from "../components/menus/editor.jsx";
+import {MainMenu} from "../components/menus/main.jsx";
 import {PagesMenu} from "../components/menus/pages.jsx";
 import {SettingsMenu} from "../components/menus/settings.jsx";
 import {EditionPanel} from "../components/panels/edition.jsx";
@@ -18,7 +18,7 @@ import {MinimapPanel} from "../components/panels/minimap.jsx";
 import {ToolbarPanel} from "../components/panels/toolbar.jsx";
 import {ZoomPanel} from "../components/panels/zoom.jsx";
 import {LayersPanel} from "../components/panels/layers.jsx";
-import {Menu} from "../components/panels/menu.jsx";
+import {MenuPanel} from "../components/panels/menu.jsx";
 
 // @description editor components context
 export const EditorComponentsContext = React.createContext(null);
@@ -48,11 +48,11 @@ export const EditorComponentsProvider = ({components = {}, children}) => {
             KeyboardShortcutsDialog: KeyboardShortcutsDialog,
             // menus
             LibraryMenu: LibraryMenu,
-            EditorMenu: EditorMenu,
+            MainMenu: MainMenu,
             PagesMenu: PagesMenu,
             SettingsMenu: SettingsMenu,
             // panels
-            Menu: Menu,
+            MenuPanel: MenuPanel,
             EditionPanel: EditionPanel,
             HistoryPanel: HistoryPanel,
             MinimapPanel: MinimapPanel,
