@@ -60,7 +60,7 @@ const LibraryItem = ({thumbnail, onInsert, onDelete}) => {
 };
 
 // @description library menu
-export const LibraryMenu = () => {
+export const LibraryMenuContent = () => {
     const editor = useEditor();
     const dispatchAction = useActions();
     const {showConfirm} = useConfirm();
@@ -123,41 +123,53 @@ export const LibraryMenu = () => {
     }, [editor, showConfirm]);
 
     return (
+        <React.Fragment>
+            <Dropdown.Header>
+                <div className="text-sm font-bold mr-auto">Library</div>
+                <Dropdown.HeaderButton
+                    icon="folder"
+                    onClick={handleLibraryLoad}
+                />
+                <Dropdown.HeaderButton
+                    icon="download"
+                    disabled={editor.library.items.length === 0}
+                    onClick={handleLibraryExport}
+                />
+                <Dropdown.HeaderButton
+                    icon="trash"
+                    disabled={editor.library.items.length === 0}
+                    onClick={handleLibraryClear}
+                />
+            </Dropdown.Header>
+            <div className="overflow-x-hidden overflow-y-auto scrollbar" style={{maxHeight:"50vh"}}>
+                <div className="grid gap-2 grid-cols-4 pt-2">
+                    {editor.getLibraryItems().map(item => (
+                        <LibraryItem
+                            key={item.id}
+                            thumbnail={item.thumbnail}
+                            onInsert={() => handleInsertItem(item)}
+                            onDelete={() => handleDeleteItem(item)}
+                        />
+                    ))}
+                </div>
+                {editor.library.items.length === 0 && (
+                    <EmptyLibrary />
+                )}
+            </div>
+        </React.Fragment>
+    );
+};
+
+// @description library menu
+export const LibraryMenu = props => {
+    // use the default content if no children are provided
+    const content = props.children ?? <LibraryMenuContent />;
+
+    return (
         <div className="flex relative group" tabIndex="0">
             <Island.Button icon="album" />
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
-                <Dropdown.Header>
-                    <div className="text-sm font-bold mr-auto">Library</div>
-                    <Dropdown.HeaderButton
-                        icon="folder"
-                        onClick={handleLibraryLoad}
-                    />
-                    <Dropdown.HeaderButton
-                        icon="download"
-                        disabled={editor.library.items.length === 0}
-                        onClick={handleLibraryExport}
-                    />
-                    <Dropdown.HeaderButton
-                        icon="trash"
-                        disabled={editor.library.items.length === 0}
-                        onClick={handleLibraryClear}
-                    />
-                </Dropdown.Header>
-                <div className="overflow-x-hidden overflow-y-auto scrollbar" style={{maxHeight:"50vh"}}>
-                    <div className="grid gap-2 grid-cols-4 pt-2">
-                        {editor.getLibraryItems().map(item => (
-                            <LibraryItem
-                                key={item.id}
-                                thumbnail={item.thumbnail}
-                                onInsert={() => handleInsertItem(item)}
-                                onDelete={() => handleDeleteItem(item)}
-                            />
-                        ))}
-                    </div>
-                    {editor.library.items.length === 0 && (
-                        <EmptyLibrary />
-                    )}
-                </div>
+                {content}
             </Dropdown>
         </div>
     );

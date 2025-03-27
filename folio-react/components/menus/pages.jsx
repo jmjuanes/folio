@@ -7,7 +7,6 @@ import {Dropdown} from "../ui/dropdown.jsx";
 import {Island} from "../ui/island.jsx";
 import {useActions} from "../../hooks/use-actions.js";
 import {useEditor} from "../../contexts/editor.jsx";
-import {useDialog} from "../../contexts/dialogs.jsx";
 import {themed} from "../../contexts/theme.jsx";
 import {exportToDataURL} from "../../lib/export.js";
 import {clearFocus} from "../../utils/dom.js";
@@ -165,12 +164,10 @@ const initializeSortedPages = pages => {
     }));
 };
 
-// @description pages menu component
-export const ControlledPagesMenu = () => {
+// @description content of the pages menu component
+export const PagesMenuContent = () => {
     const editor = useEditor();
     const dispatchAction = useActions();
-    const {showDialog} = useDialog();
-    // const [preferences, setPreferences] = usePreferences();
     const [sortedPages, setSortedPages] = React.useState(() => {
         return initializeSortedPages(editor.pages);
     });
@@ -241,71 +238,76 @@ export const ControlledPagesMenu = () => {
     // };
 
     return (
-        <div className="flex relative group" tabIndex="0">
-            <Island.Button
-                icon="files"
-                text={(<div className="w-32 truncate">{activePage.title}</div>)}
-                showChevron={true}
-            />
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
-                <Dropdown.Header>
-                    <div className="text-sm font-bold mr-auto">Pages</div>
-                    <Dropdown.HeaderButton
-                        icon="plus"
-                        onClick={() => {
-                            dispatchAction(ACTIONS.CREATE_PAGE);
-                        }}
-                    />
-                </Dropdown.Header>
-                <div className="p-0 scrollbar w-full overflow-y-auto" style={{maxHeight: "240px"}}>
-                    <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
-                        {editor.pages.map(page => (
-                            <Page
-                                key={`page:${page.id}`}
-                                title={page.title}
-                                readonly={page.readonly}
-                                active={page.id === activePage.id}
-                                editable={true}
-                                moving={sortedPages[page.id].selected}
-                                style={{
-                                    top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
-                                    transform: sortedPages[page.id].selected ? `translate(0px, ${sortedPages[page.id].y}px)` : null,
-                                    zIndex: sortedPages[page.id].selected ? 100 : 0,
-                                }}
-                                onClick={() => {
-                                    editor.setActivePage(page);
-                                    editor.update();
-                                }}
-                                onDelete={() => {
-                                    dispatchAction(ACTIONS.DELETE_PAGE, {page});
-                                }}
-                                onDuplicate={() => {
-                                    dispatchAction(ACTIONS.DUPLICATE_PAGE, {page});
-                                }}
-                                onEdit={() => {
-                                    dispatchAction(ACTIONS.SHOW_PAGE_EDIT_DIALOG, {page});
-                                }}
-                                onMove={event => {
-                                    handlePageMove(event, page);
-                                }}
-                            />
-                        ))}
-                    </div>
+        <React.Fragment>
+            <Dropdown.Header>
+                <div className="text-sm font-bold mr-auto">Pages</div>
+                <Dropdown.HeaderButton
+                    icon="plus"
+                    onClick={() => {
+                        dispatchAction(ACTIONS.CREATE_PAGE);
+                    }}
+                />
+            </Dropdown.Header>
+            <div className="p-0 scrollbar w-full overflow-y-auto" style={{maxHeight: "240px"}}>
+                <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
+                    {editor.pages.map(page => (
+                        <Page
+                            key={`page:${page.id}`}
+                            title={page.title}
+                            readonly={page.readonly}
+                            active={page.id === activePage.id}
+                            editable={true}
+                            moving={sortedPages[page.id].selected}
+                            style={{
+                                top: PAGES_ITEM_HEIGHT * (sortedPages[page.id].index),
+                                transform: sortedPages[page.id].selected ? `translate(0px, ${sortedPages[page.id].y}px)` : null,
+                                zIndex: sortedPages[page.id].selected ? 100 : 0,
+                            }}
+                            onClick={() => {
+                                editor.setActivePage(page);
+                                editor.update();
+                            }}
+                            onDelete={() => {
+                                dispatchAction(ACTIONS.DELETE_PAGE, {page});
+                            }}
+                            onDuplicate={() => {
+                                dispatchAction(ACTIONS.DUPLICATE_PAGE, {page});
+                            }}
+                            onEdit={() => {
+                                dispatchAction(ACTIONS.SHOW_PAGE_EDIT_DIALOG, {page});
+                            }}
+                            onMove={event => {
+                                handlePageMove(event, page);
+                            }}
+                        />
+                    ))}
                 </div>
-            </Dropdown>
-        </div>
+            </div>
+        </React.Fragment>
     );
 };
 
 // @description pages menu wrapper
-export const PagesMenu = () => {
+export const PagesMenu = props => {
     const editor = useEditor();
+    const activePage = editor.getActivePage();
 
     // note: using the pages ids as a key instead of the number of pages
     // this fixes a bug when clearing the editor data with only one page
     const pagesKey = (editor?.pages || []).map(page => page.id).join("-");
 
+    // get the content to display
+    const content = props.children ?? <PagesMenuContent key={"pages:" + pagesKey} />;
+
     return (
-        <ControlledPagesMenu key={"pages:" + pagesKey} />
+        <div className="flex relative group" tabIndex="0">
+            <Island.Button
+                text={(<div className="w-32 truncate">{activePage.title}</div>)}
+                showChevron={true}
+            />
+            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
+                {content}
+            </Dropdown>
+        </div>
     );
 };
