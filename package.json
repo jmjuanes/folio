@@ -13,13 +13,13 @@
         "website/*"
     ],
     "scripts": {
-        "build": "echo 'not available yet...'",
+        "build": "yarn build:app && yarn build:landing && yarn copy-assets",
         "build:app": "yarn workspace folio-app build",
         "build:dist": "cross-env NODE_ENV=production webpack build",
         "build:landing": "yarn workspace folio-landing build",
         "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
-        "dev": "yarn dev:app",
+        "dev": "serve www -p 8080",
         "dev:app": "yarn workspace folio-app dev",
         "dev:landing": "yarn workspace folio-landing dev",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
@@ -46,6 +46,7 @@
         "mini-css-extract-plugin": "^2.9.2",
         "picomatch": "^4.0.2",
         "react-test-renderer": "^18.2.0",
+        "serve": "^14.2.4",
         "webpack": "^5.95.0",
         "webpack-cli": "^6.0.1"
     },
