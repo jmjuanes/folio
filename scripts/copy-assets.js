@@ -1,6 +1,6 @@
-const fs = require("node:fs");
-const path = require("node:path");
-const picomatch = require("picomatch");
+import * as fs from "node:fs";
+import * as path from "node:path";
+import picomatch from "picomatch";
 
 // helper method to copy from one source to another
 const copy = (src, dest) => {
@@ -24,7 +24,7 @@ const copyAssets = (dest, assets) => {
                 }
             });
         }
-        // no blob patter, just copy and paste the file
+        // no blob pattern, just copy and paste the file
         else {
             const srcPath = path.resolve(process.cwd(), asset.from);
             const targetPath = path.resolve(destPath, asset.to || path.basename(asset.from));
@@ -36,21 +36,11 @@ const copyAssets = (dest, assets) => {
 // copy stuff to www folder
 copyAssets("www", [
     {
-        from: "node_modules/lowcss/low.css",
-        to: "./low.css",
+        from: "website/landing/www/*",
+        to: "",
     },
     {
-        from: "node_modules/@josemi-icons/svg/sprite.svg",
-        to: "./sprite.svg",
-    },
-    {
-        from: "public/og.png",
-        to: "./og.png",
-    },
-    {
-        from: "public/illustration-*.png",
-    },
-    {
-        from: "public/screenshot-*.png",
+        from: "website/app/www/*",
+        to: "",
     },
 ]);
