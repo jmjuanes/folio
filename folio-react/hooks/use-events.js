@@ -96,7 +96,7 @@ export const useEvents = () => {
 
         // @description listen for point on canvas event
         const onPointCanvas = () => {
-            editor.state.visibleSnapEdges = [];
+            editor.state.snapEdges = [];
             // if (action === ACTIONS.EDIT) {
             if (activeElement) {
                 if (activeElement?.editing) {
@@ -234,8 +234,7 @@ export const useEvents = () => {
             //     };
             // }
             editor.state.status = STATUS.POINTING;
-            // editor.state.contextMenu = false;
-            editor.state.visibleSnapEdges = [];
+            editor.state.snapEdges = [];
             snapEdges = [];
             activeSnapEdges = [];
             // if (action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {
@@ -285,7 +284,7 @@ export const useEvents = () => {
             }
             // else if (action === ACTIONS.TRANSLATE) {
             else if (editor.state.tool === TOOLS.SELECT && snapshot.length > 0 && !event.handler) {
-                editor.state.visibleSnapEdges = [];
+                editor.state.snapEdges = [];
                 activeSnapEdges = [];
                 editor.state.status = STATUS.TRANSLATING;
                 isDragged = true;
@@ -303,7 +302,7 @@ export const useEvents = () => {
                 });
                 if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
                     const bounds = elements.length === 1 ? elements[0] : getRectangleBounds(elements);
-                    editor.state.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
+                    editor.state.snapEdges = activeSnapEdges.map(snapEdge => ({
                         // ...snapEdge,
                         points: [
                             ...snapEdge.points,
@@ -314,7 +313,7 @@ export const useEvents = () => {
             }
             // else if (action === ACTIONS.RESIZE) {
             else if (editor.state.tool === TOOLS.SELECT && event.handler) {
-                editor.state.visibleSnapEdges = [];
+                editor.state.snapEdges = [];
                 editor.state.status = STATUS.RESIZING;
                 activeSnapEdges = [];
                 isResized = true;
@@ -360,7 +359,7 @@ export const useEvents = () => {
                 elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
                 // Set visible snap edges
                 if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
-                    editor.state.visibleSnapEdges = activeSnapEdges.map(snapEdge => ({
+                    editor.state.snapEdges = activeSnapEdges.map(snapEdge => ({
                         // ...snapEdge,
                         points: [
                             ...snapEdge.points,
@@ -382,7 +381,7 @@ export const useEvents = () => {
         // @description handle pointer up event
         // @param {object} event
         const onPointerUp = event => {
-            editor.state.visibleSnapEdges = [];
+            editor.state.snapEdges = [];
             editor.state.status = STATUS.IDLE;
             // if (editor.state.action === ACTIONS.MOVE) {
             if (editor.state.tool === TOOLS.DRAG) {
