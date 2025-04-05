@@ -152,7 +152,10 @@ export const ContextMenu = props => {
                 text="Paste"
                 shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.PASTE)}
                 onClick={() => {
-                    dispatchAction(ACTIONS.PASTE, {x: props.left, y: props.top});
+                    dispatchAction(ACTIONS.PASTE, {
+                        event: null,
+                        position: {x: props.left, y: props.top},
+                    });
                     hideContextMenu();
                 }}
             />
