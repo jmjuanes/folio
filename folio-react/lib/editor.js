@@ -17,10 +17,7 @@ import {loadImage} from "../utils/image.js";
 import {isLink, getLinkMetadata} from "../utils/link.js";
 import {getRectangleBounds} from "../utils/math.js";
 import {
-    getTextFromClipboard,
     copyTextToClipboard,
-    getTextFromClipboardItem,
-    getBlobFromClipboardItem,
     getClipboardContents,
 } from "../utils/clipboard.js";
 import {
@@ -1258,11 +1255,8 @@ export const createEditor = (options = {}) => {
         pasteElementsFromClipboard: (event = null, point) => {
             const x = point ? (point.x - editor.page.translateX) / editor.page.zoom : null;
             const y = point ? (point.y - editor.page.translateY) / editor.page.zoom : null;
-            debugger;
-
             return getClipboardContents(event).then(items => {
-                // const clipboardItems = event.clipboardData?.items || [];
-                for (let i = 0; i < items.length; i++) {
+                for (let i = 0; i < items?.length; i++) {
                     const item = items[i];
                     // Check for image data (image/png, image/jpg)
                     if (item.types.includes("image/png") || item.types.includes("image/jpeg")) {
@@ -1271,8 +1265,6 @@ export const createEditor = (options = {}) => {
                             .then(image => {
                                 return editor.addImageElement(image, x, y);
                             });
-                        // return getBlobFromClipboardItem(item)
-                        //     .then(content => editor.addImageElement(content, x, y));
                     }
                     // Check for text data
                     else if (item.types.includes("text/plain")) {
@@ -1281,14 +1273,9 @@ export const createEditor = (options = {}) => {
                             .then(content => {
                                 return parseTextDataToEditor(editor, content, x, y);
                             });
-                        // return getTextFromClipboardItem(item)
-                        //     .then(content => parseTextDataToEditor(editor, content, x, y));
                     }
                 }
             });
-            // If not, check clipboard
-            // return getTextFromClipboard()
-            //     .then(content => parseTextDataToEditor(editor, content, x, y));
         },
 
         //
