@@ -33,22 +33,3 @@ export const getClipboardContents = (event = null) => {
     // other case: return empty array
     return Promise.resolve([]);
 };
-
-// Get text from clipboard
-export const getTextFromClipboard = () => {
-    if (navigator?.clipboard) {
-        return navigator.clipboard.readText();
-    }
-    // TODO: use an alternate method to read from clipboard
-    return Promise.reject(null);
-};
-
-export const getTextFromClipboardItem = item => {
-    return new Promise(resolve => {
-        return item.getAsString(text => resolve(text.trim()));
-    });
-};
-
-export const getBlobFromClipboardItem = item => {
-    return blobToDataUrl(item.getAsFile());
-};
