@@ -1260,7 +1260,8 @@ export const createEditor = (options = {}) => {
                     const item = items[i];
                     // Check for image data (image/png, image/jpg)
                     if (item.types.includes("image/png") || item.types.includes("image/jpeg")) {
-                        return item.getType("image/png")
+                        const imageType = item.types.includes("image/png") ? "image/png" : "image/jpeg";
+                        return item.getType(imageType)
                             .then(blob => blobToDataUrl(blob))
                             .then(image => {
                                 return editor.addImageElement(image, x, y);
