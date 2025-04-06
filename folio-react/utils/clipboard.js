@@ -20,21 +20,16 @@ export const copyTextToClipboard = text => {
     return Promise.reject(null);
 };
 
-// Get text from clipboard
-export const getTextFromClipboard = () => {
-    if (navigator?.clipboard) {
-        return navigator.clipboard.readText();
+// @description get clipboard contents
+export const getClipboardContents = (event = null) => {
+    // check if a custom event has been provided
+    if (event && event?.clipboardData) {
+        return Promise.resolve(event.clipboardData?.items || []);
     }
-    // TODO: use an alternate method to read from clipboard
-    return Promise.reject(null);
-};
-
-export const getTextFromClipboardItem = item => {
-    return new Promise(resolve => {
-        return item.getAsString(text => resolve(text.trim()));
-    });
-};
-
-export const getBlobFromClipboardItem = item => {
-    return blobToDataUrl(item.getAsFile());
+    // get from navigator
+    if (navigator?.clipboard) {
+        return navigator.clipboard.read();
+    }
+    // other case: return empty array
+    return Promise.resolve([]);
 };

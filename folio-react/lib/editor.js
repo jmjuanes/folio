@@ -12,14 +12,13 @@ import {
     TOOLS,
 } from "../constants.js";
 import {BACKGROUND_COLORS} from "../utils/colors.js";
+import {blobToDataUrl} from "../utils/blob.js";
 import {loadImage} from "../utils/image.js";
 import {isLink, getLinkMetadata} from "../utils/link.js";
 import {getRectangleBounds} from "../utils/math.js";
 import {
-    getTextFromClipboard,
     copyTextToClipboard,
-    getTextFromClipboardItem,
-    getBlobFromClipboardItem,
+    getClipboardContents,
 } from "../utils/clipboard.js";
 import {
     getElementConfig,
@@ -1253,30 +1252,31 @@ export const createEditor = (options = {}) => {
         },
 
         // @description Get data from clipboard and add it to the editor
-        pasteElementsFromClipboard: (event, point) => {
+        pasteElementsFromClipboard: (event = null, point) => {
             const x = point ? (point.x - editor.page.translateX) / editor.page.zoom : null;
             const y = point ? (point.y - editor.page.translateY) / editor.page.zoom : null;
-
-            // Check for paste event
-            if (event?.clipboardData) {
-                const clipboardItems = event.clipboardData?.items || [];
-                for (let i = 0; i < clipboardItems.length; i++) {
-                    const item = clipboardItems[i];
+            return getClipboardContents(event).then(items => {
+                for (let i = 0; i < items?.length; i++) {
+                    const item = items[i];
                     // Check for image data (image/png, image/jpg)
-                    if (item.type.startsWith("image/")) {
-                        return getBlobFromClipboardItem(item)
-                            .then(content => editor.addImageElement(content, x, y));
+                    if (item.types.includes("image/png") || item.types.includes("image/jpeg")) {
+                        const imageType = item.types.includes("image/png") ? "image/png" : "image/jpeg";
+                        return item.getType(imageType)
+                            .then(blob => blobToDataUrl(blob))
+                            .then(image => {
+                                return editor.addImageElement(image, x, y);
+                            });
                     }
                     // Check for text data
-                    else if (item.type === "text/plain") {
-                        return getTextFromClipboardItem(item)
-                            .then(content => parseTextDataToEditor(editor, content, x, y));
+                    else if (item.types.includes("text/plain")) {
+                        return item.getType("text/plain")
+                            .then(blob => blob.text())
+                            .then(content => {
+                                return parseTextDataToEditor(editor, content, x, y);
+                            });
                     }
                 }
-            }
-            // If not, check clipboard
-            return getTextFromClipboard()
-                .then(content => parseTextDataToEditor(editor, content, x, y));
+            });
         },
 
         //
