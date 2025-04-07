@@ -74,20 +74,20 @@ export const ExportDialog = () => {
     // @param {object} options export options
     const handleDownload = React.useCallback(() => {
         // TODO: display a notification if the export is successful
-        return exportToFile(elements, options)
+        return exportToFile(exportElements, exportOptions)
             .catch(error => console.error(error))
             .finally(() => hideDialog());
-    }, [hideDialog, elements, options]);
+    }, [hideDialog, exportElements, exportOptions]);
 
     // handle copy to clipboard action
     // @param {array} elements elements to export
     // @param {object} options export options
     const handleCopyToClipboard = React.useCallback(() => {
         // TODO: display a notification if the export is successful
-        return exportToClipboard(elements, options)
+        return exportToClipboard(exportElements, exportOptions)
             .catch(error => console.error(error))
             .finally(() => hideDialog());
-    }, [hideDialog, elements, options]);
+    }, [hideDialog, exportElements, exportOptions]);
 
     // Handle preview update when an option is changed
     React.useEffect(() => {
