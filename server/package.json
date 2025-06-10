@@ -1,0 +1,21 @@
+{
+    "name": "folio-server",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "homepage": "https://www.josemi.xyz/folio",
+    "repository": "https://github.com/jmjuanes/folio",
+    "author": "Josemi Juanes <hello@josemi.xyz>",
+    "bugs": "https://github.com/jmjuanes/folio/issues",
+    "main": "index.js",
+    "exports": {
+        ".": "./index.js",
+        "./package.json": "./package.json"
+    },
+    "scripts": {
+        "start": ""
+    },
+    "dependencies": {
+    },
+    "license": "MIT"
+}
