@@ -3,6 +3,11 @@ import {ACCESS_TOKEN, generateJwtToken} from "../utils/token.js";
 
 export const loginRouter = new Router();
 
+// GET - login route
+loginRouter.get("/", (ctx) => {
+    ctx.sendError(ctx, 405, "Method Not Allowed. Use POST to login.");
+});
+
 // POST - login route
 loginRouter.post("/", async (ctx) => {
     const {token} = ctx.request.body;
