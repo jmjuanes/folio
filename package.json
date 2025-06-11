@@ -10,6 +10,7 @@
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
         "folio-react",
+        "server",
         "website/*"
     ],
     "scripts": {
@@ -22,6 +23,7 @@
         "dev": "serve www -p 8080",
         "dev:app": "yarn workspace folio-app dev",
         "dev:landing": "yarn workspace folio-landing dev",
+        "start": "yarn workspace folio-server start",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
     },
     "dependencies": {
