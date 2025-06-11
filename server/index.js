@@ -13,7 +13,7 @@ import {ACCESS_TOKEN} from "./utils/token.js";
 
 // Initialize Koa app
 const app = new Koa();
-const PORT = environment.PORT || 4000;
+const PORT = environment.PORT || 8080;
 const STATIC_PATH = path.resolve(process.cwd(), "../www");
 
 // define utility methods in app 
