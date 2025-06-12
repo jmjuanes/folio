@@ -22,9 +22,23 @@ const initDB = async () => {
     await db.exec(`
         CREATE TABLE IF NOT EXISTS boards (
             id TEXT NOT NULL PRIMARY KEY,
+            owner TEXT NOT NULL,
             name TEXT NOT NULL DEFAULT 'Untitled',
+            thumbnail TEXT,
+            private BOOLEAN DEFAULT TRUE,
             data TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS libraries (
+            owner TEXT NOT NULL PRIMARY KEY,
+            version INTEGER NOT NULL DEFAULT 1,
+            items TEXT NOT NULL,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS user_preferences (
+            user TEXT NOT NULL PRIMARY KEY,
+            data TEXT NOT NULL,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `);
