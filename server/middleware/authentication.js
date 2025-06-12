@@ -10,11 +10,11 @@ export const authenticateToken = async (ctx, next) => {
         return ctx.sendError(ctx, 401, "Authentication required");
     }
     // verify the token and extract user information
-    const user = verifyJwtToken(token);
-    if (!user) {
+    const payload = verifyJwtToken(token);
+    if (!payload) {
         return ctx.sendError(ctx, 403, "Invalid or expired token");
     }
     // attach user information to the context state for use in subsequent middleware or routes
-    ctx.state.user = user;
+    ctx.state.user = payload.userId;
     await next();
 };
