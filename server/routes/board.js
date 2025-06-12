@@ -11,7 +11,10 @@ boardRouter.use(authenticateToken);
 // GET - list all available boards
 boardRouter.get("/", async (ctx) => {
     try {
-        const items = await db.all("SELECT id, name, created_at, updated_at FROM boards ORDER BY updated_at DESC");
+        const items = await db.all(
+            "SELECT id, owner, name, thumbnail, private, created_at, updated_at FROM boards ORDER BY updated_at DESC WHERE owner = ?",
+            [ctx.state.user],
+        );
         ctx.body = items;
     } catch (error) {
         ctx.throw(500, "Failed to retrieve boards from database.");
@@ -23,8 +26,12 @@ boardRouter.post("/", async (ctx) => {
     const {name} = ctx.request.body;
     try {
         const id = uid(16); // Generate a unique ID for the board
-        await db.run("INSERT INTO boards (id, name, data) VALUES (?, ?, ?)", [id, name || "Untitled", JSON.stringify({})]);
+        await db.run(
+            "INSERT INTO boards (id, owner, name, data) VALUES (?, ?, ?, ?)",
+            [id, ctx.state.user, name || "Untitled", "{}"],
+        );
         ctx.body = {
+            message: "ok",
             id: id,
         };
     }
@@ -36,7 +43,10 @@ boardRouter.post("/", async (ctx) => {
 // GET - get a specific board by ID
 boardRouter.get("/:id", async (ctx) => {
     try {
-        const item = await db.get("SELECT id, name, json_extract(data, '$') as data, created_at, updated_at FROM boards WHERE id = ?", [ctx.params.id]);
+        const item = await db.get(
+            "SELECT id, owner, name, thumbnail, private, created_at, updated_at FROM boards WHERE id = ? AND owner = ?",
+            [ctx.params.id, ctx.state.user],
+        );
         // no board returned after query
         if (!item) {
             return ctx.sendError(ctx, 404, `Board '${ctx.params.id}' not found.`);
@@ -51,29 +61,67 @@ boardRouter.get("/:id", async (ctx) => {
 
 // POST - update an existing board
 boardRouter.post("/:id", async (ctx) => {
-    const {data} = ctx.request.body;
+    const {name, thumbnail} = ctx.request.body;
     try {
-        // Validate that data is valid JSON
-        const jsonData = typeof data === "string" ? JSON.parse(data) : data;
-        // Stringify the data to store in SQLite
-        const jsonString = JSON.stringify();
-        await db.run("UPDATE boards SET data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", [jsonString, ctx.params.id]);
+        // Update the board with the provided data
+        await db.run(
+            "UPDATE boards SET name = ?, thumbnail = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND owner = ?",
+            [name, thumbnail, ctx.params.id, ctx.state.user],
+        );
         ctx.body = {
             message: "ok",
+            id: ctx.params.id,
         };
     } catch (error) {
-        ctx.throw(500, "Failed to save board data.");
+        ctx.throw(500, "Failed to update board.");
     }
 });
 
 // DELETE - delete a board
 boardRouter.delete("/:id", async (ctx) => {
     try {
-        await db.run("DELETE FROM boards WHERE id = ?", [ctx.params.id]);
+        await db.run(
+            "DELETE FROM boards WHERE id = ? AND owner = ?",
+            [ctx.params.id, ctx.state.user],
+        );
         ctx.body = {
             message: "ok",
+            id: ctx.params.id,
         };
     } catch (error) {
         ctx.throw(500, "Failed to delete board.");
+    }
+});
+
+// GET - get the data of a specific board by ID
+boardRouter.get("/:id/data", async (ctx) => {
+    try {
+        const item = await db.get(
+            "SELECT data FROM boards WHERE id = ? AND owner = ?",
+            [ctx.params.id, ctx.state.user],
+        );
+        if (!item) {
+            return ctx.sendError(ctx, 404, `Board '${ctx.params.id}' not found.`);
+        }
+        // parse the JSON data
+        ctx.body = JSON.parse(item.data);
+    } catch (error) {
+        ctx.throw(500, "Failed to retrieve board data.");
+    }
+});
+
+// POST - update an existing board data
+boardRouter.post("/:id/data", async (ctx) => {
+    try {
+        await db.run(
+            "UPDATE boards SET data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND owner = ?",
+            [JSON.stringify(ctx.request.body), ctx.params.id, ctx.state.user],
+        );
+        ctx.body = {
+            message: "ok",
+            id: ctx.params.id,
+        };
+    } catch (error) {
+        ctx.throw(500, "Failed to save board data.");
     }
 });

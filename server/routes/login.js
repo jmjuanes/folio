@@ -19,7 +19,9 @@ loginRouter.post("/", async (ctx) => {
         return ctx.sendError(ctx, 401, "Invalid token");
     }
     // Generate JWT token for API access
-    const jwtToken = generateJwtToken();
+    const jwtToken = generateJwtToken({
+        userId: "folio",
+    });
     ctx.body = {
         message: "ok",
         token: jwtToken,
