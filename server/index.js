@@ -52,7 +52,7 @@ app.use(serve(STATIC_PATH));
 // Root router
 const router = new Router();
 
-// api entry point
+// api main entrypoint
 router.get("/api", ctx => {
     ctx.body = {
         status_url: getServerUrl("api/status"),
