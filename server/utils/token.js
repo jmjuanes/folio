@@ -9,14 +9,14 @@ const generateToken = (size = 32) => {
 
 // Get JWT secret from environment or use a default
 const TOKEN_SECRET = environment.TOKEN_SECRET || generateToken(64);
-const TOKEN_EXPIRATION = environment.TOKEN_EXPIRATION || "7d";
+const TOKEN_EXPIRATION = environment.TOKEN_EXPIRATION || "10y";
 
 // The access token is generated once when the server starts
 export const ACCESS_TOKEN = environment.ACCESS_TOKEN || generateToken();
 
 // Generate a JWT token for API access after authentication
-export const generateJwtToken = () => {
-    return jwt.sign({authenticated: true}, TOKEN_SECRET, {expiresIn: TOKEN_EXPIRATION});
+export const generateJwtToken = (payload = {}) => {
+    return jwt.sign(payload, TOKEN_SECRET, {expiresIn: TOKEN_EXPIRATION});
 };
 
 // verify the provided JWT token
