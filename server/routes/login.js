@@ -20,7 +20,7 @@ loginRouter.post("/", async (ctx) => {
     }
     // Generate JWT token for API access
     const jwtToken = generateJwtToken({
-        userId: "folio",
+        user: "folio",
     });
     ctx.body = {
         message: "ok",

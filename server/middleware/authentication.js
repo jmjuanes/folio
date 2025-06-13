@@ -15,6 +15,6 @@ export const authenticateToken = async (ctx, next) => {
         return ctx.sendError(ctx, 403, "Invalid or expired token");
     }
     // attach user information to the context state for use in subsequent middleware or routes
-    ctx.state.user = payload.userId;
+    ctx.state.user = payload.user;
     await next();
 };

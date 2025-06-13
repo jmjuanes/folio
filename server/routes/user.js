@@ -12,27 +12,32 @@ userRouter.get("/", async (ctx) => {
     // Note: currently we do not support user management, so this endpoint is only used to 
     // verify that the user is authenticated and to return a success message.
     ctx.body = {
-        message: "ok",
+        // url: ctx.getUrl("api/users/" + ctx.state.user),
+        preferences_url: ctx.getUrl("api/user/preferences"),
+        boards_url: ctx.getUrl("api/user/boards"),
+        id: ctx.state.user,
+        email: null,
     };
 });
 
 // GET - get user preferences
 userRouter.get("/preferences", async (ctx) => {
     try {
-        const item = await db.get("SELECT data FROM user_preferences WHERE user = ?", [ctx.state.user]);
+        const item = await db.get("SELECT data FROM preferences WHERE user = ?", [ctx.state.user]);
         ctx.body = item?.data ? JSON.parse(item.data) : {};
     }
     catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to retrieve user preferences.");
     }
 });
 
-// POST - update user preferences
-userRouter.post("/preferences", async (ctx) => {
+// PATCH - update user preferences
+userRouter.patch("/preferences", async (ctx) => {
     try {
         const jsonString = JSON.stringify(ctx.request.body);
         await db.run(
-            "INSERT INTO user_preferences (user, data) VALUES (?, ?) ON CONFLICT(user) DO UPDATE SET data = ?, updated_at = CURRENT_TIMESTAMP",
+            "INSERT INTO preferences (user, data) VALUES (?, ?) ON CONFLICT(user) DO UPDATE SET data = ?, updated_at = CURRENT_TIMESTAMP",
             [ctx.state.user, jsonString, jsonString],
         );
         ctx.body = {
@@ -40,38 +45,21 @@ userRouter.post("/preferences", async (ctx) => {
         };
     }
     catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to update user preferences.");
     }
 });
 
-// GET - get user libraries
-userRouter.get("/libraries", async (ctx) => {
+// GET - list all boards of the authenticated user
+userRouter.get("/boards", async (ctx) => {
     try {
-        const item = await db.get("SELECT version, items FROM libraries WHERE owner = ?", [ctx.state.user]);
-        ctx.body = {
-            version: item?.version || 1,
-            items: item?.items ? JSON.parse(item.items) : [],
-        };
-    }
-    catch (error) {
-        ctx.throw(500, "Failed to retrieve user libraries.");
-    }
-});
-
-// POST - update user libraries
-userRouter.post("/libraries", async (ctx) => {
-    const {version, items} = ctx.request.body;
-    try {
-        const jsonString = JSON.stringify(items || []);
-        await db.run(
-            "INSERT INTO libraries (owner, version, items) VALUES (?, ?, ?) ON CONFLICT(owner) DO UPDATE SET version = ?, items = ?, updated_at = CURRENT_TIMESTAMP",
-            [ctx.state.user, version, jsonString, version, jsonString],
+        const items = await db.all(
+            "SELECT id, owner, name, thumbnail, created_at, updated_at FROM boards WHERE owner = ? ORDER BY updated_at DESC",
+            [ctx.state.user],
         );
-        ctx.body = {
-            message: "ok",
-        };
-    }
-    catch (error) {
-        ctx.throw(500, "Failed to update user libraries.");
+        ctx.body = items;
+    } catch (error) {
+        console.error(error);
+        ctx.throw(500, "Failed to retrieve boards from database.");
     }
 });

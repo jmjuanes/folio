@@ -26,7 +26,7 @@ app.context.sendError = (ctx, status, message) => {
 };
 
 // get server URL
-const getServerUrl = directory => {
+app.context.getUrl = (directory = "") => {
     return `http://127.0.0.1:${PORT}/${directory}`;
 };
 
@@ -55,10 +55,10 @@ const router = new Router();
 // api main entrypoint
 router.get("/api", ctx => {
     ctx.body = {
-        status_url: getServerUrl("api/status"),
-        boards_url: getServerUrl("api/boards"),
-        user_url: getServerUrl("api/user"),
-        login_url: getServerUrl("api/login"),
+        status_url: ctx.getUrl("api/status"),
+        boards_url: ctx.getUrl("api/boards"),
+        user_url: ctx.getUrl("api/user"),
+        login_url: ctx.getUrl("api/login"),
     };
 });
 
@@ -80,9 +80,9 @@ app.use(router.allowedMethods());
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`[folio:server] Server running at ${getServerUrl("")}`);
-    console.log(`[folio:server] API available at ${getServerUrl("api/")}`);
-    console.log(`[folio:server] API Status available at ${getServerUrl("api/status")}`);
+    console.log(`[folio:server] Server running at ${app.context.getUrl("")}`);
+    console.log(`[folio:server] API available at ${app.context.getUrl("api/")}`);
+    console.log(`[folio:server] API Status available at ${app.context.getUrl("api/status")}`);
     console.log(`[folio:server] Use Control-C to stop this server.`);
     // console.log(`[folio:server] Static files served from: ${""}`);
     console.log(`[folio:server] ======= AUTHENTICATION ========`);

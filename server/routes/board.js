@@ -8,15 +8,13 @@ export const boardRouter = new Router();
 // Apply authentication middleware to all routes
 boardRouter.use(authenticateToken);
 
-// GET - list all available boards
+// GET - list all boards
 boardRouter.get("/", async (ctx) => {
     try {
-        const items = await db.all(
-            "SELECT id, owner, name, thumbnail, private, created_at, updated_at FROM boards ORDER BY updated_at DESC WHERE owner = ?",
-            [ctx.state.user],
-        );
+        const items = await db.all("SELECT id, owner, name, thumbnail, created_at, updated_at FROM boards ORDER BY updated_at DESC");
         ctx.body = items;
     } catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to retrieve boards from database.");
     }
 });
@@ -36,6 +34,7 @@ boardRouter.post("/", async (ctx) => {
         };
     }
     catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to create board.");
     }
 });
@@ -44,7 +43,7 @@ boardRouter.post("/", async (ctx) => {
 boardRouter.get("/:id", async (ctx) => {
     try {
         const item = await db.get(
-            "SELECT id, owner, name, thumbnail, private, created_at, updated_at FROM boards WHERE id = ? AND owner = ?",
+            "SELECT id, owner, name, thumbnail, created_at, updated_at FROM boards WHERE id = ? AND owner = ?",
             [ctx.params.id, ctx.state.user],
         );
         // no board returned after query
@@ -55,12 +54,13 @@ boardRouter.get("/:id", async (ctx) => {
         item.data = JSON.parse(item.data);
         ctx.body = item;
     } catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to retrieve board.");
     }
 });
 
-// POST - update an existing board
-boardRouter.post("/:id", async (ctx) => {
+// PATCH - update an existing board
+boardRouter.patch("/:id", async (ctx) => {
     const {name, thumbnail} = ctx.request.body;
     try {
         // Update the board with the provided data
@@ -73,6 +73,7 @@ boardRouter.post("/:id", async (ctx) => {
             id: ctx.params.id,
         };
     } catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to update board.");
     }
 });
@@ -89,6 +90,7 @@ boardRouter.delete("/:id", async (ctx) => {
             id: ctx.params.id,
         };
     } catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to delete board.");
     }
 });
@@ -106,12 +108,13 @@ boardRouter.get("/:id/data", async (ctx) => {
         // parse the JSON data
         ctx.body = JSON.parse(item.data);
     } catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to retrieve board data.");
     }
 });
 
-// POST - update an existing board data
-boardRouter.post("/:id/data", async (ctx) => {
+// PATCH - update an existing board data
+boardRouter.patch("/:id/data", async (ctx) => {
     try {
         await db.run(
             "UPDATE boards SET data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND owner = ?",
@@ -122,6 +125,7 @@ boardRouter.post("/:id/data", async (ctx) => {
             id: ctx.params.id,
         };
     } catch (error) {
+        console.error(error);
         ctx.throw(500, "Failed to save board data.");
     }
 });
