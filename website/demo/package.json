@@ -9,9 +9,9 @@
         "dev": "yarn clean && webpack serve"
     },
     "dependencies": {
-        "@josemi-icons/react": "^0.6.1",
+        "@josemi-icons/react": "^0.7.0",
         "idb-keyval": "^6.2.1",
-        "lowcss": "^0.28.0",
+        "lowcss": "^0.30.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
     },

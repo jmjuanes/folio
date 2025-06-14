@@ -9,14 +9,14 @@
         "dev": "serve www -p 8081"
     },
     "dependencies": {
-        "@josemi-icons/svg": "^0.6.1",
-        "lowcss": "^0.28.0"
+        "@josemi-icons/svg": "^0.7.0",
+        "lowcss": "^0.30.1"
     },
     "devDependencies": {
         "js-yaml": "^4.1.0",
         "marked": "^15.0.6",
-        "mikel": "^0.18.2",
-        "mikel-press": "^0.18.2",
+        "mikel": "^0.24.0",
+        "mikel-press": "^0.24.0",
         "serve": "^14.2.4"
     },
     "license": "MIT"
