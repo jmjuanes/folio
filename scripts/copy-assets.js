@@ -40,7 +40,7 @@ copyAssets("www", [
         to: "",
     },
     {
-        from: "website/app/www/*",
+        from: "website/demo/www/*",
         to: "",
     },
 ]);

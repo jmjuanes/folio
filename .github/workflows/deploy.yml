@@ -32,7 +32,8 @@ jobs:
           node-version: 20
       - uses: actions/configure-pages@v5
       - run: yarn install
-      - run: yarn run build
+      - run: yarn run build:website
+      - run: yarn run copy:website
       - uses: actions/upload-pages-artifact@v3
         with:
           path: www
