@@ -16,13 +16,13 @@ environments.forEach(name => {
     const isCurrentEnv = process.env.NODE_ENV === name;
     const isLocalDevelopment = name === "local" && process.env.NODE_ENV === "development";
     if (isCurrentEnv || isLocalDevelopment) {
-        const envPath = path.resolve(process.cwd(), `.env.${name}`);
+        const envPath = path.resolve(process.cwd(), `../.env.${name}`);
         Object.assign(environment, parseEnvFile(envPath));
     }
 });
 
 // Export parsed env
 export default {
-    ...parseEnvFile(path.resolve(process.cwd(), ".env")),
+    ...parseEnvFile(path.resolve(process.cwd(), "../.env")),
     ...environment,
 };
