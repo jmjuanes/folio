@@ -38,7 +38,7 @@ Dropdown.Header = ({className, ...props}) => (
 // @param {function} props.onClick click event handler
 // @returns {React.ReactNode} React component
 Dropdown.HeaderButton = ({className, icon, text, onClick}) => (
-    <div className={classNames("cursor-pointer flex items-center gap-1 p-1 rounded-lg hover:bg-neutral-200", className)} onClick={onClick}>
+    <div className={classNames("cursor-pointer flex items-center gap-1 p-1 rounded-lg hover:bg-gray-200", className)} onClick={onClick}>
         {!!icon && renderIcon(icon)}
         {!!text && <div className="text-xs">{text}</div>}
     </div>
@@ -111,7 +111,7 @@ Dropdown.Icon = ({className, icon, ...props}) => (
 // @param {React.ReactNode} props.children React children
 // @param {string} props.className CSS class name
 Dropdown.Shortcut = ({className, ...props}) => (
-    <div className={classNames("ml-auto text-xs text-right text-neutral-600", className)} {...props} />
+    <div className={classNames("ml-auto text-xs text-right text-gray-600", className)} {...props} />
 );
 
 // @description dropdown check item

@@ -35,7 +35,7 @@ ContextMenu.Icon = ({className, icon}) => (
 // @param {React.ReactNode} props.children React children
 // @param {string} props.className CSS class name
 ContextMenu.Shortcut = ({className, ...props}) => (
-    <div className={classNames("ml-auto text-xs text-right text-neutral-600", className)} {...props} />
+    <div className={classNames("ml-auto text-xs text-right text-gray-600", className)} {...props} />
 );
 
 ContextMenu.Separator = ({className, ...props}) => (

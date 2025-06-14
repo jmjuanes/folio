@@ -20,10 +20,10 @@ const LibraryItemsGrid = ({items, selectedItems, onChange}) => {
         <div className="grid gap-2 grid-cols-8 mb-2 max-h-40 overflow-y-auto">
             {items.map(item => (
                 <div key={item.id} onClick={() => handleItemClick(item.id)}>
-                    <div className="relative border border-neutral-200 rounded-lg overflow-hidden cursor-pointer"> 
+                    <div className="relative border-1 border-gray-200 rounded-lg overflow-hidden cursor-pointer"> 
                         <img src={item.thumbnail} width="100%" height="100%" />
                         {selectedItems.has(item.id) && (
-                            <div className="absolute top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-60 flex items-center justify-center">
+                            <div className="absolute top-0 bottom-0 left-0 right-0 bg-gray-900 opacity-60 flex items-center justify-center">
                                 <div className="text-white text-lg flex">
                                     <CheckIcon />
                                 </div>

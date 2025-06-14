@@ -40,9 +40,9 @@ const LibraryItem = ({thumbnail, onInsert, onDelete}) => {
 
     return (
         <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            <div className="relative border border-neutral-200 rounded-lg overflow-hidden cursor-pointer" onClick={onInsert}> 
+            <div className="relative border-1 border-gray-200 rounded-lg overflow-hidden cursor-pointer" onClick={onInsert}> 
                 <img src={thumbnail} width="100%" height="100%" />
-                <div className="absolute top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-0 hover:opacity-80 flex items-center justify-center z-10">
+                <div className="absolute top-0 bottom-0 left-0 right-0 bg-gray-900 opacity-0 hover:opacity-80 flex items-center justify-center z-10">
                     <div className="text-white text-lg flex">
                         <PlusIcon />
                     </div>
@@ -50,7 +50,7 @@ const LibraryItem = ({thumbnail, onInsert, onDelete}) => {
             </div>
             {isHovered && (
                 <div className="absolute z-20" style={{top:"-0.3rem",right:"-0.3rem"}} onClick={onDelete}>
-                    <div className="flex p-1 rounded-full bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-950 cursor-pointer">
+                    <div className="flex p-1 rounded-full bg-white hover:bg-gray-100 border-1 border-gray-200 text-gray-950 cursor-pointer">
                         <CloseIcon />
                     </div>
                 </div>

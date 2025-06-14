@@ -3,19 +3,19 @@ import classNames from "classnames";
 
 // @description main panel component
 export const Panel = ({className, children}) => (
-    <div className={classNames("rounded-xl relative border border-neutral-200 shadow-sm bg-white", className)}>
+    <div className={classNames("rounded-xl relative border-1 border-gray-200 shadow-sm bg-white", className)}>
         {children}
     </div>
 );
 
 // separator for buttons
 Panel.Separator = () => (
-    <div className="w-full h-px shrink-0 bg-neutral-200" />
+    <div className="w-full h-px shrink-0 bg-gray-200" />
 );
 
 // panel tabs container
 Panel.Tabs = ({className, children}) => (
-    <div className={classNames("flex items-center gap-1 flex-nowrap p-1 rounded-lg bg-neutral-100 m-2", className)}>
+    <div className={classNames("flex items-center gap-1 flex-nowrap p-1 rounded-lg bg-gray-100 m-2", className)}>
         {children}
     </div>
 );
@@ -29,8 +29,8 @@ Panel.Tabs = ({className, children}) => (
 Panel.TabsItem = props => {
     const classList = classNames({
         "rounded-lg flex justify-center items-center flex p-1 w-full text-lg": true,
-        "text-neutral-600 hover:text-neutral-900 cursor-pointer": !props.active,
-        "bg-white text-neutral-950 shadow-sm border border-neutral-200": props.active,
+        "text-gray-600 hover:text-gray-900 cursor-pointer": !props.active,
+        "bg-white text-gray-950 shadow-sm border-1 border-gray-200": props.active,
     }, props.className);
     
     return (

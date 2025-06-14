@@ -138,7 +138,7 @@ const optionTypes = {
     ),
     [FORM_OPTIONS.CHECKBOX]: props => {
         const inputClass = themed({
-            "cursor-pointer border rounded-full p-px w-8 flex": true,
+            "cursor-pointer border-1 rounded-full p-px w-8 flex": true,
             "justify-end": !!props.value,
             "form.checkbox.input": true,
             "form.checkbox.input.active": !!props.value,
@@ -167,7 +167,7 @@ const optionTypes = {
     //         <div className="flex items-center">
     //             <input
     //                 type="number"
-    //                 className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border border-gray-300 text-xs"
+    //                 className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border-1 border-gray-300 text-xs"
     //                 defaultValue={props.value}
     //                 min={props.minValue}
     //                 max={props.maxValue}

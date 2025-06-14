@@ -21,9 +21,9 @@ const containerStyle = {
 
 const Checkbox = ({checked, disabled, onClick}) => {
     const checkboxClass = themed({
-        "flex items-center w-5 h-5 rounded-md border-2 border-neutral-950 text-lg": true,
+        "flex items-center w-5 h-5 rounded-md border-2 border-gray-950 text-lg": true,
         "bg-white": !checked,
-        "bg-neutral-950 text-white": checked,
+        "bg-gray-950 text-white": checked,
         "opacity-60 pointer-events-none": disabled,
     });
     return (
@@ -38,8 +38,8 @@ const PageItem = ({page, dragging, onDragStart, onDelete, onDuplicate, ...props}
     const previewImage = usePagePreview(page, PREVIEW_WIDTH, PREVIEW_HEIGHT);
     const previewClass = themed({
         "relative group shrink-0 rounded-md overflow-hidden cursor-pointer shadow-sm": true,
-        "border border-neutral-200": !props.selected,
-        "border-4 border-neutral-950": props.selected,
+        "border-1 border-gray-200": !props.selected,
+        "border-4 border-gray-950": props.selected,
     });
     const checkboxContainerClass = themed({
         "absolute top-0 right-0 mt-2 mr-2 z-40": true,
@@ -52,12 +52,12 @@ const PageItem = ({page, dragging, onDragStart, onDelete, onDuplicate, ...props}
     return (
         <div className="p-1">
             <div className="flex items-center justify-between mb-2 h-6">
-                <div className="text-xs text-neutral-900 font-bold truncate w-40">
+                <div className="text-xs text-gray-900 font-bold truncate w-40">
                     {page.title}
                 </div>
                 {props.showDropdown && (
                     <div className="flex relative group" tabIndex="0">
-                        <div className="flex items-center p-1 group-hover:bg-neutral-200 group-focus-within:bg-neutral-200 rounded-md cursor-pointer">
+                        <div className="flex items-center p-1 group-hover:bg-gray-200 group-focus-within:bg-gray-200 rounded-md cursor-pointer">
                             <DotsVerticalIcon />
                         </div>
                         <Dropdown className="hidden group-focus-within:block top-full right-0 mt-1 w-32 z-50">
@@ -98,7 +98,7 @@ const PageDraggingPreview = ({page, x, y}) => {
         opacity: 0.55,
     };
     return (
-        <div className="absolute pointer-events-none border-4 border-neutral-950 rounded" style={previewStyle}>
+        <div className="absolute pointer-events-none border-4 border-gray-950 rounded" style={previewStyle}>
             <img src={previewImage} width={PREVIEW_WIDTH / 2} height={PREVIEW_HEIGHT / 2} />
         </div>
     );
@@ -115,8 +115,8 @@ const PageSeparator = ({className, active = false, visible = false, onPointerEnt
             <div
                 className={themed({
                     "w-1": true,
-                    "h-20 bg-neutral-200": !active,
-                    "h-40 bg-neutral-900": active,
+                    "h-20 bg-gray-200": !active,
+                    "h-40 bg-gray-900": active,
                 })}
             />
         </div>
@@ -193,7 +193,7 @@ export const PagesManager = props => {
     };
 
     return (
-        <div className="absolute top-0 left-0 w-full h-full z-50 bg-neutral-100" style={containerStyle}>
+        <div className="absolute top-0 left-0 w-full h-full z-50 bg-gray-100" style={containerStyle}>
             <div className="absolute left-0 top-0 mt-4 ml-4 z-50 flex gap-2">
                 <Island>
                     <Island.Button

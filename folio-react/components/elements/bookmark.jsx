@@ -7,7 +7,7 @@ import {stopEventPropagation} from "../../utils/events.js";
 
 // @private bookmark action button
 const BookmarkActionButton = props => (
-    <div onPointerDown={props.onPointerDown} className="cursor-pointer flex text-xl p-2 rounded-md border border-neutral-200 bg-white hover:bg-neutral-100">
+    <div onPointerDown={props.onPointerDown} className="cursor-pointer flex text-xl p-2 rounded-md border-1 border-gray-200 bg-white hover:bg-gray-100">
         {renderIcon(props.icon)}
     </div>
 );
@@ -32,9 +32,9 @@ export const BookmarkElement = props => {
                 width={width + (2 * BOOKMARK_OFFSET)}
                 height={height + (2 * BOOKMARK_OFFSET)}
             >
-                <div className="select-none flex flex-col rounded-md bg-white shadow-sm overflow-hidden border border-neutral-200" style={style}>
-                    <div className="flex items-center justify-center bg-neutral-100 grow">
-                        <div className="flex text-5xl text-neutral-500">
+                <div className="select-none flex flex-col rounded-md bg-white shadow-sm overflow-hidden border-1 border-gray-200" style={style}>
+                    <div className="flex items-center justify-center bg-gray-100 grow">
+                        <div className="flex text-5xl text-gray-500">
                             <ImageIcon />
                         </div>
                     </div>
