@@ -3,7 +3,7 @@ import mikel from "mikel";
 import press from "mikel-press";
 import websiteConfig from "./website.config.json" with {type: "json"};
 
-press.build({
+press({
     destination: "www",
     template: mikel.create({
         functions: {
@@ -19,11 +19,11 @@ press.build({
     ...websiteConfig,
     plugins: [
         press.SourcePlugin({
-            source: "content",
+            folder: "content",
         }),
         press.PartialsPlugin(),
         press.FrontmatterPlugin(),
-        press.ContentPlugin(),
+        press.ContentPagePlugin(),
         press.CopyAssetsPlugin({
             patterns: [
                 {
