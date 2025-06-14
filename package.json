@@ -14,11 +14,13 @@
         "website/*"
     ],
     "scripts": {
-        "build": "yarn build:app && yarn build:landing && yarn copy-assets",
+        "build": "yarn build:app",
+        "build:app": "yarn workspace app build && cp -R app/www/* www/",
         "build:demo": "yarn workspace demo build",
         "build:dist": "cross-env NODE_ENV=production webpack build",
         "build:landing": "yarn workspace landing build",
         "build:website": "yarn build:demo && yarn build:landing && yarn copy-assets",
+        "postbuild:website": "cp -R website/landing/www www && cp -R website/demo/www/* www/",
         "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
         "dev": "serve www -p 8080",
