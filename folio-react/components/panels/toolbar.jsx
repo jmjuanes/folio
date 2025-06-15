@@ -30,7 +30,7 @@ const PickPanel = props => (
 
 const ToolbarButton = props => {
     const classList = themed({
-        "flex flex-col justify-center items-center flex px-4 py-2 gap-1 rounded-xl": true,
+        "flex flex-col justify-center items-center px-4 py-2 gap-1 rounded-xl": true,
         "cursor-pointer": !props.active,
         "toolbar.button": true,
         "toolbar.button.active": props.active,

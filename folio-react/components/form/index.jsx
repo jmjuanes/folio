@@ -95,7 +95,7 @@ const optionTypes = {
                     return null;
                 }
                 const itemClass = themed({
-                    "flex flex-nowrap justify-center gap-1 items-center grow rounded-md h-8 px-1": true,
+                    "flex flex-nowrap justify-center gap-1 items-center grow-1 rounded-md h-8 px-1": true,
                     "cursor-pointer": item.value !== props.value,
                     "form.labeledselect.item.active": item.value === props.value,
                     "form.labeledselect.item.inactive": item.value !== props.value,
