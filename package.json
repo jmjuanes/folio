@@ -27,6 +27,7 @@
         "dev": "serve www -p 8080",
         "dev:demo": "yarn workspace demo dev",
         "dev:landing": "yarn workspace landing dev",
+        "serve": "yarn dev",
         "start": "cross-env NODE_ENV=development yarn workspace folio-server start",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
     },
