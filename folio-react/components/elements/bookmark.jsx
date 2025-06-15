@@ -33,7 +33,7 @@ export const BookmarkElement = props => {
                 height={height + (2 * BOOKMARK_OFFSET)}
             >
                 <div className="select-none flex flex-col rounded-md bg-white shadow-sm overflow-hidden border-1 border-gray-200" style={style}>
-                    <div className="flex items-center justify-center bg-gray-100 grow">
+                    <div className="flex items-center justify-center bg-gray-100 grow-1">
                         <div className="flex text-5xl text-gray-500">
                             <ImageIcon />
                         </div>

@@ -45,7 +45,7 @@ const optionTypes = {
                 }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = themed({
-                    "flex flex-col justify-center items-center rounded-md py-2 grow": true,
+                    "flex flex-col justify-center items-center rounded-md py-2 grow-1": true,
                     "cursor-pointer": !active,
                     "form.select.item.active": active,
                     "form.select.item.inactive": !active,
@@ -73,7 +73,7 @@ const optionTypes = {
                 <div
                     key={value}
                     className={themed({
-                        "flex flex-col justify-center items-center rounded-md h-8 grow": true,
+                        "flex flex-col justify-center items-center rounded-md h-8 grow-1": true,
                         "cursor-pointer": value !== props.value,
                         "form.colorselect.item.active": value === props.value,
                         "form.colorselect.item.inactive": value !== props.value,
@@ -188,7 +188,7 @@ const optionTypes = {
                 }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = themed({
-                    "flex flex-col justify-center items-center rounded-md py-0 grow": true,
+                    "flex flex-col justify-center items-center rounded-md py-0 grow-1": true,
                     "cursor-pointer": !active,
                     "form.imageselect.item.active": active,
                     "form.imageselect.item.inactive": !active,
