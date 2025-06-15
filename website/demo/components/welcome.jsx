@@ -55,7 +55,7 @@ export const Welcome = () => {
         <React.Fragment>
             <Overlay className="z-50" />
             <Centered className="fixed h-full z-50">
-                <div className="w-full max-w-lg p-8 rounded-3xl border border-neutral-200 bg-white shadow-lg">
+                <div className="w-full max-w-lg p-8 rounded-3xl border-1 border-gray-200 bg-white shadow-lg">
                     <div className="pt-12 pb-4 select-none">
                         <div className="font-black text-5xl mb-6 leading-none">
                             <span>Hello 👋</span>
@@ -66,7 +66,7 @@ export const Welcome = () => {
                     </div>
                     <div className="flex gap-2 w-full pb-6">
                         {defaultWelcomeFeatures.map(feature => (
-                            <div key={feature.title} className="rounded-md p-4 w-full bg-neutral-100">
+                            <div key={feature.title} className="rounded-md p-4 w-full bg-gray-100">
                                 <div className="text-3xl flex mb-1">
                                     {renderIcon(feature.icon)}
                                 </div>
@@ -93,7 +93,7 @@ export const Welcome = () => {
                             <div className="font-medium">Load from file</div>
                         </Button>
                     </div>
-                    <div className="text-center text-xs text-neutral-600 select-none">
+                    <div className="text-center text-xs text-gray-600 select-none">
                         <span><b>folio</b> v{process.env.VERSION}</span> 
                     </div>
                 </div>

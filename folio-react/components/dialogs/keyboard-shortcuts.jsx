@@ -7,10 +7,10 @@ import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 // @description keyboard shortcuts section
 const KeyboardShortcutsGroup = props => (
     <div className="mb-4" style={{breakInside: "avoid-column"}}>
-        <div className="text-sm text-neutral-600 font-bold mb-1">
+        <div className="text-sm text-gray-600 font-bold mb-1">
             {props.label || props.title || ""}
         </div>
-        <div className="border border-neutral-200 rounded-lg overflow-hidden">
+        <div className="border-1 border-gray-200 rounded-lg overflow-hidden">
             {props.children}
         </div>
     </div>
@@ -23,12 +23,12 @@ const KeyboardShortcutsItem = props => {
     }, [props.action, props.shortcut]);
 
     return (
-        <div className="border-b last:border-b-0 border-neutral-200 flex items-center justify-between p-2">
+        <div className="border-b-1 last:border-b-0 border-gray-200 flex items-center justify-between p-2">
             <div className="text-sm">
                 {props.label || ""}
             </div>
             {shortcut && (
-                <div className="text-xs text-neutral-800 font-bold bg-neutral-100 px-2 py-1 rounded-md">
+                <div className="text-xs text-gray-800 font-bold bg-gray-100 px-2 py-1 rounded-md">
                     {printShortcut(shortcut)}
                 </div>
             )}

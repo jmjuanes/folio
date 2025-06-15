@@ -44,7 +44,7 @@ const PageGalleryItem = ({page, active, onClick}) => {
     });
     return (
         <div className="p-1" onClick={onClick}>
-            <div className="text-2xs mb-1 text-neutral-600 font-medium truncate w-40">
+            <div className="text-2xs mb-1 text-gray-600 font-medium truncate w-40">
                 {page.title}
             </div>
             <div className={previewClass}>
@@ -111,14 +111,14 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
     // page classname
     const pageClassName = classNames({
         "absolute group flex items-center rounded-md p-2 w-full": true,
-        "hover:bg-neutral-200": !active,
-        "bg-neutral-200": active,
-        "bg-neutral-100": !active && actionsMenuOpen,
+        "hover:bg-gray-200": !active,
+        "bg-gray-200": active,
+        "bg-gray-100": !active && actionsMenuOpen,
     });
 
     return (
         <div className={pageClassName} style={style}>
-            <div className="flex items-center text-xs text-neutral-400" style={moveButtonStyle} onPointerDown={props.onMove}>
+            <div className="flex items-center text-xs text-gray-400" style={moveButtonStyle} onPointerDown={props.onMove}>
                 <BarsIcon />
             </div>
             <div className="cursor-pointer flex items-center gap-2 w-full p-0 ml-2" onClick={onClick}>
@@ -132,7 +132,7 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
                 )}
             </div>
             <div className="flex items-center">
-                <div className="cursor-pointer flex items-center px-1 text-neutral-500 hover:text-neutral-900" onClick={handleActionsMenuClick}>
+                <div className="cursor-pointer flex items-center px-1 text-gray-500 hover:text-gray-900" onClick={handleActionsMenuClick}>
                     <DotsIcon />
                 </div>
             </div>

@@ -20,8 +20,8 @@
         "react-dom": ">=18"
     },
     "devDependencies": {
-        "@josemi-icons/react": "^0.6.1",
-        "browser-fs-access": "^0.35.0",
+        "@josemi-icons/react": "^0.7.0",
+        "browser-fs-access": "^0.37.0",
         "classnames": "^2.3.2",
         "react-use": "^17.5.1",
         "uid": "^2.0.2"

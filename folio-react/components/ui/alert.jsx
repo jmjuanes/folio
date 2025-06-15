@@ -4,7 +4,7 @@ import {renderIcon} from "@josemi-icons/react";
 
 export const Alert = ({className, variant = "", icon = "", text = "", children, ...props}) => {
     const alertClassName = classNames({
-        "rounded-xl shadow-sm border p-3 flex gap-2 items-center": true,
+        "rounded-xl shadow-sm border-1 p-3 flex gap-2 items-center": true,
         "bg-yellow-100 text-yellow-900 border-yellow-200": variant === "warning",
     }, className);
 

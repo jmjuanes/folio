@@ -45,7 +45,7 @@ const optionTypes = {
                 }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = themed({
-                    "flex flex-col justify-center items-center rounded-md py-2 grow": true,
+                    "flex flex-col justify-center items-center rounded-md py-2 grow-1": true,
                     "cursor-pointer": !active,
                     "form.select.item.active": active,
                     "form.select.item.inactive": !active,
@@ -73,7 +73,7 @@ const optionTypes = {
                 <div
                     key={value}
                     className={themed({
-                        "flex flex-col justify-center items-center rounded-md h-8 grow": true,
+                        "flex flex-col justify-center items-center rounded-md h-8 grow-1": true,
                         "cursor-pointer": value !== props.value,
                         "form.colorselect.item.active": value === props.value,
                         "form.colorselect.item.inactive": value !== props.value,
@@ -95,7 +95,7 @@ const optionTypes = {
                     return null;
                 }
                 const itemClass = themed({
-                    "flex flex-nowrap justify-center gap-1 items-center grow rounded-md h-8 px-1": true,
+                    "flex flex-nowrap justify-center gap-1 items-center grow-1 rounded-md h-8 px-1": true,
                     "cursor-pointer": item.value !== props.value,
                     "form.labeledselect.item.active": item.value === props.value,
                     "form.labeledselect.item.inactive": item.value !== props.value,
@@ -138,7 +138,7 @@ const optionTypes = {
     ),
     [FORM_OPTIONS.CHECKBOX]: props => {
         const inputClass = themed({
-            "cursor-pointer border rounded-full p-px w-8 flex": true,
+            "cursor-pointer border-1 rounded-full p-px w-8 flex": true,
             "justify-end": !!props.value,
             "form.checkbox.input": true,
             "form.checkbox.input.active": !!props.value,
@@ -167,7 +167,7 @@ const optionTypes = {
     //         <div className="flex items-center">
     //             <input
     //                 type="number"
-    //                 className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border border-gray-300 text-xs"
+    //                 className="w-full px-2 py-0 h-8 bg-white rounded-md outline-0 border-1 border-gray-300 text-xs"
     //                 defaultValue={props.value}
     //                 min={props.minValue}
     //                 max={props.maxValue}
@@ -188,7 +188,7 @@ const optionTypes = {
                 }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
                 const itemClass = themed({
-                    "flex flex-col justify-center items-center rounded-md py-0 grow": true,
+                    "flex flex-col justify-center items-center rounded-md py-0 grow-1": true,
                     "cursor-pointer": !active,
                     "form.imageselect.item.active": active,
                     "form.imageselect.item.inactive": !active,

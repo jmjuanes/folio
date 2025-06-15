@@ -33,8 +33,8 @@ const LayerItem = ({elements, active = false, onClick, onDoubleClick}) => {
     const previewImage = useElementPreview(elements, elements.map(el => el.version));
     const layerClass = classNames({
         "relative shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white border-2 p-2": true,
-        "border-neutral-950": active,
-        "hover:bg-neutral-200 border-neutral-200 cursor-pointer": !active,
+        "border-gray-950": active,
+        "hover:bg-gray-200 border-gray-200 cursor-pointer": !active,
     });
     return (
         <div className={layerClass} onClick={onClick} onDoubleClick={onDoubleClick}>
@@ -42,7 +42,7 @@ const LayerItem = ({elements, active = false, onClick, onDoubleClick}) => {
                 <img src={previewImage} width="100%" height="100%" />
             )}
             {elements.length > 1 && (
-                <div className="absolute bottom-0 right-0 bg-neutral-950 flex items-center justify-center h-4 w-4 rounded-full mb-1 mr-1">
+                <div className="absolute bottom-0 right-0 bg-gray-950 flex items-center justify-center h-4 w-4 rounded-full mb-1 mr-1">
                     <span className="text-white text-2xs leading-none font-bold">{elements.length}</span>
                 </div>
             )}
@@ -151,7 +151,7 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
             </div>
             {activeGroup && (
                 <div className="flex items-center justify-center mt-2">
-                    <div className="cursor-pointer flex items-center justify-center h-8 w-8 rounded-full bg-white shadow-sm border border-neutral-200" onClick={handleCloseActiveGroup}>
+                    <div className="cursor-pointer flex items-center justify-center h-8 w-8 rounded-full bg-white shadow-sm border-1 border-gray-200" onClick={handleCloseActiveGroup}>
                         <CloseIcon />
                     </div>
                 </div>

@@ -3,19 +3,19 @@ import cn from "classnames";
 import {CloseIcon} from "@josemi-icons/react";
 
 export const Dialog = ({className, ...props}) => (
-    <div className={cn("bg-white border border-neutral-200 shadow-sm rounded-2xl", className)} {...props} />
+    <div className={cn("bg-white border-1 border-gray-200 shadow-sm rounded-2xl", className)} {...props} />
 );
 
 Dialog.Title = ({className, ...props}) => (
-    <div className={cn("font-bold text-lg text-neutral-950", className)} {...props} />
+    <div className={cn("font-bold text-lg text-gray-950", className)} {...props} />
 );
 
 Dialog.Description = ({className, ...props}) => (
-    <div className={cn("text-sm text-neutral-800", className)} {...props} />
+    <div className={cn("text-sm text-gray-800", className)} {...props} />
 );
 
 Dialog.Close = ({className, ...props}) => (
-    <div className={cn("flex cursor-pointer text-2xl absolute top-0 right-0 mt-6 mr-5 text-neutral-700 hover:text-neutral-900", className)} {...props}>
+    <div className={cn("flex cursor-pointer text-2xl absolute top-0 right-0 mt-6 mr-5 text-gray-700 hover:text-gray-900", className)} {...props}>
         <CloseIcon />
     </div>
 );

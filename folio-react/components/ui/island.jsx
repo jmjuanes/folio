@@ -7,14 +7,14 @@ import {renderIcon, ChevronDownIcon} from "@josemi-icons/react";
 // @param {React.ReactNode} props.children React children
 // @param {string} props.className additional class name
 export const Island = props => (
-    <div className={classNames("flex gap-1 p-1 rounded-xl shadow-sm bg-white border border-neutral-200", props.className)}>
+    <div className={classNames("flex gap-1 p-1 rounded-xl shadow-sm bg-white border-1 border-gray-200", props.className)}>
         {props.children}
     </div>
 );
 
 // @description a vertical separator for the Island component
 Island.Separator = () => (
-    <div className="w-px bg-neutral-200" />
+    <div className="w-px bg-gray-200" />
 );
 
 // @description a button for the Island component
@@ -32,8 +32,8 @@ Island.Button = props => {
         "flex justify-between items-center gap-1 p-2 rounded-lg": true,
         "cursor-pointer": !props.disabled,
         "cursor-not-allowed opacity-40 pointer-events-none": props.disabled,
-        "hover:bg-neutral-200 text-neutral-900 group-focus-within:bg-neutral-200 group-focus-within:text-neutral-950": !props.active,
-        "bg-neutral-200 text-neutral-950": !props.disabled && props.active,
+        "hover:bg-gray-200 text-gray-900 group-focus-within:bg-gray-200 group-focus-within:text-gray-950": !props.active,
+        "bg-gray-200 text-gray-950": !props.disabled && props.active,
     }, props.className);
     const handleClick = () => {
         return !props.disabled && props?.onClick?.();
