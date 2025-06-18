@@ -1,15 +1,12 @@
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import path from "node:path";
 import fs from "node:fs";
-import environment from "./utils/environment.js";
+import path from "node:path";
+import {DB_PATH, DB_TABLES} from "../config.js";
 
-// get the path to the database
-export const DB_PATH = environment.DB_PATH || path.join(process.cwd(), "data", "folio.sqlite");
-
-// Initialize database
+// initialize database
 const initDB = async () => {
-    // 1. ensure the data directory exists
+    // 1. ensure the database directory exists
     if (!fs.existsSync(path.dirname(DB_PATH))) {
         fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
     }
@@ -20,7 +17,7 @@ const initDB = async () => {
     });
     // 3. create boards table if it doesn't exist
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS boards (
+        CREATE TABLE IF NOT EXISTS ${DB_TABLES.BOARDS} (
             id TEXT NOT NULL PRIMARY KEY,
             owner TEXT NOT NULL,
             name TEXT NOT NULL DEFAULT 'Untitled',
@@ -29,7 +26,7 @@ const initDB = async () => {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
-        CREATE TABLE IF NOT EXISTS preferences (
+        CREATE TABLE IF NOT EXISTS ${DB_TABLES.PREFERENCES} (
             user TEXT NOT NULL PRIMARY KEY,
             data TEXT NOT NULL,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -38,6 +35,11 @@ const initDB = async () => {
     return db;
 };
 
-const db = await initDB();
+// get the database instance
+export const db = await initDB();
 
-export default db;
+// export the database middleware
+export const database = async (ctx, next) => {
+    ctx.state.db = db; // attach the database instance to the context
+    await next(); // call the next middleware or route handler
+};
