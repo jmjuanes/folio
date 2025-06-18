@@ -4,6 +4,7 @@ yarn-error.log
 node_modules
 
 # Outputs
+data
 www
 homepage/public
 firebase-debug.log
