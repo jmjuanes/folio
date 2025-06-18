@@ -10,6 +10,7 @@
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
         "folio-react",
+        "app",
         "server",
         "website/*"
     ],
@@ -25,7 +26,8 @@
         "copy-assets": "node scripts/copy-assets.js",
         "clean": "rm -rf www",
         "dev": "serve www -p 8080",
-        "dev:demo": "yarn workspace demo dev",
+        "dev:app": "cross-env NODE_ENV=development yarn workspace app dev",
+        "dev:demo": "cross-env NODE_ENV=development yarn workspace demo dev",
         "dev:landing": "yarn workspace landing dev",
         "serve": "yarn dev",
         "start": "cross-env NODE_ENV=development yarn workspace folio-server start",
