@@ -1,8 +1,8 @@
 import Router from "koa-router";
 import {uid} from "uid/secure";
 import {API_BOARDS_ENDPOINTS, DB_TABLES} from "../config.js";
-import {database} from "../middleware/database.js";
-import {authentication} from "../middleware/authentication.js";
+import {database} from "../middlewares/database.js";
+import {authentication} from "../middlewares/authentication.js";
 
 export const boardRouter = new Router();
 

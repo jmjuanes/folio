@@ -1,7 +1,7 @@
 import Router from "koa-router";
 import {API_USER_ENDPOINTS, DB_TABLES} from "../config.js";
-import {database} from "../middleware/database.js";
-import {authentication} from "../middleware/authentication.js";
+import {database} from "../middlewares/database.js";
+import {authentication} from "../middlewares/authentication.js";
 
 export const userRouter = new Router();
 

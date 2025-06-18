@@ -4,7 +4,7 @@ import helmet from "koa-helmet";
 import bodyParser from "koa-bodyparser";
 import serve from "koa-static";
 import cors from "@koa/cors";
-import {logger} from "./middleware/logger.js";
+import {logger} from "./middlewares/logger.js";
 import {boardRouter} from "./routes/board.js";
 import {loginRouter} from "./routes/login.js";
 import {userRouter} from "./routes/user.js";
