@@ -16,6 +16,8 @@
         "start": "node index.js"
     },
     "dependencies": {
+        "@koa/cors": "^5.0.0",
+        "debug": "^4.4.1",
         "dotenv": "^16.5.0",
         "helmet": "^8.1.0",
         "jsonwebtoken": "^9.0.2",

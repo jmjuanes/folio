@@ -1,7 +1,7 @@
-import {verifyJwtToken} from "../utils/token.js";
+import {verifyJwtToken} from "../token.js";
 
 // Authentication middleware
-export const authenticateToken = async (ctx, next) => {
+export const authentication = async (ctx, next) => {
     const authHeader = ctx.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
     // validate that token has been provided in the authorization header
