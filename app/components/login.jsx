@@ -29,8 +29,8 @@ export const Login = () => {
 
     return (
         <Centered className="h-screen">
-            <div className="w-96">
-                <div className="font-serif text-7xl mb-4 leading-none">Hola!</div>
+            <div className="w-88">
+                <div className="font-serif text-8xl mb-4 leading-none font-bold tracking-tight">folio.</div>
                 <div className="text-sm text-gray-700 mb-4">
                     <span>Welcome to your private <b>folio</b> instance. You need to log in with your access token to continue.</span>
                 </div>
