@@ -1,6 +1,5 @@
 import React from "react";
 import {useClient} from "./client.jsx";
-import {Loading} from "folio-react/components/loading.jsx";
 import {Login} from "../components/login.jsx";
 
 // the authentication context saves information about the current
@@ -35,9 +34,9 @@ export const AuthenticationProvider = ({children}) => {
         return <Login />;
     }
 
-    // if the user is not authenticated, show a loading state
+    // if the user is not authenticated, do not render the children
     if (!user) {
-        return <Loading />;
+        return null;
     }
 
     return (
