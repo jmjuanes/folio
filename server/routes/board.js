@@ -54,8 +54,6 @@ boardRouter.get(API_BOARDS_ENDPOINTS.BOARD, async (ctx) => {
         if (!item) {
             return ctx.sendError(ctx, 404, `Board '${ctx.params.id}' not found.`);
         }
-        // parse the JSON data
-        item.data = JSON.parse(item.data);
         ctx.body = item;
     } catch (error) {
         console.error(error);
