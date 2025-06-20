@@ -29,12 +29,13 @@ export const Login = () => {
 
     return (
         <Centered className="h-screen">
-            <div className="w-88">
-                <div className="font-serif text-8xl mb-4 leading-none font-bold tracking-tight">folio.</div>
-                <div className="text-sm text-gray-700 mb-4">
+            <div className="w-88 pb-20">
+                <div className="font-serif text-7xl mb-6 leading-none font-bold tracking-tighter">folio.</div>
+                <div className="text-sm text-gray-700 mb-6">
                     <span>Welcome to your private <b>folio</b> instance. You need to log in with your access token to continue.</span>
                 </div>
-                <div className="mb-3">
+                <div className="mb-5">
+                    <label className="block text-sm font-medium text-gray-950 mb-1">Access Token</label>
                     <input
                         type="text"
                         className="w-full p-2 border-1 border-gray-200 text-gray-950 rounded-md outline-gray-950"
@@ -42,16 +43,19 @@ export const Login = () => {
                         ref={accessTokenRef}
                         disabled={state.loading}
                     />
+                    <div className="text-2xs text-gray-600 mt-1">
+                        Your access token is printed in the terminal where you run the server. If you don't have it, please contact your administrator.
+                    </div>
                 </div>
                 <div className="w-full">
                     {!state.loading && (
                         <Button className="w-full" onClick={handleLogin}>
-                            <span>Sign in</span>
+                            <span>Continue</span>
                         </Button>
                     )}
                     {state.loading && (
                         <div className="flex items-center justify-center w-full">
-                            <div class="flex animation-spin text-gray-600 text-lg">
+                            <div className="flex animation-spin text-gray-600 text-lg">
                                 <LoaderIcon />
                             </div>
                         </div>

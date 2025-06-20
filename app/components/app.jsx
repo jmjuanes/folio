@@ -2,19 +2,22 @@ import React from "react";
 import {useDebounce, useHash, useToggle} from "react-use";
 import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {saveAsJson, loadFromJson} from "folio-react/lib/json.js";
+import {useConfirm} from "folio-react/contexts/confirm.jsx";
 import {useClient} from "../contexts/client.jsx";
-// import {ConfirmProvider, useConfirm} from "folio-react/contexts/confirm.jsx";
+import {Switch, Route, useRouter} from "../contexts/router.jsx";
 import {Welcome} from "./welcome.jsx";
 import {Sidebar} from "./sidebar.jsx";
+import {Board} from "./board.jsx";
 
 // @description main app component
 export const App = () => {
     const client = useClient();
+    const router = useRouter();
     const [hash, redirect] = useHash();
-    // const {showConfirm} = useConfirm();
+    const {showConfirm} = useConfirm();
     const [state, setState] = React.useState({});
     const [boards, setBoards] = React.useState([]);
-    const [sidebarVisible, toggleSidebarVisible] = useToggle(false);
+    const [sidebarVisible, toggleSidebarVisible] = useToggle(true);
     const hasChangedTitle = React.useRef(false);
     const hasBeenInitialized = React.useRef(false);
     const id = (hash || "").replace(/^#/, ""); // Remove leading hash
@@ -22,22 +25,20 @@ export const App = () => {
     // Update boards list
     // This method must be called after each update in the boards
     const updateBoards = React.useCallback(() => {
-        return client.list()
-            .then(data => data.sort((a, b) => a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1))
-            .then(data => {
-                // Display the sidebar on init when there are boards
-                if (!hasBeenInitialized.current && data.length > 0) {
-                    toggleSidebarVisible(true);
-                }
-                // Save boards
-                setBoards(data);
-            });
+        return client.getUserBoards().then(data => {
+            // Display the sidebar on init when there are boards
+            if (!hasBeenInitialized.current && data.length > 0) {
+                toggleSidebarVisible(true);
+            }
+            // Save boards
+            setBoards(data);
+        });
     }, []);
 
     // Handle board create.
     const handleBoardCreate = React.useCallback(() => {
-        return client.add({})
-            .then(newBoardId => redirect(newBoardId))
+        return client.createBoard({})
+            .then(response => redirect(response.id))
             .then(() => updateBoards());
     }, []);
 
@@ -59,7 +60,7 @@ export const App = () => {
             title: "Delete board",
             message: "Are you sure? This action can not be undone.",
             callback: () => {
-                return client.delete(boardId)
+                return client.deleteBoard(boardId)
                     .then(() => {
                         // TODO: display a confirmation message
                         // Check if the board that we are removing is the current visible board
@@ -89,21 +90,21 @@ export const App = () => {
     }, [id]);
 
     // Hook to save changes into storage
-    useDebounce(() => {
-        if (!!id && state?.updatedAt) {
-            client.update(id, state).then(() => {
-                // Check if sidebar is visible for updating the boards list
-                if (sidebarVisible && hasChangedTitle.current) {
-                    updateBoards();
-                }
-                // TODO: show confirmation message
-                hasChangedTitle.current = false;
-            });
-        }
-    }, 250, [state?.updatedAt]);
+    // useDebounce(() => {
+    //     if (!!id && state?.updatedAt) {
+    //         client.update(id, state).then(() => {
+    //             // Check if sidebar is visible for updating the boards list
+    //             if (sidebarVisible && hasChangedTitle.current) {
+    //                 updateBoards();
+    //             }
+    //             // TODO: show confirmation message
+    //             hasChangedTitle.current = false;
+    //         });
+    //     }
+    // }, 250, [state?.updatedAt]);
 
     return (
-        <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-neutral-800 flex">
+        <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-gray-800 flex">
             {sidebarVisible && (
                 <Sidebar
                     currentId={id}
@@ -111,30 +112,41 @@ export const App = () => {
                     onBoardCreate={handleBoardCreate}
                     onBoardDelete={handleBoardDelete}
                     onBoardImport={handleBoardImport}
+                    onLogout={() => {
+                        client.logout();
+                    }}
                 />
             )}
             <div className="relative h-full">
                 <div
-                    className="absolute left-0 top-half z-5 cursor-pointer"
+                    className="absolute left-0 top-half z-50 cursor-pointer"
                     style={{
                         transform: "translateY(-50%)",
                     }}
                     onClick={() => toggleSidebarVisible()}
                 >
-                    <div className="flex bg-neutral-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
+                    <div className="flex bg-gray-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
                         {sidebarVisible ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </div>
                 </div>
             </div>
-            {!id && (
-                <Welcome
-                    boards={[...boards]}
-                    onBoardCreate={handleBoardCreate}
-                    onBoardImport={handleBoardImport}
-                />
-            )}
+            <Switch>
+                <Route test={/(^#$)|(^#home$)/} render={() => (
+                    <Welcome
+                        boards={[...boards]}
+                        onBoardCreate={handleBoardCreate}
+                        onBoardImport={handleBoardImport}
+                    />
+                )} />
+                <Route test={/^#b\/\w+$/} render={() => (
+                    <Board
+                        key={router.currentPath}
+                        id={router.currentPath.replace(/^#b\//, "")}
+                    />
+                )} />
+            </Switch>
+            {/*
             {(!!id && state?.id === id) && (
-                {/*
                 <Board
                     key={id}
                     initialData={() => client.get(id)}
@@ -164,8 +176,8 @@ export const App = () => {
                             .catch(error => console.error(error));
                     }}
                 />
-                */}
             )}
+            */}
         </div>
     );
 };

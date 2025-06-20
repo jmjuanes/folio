@@ -1,18 +1,38 @@
 import React from "react";
 import {Editor} from "folio-react/components/editor.jsx";
+import {useStore} from "../hooks/use-store.js";
+import {NotFound} from "./not-found.jsx";
 
-// 2. components overrides
-const componentsOverrides = {
-};
+// @description board component
+export const Board = props => {
+    const [exists, setExists] = React.useState(null);
+    const store = useStore(props.id);
 
-// @description board route
-export const BoardRoute = props => {
+    // on mount, check if the board exists
+    React.useEffect(() => {
+        store.exists()
+            .then(() => setExists(true))
+            .catch(error => {
+                setExists(false); // Assume board does not exist on error
+            });
+    }, [store]);
+
+    // we do not know (yet) if the board exists, so we set it to null
+    if (exists === null) {
+        return null;
+    }
+
+    // if the board does not exist, we display a centered message
+    if (!exists) {
+        return (
+            <NotFound />
+        );
+    }
+
     return (
-        <div className="fixed top-0 left-0 h-full w-full bg-white text-base flex">
-            <Editor
-                store={store}
-                components={componentsOverrides}
-            />
-        </div>
+        <Editor
+            store={store}
+            components={{}}
+        />
     );
 };
