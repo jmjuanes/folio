@@ -1,13 +1,60 @@
 [
     {
         "method": "POST",
-        "test": "**/login",
-        "filename": "login.json"
+        "test": "/api/login",
+        "data": {
+            "token": "12345"
+        }
     },
     {
         "method": "GET",
-        "test": "**/user",
+        "test": "/api/user",
         "filename": "user.json",
+        "secure": true
+    },
+    {
+        "method": "GET",
+        "test": "/api/user/boards",
+        "filename": "boards.json",
+        "secure": true
+    },
+    {
+        "method": "GET",
+        "test": "/api/boards",
+        "filename": "boards.json",
+        "secure": true
+    },
+    {
+        "method": "POST",
+        "test": "/api/boards",
+        "data": {
+            "id": "board01"
+        },
+        "secure": true
+    },
+    {
+        "method": "GET",
+        "test": "/api/boards/*",
+        "secure": true
+    },
+    {
+        "method": "PATCH",
+        "test": "/api/boards/*",
+        "secure": true
+    },
+    {
+        "method": "DELETE",
+        "test": "/api/boards/*",
+        "secure": true
+    },
+    {
+        "method": "GET",
+        "test": "/api/boards/*/data",
+        "secure": true
+    },
+    {
+        "method": "PATCH",
+        "test": "/api/boards/*/data",
         "secure": true
     }
 ]
