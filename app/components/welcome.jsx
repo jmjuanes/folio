@@ -39,7 +39,7 @@ const BoardItem = props => (
 // @description welcome component
 export const Welcome = props => (
     <Centered className="min-h-full bg-white">
-        <div className="w-full max-w-4xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
+        <div className="w-full max-w-3xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
             <div className="pt-4 pb-2 select-none">
                 <div className="font-bold font-serif tracking-tight text-4xl mb-6 text-gray-950 leading-none">
                     <span>{getGreetingMessage()}, Josemi</span>
