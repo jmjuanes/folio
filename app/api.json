@@ -1,0 +1,13 @@
+[
+    {
+        "method": "POST",
+        "test": "**/login",
+        "filename": "login.json"
+    },
+    {
+        "method": "GET",
+        "test": "**/user",
+        "filename": "user.json",
+        "secure": true
+    }
+]

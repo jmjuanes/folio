@@ -2,11 +2,9 @@ import path from "node:path";
 import webpack from "webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import {isProd, PORT} from "../server/config.js";
+import {createApi} from "./scripts/api.js";
 import pkg from "../package.json" with {type: "json"};
-
-// url to the REST API server
-const API_BASE_URL = isProd() ? "/api" : `http://localhost:${PORT}/api`;
+import apiRules from "./api.json" with {type: "json"};
 
 export default {
     mode: process.env.NODE_ENV || "development",
@@ -42,6 +40,14 @@ export default {
                 {from: /^\/index.html$/, to: "app.html"},
             ],
         },
+        setupMiddlewares: createApi({
+            source: path.join(process.cwd(), "__stubs"),
+            entry: "/api/*",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            rules: apiRules,
+        }),
         devMiddleware: {
             writeToDisk: true,
         },
@@ -80,7 +86,7 @@ export default {
             "process.env.URL_REPOSITORY": JSON.stringify(pkg.repository),
             "process.env.URL_ISSUES": JSON.stringify(pkg.bugs),
             "process.env.URL_HOMEPAGE": JSON.stringify(pkg.homepage),
-            "process.env.API_BASE_URL": JSON.stringify(API_BASE_URL),
+            "process.env.API_BASE_URL": JSON.stringify("/api"),
         }),
         new CopyWebpackPlugin({
             patterns: [
