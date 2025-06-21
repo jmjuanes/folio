@@ -1,18 +1,35 @@
 import React from "react";
 import {Editor} from "folio-react/components/editor.jsx";
-import {useStore} from "../hooks/use-store.js";
+import {useClient} from "../contexts/client.jsx";
 import {NotFound} from "./not-found.jsx";
 
 // @description board component
 export const Board = props => {
     const [exists, setExists] = React.useState(null);
-    const store = useStore(props.id);
+    const client = useClient();
+    const store = React.useMemo(() => {
+        return {
+            initialize: () => {
+                return Promise.resolve(true);
+            },
+            // manage board data
+            data: {
+                get: () => {
+                    return client.getBoardData(props.id);
+                },
+                set: data => {
+                    return client.updateBoardData(props.id, data);
+                },
+            },
+        };
+    }, [props.id, client]);
 
     // on mount, check if the board exists
     React.useEffect(() => {
-        store.exists()
+        client.getBoard(props.id)
             .then(() => setExists(true))
             .catch(error => {
+                console.error(error);
                 setExists(false); // Assume board does not exist on error
             });
     }, [store]);
