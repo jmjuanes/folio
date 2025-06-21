@@ -33,8 +33,14 @@ export const createApi = (config = {}) => {
                     response.setHeader(name, headers[name]);
                 });
                 // 2. send JSON data
-                const data = JSON.parse(fs.readFileSync(path.join(config.source, rule.filename), "utf8"));
-                response.json(data)
+                if (rule.filename) {
+                    const data = JSON.parse(fs.readFileSync(path.join(config.source, rule.filename), "utf8"));
+                    response.json(data)
+                }
+                else {
+                    // if no filename is configured, just return an empty json object
+                    response.json({});
+                }
             }
             else {
                 console.warn(`404 ${request.method} '${request.originalUrl}'`);
