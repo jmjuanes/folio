@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs, { readFile } from "node:fs";
 import path from "node:path";
 import {minimatch} from "minimatch";
 
@@ -32,13 +32,18 @@ export const createApi = (config = {}) => {
                 Object.keys(headers).forEach(name => {
                     response.setHeader(name, headers[name]);
                 });
-                // 2. send JSON data
+                // 2.1 send JSON data from the provided file
                 if (rule.filename) {
                     const data = JSON.parse(fs.readFileSync(path.join(config.source, rule.filename), "utf8"));
                     response.json(data)
                 }
+                // 2.2. if the rule has a data property, use it to send the data object
+                else if (rule.data) {
+                    response.json(rule.data);
+                }
+                // 2.3. if the rule does not have a filename or data property,
+                // we return an empty object
                 else {
-                    // if no filename is configured, just return an empty json object
                     response.json({});
                 }
             }
