@@ -2,7 +2,7 @@ import path from "node:path";
 import webpack from "webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import {createApi} from "./scripts/api.js";
+import {createApi} from "./scripts/create-api.js";
 import pkg from "../package.json" with {type: "json"};
 import apiRules from "./api.json" with {type: "json"};
 
