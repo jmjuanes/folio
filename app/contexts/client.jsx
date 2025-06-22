@@ -16,8 +16,7 @@ export const ClientProvider = props => {
     // internal method to call the REST API
     const api = React.useCallback((method = "GET", path = "", data = null) => {
         // construct the URL based on the base URL and path
-        // const baseUrl = process.env.API_BASE_URL || "/api"; // Use environment variable or default to /api
-        const url = `${process.env.API_BASE_URL}${path}`;
+        const url = `/api${path}`;
         const options = {
             method: method,
             headers: {
