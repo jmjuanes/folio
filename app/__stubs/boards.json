@@ -1,0 +1,22 @@
+[
+    {
+        "id": "board1",
+        "name": "Board 1"
+    },
+    {
+        "id": "board2",
+        "name": "Board 2"
+    },
+    {
+        "id": "board3",
+        "name": "Board 3"
+    },
+    {
+        "id": "board4",
+        "name": "Board 4"
+    },
+    {
+        "id": "board5",
+        "name": "Board 5"
+    }
+]

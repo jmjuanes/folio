@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
-import environment from "./environment.js";
+import environment from "./env.js";
 
 // Generate a secure random token
 const generateToken = (size = 32) => {
@@ -8,11 +8,11 @@ const generateToken = (size = 32) => {
 };
 
 // Get JWT secret from environment or use a default
-const TOKEN_SECRET = environment.TOKEN_SECRET || generateToken(64);
-const TOKEN_EXPIRATION = environment.TOKEN_EXPIRATION || "10y";
+const TOKEN_SECRET = environment.FOLIO_TOKEN_SECRET || generateToken(64);
+const TOKEN_EXPIRATION = environment.FOLIO_TOKEN_EXPIRATION || "10y";
 
 // The access token is generated once when the server starts
-export const ACCESS_TOKEN = environment.ACCESS_TOKEN || generateToken();
+export const ACCESS_TOKEN = environment.FOLIO_ACCESS_TOKEN || generateToken();
 
 // Generate a JWT token for API access after authentication
 export const generateJwtToken = (payload = {}) => {
