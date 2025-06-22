@@ -48,6 +48,7 @@ export const Board = props => {
 
     return (
         <Editor
+            key={props.id}
             store={store}
             components={{}}
         />
