@@ -53,7 +53,7 @@ export const ClientProvider = props => {
             return api("GET", "/user");
         },
         getUserBoards: () => {
-            return api("GET", "/user/boards");
+            return api("GET", "/boards");
         },
         createBoard: (data = {}) => {
             return api("POST", "/boards", data);
