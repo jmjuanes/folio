@@ -21,7 +21,8 @@ const initDB = async () => {
             id TEXT NOT NULL PRIMARY KEY,
             owner TEXT NOT NULL,
             name TEXT NOT NULL DEFAULT 'Untitled',
-            thumbnail TEXT,
+            preview TEXT,
+            icon TEXT,
             data TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

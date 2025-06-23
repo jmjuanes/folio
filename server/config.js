@@ -41,7 +41,6 @@ export const API_LOGIN_ENDPOINTS = {
 export const API_USER_ENDPOINTS = {
     USER: "/",
     PREFERENCES: "/preferences",
-    BOARDS: "/boards",
 };
 
 export const API_BOARDS_ENDPOINTS = {

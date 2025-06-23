@@ -51,17 +51,3 @@ userRouter.patch(API_USER_ENDPOINTS.PREFERENCES, async (ctx) => {
         ctx.throw(500, "Failed to update user preferences.");
     }
 });
-
-// GET - list all boards of the authenticated user
-userRouter.get(API_USER_ENDPOINTS.BOARDS, async (ctx) => {
-    try {
-        const items = await ctx.state.db.all(
-            `SELECT id, owner, name, thumbnail, created_at, updated_at FROM ${DB_TABLES.BOARDS} WHERE owner = ? ORDER BY updated_at DESC`,
-            [ctx.state.user],
-        );
-        ctx.body = items;
-    } catch (error) {
-        console.error(error);
-        ctx.throw(500, "Failed to retrieve boards from database.");
-    }
-});

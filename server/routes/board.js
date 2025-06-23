@@ -14,7 +14,8 @@ boardRouter.use(database);
 boardRouter.get(API_BOARDS_ENDPOINTS.LIST_BOARDS, async (ctx) => {
     try {
         const items = await ctx.state.db.all(
-            `SELECT id, owner, name, thumbnail, created_at, updated_at FROM ${DB_TABLES.BOARDS} ORDER BY updated_at DESC`,
+            `SELECT id, owner, name, preview, icon, created_at, updated_at FROM ${DB_TABLES.BOARDS} WHERE owner = ? ORDER BY updated_at DESC`,
+            [ctx.state.user],
         );
         ctx.body = items;
     } catch (error) {
@@ -25,12 +26,12 @@ boardRouter.get(API_BOARDS_ENDPOINTS.LIST_BOARDS, async (ctx) => {
 
 // POST - create a new board
 boardRouter.post(API_BOARDS_ENDPOINTS.LIST_BOARDS, async (ctx) => {
-    const {name} = ctx.request.body;
+    const {name, data} = ctx.request.body;
     try {
         const id = uid(16); // Generate a unique ID for the board
         await ctx.state.db.run(
             `INSERT INTO ${DB_TABLES.BOARDS} (id, owner, name, data) VALUES (?, ?, ?, ?)`,
-            [id, ctx.state.user, name || "Untitled", "{}"],
+            [id, ctx.state.user, name || "Untitled", JSON.stringify(data || {})],
         );
         ctx.body = {
             message: "ok",
@@ -47,7 +48,7 @@ boardRouter.post(API_BOARDS_ENDPOINTS.LIST_BOARDS, async (ctx) => {
 boardRouter.get(API_BOARDS_ENDPOINTS.BOARD, async (ctx) => {
     try {
         const item = await ctx.state.db.get(
-            `SELECT id, owner, name, thumbnail, created_at, updated_at FROM ${DB_TABLES.BOARDS} WHERE id = ? AND owner = ?`,
+            `SELECT id, owner, name, preview, icon, created_at, updated_at FROM ${DB_TABLES.BOARDS} WHERE id = ? AND owner = ?`,
             [ctx.params.id, ctx.state.user],
         );
         // no board returned after query
@@ -63,12 +64,14 @@ boardRouter.get(API_BOARDS_ENDPOINTS.BOARD, async (ctx) => {
 
 // PATCH - update an existing board
 boardRouter.patch(API_BOARDS_ENDPOINTS.BOARD, async (ctx) => {
-    const {name, thumbnail} = ctx.request.body;
+    const fields = ["name", "preview", "icon"].filter(field => {
+        return typeof ctx.request.body[field] !== "undefined";
+    });
     try {
         // Update the board with the provided data
         await ctx.state.db.run(
-            `UPDATE ${DB_TABLES.BOARDS} SET name = ?, thumbnail = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND owner = ?`,
-            [name, thumbnail, ctx.params.id, ctx.state.user],
+            `UPDATE ${DB_TABLES.BOARDS} SET ${fields.map(f => `${f} = ?`).join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND owner = ?`,
+            [...fields.map(f => ctx.body[f]), ctx.params.id, ctx.state.user],
         );
         ctx.body = {
             message: "ok",
