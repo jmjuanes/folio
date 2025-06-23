@@ -5,7 +5,7 @@ import {useBoards} from "../contexts/boards.jsx";
 
 const getRecentBoards = (boards, maxRecentBoards = 6) => {
     return boards
-        .sort((a, b) => b.updatedAt - a.updatedAt)
+        .sort((a, b) => b.updated_at - a.updated_at)
         .slice(0, maxRecentBoards);
 };
 
@@ -55,7 +55,7 @@ export const Welcome = () => {
                             </div>
                             <div className="text-xs font-bold">Recent boards</div>
                         </div>
-                        <div className="w-full grid grid-cols-4 gap-4">
+                        <div className="w-full grid grid-cols-3 gap-4">
                             {getRecentBoards(boards).map(item => (
                                 <BoardItem
                                     key={item.id}

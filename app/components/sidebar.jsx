@@ -1,10 +1,14 @@
 import React from "react";
+import {createPortal} from "react-dom";
 import classNames from "classnames";
-import {renderIcon, FileIcon, TrashIcon, DrawingIcon} from "@josemi-icons/react";
+import {renderIcon, FileIcon, TrashIcon, DrawingIcon, DotsIcon} from "@josemi-icons/react";
 import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
+import {useDialog} from "folio-react/contexts/dialogs.jsx";
+import {Dropdown} from "folio-react/components/ui/dropdown.jsx";
 import {useBoards} from "../contexts/boards.jsx";
 import {useClient} from "../contexts/client.jsx";
 import {useHash} from "../hooks/use-hash.js";
+import {EditBoard} from "./edit-board.jsx";
 
 // @description logo component
 const Logo = () => (
@@ -25,8 +29,52 @@ const ActionButton = props => (
 
 // @description sidebar board item
 const BoardItem = props => {
+    const [actionsMenuOpen, setActionsMenuOpen] = React.useState(false);
+    const actionsMenuRef = React.useRef(null);
+    const position = React.useRef({});
+
+    // when clicking on the action item
+    const handleActionsMenuClick = React.useCallback(event => {
+        event.preventDefault();
+        if (event.currentTarget) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            position.current = {
+                top: rect.bottom + window.scrollY,
+                left: rect.left + window.scrollX,
+            };
+            setActionsMenuOpen(true);
+        }
+    }, [setActionsMenuOpen]);
+
+    // handle edition the page
+    const handleEdit = React.useCallback(() => {
+        setActionsMenuOpen(false);
+        props.onEdit();
+    }, [props.onEdit, setActionsMenuOpen]);
+
+    // handle delete the page
+    const handleDelete = React.useCallback(() => {
+        setActionsMenuOpen(false);
+        props.onDelete();
+    }, [props.onDelete, setActionsMenuOpen]);
+
+    React.useEffect(() => {
+        if (actionsMenuOpen) {
+            const handleClickOutside = event => {
+                event.preventDefault();
+                if (actionsMenuRef.current && !actionsMenuRef.current.contains(event.target)) {
+                    setActionsMenuOpen(false);
+                }
+            };
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }
+    }, [actionsMenuOpen]);
+
     const itemClass = classNames({
-        "group rounded-md w-full flex items-center py-1 px-2": true,
+        "relative group rounded-md w-full flex items-center py-1 px-2": true,
         "bg-gray-100 text-gray-900": props.active,
         "hover:bg-gray-100 text-gray-600 hover:text-gray-900": !props.active,
     });
@@ -39,10 +87,23 @@ const BoardItem = props => {
                 <div className="font-medium text-sm w-32 truncate">{props.board.name}</div>
             </div>
             <div className="opacity-0 group-hover:opacity-100 flex cursor-pointer items-center ml-auto text-base p-0">
-                <div className="flex items-center p-1 rounded-sm hover:bg-gray-200 text-gray-600" onClick={props.onDelete}>
-                    <TrashIcon />
+                <div className="flex items-center p-1 rounded-sm hover:bg-gray-200 text-gray-600" onClick={handleActionsMenuClick}>
+                    <DotsIcon />
                 </div>
             </div>
+            {actionsMenuOpen && createPortal([
+                <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
+                <Dropdown key="sidebar:board:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={position.current}>
+                    <Dropdown.Item onClick={handleEdit}>
+                        <Dropdown.Icon icon="edit" />
+                        <span>Edit</span>
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={handleDelete}>
+                        <Dropdown.Icon icon="trash" />
+                        <span>Delete</span>
+                    </Dropdown.Item>
+                </Dropdown>,
+            ], document.body)}
         </a>
     );
 };
@@ -52,6 +113,8 @@ export const Sidebar = () => {
     const client = useClient();
     const [boards, actions] = useBoards();
     const [hash] = useHash();
+    const {showDialog} = useDialog();
+
     return (
         <div className="w-64 h-full bg-white shrink-0 flex flex-col justify-between border-r-1 border-gray-200">
             <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
@@ -79,8 +142,16 @@ export const Sidebar = () => {
                                 key={`board:item:${item.id}`}
                                 board={item}
                                 active={hash === item.id}
-                                onDelete={event => {
-                                    event.preventDefault();
+                                onEdit={() => {
+                                    return showDialog({
+                                        dialogClassName: "w-full max-w-lg",
+                                        component: EditBoard,
+                                        props: {
+                                            id: item.id,
+                                        },
+                                    });
+                                }}
+                                onDelete={() => {
                                     actions.deleteBoard(item.id)
                                 }}
                             />

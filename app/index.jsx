@@ -2,6 +2,7 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import {useToggle} from "react-use";
 import {ConfirmProvider} from "folio-react/contexts/confirm.jsx";
+import {DialogsProvider} from "folio-react/contexts/dialogs.jsx";
 import {Sidebar, SidebarToggle} from "./components/sidebar.jsx";
 import {Welcome} from "./components/welcome.jsx";
 import {Board} from "./components/board.jsx";
@@ -37,7 +38,9 @@ createRoot(document.getElementById("root")).render((
         <AuthenticationProvider>
             <ConfirmProvider>
                 <BoardsProvider>
-                    <App />
+                    <DialogsProvider>
+                        <App />
+                    </DialogsProvider>
                 </BoardsProvider>
             </ConfirmProvider>
         </AuthenticationProvider>
