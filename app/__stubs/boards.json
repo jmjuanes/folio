@@ -18,5 +18,9 @@
     {
         "id": "board5",
         "name": "Board 5"
+    },
+    {
+        "id": "do-not-exist",
+        "name": "Do Not Exist"
     }
 ]
