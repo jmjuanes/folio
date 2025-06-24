@@ -61,6 +61,9 @@ export const ClientProvider = props => {
         getBoard: id => {
             return api("GET", `/boards/${id}`);
         },
+        updateBoard: (id, data) => {
+            return api("PATCH", `/boards/${id}`, data);
+        },
         deleteBoard: id => {
             return api("DELETE", `/boards/${id}`);
         },

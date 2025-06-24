@@ -118,7 +118,7 @@ const BoardsList = props => {
                     board={item}
                     active={hash === item.id}
                     onRename={() => {
-                        return null;
+                        props.onRename(item.id);
                     }}
                     onDelete={() => {
                         props.onDelete(item.id)

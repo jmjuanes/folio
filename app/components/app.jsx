@@ -1,17 +1,20 @@
 import React from "react";
 import {loadFromJson} from "folio-react/lib/json.js";
 import {useConfirm} from "folio-react/contexts/confirm.jsx";
+import {useDialog} from "folio-react/contexts/dialogs.jsx";
 import {useClient} from "../contexts/client.jsx";
 import {useRouter, Route, Switch} from "../contexts/router.jsx";
 import {Sidebar} from "./sidebar.jsx";
 import {Welcome} from "./welcome.jsx";
 import {Board} from "./board.jsx";
+import {BoardRenameDialog} from "./dialogs/board-rename.jsx";
 
 export const App = () => {
     const client = useClient();
     const [boards, setBoards] = React.useState([]);
     const [hash, redirect] = useRouter();
     const {showConfirm} = useConfirm();
+    const {showDialog} = useDialog();
     
     // after any change, force to update boards list by calling the /boards endpoint
     const updateBoards = React.useCallback(() => {
@@ -38,6 +41,19 @@ export const App = () => {
             });
         });
     }, [handleBoardCreate]);
+
+    // to rename a board we display a dialog containing the 
+    // BoardRenameDialog component
+    const handleBoardRename = React.useCallback(id => {
+        return showDialog({
+            component: BoardRenameDialog,
+            dialogClassName: "w-full max-w-sm",
+            props: {
+                id: id,
+                onSubmit: updateBoards, // update the boards list after renaming
+            },
+        });
+    }, [showDialog, updateBoards]);
 
     // to delete a board we just display a confirmation component
     const handleBoardDelete = React.useCallback(id => {
@@ -68,7 +84,7 @@ export const App = () => {
                 defaultCollapsed={false}
                 onBoardCreate={handleBoardCreate}
                 onBoardImport={handleBoardImport}
-                onBoardRename={null}
+                onBoardRename={handleBoardRename}
                 onBoardDelete={handleBoardDelete}
             />
             <Switch>
