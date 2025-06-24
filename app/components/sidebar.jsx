@@ -170,12 +170,12 @@ export const Sidebar = props => {
                         <div className="flex flex-col gap-1 mb-2">
                             <ActionButton href="#" icon="home" text="Home" />
                             <ActionButton
-                                onClick={props.onBoardCreate}
+                                onClick={() => props.onBoardCreate()}
                                 icon="plus"
                                 text="Create a new board"
                             />
                             <ActionButton
-                                onClick={props.onBoardImport}
+                                onClick={() => props.onBoardImport()}
                                 icon="upload"
                                 text="Import board from file"
                             />
