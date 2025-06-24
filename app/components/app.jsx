@@ -62,7 +62,7 @@ export const App = () => {
     React.useEffect(() => updateBoards(), [client]);
 
     return (
-        <div className="fixed top-0 left-0 h-full w-full bg-white text-base text-gray-800 flex">
+        <div className="fixed top-0 left-0 h-full w-full bg-white text-gray-800 flex">
             <Sidebar
                 boards={boards}
                 defaultCollapsed={false}
@@ -75,7 +75,7 @@ export const App = () => {
                 <Route test={/^$/} render={() => (
                     <Welcome boards={boards} />
                 )} />
-                <Route test={/^[\w]+$/} render={() => (
+                <Route test={/^\w+$/} render={() => (
                     <Board key={hash} id={hash} />
                 )} />
             </Switch>

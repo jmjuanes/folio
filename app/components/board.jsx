@@ -3,7 +3,6 @@ import {Editor} from "folio-react/components/editor.jsx";
 import {useClient} from "../contexts/client.jsx";
 import {NotFound} from "./not-found.jsx";
 
-// @description board component
 export const Board = props => {
     const [exists, setExists] = React.useState(null);
     const client = useClient();
@@ -34,19 +33,12 @@ export const Board = props => {
             }
             // check if board exists
             client.getBoard(props.id)
-                .then(() => {
-                    if (didEnter) {
-                        setExists(true);
-                    }
-                })
+                .then(() => setExists(true))
                 .catch(error => {
                     console.error(error);
-                    if (didEnter) {
-                        setExists(false); // Assume board does not exist on error
-                    }
+                    setExists(false); // Assume board does not exist on error
                 });
         }, 1200);
-        
         // on unmount, clear the timer and stop checking if board exists
         return () => {
             window.clearTimeout(timer);
