@@ -1,11 +1,12 @@
 import React from "react";
 import {createPortal} from "react-dom";
+import {useToggle} from "react-use";
 import classNames from "classnames";
 import {renderIcon, FileIcon, DrawingIcon, DotsIcon} from "@josemi-icons/react";
+import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
 import {Dropdown} from "folio-react/components/ui/dropdown.jsx";
-import {useApp} from "../contexts/app.jsx";
 import {useClient} from "../contexts/client.jsx";
-import {useHash} from "../hooks/use-hash.js";
+import {useRouter} from "../contexts/router.jsx";
 
 // @description logo component
 const Logo = () => (
@@ -43,13 +44,11 @@ const BoardItem = props => {
         }
     }, [setActionsMenuOpen]);
 
-    // handle edition the page
-    const handleEdit = React.useCallback(() => {
+    const handleRename = React.useCallback(() => {
         setActionsMenuOpen(false);
-        props.onEdit();
-    }, [props.onEdit, setActionsMenuOpen]);
+        props.onRename();
+    }, [props.onRename, setActionsMenuOpen]);
 
-    // handle delete the page
     const handleDelete = React.useCallback(() => {
         setActionsMenuOpen(false);
         props.onDelete();
@@ -91,9 +90,9 @@ const BoardItem = props => {
             {actionsMenuOpen && createPortal([
                 <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                 <Dropdown key="sidebar:board:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={position.current}>
-                    <Dropdown.Item onClick={handleEdit}>
+                    <Dropdown.Item onClick={handleRename}>
                         <Dropdown.Icon icon="edit" />
-                        <span>Edit</span>
+                        <span>Rename</span>
                     </Dropdown.Item>
                     <Dropdown.Item onClick={handleDelete}>
                         <Dropdown.Icon icon="trash" />
@@ -106,28 +105,27 @@ const BoardItem = props => {
 };
 
 // @description render boards list
-const BoardsList = () => {
-    const app = useApp();
-    const [hash] = useHash();
+const BoardsList = props => {
+    const [hash] = useRouter();
     return (
         <div className="flex flex-col gap-1">
             <div className="text-xs font-bold text-gray-600 mb-0 px-2">
                 <span>Private Boards</span>
             </div>
-            {(app.boards || []).map(item => (
+            {(props.boards || []).map(item => (
                 <BoardItem
                     key={`board:item:${item.id}`}
                     board={item}
                     active={hash === item.id}
-                    onEdit={() => {
+                    onRename={() => {
                         return null;
                     }}
                     onDelete={() => {
-                        app.deleteBoard(item.id)
+                        props.onDelete(item.id)
                     }}
                 />
             ))}
-            {app.boards.length === 0 && (
+            {props.boards.length === 0 && (
                 <div className="bg-gray-50 rounded-lg p-6 border-0 border-gray-200">
                     <div className="flex items-center justify-center text-gray-700 text-3xl mb-1">
                         <DrawingIcon />
@@ -144,38 +142,68 @@ const BoardsList = () => {
     );
 };
 
+const ToggleButton = props => (
+    <div className="absolute left-0 top-half z-50 cursor-pointer" style={props.style} onClick={props.onClick}>
+        <div className="flex bg-gray-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
+            {props.collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        </div>
+    </div>
+);
+
 // export the sidebar component
-export const Sidebar = () => {
+export const Sidebar = props => {
+    const [collapsed, toggleCollapsed] = useToggle(!!props.defaultCollapsed);
     const client = useClient();
-    const app = useApp();
+
+    const sidebarClass = classNames({
+        "w-64 h-full bg-white shrink-0 flex-col justify-between border-r-1 border-gray-200": true,
+        "flex": !collapsed,
+        "hidden": collapsed,
+    });
+
     return (
-        <div className="w-64 h-full bg-white shrink-0 flex flex-col justify-between border-r-1 border-gray-200">
-            <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
-                <Logo />
-                <div className="flex flex-col gap-4 h-full px-3 select-none">
-                    <div className="flex flex-col gap-1 mb-2">
-                        <ActionButton href="#" icon="home" text="Home" />
-                        <ActionButton
-                            onClick={() => app.createBoard()}
-                            icon="plus"
-                            text="Create a new board"
-                        />
-                        <ActionButton
-                            onClick={() => app.importBoard()}
-                            icon="upload"
-                            text="Import board from file"
+        <React.Fragment>
+            <div className={sidebarClass}>
+                <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
+                    <Logo />
+                    <div className="flex flex-col gap-4 h-full px-3 select-none">
+                        <div className="flex flex-col gap-1 mb-2">
+                            <ActionButton href="#" icon="home" text="Home" />
+                            <ActionButton
+                                onClick={props.onBoardCreate}
+                                icon="plus"
+                                text="Create a new board"
+                            />
+                            <ActionButton
+                                onClick={props.onBoardImport}
+                                icon="upload"
+                                text="Import board from file"
+                            />
+                        </div>
+                        <BoardsList
+                            boards={props.boards}
+                            onRename={props.onBoardRename}
+                            onDelete={props.onBoardDelete}
                         />
                     </div>
-                    <BoardsList />
+                </div>
+                <div className="px-3 pt-3 pb-3 bg-white">
+                    <ActionButton
+                        icon="logout"
+                        text="Sign out"
+                        onClick={() => client.logout()}
+                    />
                 </div>
             </div>
-            <div className="px-3 pt-3 pb-3 bg-white">
-                <ActionButton
-                    icon="logout"
-                    text="Sign out"
-                    onClick={() => client.logout()}
+            <div className="relative h-full">
+                <ToggleButton
+                    collapsed={collapsed}
+                    style={{
+                        transform: "translateY(-50%)",
+                    }}
+                    onClick={toggleCollapsed}
                 />
             </div>
-        </div>
+        </React.Fragment>
     );
 };
