@@ -25,14 +25,34 @@ export const Board = props => {
     }, [props.id, client]);
 
     // on mount, check if the board exists
+    // it includes a little protection against rapid board entering/exit
     React.useEffect(() => {
-        client.getBoard(props.id)
-            .then(() => setExists(true))
-            .catch(error => {
-                console.error(error);
-                setExists(false); // Assume board does not exist on error
-            });
-    }, [store]);
+        let didEnter = true; // if it changes to false, stop loading board
+        const timer = window.setTimeout(() => {
+            if (!didEnter) {
+                return;
+            }
+            // check if board exists
+            client.getBoard(props.id)
+                .then(() => {
+                    if (didEnter) {
+                        setExists(true);
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    if (didEnter) {
+                        setExists(false); // Assume board does not exist on error
+                    }
+                });
+        }, 1200);
+        
+        // on unmount, clear the timer and stop checking if board exists
+        return () => {
+            window.clearTimeout(timer);
+            didEnter = false;
+        };
+    }, [props.id, client]);
 
     // we do not know (yet) if the board exists, so we set it to null
     if (exists === null) {
@@ -41,9 +61,7 @@ export const Board = props => {
 
     // if the board does not exist, we display a centered message
     if (!exists) {
-        return (
-            <NotFound />
-        );
+        return <NotFound />;
     }
 
     return (

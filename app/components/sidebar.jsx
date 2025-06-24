@@ -1,14 +1,11 @@
 import React from "react";
 import {createPortal} from "react-dom";
 import classNames from "classnames";
-import {renderIcon, FileIcon, TrashIcon, DrawingIcon, DotsIcon} from "@josemi-icons/react";
-import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
-import {useDialog} from "folio-react/contexts/dialogs.jsx";
+import {renderIcon, FileIcon, DrawingIcon, DotsIcon} from "@josemi-icons/react";
 import {Dropdown} from "folio-react/components/ui/dropdown.jsx";
-import {useBoards} from "../contexts/boards.jsx";
+import {useApp} from "../contexts/app.jsx";
 import {useClient} from "../contexts/client.jsx";
 import {useHash} from "../hooks/use-hash.js";
-import {EditBoard} from "./edit-board.jsx";
 
 // @description logo component
 const Logo = () => (
@@ -108,13 +105,49 @@ const BoardItem = props => {
     );
 };
 
+// @description render boards list
+const BoardsList = () => {
+    const app = useApp();
+    const [hash] = useHash();
+    return (
+        <div className="flex flex-col gap-1">
+            <div className="text-xs font-bold text-gray-600 mb-0 px-2">
+                <span>Private Boards</span>
+            </div>
+            {(app.boards || []).map(item => (
+                <BoardItem
+                    key={`board:item:${item.id}`}
+                    board={item}
+                    active={hash === item.id}
+                    onEdit={() => {
+                        return null;
+                    }}
+                    onDelete={() => {
+                        app.deleteBoard(item.id)
+                    }}
+                />
+            ))}
+            {app.boards.length === 0 && (
+                <div className="bg-gray-50 rounded-lg p-6 border-0 border-gray-200">
+                    <div className="flex items-center justify-center text-gray-700 text-3xl mb-1">
+                        <DrawingIcon />
+                    </div>
+                    <div className="text-center font-bold text-gray-700 text-sm mb-1">
+                        <span>No boards available</span>
+                        </div> 
+                    <div className="text-center text-xs text-gray-500">
+                        <span>Your created boards will be displayed here.</span>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 // export the sidebar component
 export const Sidebar = () => {
     const client = useClient();
-    const [boards, actions] = useBoards();
-    const [hash] = useHash();
-    const {showDialog} = useDialog();
-
+    const app = useApp();
     return (
         <div className="w-64 h-full bg-white shrink-0 flex flex-col justify-between border-r-1 border-gray-200">
             <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
@@ -123,70 +156,26 @@ export const Sidebar = () => {
                     <div className="flex flex-col gap-1 mb-2">
                         <ActionButton href="#" icon="home" text="Home" />
                         <ActionButton
-                            onClick={() => actions.createBoard()}
+                            onClick={() => app.createBoard()}
                             icon="plus"
                             text="Create a new board"
                         />
                         <ActionButton
-                            onClick={() => actions.importBoard()}
+                            onClick={() => app.importBoard()}
                             icon="upload"
                             text="Import board from file"
                         />
                     </div>
-                    <div className="flex flex-col gap-1">
-                        <div className="text-xs font-bold text-gray-600 mb-0 px-2">
-                            <span>Private Boards</span>
-                        </div>
-                        {(boards || []).map(item => (
-                            <BoardItem
-                                key={`board:item:${item.id}`}
-                                board={item}
-                                active={hash === item.id}
-                                onEdit={() => {
-                                    return showDialog({
-                                        dialogClassName: "w-full max-w-lg",
-                                        component: EditBoard,
-                                        props: {
-                                            id: item.id,
-                                        },
-                                    });
-                                }}
-                                onDelete={() => {
-                                    actions.deleteBoard(item.id)
-                                }}
-                            />
-                        ))}
-                        {boards.length === 0 && (
-                            <div className="bg-gray-50 rounded-lg p-6 border-0 border-gray-200">
-                                <div className="flex items-center justify-center text-gray-700 text-3xl mb-1">
-                                    <DrawingIcon />
-                                </div>
-                                <div className="text-center font-bold text-gray-700 text-sm mb-1">
-                                    <span>No boards available</span>
-                                    </div> 
-                                <div className="text-center text-xs text-gray-500">
-                                    <span>Your created boards will be displayed here.</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    <BoardsList />
                 </div>
             </div>
             <div className="px-3 pt-3 pb-3 bg-white">
-                <ActionButton icon="sliders" text="Settings" onClick={null} />
-                <ActionButton icon="logout" text="Sign out" onClick={() => client.logout()} />
+                <ActionButton
+                    icon="logout"
+                    text="Sign out"
+                    onClick={() => client.logout()}
+                />
             </div>
         </div>
     );
 };
-
-// @description sidebar toggle component
-export const SidebarToggle = props => (
-    <div className="relative h-full">
-        <div className="absolute left-0 top-half z-50 cursor-pointer" style={props.style} onClick={props.onToggle}>
-            <div className="flex bg-gray-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
-                {props.sidebarVisible ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </div>
-        </div>
-    </div>
-);

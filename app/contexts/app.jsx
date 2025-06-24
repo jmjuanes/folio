@@ -2,18 +2,18 @@ import React from "react";
 import {loadFromJson} from "folio-react/lib/json.js";
 import {useConfirm} from "folio-react/contexts/confirm.jsx";
 import {useClient} from "./client.jsx";
-import {useHash} from "../hooks/use-hash.js";
+import {useHash, getCurrentHash} from "../hooks/use-hash.js";
 
-// boards context, to store current boards and actions
-const BoardsContext = React.createContext({});
+// main app context
+const AppContext = React.createContext({});
 
-// @description custom hook to access to boards context
-export const useBoards = () => {
-    return React.useContext(BoardsContext);
+// @description custom hook to access to app context
+export const useApp = () => {
+    return React.useContext(AppContext);
 };
 
-// @description boards provider
-export const BoardsProvider = props => {
+// @description app provider
+export const AppProvider = props => {
     const client = useClient();
     const [boards, setBoards] = React.useState([]);
     const [hash, redirect] = useHash();
@@ -48,19 +48,18 @@ export const BoardsProvider = props => {
                     callback: () => {
                         return client.deleteBoard(id).then(() => {
                             // TODO: display a confirmation message
-                            // Check if the board that we are removing is the current visible board
-                            // TODO: we would need to decide what to do. At this moment we just redirect to welcome
-                            if (id === hash) {
+                            const currentHash = getCurrentHash().replace(/^#/, "");
+                            if (id === currentHash) {
                                 redirect("");
                             }
-                            // Update boards list in sidebar and welcome
+                            // update boards list
                             updateBoards();
                         });
                     },
                 });
             },
         };
-    }, [client, setBoards, showConfirm, hash, redirect]);
+    }, [client, setBoards, showConfirm, redirect]);
 
     // on mount, update the boards
     React.useEffect(() => {
@@ -68,8 +67,8 @@ export const BoardsProvider = props => {
     }, [client]);
 
     return (
-        <BoardsContext.Provider value={[boards, actions]}>
+        <AppContext.Provider value={{boards, ...actions}}>
             {props.children}
-        </BoardsContext.Provider>
+        </AppContext.Provider>
     );
 };
