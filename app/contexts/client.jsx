@@ -1,5 +1,5 @@
 import React from "react";
-import {useLocalStorage} from "react-use";
+import { useLocalStorage } from "react-use";
 
 // main client context
 const ClientContext = React.createContext({});

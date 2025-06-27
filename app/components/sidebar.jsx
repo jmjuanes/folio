@@ -41,7 +41,7 @@ const BoardsList = props => {
                         props.onRename(item.id);
                     }}
                     onDelete={() => {
-                        props.onDelete(item.id)
+                        props.onDelete(item.id);
                     }}
                 />
             ))}

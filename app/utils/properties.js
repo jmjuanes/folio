@@ -7,3 +7,10 @@ export const getPropertyByKey = (properties = [], key = "") => {
         return item.object === "property_item" && item?.content?.key === key;
     });
 };
+
+// @description create a new property object
+// @param {string} key - the property key
+// @param {string} value - the property value
+export const createProperty = (key = "", value = "") => {
+    return {key, value};
+};

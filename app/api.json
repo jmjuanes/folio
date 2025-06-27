@@ -68,8 +68,23 @@
         }
     },
     {
-        "method": "PATCH",
+        "method": "POST",
         "test": "/api/board/*/properties",
+        "secure": true
+    },
+    {
+        "method": "GET",
+        "test": "/api/properties/*",
+        "secure": true
+    },
+    {
+        "method": "PATCH",
+        "test": "/api/properties/*",
+        "secure": true
+    },
+    {
+        "method": "DELETE",
+        "test": "/api/properties/*",
         "secure": true
     }
 ]

@@ -1,7 +1,7 @@
 import React from "react";
-import {Editor} from "folio-react/components/editor.jsx";
-import {useClient} from "../contexts/client.jsx";
-import {NotFound} from "./not-found.jsx";
+import { Editor } from "folio-react/components/editor.jsx";
+import { useClient } from "../contexts/client.jsx";
+import { NotFound } from "./not-found.jsx";
 
 export const Board = props => {
     const [exists, setExists] = React.useState(null);
@@ -14,10 +14,10 @@ export const Board = props => {
             // manage board data
             data: {
                 get: () => {
-                    return client.getBoardData(props.id);
+                    return client.getBoard(props.id);
                 },
                 set: data => {
-                    return client.updateBoardData(props.id, data);
+                    return client.updateBoard(props.id, data);
                 },
             },
         };
