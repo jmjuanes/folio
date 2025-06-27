@@ -1,30 +1,43 @@
-import Router from "koa-router";
-import {API_LOGIN_ENDPOINTS} from "../config.js";
-import {ACCESS_TOKEN, generateJwtToken} from "../token.js";
+import Router from "@koa/router";
+import { database } from "../middlewares/database.js";
+import { ACCESS_TOKEN, generateJwtToken } from "../token.js";
+import { DB_TABLE, OBJECT_TYPES } from "../config.js";
 
 export const loginRouter = new Router();
+loginRouter.use(database);
 
 // GET - login route
-loginRouter.get(API_LOGIN_ENDPOINTS.LOGIN, (ctx) => {
-    ctx.sendError(ctx, 405, "Method Not Allowed. Use POST to login.");
+loginRouter.get("/", async ctx => {
+    return ctx.send(405, {
+        message: "Method Not Allowed. Use POST to login.",
+    });
 });
 
 // POST - login route
-loginRouter.post(API_LOGIN_ENDPOINTS.LOGIN, async (ctx) => {
+loginRouter.post("/", async ctx => {
     const {token} = ctx.request.body;
     if (!token) {
-        return ctx.sendError(ctx, 400, "Token is required");
+        return ctx.send(400, {
+            message: "Token is required",
+        });
     }
-    // Compare with the access token generated at server start
+    // compare with the access token generated at server start
     if (token !== ACCESS_TOKEN) {
-        return ctx.sendError(ctx, 401, "Invalid token");
+        return ctx.send(401, {
+            message: "Invalid token",
+        });
     }
-    // Generate JWT token for API access
-    const jwtToken = generateJwtToken({
-        user: "folio",
-    });
-    ctx.body = {
+    // get the user object from the database
+    const user = await ctx.state.db.get(
+        `SELECT id FROM ${DB_TABLE} WHERE object = ?`,
+        [OBJECT_TYPES.USER],
+    );
+    // generate the JWT token for API access and return it as part 
+    // of the response object
+    return ctx.ok({
         message: "ok",
-        token: jwtToken,
-    };
+        token: generateJwtToken({
+            id: user.id,
+        }),
+    });
 });

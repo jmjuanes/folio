@@ -17,9 +17,13 @@ export const WWW_PATH = path.resolve(ROOT_PATH, environment.FOLIO_WWW_PATH || "w
 
 // database
 export const DB_PATH = path.join(DATA_PATH, environment.FOLIO_DB_NAME || "folio.sqlite");
-export const DB_TABLES = {
-    BOARDS: "boards",
-    PREFERENCES: "preferences",
+export const DB_TABLE = environment.FOLIO_DB_TABLE || "documents";
+
+// object types
+export const OBJECT_TYPES = {
+    BOARD: "board",
+    PROPERTY: "property_item",
+    USER: "user",
 };
 
 // api
@@ -30,21 +34,7 @@ export const API_ENDPOINTS = {
     API: API_PATH,
     LOGIN: `${API_PATH}/login`,
     USER: `${API_PATH}/user`,
-    BOARDS: `${API_PATH}/boards`,
+    BOARD: `${API_PATH}/board`,
+    PROPERTIES: `${API_PATH}/properties`,
     STATUS: `${API_PATH}/status`,
-};
-
-export const API_LOGIN_ENDPOINTS = {
-    LOGIN: "/",
-};
-
-export const API_USER_ENDPOINTS = {
-    USER: "/",
-    PREFERENCES: "/preferences",
-};
-
-export const API_BOARDS_ENDPOINTS = {
-    LIST_BOARDS: "/",
-    BOARD: "/:id",
-    BOARD_DATA: "/:id/data",
 };
