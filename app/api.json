@@ -13,7 +13,9 @@
         "test": "/api/user",
         "secure": true,
         "response": {
-            "file": "user.json"
+            "body": {
+                "id": "user"
+            }
         }
     },
     {
@@ -25,16 +27,8 @@
         }
     },
     {
-        "method": "GET",
-        "test": "/api/boards",
-        "secure": true,
-        "response": {
-            "file": "boards.json"
-        }
-    },
-    {
         "method": "POST",
-        "test": "/api/boards",
+        "test": "/api/user/boards",
         "secure": true,
         "response": {
             "body": {
@@ -44,7 +38,7 @@
     },
     {
         "method": "GET",
-        "test": "/api/boards/do-not-exist",
+        "test": "/api/board/do-not-exist",
         "secure": true,
         "response": {
             "status": 404
@@ -52,27 +46,30 @@
     },
     {
         "method": "GET",
-        "test": "/api/boards/*",
+        "test": "/api/board/*",
         "secure": true
     },
     {
         "method": "PATCH",
-        "test": "/api/boards/*",
+        "test": "/api/board/*",
         "secure": true
     },
     {
         "method": "DELETE",
-        "test": "/api/boards/*",
+        "test": "/api/board/*",
         "secure": true
     },
     {
         "method": "GET",
-        "test": "/api/boards/*/data",
-        "secure": true
+        "test": "/api/board/*/properties",
+        "secure": true,
+        "response": {
+            "body": []
+        }
     },
     {
         "method": "PATCH",
-        "test": "/api/boards/*/data",
+        "test": "/api/board/*/properties",
         "secure": true
     }
 ]

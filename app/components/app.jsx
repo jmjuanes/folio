@@ -88,8 +88,12 @@ export const App = () => {
                 onBoardDelete={handleBoardDelete}
             />
             <Switch>
-                <Route test={/^$/} render={() => (
-                    <Welcome boards={boards} />
+                <Route test={/^(|home)$/} render={() => (
+                    <Welcome
+                        boards={boards}
+                        onBoardCreate={handleBoardCreate}
+                        onBoardImport={handleBoardImport}
+                    />
                 )} />
                 <Route test={/^\w+$/} render={() => (
                     <Board key={hash} id={hash} />

@@ -1,12 +1,10 @@
 import React from "react";
-import {createPortal} from "react-dom";
-import {useToggle} from "react-use";
+import { useToggle } from "react-use";
 import classNames from "classnames";
-import {renderIcon, FileIcon, DrawingIcon, DotsIcon} from "@josemi-icons/react";
-import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
-import {Dropdown} from "folio-react/components/ui/dropdown.jsx";
-import {useClient} from "../contexts/client.jsx";
-import {useRouter} from "../contexts/router.jsx";
+import { renderIcon, DrawingIcon, ChevronLeftIcon, ChevronRightIcon } from "@josemi-icons/react";
+import { useClient } from "../contexts/client.jsx";
+import { useRouter } from "../contexts/router.jsx";
+import { BoardLink } from "./board-link.jsx";
 
 // @description logo component
 const Logo = () => (
@@ -25,95 +23,17 @@ const ActionButton = props => (
     </a>
 );
 
-// @description sidebar board item
-const BoardItem = props => {
-    const [actionsMenuOpen, setActionsMenuOpen] = React.useState(false);
-    const actionsMenuRef = React.useRef(null);
-    const position = React.useRef({});
-
-    // when clicking on the action item
-    const handleActionsMenuClick = React.useCallback(event => {
-        event.preventDefault();
-        if (event.currentTarget) {
-            const rect = event.currentTarget.getBoundingClientRect();
-            position.current = {
-                top: rect.bottom + window.scrollY,
-                left: rect.left + window.scrollX,
-            };
-            setActionsMenuOpen(true);
-        }
-    }, [setActionsMenuOpen]);
-
-    const handleRename = React.useCallback(() => {
-        setActionsMenuOpen(false);
-        props.onRename();
-    }, [props.onRename, setActionsMenuOpen]);
-
-    const handleDelete = React.useCallback(() => {
-        setActionsMenuOpen(false);
-        props.onDelete();
-    }, [props.onDelete, setActionsMenuOpen]);
-
-    React.useEffect(() => {
-        if (actionsMenuOpen) {
-            const handleClickOutside = event => {
-                event.preventDefault();
-                if (actionsMenuRef.current && !actionsMenuRef.current.contains(event.target)) {
-                    setActionsMenuOpen(false);
-                }
-            };
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => {
-                document.removeEventListener("mousedown", handleClickOutside);
-            };
-        }
-    }, [actionsMenuOpen]);
-
-    const itemClass = classNames({
-        "relative group rounded-md w-full flex items-center py-1 px-2": true,
-        "bg-gray-100 text-gray-900": props.active,
-        "hover:bg-gray-100 text-gray-600 hover:text-gray-900": !props.active,
-    });
-    return (
-        <a href={`#${props.board.id}`} className={itemClass} title={props.board.name}>
-            <div className="cursor-pointer flex items-center gap-2">
-                <div className="text-lg flex items-center text-gray-600">
-                    <FileIcon />
-                </div>
-                <div className="font-medium text-sm w-32 truncate">{props.board.name}</div>
-            </div>
-            <div className="opacity-0 group-hover:opacity-100 flex cursor-pointer items-center ml-auto text-base p-0">
-                <div className="flex items-center p-1 rounded-sm hover:bg-gray-200 text-gray-600" onClick={handleActionsMenuClick}>
-                    <DotsIcon />
-                </div>
-            </div>
-            {actionsMenuOpen && createPortal([
-                <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
-                <Dropdown key="sidebar:board:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={position.current}>
-                    <Dropdown.Item onClick={handleRename}>
-                        <Dropdown.Icon icon="edit" />
-                        <span>Rename</span>
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={handleDelete}>
-                        <Dropdown.Icon icon="trash" />
-                        <span>Delete</span>
-                    </Dropdown.Item>
-                </Dropdown>,
-            ], document.body)}
-        </a>
-    );
-};
-
 // @description render boards list
 const BoardsList = props => {
     const [hash] = useRouter();
+
     return (
         <div className="flex flex-col gap-1">
             <div className="text-xs font-bold text-gray-600 mb-0 px-2">
                 <span>Private Boards</span>
             </div>
             {(props.boards || []).map(item => (
-                <BoardItem
+                <BoardLink
                     key={`board:item:${item.id}`}
                     board={item}
                     active={hash === item.id}
@@ -154,7 +74,6 @@ const ToggleButton = props => (
 export const Sidebar = props => {
     const [collapsed, toggleCollapsed] = useToggle(!!props.defaultCollapsed);
     const client = useClient();
-
     const sidebarClass = classNames({
         "w-64 h-full bg-white shrink-0 flex-col justify-between border-r-1 border-gray-200": true,
         "flex": !collapsed,

@@ -53,25 +53,34 @@ export const ClientProvider = props => {
             return api("GET", "/user");
         },
         getUserBoards: () => {
-            return api("GET", "/boards");
+            return api("GET", "/user/boards");
         },
         createBoard: (data = {}) => {
-            return api("POST", "/boards", data);
+            return api("POST", "/user/boards", data);
         },
         getBoard: id => {
-            return api("GET", `/boards/${id}`);
+            return api("GET", `/board/${id}`);
         },
         updateBoard: (id, data) => {
-            return api("PATCH", `/boards/${id}`, data);
+            return api("PATCH", `/board/${id}`, data);
         },
         deleteBoard: id => {
-            return api("DELETE", `/boards/${id}`);
+            return api("DELETE", `/board/${id}`);
         },
-        getBoardData: id => {
-            return api("GET", `/boards/${id}/data`);
+        getBoardProperties: id => {
+            return api("GET", `/board/${id}/properties`);
         },
-        updateBoardData: (id, data) => {
-            return api("PATCH", `/boards/${id}/data`, data);
+        createBoardProperty: (id, data) => {
+            return api("POST", `/board/${id}/properties`, data);
+        },
+        getProperty: id => {
+            return api("GET", `/properties/${id}`);
+        },
+        updateProperty: (id, data) => {
+            return api("PATCH", `/properties/${id}`, data);
+        },
+        deleteProperty: id => {
+            return api("DELETE", `/properties/${id}`);
         },
     }), [token, setToken, removeToken]);
 
