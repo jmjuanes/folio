@@ -5,6 +5,7 @@ import { renderIcon, DrawingIcon, ChevronLeftIcon, ChevronRightIcon } from "@jos
 import { useClient } from "../contexts/client.jsx";
 import { useRouter } from "../contexts/router.jsx";
 import { BoardLink } from "./board-link.jsx";
+import { groupByDate } from "../utils/dates.js";
 
 // @description logo component
 const Logo = () => (
@@ -23,14 +24,12 @@ const ActionButton = props => (
     </a>
 );
 
-// @description render boards list
-const BoardsList = props => {
+const BoardsGroup = props => {
     const [hash] = useRouter();
-
     return (
         <div className="flex flex-col gap-1">
             <div className="text-xs font-bold text-gray-600 mb-0 px-2">
-                <span>Private Boards</span>
+                <span>{props.title}</span>
             </div>
             {(props.boards || []).map(item => (
                 <BoardLink
@@ -45,6 +44,48 @@ const BoardsList = props => {
                     }}
                 />
             ))}
+        </div>
+    );
+};
+
+// @description render boards list
+const BoardsList = props => {
+    const groups = React.useMemo(() => {
+        return groupByDate(props.boards, "updated_at");
+    }, [props.boards]);
+
+    return (
+        <React.Fragment>
+            {groups.today.length > 0 && (
+                <BoardsGroup
+                    title="Today"
+                    boards={groups.today}
+                />
+            )}
+            {groups.yesterday.length > 0 && (
+                <BoardsGroup
+                    title="Yesterday"
+                    boards={groups.yesterday}
+                />
+            )}
+            {groups.thisWeek.length > 0 && (
+                <BoardsGroup
+                    title="This Week"
+                    boards={groups.thisWeek}
+                />
+            )}
+            {groups.thisMonth.length > 0 && (
+                <BoardsGroup
+                    title="This Month"
+                    boards={groups.thisMonth}
+                />
+            )}
+            {groups.others.length > 0 && (
+                <BoardsGroup
+                    title="Older Boards"
+                    boards={groups.others}
+                />
+            )}
             {props.boards.length === 0 && (
                 <div className="bg-gray-50 rounded-lg p-6 border-0 border-gray-200">
                     <div className="flex items-center justify-center text-gray-700 text-3xl mb-1">
@@ -58,7 +99,7 @@ const BoardsList = props => {
                     </div>
                 </div>
             )}
-        </div>
+        </React.Fragment>
     );
 };
 
