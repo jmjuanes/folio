@@ -14,7 +14,9 @@ export const Board = props => {
             // manage board data
             data: {
                 get: () => {
-                    return client.getBoard(props.id);
+                    return client.getBoard(props.id).then(board => {
+                        return board.content;
+                    });
                 },
                 set: data => {
                     return client.updateBoard(props.id, data);
