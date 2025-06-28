@@ -5,8 +5,8 @@ import cors from "@koa/cors";
 import { send } from "@koa/send";
 import helmet from "koa-helmet";
 import { logger } from "./middlewares/logger.js";
-import { boardRouter } from "./routes/board.js";
 import { loginRouter } from "./routes/login.js";
+import { boardsRouter } from "./routes/boards.js";
 import { propertiesRouter } from "./routes/properties.js";
 import { userRouter } from "./routes/user.js";
 import { ACCESS_TOKEN } from "./token.js";
@@ -77,7 +77,8 @@ const router = new Router();
 router.get(API_ENDPOINTS.API, ctx => {
     return ctx.ok({
         status_url: ctx.getUrl(API_ENDPOINTS.STATUS),
-        board_url: ctx.getUrl(API_ENDPOINTS.BOARD),
+        boards_url: ctx.getUrl(API_ENDPOINTS.BOARDS),
+        properties_url: ctx.getUrl(API_ENDPOINTS.PROPERTIES),
         search_url: ctx.getUrl(API_ENDPOINTS.SEARCH),
         user_url: ctx.getUrl(API_ENDPOINTS.USER),
         login_url: ctx.getUrl(API_ENDPOINTS.LOGIN),
@@ -94,7 +95,7 @@ router.get(API_ENDPOINTS.STATUS, ctx => {
 // API Routes
 router.use(API_ENDPOINTS.LOGIN, loginRouter.routes(), loginRouter.allowedMethods());
 router.use(API_ENDPOINTS.USER, userRouter.routes(), userRouter.allowedMethods());
-router.use(API_ENDPOINTS.BOARD, boardRouter.routes(), boardRouter.allowedMethods());
+router.use(API_ENDPOINTS.BOARDS, boardsRouter.routes(), boardsRouter.allowedMethods());
 router.use(API_ENDPOINTS.PROPERTIES, propertiesRouter.routes(), propertiesRouter.allowedMethods());
 
 // Register all routes

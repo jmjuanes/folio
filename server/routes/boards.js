@@ -5,21 +5,21 @@ import { database } from "../middlewares/database.js";
 import { authentication } from "../middlewares/authentication.js";
 import { formatResult } from "../utils/results.js";
 
-export const boardRouter = new Router();
+export const boardsRouter = new Router();
 
 // apply middlewares to all routes
-boardRouter.use(authentication);
-boardRouter.use(database);
+boardsRouter.use(authentication);
+boardsRouter.use(database);
 
 // GET - return nothing, this is just a placeholder
-boardRouter.get("/", (ctx) => {
+boardsRouter.get("/", (ctx) => {
     return ctx.send(405, {
         message: "Method Not Allowed.",
     });
 });
 
 // GET - get the data of a single board
-boardRouter.get("/:id", async (ctx) => {
+boardsRouter.get("/:id", async (ctx) => {
     try {
         const result = await ctx.state.db.get(
             `SELECT id, object, parent, created_at, updated_at, content FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
@@ -44,7 +44,7 @@ boardRouter.get("/:id", async (ctx) => {
 });
 
 // PATCH - update an existing board
-boardRouter.patch("/:id", async (ctx) => {
+boardsRouter.patch("/:id", async (ctx) => {
     try {
         // update the board with the provided data
         await ctx.state.db.run(
@@ -59,7 +59,7 @@ boardRouter.patch("/:id", async (ctx) => {
 });
 
 // DELETE - delete a board
-boardRouter.delete("/:id", async (ctx) => {
+boardsRouter.delete("/:id", async (ctx) => {
     try {
         await ctx.state.db.run(
             `DELETE FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
@@ -73,7 +73,7 @@ boardRouter.delete("/:id", async (ctx) => {
 });
 
 // GET - get the properties of a board
-boardRouter.get("/:id/properties", async (ctx) => {
+boardsRouter.get("/:id/properties", async (ctx) => {
     try {
         const results = await ctx.state.db.all(
             `SELECT * FROM ${DB_TABLE} WHERE parent = ? AND object = ?`,
@@ -88,7 +88,7 @@ boardRouter.get("/:id/properties", async (ctx) => {
 });
 
 // POST - add a new property to the board
-boardRouter.post("/:id/properties", async ctx => {
+boardsRouter.post("/:id/properties", async ctx => {
     try {
         const id = uid(20);
         await ctx.state.db.run(
