@@ -24,6 +24,7 @@ export const OBJECT_TYPES = {
     BOARD: "board",
     PROPERTY: "property_item",
     USER: "user",
+    LIBRARY: "library",
 };
 
 // api
@@ -36,5 +37,6 @@ export const API_ENDPOINTS = {
     USER: `${API_PATH}/user`,
     BOARDS: `${API_PATH}/boards`,
     PROPERTIES: `${API_PATH}/properties`,
+    LIBRARIES: `${API_PATH}/libraries`,
     STATUS: `${API_PATH}/status`,
 };

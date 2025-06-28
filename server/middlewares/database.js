@@ -1,8 +1,8 @@
+import fs from "node:fs";
+import path from "node:path";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { uid } from "uid/secure";
-import fs from "node:fs";
-import path from "node:path";
 import { DB_PATH, DB_TABLE, OBJECT_TYPES } from "../config.js";
 
 // initialize database

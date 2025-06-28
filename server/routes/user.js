@@ -3,6 +3,7 @@ import { uid } from "uid/secure";
 import { DB_TABLE, OBJECT_TYPES } from "../config.js";
 import { database } from "../middlewares/database.js";
 import { authentication } from "../middlewares/authentication.js";
+import { insertObject, getChildren } from "../service.js";
 import { formatResult } from "../utils/results.js";
 
 export const userRouter = new Router();
@@ -23,17 +24,11 @@ userRouter.get("/", async ctx => {
 // GET - get boards of the authenticated user
 userRouter.get("/boards", async ctx => {
     try {
-        const results = await ctx.state.db.all(
-            `SELECT id, object, parent, created_at, updated_at, content FROM ${DB_TABLE} WHERE object = ? AND parent = ? ORDER BY updated_at DESC`,
-            [OBJECT_TYPES.BOARD, ctx.state.user_id],
-        );
+        const results = await getChildren(OBJECT_TYPES.BOARD, ctx.state.user_id);
         // note: we have to fetch also properties of the boards
         if (results.length > 0) {
             const ids = results.map(result => result.id);
-            const propertiesResults = await ctx.state.db.all(
-                `SELECT id, object, parent, created_at, updated_at, content FROM ${DB_TABLE} WHERE object = ? AND parent IN (${ids.map(() => "?").join(", ")})`,
-                [OBJECT_TYPES.PROPERTY, ...ids],
-            );
+            const propertiesResults = await getChildren(OBJECT_TYPES.PROPERTY, ids);
             // merge properties with boards results
             results.forEach(result => {
                 result.properties = propertiesResults
@@ -51,12 +46,7 @@ userRouter.get("/boards", async ctx => {
 // POST - create a new board for the authenticated user
 userRouter.post("/boards", async ctx => {
     try {
-        const id = uid(20); // generate a unique ID for the board
-        await ctx.state.db.run(
-            `INSERT INTO ${DB_TABLE} (id, object, parent, content) VALUES (?, ?, ?, ?)`,
-            [id, OBJECT_TYPES.BOARD, ctx.state.user_id, JSON.stringify(ctx.request.body || {})],
-        );
-        // return the ID of the created board
+        const id = await insertObject(OBJECT_TYPES.BOARD, ctx.state.user_id, ctx.request.body);
         return ctx.ok({
             id: id,
         });
@@ -64,6 +54,31 @@ userRouter.post("/boards", async ctx => {
     catch (error) {
         console.error(error);
         ctx.throw(500, "Failed to create board.");
+    }
+});
+
+// GET - get libraries of the authenticated user
+userRouter.get("/libraries", async ctx => {
+    try {
+        const results = await getChildren(OBJECT_TYPES.LIBRARY, ctx.state.user_id);
+        return ctx.ok(results.map(formatResult));
+    } catch (error) {
+        console.error(error);
+        ctx.throw(500, "Failed to retrieve libraries from database.");
+    }
+});
+
+// POST - create a new library for the authenticated user
+userRouter.post("/libraries", async ctx => {
+    try {
+        const id = await insertObject(OBJECT_TYPES.LIBRARY, ctx.state.user_id, ctx.request.body);
+        return ctx.ok({
+            id: id,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        ctx.throw(500, "Failed to create library.");
     }
 });
 
