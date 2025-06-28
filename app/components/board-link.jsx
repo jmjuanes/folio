@@ -19,7 +19,7 @@ export const BoardLink = props => {
     const hasActions = typeof props.onRename === "function" || typeof props.onDelete === "function";
     const title = React.useMemo(() => {
         return getPropertyByKey(props.board?.properties, "title")?.content?.value || "Untitled";
-    }, [props.board.id]);
+    }, [props.board?.id, props.board?.properties]);
 
     // when clicking on the action item, open the actions menu
     // and position it below the clicked item
