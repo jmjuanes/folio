@@ -38,7 +38,7 @@
     },
     {
         "method": "GET",
-        "test": "/api/board/do-not-exist",
+        "test": "/api/boards/do-not-exist",
         "secure": true,
         "response": {
             "status": 404
@@ -46,30 +46,30 @@
     },
     {
         "method": "GET",
-        "test": "/api/board/*",
+        "test": "/api/boards/*",
         "secure": true
     },
     {
         "method": "PATCH",
-        "test": "/api/board/*",
+        "test": "/api/boards/*",
         "secure": true
     },
     {
         "method": "DELETE",
-        "test": "/api/board/*",
+        "test": "/api/boards/*",
         "secure": true
     },
     {
         "method": "GET",
-        "test": "/api/board/*/properties",
+        "test": "/api/boards/*/properties",
         "secure": true,
         "response": {
-            "body": []
+            "file": "properties.json"
         }
     },
     {
         "method": "POST",
-        "test": "/api/board/*/properties",
+        "test": "/api/boards/*/properties",
         "secure": true
     },
     {

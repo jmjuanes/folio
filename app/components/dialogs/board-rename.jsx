@@ -31,9 +31,9 @@ export const BoardRenameDialog = props => {
         }
         else {
             // we have to create a new property assigned to this board
-            request = client.addBoardProperty(props.id, createProperty("title", data.title));
+            request = client.createBoardProperty(props.id, createProperty("title", data.title));
         }
-        return client.updateBoard(props.id, data).then(() => {
+        return request.then(() => {
             // if onSubmit callback is provided, call it with the updated data
             // this is useful to update the board list in the parent component
             // or to perform any other action after the board is renamed

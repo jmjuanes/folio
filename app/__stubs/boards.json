@@ -8,7 +8,7 @@
         "properties": [
             {
                 "id": "property1",
-                "object": "property-item",
+                "object": "property_item",
                 "parent": "board1",
                 "content": {
                     "key": "title",
@@ -17,7 +17,7 @@
             },
             {
                 "id": "property2",
-                "object": "property-item",
+                "object": "property_item",
                 "parent": "board1",
                 "content": {
                     "key": "pinned",

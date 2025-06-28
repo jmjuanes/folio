@@ -59,19 +59,19 @@ export const ClientProvider = props => {
             return api("POST", "/user/boards", data);
         },
         getBoard: id => {
-            return api("GET", `/board/${id}`);
+            return api("GET", `/boards/${id}`);
         },
         updateBoard: (id, data) => {
-            return api("PATCH", `/board/${id}`, data);
+            return api("PATCH", `/boards/${id}`, data);
         },
         deleteBoard: id => {
-            return api("DELETE", `/board/${id}`);
+            return api("DELETE", `/boards/${id}`);
         },
         getBoardProperties: id => {
-            return api("GET", `/board/${id}/properties`);
+            return api("GET", `/boards/${id}/properties`);
         },
         createBoardProperty: (id, data) => {
-            return api("POST", `/board/${id}/properties`, data);
+            return api("POST", `/boards/${id}/properties`, data);
         },
         getProperty: id => {
             return api("GET", `/properties/${id}`);
