@@ -1,16 +1,13 @@
 import Router from "@koa/router";
-import { uid } from "uid/secure";
-import { DB_TABLE, OBJECT_TYPES } from "../config.js";
-import { database } from "../middlewares/database.js";
+import { OBJECT_TYPES } from "../config.js";
 import { authentication } from "../middlewares/authentication.js";
-import { insertObject, getChildren } from "../service.js";
+import { insertObject, getChildrenObjects } from "../service.js";
 import { formatResult } from "../utils/results.js";
 
 export const userRouter = new Router();
 
 // apply middlewares to all routes
 userRouter.use(authentication);
-userRouter.use(database);
 
 // GET - get information of the authenticated user
 userRouter.get("/", async ctx => {
@@ -24,11 +21,11 @@ userRouter.get("/", async ctx => {
 // GET - get boards of the authenticated user
 userRouter.get("/boards", async ctx => {
     try {
-        const results = await getChildren(OBJECT_TYPES.BOARD, ctx.state.user_id);
+        const results = await getChildrenObjects(OBJECT_TYPES.BOARD, ctx.state.user_id);
         // note: we have to fetch also properties of the boards
         if (results.length > 0) {
             const ids = results.map(result => result.id);
-            const propertiesResults = await getChildren(OBJECT_TYPES.PROPERTY, ids);
+            const propertiesResults = await getChildrenObjects(OBJECT_TYPES.PROPERTY, ids);
             // merge properties with boards results
             results.forEach(result => {
                 result.properties = propertiesResults
@@ -60,7 +57,7 @@ userRouter.post("/boards", async ctx => {
 // GET - get libraries of the authenticated user
 userRouter.get("/libraries", async ctx => {
     try {
-        const results = await getChildren(OBJECT_TYPES.LIBRARY, ctx.state.user_id);
+        const results = await getChildrenObjects(OBJECT_TYPES.LIBRARY, ctx.state.user_id);
         return ctx.ok(results.map(formatResult));
     } catch (error) {
         console.error(error);
