@@ -1,31 +1,35 @@
 import Koa from "koa";
-import Router from "koa-router";
-import helmet from "koa-helmet";
-import bodyParser from "koa-bodyparser";
-import serve from "koa-static";
+import Router from "@koa/router";
+import bodyParser from "@koa/bodyparser";
 import cors from "@koa/cors";
-import {logger} from "./middlewares/logger.js";
-import {boardRouter} from "./routes/board.js";
-import {loginRouter} from "./routes/login.js";
-import {userRouter} from "./routes/user.js";
-import {ACCESS_TOKEN} from "./token.js";
-import {PORT, WWW_PATH, API_ENDPOINTS} from "./config.js";
+import { send } from "@koa/send";
+import helmet from "koa-helmet";
+import { logger } from "./middlewares/logger.js";
+import { loginRouter } from "./routes/login.js";
+import { boardsRouter } from "./routes/boards.js";
+import { propertiesRouter } from "./routes/properties.js";
+import { userRouter } from "./routes/user.js";
+import { ACCESS_TOKEN } from "./token.js";
+import { PORT, WWW_PATH, API_PATH, API_ENDPOINTS } from "./config.js";
 
 const app = new Koa();
-
-// define utility methods in app 
-app.context.sendError = (ctx, status, message) => {
-    ctx.status = status;
-    ctx.body = {
-        message: message || "An error occurred",
-        status: status.toString(),
-    };
-};
 
 // get server URL
 app.context.getUrl = (directory = "") => {
     return `http://127.0.0.1:${PORT}${directory}`;
 };
+
+// register custom methods to send responses
+app.use(async (ctx, next) => {
+    // send a response with a status code and body content
+    ctx.send = (status = 200, bodyContent = {}) => {
+        ctx.status = status;
+        ctx.body = bodyContent;
+    };
+    // to avoid adding the 200 status code to every response, we can use ctx.ok instead
+    ctx.ok = (bodyContent = {}) => ctx.send(200, bodyContent);
+    await next();
+});
 
 // Global error handler
 app.use(async (ctx, next) => {
@@ -34,7 +38,9 @@ app.use(async (ctx, next) => {
     }
     catch (error) {
         console.error(error);
-        ctx.sendError(ctx, error.status || 500, error.message || "Internal Server Error");
+        ctx.send(error.status || 500, {
+            message: error.message || "Internal Server Error",
+        });
     }
 });
 
@@ -43,42 +49,54 @@ app.use(logger()); // Custom logger middleware
 app.use(helmet()); // Security headers
 app.use(bodyParser()); // Parse JSON request bodies
 app.use(cors({
-    // origin: () => {
-    //     return process.env?.NODE_ENV === "development" ? "*" : ""; // allow all origins in development
-    // },
     origin: "*",
     allowMethods: ["GET", "POST", "PATCH", "DELETE"],
 }));
 
 // Serve static files from www folder
-app.use(serve(WWW_PATH, {
-    index: "index.html", // default file to serve
-}));
+app.use(async (ctx, next) => {
+    await next();
+    // if the response is already set, skip serving static files
+    if (ctx.body || ctx.status !== 404) {
+        return;
+    }
+    // if the request is for an API endpoint, skip serving static files
+    if (ctx.path.startsWith(API_PATH)) {
+        return;
+    }
+    await send(ctx, ctx.path, {
+        root: WWW_PATH,
+        index: "index.html",
+    });
+});
 
 // Root router
 const router = new Router();
 
 // api main entrypoint
 router.get(API_ENDPOINTS.API, ctx => {
-    ctx.body = {
+    return ctx.ok({
         status_url: ctx.getUrl(API_ENDPOINTS.STATUS),
         boards_url: ctx.getUrl(API_ENDPOINTS.BOARDS),
+        properties_url: ctx.getUrl(API_ENDPOINTS.PROPERTIES),
+        search_url: ctx.getUrl(API_ENDPOINTS.SEARCH),
         user_url: ctx.getUrl(API_ENDPOINTS.USER),
         login_url: ctx.getUrl(API_ENDPOINTS.LOGIN),
-    };
+    });
 });
 
 // Health check endpoint
 router.get(API_ENDPOINTS.STATUS, ctx => {
-    ctx.body = {
+    return ctx.ok({
         message: "ok",
-    };
+    });
 });
 
 // API Routes
 router.use(API_ENDPOINTS.LOGIN, loginRouter.routes(), loginRouter.allowedMethods());
 router.use(API_ENDPOINTS.USER, userRouter.routes(), userRouter.allowedMethods());
-router.use(API_ENDPOINTS.BOARDS, boardRouter.routes(), boardRouter.allowedMethods());
+router.use(API_ENDPOINTS.BOARDS, boardsRouter.routes(), boardsRouter.allowedMethods());
+router.use(API_ENDPOINTS.PROPERTIES, propertiesRouter.routes(), propertiesRouter.allowedMethods());
 
 // Register all routes
 app.use(router.routes());

@@ -1,5 +1,5 @@
 import React from "react";
-import {useLocalStorage} from "react-use";
+import { useLocalStorage } from "react-use";
 
 // main client context
 const ClientContext = React.createContext({});
@@ -56,19 +56,31 @@ export const ClientProvider = props => {
             return api("GET", "/user/boards");
         },
         createBoard: (data = {}) => {
-            return api("POST", "/boards", data);
+            return api("POST", "/user/boards", data);
         },
         getBoard: id => {
             return api("GET", `/boards/${id}`);
         },
+        updateBoard: (id, data) => {
+            return api("PATCH", `/boards/${id}`, data);
+        },
         deleteBoard: id => {
             return api("DELETE", `/boards/${id}`);
         },
-        getBoardData: id => {
-            return api("GET", `/boards/${id}/data`);
+        getBoardProperties: id => {
+            return api("GET", `/boards/${id}/properties`);
         },
-        updateBoardData: (id, data) => {
-            return api("PATCH", `/boards/${id}/data`, data);
+        createBoardProperty: (id, data) => {
+            return api("POST", `/boards/${id}/properties`, data);
+        },
+        getProperty: id => {
+            return api("GET", `/properties/${id}`);
+        },
+        updateProperty: (id, data) => {
+            return api("PATCH", `/properties/${id}`, data);
+        },
+        deleteProperty: id => {
+            return api("DELETE", `/properties/${id}`);
         },
     }), [token, setToken, removeToken]);
 

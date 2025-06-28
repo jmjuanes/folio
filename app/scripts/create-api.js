@@ -33,17 +33,20 @@ export const createApi = (config = {}) => {
                     response.setHeader(name, headers[name]);
                 });
                 // 2.1 send JSON data from the provided file
-                if (rule.filename) {
-                    const data = JSON.parse(fs.readFileSync(path.join(config.source, rule.filename), "utf8"));
+                if (rule.response?.file) {
+                    const data = JSON.parse(fs.readFileSync(path.join(config.source, rule.response.file), "utf8"));
+                    response.status(rule.response?.status || 200);
                     response.json(data)
                 }
                 // 2.2. if the rule has a data property, use it to send the data object
-                else if (rule.data) {
-                    response.json(rule.data);
+                else if (rule.response?.body) {
+                    response.status(rule.response?.status || 200);
+                    response.json(rule.response.body);
                 }
                 // 2.3. if the rule does not have a filename or data property,
                 // we return an empty object
                 else {
+                    response.status(rule.response?.status || 200);
                     response.json({});
                 }
             }

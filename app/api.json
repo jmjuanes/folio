@@ -2,35 +2,47 @@
     {
         "method": "POST",
         "test": "/api/login",
-        "data": {
-            "token": "12345"
+        "response": {
+            "body": {
+                "token": "12345"
+            }
         }
     },
     {
         "method": "GET",
         "test": "/api/user",
-        "filename": "user.json",
-        "secure": true
+        "secure": true,
+        "response": {
+            "body": {
+                "id": "user"
+            }
+        }
     },
     {
         "method": "GET",
         "test": "/api/user/boards",
-        "filename": "boards.json",
-        "secure": true
-    },
-    {
-        "method": "GET",
-        "test": "/api/boards",
-        "filename": "boards.json",
-        "secure": true
+        "secure": true,
+        "response": {
+            "file": "boards.json"
+        }
     },
     {
         "method": "POST",
-        "test": "/api/boards",
-        "data": {
-            "id": "board01"
-        },
-        "secure": true
+        "test": "/api/user/boards",
+        "secure": true,
+        "response": {
+            "body": {
+                "id": "board01"
+            }
+        }
+    },
+    {
+        "method": "GET",
+        "test": "/api/boards/do-not-exist",
+        "secure": true,
+        "response": {
+            "status": 404
+        }
     },
     {
         "method": "GET",
@@ -49,12 +61,30 @@
     },
     {
         "method": "GET",
-        "test": "/api/boards/*/data",
+        "test": "/api/boards/*/properties",
+        "secure": true,
+        "response": {
+            "file": "properties.json"
+        }
+    },
+    {
+        "method": "POST",
+        "test": "/api/boards/*/properties",
+        "secure": true
+    },
+    {
+        "method": "GET",
+        "test": "/api/properties/*",
         "secure": true
     },
     {
         "method": "PATCH",
-        "test": "/api/boards/*/data",
+        "test": "/api/properties/*",
+        "secure": true
+    },
+    {
+        "method": "DELETE",
+        "test": "/api/properties/*",
         "secure": true
     }
 ]

@@ -1,10 +1,11 @@
 import React from "react";
+import { useToggle } from "react-use";
 import classNames from "classnames";
-import {renderIcon, FileIcon, TrashIcon, DrawingIcon} from "@josemi-icons/react";
-import {ChevronLeftIcon, ChevronRightIcon} from "@josemi-icons/react";
-import {useBoards} from "../contexts/boards.jsx";
-import {useClient} from "../contexts/client.jsx";
-import {useHash} from "../hooks/use-hash.js";
+import { renderIcon, DrawingIcon, ChevronLeftIcon, ChevronRightIcon } from "@josemi-icons/react";
+import { useClient } from "../contexts/client.jsx";
+import { useRouter } from "../contexts/router.jsx";
+import { BoardLink } from "./board-link.jsx";
+import { groupByDate } from "../utils/dates.js";
 
 // @description logo component
 const Logo = () => (
@@ -23,99 +24,146 @@ const ActionButton = props => (
     </a>
 );
 
-// @description sidebar board item
-const BoardItem = props => {
-    const itemClass = classNames({
-        "group rounded-md w-full flex items-center py-1 px-2": true,
-        "bg-gray-100 text-gray-900": props.active,
-        "hover:bg-gray-100 text-gray-600 hover:text-gray-900": !props.active,
-    });
+const BoardsGroup = props => {
+    const [hash] = useRouter();
     return (
-        <a href={`#${props.board.id}`} className={itemClass} title={props.board.name}>
-            <div className="cursor-pointer flex items-center gap-2">
-                <div className="text-lg flex items-center text-gray-600">
-                    <FileIcon />
-                </div>
-                <div className="font-medium text-sm w-32 truncate">{props.board.name}</div>
+        <div className="flex flex-col gap-1">
+            <div className="text-xs font-bold text-gray-600 mb-0 px-2">
+                <span>{props.title}</span>
             </div>
-            <div className="opacity-0 group-hover:opacity-100 flex cursor-pointer items-center ml-auto text-base p-0">
-                <div className="flex items-center p-1 rounded-sm hover:bg-gray-200 text-gray-600" onClick={props.onDelete}>
-                    <TrashIcon />
-                </div>
-            </div>
-        </a>
-    );
-};
-
-// export the sidebar component
-export const Sidebar = () => {
-    const client = useClient();
-    const [boards, actions] = useBoards();
-    const [hash] = useHash();
-    return (
-        <div className="w-64 h-full bg-white shrink-0 flex flex-col justify-between border-r-1 border-gray-200">
-            <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
-                <Logo />
-                <div className="flex flex-col gap-4 h-full px-3 select-none">
-                    <div className="flex flex-col gap-1 mb-2">
-                        <ActionButton href="#" icon="home" text="Home" />
-                        <ActionButton
-                            onClick={() => actions.createBoard()}
-                            icon="plus"
-                            text="Create a new board"
-                        />
-                        <ActionButton
-                            onClick={() => actions.importBoard()}
-                            icon="upload"
-                            text="Import board from file"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <div className="text-xs font-bold text-gray-600 mb-0 px-2">
-                            <span>Private Boards</span>
-                        </div>
-                        {(boards || []).map(item => (
-                            <BoardItem
-                                key={`board:item:${item.id}`}
-                                board={item}
-                                active={hash === item.id}
-                                onDelete={event => {
-                                    event.preventDefault();
-                                    actions.deleteBoard(item.id)
-                                }}
-                            />
-                        ))}
-                        {boards.length === 0 && (
-                            <div className="bg-gray-50 rounded-lg p-6 border-0 border-gray-200">
-                                <div className="flex items-center justify-center text-gray-700 text-3xl mb-1">
-                                    <DrawingIcon />
-                                </div>
-                                <div className="text-center font-bold text-gray-700 text-sm mb-1">
-                                    <span>No boards available</span>
-                                    </div> 
-                                <div className="text-center text-xs text-gray-500">
-                                    <span>Your created boards will be displayed here.</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-            <div className="px-3 pt-3 pb-3 bg-white">
-                <ActionButton icon="sliders" text="Settings" onClick={null} />
-                <ActionButton icon="logout" text="Sign out" onClick={() => client.logout()} />
-            </div>
+            {(props.boards || []).map(item => (
+                <BoardLink
+                    key={`board:item:${item.id}`}
+                    board={item}
+                    active={hash === item.id}
+                    onRename={() => {
+                        props.onRename(item.id);
+                    }}
+                    onDelete={() => {
+                        props.onDelete(item.id);
+                    }}
+                />
+            ))}
         </div>
     );
 };
 
-// @description sidebar toggle component
-export const SidebarToggle = props => (
-    <div className="relative h-full">
-        <div className="absolute left-0 top-half z-50 cursor-pointer" style={props.style} onClick={props.onToggle}>
-            <div className="flex bg-gray-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
-                {props.sidebarVisible ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </div>
+// @description render boards list
+const BoardsList = props => {
+    const groups = React.useMemo(() => {
+        return groupByDate(props.boards, "updated_at");
+    }, [props.boards]);
+
+    return (
+        <React.Fragment>
+            {groups.today.length > 0 && (
+                <BoardsGroup
+                    title="Today"
+                    boards={groups.today}
+                />
+            )}
+            {groups.yesterday.length > 0 && (
+                <BoardsGroup
+                    title="Yesterday"
+                    boards={groups.yesterday}
+                />
+            )}
+            {groups.thisWeek.length > 0 && (
+                <BoardsGroup
+                    title="This Week"
+                    boards={groups.thisWeek}
+                />
+            )}
+            {groups.thisMonth.length > 0 && (
+                <BoardsGroup
+                    title="This Month"
+                    boards={groups.thisMonth}
+                />
+            )}
+            {groups.others.length > 0 && (
+                <BoardsGroup
+                    title="Older Boards"
+                    boards={groups.others}
+                />
+            )}
+            {props.boards.length === 0 && (
+                <div className="bg-gray-50 rounded-lg p-6 border-0 border-gray-200">
+                    <div className="flex items-center justify-center text-gray-700 text-3xl mb-1">
+                        <DrawingIcon />
+                    </div>
+                    <div className="text-center font-bold text-gray-700 text-sm mb-1">
+                        <span>No boards available</span>
+                        </div> 
+                    <div className="text-center text-xs text-gray-500">
+                        <span>Your created boards will be displayed here.</span>
+                    </div>
+                </div>
+            )}
+        </React.Fragment>
+    );
+};
+
+const ToggleButton = props => (
+    <div className="absolute left-0 top-half z-50 cursor-pointer" style={props.style} onClick={props.onClick}>
+        <div className="flex bg-gray-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
+            {props.collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
         </div>
     </div>
 );
+
+// export the sidebar component
+export const Sidebar = props => {
+    const [collapsed, toggleCollapsed] = useToggle(!!props.defaultCollapsed);
+    const client = useClient();
+    const sidebarClass = classNames({
+        "w-64 h-full bg-white shrink-0 flex-col justify-between border-r-1 border-gray-200": true,
+        "flex": !collapsed,
+        "hidden": collapsed,
+    });
+
+    return (
+        <React.Fragment>
+            <div className={sidebarClass}>
+                <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
+                    <Logo />
+                    <div className="flex flex-col gap-4 h-full px-3 select-none">
+                        <div className="flex flex-col gap-1 mb-2">
+                            <ActionButton href="#" icon="home" text="Home" />
+                            <ActionButton
+                                onClick={() => props.onBoardCreate()}
+                                icon="plus"
+                                text="Create a new board"
+                            />
+                            <ActionButton
+                                onClick={() => props.onBoardImport()}
+                                icon="upload"
+                                text="Import board from file"
+                            />
+                        </div>
+                        <BoardsList
+                            boards={props.boards}
+                            onRename={props.onBoardRename}
+                            onDelete={props.onBoardDelete}
+                        />
+                    </div>
+                </div>
+                <div className="px-3 pt-3 pb-3 bg-white">
+                    <ActionButton
+                        icon="logout"
+                        text="Sign out"
+                        onClick={() => client.logout()}
+                    />
+                </div>
+            </div>
+            <div className="relative h-full">
+                <ToggleButton
+                    collapsed={collapsed}
+                    style={{
+                        transform: "translateY(-50%)",
+                    }}
+                    onClick={toggleCollapsed}
+                />
+            </div>
+        </React.Fragment>
+    );
+};

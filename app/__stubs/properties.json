@@ -1,0 +1,20 @@
+[
+    {
+        "id": "property1",
+        "object": "property_item",
+        "parent": "board1",
+        "content": {
+            "key": "title",
+            "value": "Board 1 Title"
+        }
+    },
+    {
+        "id": "property2",
+        "object": "property_item",
+        "parent": "board1",
+        "content": {
+            "key": "pinned",
+            "value": true
+        }
+    }
+]
