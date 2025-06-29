@@ -1,10 +1,9 @@
 import Router from "@koa/router";
-import { database } from "../middlewares/database.js";
+import { db } from "../database.js";
 import { ACCESS_TOKEN, generateJwtToken } from "../token.js";
 import { DB_TABLE, OBJECT_TYPES } from "../config.js";
 
 export const loginRouter = new Router();
-loginRouter.use(database);
 
 // GET - login route
 loginRouter.get("/", async ctx => {
@@ -28,7 +27,7 @@ loginRouter.post("/", async ctx => {
         });
     }
     // get the user object from the database
-    const user = await ctx.state.db.get(
+    const user = await db.get(
         `SELECT id FROM ${DB_TABLE} WHERE object = ?`,
         [OBJECT_TYPES.USER],
     );

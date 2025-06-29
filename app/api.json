@@ -38,6 +38,16 @@
     },
     {
         "method": "GET",
+        "test": "/api/user/library",
+        "secure": true
+    },
+    {
+        "method": "PATCH",
+        "test": "/api/user/library",
+        "secure": true
+    },
+    {
+        "method": "GET",
         "test": "/api/boards/do-not-exist",
         "secure": true,
         "response": {

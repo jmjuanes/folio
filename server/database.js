@@ -1,9 +1,9 @@
+import fs from "node:fs";
+import path from "node:path";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { uid } from "uid/secure";
-import fs from "node:fs";
-import path from "node:path";
-import { DB_PATH, DB_TABLE, OBJECT_TYPES } from "../config.js";
+import { DB_PATH, DB_TABLE, OBJECT_TYPES } from "./config.js";
 
 // initialize database
 const initDB = async () => {
@@ -46,9 +46,3 @@ const initDB = async () => {
 
 // get the database instance
 export const db = await initDB();
-
-// export the database middleware
-export const database = async (ctx, next) => {
-    ctx.state.db = db; // attach the database instance to the context
-    await next(); // call the next middleware or route handler
-};

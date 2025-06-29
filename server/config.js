@@ -24,6 +24,7 @@ export const OBJECT_TYPES = {
     BOARD: "board",
     PROPERTY: "property_item",
     USER: "user",
+    LIBRARY: "library",
 };
 
 // api

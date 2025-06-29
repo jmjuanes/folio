@@ -1,15 +1,13 @@
 import Router from "@koa/router";
-import { uid } from "uid/secure";
-import { DB_TABLE, OBJECT_TYPES } from "../config.js";
-import { database } from "../middlewares/database.js";
+import { OBJECT_TYPES } from "../config.js";
 import { authentication } from "../middlewares/authentication.js";
+import { getChildrenObjects, getObject, updateObject, deleteObject } from "../service.js";
 import { formatResult } from "../utils/results.js";
 
 export const boardsRouter = new Router();
 
 // apply middlewares to all routes
 boardsRouter.use(authentication);
-boardsRouter.use(database);
 
 // GET - return nothing, this is just a placeholder
 boardsRouter.get("/", (ctx) => {
@@ -21,20 +19,14 @@ boardsRouter.get("/", (ctx) => {
 // GET - get the data of a single board
 boardsRouter.get("/:id", async (ctx) => {
     try {
-        const result = await ctx.state.db.get(
-            `SELECT id, object, parent, created_at, updated_at, content FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
-            [ctx.params.id, OBJECT_TYPES.BOARD],
-        );
+        const result = await getObject(ctx.params.id, OBJECT_TYPES.BOARD);
         if (!result) {
             return ctx.send(404, {
                 message: `Board '${ctx.params.id}' not found.`,
             });
         }
         // fetch properties of the board and merge them into the result
-        const propertiesResults = await ctx.state.db.all(
-            `SELECT id, object, parent, created_at, updated_at, content FROM ${DB_TABLE} WHERE object = ? AND parent = ?`,
-            [OBJECT_TYPES.PROPERTY, ctx.params.id],
-        );
+        const propertiesResults = await getChildrenObjects(OBJECT_TYPES.PROPERTY, ctx.params.id);
         result.properties = propertiesResults.map(formatResult);
         return ctx.ok(formatResult(result));
     } catch (error) {
@@ -46,11 +38,7 @@ boardsRouter.get("/:id", async (ctx) => {
 // PATCH - update an existing board
 boardsRouter.patch("/:id", async (ctx) => {
     try {
-        // update the board with the provided data
-        await ctx.state.db.run(
-            `UPDATE ${DB_TABLE} SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND object = ?`,
-            [JSON.stringify(ctx.request.body || {}), ctx.params.id, OBJECT_TYPES.BOARD],
-        );
+        await updateObject(ctx.params.id, OBJECT_TYPES.BOARD, ctx.request.body || {});
         return ctx.ok({});
     } catch (error) {
         console.error(error);
@@ -61,10 +49,7 @@ boardsRouter.patch("/:id", async (ctx) => {
 // DELETE - delete a board
 boardsRouter.delete("/:id", async (ctx) => {
     try {
-        await ctx.state.db.run(
-            `DELETE FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
-            [ctx.params.id, OBJECT_TYPES.BOARD],
-        );
+        await deleteObject(ctx.params.id, OBJECT_TYPES.BOARD);
         return ctx.ok({});
     } catch (error) {
         console.error(error);
@@ -75,11 +60,7 @@ boardsRouter.delete("/:id", async (ctx) => {
 // GET - get the properties of a board
 boardsRouter.get("/:id/properties", async (ctx) => {
     try {
-        const results = await ctx.state.db.all(
-            `SELECT * FROM ${DB_TABLE} WHERE parent = ? AND object = ?`,
-            [ctx.params.id, OBJECT_TYPES.PROPERTY],
-        );
-        // parse the JSON data
+        const results = await getChildrenObjects(OBJECT_TYPES.PROPERTY, ctx.params.id);
         return ctx.ok(results.map(formatResult));
     } catch (error) {
         console.error(error);
@@ -90,11 +71,7 @@ boardsRouter.get("/:id/properties", async (ctx) => {
 // POST - add a new property to the board
 boardsRouter.post("/:id/properties", async ctx => {
     try {
-        const id = uid(20);
-        await ctx.state.db.run(
-            `INSERT INTO ${DB_TABLE} (id, object, parent, content) VALUES (?, ?, ?, ?)`,
-            [id, OBJECT_TYPES.PROPERTY, ctx.params.id, JSON.stringify(ctx.request.body || {})],
-        );
+        const id = await insertObject(OBJECT_TYPES.PROPERTY, ctx.params.id, ctx.request.body || {});
         return ctx.ok({
             id: id,
         });
