@@ -37,6 +37,5 @@ export const API_ENDPOINTS = {
     USER: `${API_PATH}/user`,
     BOARDS: `${API_PATH}/boards`,
     PROPERTIES: `${API_PATH}/properties`,
-    LIBRARIES: `${API_PATH}/libraries`,
     STATUS: `${API_PATH}/status`,
 };
