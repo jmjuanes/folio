@@ -64,8 +64,8 @@ export const getChildrenObjects = async (object, parents = []) => {
             [object, parents],
         );
     }
-    return await ctx.state.db.all(
+    return await db.all(
         `SELECT * FROM ${DB_TABLE} WHERE object = ? AND parent IN (${parents.map(() => "?").join(", ")})`,
-        [OBJECT_TYPES.PROPERTY, ...parents],
+        [object, ...parents],
     );
 };
