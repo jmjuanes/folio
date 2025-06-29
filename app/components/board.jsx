@@ -22,6 +22,16 @@ export const Board = props => {
                     return client.updateBoard(props.id, data);
                 },
             },
+            library: {
+                get: () => {
+                    return client.getUserLibrary().then(library => {
+                        return library?.content || {};
+                    });
+                },
+                set: data => {
+                    return client.updateUserLibrary(data);
+                },
+            },
         };
     }, [props.id, client]);
 

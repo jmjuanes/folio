@@ -58,6 +58,12 @@ export const ClientProvider = props => {
         createBoard: (data = {}) => {
             return api("POST", "/user/boards", data);
         },
+        getUserLibrary: () => {
+            return api("GET", "/user/library");
+        },
+        updateUserLibrary: data => {
+            return api("PATCH", "/user/library", data);
+        },
         getBoard: id => {
             return api("GET", `/boards/${id}`);
         },
