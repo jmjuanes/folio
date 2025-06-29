@@ -1,8 +1,8 @@
 import React from "react";
-import {useMount, useDebounce} from "react-use";
-import {createEditor} from "../lib/editor.js";
-import {createMemoryStore} from "../store/memory.js";
-import {Loading} from "../components/loading.jsx";
+import { useMount, useDebounce } from "react-use";
+import { createEditor } from "../lib/editor.js";
+import { Loading } from "../components/loading.jsx";
+import { promisifyValue } from "../utils/promises.js";
 
 // @private Shared editor context
 export const EditorContext = React.createContext(null);
@@ -19,18 +19,13 @@ export const EditorProvider = props => {
     const [editor, setEditor] = React.useState(null);
     const [update, setUpdate] = React.useState(0);
     const [dataToDispatch, setDataToDispatch] = React.useState(null);
-    // const [error, setError] = React.useState(null);
-
-    const store = React.useMemo(() => {
-        return props.store || createMemoryStore();
-    }, [props.store]);
 
     // debounce saving data into the store
     useDebounce(() => {
-        if (dataToDispatch && store?.data) {
-            store.data.set(dataToDispatch);
+        if (dataToDispatch && typeof props.onChange === "function") {
+            props.onChange(dataToDispatch);
         }
-    }, 250, [editor, dataToDispatch, store]);
+    }, 250, [editor, dataToDispatch]);
 
     // dispatch a change event
     const dispatchDataChange = React.useCallback(() => {
@@ -40,13 +35,10 @@ export const EditorProvider = props => {
 
     // dispatch a library change event
     const dispatchLibraryChange = React.useCallback(() => {
-        store.library.set(editor.libraryToJSON());
-    }, [store, editor]);
-
-    // dispatch a preferences change event
-    const dispatchPreferencesChange = React.useCallback(() => {
-        store.preferences.set(editor.preferences);
-    }, [store, editor]);
+        if (typeof props.onLibraryChange === "function") {
+            props.onLibraryChange(editor.libraryToJSON());
+        }
+    }, [editor, props.onLibraryChange]);
 
     // dispatch an update event
     const dispatchUpdate = React.useCallback(() => {
@@ -55,31 +47,25 @@ export const EditorProvider = props => {
 
     // On mount, import data to create the editor
     // TODO: we would need to handle errors when importing editor data
-    useMount(() => {
-        store.initialize()
-            .then(() => {
-                const allPromises = [];
-                if (typeof store.data?.get === "function") {
-                    allPromises.push(store.data.get());
-                }
-                if (typeof store.library?.get === "function") {
-                    allPromises.push(store.library.get());
-                }
-                if (typeof store.preferences?.get === "function") {
-                    allPromises.push(store.preferences.get());
-                }
-                return Promise.all(allPromises);
-            })
-            .then(([initialData, initialLibrary, initialPreferences]) => {
-                return setEditor(createEditor({
-                    data: initialData,
-                    library: initialLibrary, 
-                    preferences: initialPreferences,
-                }));
-            })
-            .catch(error => {
-                console.error(error);
-            });
+    useMount(async () => {
+        try {
+            let initialData = null, initialLibrary = null;
+            if (typeof props.data !== "undefined") {
+                initialData = await promisifyValue(props.data);
+            }
+            if (typeof props.library !== "undefined") {
+                initialLibrary = await promisifyValue(props.library);
+            }
+            // initialize editor
+            setEditor(createEditor({
+                data: initialData,
+                library: initialLibrary, 
+                preferences: props.preferences || {},
+            }));
+        }
+        catch (error) {
+            console.error(error);
+        }
     });
 
     // If editor is not available (yet), do not render
@@ -90,9 +76,8 @@ export const EditorProvider = props => {
     // assign additional editor methods
     editor.dispatchChange = dispatchDataChange;
     editor.dispatchLibraryChange = dispatchLibraryChange;
-    editor.dispatchPreferencesChange = dispatchPreferencesChange;
     editor.update = dispatchUpdate;
-    editor.store = store; // save store object as a reference in the editor
+    editor.preferences = props.preferences || {}; // assign preferences
 
     // Render editor context provider
     return (

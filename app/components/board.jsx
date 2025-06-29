@@ -6,33 +6,27 @@ import { NotFound } from "./not-found.jsx";
 export const Board = props => {
     const [exists, setExists] = React.useState(null);
     const client = useClient();
-    const store = React.useMemo(() => {
-        return {
-            initialize: () => {
-                return Promise.resolve(true);
-            },
-            // manage board data
-            data: {
-                get: () => {
-                    return client.getBoard(props.id).then(board => {
-                        return board.content;
-                    });
-                },
-                set: data => {
-                    return client.updateBoard(props.id, data);
-                },
-            },
-            library: {
-                get: () => {
-                    return client.getUserLibrary().then(library => {
-                        return library?.content || {};
-                    });
-                },
-                set: data => {
-                    return client.updateUserLibrary(data);
-                },
-            },
-        };
+
+    // handle loading data from api
+    const handleDataLoad = React.useCallback(() => {
+        return client.getBoard(props.id).then(board => {
+            return board.content;
+        });
+    }, [props.id, client]);
+
+    const handleLibraryLoad = React.useCallback(() => {
+        return client.getUserLibrary().then(library => {
+            return library?.content || {};
+        });
+    }, [props.id, client]);
+
+    // handle saving data or library
+    const handleDataChange = React.useCallback(data => {
+        return client.updateBoard(props.id, data);
+    }, [props.id, client]);
+
+    const handleLibraryChange = React.useCallback(data => {
+        return client.updateUserLibrary(data);
     }, [props.id, client]);
 
     // on mount, check if the board exists
@@ -71,8 +65,10 @@ export const Board = props => {
     return (
         <Editor
             key={props.id}
-            store={store}
-            components={{}}
+            data={handleDataLoad}
+            library={handleLibraryLoad}
+            onChange={handleDataChange}
+            onLibraryChange={handleLibraryChange}
         />
     );
 };
