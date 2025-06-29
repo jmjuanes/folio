@@ -1,12 +1,13 @@
-// Promisify a value
+// @description promisify a value
+// @params {object|function|promise} value - value to wrap in a promise
+// @returns {promise} promise that resolves to the value
 export const promisifyValue = value => {
-    if (typeof value === "function") {
-        // Wrapp the call of this function inside a promise chain
-        return Promise.resolve(null).then(() => {
+    return Promise.resolve(null).then(() => {
+        // execute the provided function
+        if (typeof value === "function") {
             return value();
-        });
-    }
-    // Other value is not supported
-    return Promise.resolve(value);
+        }
+        // if other value is provided, just return it
+        return value;
+    });
 };
-
