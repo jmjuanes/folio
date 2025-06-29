@@ -1,6 +1,6 @@
 import * as idb from "idb-keyval";
-import {VERSION} from "folio-react/constants.js";
-import {migrate} from "folio-react/lib/migrate.js";
+import { VERSION } from "folio-react/constants.js";
+import { migrate } from "folio-react/lib/migrate.js";
 
 // @private internal store version
 const STORE_VERSION = "1";
@@ -18,9 +18,6 @@ const STORE_KEYS = {
 // @param {string} options.key key to use for the IDB store (aka database name)
 // @returns {object} store local store manager
 // @returns {function} store.initialize method to initialize the store
-// @returns {object} store.data data namager that implements the get and set methods
-// @returns {object} store.library library manager that implements the get and set methods
-// @returns {object} store.preferences preferences manager that implements the get and set methods
 export const createLocalStore = (options = {}) => {
     const databaseName = options.key || "folio"; // database to use
     const store = idb.createStore(databaseName, "folio-store");
@@ -59,43 +56,34 @@ export const createLocalStore = (options = {}) => {
             }
         },
 
-        // @description data manager
-        data: {
-            get: async () => {
-                let data = await idb.get(STORE_KEYS.DATA, store);
-                // Check if we need to perform an upgrade to the new version
-                if (data?.version !== VERSION) {
-                    // NOTE: we found that before v11 version was not saved in local storage
-                    // In that case, we assume that version is 10
-                    data = await migrate({...data}, data.version || "10");
-                    await idb.set(STORE_KEYS.DATA, data, store);
-                }
-                // Return migrated data
-                return data;
-            },
-            set: data => {
-                return idb.update(STORE_KEYS.DATA, prev => ({...prev, ...data}), store);
-            },
+        getInitialData: async () => {
+            let data = await idb.get(STORE_KEYS.DATA, store);
+            // Check if we need to perform an upgrade to the new version
+            if (data?.version !== VERSION) {
+                // NOTE: we found that before v11 version was not saved in local storage
+                // In that case, we assume that version is 10
+                data = await migrate({...data}, data.version || "10");
+                await idb.set(STORE_KEYS.DATA, data, store);
+            }
+            // Return migrated data
+            return data;
+        },
+        updateData: data => {
+            return idb.update(STORE_KEYS.DATA, prev => ({...prev, ...data}), store);
         },
 
-        // @description library manager
-        library: {
-            get: () => {
-                return idb.get(STORE_KEYS.LIBRARY, store);
-            },
-            set: library => {
-                return idb.set(STORE_KEYS.LIBRARY, library, store);
-            },
+        getInitialLibrary: () => {
+            return idb.get(STORE_KEYS.LIBRARY, store);
+        },
+        updateLibrary: library => {
+            return idb.set(STORE_KEYS.LIBRARY, library, store);
         },
 
-        // @description preferences manager
-        preferences: {
-            get: () => {
-                return idb.get(STORE_KEYS.PREFERENCES, store);
-            },
-            set: newPreferences => {
-                return idb.set(STORE_KEYS.PREFERENCES, newPreferences, store);
-            },
+        getPreferences: () => {
+            return idb.get(STORE_KEYS.PREFERENCES, store);
+        },
+        updatePreferences: newPreferences => {
+            return idb.set(STORE_KEYS.PREFERENCES, newPreferences, store);
         },
     };
 };
