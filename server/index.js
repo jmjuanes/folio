@@ -46,7 +46,9 @@ app.use(async (ctx, next) => {
 
 // Register middlewares
 app.use(logger()); // Custom logger middleware
-app.use(helmet()); // Security headers
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
 app.use(bodyParser()); // Parse JSON request bodies
 app.use(cors({
     origin: "*",
