@@ -1,11 +1,12 @@
 import React from "react";
 import classnames from "classnames";
-import {ACTIONS, PREFERENCES_FIELDS} from "../../constants.js";
-import {Dropdown} from "../ui/dropdown.jsx";
-import {Island} from "../ui/island.jsx";
-import {useEditor} from "../../contexts/editor.jsx";
-import {useActions} from "../../hooks/use-actions.js";
-import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
+import { ACTIONS } from "../../constants.js";
+import { Dropdown } from "../ui/dropdown.jsx";
+import { Island } from "../ui/island.jsx";
+import { useEditor } from "../../contexts/editor.jsx";
+import { useEditorComponents } from "../../contexts/editor-components.jsx";
+import { useActions } from "../../hooks/use-actions.js";
+import { getShortcutByAction, printShortcut } from "../../lib/actions.js";
 
 // @private menu link component
 const MenuLinkItem = props => (
@@ -33,7 +34,8 @@ export const MainMenuContent = () => {
     const dispatchAction = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
-    const shortcutsEnabled = !!editor?.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS];
+    const { PreferencesDialog } = useEditorComponents();
+    const shortcutsEnabled = true; // !!editor?.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS];
 
     return (
         <React.Fragment>
@@ -77,17 +79,18 @@ export const MainMenuContent = () => {
                 }}
             />
             <Dropdown.Separator />
-            <MenuDropdownItem
-                icon="tools"
-                text="Preferences"
-                onClick={() => {
-                    dispatchAction(ACTIONS.SHOW_PREFERENCES_DIALOG);
-                }}
-            />
+            {!!PreferencesDialog && (
+                <MenuDropdownItem
+                    icon="tools"
+                    text="Preferences"
+                    onClick={() => {
+                        dispatchAction(ACTIONS.SHOW_PREFERENCES_DIALOG);
+                    }}
+                />
+            )}
             <MenuDropdownItem
                 icon="keyboard"
                 text="Keyboard shortcuts"
-                disabled={!shortcutsEnabled}
                 onClick={() => {
                     dispatchAction(ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG);
                 }}

@@ -20,7 +20,7 @@ export const shortcutsMap = {
 
     [ACTIONS.OPEN]: getShortcutKey("CtrlOrCmd+O"),
     [ACTIONS.SAVE]: getShortcutKey("CtrlOrCmd+S"),
-    [ACTIONS.CLEAR]: getShortcutKey("CtrlOrCmd+Shift+Delete"),
+    // [ACTIONS.CLEAR]: getShortcutKey("CtrlOrCmd+Shift+Delete"),
 
     [ACTIONS.SELECT_ALL]: getShortcutKey("CtrlOrCmd+A"),
     [ACTIONS.DELETE_SELECTION]: [
@@ -30,31 +30,31 @@ export const shortcutsMap = {
     [ACTIONS.DUPLICATE_SELECTION]: getShortcutKey("CtrlOrCmd+D"),
     [ACTIONS.GROUP_SELECTION]: getShortcutKey("CtrlOrCmd+G"),
     [ACTIONS.UNGROUP_SELECTION]: getShortcutKey("CtrlOrCmd+Shift+G"),
-    [ACTIONS.BRING_FORWARD]: getShortcutKey("CtrlOrCmd+]"),
-    [ACTIONS.BRING_TO_FRONT]: getShortcutKey("CtrlOrCmd+Shift+]"),
-    [ACTIONS.SEND_BACKWARD]: getShortcutKey("CtrlOrCmd+["),
-    [ACTIONS.SEND_TO_BACK]: getShortcutKey("CtrlOrCmd+Shift+["),
+    // [ACTIONS.BRING_FORWARD]: getShortcutKey("CtrlOrCmd+]"),
+    // [ACTIONS.BRING_TO_FRONT]: getShortcutKey("CtrlOrCmd+Shift+]"),
+    // [ACTIONS.SEND_BACKWARD]: getShortcutKey("CtrlOrCmd+["),
+    // [ACTIONS.SEND_TO_BACK]: getShortcutKey("CtrlOrCmd+Shift+["),
     [ACTIONS.LOCK_SELECTION]: getShortcutKey("CtrlOrCmd+L"),
     [ACTIONS.UNLOCK_SELECTION]: getShortcutKey("CtrlOrCmd+Shift+L"),
 
     [ACTIONS.ZOOM_IN]: getShortcutKey("CtrlOrCmd++"),
     [ACTIONS.ZOOM_OUT]: getShortcutKey("CtrlOrCmd+-"),
-    [ACTIONS.ZOOM_RESET]: getShortcutKey("CtrlOrCmd+0"),
-    [ACTIONS.ZOOM_FIT]: getShortcutKey("CtrlOrCmd+1"),
-    [ACTIONS.ZOOM_FIT_SELECTION]: getShortcutKey("CtrlOrCmd+2"),
+    // [ACTIONS.ZOOM_RESET]: getShortcutKey("CtrlOrCmd+0"),
+    // [ACTIONS.ZOOM_FIT]: getShortcutKey("CtrlOrCmd+1"),
+    // [ACTIONS.ZOOM_FIT_SELECTION]: getShortcutKey("CtrlOrCmd+2"),
 
-    [ACTIONS.CREATE_PAGE]: getShortcutKey("CtrlOrCmd+M"),
-    [ACTIONS.DUPLICATE_PAGE]: getShortcutKey("CtrlOrCmd+Shift+M"),
-    [ACTIONS.DELETE_PAGE]: getShortcutKey("CtrlOrCmd+B"),
-    [ACTIONS.CLEAR_PAGE]: getShortcutKey("CtrlOrCmd+Shift+B"),
-    [ACTIONS.PREVIOUS_PAGE]: getShortcutKey("CtrlOrCmd+{"),
-    [ACTIONS.NEXT_PAGE]: getShortcutKey("CtrlOrCmd+}"),
+    // [ACTIONS.CREATE_PAGE]: getShortcutKey("CtrlOrCmd+M"),
+    // [ACTIONS.DUPLICATE_PAGE]: getShortcutKey("CtrlOrCmd+Shift+M"),
+    // [ACTIONS.DELETE_PAGE]: getShortcutKey("CtrlOrCmd+B"),
+    // [ACTIONS.CLEAR_PAGE]: getShortcutKey("CtrlOrCmd+Shift+B"),
+    // [ACTIONS.PREVIOUS_PAGE]: getShortcutKey("CtrlOrCmd+{"),
+    // [ACTIONS.NEXT_PAGE]: getShortcutKey("CtrlOrCmd+}"),
 
-    [ACTIONS.TOGGLE_GRID]: getShortcutKey("CtrlOrCmd+'"),
-    [ACTIONS.TOGGLE_SNAP_TO_ELEMENTS]: getShortcutKey("Alt+S"),
-    [ACTIONS.TOGGLE_SHOW_DIMENSIONS]: getShortcutKey("Alt+D"),
+    // [ACTIONS.TOGGLE_GRID]: getShortcutKey("CtrlOrCmd+'"),
+    // [ACTIONS.TOGGLE_SNAP_TO_ELEMENTS]: getShortcutKey("Alt+S"),
+    // [ACTIONS.TOGGLE_SHOW_DIMENSIONS]: getShortcutKey("Alt+D"),
 
-    [ACTIONS.SHOW_EXPORT_DIALOG]: getShortcutKey("CtrlOrCmd+Shift+E"),
+    // [ACTIONS.SHOW_EXPORT_DIALOG]: getShortcutKey("CtrlOrCmd+Shift+E"),
 };
 
 // @description get shortcut key for the provided action

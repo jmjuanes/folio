@@ -247,7 +247,6 @@ export const getDefaults = () => {
 export const getInitialPreferences = () => {
     return {
         [PREFERENCES_FIELDS.MINIMAP]: false,
-        [PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS]: false,
     };
 }
 

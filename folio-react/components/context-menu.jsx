@@ -1,10 +1,10 @@
 import React from "react";
-import {ACTIONS, ELEMENTS, PREFERENCES_FIELDS} from "../constants.js";
-import {ContextMenu as Menu} from "./ui/context-menu.jsx";
-import {useEditor} from "../contexts/editor.jsx";
-import {useContextMenu} from "../contexts/context-menu.jsx";
-import {useActions} from "../hooks/use-actions.js";
-import {getShortcutByAction, printShortcut} from "../lib/actions.js";
+import { ACTIONS, ELEMENTS } from "../constants.js";
+import { ContextMenu as Menu } from "./ui/context-menu.jsx";
+import { useEditor } from "../contexts/editor.jsx";
+import { useContextMenu } from "../contexts/context-menu.jsx";
+import { useActions } from "../hooks/use-actions.js";
+import { getShortcutByAction, printShortcut } from "../lib/actions.js";
 
 // Not allowed elements in library
 const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
@@ -33,9 +33,9 @@ const ContextMenuItem = props => (
 export const ContextMenu = props => {
     const editor = useEditor();
     const dispatchAction = useActions();
-    const {hideContextMenu} = useContextMenu();
+    const { hideContextMenu } = useContextMenu();
     const selectedElements = editor.getSelection();
-    const shortcutsEnabled = !!editor?.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS];
+    const shortcutsEnabled = true;
 
     const contextMenuStyle = React.useMemo(() => {
         return {
