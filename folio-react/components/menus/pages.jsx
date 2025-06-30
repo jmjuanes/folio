@@ -172,7 +172,6 @@ export const PagesMenuContent = () => {
         return initializeSortedPages(editor.pages);
     });
     const activePage = editor.getActivePage();
-    // const view = preferences[PREFERENCES_FIELDS.PAGES_VIEW] || PAGES_VIEW.LIST;
 
     // Handle page move
     const handlePageMove = React.useCallback((event, page) => {
@@ -229,13 +228,6 @@ export const PagesMenuContent = () => {
         document.addEventListener("pointerup", handlePointerUp);
         document.addEventListener("pointerleave", handlePointerUp);
     }, [editor]);
-
-    // handle change view mode
-    // const handleViewModeChange = () => {
-    //     setPreferences(Object.assign({}, preferences, {
-    //         [PREFERENCES_FIELDS.PAGES_VIEW]: view === PAGES_VIEW.LIST ? PAGES_VIEW.GALLERY : PAGES_VIEW.LIST,
-    //     }));
-    // };
 
     return (
         <React.Fragment>

@@ -19,11 +19,11 @@ export const PreferencesDialog = () => {
                 title: "Minimap",
                 helper: "Show or hide a minimap in the bottom left corner of the board.",
             },
-            [PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS]: {
-                type: FORM_OPTIONS.CHECKBOX,
-                title: "Keyboard Shortcuts",
-                helper: "Enable or disable keyboard shortcuts.",
-            },
+            // [PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS]: {
+            //     type: FORM_OPTIONS.CHECKBOX,
+            //     title: "Keyboard Shortcuts",
+            //     helper: "Enable or disable keyboard shortcuts.",
+            // },
         };
     }, [data]);
 

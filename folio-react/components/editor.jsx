@@ -108,7 +108,6 @@ const InnerEditor = () => {
 // @param {object} props.components Map of editor components to override
 // @param {object|promise|function} props.data Initial data of the editor
 // @param {object|promise|function} props.library Initial library data
-// @param {object} props.preferences Preferences for the editor
 // @param {function} props.onChange executed each time data of the board is updated
 // @param {function} props.onLibraryChange executed each time the library is updated
 export const Editor = props => {

@@ -14,7 +14,6 @@ import {
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
     FIELDS,
-    PREFERENCES_FIELDS,
 } from "../constants.js";
 import {normalizeBounds, getRectangleBounds} from "../utils/math.js";
 import {isArrowKey} from "../utils/keys.js";
@@ -605,7 +604,7 @@ export const useEvents = () => {
                 update();
             }
             // otherwhise check for the action by the key combination
-            else if (!!editor.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS]) {
+            else {
                 // 1. check if this combination is an action shortcut
                 const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
                 if (action) {

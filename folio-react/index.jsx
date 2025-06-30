@@ -2,7 +2,6 @@ export {
     ELEMENTS,
     TOOLS,
     VERSION,
-    PREFERENCES_FIELDS as PREFERENCES,
     ACTIONS,
 } from "./constants.js";
 export {
@@ -59,7 +58,6 @@ export {Layout} from "./components/layout.jsx";
 export {ExportDialog} from "./components/dialogs/export.jsx";
 export {LibraryAddDialog} from "./components/dialogs/library-add.jsx";
 export {LibraryExportDialog} from "./components/dialogs/library-export.jsx";
-export {PreferencesDialog} from "./components/dialogs/preferences.jsx";
 export {KeyboardShortcutsDialog} from "./components/dialogs/keyboard-shortcuts.jsx";
 export {PageEditDialog} from "./components/dialogs/page-edit.jsx";
 export {

@@ -1,19 +1,18 @@
 import React from "react";
-import {ACTIONS, ZOOM_STEP} from "../constants.js";
-import {useEditor} from "../contexts/editor.jsx";
-import {useConfirm} from "../contexts/confirm.jsx";
-import {useDialog} from "../contexts/dialogs.jsx";
-import {useEditorComponents} from "../contexts/editor-components.jsx";
-import {loadFromJson, saveAsJson} from "../lib/json.js";
+import { ACTIONS, ZOOM_STEP } from "../constants.js";
+import { useEditor } from "../contexts/editor.jsx";
+import { useConfirm } from "../contexts/confirm.jsx";
+import { useDialog } from "../contexts/dialogs.jsx";
+import { useEditorComponents } from "../contexts/editor-components.jsx";
+import { loadFromJson, saveAsJson } from "../lib/json.js";
 
 // @description hook to dispatch an action in the editor
 export const useActions = () => {
     const editor = useEditor();
-    const {showConfirm} = useConfirm();
-    const {showDialog} = useDialog();
+    const { showConfirm } = useConfirm();
+    const { showDialog } = useDialog();
     const {
         KeyboardShortcutsDialog,
-        PreferencesDialog,
         ExportDialog,
         LibraryAddDialog,
         LibraryExportDialog,
@@ -266,14 +265,8 @@ export const useActions = () => {
             },
             [ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG]: () => {
                 showDialog({
-                    dialogClassName: "w-full max-w-sm",
+                    dialogClassName: "w-full max-w-xl",
                     component: KeyboardShortcutsDialog,
-                });
-            },
-            [ACTIONS.SHOW_PREFERENCES_DIALOG]: () => {
-                showDialog({
-                    dialogClassName: "w-full max-w-md",
-                    component: PreferencesDialog,
                 });
             },
             [ACTIONS.SHOW_EXPORT_DIALOG]: exportOptions => {

@@ -474,12 +474,6 @@ export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
 //     IMPORTED_FROM_FILE: "imported:file",
 // };
 
-// preferences fields
-export const PREFERENCES_FIELDS = {
-    MINIMAP: "minimap",
-    KEYBOARD_SHORTCUTS: "keyboardShortcuts",
-};
-
 // minimap constants
 export const MINIMAP_WIDTH = 180;
 export const MINIMAP_HEIGHT = 100;
@@ -527,7 +521,6 @@ export const ACTIONS = {
     TOGGLE_GRID: "toggle-grid",
     TOGGLE_SNAP_TO_ELEMENTS: "toggle-snap-to-elements",
     TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
-    SHOW_PREFERENCES_DIALOG: "show-preferences-dialog",
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
     SHOW_LIBRARY_ADD_DIALOG: "show-library-add-dialog",

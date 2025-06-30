@@ -7,7 +7,7 @@ import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 // @description keyboard shortcuts section
 const KeyboardShortcutsGroup = props => (
     <div className="mb-4" style={{breakInside: "avoid-column"}}>
-        <div className="text-sm text-gray-600 font-bold mb-1">
+        <div className="text-xs text-gray-600 font-bold mb-1">
             {props.label || props.title || ""}
         </div>
         <div className="border-1 border-gray-200 rounded-lg overflow-hidden">
@@ -51,12 +51,14 @@ export const KeyboardShortcutsDialogContent = () => {
     }, [tools]);
 
     return (
-        <div className="fles flex-col gap-4">
+        <div className="" style={{columnCount: 2, columnGap: "1rem"}}>
             <KeyboardShortcutsGroup title="Drawing">
                 <KeyboardShortcutsItem action={ACTIONS.OPEN} label="Open" />
                 <KeyboardShortcutsItem action={ACTIONS.SAVE} label="Save" />
+                {/*
                 <KeyboardShortcutsItem action={ACTIONS.SHOW_EXPORT_DIALOG} label="Export as Image" />
                 <KeyboardShortcutsItem action={ACTIONS.CLEAR} label="Clear all" />
+                */}
             </KeyboardShortcutsGroup>
             <KeyboardShortcutsGroup title="Actions">
                 <KeyboardShortcutsItem action={ACTIONS.CUT} label="Cut" />
@@ -71,10 +73,12 @@ export const KeyboardShortcutsDialogContent = () => {
                 <KeyboardShortcutsItem action={ACTIONS.DUPLICATE_SELECTION} label="Duplicate" />
                 <KeyboardShortcutsItem action={ACTIONS.GROUP_SELECTION} label="Group" />
                 <KeyboardShortcutsItem action={ACTIONS.UNGROUP_SELECTION} label="Ungroup" />
+                {/*
                 <KeyboardShortcutsItem action={ACTIONS.BRING_FORWARD} label="Bring Forward" />
                 <KeyboardShortcutsItem action={ACTIONS.BRING_TO_FRONT} label="Bring to Front" />
                 <KeyboardShortcutsItem action={ACTIONS.SEND_BACKWARD} label="Send Backward" />
                 <KeyboardShortcutsItem action={ACTIONS.SEND_TO_BACK} label="Send to Back" />
+                */}
                 <KeyboardShortcutsItem action={ACTIONS.LOCK_SELECTION} label="Lock" />
                 <KeyboardShortcutsItem action={ACTIONS.UNLOCK_SELECTION} label="Unlock" />
             </KeyboardShortcutsGroup>
@@ -85,6 +89,7 @@ export const KeyboardShortcutsDialogContent = () => {
                     ))}
                 </KeyboardShortcutsGroup>
             )}
+            {/*
             <KeyboardShortcutsGroup title="Pages">
                 <KeyboardShortcutsItem action={ACTIONS.CREATE_PAGE} label="Create Page" />
                 <KeyboardShortcutsItem action={ACTIONS.DUPLICATE_PAGE} label="Duplicate Page" />
@@ -93,18 +98,23 @@ export const KeyboardShortcutsDialogContent = () => {
                 <KeyboardShortcutsItem action={ACTIONS.PREVIOUS_PAGE} label="Previous Page" />
                 <KeyboardShortcutsItem action={ACTIONS.NEXT_PAGE} label="Next Page" />
             </KeyboardShortcutsGroup>
+            */}
             <KeyboardShortcutsGroup title="Zoom">
                 <KeyboardShortcutsItem action={ACTIONS.ZOOM_IN} label="Zoom In" />
                 <KeyboardShortcutsItem action={ACTIONS.ZOOM_OUT} label="Zoom Out" />
+                {/*
                 <KeyboardShortcutsItem action={ACTIONS.ZOOM_RESET} label="Reset Zoom" />
                 <KeyboardShortcutsItem action={ACTIONS.ZOOM_FIT} label="Fit" />
                 <KeyboardShortcutsItem action={ACTIONS.ZOOM_FIT_SELECTION} label="Fit to Selection" />
+                */}
             </KeyboardShortcutsGroup>
+            {/*
             <KeyboardShortcutsGroup title="Settings">
                 <KeyboardShortcutsItem action={ACTIONS.TOGGLE_GRID} label="Grid" />
                 <KeyboardShortcutsItem action={ACTIONS.TOGGLE_SNAP_TO_ELEMENTS} label="Snap to Elements" />
                 <KeyboardShortcutsItem action={ACTIONS.TOGGLE_SHOW_DIMENSIONS} label="Object Dimensions" />
             </KeyboardShortcutsGroup>
+            */}
         </div>
     );
 };

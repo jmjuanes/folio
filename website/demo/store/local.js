@@ -10,7 +10,6 @@ const STORE_KEYS = {
     VERSION: "folio:version",
     DATA: "folio:data",
     LIBRARY: "folio:library",
-    PREFERENCES: "folio:preferences",
 };
 
 // @description create a new local store instance
@@ -48,7 +47,6 @@ export const createLocalStore = (options = {}) => {
                 // Create new store keys
                 await idb.set(STORE_KEYS.VERSION, STORE_VERSION, store)
                 await idb.set(STORE_KEYS.DATA, newData, store);
-                await idb.set(STORE_KEYS.PREFERENCES, {}, store);
             }
             // Check if library is not initialized
             if (!keys.includes(STORE_KEYS.LIBRARY)) {
@@ -77,13 +75,6 @@ export const createLocalStore = (options = {}) => {
         },
         updateLibrary: library => {
             return idb.set(STORE_KEYS.LIBRARY, library, store);
-        },
-
-        getPreferences: () => {
-            return idb.get(STORE_KEYS.PREFERENCES, store);
-        },
-        updatePreferences: newPreferences => {
-            return idb.set(STORE_KEYS.PREFERENCES, newPreferences, store);
         },
     };
 };
