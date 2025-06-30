@@ -16,7 +16,7 @@ export const Demo = props => {
     // when the library in the editor changes, run store.updateLibrary
     const handleLibraryChange = React.useCallback(library => {
         return props.store.updateLibrary(library);
-    }, props.store);
+    }, [props.store]);
 
     // on mount, initialize the store
     React.useEffect(() => {
