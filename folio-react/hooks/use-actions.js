@@ -265,7 +265,7 @@ export const useActions = () => {
             },
             [ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG]: () => {
                 showDialog({
-                    dialogClassName: "w-full max-w-sm",
+                    dialogClassName: "w-full max-w-xl",
                     component: KeyboardShortcutsDialog,
                 });
             },

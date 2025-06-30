@@ -51,7 +51,7 @@ export const KeyboardShortcutsDialogContent = () => {
     }, [tools]);
 
     return (
-        <div className="fles flex-col gap-4">
+        <div className="" style={{columnCount: 2, columnGap: "1rem"}}>
             <KeyboardShortcutsGroup title="Drawing">
                 <KeyboardShortcutsItem action={ACTIONS.OPEN} label="Open" />
                 <KeyboardShortcutsItem action={ACTIONS.SAVE} label="Save" />
