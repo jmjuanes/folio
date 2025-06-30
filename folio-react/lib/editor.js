@@ -5,7 +5,6 @@ import {
     ELEMENTS,
     FIELDS,
     PASTE_OFFSET,
-    PREFERENCES_FIELDS,
     ZOOM_DEFAULT,
     ASSETS,
     VERSION,
@@ -243,13 +242,6 @@ export const getDefaults = () => {
     };
 };
 
-// @description get initial preferences
-export const getInitialPreferences = () => {
-    return {
-        [PREFERENCES_FIELDS.MINIMAP]: false,
-    };
-}
-
 // @description Generate a editor state from initial data object
 export const getEditorStateFromInitialData = initialData => {
     // Parse pages list from initialData object
@@ -284,9 +276,6 @@ export const createEditor = (options = {}) => {
         // @description library state
         // @param {object} library.items list of items in the library
         library: getLibraryStateFromInitialData(options?.library || {}),
-
-        // @description preferences state
-        preferences: Object.assign(getInitialPreferences(), options?.preferences || {}),
 
         // @description internal editor state
         state: {

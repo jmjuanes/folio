@@ -4,7 +4,6 @@ import { ACTIONS } from "../../constants.js";
 import { Dropdown } from "../ui/dropdown.jsx";
 import { Island } from "../ui/island.jsx";
 import { useEditor } from "../../contexts/editor.jsx";
-import { useEditorComponents } from "../../contexts/editor-components.jsx";
 import { useActions } from "../../hooks/use-actions.js";
 import { getShortcutByAction, printShortcut } from "../../lib/actions.js";
 
@@ -34,7 +33,6 @@ export const MainMenuContent = () => {
     const dispatchAction = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
-    const { PreferencesDialog } = useEditorComponents();
     const shortcutsEnabled = true; // !!editor?.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS];
 
     return (
@@ -79,15 +77,6 @@ export const MainMenuContent = () => {
                 }}
             />
             <Dropdown.Separator />
-            {!!PreferencesDialog && (
-                <MenuDropdownItem
-                    icon="tools"
-                    text="Preferences"
-                    onClick={() => {
-                        dispatchAction(ACTIONS.SHOW_PREFERENCES_DIALOG);
-                    }}
-                />
-            )}
             <MenuDropdownItem
                 icon="keyboard"
                 text="Keyboard shortcuts"

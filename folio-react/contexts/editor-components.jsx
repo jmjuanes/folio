@@ -43,7 +43,6 @@ export const EditorComponentsProvider = ({components = {}, children}) => {
             LibraryAddDialog: LibraryAddDialog,
             LibraryExportDialog: LibraryExportDialog,
             PageEditDialog: PageEditDialog,
-            PreferencesDialog: null,
             KeyboardShortcutsDialog: KeyboardShortcutsDialog,
             // menus
             LibraryMenu: LibraryMenu,

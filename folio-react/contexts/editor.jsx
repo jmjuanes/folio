@@ -60,7 +60,6 @@ export const EditorProvider = props => {
             setEditor(createEditor({
                 data: initialData,
                 library: initialLibrary, 
-                preferences: props.preferences || {},
             }));
         }
         catch (error) {
@@ -77,7 +76,6 @@ export const EditorProvider = props => {
     editor.dispatchChange = dispatchDataChange;
     editor.dispatchLibraryChange = dispatchLibraryChange;
     editor.update = dispatchUpdate;
-    editor.preferences = props.preferences || {}; // assign preferences
 
     // Render editor context provider
     return (
