@@ -30,18 +30,23 @@ export const Login = () => {
     return (
         <Centered className="h-screen">
             <div className="w-88 pb-20">
-                <div className="font-serif text-7xl mb-6 leading-none font-bold tracking-tighter">folio.</div>
-                <div className="text-sm text-gray-700 mb-6">
+                <div className="font-serif text-7xl mb-6 leading-none font-brand select-none">folio.</div>
+                <div className="text-sm text-gray-700 mb-4">
                     <span>Welcome to your private <b>folio</b> instance. You need to log in with your access token to continue.</span>
                 </div>
                 <div className="mb-5">
-                    <label className="block text-sm font-medium text-gray-950 mb-1">Access Token</label>
                     <input
                         type="text"
                         className="w-full p-2 border-1 border-gray-200 text-gray-950 rounded-md outline-gray-950"
                         placeholder="Enter your access token..."
                         ref={accessTokenRef}
                         disabled={state.loading}
+                        onKeyDown={event => {
+                            if (event.key === "Enter") {
+                                event.preventDefault();
+                                handleLogin();
+                            }
+                        }}
                     />
                     <div className="text-2xs text-gray-600 mt-1">
                         Your access token is printed in the terminal where you run the server. If you don't have it, please contact your administrator.

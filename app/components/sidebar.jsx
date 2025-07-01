@@ -9,8 +9,8 @@ import { groupByDate } from "../utils/dates.js";
 
 // @description logo component
 const Logo = () => (
-    <div className="sticky top-0 tracking-tighter text-3xl leading-none select-none bg-white pt-5 px-3 pb-3">
-        <span className="text-gray-950 font-serif font-bold">folio.</span>
+    <div className="sticky top-0 text-3xl leading-none select-none bg-white pt-5 px-3 pb-3">
+        <span className="text-gray-950 font-brand select-none">folio.</span>
     </div>
 );
 

@@ -30,13 +30,8 @@ export const Welcome = props => (
     <Centered className="min-h-full bg-white">
         <div className="w-full max-w-2xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
             <div className="pt-4 pb-12 select-none">
-                <div className="font-bold font-serif tracking-tight text-4xl mb-4 text-gray-950 leading-none text-center">
+                <div className="font-bold text-4xl mb-4 text-gray-950 leading-none text-center">
                     <span>{getGreetingMessage()}</span>
-                </div>
-                <div className="hidden text-gray-700 text-lg mb-2 text-center">
-                    <span>Welcome to </span>
-                    <span className="font-bold">folio</span>
-                    <span>, your personal board manager.</span>
                 </div>
                 <div className="text-gray-700 text-center mb-6">
                     <span>Here you can create boards to organize your ideas, tasks, and projects. </span>
