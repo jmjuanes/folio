@@ -1,5 +1,6 @@
 import React from "react";
 import { Editor } from "folio-react/components/editor.jsx";
+import { Loading } from "../../../folio-react/components/loading.jsx";
 import { Welcome } from "./welcome.jsx";
 
 export const Demo = props => {
@@ -26,7 +27,9 @@ export const Demo = props => {
     }, [props.store]);
 
     if (!ready) {
-        return null;
+        return (
+            <Loading className="h-screen flex items-center justify-center" />
+        );
     }
 
     return (
