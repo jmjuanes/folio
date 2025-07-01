@@ -1,7 +1,7 @@
 import Router from "@koa/router";
 import { OBJECT_TYPES } from "../config.js";
 import { authentication } from "../middlewares/authentication.js";
-import { getChildrenObjects, getObject, updateObject, deleteObject } from "../service.js";
+import { getChildrenObjects, getObject, updateObject, insertObject, deleteObject } from "../service.js";
 import { formatResult } from "../utils/results.js";
 
 export const boardsRouter = new Router();
