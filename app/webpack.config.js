@@ -93,7 +93,7 @@ export default {
             ],
         }),
         new HtmlWebpackPlugin({
-            template: path.resolve("app.html"),
+            template: path.resolve("../index.html"),
             filename: "index.html",
             minify: true,
         }),
