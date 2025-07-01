@@ -107,3 +107,8 @@ export {Dropdown} from "./components/ui/dropdown.jsx";
 export {Island} from "./components/ui/island.jsx";
 export {Overlay} from "./components/ui/overlay.jsx";
 export {Panel} from "./components/ui/panel.jsx";
+
+export {
+    Loading,
+    LoadingSpinner,
+} from "./components/loading.jsx";
