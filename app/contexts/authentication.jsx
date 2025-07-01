@@ -1,4 +1,5 @@
 import React from "react";
+import { Loading } from "folio-react/components/loading.jsx";
 import {useClient} from "./client.jsx";
 import {Login} from "../components/login.jsx";
 
@@ -36,7 +37,11 @@ export const AuthenticationProvider = ({children}) => {
 
     // if the user is not authenticated, do not render the children
     if (!user) {
-        return null;
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loading />
+            </div>
+        );
     }
 
     return (

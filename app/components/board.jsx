@@ -1,5 +1,6 @@
 import React from "react";
 import { Editor } from "folio-react/components/editor.jsx";
+import { Loading } from "folio-react/components/loading.jsx";
 import { useClient } from "../contexts/client.jsx";
 import { NotFound } from "./not-found.jsx";
 
@@ -54,7 +55,7 @@ export const Board = props => {
 
     // we do not know (yet) if the board exists, so we set it to null
     if (exists === null) {
-        return null;
+        return <Loading />;
     }
 
     // if the board does not exist, we display a centered message
