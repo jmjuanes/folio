@@ -60,30 +60,40 @@ const BoardsList = props => {
                 <BoardsGroup
                     title="Today"
                     boards={groups.today}
+                    onRename={props.onRename}
+                    onDelete={props.onDelete}
                 />
             )}
             {groups.yesterday.length > 0 && (
                 <BoardsGroup
                     title="Yesterday"
                     boards={groups.yesterday}
+                    onRename={props.onRename}
+                    onDelete={props.onDelete}
                 />
             )}
             {groups.thisWeek.length > 0 && (
                 <BoardsGroup
                     title="This Week"
                     boards={groups.thisWeek}
+                    onRename={props.onRename}
+                    onDelete={props.onDelete}
                 />
             )}
             {groups.thisMonth.length > 0 && (
                 <BoardsGroup
                     title="This Month"
                     boards={groups.thisMonth}
+                    onRename={props.onRename}
+                    onDelete={props.onDelete}
                 />
             )}
             {groups.others.length > 0 && (
                 <BoardsGroup
                     title="Older Boards"
                     boards={groups.others}
+                    onRename={props.onRename}
+                    onDelete={props.onDelete}
                 />
             )}
             {props.boards.length === 0 && (
