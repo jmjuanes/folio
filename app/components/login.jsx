@@ -41,6 +41,12 @@ export const Login = () => {
                         placeholder="Enter your access token..."
                         ref={accessTokenRef}
                         disabled={state.loading}
+                        onKeyDown={event => {
+                            if (event.key === "Enter") {
+                                event.preventDefault();
+                                handleLogin();
+                            }
+                        }}
                     />
                     <div className="text-2xs text-gray-600 mt-1">
                         Your access token is printed in the terminal where you run the server. If you don't have it, please contact your administrator.
