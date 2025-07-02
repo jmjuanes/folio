@@ -28,6 +28,19 @@ if [ ! -f "server/package.json" ]; then
     exit 1
 fi
 
+# Ensure data directory exists and has proper permissions
+if [ ! -d "/opt/folio/data" ]; then
+    echo "Creating data directory..."
+    mkdir -p /opt/folio/data
+fi
+
+# Check if we can write to the data directory
+if [ ! -w "/opt/folio/data" ]; then
+    echo "WARNING: Data directory is not writable. Database operations may fail."
+    echo "Data directory permissions:"
+    ls -la /opt/folio/data
+fi
+
 # Start the server with proper error handling
 echo "Starting server..."
 cd server
