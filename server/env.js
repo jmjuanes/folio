@@ -7,12 +7,9 @@ const parseEnvFile = envPath => {
     return fs.existsSync(envPath) ? dotenv.parse(fs.readFileSync(envPath, "utf8")) : {};
 };
 
-// Parse available environmets, in order of loading
+// parse available environmets, in order of loading
 const environment = {};
-// const environments = ["production", "development"];
-const environments = ["production", "development", "local"];
-
-environments.forEach(name => {
+["production", "development", "local"].forEach(name => {
     const isCurrentEnv = process.env.NODE_ENV === name;
     const isLocalDevelopment = name === "local" && process.env.NODE_ENV === "development";
     if (isCurrentEnv || isLocalDevelopment) {
@@ -21,8 +18,17 @@ environments.forEach(name => {
     }
 });
 
+// parse the process.env object and get only the keys that start with "FOLIO_"
+const globalEnv = Object.keys(process.env || {}).reduce((env, key) => {
+    if (key.startsWith("FOLIO_")) {
+        env[key] = process.env[key];
+    }
+    return env;
+}, {});
+
 // Export parsed env
 export default {
     ...parseEnvFile(path.resolve(process.cwd(), "../.env")),
+    ...globalEnv,
     ...environment,
 };

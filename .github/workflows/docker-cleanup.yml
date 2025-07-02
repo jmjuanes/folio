@@ -1,0 +1,28 @@
+name: Cleanup PR Docker Images
+
+on:
+  pull_request:
+    types: [closed]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  docker-cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ env.IMAGE_NAME }}
+          package-type: container
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-versions-to-keep: 0
+          delete-only-untagged-versions: false
+          ignore-versions: '^(main|latest|\d+\.\d+\.\d+|sha-.*)$'
+          version-pattern: '^pr-${{ github.event.pull_request.number }}$'
+        continue-on-error: true
