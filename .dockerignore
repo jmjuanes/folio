@@ -1,0 +1,69 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+README*
+CHANGELOG*
+CODE_OF_CONDUCT*
+LICENSE
+docs/
+cover.png
+
+# Development files
+.env
+.env.local
+.env.development
+.env.test
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node.js
+node_modules/
+npm-debug.log
+.npm
+.node_repl_history
+
+# Development and testing
+jest.config.js
+test/
+__tests__/
+__stubs__/
+*.test.js
+*.spec.js
+coverage/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Database files (should be mounted as volume)
+data/
+*.sqlite
+*.db
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# Docker files (to prevent recursion)
+Dockerfile*
+.dockerignore
+docker-compose*.yml
