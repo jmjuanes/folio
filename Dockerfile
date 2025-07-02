@@ -51,17 +51,10 @@ RUN cd server && \
 FROM base AS app
 
 # Copy workspace configuration files first
-COPY --chown=node:node . ./
-# COPY --chown=node:node app/package.json ./app/
-# COPY --chown=node:node folio-react/package.json ./folio-react/
+COPY --chown=node:node . .
 
 # Install root dependencies to set up workspaces
 RUN yarn install --frozen-lockfile
-
-# Copy application source files
-# COPY --chown=node:node folio-react/ ./folio-react/
-# COPY --chown=node:node app/ ./app/
-# COPY --chown=node:node scripts/ ./scripts/
 
 # Build the application
 RUN yarn build:app
@@ -73,7 +66,6 @@ FROM base
 
 # Set environment variables
 ENV NODE_ENV=production \
-    PORT=8080 \
     # Security headers
     NODE_OPTIONS="--max-old-space-size=512" \
     # Disable npm update check
@@ -90,6 +82,11 @@ COPY --from=app --chown=node:node /opt/folio/app/www ./www
 
 # Set proper permissions for executable files
 RUN chmod +x start.sh
+
+# Create data directory with proper ownership for SQLite
+RUN mkdir -p /opt/folio/data && \
+    chown -R node:node /opt/folio/data && \
+    chmod 775 /opt/folio/data
 
 # Create volume for persistent data
 VOLUME ["/opt/folio/data"]
@@ -120,7 +117,7 @@ LABEL org.opencontainers.image.vendor="Josemi Juanes"
 LABEL org.opencontainers.image.url="https://folio.josemi.xyz"
 LABEL org.opencontainers.image.source="https://github.com/jmjuanes/folio"
 
-# Use tini as init system for proper signal handling
+# Use custom entrypoint for proper initialization
 ENTRYPOINT ["/sbin/tini", "--"]
 
 # Start the application
