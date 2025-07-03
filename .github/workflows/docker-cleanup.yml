@@ -19,7 +19,7 @@ jobs:
       - uses: actions/delete-package-versions@v5
         with:
           package-name: ${{ env.IMAGE_NAME }}
-          package-type: container
+          package-type: docker
           token: ${{ secrets.GITHUB_TOKEN }}
           min-versions-to-keep: 0
           ignore-versions: '^(dev|\d+\.\d+\.\d+)$'
