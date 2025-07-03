@@ -22,7 +22,5 @@ jobs:
           package-type: container
           token: ${{ secrets.GITHUB_TOKEN }}
           min-versions-to-keep: 0
-          delete-only-untagged-versions: false
-          ignore-versions: '^(main|latest|\d+\.\d+\.\d+|sha-.*)$'
-          version-pattern: '^pr-${{ github.event.pull_request.number }}$'
+          ignore-versions: '^(dev|\d+\.\d+\.\d+)$'
         continue-on-error: true
