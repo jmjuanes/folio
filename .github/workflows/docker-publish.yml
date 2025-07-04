@@ -13,6 +13,7 @@ env:
 
 jobs:
   docker-publish:
+    if: ${{ github.repository == 'jmjuanes/folio' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
