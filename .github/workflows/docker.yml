@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: docker
 
 on:
   push:
@@ -6,18 +6,23 @@ on:
     tags: ["*"]
   pull_request:
     branches: [main]
+    paths:
+      - Dockerfile
+      - start.sh
+      - .github/workflows/docker.yml
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  docker-publish:
+  build:
+    if: ${{ github.repository == 'jmjuanes/folio' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      attestations: write
       id-token: write
 
     steps:
@@ -33,6 +38,8 @@ jobs:
         id: meta
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=pr,prefix=pr-
             type=semver,pattern={{version}}
@@ -42,12 +49,6 @@ jobs:
         id: build
         with:
           context: .
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      - uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.build.outputs.digest }}
-          push-to-registry: true
