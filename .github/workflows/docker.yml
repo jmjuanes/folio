@@ -9,7 +9,7 @@ on:
     paths:
       - Dockerfile
       - start.sh
-      - .github/workflows/docker.yaml
+      - .github/workflows/docker.yml
   workflow_dispatch:
 
 env:
