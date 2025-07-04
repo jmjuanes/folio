@@ -6,6 +6,11 @@ on:
     tags: ["*"]
   pull_request:
     branches: [main]
+    paths:
+      - Dockerfile
+      - start.sh
+      - .github/workflows/docker.yaml
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -44,6 +49,6 @@ jobs:
         id: build
         with:
           context: .
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
