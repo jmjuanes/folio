@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: docker
 
 on:
   push:
@@ -17,7 +17,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  docker-publish:
+  build:
     if: ${{ github.repository == 'jmjuanes/folio' }}
     runs-on: ubuntu-latest
     permissions:
