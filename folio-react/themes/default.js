@@ -1,8 +1,8 @@
 export default {
     "editor": "text-gray-900",
 
-    "button.primary": "bg-gray-950 hover:bg-gray-900 text-white text-sm",
-    "button.secondary": "bg-white text-gray-900 hover:bg-gray-200 border-1 border-gray-200 text-sm",
+    "button.primary": "",
+    "button.secondary": "",
 
     "context-menu": "bg-white shadow-sm border-1 border-gray-200",
     "context-menu.item": "hover:bg-gray-200",
