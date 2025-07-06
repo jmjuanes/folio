@@ -22,13 +22,14 @@ describe("<ColorPicker />", () => {
         });
     });
 
-    it("should emit 'onChange' when clicking on an color value of the palette", () => {
+    it("should emit 'onChange' when clicking on an color value of the palette", async () => {
         const handleChange = jest.fn();
         const colorIndex = 1;
         const user = userEvent.setup();
         render(<ColorPicker values={colors} onChange={handleChange} />);
 
-        user.click(screen.getAllByTestId("colorpicker-value")[colorIndex]);
+        await user.click(screen.getAllByTestId("colorpicker-value")[colorIndex]);
+
         expect(handleChange).toHaveBeenCalledWith(colors[colorIndex]);
     });
 });
