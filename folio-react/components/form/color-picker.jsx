@@ -1,5 +1,5 @@
 import React from "react";
-import {themed} from "../../contexts/theme.jsx";
+import classNames from "classnames";
 import {isValidHexColor} from "../../utils/colors.js";
 
 export const ColorPicker = ({value = "", values = [], showInput = true, showPalette = true, onChange}) => {
@@ -10,8 +10,11 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
             {showInput && (
                 <div className="flex items-center w-full">
                     <div
-                        data-testid="colorpicker:preview"
-                        className={themed("flex rounded-md h-8 w-8 mr-1", "form.colorpicker.preview")}
+                        data-testid="colorpicker-preview"
+                        className={classNames({
+                            "flex rounded-md h-8 w-8 mr-1": true,
+                            "border-1 border-gray-200": true,
+                        })}
                         style={{
                             backgroundColor: value,
                             minWidth: "2rem",
@@ -23,7 +26,7 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                         }}
                     />
                     <input
-                        data-testid="colorpicker:pick"
+                        data-testid="colorpicker-pick"
                         ref={pickerRef}
                         type="color"
                         defaultValue={value}
@@ -37,10 +40,13 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                         }}
                     />
                     <input
-                        data-testid="colorpicker:input"
+                        data-testid="colorpicker-input"
                         ref={inputRef}
                         type="text"
-                        className={themed("w-full px-2 py-0 h-8 rounded-md outline-0 text-xs", "form.colorpicker.input")}
+                        className={classNames({
+                            "w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
+                            "bg-white border-1 border-gray-200 text-gray-900": true,
+                        })}
                         defaultValue={value}
                         style={{
                             fontFamily: "monospace",
@@ -54,11 +60,15 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                 </div>
             )}
             {(values?.length > 0 && showPalette) && (
-                <div data-testid="colorpicker:palette" className="grid gap-1 grid-cols-6 w-full">
+                <div data-testid="colorpicker-values" className="grid gap-1 grid-cols-6 w-full">
                     {values.map(color => (
                         <div
                             key={color}
-                            className={themed("flex w-full h-6 rounded-md cursor-pointer", "form.colorpicker.palette.item")}
+                            data-testid="colorpicker-value"
+                            className={classNames({
+                                "flex w-full h-6 rounded-md cursor-pointer": true,
+                                "border-1 border-gray-200": true,
+                            })}
                             style={{
                                 backgroundColor: color,
                             }}
