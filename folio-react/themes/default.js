@@ -24,8 +24,6 @@ export default {
     "form.colorpicker.preview": "border-1 border-gray-200",
     "form.colorpicker.input": "bg-white border-1 border-gray-200 text-gray-900",
     "form.colorpicker.palette.item": "border-1 border-gray-200",
-    "form.fontpicker.item.active": "bg-gray-900 text-white",
-    "form.fontpicker.item.inactive": "text-gray-900 bg-gray-100 hover:bg-gray-200",
     "form.select.item.active": "bg-gray-900 text-white",
     "form.select.item.inactive": "bg-gray-100 hover:bg-gray-200",
     "form.colorselect.item.active": "border-1 border-gray-300",
