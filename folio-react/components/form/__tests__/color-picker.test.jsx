@@ -15,7 +15,7 @@ describe("<ColorPicker />", () => {
         const colors = ["#fff", "#000"];
         render(<ColorPicker values={colors} />);
 
-        screen.queryByTestId("colorpicker-value").forEach((element, index) => {
+        screen.getAllByTestId("colorpicker-value").forEach((element, index) => {
             expect(element).toHaveStyle({
                 backgroundColor: colors[index],
             });
