@@ -4,7 +4,7 @@ export default {
     transform: {
         "^.+\\.(js|jsx)$": "babel-jest",
     },
-    extensionsToTreatAsEsm: [".js", ".jsx"],
+    extensionsToTreatAsEsm: [".jsx"],
     moduleNameMapper: {
         "^@lib(.*)$": "<rootDir>/lib$1",
         "^@components(.*)$": "<rootDir>/components$1",
