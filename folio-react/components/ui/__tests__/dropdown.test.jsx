@@ -1,6 +1,12 @@
+import { jest } from "@jest/globals";
 import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
+
+jest.unstable_mockModule("@josemi-icons/react", () => ({
+    CheckIcon: () => null,
+    renderIcon: icon => icon.toUpperCase(),
+}));
 
 import { Dropdown } from "../dropdown.jsx";
 
