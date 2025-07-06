@@ -1,9 +1,6 @@
 export default {
     "editor": "text-gray-900",
 
-    "button.primary": "",
-    "button.secondary": "",
-
     "context-menu": "bg-white shadow-sm border-1 border-gray-200",
     "context-menu.item": "hover:bg-gray-200",
     "context-menu.separator": "bg-gray-200",
@@ -15,11 +12,6 @@ export default {
     "dialog.footer": "",
     "dialog.header": "",
     "dialog.title": "font-bold text-lg text-gray-950",
-
-    "dropdown": "bg-white border-1 border-gray-200 shadow-sm",
-    "dropdown.item": "hover:bg-gray-200",
-    "dropdown.label": "text-gray-600",
-    "dropdown.separator": "bg-gray-200",
 
     "export.preview": "text-gray-500 border-1 border-gray-200",
 

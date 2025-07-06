@@ -1,7 +1,6 @@
 import React from "react";
 import classNames from "classnames";
 import {CheckIcon, renderIcon} from "@josemi-icons/react";
-import {themed} from "../../contexts/theme.jsx";
 
 // @description dropdown component
 // @param {object} props React props
@@ -12,7 +11,10 @@ export const Dropdown = React.forwardRef(({className, ...props}, ref) => (
     <div
         ref={ref}
         data-testid="dropdown"
-        className={themed("absolute p-1 rounded-xl", "dropdown", className)}
+        className={classNames({
+            "absolute p-1 rounded-xl": true,
+            "bg-white border-1 border-gray-200 shadow-sm": true,
+        }, className)}
         {...props}
     />
 ));
@@ -51,7 +53,7 @@ Dropdown.HeaderButton = ({className, icon, text, onClick}) => (
 Dropdown.Separator = ({className, ...props}) => (
     <div
         data-testid="dropdown-separator"
-        className={themed("w-full h-px my-1", "dropdown.separator", className)}
+        className={classNames("w-full h-px my-1 bg-gray-200", className)}
         {...props}
     />
 );
@@ -64,7 +66,7 @@ Dropdown.Separator = ({className, ...props}) => (
 Dropdown.Label = ({className, ...props}) => (
     <div
         data-testid="dropdown-label"
-        className={themed("select-none text-xs mb-1", "dropdown.label", className)}
+        className={classNames("select-none text-xs mb-1 text-gray-600", className)}
         {...props}
     />
 );
@@ -81,12 +83,12 @@ Dropdown.Item = ({as, className, disabled = false, ...props}) => {
     return (
         <Component
             data-testid="dropdown-item"
-            className={themed({
+            className={classNames({
                 "relative flex items-center gap-2 select-none": true,
                 "rounded-lg text-sm no-underline px-2 py-1": true,
                 "pointer-events-none opacity-60 cursor-not-allowed": disabled,
                 "cursor-pointer": !disabled,
-                "dropdown.item": !disabled,
+                "hover:bg-gray-200": !disabled,
             }, className)}
             tabIndex="0"
             {...props}
