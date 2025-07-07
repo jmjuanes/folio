@@ -1,7 +1,6 @@
 import React from "react";
 import classNames from "classnames";
 import {FORM_OPTIONS} from "../../constants.js";
-import {themed} from "../../contexts/theme.jsx";
 import {ColorPicker} from "./color-picker.jsx";
 import {FontPicker} from "./font-picker.jsx";
 
@@ -44,11 +43,11 @@ const optionTypes = {
                     return null;
                 }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
-                const itemClass = themed({
+                const itemClass = classNames({
                     "flex flex-col justify-center items-center rounded-md py-2 grow-1": true,
                     "cursor-pointer": !active,
-                    "form.select.item.active": active,
-                    "form.select.item.inactive": !active,
+                    "active bg-gray-900 text-white": active,
+                    "bg-gray-100 hover:bg-gray-200": !active,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -72,11 +71,11 @@ const optionTypes = {
             {(props.values || []).map(value => (
                 <div
                     key={value}
-                    className={themed({
+                    className={classNames({
                         "flex flex-col justify-center items-center rounded-md h-8 grow-1": true,
                         "cursor-pointer": value !== props.value,
-                        "form.colorselect.item.active": value === props.value,
-                        "form.colorselect.item.inactive": value !== props.value,
+                        "active border-1 border-gray-300": value === props.value,
+                        "border-1 border-gray-300 opacity-50 hover:opacity-100": value !== props.value,
                     })}
                     style={{
                         backgroundColor: value,
@@ -94,11 +93,11 @@ const optionTypes = {
                 if (!checkIsVisible(item.value, props.value, props.isVisible, props.data)) {
                     return null;
                 }
-                const itemClass = themed({
+                const itemClass = classNames({
                     "flex flex-nowrap justify-center gap-1 items-center grow-1 rounded-md h-8 px-1": true,
                     "cursor-pointer": item.value !== props.value,
-                    "form.labeledselect.item.active": item.value === props.value,
-                    "form.labeledselect.item.inactive": item.value !== props.value,
+                    "active bg-gray-900 text-white": item.value === props.value,
+                    "bg-gray-100 hover:bg-gray-200": item.value !== props.value,
                     "cursor-not-allowed opacity-60": props.disabled,
                 });
                 return (
@@ -117,16 +116,16 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.RANGE]: props => (
-        <div className={themed("flex items-center gap-2", "form.range")}>
+        <div className="flex items-center gap-2">
             {props.title && (
-                <div className={themed("text-xs w-16 shrink-0", "form.option.title")}>
+                <div className="text-xs w-16 shrink-0 font-medium">
                     {props.title}
                 </div>
             )}
             <div className="flex items-center">
                 <input
                     type="range"
-                    className={themed("m-0 w-full h-1 mt-3 mb-2", "form.range.input")}
+                    className="m-0 w-full h-1 mt-3 mb-2 bg-gray-200"
                     onChange={e => props.onChange(e.target.value || 0)}
                     defaultValue={props.value}
                     min={props.minValue}
@@ -137,20 +136,19 @@ const optionTypes = {
         </div>
     ),
     [FORM_OPTIONS.CHECKBOX]: props => {
-        const inputClass = themed({
+        const inputClass = classNames({
             "cursor-pointer border-1 rounded-full p-px w-8 flex": true,
             "justify-end": !!props.value,
-            "form.checkbox.input": true,
-            "form.checkbox.input.active": !!props.value,
-            "form.checkbox.input.inactive": !props.value,
+            "active bg-gray-900 border-gray-900": !!props.value,
+            "bg-gray-200 border-gray-200": !props.value,
             "cursor-not-allowed opacity-60": props.disabled,
         });
         const handleClick = () => {
             return !props.disabled && props.onChange(!props.value);
         };
         return (
-            <div className={themed("flex items-center justify-between select-none", "form.checkbox")}>
-                <div className={themed("text-xs", "form.option.title")}>
+            <div className="flex items-center justify-between select-none">
+                <div className="text-xs font-medium">
                     {props.title}
                 </div>
                 <div className={inputClass} onClick={handleClick}>
@@ -187,11 +185,11 @@ const optionTypes = {
                     return null;
                 }
                 const active = checkIsActive(item.value, props.value, props.isActive, props.data);
-                const itemClass = themed({
+                const itemClass = classNames({
                     "flex flex-col justify-center items-center rounded-md py-0 grow-1": true,
                     "cursor-pointer": !active,
-                    "form.imageselect.item.active": active,
-                    "form.imageselect.item.inactive": !active,
+                    "active border-1 border-gray-900": active,
+                    "border-1 border-gray-200 hover:bg-gray-200": !active,
                 });
                 return (
                     <div key={item.value} className={itemClass} onClick={() => props.onChange(item.value)}>
@@ -204,7 +202,10 @@ const optionTypes = {
     [FORM_OPTIONS.TEXT]: props => (
         <input
             type="text"
-            className={themed("w-full px-2 py-0 h-8 rounded-md outline-0 text-xs", "form.text.input")}
+            className={classNames({
+                "w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
+                "bg-white border-1 border-gray-200 text-gray-900": true,
+            })}
             defaultValue={props.value}
             placeholder={props.placeholder}
             onChange={event => props.onChange(event.target.value)}
@@ -212,7 +213,10 @@ const optionTypes = {
     ),
     [FORM_OPTIONS.TEXTAREA]: props => (
         <textarea
-            className={themed("w-full px-2 py-1 rounded-md outline-0 text-xs", "form.text.input")}
+            className={classNames({
+                "w-full px-2 py-1 rounded-md outline-0 text-xs": true,
+                "bg-white border-1 border-gray-200 text-gray-900": true,
+            })}
             defaultValue={props.value}
             placeholder={props.placeholder}
             rows={props.rows ?? 3}
@@ -223,14 +227,14 @@ const optionTypes = {
         return props.render?.(props);
     },
     [FORM_OPTIONS.SEPARATOR]: () => (
-        <div className={themed("w-full h-px shrink-0", "form.separator")} />
+        <div className="w-full h-px shrink-0 bg-gray-200" />
     ),
 };
 
 export const Option = props => (
-    <div className={themed("form.option")}>
+    <div className="text-gray-900" data-testid="option">
         {(!optionsWithInlineTitle.has(props.type)) && !!props.title && (
-            <div className={themed("text-xs mb-1 select-none", "form.option.title")}>
+            <div className="text-xs mb-1 select-none font-medium">
                 {props.title}
             </div>
         )}
@@ -238,7 +242,7 @@ export const Option = props => (
             {optionTypes[props.type](props)}
         </div>
         {!!props.helper && (
-            <div className={themed("text-2xs mt-0 select-none", "form.option.helper")}>
+            <div className="text-2xs mt-0 select-none text-gray-600">
                 {props.helper}
             </div>
         )}
@@ -258,7 +262,7 @@ const getVisibleItems = (items, data) => {
 };
 
 export const Form = props => (
-    <div className={themed(props.className || "flex flex-col gap-4", "form")} style={props.style || {}}>
+    <div data-testid="form" className={props.className || "flex flex-col gap-4"} style={props.style || {}}>
         {getVisibleItems(props.items, props.data).map(key => (
             <React.Fragment key={key}>
                 <Option
