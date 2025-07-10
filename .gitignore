@@ -10,6 +10,7 @@ homepage/public
 firebase-debug.log
 .firebase
 *.tar.gz
+.cache
 
 # Configuration files
 .env
