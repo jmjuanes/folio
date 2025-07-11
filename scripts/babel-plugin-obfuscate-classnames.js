@@ -2,9 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 export default ({ types: t }) => {
-    const classMap = JSON.parse(fs.readFileSync(path.resolve("./.cache/classnames-map.json"), "utf8"));
+    const config = JSON.parse(fs.readFileSync(path.resolve("obfuscate.map.json"), "utf8"));
     const obfuscateClassString = str => {
-        return str.split(/\s+/).map(cls => classMap[cls] || cls).join(" ");
+        return str.split(/\s+/).map(cls => config.classNames[cls] || cls).join(" ");
     };
 
     return {
