@@ -1,15 +1,14 @@
 import React from "react";
-import {createPortal} from "react-dom";
+import { createPortal } from "react-dom";
 import classNames from "classnames";
-import {BarsIcon, LockIcon, DotsIcon} from "@josemi-icons/react";
-import {ACTIONS, EXPORT_PADDING} from "../../constants.js";
-import {Dropdown} from "../ui/dropdown.jsx";
-import {Island} from "../ui/island.jsx";
-import {useActions} from "../../hooks/use-actions.js";
-import {useEditor} from "../../contexts/editor.jsx";
-import {themed} from "../../contexts/theme.jsx";
-import {exportToDataURL} from "../../lib/export.js";
-import {clearFocus} from "../../utils/dom.js";
+import { BarsIcon, LockIcon, DotsIcon } from "@josemi-icons/react";
+import { ACTIONS, EXPORT_PADDING } from "../../constants.js";
+import { Dropdown } from "../ui/dropdown.jsx";
+import { Island } from "../ui/island.jsx";
+import { useActions } from "../../hooks/use-actions.js";
+import { useEditor } from "../../contexts/editor.jsx";
+import { exportToDataURL } from "../../lib/export.js";
+import { clearFocus } from "../../utils/dom.js";
 
 const PAGES_ITEM_HEIGHT = 37;
 const PAGES_PREVIEW_WIDTH = 140;
@@ -37,10 +36,10 @@ const usePagePreview = page => {
 // @private page in gallery mode
 const PageGalleryItem = ({page, active, onClick}) => {
     const previewImage = usePagePreview(page);
-    const previewClass = themed({
+    const previewClass = classNames({
         "shrink-0 rounded-md overflow-hidden cursor-pointer": true,
-        "pages.gallery.item": true,
-        "pages.gallery.item.active": active,
+        "border-2 border-gray-200": true,
+        "border-gray-950": active,
     });
     return (
         <div className="p-1" onClick={onClick}>

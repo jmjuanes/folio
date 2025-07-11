@@ -1,6 +1,6 @@
 import React from "react";
-import {useEditor} from "../contexts/editor.jsx";
-import {themed} from "../contexts/theme.jsx";
+import classNames from "classnames";
+import { useEditor } from "../contexts/editor.jsx";
 
 export const Title = () => {
     const editor = useEditor();
@@ -8,9 +8,9 @@ export const Title = () => {
     const inputRef = React.useRef();
     const [editing, setEditing] = React.useState(false);
     const editable = true; // TODO: check editor if data is editable
-    const previewClass = themed({
+    const previewClass = classNames({
         "flex items-center leading-none p-2 w-full rounded-md": true,
-        "title.preview": editable,
+        "text-gray-900 hover:bg-gray-200": editable,
         "cursor-pointer": editable,
     });
 
@@ -42,7 +42,7 @@ export const Title = () => {
                     ref={inputRef}
                     type="text"
                     defaultValue={title}
-                    className={themed("outline-none font-bold leading-none w-full p-2 rounded-md", "title.input")}
+                    className="outline-none font-bold leading-none w-full p-2 rounded-md text-gray-900 bg-gray-200"
                     placeholder="Untitled"
                     onKeyUp={event => {
                         if (event.key === "Enter") {

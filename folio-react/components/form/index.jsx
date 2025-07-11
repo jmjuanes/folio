@@ -271,7 +271,6 @@ export const Form = props => (
                     field={key}
                     value={props.data?.[key] ?? null}
                     data={props.data ?? {}}
-                    theme={props.theme}
                     onChange={value => props.onChange?.(key, value)}
                 />
                 {props.separator && (

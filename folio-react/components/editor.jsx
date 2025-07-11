@@ -9,7 +9,6 @@ import {useDimensions} from "../hooks/use-dimensions.js";
 import {Canvas} from "./canvas.jsx";
 import {Pointer} from "./pointer.jsx";
 import {EditorProvider, useEditor} from "../contexts/editor.jsx";
-import {ThemeProvider} from "../contexts/theme.jsx";
 import {ContextMenuProvider, useContextMenu} from "../contexts/context-menu.jsx";
 import {EditorComponentsProvider, useEditorComponents} from "../contexts/editor-components.jsx";
 import {ConfirmProvider} from "../contexts/confirm.jsx";
@@ -112,18 +111,16 @@ const InnerEditor = () => {
 // @param {function} props.onLibraryChange executed each time the library is updated
 export const Editor = props => {
     return (
-        <ThemeProvider theme="default">
-            <EditorComponentsProvider components={props.components}>
-                <EditorProvider {...props}>
-                    <ConfirmProvider>
-                        <DialogsProvider>
-                            <ContextMenuProvider>
-                                <InnerEditor />
-                            </ContextMenuProvider>
-                        </DialogsProvider>
-                    </ConfirmProvider>
-                </EditorProvider>
-            </EditorComponentsProvider>
-        </ThemeProvider>
+        <EditorComponentsProvider components={props.components}>
+            <EditorProvider {...props}>
+                <ConfirmProvider>
+                    <DialogsProvider>
+                        <ContextMenuProvider>
+                            <InnerEditor />
+                        </ContextMenuProvider>
+                    </DialogsProvider>
+                </ConfirmProvider>
+            </EditorProvider>
+        </EditorComponentsProvider>
     );
 };
