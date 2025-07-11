@@ -11,6 +11,7 @@ firebase-debug.log
 .firebase
 *.tar.gz
 .cache
+obfuscate.map.json
 
 # Configuration files
 .env
