@@ -61,7 +61,6 @@ export const EditableText = props => {
                             outline: "0px",
                             overflow: "hidden",
                             padding: "0px",
-                            // position: "absolute",
                             resize: "none",
                             textAlign: props.textAlign,
                             // transform: "translateX(-50%) translateY(-50%)",
