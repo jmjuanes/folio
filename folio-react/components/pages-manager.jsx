@@ -1,13 +1,12 @@
 import React from "react";
 import {useUpdate} from "react-use";
-// import classNames from "classnames";
-import {DotsVerticalIcon, CheckIcon} from "@josemi-icons/react";
-import {Island} from "./island.jsx";
-import {Dropdown} from "./ui/dropdown.jsx";
-import {useEditor} from "../contexts/editor.jsx";
-import {themed} from "../contexts/theme.jsx";
-import {usePagePreview} from "../hooks/use-page-preview.js";
-import {clearFocus} from "../utils/dom.js";
+import classNames from "classnames";
+import { DotsVerticalIcon, CheckIcon } from "@josemi-icons/react";
+import { Island } from "./island.jsx";
+import { Dropdown } from "./ui/dropdown.jsx";
+import { useEditor } from "../contexts/editor.jsx";
+import { usePagePreview } from "../hooks/use-page-preview.js";
+import { clearFocus } from "../utils/dom.js";
 
 const PREVIEW_WIDTH = 280;
 const PREVIEW_HEIGHT = 160;
@@ -20,7 +19,7 @@ const containerStyle = {
 };
 
 const Checkbox = ({checked, disabled, onClick}) => {
-    const checkboxClass = themed({
+    const checkboxClass = classNames({
         "flex items-center w-5 h-5 rounded-md border-2 border-gray-950 text-lg": true,
         "bg-white": !checked,
         "bg-gray-950 text-white": checked,
@@ -36,12 +35,12 @@ const Checkbox = ({checked, disabled, onClick}) => {
 // @private page in gallery mode
 const PageItem = ({page, dragging, onDragStart, onDelete, onDuplicate, ...props}) => {
     const previewImage = usePagePreview(page, PREVIEW_WIDTH, PREVIEW_HEIGHT);
-    const previewClass = themed({
+    const previewClass = classNames({
         "relative group shrink-0 rounded-md overflow-hidden cursor-pointer shadow-sm": true,
         "border-1 border-gray-200": !props.selected,
         "border-4 border-gray-950": props.selected,
     });
-    const checkboxContainerClass = themed({
+    const checkboxContainerClass = classNames({
         "absolute top-0 right-0 mt-2 mr-2 z-40": true,
         "hidden group-hover:block": !props.selected,
     });
@@ -106,14 +105,14 @@ const PageDraggingPreview = ({page, x, y}) => {
 
 // @private page separator
 const PageSeparator = ({className, active = false, visible = false, onPointerEnter, onPointerLeave}) => {
-    const separatorClass = themed(className, {
+    const separatorClass = classNames(className, {
         "flex items-center w-4 h-48": true,
         "opacity-0 pointer-events-none": !visible,
     });
     return (
         <div className={separatorClass} onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
             <div
-                className={themed({
+                className={classNames({
                     "w-1": true,
                     "h-20 bg-gray-200": !active,
                     "h-40 bg-gray-900": active,

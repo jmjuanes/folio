@@ -40,36 +40,6 @@ Panel.TabsItem = props => {
     );
 };
 
-// // panel header
-// Panel.Header = props => (
-//     <div className={themed("flex items-center justify-between p-2 h-12", "panel.header", props.className)}>
-//         {props.children}
-//     </div>
-// );
-// 
-// // panel header title
-// Panel.HeaderTitle = props => (
-//     <div className={themed("text-sm select-none", "panel.header.title", props.className)}>
-//         {props.children}
-//     </div>
-// );
-// 
-// // panel header button
-// Panel.HeaderButton = ({active, disabled = false, className, children, onClick}) => {
-//     const classList = themed({
-//         "flex items-center rounded-md cursor-pointer p-2": true,
-//         "panel.header.button": true,
-//         "panel.header.button.active": active,
-//         "panel.header.button.inactive": !active,
-//         "opacity-50 pointer-events-none": disabled,
-//     }, className);
-//     return (
-//         <div className={classList} onClick={onClick}>
-//             {children}
-//         </div>
-//     );
-// };
-
 // @description panel body content
 Panel.Body = ({className, ...props}) => (
     <div className={classNames("p-2", className)} {...props} />

@@ -1,5 +1,5 @@
 import React from "react";
-import {ImageIcon, DownloadIcon, ClipboardIcon} from "@josemi-icons/react";
+import { ImageIcon, DownloadIcon, ClipboardIcon } from "@josemi-icons/react";
 import {
     EXPORT_FORMATS,
     EXPORT_PADDING,
@@ -11,12 +11,11 @@ import {
     exportToFile,
     exportToClipboard,
 } from "../../lib/export.js";
-import {Button} from "../ui/button.jsx";
-import {Dialog} from "../ui/dialog.jsx";
-import {Form} from "../form/index.jsx";
-import {useEditor} from "../../contexts/editor.jsx";
-import {useDialog} from "../../contexts/dialogs.jsx";
-import {themed} from "../../contexts/theme.jsx";
+import { Button } from "../ui/button.jsx";
+import { Dialog } from "../ui/dialog.jsx";
+import { Form } from "../form/index.jsx";
+import { useEditor } from "../../contexts/editor.jsx";
+import { useDialog } from "../../contexts/dialogs.jsx";
 import transparentBg from "../../assets/transparent.svg";
 
 const previewStyle = {
@@ -104,7 +103,7 @@ export const ExportDialog = () => {
                 <Dialog.Title>Export as image</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body className="">
-                <div className={themed("select-none mb-4 rounded-lg overflow-hidden", "export.preview")}>
+                <div className="select-none mb-4 rounded-lg overflow-hidden text-gray-500 border-1 border-gray-200">
                     {!!previewImage && (
                         <div className="flex items-center justify-center h-48" style={previewStyle}>
                             <img src={previewImage} className="max-h-48" />

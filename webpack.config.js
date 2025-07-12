@@ -1,7 +1,6 @@
 import path from "node:path";
 import webpack from "webpack";
 import TerserPlugin from "terser-webpack-plugin";
-// import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import pkg from "./package.json" with {type: "json"};
 
 export default {
@@ -60,6 +59,7 @@ export default {
                     plugins: [
                         "@babel/plugin-transform-react-jsx",
                         "@babel/plugin-transform-runtime",
+                        path.resolve("scripts/babel-plugin-obfuscate-classnames.js"),
                     ],
                 },
             },

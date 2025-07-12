@@ -225,7 +225,7 @@ export const Canvas = props => {
             onDoubleClick={e => handleDoubleClick(e, null, props.onDoubleClickCanvas)}
             onContextMenu={e => handleContextMenu(e)}
         >
-            <div style={{position:"absolute", transform:transform.join(" ")}}>
+            <div className="absolute" style={{transform:transform.join(" ")}}>
                 <style type="text/css">
                     {props.fonts.map(font => `@import url('${font}');`).join("")}
                 </style>

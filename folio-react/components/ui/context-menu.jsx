@@ -1,12 +1,11 @@
 import React from "react";
 import classNames from "classnames";
-import {renderIcon} from "@josemi-icons/react";
-import {themed} from "../../contexts/theme.jsx";
+import { renderIcon } from "@josemi-icons/react";
 
 export const ContextMenu = ({className, ...props}) => (
     <div
         data-testid="contextmenu"
-        className={themed("p-1 rounded-xl", "context-menu", className)}
+        className={classNames("p-1 rounded-xl bg-white shadow-sm border-1 border-gray-200", className)}
         {...props}
     />
 );
@@ -14,11 +13,11 @@ export const ContextMenu = ({className, ...props}) => (
 ContextMenu.Item = ({className, disabled = false, ...props}) => (
     <div
         data-testid="contextmenu-item"
-        className={themed({
+        className={classNames({
             "relative flex items-center gap-2 select-none rounded-lg text-sm px-2 py-1": true,
             "pointer-events-none opacity-60 cursor-disabled": disabled,
             "cursor-pointer": !disabled,
-            "context-menu.item": !disabled,
+            "hover:bg-gray-200": !disabled,
         }, className)}
         {...props}
     />
@@ -41,7 +40,7 @@ ContextMenu.Shortcut = ({className, ...props}) => (
 ContextMenu.Separator = ({className, ...props}) => (
     <div
         data-testid="contextmenu-separator"
-        className={themed("w-full h-px my-1", "context-menu.separator", className)}
+        className={classNames("w-full h-px my-1 bg-gray-200", className)}
         {...props}
     />
 );

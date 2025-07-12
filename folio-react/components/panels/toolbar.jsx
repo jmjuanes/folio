@@ -1,17 +1,19 @@
 import React from "react";
 import classNames from "classnames";
-import {useUpdate} from "react-use";
-import {LockIcon, UnlockIcon, DotsVerticalIcon, renderIcon} from "@josemi-icons/react";
-import {Dropdown} from "../ui/dropdown.jsx";
-import {Form} from "../form/index.jsx";
-import {useEditor} from "../../contexts/editor.jsx";
-import {useContextMenu} from "../../contexts/context-menu.jsx";
-import {themed} from "../../contexts/theme.jsx";
-import {useTools} from "../../hooks/use-tools.js";
+import { useUpdate } from "react-use";
+import { LockIcon, UnlockIcon, DotsVerticalIcon, renderIcon } from "@josemi-icons/react";
+import { Dropdown } from "../ui/dropdown.jsx";
+import { Form } from "../form/index.jsx";
+import { useEditor } from "../../contexts/editor.jsx";
+import { useContextMenu } from "../../contexts/context-menu.jsx";
+import { useTools } from "../../hooks/use-tools.js";
 
 const PickPanel = props => (
     <div
-        className={themed("absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3", "toolbar.pick")}
+        className={classNames({
+            "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
+            "bg-white border-1 border-gray-200 shadow-sm": true,
+        })}
         style={{
             transform: "translateX(-50%)",
         }}
@@ -21,7 +23,7 @@ const PickPanel = props => (
             data={props.values}
             items={props.items}
             separator={(
-                <div className={themed("w-px h-6", "toolbar.pick.separator")} />
+                <div className="w-px h-6 bg-gray-200" />
             )}
             onChange={props.onChange}
         />
@@ -29,12 +31,11 @@ const PickPanel = props => (
 );
 
 const ToolbarButton = props => {
-    const classList = themed({
+    const classList = classNames({
         "flex flex-col justify-center items-center px-4 py-2 gap-1 rounded-xl": true,
         "cursor-pointer": !props.active,
-        "toolbar.button": true,
-        "toolbar.button.active": props.active,
-        "toolbar.button.inactive": !props.active,
+        "bg-gray-950 text-white": props.active,
+        "hover:bg-gray-200": !props.active,
         "pointer-events-none opacity-60 cursor-not-allowed": props.disabled,
     }, props.className);
 
@@ -90,16 +91,16 @@ export const ToolbarPanel = () => {
         update();
     }, []);
 
-    const lockButtonClass = themed({
+    const lockButtonClass = classNames({
         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-        "toolbar.lock.active": editor.state.toolLocked,
-        "toolbar.lock.inactive": !editor.state.toolLocked,
+        "bg-gray-950 text-white": editor.state.toolLocked,
+        "opacity-50 hover:opacity-100": !editor.state.toolLocked,
         "pointer-events-none opacity-40 cursor-not-allowed": editor.page.readonly,
     });
 
     return (
         <div className="flex items-center relative select-none">
-            <div className={themed("rounded-2xl items-center flex gap-2 p-1", "toolbar")}>
+            <div className="rounded-2xl items-center flex gap-2 p-1 border-1 border-gray-200 bg-white shadow-sm text-gray-900">
                 {primaryTools.map(key => (
                     <div key={key} className="flex relative">
                         <ToolbarButton
@@ -129,7 +130,7 @@ export const ToolbarPanel = () => {
                 ))}
                 {secondaryTools.length > 0 && (
                     <div className="flex self-stretch relative group" tabIndex="0">
-                        <div className={themed("flex items-center cursor-pointer rounded-xl px-1", "toolbar.dots")}>
+                        <div className="flex items-center cursor-pointer rounded-xl px-1 hover:bg-gray-200 group-focus-within:bg-gray-200">
                             <div className="flex items-center text-xl">
                                 <DotsVerticalIcon />
                             </div>
