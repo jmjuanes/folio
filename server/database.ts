@@ -22,10 +22,10 @@ const initDB = async () => {
             id TEXT NOT NULL,
             object TEXT NOT NULL,
             parent TEXT DEFAULT NULL,
-            name TEXT DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            content TEXT NOT NULL,
+            attributes TEXT,
+            content TEXT,
             PRIMARY KEY (id)
         );
         CREATE INDEX IF NOT EXISTS idx_${DB_TABLE}_id ON ${DB_TABLE} (id);
@@ -38,7 +38,7 @@ const initDB = async () => {
     const userExists = await db.get(`SELECT COUNT(*) as count FROM ${DB_TABLE} WHERE object = ?`, [OBJECT_TYPES.USER]);
     if (userExists.count === 0) {
         await db.run(
-            `INSERT INTO ${DB_TABLE} (id, object, metadata, content) VALUES (?, ?, ?, ?)`,
+            `INSERT INTO ${DB_TABLE} (id, object, attributes, content) VALUES (?, ?, ?, ?)`,
             [uid(20), OBJECT_TYPES.USER, "{}", "{}"],
         );
     }
@@ -51,14 +51,14 @@ export const db = await initDB();
 // @description insert a new object into the database
 // @param {string} object - The type of object to insert
 // @param {string} parent - The parent ID of the object
-// @param {string} name - The name of the object
-// @param {Object} content - The content of the object
+// @param {string} attributes - Additional attributes of the object
+// @param {string} content - The content of the object
 // @returns {Promise<string>} - The ID of the inserted object
-export const insertObject = async (object: string, parent: string = null, name: string = null, content: any = {}): Promise<string> => {
+export const insertObject = async (object: string, parent: string, attributes: string, content: string): Promise<string> => {
     const id = uid(20); // generate a unique ID for the object
     await db.run(
-        `INSERT INTO ${DB_TABLE} (id, object, parent, name, content) VALUES (?, ?, ?, ?, ?)`,
-        [id, object, parent, name || "", JSON.stringify(content || {})],
+        `INSERT INTO ${DB_TABLE} (id, object, parent, attributes, content) VALUES (?, ?, ?, ?, ?)`,
+        [id, object, parent || null, attributes || "{}", content || ""],
     );
     return id; // return the ID of the inserted object
 };
@@ -69,7 +69,7 @@ export const insertObject = async (object: string, parent: string = null, name: 
 // @returns {Promise<Object>} - The object that matches the ID and type, or null if not found
 export const getObject = async (object: string, id: string): Promise<any> => {
     return await db.get(
-        `SELECT id, object, parent, name, created_at, updated_at FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
+        `SELECT id, object, parent, attributes, created_at, updated_at FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
         [id, object],
     );
 };
@@ -77,12 +77,12 @@ export const getObject = async (object: string, id: string): Promise<any> => {
 // @description update an existing object in the database
 // @param {string} object - The type of object to update
 // @param {string} id - The ID of the object to update
-// @param {Object} content - The new content for the object
+// @param {string} attributes - The new attributes for the object
 // @returns {Promise<void>} - Resolves when the update is complete
-export const updateObject = async (object: string, id: string, metadata: any = {}): Promise<void> => {
+export const updateObject = async (object: string, id: string, attributes: string): Promise<void> => {
     await db.run(
-        `UPDATE ${DB_TABLE} SET name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND object = ?`,
-        [JSON.stringify(metadata), id, object],
+        `UPDATE ${DB_TABLE} SET attributes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND object = ?`,
+        [attributes || "{}", id, object],
     );
 };
 
@@ -100,12 +100,12 @@ export const getObjectContent = async (object: string, id: string): Promise<any>
 // @description update the content of an object in the database
 // @param {string} object - The type of object to update
 // @param {string} id - The ID of the object to update
-// @param {Object} content - The new content for the object
+// @param {string} content - The new content for the object
 // @returns {Promise<void>} - Resolves when the update is complete
-export const updateObjectContent = async (object: string, id: string, content: any): Promise<void> => {
+export const updateObjectContent = async (object: string, id: string, content: string): Promise<void> => {
     await db.run(
         `UPDATE ${DB_TABLE} SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND object = ?`,
-        [JSON.stringify(content), id, object],
+        [content || "", id, object],
     );
 };
 
@@ -129,7 +129,7 @@ export const deleteObject = async (object: string, id: string): Promise<void> =>
 // @returns {Promise<Array>} - An array of objects that match the criteria
 export const getChildrenObjects = async (object: string, parent: string): Promise<any[]> => {
     return db.all(
-        `SELECT id, object, parent, name, created_at, updated_at FROM ${DB_TABLE} WHERE object = ? AND parent = ? ORDER BY updated_at DESC`,
+        `SELECT id, object, parent, attributes, created_at, updated_at FROM ${DB_TABLE} WHERE object = ? AND parent = ? ORDER BY updated_at DESC`,
         [object, parent],
     );
 };
