@@ -13,21 +13,26 @@
         "./package.json": "./package.json"
     },
     "scripts": {
-        "start": "node index.js"
+        "compile": "tsc --project tsconfig.json",
+        "start": "node dist/index.js"
     },
     "dependencies": {
         "@koa/bodyparser": "^6.0.0",
         "@koa/cors": "^5.0.0",
         "@koa/router": "^13.1.0",
         "@koa/send": "^6.0.0",
+        "@types/koa-bodyparser": "^4.3.12",
+        "@types/node": "^24.0.14",
         "debug": "^4.4.1",
         "dotenv": "^16.5.0",
+        "graphql": "^16.11.0",
         "helmet": "^8.1.0",
         "jsonwebtoken": "^9.0.2",
         "koa": "^3.0.0",
         "koa-helmet": "^8.0.1",
         "sqlite": "^5.1.1",
         "sqlite3": "^5.1.7",
+        "typescript": "^5.8.3",
         "uid": "^2.0.2"
     },
     "license": "MIT"

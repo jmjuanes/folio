@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "outDir": "./dist",
+        "module": "es2022",
+        "target": "es2022",
+        "moduleResolution": "node",
+        "skipLibCheck": true
+    },
+    "exclude": [
+        "node_modules/**/*",
+        "**/*.js"
+    ]
+}
