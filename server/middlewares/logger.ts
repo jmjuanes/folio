@@ -1,6 +1,8 @@
+import { ExtendedContext } from "../types/commons";
+
 // simple logger middleware
 export const logger = () => {
-    return async (ctx, next) => {
+    return async (ctx: ExtendedContext, next: () => Promise<void>) => {
         const start = Date.now();
         await next();
         ctx.set("X-Response-Time", `${(Date.now() - start)}ms`);

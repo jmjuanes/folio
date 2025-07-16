@@ -4,9 +4,26 @@ import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { uid } from "uid/secure";
 import { DB_PATH, DB_TABLE, OBJECT_TYPES } from "./env";
+import { DatabaseOptions, DatabaseManager } from "./types/database";
 
-// initialize database
-const initDB = async () => {
+// get fields to query the database
+const getFields = (includeContent: boolean = false): string => {
+    const fields = [
+        "id",
+        "object",
+        "parent",
+        "created_at",
+        "updated_at",
+        "attributes"
+    ];
+    if (includeContent) {
+        fields.push("content");
+    }
+    return fields.join(", ");
+};
+
+// create an instance of a database
+export const createDatabase = async (options: DatabaseOptions = {}): Promise<DatabaseManager> => {
     // 1. ensure the database directory exists
     if (!fs.existsSync(path.dirname(DB_PATH))) {
         fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
@@ -42,94 +59,76 @@ const initDB = async () => {
             [uid(20), OBJECT_TYPES.USER, "{}", "{}"],
         );
     }
-    return db;
-};
-
-// get the database instance
-export const db = await initDB();
-
-// @description insert a new object into the database
-// @param {string} object - The type of object to insert
-// @param {string} parent - The parent ID of the object
-// @param {string} attributes - Additional attributes of the object
-// @param {string} content - The content of the object
-// @returns {Promise<string>} - The ID of the inserted object
-export const insertObject = async (object: string, parent: string, attributes: string, content: string): Promise<string> => {
-    const id = uid(20); // generate a unique ID for the object
-    await db.run(
-        `INSERT INTO ${DB_TABLE} (id, object, parent, attributes, content) VALUES (?, ?, ?, ?, ?)`,
-        [id, object, parent || null, attributes || "{}", content || ""],
-    );
-    return id; // return the ID of the inserted object
-};
-
-// @description get an object by its ID and type
-// @param {string} object - The type of object to retrieve
-// @param {string} id - The ID of the object to retrieve
-// @returns {Promise<Object>} - The object that matches the ID and type, or null if not found
-export const getObject = async (object: string, id: string): Promise<any> => {
-    return await db.get(
-        `SELECT id, object, parent, attributes, created_at, updated_at FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
-        [id, object],
-    );
-};
-
-// @description update an existing object in the database
-// @param {string} object - The type of object to update
-// @param {string} id - The ID of the object to update
-// @param {string} attributes - The new attributes for the object
-// @returns {Promise<void>} - Resolves when the update is complete
-export const updateObject = async (object: string, id: string, attributes: string): Promise<void> => {
-    await db.run(
-        `UPDATE ${DB_TABLE} SET attributes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND object = ?`,
-        [attributes || "{}", id, object],
-    );
-};
-
-// @description get the content of an object by its ID and type
-// @param {string} object - The type of object to retrieve
-// @param {string} id - The ID of the object to retrieve
-// @returns {Promise<Object>} - The content of the object that matches the ID and type
-export const getObjectContent = async (object: string, id: string): Promise<any> => {
-    return db.get(
-        `SELECT content FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
-        [id, object],
-    );
-};
-
-// @description update the content of an object in the database
-// @param {string} object - The type of object to update
-// @param {string} id - The ID of the object to update
-// @param {string} content - The new content for the object
-// @returns {Promise<void>} - Resolves when the update is complete
-export const updateObjectContent = async (object: string, id: string, content: string): Promise<void> => {
-    await db.run(
-        `UPDATE ${DB_TABLE} SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND object = ?`,
-        [content || "", id, object],
-    );
-};
-
-// @description delete an object from the database
-// @param {string} id - The ID of the object to delete
-// @param {string} object - The type of object to delete
-// @returns {Promise<void>} - Resolves when the deletion is complete
-export const deleteObject = async (object: string, id: string): Promise<void> => {
-    // 1. delete the object itself
-    await db.run(
-        `DELETE FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
-        [id, object],
-    );
-    // 2. remove all children of the object
-    await db.run(`DELETE FROM ${DB_TABLE} WHERE parent = ?`, [id]);
-};
-
-// @description get children of a given parent object
-// @param {string} object - The type of object to search for
-// @param {string} parent - The parent ID to search for
-// @returns {Promise<Array>} - An array of objects that match the criteria
-export const getChildrenObjects = async (object: string, parent: string): Promise<any[]> => {
-    return db.all(
-        `SELECT id, object, parent, attributes, created_at, updated_at FROM ${DB_TABLE} WHERE object = ? AND parent = ? ORDER BY updated_at DESC`,
-        [object, parent],
-    );
+    // return api to access to the database
+    return {
+        // @description insert a new object into the database
+        // @param {string} object - The type of object to insert
+        // @param {string} parent - The parent ID of the object
+        // @param {string} attributes - Additional attributes of the object
+        // @param {string} content - The content of the object
+        // @returns {Promise<string>} - The ID of the inserted object
+        insertObject: async (object: string, parent: string, attributes: string, content: string): Promise<string> => {
+            const id = uid(20); // generate a unique ID for the object
+            await db.run(
+                `INSERT INTO ${DB_TABLE} (id, object, parent, attributes, content) VALUES (?, ?, ?, ?, ?)`,
+                [id, object, parent || null, attributes || "{}", content || ""],
+            );
+            return id; // return the ID of the inserted object
+        },
+        // @description get an object by its ID and type
+        // @param {string} object - The type of object to retrieve
+        // @param {string} id - The ID of the object to retrieve
+        // @param {boolean} includeContent - Whether to include content in the result. Defaults to true.
+        // @returns {Promise<Object>} - The object that matches the ID and type, or null if not found
+        getObject: async (object: string, id?: string, includeContent?: boolean): Promise<object> => {
+            return await db.get(
+                `SELECT ${getFields(includeContent ?? true)} FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
+                [id, object],
+            );
+        },
+        // @description update an existing object in the database
+        // @param {string} object - The type of object to update
+        // @param {string} id - The ID of the object to update
+        // @param {string} attributes - The new attributes for the object
+        // @param {string} content - The new content for the object
+        // @returns {Promise<void>} - Resolves when the update is complete
+        updateObject: async (object: string, id: string, attributes: string = null, content: string = null): Promise<void> => {
+            if (typeof attributes === "string") {
+                await db.run(
+                    `UPDATE ${DB_TABLE} SET attributes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND object = ?`,
+                    [attributes || "{}", id, object],
+                );
+            }
+            if (typeof content === "string") {
+                await db.run(
+                    `UPDATE ${DB_TABLE} SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND object = ?`,
+                    [content || "", id, object],
+                );
+            }
+        },
+        // @description delete an object from the database
+        // @param {string} id - The ID of the object to delete
+        // @param {string} object - The type of object to delete
+        // @returns {Promise<void>} - Resolves when the deletion is complete
+        deleteObject: async (object: string, id: string): Promise<void> => {
+            // 1. delete the object itself
+            await db.run(
+                `DELETE FROM ${DB_TABLE} WHERE id = ? AND object = ?`,
+                [id, object],
+            );
+            // 2. remove all children of the object
+            await db.run(`DELETE FROM ${DB_TABLE} WHERE parent = ?`, [id]);
+        },
+        // @description get children of a given parent object
+        // @param {string} object - The type of object to search for
+        // @param {string} parent - The parent ID to search for
+        // @param {boolean} includeContent - Whether to include content in the results. Defaults to false.
+        // @returns {Promise<Array>} - An array of objects that match the criteria
+        getChildrenObjects: async (object: string, parent: string|null, includeContent: boolean = false): Promise<object[]> => {
+            return db.all(
+                `SELECT ${getFields(includeContent)} FROM ${DB_TABLE} WHERE object = ? AND parent = ? ORDER BY updated_at DESC`,
+                [object, parent],
+            );
+        },
+    };
 };

@@ -1,20 +1,20 @@
 import Router from "@koa/router";
-import { db } from "../database.js";
-import { ACCESS_TOKEN, generateJwtToken } from "../token.js";
-import { DB_TABLE, OBJECT_TYPES } from "../config.js";
+import { ACCESS_TOKEN, generateJwtToken } from "../token";
+import { OBJECT_TYPES } from "../env";
+import { ExtendedContext } from "../types/commons";
 
 export const loginRouter = new Router();
 
 // GET - login route
-loginRouter.get("/", async ctx => {
+loginRouter.get("/", async (ctx: ExtendedContext) => {
     return ctx.send(405, {
         message: "Method Not Allowed. Use POST to login.",
     });
 });
 
 // POST - login route
-loginRouter.post("/", async ctx => {
-    const {token} = ctx.request.body;
+loginRouter.post("/", async (ctx: ExtendedContext) => {
+    const { token } = ctx.request.body;
     if (!token) {
         return ctx.send(400, {
             message: "Token is required",
@@ -27,16 +27,18 @@ loginRouter.post("/", async ctx => {
         });
     }
     // get the user object from the database
-    const user = await db.get(
-        `SELECT id FROM ${DB_TABLE} WHERE object = ?`,
-        [OBJECT_TYPES.USER],
-    );
+    const users = await ctx.state.db.getChildrenObjects(OBJECT_TYPES.USER, null, false);
+    if (users.length === 0 || users.length > 1) {
+        return ctx.send(500, {
+            message: "wtf??",
+        });
+    }
     // generate the JWT token for API access and return it as part 
     // of the response object
     return ctx.ok({
         message: "ok",
         token: generateJwtToken({
-            id: user.id,
+            id: users[0].id,
         }),
     });
 });

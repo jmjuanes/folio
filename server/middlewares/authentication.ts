@@ -1,7 +1,8 @@
-import {verifyJwtToken} from "../token.js";
+import { verifyJwtToken } from "../token";
+import { ExtendedContext } from "../types/commons";
 
-// Authentication middleware
-export const authentication = async (ctx, next) => {
+// authentication middleware
+export const authentication = async (ctx: ExtendedContext, next: () => Promise<any>) => {
     const authHeader = ctx.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
     // validate that token has been provided in the authorization header
@@ -12,8 +13,8 @@ export const authentication = async (ctx, next) => {
         });
     }
     // verify the token and extract user information
-    const payload = verifyJwtToken(token);
-    if (!payload) {
+    const payload = verifyJwtToken(token) as { id: string } | null;
+    if (!payload || !payload?.id) {
         return ctx.send(403, {
             message: "Invalid or expired token",
         });

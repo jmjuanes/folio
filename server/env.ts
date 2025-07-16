@@ -65,7 +65,8 @@ export const OBJECT_TYPES = {
 
 // endpoints
 export const ENDPOINTS = {
-    LOGIN: `api/login`,
-    STATUS: `api/status`,
-    GRAPHQL: `api/graphql`,
+    API: "api/",
+    LOGIN: "api/login",
+    STATUS: "api/status",
+    GRAPHQL: "api/graphql",
 };

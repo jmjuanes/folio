@@ -1,6 +1,5 @@
 import * as graphql from "graphql";
 import { OBJECT_TYPES } from "./env";
-import { getObject, getChildrenObjects } from "./database";
 
 // declare the primary document type
 export const documentType = new graphql.GraphQLObjectType({
@@ -46,7 +45,7 @@ export const schema = new graphql.GraphQLSchema({
                 type: documentType,
                 description: "Retrieve the information about the logged-in user",
                 resolve: (source, args, context) => {
-                    return getObject(OBJECT_TYPES.USER, context.userId);
+                    return context.db.getObject(OBJECT_TYPES.USER, context.userId, false);
                 },
             },
             getUser: {
@@ -58,21 +57,21 @@ export const schema = new graphql.GraphQLSchema({
                         description: "the ID of the user to retrieve",
                     },
                 },
-                resolve: (source, args) => {
-                    return getObject(OBJECT_TYPES.USER, args.id);
+                resolve: (source, args, context) => {
+                    return context.db.getObject(OBJECT_TYPES.USER, args.id, false);
                 }
             },
             getUserBoards: {
                 type: new graphql.GraphQLList(documentType),
                 description: "Retrieve all boards created by the provided user ID",
                 args: {
-                    userId: {
+                    id: {
                         type: graphql.GraphQLString,
                         description: "the ID of the user whose boards to retrieve",
                     },
                 },
-                resolve: (source, args) => {
-                    return getChildrenObjects(OBJECT_TYPES.BOARD, args.userId);
+                resolve: (source, args, context) => {
+                    return context.db.getChildrenObjects(OBJECT_TYPES.BOARD, args.id, false);
                 },
             },
             getBoard: {
@@ -83,14 +82,69 @@ export const schema = new graphql.GraphQLSchema({
                         description: "the ID of the board to retrieve",
                     },
                 },
-                resolve: (source, args) => {
-                    return getObject(OBJECT_TYPES.BOARD, args.id);
+                resolve: (source, args, context) => {
+                    return context.db.getObject(OBJECT_TYPES.BOARD, args.id, true);
                 },
             },
         },
     }),
     mutation: new graphql.GraphQLObjectType({
         name: "Mutation",
-        fields: {},
+        fields: {
+            createBoard: {
+                type: documentType,
+                description: "create a new board",
+                args: {
+                    attributes: {
+                        type: graphql.GraphQLString,
+                        description: "additional attributes for the board",
+                    },
+                    content: {
+                        type: graphql.GraphQLString,
+                        description: "the content of the board",
+                    },
+                },
+                resolve: async (source, args, context) => {
+                    const id = await context.db.insertObject(OBJECT_TYPES.BOARD, context.userId, args.attributes, args.content);
+                    return { id };
+                },
+            },
+            updateBoard: {
+                type: documentType,
+                description: "update a board's content",
+                args: {
+                    id: {
+                        type: graphql.GraphQLString,
+                        description: "the ID of the board to update",
+                    },
+                    attributes: {
+                        type: graphql.GraphQLString,
+                        description: "the new attributes for the board",
+                    },
+                    content: {
+                        type: graphql.GraphQLString,
+                        description: "the new content for the board",
+                    },
+                },
+                resolve: async (source, args, context) => {
+                    await context.db.updateObject(OBJECT_TYPES.BOARD, args.id, args.attributes, args.content);
+                    return { id: args.id };
+                },
+            },
+            deleteBoard: {
+                type: documentType,
+                description: "delete a board by ID",
+                args: {
+                    id: {
+                        type: graphql.GraphQLString,
+                        description: "the ID of the board to delete",
+                    },
+                },
+                resolve: async (source, args, context) => {
+                    await context.db.deleteObject(OBJECT_TYPES.BOARD, args.id);
+                    return { id: args.id };
+                },
+            },
+        },
     }),
 }) as graphql.GraphQLSchema;
