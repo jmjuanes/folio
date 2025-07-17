@@ -1,5 +1,5 @@
 import * as graphql from "graphql";
-import { OBJECT_TYPES } from "./env";
+import { ObjectTypes } from "./types/storage.ts";
 
 // declare the primary document type
 export const documentType = new graphql.GraphQLObjectType({
@@ -45,7 +45,7 @@ export const schema = new graphql.GraphQLSchema({
                 type: documentType,
                 description: "Retrieve the information about the logged-in user",
                 resolve: (source, args, context) => {
-                    return context.db.getObject(OBJECT_TYPES.USER, context.userId, false);
+                    return context.store.getObject(ObjectTypes.USER, context.userId, false);
                 },
             },
             getUser: {
@@ -58,7 +58,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: (source, args, context) => {
-                    return context.db.getObject(OBJECT_TYPES.USER, args.id, false);
+                    return context.store.getObject(ObjectTypes.USER, args.id, false);
                 }
             },
             getUserBoards: {
@@ -71,7 +71,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: (source, args, context) => {
-                    return context.db.getChildrenObjects(OBJECT_TYPES.BOARD, args.id, false);
+                    return context.store.getChildrenObjects(ObjectTypes.BOARD, args.id, false);
                 },
             },
             getBoard: {
@@ -83,7 +83,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: (source, args, context) => {
-                    return context.db.getObject(OBJECT_TYPES.BOARD, args.id, true);
+                    return context.store.getObject(ObjectTypes.BOARD, args.id, true);
                 },
             },
         },
@@ -105,7 +105,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    const id = await context.db.insertObject(OBJECT_TYPES.BOARD, context.userId, args.attributes, args.content);
+                    const id = await context.store.insertObject(ObjectTypes.BOARD, context.userId, args.attributes, args.content);
                     return { id };
                 },
             },
@@ -127,7 +127,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    await context.db.updateObject(OBJECT_TYPES.BOARD, args.id, args.attributes, args.content);
+                    await context.store.updateObject(ObjectTypes.BOARD, args.id, args.attributes, args.content);
                     return { id: args.id };
                 },
             },
@@ -141,7 +141,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    await context.db.deleteObject(OBJECT_TYPES.BOARD, args.id);
+                    await context.store.deleteObject(ObjectTypes.BOARD, args.id);
                     return { id: args.id };
                 },
             },

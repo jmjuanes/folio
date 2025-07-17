@@ -1,5 +1,5 @@
 import { send } from "@koa/send";
-import { ExtendedContext } from "../types/commons";
+import type { ExtendedContext } from "../types/custom.ts";
 
 // middleware to serve static files from www folder
 export const staticContent = (options: any = {}) => {
@@ -10,9 +10,9 @@ export const staticContent = (options: any = {}) => {
             return;
         }
         // if the request is for an API endpoint, skip serving static files
-        // if (ctx.path.startsWith(ENDPOINTS.API)) {
-        //     return;
-        // }
+        if (ctx.path.startsWith("_") || ctx.path.startsWith("/_")) {
+            return;
+        }
         await send(ctx, ctx.path, {
             root: options.directory,
             index: options.index || "index.html",

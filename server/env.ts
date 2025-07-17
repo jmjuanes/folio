@@ -1,4 +1,4 @@
-import fs, { read } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import dotenv from "dotenv";
 
@@ -41,32 +41,4 @@ export const environment: Environment = {
     ...readFileEnv("../.env.production", NodeEnv.PRODUCTION),
     ...readFileEnv("../.env.development", NodeEnv.DEVELOPMENT),
     ...readFileEnv("../.env.local", NodeEnv.DEVELOPMENT),
-};
-
-// Port where the server will run
-export const PORT = environment.FOLIO_PORT || 8080;
-
-// paths to the server directories
-export const ROOT_PATH = path.resolve(process.cwd(), "../");
-export const DATA_PATH = path.resolve(ROOT_PATH, environment.FOLIO_DATA_PATH || "data");
-export const WWW_PATH = path.resolve(ROOT_PATH, environment.FOLIO_WWW_PATH || "www");
-
-// database
-export const DB_PATH = path.join(DATA_PATH, environment.FOLIO_DB_NAME || "folio.sqlite");
-export const DB_TABLE = environment.FOLIO_DB_TABLE || "documents";
-
-// object types
-export const OBJECT_TYPES = {
-    BOARD: "board",
-    PROPERTY: "property_item",
-    USER: "user",
-    LIBRARY: "library",
-};
-
-// endpoints
-export const ENDPOINTS = {
-    API: "api/",
-    LOGIN: "api/login",
-    STATUS: "api/status",
-    GRAPHQL: "api/graphql",
 };

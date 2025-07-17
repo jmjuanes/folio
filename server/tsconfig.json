@@ -4,10 +4,11 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "outDir": "./dist",
-        "module": "es2022",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "target": "es2022",
-        "moduleResolution": "node",
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "rewriteRelativeImportExtensions": true
     },
     "exclude": [
         "node_modules/**/*",

@@ -1,4 +1,4 @@
-import { ExtendedContext } from "../types/commons";
+import type { ExtendedContext } from "../types/custom.ts";
 
 // simple logger middleware
 export const logger = () => {

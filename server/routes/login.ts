@@ -1,7 +1,6 @@
 import Router from "@koa/router";
-import { ACCESS_TOKEN, generateJwtToken } from "../token";
-import { OBJECT_TYPES } from "../env";
-import { ExtendedContext } from "../types/commons";
+import { generateJwtToken } from "../token.ts";
+import type { ExtendedContext } from "../types/custom.ts";
 
 export const loginRouter = new Router();
 
@@ -20,25 +19,31 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
             message: "Token is required",
         });
     }
-    // compare with the access token generated at server start
-    if (token !== ACCESS_TOKEN) {
-        return ctx.send(401, {
-            message: "Invalid token",
+    // check if we have a user with this access token
+    try {
+        const user = await ctx.state.store.getToken(null, token);
+        // if no user is found, return 401 Unauthorized
+        if (!user) {
+            return ctx.send(401, {
+                message: "Invalid token",
+            });
+        }
+        // generate the JWT token for API access and return it as part 
+        // of the response object
+        return ctx.ok({
+            message: "ok",
+            token: generateJwtToken({
+                secret: ctx.state.config?.tokenSecret,
+                expiration: ctx.state.config?.tokenExpiration,
+                payload: {
+                    id: user.user,
+                },
+            }),
         });
     }
-    // get the user object from the database
-    const users = await ctx.state.db.getChildrenObjects(OBJECT_TYPES.USER, null, false);
-    if (users.length === 0 || users.length > 1) {
+    catch (error) {
         return ctx.send(500, {
-            message: "wtf??",
+            message: "Internal Server Error",
         });
     }
-    // generate the JWT token for API access and return it as part 
-    // of the response object
-    return ctx.ok({
-        message: "ok",
-        token: generateJwtToken({
-            id: users[0].id,
-        }),
-    });
 });

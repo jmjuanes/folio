@@ -1,5 +1,5 @@
 import Router from "@koa/router";
-import { ExtendedContext } from "../types/commons";
+import type { ExtendedContext } from "../types/custom.ts";
 
 // status router
 export const statusRouter = new Router();

@@ -1,5 +1,5 @@
-import { verifyJwtToken } from "../token";
-import { ExtendedContext } from "../types/commons";
+import { verifyJwtToken } from "../token.ts";
+import type { ExtendedContext } from "../types/custom.ts";
 
 // authentication middleware
 export const authentication = async (ctx: ExtendedContext, next: () => Promise<any>) => {
@@ -13,7 +13,9 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
         });
     }
     // verify the token and extract user information
-    const payload = verifyJwtToken(token) as { id: string } | null;
+    const payload = verifyJwtToken(token, {
+        secret: ctx.state.config?.tokenSecret || null,
+    }) as { id: string } | null;
     if (!payload || !payload?.id) {
         return ctx.send(403, {
             message: "Invalid or expired token",
