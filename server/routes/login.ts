@@ -1,5 +1,6 @@
 import Router from "@koa/router";
-import { generateJwtToken } from "../token.ts";
+import { generateJwtToken, hashToken } from "../token.ts";
+import { Collections } from "../types/storage.ts";
 import type { ExtendedContext } from "../types/custom.ts";
 
 export const loginRouter = new Router();
@@ -21,6 +22,11 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
     }
     // check if we have a user with this access token
     try {
+        const hashedToken = await hashToken(token, ctx.state.config?.secret);
+        const allTokens = await ctx.state.store.getAll(Collections.ACCESS_TOKEN);
+        const tokenExists = allTokens.some((response: any) => {
+            return JSON.parse(response.content)?.token === hashedToken;
+        });
         const user = await ctx.state.store.getToken(null, token);
         // if no user is found, return 401 Unauthorized
         if (!user) {
@@ -36,7 +42,7 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
                 secret: ctx.state.config?.tokenSecret,
                 expiration: ctx.state.config?.tokenExpiration,
                 payload: {
-                    id: user.user,
+                    userId: user.user,
                 },
             }),
         });

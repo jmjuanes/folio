@@ -23,6 +23,10 @@ graphqlRouter.post("/", async (ctx: ExtendedContext) => {
             schema,
             source: query || "",
             variableValues: variables,
+            contextValue: {
+                userId: ctx.state.userId,
+                store: ctx.state.store,
+            },
         });
         // send the response back to the client
         return ctx.ok(response);

@@ -17,7 +17,7 @@ export const isProd = (): boolean => {
 
 // utility method to read the provided env
 const readFileEnv = (envFile: string, mode?: NodeEnv): Environment => {
-    const envPath = path.resolve(process.cwd(), envFile);
+    const envPath = path.join(process.cwd(), envFile);
     if (!mode || process.env.NODE_ENV === mode) {
         return fs.existsSync(envPath) ? dotenv.parse(fs.readFileSync(envPath, "utf8")) : {};
     }
@@ -36,9 +36,9 @@ const readGlobalEnv = (): Environment => {
 
 // export parsed env
 export const environment: Environment = {
-    ...readFileEnv("../.env"),
+    ...readFileEnv(".env"),
     ...readGlobalEnv(),
-    ...readFileEnv("../.env.production", NodeEnv.PRODUCTION),
-    ...readFileEnv("../.env.development", NodeEnv.DEVELOPMENT),
-    ...readFileEnv("../.env.local", NodeEnv.DEVELOPMENT),
+    ...readFileEnv(".env.production", NodeEnv.PRODUCTION),
+    ...readFileEnv(".env.development", NodeEnv.DEVELOPMENT),
+    ...readFileEnv(".env.local", NodeEnv.DEVELOPMENT),
 };

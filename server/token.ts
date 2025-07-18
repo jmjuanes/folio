@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
+import { uid } from "uid/secure";
 
 export type JwtTokenGenerationOptions = {
     secret?: string; // secret key used to sign the JWT
@@ -9,6 +10,11 @@ export type JwtTokenGenerationOptions = {
 
 export type JwtTokenVerificationOptions = {
     secret?: string; // secret key used to verify the JWT
+};
+
+// generate an unique identifier
+export const generateUid = (size: number = 16): string => {
+    return uid(size);
 };
 
 // generate a secure random token
@@ -34,4 +40,17 @@ export const verifyJwtToken = (token: string, options: JwtTokenVerificationOptio
     catch (error) {
         return null;
     }
+};
+
+// hashing tokens to store them securely
+// this is useful for access tokens or other sensitive information
+export const hashToken = (token: string, secret: string, digest?: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        crypto.pbkdf2(token, secret, 1000, 64, digest || "sha512", (error, derivedKey) => {
+            if (error) {
+                return reject(error);
+            }
+            resolve(derivedKey.toString("hex"));
+        });
+    });
 };

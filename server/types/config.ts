@@ -1,5 +1,17 @@
+export type LocalStorageConfig = {
+    // path to the folder where the database will be stored
+    storePath?: string;
+
+    // name of the database file. Defaults to "folio.db"
+    storeName?: string;
+};
+
 // configuration for folio server
 export type Config = {
+    // internal secret used to generate access tokens
+    // this should be a long, random string
+    secret: string;
+
     // port where the server will run
     port?: number;
 
@@ -13,7 +25,7 @@ export type Config = {
 
     // custom store configuration
     // each store plugin can define its own configuration
-    store?: any;
+    store?: LocalStorageConfig | Record<string, any>;
 
     // secret key used to generate JWT tokens
     tokenSecret?: string;

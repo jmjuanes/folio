@@ -1,5 +1,5 @@
 import * as graphql from "graphql";
-import { ObjectTypes } from "./types/storage.ts";
+import { Collections } from "./types/storage.ts";
 
 // declare the primary document type
 export const documentType = new graphql.GraphQLObjectType({
@@ -9,11 +9,7 @@ export const documentType = new graphql.GraphQLObjectType({
             type: graphql.GraphQLString,
             description: "the unique identifier of the document",
         },
-        parent: {
-            type: graphql.GraphQLString,
-            description: "the ID of the parent document, if any",
-        },
-        object: {
+        collection: {
             type: graphql.GraphQLString,
             description: "the type of the object, e.g. 'board', 'user', etc.",
         },
@@ -24,10 +20,6 @@ export const documentType = new graphql.GraphQLObjectType({
         updated_at: {
             type: graphql.GraphQLString,
             description: "the timestamp when the document was last updated",
-        },
-        metadata: {
-            type: graphql.GraphQLString,
-            description: "additional metadata associated with the document",
         },
         content: {
             type: graphql.GraphQLString,
@@ -41,37 +33,32 @@ export const schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
         name: "Query",
         fields: {
-            getCurrentUser: {
-                type: documentType,
-                description: "Retrieve the information about the logged-in user",
-                resolve: (source, args, context) => {
-                    return context.store.getObject(ObjectTypes.USER, context.userId, false);
-                },
-            },
-            getUser: {
-                type: documentType,
-                description: "Retrieve the information about a user by ID",
-                args: {
-                    id: {
-                        type: graphql.GraphQLString,
-                        description: "the ID of the user to retrieve",
-                    },
-                },
-                resolve: (source, args, context) => {
-                    return context.store.getObject(ObjectTypes.USER, args.id, false);
-                }
-            },
-            getUserBoards: {
+            // getCurrentUser: {
+            //     type: documentType,
+            //     description: "Retrieve the information about the logged-in user",
+            //     resolve: (source, args, context) => {
+            //         console.log(context.userId);
+            //         return context.store.getObject(Collections.USER, context.userId, false);
+            //     },
+            // },
+            // getUser: {
+            //     type: documentType,
+            //     description: "Retrieve the information about a user by ID",
+            //     args: {
+            //         id: {
+            //             type: graphql.GraphQLString,
+            //             description: "the ID of the user to retrieve",
+            //         },
+            //     },
+            //     resolve: (source, args, context) => {
+            //         return context.store.getObject(Collections.USER, args.id, false);
+            //     }
+            // },
+            getAllBoards: {
                 type: new graphql.GraphQLList(documentType),
-                description: "Retrieve all boards created by the provided user ID",
-                args: {
-                    id: {
-                        type: graphql.GraphQLString,
-                        description: "the ID of the user whose boards to retrieve",
-                    },
-                },
+                description: "Retrieve all boards",
                 resolve: (source, args, context) => {
-                    return context.store.getChildrenObjects(ObjectTypes.BOARD, args.id, false);
+                    return context.store.getAll(Collections.BOARD);
                 },
             },
             getBoard: {
@@ -83,7 +70,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: (source, args, context) => {
-                    return context.store.getObject(ObjectTypes.BOARD, args.id, true);
+                    return context.store.get(Collections.BOARD, args.id);
                 },
             },
         },
@@ -95,17 +82,13 @@ export const schema = new graphql.GraphQLSchema({
                 type: documentType,
                 description: "create a new board",
                 args: {
-                    attributes: {
-                        type: graphql.GraphQLString,
-                        description: "additional attributes for the board",
-                    },
                     content: {
                         type: graphql.GraphQLString,
                         description: "the content of the board",
                     },
                 },
                 resolve: async (source, args, context) => {
-                    const id = await context.store.insertObject(ObjectTypes.BOARD, context.userId, args.attributes, args.content);
+                    const id = await context.store.insert(Collections.BOARD, args.content || "{}");
                     return { id };
                 },
             },
@@ -117,17 +100,13 @@ export const schema = new graphql.GraphQLSchema({
                         type: graphql.GraphQLString,
                         description: "the ID of the board to update",
                     },
-                    attributes: {
-                        type: graphql.GraphQLString,
-                        description: "the new attributes for the board",
-                    },
                     content: {
                         type: graphql.GraphQLString,
                         description: "the new content for the board",
                     },
                 },
                 resolve: async (source, args, context) => {
-                    await context.store.updateObject(ObjectTypes.BOARD, args.id, args.attributes, args.content);
+                    await context.store.update(Collections.BOARD, args.id, args.content);
                     return { id: args.id };
                 },
             },
@@ -141,7 +120,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    await context.store.deleteObject(ObjectTypes.BOARD, args.id);
+                    await context.store.delete(Collections.BOARD, args.id);
                     return { id: args.id };
                 },
             },
