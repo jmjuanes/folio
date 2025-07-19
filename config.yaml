@@ -37,4 +37,4 @@ security:
 ## website configuration
 website:
   enabled: true
-  # directory: "app"
+  directory: "app"
