@@ -1,6 +1,6 @@
 import { createAccessTokenAuth } from "./access-token.ts";
 import type { AuthContext } from "../types/authentication.ts";
-import type { Config, AuthConfig} from "../config.ts";
+import type { Config, AuthConfig } from "../config.ts";
 
 export const createAuth = async (config: Config): Promise<AuthContext> => {
     const authConfig = config?.authentication as AuthConfig;
