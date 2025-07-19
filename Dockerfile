@@ -38,7 +38,7 @@ USER node
 FROM base AS server
 
 # Copy package files first for better layer caching
-COPY --chown=node:node server/package.json ./server/
+COPY --chown=node:node server ./server
 
 # Install dependencies with security optimizations
 RUN cd server && \
@@ -80,11 +80,12 @@ ENV NODE_ENV=production \
 COPY --chown=node:node server/ ./server/
 COPY --chown=node:node folio.js ./
 COPY --chown=node:node .env.example ./.env
+COPY --chown=node:node config.yaml ./
 
 # Copy builds from previous stage
 COPY --from=server --chown=node:node $FOLIO_APPDIR/server/node_modules ./server/node_modules
 COPY --from=server --chown=node:node $FOLIO_APPDIR/server/dist ./server/dist
-COPY --from=app --chown=node:node $FOLIO_APPDIR/app/www ./www
+COPY --from=app --chown=node:node $FOLIO_APPDIR/app/www ./app
 
 # Set proper permissions for executable files
 RUN chmod +x folio.js
