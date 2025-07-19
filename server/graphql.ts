@@ -90,7 +90,7 @@ export const schema = new graphql.GraphQLSchema({
                 },
                 resolve: async (source, args, context) => {
                     const id = uid(20); // generate a unique ID for the object
-                    const id = await context.store.insert(Collections.BOARD, id, args.content || "{}");
+                    await context.store.insert(Collections.BOARD, id, args.content || "{}");
                     return { id };
                 },
             },

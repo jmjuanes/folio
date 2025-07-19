@@ -45,6 +45,6 @@ export type Config = {
 
 // @description read configuration file
 export const readConfig = async (configPath: string): Promise<Config> => {
-    const content = fs.readFile(path.resolve(configPath), "utf8");
+    const content = await fs.readFile(path.resolve(configPath), "utf8");
     return yaml.parse(content);
 };

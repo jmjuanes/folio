@@ -7,8 +7,8 @@ export const createAuth = async (config: Config): Promise<AuthContext> => {
     let auth = null as AuthContext;
 
     // check if access token has been configured as the authentication method
-    if (authConfig?.accessToken) {
-        auth = await createAccessTokenAuth(authConfig.accessToken);
+    if (authConfig?.access_token) {
+        auth = await createAccessTokenAuth(authConfig.access_token);
     }
 
     // return the auth instance

@@ -28,7 +28,7 @@ export const generateJwtToken = (options: JwtTokenGenerationOptions): string => 
 };
 
 // verify the provided JWT token
-export const verifyJwtToken = (token: string, options: JwtTokenVerificationOptions): object|null => {
+export const verifyJwtToken = (token: string, options: JwtTokenVerificationOptions): any => {
     try {
         return jwt.verify(token, options?.secret || JWT_TOKEN_SECRET);
     }
