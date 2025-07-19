@@ -12,10 +12,10 @@ export const createAccessTokenAuth = async (authConfig: AccessTokenAuthConfig): 
     const accessToken = authConfig?.token || generateToken(ACCESS_TOKEN_LENGTH);
 
     return {
-        validate: async (token: string) => {
+        validate: async (token: string): Promise<AuthPayload|null> => {
             if (token === accessToken) {
                 return {
-                    userId: authConfig?.user || ACCESS_USER,
+                    id: authConfig?.user || ACCESS_USER,
                 };
             }
             // authentication not valid

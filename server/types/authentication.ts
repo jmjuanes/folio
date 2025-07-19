@@ -1,6 +1,6 @@
 // authentication payload
 export type AuthPayload = {
-    userId: string;
+    id: string;
 };
 
 export type AuthContext = {

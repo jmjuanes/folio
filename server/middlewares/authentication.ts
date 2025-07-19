@@ -18,9 +18,10 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
     }
 
     // verify the token and extract user information
-    const payload = verifyJwtToken(token, {
+    // if the JWT is not valid, this method will return null
+    const payload: AuthPayload | null = verifyJwtToken(token, {
         secret: securityConfig?.jwt_token_secret,
-    }) as AuthPayload | null;
+    });
 
     if (!payload) {
         return ctx.send(403, {
