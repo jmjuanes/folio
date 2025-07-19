@@ -3,39 +3,30 @@
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { environment } from "./server/dist/env.js";
+import { readConfig } from "./server/dist/config.js";
 import { startServer } from "./server/dist/index.js";
-import { createLocalStore } from "./server/dist/storage/local.js";
-import { generateToken } from "./server/dist/token.js";
-import { ObjectTypes } from "./server/dist/types/storage.js";
 
 // this is the root path of the project
 // it is used to resolve paths to the data and www directories
 const ROOT_PATH = process.cwd();
 
-const printUserInfo = (userId, token = "", attributes = null) => {
-    console.log(`${userId} {`);
-    console.log(`    token: '${token}'`);
-    if (attributes) {
-        console.log(`    attributes: {`);
-        Object.keys(attributes).forEach(key => {
-            console.log(`        ${key}: '${attributes[key]}'`);
-        });
-        console.log(`    }`);
-    }
-    console.log(`}`);
-};
+// read the configuration file
+const getConfiguration = async (configPath) => {
+    const config = await readConfig(path.resolve(ROOT_PATH, configPath));
 
-const printHelp = () => {
-    console.log("Usage: node folio.js <command> [options]");
-    console.log("Commands:");
-    console.log("  start              Start the FOLIO server.");
-    console.log("  users:create       Create a new user with specified attributes.");
-    console.log("  users:updateToken  Update the token for a specified user.");
-    console.log("  users:list         List all users.");
-    console.log("Options:");
-    console.log("  --user <name>  Specify the user ID for user-related actions.");
-    console.log("  --userName <name> Specify the name of the user to create.");
-    console.log("  --userEmail <email> Specify the email of the user to create.");
+    // get fields to override with custom environment values
+    const fields = {
+        "port": environment.FOLIO_PORT,
+        "authentication.access_token.token": environment.FOLIO_ACCESS_TOKEN,
+        "storage.local.storage_path": environment.FOLIO_STORAGE_PATH,
+        "storage.local.storage_name": environment.FOLIO_STORAGE_NAME,
+        "website.directory": environment.FOLIO_WEBSITE_PATH,
+        "security.jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
+        "security.jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
+    };
+    // TODO
+
+    return config;
 };
 
 // main method to handle user commands
@@ -124,17 +115,9 @@ const main = async (command = "", options = {}) => {
 const { values, positionals } = parseArgs({
     args: process.argv.slice(2),
     options: {
-        user: {
+        config: {
             type: "string",
-            description: "User ID of the user to query or update",
-        },
-        userName: {
-            type: "string",
-            description: "Name of the user to create",
-        },
-        userEmail: {
-            type: "string",
-            description: "Email of the user to create",
+            description: "path to the configuration file to use",
         },
     },
     allowPositionals: true,
