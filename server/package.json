@@ -23,7 +23,6 @@
         "@koa/send": "^6.0.0",
         "@types/koa-bodyparser": "^4.3.12",
         "@types/node": "^24.0.14",
-        "debug": "^4.4.1",
         "dotenv": "^16.5.0",
         "graphql": "^16.11.0",
         "helmet": "^8.1.0",
