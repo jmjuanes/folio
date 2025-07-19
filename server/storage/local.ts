@@ -3,8 +3,11 @@ import path from "node:path";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { Collections } from "../types/storage.ts";
+import { createLogger } from "../utils/logger.ts";
 import type { LocalStorageConfig} from "../config.ts";
 import type { StoreContext} from "../types/storage.ts";
+
+const { debug } = createLogger("folio:storage");
 
 const DB_PATH = "./data";
 const DB_NAME = "folio.db";
@@ -12,16 +15,19 @@ const TABLE_NAME = "objects";
 
 // create an instance of a store
 export const createLocalStore = async (storeConfig: LocalStorageConfig): Promise<StoreContext> => {
-    const storePath = path.resolve(storeConfig?.storePath || DB_PATH);
+    const storePath = path.resolve(storeConfig?.store_path || DB_PATH);
+    const databasePath = path.join(storePath, storeConfig?.store_name || DB_NAME);
 
     // 1. ensure the database directory exists
     if (!fs.existsSync(storePath)) {
+        debug(`folder ${storePath} does not exist, trying to create it...`);
         fs.mkdirSync(storePath, { recursive: true });
     }
 
     // 2. open the SQLite database
+    debug(`using local database in ${databasePath}`);
     const db = await open({
-        filename: path.join(storePath, storeConfig?.storeName || DB_NAME),
+        filename: databasePath,
         driver: sqlite3.Database
     });
 

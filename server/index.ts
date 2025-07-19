@@ -11,14 +11,12 @@ import { staticContent } from "./middlewares/static.ts";
 import { loginRouter } from "./routes/login.ts";
 import { statusRouter } from "./routes/status.ts";
 import { graphqlRouter } from "./routes/graphql.ts";
+import { createLogger } from "./utils/logger.ts";
 import type { Config, SecurityConfig, WebsiteConfig } from "./config.ts";
 
 const DEFAULT_PORT = 8080;
 
-// get server URL
-const getUrl = (port: number, directory: string = ""): string => {
-    return `http://127.0.0.1:${port}${directory}`;
-};
+const { log, debug } = createLogger("folio:server");
 
 // run the server
 export const startServer = async (config: Config): Promise<any> => {
@@ -27,6 +25,8 @@ export const startServer = async (config: Config): Promise<any> => {
     const store = await createStore(config);
     const auth = await createAuth(config);
 
+    debug(`Starting server at port ${port}...`);
+
     // register custom methods to send responses
     app.use(async (ctx: Koa.Context, next: () => Promise<void>) => {
         // send a response with a status code and body content
@@ -34,14 +34,17 @@ export const startServer = async (config: Config): Promise<any> => {
             ctx.status = status;
             ctx.body = bodyContent;
         };
+
         // to avoid adding the 200 status code to every response, we can use ctx.ok instead
         ctx.ok = (bodyContent: object = {}) => {
             ctx.send(200, bodyContent);
         };
+
         // include server state in the context
         ctx.state.store = store;
         ctx.state.auth = auth;
         ctx.state.config = config;
+
         // global error handler
         try {
             await next();
@@ -60,6 +63,7 @@ export const startServer = async (config: Config): Promise<any> => {
     //     contentSecurityPolicy: false,
     // }));
     if (securityConfig?.cors) {
+        debug("Enabling CORS...");
         app.use(cors({
             origin: securityConfig?.cors_origin || "*",
             allowMethods: securityConfig?.cors_allowed_methods || "GET,POST",
@@ -73,8 +77,11 @@ export const startServer = async (config: Config): Promise<any> => {
     // website configuration
     const websiteConfig = config?.website as WebsiteConfig;
     if (!websiteConfig?.enabled === false) {
+        const websiteDirectory = path.resolve(websiteConfig?.directory || "app");
+        debug(`Website is enabled. Reading content from ${websiteDirectory}`);
         app.use(staticContent({
-            directory: path.resolve(websiteConfig?.directory || "app"),
+            // directory: path.resolve(websiteConfig?.directory || "app"),
+            directory: websiteDirectory,
             index: websiteConfig?.index || "index.html",
         }));
     }
@@ -91,13 +98,8 @@ export const startServer = async (config: Config): Promise<any> => {
 
     // start the server
     app.listen(port, () => {
-        console.log(`[folio:server] Server running at ${getUrl(port, "")}`);
-        // console.log(`[folio:server] API Status available at ${getUrl(port, STATUS_API_ENDPOINTS.status)}`);
-        console.log(`[folio:server] Use Control-C to stop this server.`);
-        // console.log(`[folio:server] ======= AUTHENTICATION ========`);
-        // console.log(`[folio:server] Access Token: ${ACCESS_TOKEN}`);
-        // console.log(`[folio:server] Use this token to login at POST ${ENDPOINTS.LOGIN}`);
-        // console.log(`[folio:server] ===============================`);
+        log(`Server running at 'http://127.0.0.1:${port}'`);
+        log(`Use Control-C to stop this server.`);
     });
 
     return app;
