@@ -2,9 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import { generateUid } from "../token.ts";
 import { Collections } from "../types/storage.ts";
-import type { Config, LocalStorageConfig} from "../types/config.ts";
+import type { LocalStorageConfig} from "../config.ts";
 import type { StoreContext} from "../types/storage.ts";
 
 const DB_PATH = "./data";
@@ -12,8 +11,7 @@ const DB_NAME = "folio.db";
 const TABLE_NAME = "objects";
 
 // create an instance of a store
-export const createLocalStore = async (config: Config): Promise<StoreContext> => {
-    const storeConfig = config.store as LocalStorageConfig;
+export const createLocalStore = async (storeConfig: LocalStorageConfig): Promise<StoreContext> => {
     const storePath = path.resolve(storeConfig?.storePath || DB_PATH);
 
     // 1. ensure the database directory exists
@@ -61,8 +59,7 @@ export const createLocalStore = async (config: Config): Promise<StoreContext> =>
             await db.each(`SELECT * FROM ${TABLE_NAME} WHERE collection = ?`, [collection], callback);
         },
 
-        insert: async (collection: Collections, content: string = ""): Promise<string> => {
-            const id = generateUid(20); // generate a unique ID for the object
+        insert: async (collection: Collections, id: string, content: string = ""): Promise<string> => {
             await db.run(`INSERT INTO ${TABLE_NAME} (id, collection, content) VALUES (?, ?, ?)`, [id, collection, content]);
             return id;
         },

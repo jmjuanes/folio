@@ -1,0 +1,40 @@
+## default configuration for folio-studio
+## https://github.com/jmjuanes/folio/blob/main/config.yaml
+
+## port where folio server will listen
+## this value can be overrided using the FOLIO_PORT env variable
+port: 8080
+
+## settings for the authentication, but only one authentication method is allowecd
+## at this moment only the acessToken plugin is enabled
+authentication:
+  access_token:
+    ## configure here your access token, if want a fixed access token
+    ## if not provided, a new one will be generated and printed in logs every time the server is restarted
+    ## you can override this token also using the FOLIO_ACCESS_TOKEN env variable
+    # token: "123456abcd"
+    user: "folio"
+
+## settings for storage, but only one storage method is allowed
+## you can configure local or memory storage
+storage:
+  local:
+    store_path: "data"
+    store_name: "folio.db"
+
+## security configuration
+security:
+  ## enable or disable cross origin requests
+  # cors: false
+  # cors_origin: "*"
+  # cors_allowed_methods: "GET,POST"
+  ## configure the generation of JWT tokens for authentication
+  ## secret: allows to specify a fixed secret key to generate jwt tokens.
+  ## expiration: specify the expiration time. Times are parsed by https://www.npmjs.com/package/ms
+  # jwt_token_secret: "abcd"
+  # jwt_token_expiration: "1y"
+
+## website configuration
+website:
+  enabled: true
+  # directory: "app"

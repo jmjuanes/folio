@@ -2,14 +2,16 @@ import path from "node:path";
 import Koa from "koa";
 import Router from "@koa/router";
 import bodyParser from "@koa/bodyparser";
-import helmet from "koa-helmet";
-import { createLocalStore } from "./storage/local.ts";
+import cors from "@koa/cors";
+// import helmet from "koa-helmet";
+import { createStore } from "./storage/index.ts";
+import { createAuth } from "./auth/index.ts";
 import { logger } from "./middlewares/logger.ts";
 import { staticContent } from "./middlewares/static.ts";
 import { loginRouter } from "./routes/login.ts";
 import { statusRouter } from "./routes/status.ts";
 import { graphqlRouter } from "./routes/graphql.ts";
-import type { Config } from "./types/config.ts";
+import type { Config, SecurityConfig, WebsiteConfig } from "./config.ts";
 
 const DEFAULT_PORT = 8080;
 
@@ -22,7 +24,8 @@ const getUrl = (port: number, directory: string = ""): string => {
 export const startServer = async (config: Config): Promise<any> => {
     const port = config.port || DEFAULT_PORT;
     const app = new Koa();
-    const store = await createLocalStore(config);
+    const store = await createStore(config);
+    const auth = await createAuth(config);
 
     // register custom methods to send responses
     app.use(async (ctx: Koa.Context, next: () => Promise<void>) => {
@@ -37,6 +40,7 @@ export const startServer = async (config: Config): Promise<any> => {
         };
         // include server state in the context
         ctx.state.store = store;
+        ctx.state.auth = auth;
         ctx.state.config = config;
         // global error handler
         try {
@@ -51,17 +55,29 @@ export const startServer = async (config: Config): Promise<any> => {
     });
 
     // register security middlewares
+    const securityConfig = config?.security as SecurityConfig;
     // app.use(helmet({
     //     contentSecurityPolicy: false,
     // }));
+    if (securityConfig?.cors) {
+        app.use(cors({
+            origin: securityConfig?.cors_origin || "*",
+            allowMethods: securityConfig?.cors_allowed_methods || "GET,POST",
+        }));
+    }
 
     // register utility and parser middlewares
     app.use(bodyParser());
     app.use(logger());
-    app.use(staticContent({
-        directory: path.resolve(config.wwwPath),
-        index: "index.html",
-    }));
+
+    // website configuration
+    const websiteConfig = config?.website as WebsiteConfig;
+    if (!websiteConfig?.enabled === false) {
+        app.use(staticContent({
+            directory: path.resolve(websiteConfig?.directory || "app"),
+            index: websiteConfig?.index || "index.html",
+        }));
+    }
 
     // create app routes
     const router = new Router();

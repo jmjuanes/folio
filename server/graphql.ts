@@ -1,4 +1,5 @@
 import * as graphql from "graphql";
+import { uid } from "uid/secure";
 import { Collections } from "./types/storage.ts";
 
 // declare the primary document type
@@ -88,7 +89,8 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    const id = await context.store.insert(Collections.BOARD, args.content || "{}");
+                    const id = uid(20); // generate a unique ID for the object
+                    const id = await context.store.insert(Collections.BOARD, id, args.content || "{}");
                     return { id };
                 },
             },

@@ -20,12 +20,13 @@ graphqlRouter.post("/", async (ctx: ExtendedContext) => {
     const { query, variables } = ctx.request.body;
     try {
         const response = await graphql({
-            schema,
+            schema: schema,
             source: query || "",
             variableValues: variables,
             contextValue: {
-                userId: ctx.state.userId,
+                user: ctx.state.user,
                 store: ctx.state.store,
+                auth: ctx.state.auth,
             },
         });
         // send the response back to the client
