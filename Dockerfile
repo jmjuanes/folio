@@ -10,6 +10,10 @@
 # Use specific Node.js version with Alpine for minimal footprint and security
 FROM node:22.12.0-alpine3.20 AS base
 
+# Set environment variables
+ENV FOLIO_APPDIR=/opt/folio \
+    FOLIO_PORT=8080
+
 # Install security updates and required packages
 RUN apk update && \
     apk upgrade && \
@@ -19,27 +23,28 @@ RUN apk update && \
     rm -rf /var/cache/apk/*
 
 # Create application directory with proper ownership
-RUN mkdir -p /opt/folio && \
-    chown -R node:node /opt/folio
+RUN mkdir -p $FOLIO_APPDIR && \
+    chown -R node:node $FOLIO_APPDIR
 
 # Set working directory
-WORKDIR /opt/folio
+WORKDIR $FOLIO_APPDIR
 
 # Switch to non-root user early for security
 USER node
 
 # =============================================================================
-# Server Dependencies Stage
+# Server Build Stage
 # =============================================================================
-FROM base AS dependencies
+FROM base AS server
 
 # Copy package files first for better layer caching
-COPY --chown=node:node server/package.json ./server/
+COPY --chown=node:node server ./server
 
 # Install dependencies with security optimizations
 RUN cd server && \
     yarn install --frozen-lockfile --production --network-timeout 300000 && \
     yarn cache clean && \
+    yarn compile && \
     # Remove unnecessary files to reduce image size
     find node_modules -name "*.md" -delete && \
     find node_modules -name "*.txt" -delete && \
@@ -73,40 +78,32 @@ ENV NODE_ENV=production \
 
 # Copy application files with proper ownership
 COPY --chown=node:node server/ ./server/
-COPY --chown=node:node start.sh ./
+COPY --chown=node:node folio.js ./
 COPY --chown=node:node .env.example ./.env
+COPY --chown=node:node config.yaml ./
 
-# Copy dependencies from previous stage
-COPY --from=dependencies --chown=node:node /opt/folio/server/node_modules ./server/node_modules
-COPY --from=app --chown=node:node /opt/folio/app/www ./www
+# Copy builds from previous stage
+COPY --from=server --chown=node:node $FOLIO_APPDIR/server/node_modules ./server/node_modules
+COPY --from=server --chown=node:node $FOLIO_APPDIR/server/dist ./server/dist
+COPY --from=app --chown=node:node $FOLIO_APPDIR/app/www ./app
 
 # Set proper permissions for executable files
-RUN chmod +x start.sh
+RUN chmod +x folio.js
 
 # Create data directory with proper ownership for SQLite
-RUN mkdir -p /opt/folio/data && \
-    chown -R node:node /opt/folio/data && \
-    chmod 775 /opt/folio/data
+RUN mkdir -p $FOLIO_APPDIR/data && \
+    chown -R node:node $FOLIO_APPDIR/data && \
+    chmod 775 $FOLIO_APPDIR/data
 
 # Create volume for persistent data
-VOLUME ["/opt/folio/data"]
+VOLUME [$FOLIO_APPDIR/data]
 
 # Expose port (documented for users, not for security)
-EXPOSE 8080
+EXPOSE $FOLIO_PORT
 
 # Add health check to monitor application status
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD node -e " \
-        const http = require('http'); \
-        const options = { hostname: 'localhost', port: 8080, path: '/api/status', timeout: 5000 }; \
-        const req = http.request(options, (res) => { \
-            if (res.statusCode === 200) process.exit(0); \
-            else process.exit(1); \
-        }); \
-        req.on('error', () => process.exit(1)); \
-        req.on('timeout', () => process.exit(1)); \
-        req.end(); \
-    "
+    CMD node ./folio.js ping
 
 # Add labels for better container management
 LABEL maintainer="Josemi Juanes <hello@josemi.xyz>"
@@ -121,4 +118,4 @@ LABEL org.opencontainers.image.source="https://github.com/jmjuanes/folio"
 ENTRYPOINT ["/sbin/tini", "--"]
 
 # Start the application
-CMD ["./start.sh"]
+CMD ["node", "folio.js", "start"]
