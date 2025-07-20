@@ -5,17 +5,28 @@ import type { ExtendedContext } from "../types/custom.ts";
 export const staticContent = (options: any = {}) => {
     return async (ctx: ExtendedContext, next: () => Promise<void>) => {
         await next();
+
         // if the response is already set, skip serving static files
         if (ctx.body || ctx.status !== 404) {
             return;
         }
+
         // if the request is for an API endpoint, skip serving static files
         if (ctx.path.startsWith("_") || ctx.path.startsWith("/_")) {
             return;
         }
-        await send(ctx, ctx.path, {
-            root: options.directory,
-            index: options.index || "index.html",
-        });
+
+        // if the request is for a file in the www directory, serve it
+        try {
+            await send(ctx, ctx.path, {
+                root: options.directory,
+                index: options.index || "index.html",
+            });
+        }
+        catch (error) {
+            ctx.send(404, {
+                message: "Not Found",
+            });
+        }
     };
 };

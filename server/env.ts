@@ -27,7 +27,7 @@ const readFileEnv = (envFile: string, mode?: NodeEnv): Environment => {
 // read global environment variables from process.env
 const readGlobalEnv = (): Environment => {
     return Object.keys(process.env || {}).reduce((env, key) => {
-        if (key.startsWith("FOLIO_") || key === "DEBUG" || key === "NODE_ENV") {
+        if (key.startsWith("FOLIO_")) {
             env[key] = process.env[key];
         }
         return env;

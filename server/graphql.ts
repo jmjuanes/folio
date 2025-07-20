@@ -45,7 +45,7 @@ export const schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
         name: "Query",
         fields: {
-            getCurrentUser: {
+            getUser: {
                 type: userType,
                 description: "Retrieve the information about the logged-in user",
                 resolve: (source, args, context) => {
