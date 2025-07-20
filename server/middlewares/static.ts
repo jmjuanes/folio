@@ -1,4 +1,5 @@
 import { send } from "@koa/send";
+import { HTTP_CODES, API_ERROR_MESSAGES } from "../constants.ts";
 import type { ExtendedContext } from "../types/custom.ts";
 
 // middleware to serve static files from www folder
@@ -7,7 +8,7 @@ export const staticContent = (options: any = {}) => {
         await next();
 
         // if the response is already set, skip serving static files
-        if (ctx.body || ctx.status !== 404) {
+        if (ctx.body || ctx.status !== HTTP_CODES.NOT_FOUND) {
             return;
         }
 
@@ -24,8 +25,8 @@ export const staticContent = (options: any = {}) => {
             });
         }
         catch (error) {
-            ctx.send(404, {
-                message: "Not Found",
+            ctx.send(HTTP_CODES.NOT_FOUND, {
+                message: API_ERROR_MESSAGES.NOT_FOUND,
             });
         }
     };

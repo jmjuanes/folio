@@ -1,7 +1,7 @@
 import { verifyJwtToken } from "../token.ts";
 import type { SecurityConfig } from "../config.ts";
-import type { AuthPayload } from "../types/authentication.ts";
 import type { ExtendedContext } from "../types/custom.ts";
+import type { User } from "../types/user.ts";
 
 // authentication middleware
 export const authentication = async (ctx: ExtendedContext, next: () => Promise<any>) => {
@@ -19,7 +19,7 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
 
     // verify the token and extract user information
     // if the JWT is not valid, this method will return null
-    const payload: AuthPayload | null = verifyJwtToken(token, {
+    const payload: User | null = verifyJwtToken(token, {
         secret: securityConfig?.jwt_token_secret,
     });
 

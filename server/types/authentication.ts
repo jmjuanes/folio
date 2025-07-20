@@ -1,8 +1,5 @@
-// authentication payload
-export type AuthPayload = {
-    id: string;
-};
+import type { User } from "./user.ts";
 
 export type AuthContext = {
-    validate: (token: string) => Promise<AuthPayload|null>;
+    authenticate: (token: string) => Promise<User|null>;
 };

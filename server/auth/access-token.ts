@@ -1,7 +1,8 @@
 import { generateToken } from "../token.ts";
 import { createLogger } from "../utils/logger.ts";
 import type { AccessTokenAuthConfig } from "../config.ts";
-import type { AuthContext, AuthPayload } from "../types/authentication.ts";
+import type { AuthContext } from "../types/authentication.ts";
+import type { User } from "../types/user.ts";
 
 const { info } = createLogger("folio:auth");
 
@@ -19,7 +20,7 @@ export const createAccessTokenAuth = async (authConfig: AccessTokenAuthConfig): 
     info(`Use '${accessToken}' to login.`);
 
     return {
-        validate: async (token: string): Promise<AuthPayload|null> => {
+        authenticate: async (token: string): Promise<User|null> => {
             if (token === accessToken) {
                 return {
                     id: authConfig?.user || ACCESS_USER,

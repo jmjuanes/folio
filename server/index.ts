@@ -4,6 +4,7 @@ import Router from "@koa/router";
 import bodyParser from "@koa/bodyparser";
 import cors from "@koa/cors";
 // import helmet from "koa-helmet";
+import { API_ERROR_MESSAGES, HTTP_CODES } from "./constants.ts";
 import { createStore } from "./storage/index.ts";
 import { createAuth } from "./auth/index.ts";
 import { logger } from "./middlewares/logger.ts";
@@ -30,14 +31,14 @@ export const startServer = async (config: Config): Promise<any> => {
     // register custom methods to send responses
     app.use(async (ctx: Koa.Context, next: () => Promise<void>) => {
         // send a response with a status code and body content
-        ctx.send = (status: number = 200, bodyContent: object = {}) => {
+        ctx.send = (status: number, bodyContent: object = {}) => {
             ctx.status = status;
             ctx.body = bodyContent;
         };
 
         // to avoid adding the 200 status code to every response, we can use ctx.ok instead
         ctx.ok = (bodyContent: object = {}) => {
-            ctx.send(200, bodyContent);
+            ctx.send(HTTP_CODES.OK, bodyContent);
         };
 
         // include server state in the context
@@ -51,8 +52,8 @@ export const startServer = async (config: Config): Promise<any> => {
         }
         catch (error) {
             console.error(error);
-            ctx.send(error.status || 500, {
-                message: error.message || "Internal Server Error",
+            ctx.send(error.status || HTTP_CODES.INTERNAL_SERVER_ERROR, {
+                message: error.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
             });
         }
     });
