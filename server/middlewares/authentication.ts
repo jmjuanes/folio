@@ -1,4 +1,5 @@
 import { verifyJwtToken } from "../token.ts";
+import { API_ERROR_MESSAGES, HTTP_CODES } from "../constants.ts";
 import type { SecurityConfig } from "../config.ts";
 import type { ExtendedContext } from "../types/custom.ts";
 import type { User } from "../types/user.ts";
@@ -12,8 +13,8 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
     // validate that token has been provided in the authorization header
     // if not, return 401 Unauthorized
     if (!token) {
-        return ctx.send(401, {
-            message: "Authentication required",
+        return ctx.send(HTTP_CODES.UNAUTHORIZED, {
+            message: API_ERROR_MESSAGES.AUTHENTICATION_REQUIRED,
         });
     }
 
@@ -24,8 +25,8 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
     });
 
     if (!payload) {
-        return ctx.send(403, {
-            message: "Invalid or expired token",
+        return ctx.send(HTTP_CODES.FORBIDDEN, {
+            message: API_ERROR_MESSAGES.INVALID_TOKEN,
         });
     }
 

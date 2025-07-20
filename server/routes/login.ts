@@ -33,7 +33,6 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
         // generate the JWT token for API access and return it as part 
         // of the response object
         return ctx.ok({
-            message: "ok",
             token: generateJwtToken({
                 secret: securityConfig?.jwt_token_secret,
                 expiration: securityConfig?.jwt_token_expiration,
