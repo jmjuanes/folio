@@ -20,8 +20,8 @@ export const createAccessTokenAuth = async (authConfig: AccessTokenAuthConfig): 
     info(`Use '${accessToken}' to login.`);
 
     return {
-        authenticate: async (token: string): Promise<User|null> => {
-            if (token === accessToken) {
+        authenticate: async (requestBody: any): Promise<User|null> => {
+            if (requestBody?.token && requestBody.token === accessToken) {
                 return {
                     id: authConfig?.user || ACCESS_USER,
                 };

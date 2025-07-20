@@ -3,7 +3,7 @@ import { STATUS_CODES } from "node:http";
 // generate the inverse map of status code -> status number
 // example HTTP_CODES.OK --> 200
 export const HTTP_CODES = {} as Record<string, number>;
-Object.keys(STATUS_CODES).forEach(code => {
+Object.keys(STATUS_CODES).forEach((code: number) => {
     HTTP_CODES[STATUS_CODES[code].replaceAll(" ", "_").toUpperCase()] = code;
 });
 

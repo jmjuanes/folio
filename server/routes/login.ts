@@ -18,18 +18,12 @@ loginRouter.get("/", async (ctx: ExtendedContext) => {
 
 // POST - login route
 loginRouter.post("/", async (ctx: ExtendedContext) => {
-    const { token } = ctx.request.body;
     const securityConfig = ctx.state.config?.security as SecurityConfig;
 
-    if (!token) {
-        return ctx.send(HTTP_CODES.BAD_REQUEST, {
-            message: API_ERROR_MESSAGES.TOKEN_NOT_PROVIDED,
-        });
-    }
-
-    // check if we have a user with this access token
+    // pass the request body object to the authenticate method
+    // it should return the user information of the user, or null
     try {
-        const payload: User|null = await ctx.state.auth.authenticate(token);
+        const payload: User|null = await ctx.state.auth.authenticate(ctx.request.body);
         if (!payload) {
             return ctx.send(HTTP_CODES.UNAUTHORIZED, {
                 message: API_ERROR_MESSAGES.INVALID_TOKEN,
