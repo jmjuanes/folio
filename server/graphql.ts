@@ -29,37 +29,43 @@ export const documentType = new graphql.GraphQLObjectType({
     },
 }) as graphql.GraphQLObjectType;
 
+// declare the primary user type
+export const userType = new graphql.GraphQLObjectType({
+    name: "User",
+    fields: {
+        id: {
+            type: graphql.GraphQLString,
+            description: "the unique identifier of the user",
+        },
+    },
+}) as graphql.GraphQLObjectType;
+
 // declare the full schema object
 export const schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
         name: "Query",
         fields: {
-            // getCurrentUser: {
-            //     type: documentType,
-            //     description: "Retrieve the information about the logged-in user",
-            //     resolve: (source, args, context) => {
-            //         console.log(context.userId);
-            //         return context.store.getObject(Collections.USER, context.userId, false);
-            //     },
-            // },
-            // getUser: {
-            //     type: documentType,
-            //     description: "Retrieve the information about a user by ID",
-            //     args: {
-            //         id: {
-            //             type: graphql.GraphQLString,
-            //             description: "the ID of the user to retrieve",
-            //         },
-            //     },
-            //     resolve: (source, args, context) => {
-            //         return context.store.getObject(Collections.USER, args.id, false);
-            //     }
-            // },
+            getCurrentUser: {
+                type: userType,
+                description: "Retrieve the information about the logged-in user",
+                resolve: (source, args, context) => {
+                    return context.user || null;
+                },
+            },
             getAllBoards: {
                 type: new graphql.GraphQLList(documentType),
                 description: "Retrieve all boards",
-                resolve: (source, args, context) => {
-                    return context.store.getAll(Collections.BOARD);
+                resolve: async (source, args, context) => {
+                    const allBoards = [];
+                    await context.store.cursor(Collections.BOARD, (error: any, board: any) => {
+                        allBoards.push({
+                            id: board.id,
+                            created_at: board.created_at,
+                            updated_at: board.updated_at,
+                            collection: Collections.BOARD,
+                        });
+                    });
+                    return allBoards;
                 },
             },
             getBoard: {

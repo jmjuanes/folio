@@ -1,8 +1,10 @@
 import Router from "@koa/router";
 import { generateJwtToken } from "../token.ts";
+import { createLogger } from "../utils/logger.ts";
 import type { ExtendedContext } from "../types/custom.ts";
 import type { SecurityConfig } from "../config.ts";
 
+const log = createLogger("folio:server:login");
 export const loginRouter = new Router();
 
 // GET - login route
@@ -16,19 +18,22 @@ loginRouter.get("/", async (ctx: ExtendedContext) => {
 loginRouter.post("/", async (ctx: ExtendedContext) => {
     const { token } = ctx.request.body;
     const securityConfig = ctx.state.config?.security as SecurityConfig;
+
     if (!token) {
         return ctx.send(400, {
             message: "Token is required",
         });
     }
+
     // check if we have a user with this access token
     try {
-        const payload = await ctx.auth.validate(token);
+        const payload = await ctx.state.auth.validate(token);
         if (!payload) {
             return ctx.send(401, {
                 message: "Invalid token",
             });
         }
+
         // generate the JWT token for API access and return it as part 
         // of the response object
         return ctx.ok({
@@ -41,6 +46,7 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
         });
     }
     catch (error) {
+        log.error(error.message);
         return ctx.send(500, {
             message: "Internal Server Error",
         });
