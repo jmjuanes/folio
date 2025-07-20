@@ -1,9 +1,9 @@
 #! /usr/bin/env node
 
 import path from "node:path";
+import http from "node:http";
 import { parseArgs } from "node:util";
-import { environment } from "./server/dist/env.js";
-import { readConfig } from "./server/dist/config.js";
+import { getConfiguration, resolveConfigPath } from "./server/dist/config.js";
 import { startServer } from "./server/dist/index.js";
 import { createLogger } from "./server/dist/utils/logger.js";
 
@@ -11,52 +11,48 @@ import { createLogger } from "./server/dist/utils/logger.js";
 // it is used to resolve paths to the data and www directories
 const ROOT_PATH = process.cwd();
 
-// read the configuration file
-const getConfiguration = async (configPath) => {
-    const config = await readConfig(path.resolve(ROOT_PATH, configPath));
-
-    // get fields to override with custom environment values
-    const fields = {
-        "port": environment.FOLIO_PORT,
-        "authentication.access_token.token": environment.FOLIO_ACCESS_TOKEN,
-        "storage.local.storage_path": environment.FOLIO_STORAGE_PATH,
-        "storage.local.storage_name": environment.FOLIO_STORAGE_NAME,
-        "website.directory": environment.FOLIO_WEBSITE_PATH,
-        "security.jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
-        "security.jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
-    };
-
-    Object.keys(fields)
-        .filter(field => typeof fields[field] === "string" && !!fields[field])
-        .forEach(field => {
-            const keys = field.split(".");
-            let current = config;
-
-            // traverse the config object to set the value
-            for (let i = 0; i < keys.length - 1; i++) {
-                // if the key does not exist, skip setting the value
-                if (!current[keys[i]]) {
-                    return;
-                }
-                current = current[keys[i]];
-            }
-            current[keys[keys.length - 1]] = fields[field];
-        });
-
-    return config;
-};
+const { debug, error } = createLogger("folio:cli");
 
 // main method to handle user commands
 const main = async (command = "", options = {}) => {
-    const { debug, error } = createLogger("folio:cli");
-    const config = await getConfiguration(options.config || environment.FOLIO_CONFIG_PATH || "config.yaml");
+    const configPath = resolveConfigPath(ROOT_PATH, options.config);
+    const config = await getConfiguration(configPath);
 
     // 1. start the folio server
     if (command === "start") {
         return startServer(config);
     }
+    // 2. health check
+    else if (command === "ping") {
+        const options = {
+            hostname: "localhost", 
+            port: parseInt(config.port || environment.FOLIO_PORT),
+            path: "/_status",
+            timeout: 5000,
+        };
+        // perform the request
+        debug(`health check on ${options.hostname}:${options.port}${options.path}`);
+        const request = http.request(options, response => {
+            if (response.statusCode === 200) {
+                return process.exit(0);
+            }
+            error(`health check failed with status code ${response.statusCode}`);
+            process.exit(1);
+        });
+        // handle request errors or timeouts
+        request.on("error", requestError => {
+            error(`health check failed due to a request error: ${requestError.message}`);
+            console.error(requestError);
+            process.exit(1);
+        });
+        request.on("timeout", () => {
+            error("health check timed out");
+            process.exit(1);
+        });
+        request.end();
+    }
     else {
-        error("Unknown command.");
+        error(`unknown command '${command}'. Available commands: start, ping.`);
         process.exit(1);
     }
 };
