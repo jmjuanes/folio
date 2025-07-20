@@ -34,6 +34,7 @@
         "dev:app": "cross-env NODE_ENV=development yarn workspace folio-studio dev",
         "dev:demo": "cross-env NODE_ENV=development yarn workspace demo dev",
         "dev:landing": "yarn workspace landing dev",
+        "docker:studio": "docker build -f apps/studio/Dockerfile -t folio-studio .",
         "serve": "yarn dev",
         "start": "yarn server:start",
         "server:start": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js start",
