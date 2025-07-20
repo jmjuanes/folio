@@ -20,7 +20,7 @@
         "build:demo": "yarn workspace demo build",
         "build:dist": "cross-env NODE_ENV=production webpack build",
         "build:landing": "yarn workspace landing build",
-        "build:server": "yarn workspace server build",
+        "build:server": "yarn workspace folio-server build",
         "build:website": "yarn build:demo && yarn build:landing",
         "prebuild:dist": "node scripts/obfuscate-css.js --input node_modules/lowcss/low.css --output obfuscate.map.json",
         "postbuild:dist": "node scripts/purge-css.js --input folio-react/folio.js --output folio-react/folio.css --config obfuscate.map.json",
@@ -33,7 +33,9 @@
         "dev:demo": "cross-env NODE_ENV=development yarn workspace demo dev",
         "dev:landing": "yarn workspace landing dev",
         "serve": "yarn dev",
-        "start": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js start",
+        "start": "yarn server:start",
+        "server:start": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js start",
+        "server:ping": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js ping",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
     },
     "dependencies": {
