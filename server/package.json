@@ -13,8 +13,8 @@
         "./package.json": "./package.json"
     },
     "scripts": {
-        "compile": "tsc --project tsconfig.json",
-        "start": "node dist/scripts/start.js"
+        "build": "yarn compile",
+        "compile": "tsc --project tsconfig.json"
     },
     "dependencies": {
         "@koa/bodyparser": "^6.0.0",
