@@ -3,11 +3,10 @@ import React from "react";
 export type ApiClient = (method: String, path: string, data: any) => Promise<any>;
 
 export const useApiClient = (token: string): ApiClient => {
-    return React.useCallback((method = "GET", path = "", data = null) => {
+    return React.useCallback((method: string, path: string, data: any): Promise<any> => {
         // construct the URL based on the base URL and path
-        const url = `/api${path}`;
         const options = {
-            method: method,
+            method: method || "GET",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -21,7 +20,7 @@ export const useApiClient = (token: string): ApiClient => {
             options.body = JSON.stringify(data);
         }
         // perform the request
-        return fetch(url, options).then(response => {
+        return fetch(path, options).then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
