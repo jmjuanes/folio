@@ -9,7 +9,7 @@ import apiRules from "./api.json" with {type: "json"};
 export default {
     mode: process.env.NODE_ENV || "development",
     target: "web",
-    entry: path.resolve("index.jsx"),
+    entry: path.resolve("index.tsx"),
     output: {
         path: path.resolve("www"),
         publicPath: "./",
@@ -20,6 +20,7 @@ export default {
         alias: {
             "folio-react": path.resolve("../../folio-react/"),
         },
+        extensions: [".tsx", ".ts", ".js", ".jsx"],
     },
     optimization: {
         splitChunks: {
@@ -55,7 +56,7 @@ export default {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/,
+                test: /\.(j|t)sx?$/,
                 include: [
                     path.resolve("."),
                     path.resolve("../../folio-react"),
@@ -66,9 +67,9 @@ export default {
                     presets: [
                         "@babel/preset-env", 
                         "@babel/preset-react",
+                        "@babel/preset-typescript",
                     ],
                     plugins: [
-                        "@babel/plugin-transform-react-jsx",
                         "@babel/plugin-transform-runtime",
                     ],
                 },
@@ -94,7 +95,7 @@ export default {
         }),
         new HtmlWebpackPlugin({
             template: path.resolve("../../index.html"),
-            filename: "index.html",
+            filename: "app.html",
             minify: true,
         }),
     ],
