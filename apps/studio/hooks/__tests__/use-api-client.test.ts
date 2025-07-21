@@ -15,18 +15,21 @@ const { useApiClient } = await import("../use-api-client.ts");
 
 describe("useApiClient", () => {
     it("should return a method to call the provided endpoint", async () => {
-        const { result } = renderHook(() => {
-            return useApiClient("TOKEN");
-        });
+        const { result } = renderHook(() => useApiClient("TOKEN"));
 
         expect(typeof result.current).toEqual("function");
     });
 
-    it("should not include data if method is GET", async () => {
-        const { result } = renderHook(() => {
-            return useApiClient("TOKEN");
-        });
+    it("should include Autorization header if token is provided", async () => {
+        const { result } = renderHook(() => useApiClient("TOKEN"));
+        const response = await result.current("GET", "URL");
 
+        expect(typeof response.options.headers).toEqual("object");
+        expect(response.options.headers["Authorization"]).toEqual("Bearer TOKEN");
+    });
+
+    it("should not include data if method is GET", async () => {
+        const { result } = renderHook(() => useApiClient("TOKEN"));
         const response = await result.current("GET", "URL", { key: true });
 
         expect(response.options.method).toEqual("GET");
@@ -35,9 +38,7 @@ describe("useApiClient", () => {
 
     it("should include data only when method is POST, PATCH, DELETE, or PUT", async () => {
         const methods = ["POST", "PUT", "DELETE", "PATCH"];
-        const { result } = renderHook(() => {
-            return useApiClient("TOKEN");
-        });
+        const { result } = renderHook(() => useApiClient("TOKEN"));
 
         for (let i = 0; i < methods.length; i++) {
             const response = await result.current(methods[i], "URL", { key: true });
