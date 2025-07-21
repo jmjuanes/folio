@@ -62,7 +62,7 @@ COPY --chown=node:node . .
 RUN yarn install --frozen-lockfile
 
 # Build the application
-RUN yarn build:app
+RUN yarn build:studio
 
 # =============================================================================
 # Production Stage
@@ -85,7 +85,7 @@ COPY --chown=node:node config.yaml ./
 # Copy builds from previous stage
 COPY --from=server --chown=node:node $FOLIO_APPDIR/server/node_modules ./server/node_modules
 COPY --from=server --chown=node:node $FOLIO_APPDIR/server/dist ./server/dist
-COPY --from=app --chown=node:node $FOLIO_APPDIR/app/www ./app
+COPY --from=app --chown=node:node $FOLIO_APPDIR/apps/studio/www ./app
 
 # Set proper permissions for executable files
 RUN chmod +x folio.js

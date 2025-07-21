@@ -3,7 +3,7 @@ import webpack from "webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import {createApi} from "./scripts/create-api.js";
-import pkg from "../package.json" with {type: "json"};
+import pkg from "../../package.json" with {type: "json"};
 import apiRules from "./api.json" with {type: "json"};
 
 export default {
@@ -18,7 +18,7 @@ export default {
     },
     resolve: {
         alias: {
-            "folio-react": path.resolve("../folio-react/"),
+            "folio-react": path.resolve("../../folio-react/"),
         },
     },
     optimization: {
@@ -58,7 +58,7 @@ export default {
                 test: /\.(js|jsx)$/,
                 include: [
                     path.resolve("."),
-                    path.resolve("../folio-react"),
+                    path.resolve("../../folio-react"),
                 ],
                 exclude: /(node_modules|www)/,
                 loader: "babel-loader",
@@ -89,11 +89,11 @@ export default {
         }),
         new CopyWebpackPlugin({
             patterns: [
-                path.resolve("../node_modules/lowcss/low.css"),
+                path.resolve("../../node_modules/lowcss/low.css"),
             ],
         }),
         new HtmlWebpackPlugin({
-            template: path.resolve("../index.html"),
+            template: path.resolve("../../index.html"),
             filename: "index.html",
             minify: true,
         }),
