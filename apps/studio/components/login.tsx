@@ -1,13 +1,18 @@
 import React from "react";
-import {LoaderIcon} from "@josemi-icons/react";
-import {Button} from "folio-react/components/ui/button.jsx";
-import {Centered} from "folio-react/components/ui/centered.jsx";
-import {useClient} from "../contexts/client.jsx";
+import { LoaderIcon } from "@josemi-icons/react";
+import { Button } from "folio-react/components/ui/button.jsx";
+import { Centered } from "folio-react/components/ui/centered.jsx";
+import { Client, useClient } from "../contexts/client.jsx";
+
+export type LoadingState = {
+    loading?: boolean;
+    error?: string;
+};
 
 // @description login component
-export const Login = () => {
-    const client = useClient();
-    const [state, setState] = React.useState({});
+export const Login = (): React.JSX.Element => {
+    const client = useClient() as Client;
+    const [state, setState] = React.useState<LoadingState>({});
     const accessTokenRef = React.useRef(null);
 
     const handleLogin = React.useCallback(() => {
@@ -41,7 +46,7 @@ export const Login = () => {
                         placeholder="Enter your access token..."
                         ref={accessTokenRef}
                         disabled={state.loading}
-                        onKeyDown={event => {
+                        onKeyDown={(event: React.SyntheticEvent) => {
                             if (event.key === "Enter") {
                                 event.preventDefault();
                                 handleLogin();

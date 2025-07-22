@@ -2,14 +2,14 @@ import React from "react";
 import { loadFromJson } from "folio-react/lib/json.js";
 import { useConfirm } from "folio-react/contexts/confirm.jsx";
 import { useDialog } from "folio-react/contexts/dialogs.jsx";
-import { useClient } from "../contexts/client.jsx";
-import { useRouter, Route, Switch } from "../contexts/router.jsx";
-import { Sidebar } from "./sidebar.jsx";
-import { Welcome } from "./welcome.jsx";
-import { Board } from "./board.jsx";
-import { BoardRenameDialog } from "./dialogs/board-rename.jsx";
+import { useClient } from "../contexts/client.tsx";
+import { useRouter, Route, Switch } from "../contexts/router.tsx";
+import { Sidebar } from "./sidebar.tsx";
+import { Welcome } from "./welcome.tsx";
+import { Board } from "./board.tsx";
+import { BoardRenameDialog } from "./dialogs/board-rename.tsx";
 
-export const App = () => {
+export const App = (): React.JSX.Element => {
     const client = useClient();
     const [boards, setBoards] = React.useState([]);
     const [hash, redirect] = useRouter();

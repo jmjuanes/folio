@@ -2,46 +2,42 @@ import React from "react";
 import { useToggle } from "react-use";
 import classNames from "classnames";
 import { renderIcon, DrawingIcon, ChevronLeftIcon, ChevronRightIcon } from "@josemi-icons/react";
-import { useClient } from "../contexts/client.jsx";
-import { useRouter } from "../contexts/router.jsx";
-import { BoardLink } from "./board-link.jsx";
-import { groupByDate } from "../utils/dates.js";
+import { useClient } from "../contexts/client.tsx";
+import { useRouter } from "../contexts/router.tsx";
+import { BoardLink } from "./board-link.tsx";
+import { groupByDate } from "../utils/dates.ts";
 
 // @description logo component
-const Logo = () => (
+const Logo = (): React.JSX.Element => (
     <div className="sticky top-0 text-3xl leading-none select-none bg-white pt-5 px-3 pb-3">
         <span className="text-gray-950 font-brand select-none">folio.</span>
     </div>
 );
 
 // @description action button component (create, import, settings, etc.)
-const ActionButton = props => (
-    <a className="flex items-center gap-2 cursor-pointer rounded-md hover:bg-gray-100 px-2 py-1 text-gray-700 hover:text-gray-900" href={props.href} onClick={props.onClick}>
+const ActionButton = ({ href, icon, text, onClick }): React.JSX.Element => (
+    <a className="flex items-center gap-2 cursor-pointer rounded-md hover:bg-gray-100 px-2 py-1 text-gray-700 hover:text-gray-900" href={href} onClick={onClick}>
         <div className="flex text-base">
-            {renderIcon(props.icon)}
+            {renderIcon(icon)}
         </div>
-        <div className="text-sm font-medium">{props.text}</div>
+        <div className="text-sm font-medium">{text}</div>
     </a>
 );
 
-const BoardsGroup = props => {
+const BoardsGroup = ({ title, boards, onRename, onDelete }): React.JSX.Element => {
     const [hash] = useRouter();
     return (
         <div className="flex flex-col gap-1">
             <div className="text-xs font-bold text-gray-600 mb-0 px-2">
-                <span>{props.title}</span>
+                <span>{title || ""}</span>
             </div>
-            {(props.boards || []).map(item => (
+            {(boards || []).map(item => (
                 <BoardLink
                     key={`board:item:${item.id}`}
                     board={item}
                     active={hash === item.id}
-                    onRename={() => {
-                        props.onRename(item.id);
-                    }}
-                    onDelete={() => {
-                        props.onDelete(item.id);
-                    }}
+                    onRename={() => onRename(item.id)}
+                    onDelete={() => props.onDelete(item.id)}
                 />
             ))}
         </div>
@@ -49,10 +45,10 @@ const BoardsGroup = props => {
 };
 
 // @description render boards list
-const BoardsList = props => {
+const BoardsList = ({ boards, onRename, onDelete }): React.JSX.Element => {
     const groups = React.useMemo(() => {
-        return groupByDate(props.boards, "updated_at");
-    }, [props.boards]);
+        return groupByDate(boards, "updated_at");
+    }, [boards]);
 
     return (
         <React.Fragment>
@@ -60,43 +56,43 @@ const BoardsList = props => {
                 <BoardsGroup
                     title="Today"
                     boards={groups.today}
-                    onRename={props.onRename}
-                    onDelete={props.onDelete}
+                    onRename={onRename}
+                    onDelete={onDelete}
                 />
             )}
             {groups.yesterday.length > 0 && (
                 <BoardsGroup
                     title="Yesterday"
                     boards={groups.yesterday}
-                    onRename={props.onRename}
-                    onDelete={props.onDelete}
+                    onRename={onRename}
+                    onDelete={onDelete}
                 />
             )}
             {groups.thisWeek.length > 0 && (
                 <BoardsGroup
                     title="This Week"
                     boards={groups.thisWeek}
-                    onRename={props.onRename}
-                    onDelete={props.onDelete}
+                    onRename={onRename}
+                    onDelete={onDelete}
                 />
             )}
             {groups.thisMonth.length > 0 && (
                 <BoardsGroup
                     title="This Month"
                     boards={groups.thisMonth}
-                    onRename={props.onRename}
-                    onDelete={props.onDelete}
+                    onRename={onRename}
+                    onDelete={onDelete}
                 />
             )}
             {groups.others.length > 0 && (
                 <BoardsGroup
                     title="Older Boards"
                     boards={groups.others}
-                    onRename={props.onRename}
-                    onDelete={props.onDelete}
+                    onRename={onRename}
+                    onDelete={onDelete}
                 />
             )}
-            {props.boards.length === 0 && (
+            {(boards || []).length === 0 && (
                 <div className="bg-gray-50 rounded-lg p-6 border-0 border-gray-200">
                     <div className="flex items-center justify-center text-gray-700 text-3xl mb-1">
                         <DrawingIcon />
@@ -113,16 +109,16 @@ const BoardsList = props => {
     );
 };
 
-const ToggleButton = props => (
-    <div className="absolute left-0 top-half z-50 cursor-pointer" style={props.style} onClick={props.onClick}>
+const ToggleButton = ({ style, collapsed, onClick }): React.JSX.Element => (
+    <div className="absolute left-0 top-half z-50 cursor-pointer" style={style} onClick={onClick}>
         <div className="flex bg-gray-200 text-lg py-2 pr-1 rounded-tr-md rounded-br-md">
-            {props.collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
         </div>
     </div>
 );
 
 // export the sidebar component
-export const Sidebar = props => {
+export const Sidebar = (props: any): React.JSX.Element => {
     const [collapsed, toggleCollapsed] = useToggle(!!props.defaultCollapsed);
     const client = useClient();
     const sidebarClass = classNames({

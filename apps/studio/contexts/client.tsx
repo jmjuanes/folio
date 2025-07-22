@@ -24,11 +24,11 @@ export type Client = {
 };
 
 // main client context
-const ClientContext = React.createContext({});
+const ClientContext = React.createContext({}) as any;
 
 // @description hook to get the client context
-export const useClient = () => {
-    return React.useContext(ClientContext);
+export const useClient = (): Client => {
+    return React.useContext(ClientContext) as Client;
 };
 
 // @description client context provider

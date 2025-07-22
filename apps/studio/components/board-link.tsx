@@ -3,27 +3,27 @@ import { createPortal } from "react-dom";
 import classNames from "classnames";
 import { renderIcon, DotsIcon } from "@josemi-icons/react";
 import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
-import { getPropertyByKey } from "../utils/properties.js";
 
-const BoardLinkAction = props => (
+const BoardLinkAction = (props: any): React.JSX.Element => (
     <Dropdown.Item as={props.as || "div"} onClick={props.onClick}>
         <Dropdown.Icon icon={props.icon} />
         <span>{props.text}</span>
     </Dropdown.Item>
 );
 
-export const BoardLink = props => {
+export const BoardLink = (props: any): React.JSX.Element => {
     const [actionsMenuOpen, setActionsMenuOpen] = React.useState(false);
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
     const hasActions = typeof props.onRename === "function" || typeof props.onDelete === "function";
     const title = React.useMemo(() => {
-        return getPropertyByKey(props.board?.properties, "title")?.content?.value || "Untitled";
-    }, [props.board?.id, props.board?.properties]);
+        // return getPropertyByKey(props.board?.properties, "title")?.content?.value || "Untitled";
+        return "Untitled";
+    }, [props.board?.id]);
 
     // when clicking on the action item, open the actions menu
     // and position it below the clicked item
-    const handleActionsMenuClick = React.useCallback(event => {
+    const handleActionsMenuClick = React.useCallback((event: React.SyntheticEvent) => {
         event.preventDefault();
         if (event.currentTarget) {
             const rect = event.currentTarget.getBoundingClientRect();
@@ -37,7 +37,7 @@ export const BoardLink = props => {
 
     React.useEffect(() => {
         if (actionsMenuOpen) {
-            const handleClickOutside = event => {
+            const handleClickOutside = (event: Event) => {
                 event.preventDefault();
                 if (actionsMenuRef.current && !actionsMenuRef.current.contains(event.target)) {
                     setActionsMenuOpen(false);
@@ -75,7 +75,7 @@ export const BoardLink = props => {
                 <Dropdown key="sidebar:board:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={position.current}>
                     {typeof props.onRename === "function" && (
                         <BoardLinkAction
-                            onClick={event => {
+                            onClick={(event: React.SyntheticEvent) => {
                                 event.preventDefault();
                                 setActionsMenuOpen(false);
                                 props.onRename();
@@ -86,7 +86,7 @@ export const BoardLink = props => {
                     )}
                     {typeof props.onDelete === "function" && (
                         <BoardLinkAction
-                            onClick={event => {
+                            onClick={(event: React.SyntheticEvent) => {
                                 event.preventDefault();
                                 setActionsMenuOpen(false);
                                 props.onDelete();
@@ -100,4 +100,3 @@ export const BoardLink = props => {
         </a>
     );
 };
-

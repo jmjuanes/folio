@@ -1,12 +1,12 @@
 import React from "react";
 import { Editor } from "folio-react/components/editor.jsx";
 import { Loading } from "folio-react/components/loading.jsx";
-import { useClient } from "../contexts/client.jsx";
-import { NotFound } from "./not-found.jsx";
+import { Client, useClient } from "../contexts/client.tsx";
+import { NotFound } from "./not-found.tsx";
 
-export const Board = props => {
-    const [exists, setExists] = React.useState(null);
-    const client = useClient();
+export const Board = (props: any): React.JSX.Element => {
+    const [exists, setExists] = React.useState<boolean>(null);
+    const client = useClient() as Client;
 
     // handle loading data from api
     const handleDataLoad = React.useCallback(() => {
@@ -15,20 +15,20 @@ export const Board = props => {
         });
     }, [props.id, client]);
 
-    const handleLibraryLoad = React.useCallback(() => {
-        return client.getUserLibrary().then(library => {
-            return library?.content || {};
-        });
-    }, [props.id, client]);
+    // const handleLibraryLoad = React.useCallback(() => {
+    //     return client.getUserLibrary().then(library => {
+    //         return library?.content || {};
+    //     });
+    // }, [props.id, client]);
 
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {
         return client.updateBoard(props.id, data);
     }, [props.id, client]);
 
-    const handleLibraryChange = React.useCallback(data => {
-        return client.updateUserLibrary(data);
-    }, [props.id, client]);
+    // const handleLibraryChange = React.useCallback(data => {
+    //     return client.updateUserLibrary(data);
+    // }, [props.id, client]);
 
     // on mount, check if the board exists
     // it includes a little protection against rapid board entering/exit
@@ -67,9 +67,7 @@ export const Board = props => {
         <Editor
             key={props.id}
             data={handleDataLoad}
-            library={handleLibraryLoad}
             onChange={handleDataChange}
-            onLibraryChange={handleLibraryChange}
         />
     );
 };

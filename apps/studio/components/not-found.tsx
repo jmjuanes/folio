@@ -1,8 +1,8 @@
 import React from "react";
-import {Centered} from "folio-react/components/ui/centered.jsx";
+import { Centered } from "folio-react/components/ui/centered.jsx";
 
 // @description not found component
-export const NotFound = () => {
+export const NotFound = (): React.JSX.Element => {
     return (
         <Centered>
             <div className="text-center max-w-md mx-auto w-full p-8">

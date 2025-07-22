@@ -1,20 +1,25 @@
 import React from "react";
 import { Loading } from "folio-react/components/loading.jsx";
-import {useClient} from "./client.jsx";
-import {Login} from "../components/login.jsx";
+import { useClient } from "./client.tsx";
+import { Login } from "../components/login.tsx";
+
+// contains the information about the authenticated user
+export type AuthenticatedUser = {
+    name: string;
+};
 
 // the authentication context saves information about the current
 // authenticated user
-export const AuthenticationContext = React.createContext(null);
+export const AuthenticationContext = React.createContext<AuthenticatedUser>(null);
 
 // @description get the information about the current authenticated user
-export const useAuthenticatedUser = () => {
+export const useAuthenticatedUser = (): AuthenticatedUser => {
     return React.useContext(AuthenticationContext);
 };
 
 // @description provider component for the authentication context
-export const AuthenticationProvider = ({children}) => {
-    const [user, setUser] = React.useState(null);
+export const AuthenticationProvider = ({ children }) => {
+    const [user, setUser] = React.useState<AuthenticathedUser>(null);
     const client = useClient();
 
     React.useEffect(() => {
