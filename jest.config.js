@@ -4,5 +4,5 @@ export default {
     transform: {
         "^.+\\.(j|t)sx?$": "babel-jest",
     },
-    extensionsToTreatAsEsm: [".jsx"],
+    extensionsToTreatAsEsm: [".jsx", ".tsx", ".ts", ".js"],
 };

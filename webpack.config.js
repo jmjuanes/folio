@@ -57,7 +57,6 @@ export default {
                         "@babel/preset-react",
                     ],
                     plugins: [
-                        "@babel/plugin-transform-react-jsx",
                         "@babel/plugin-transform-runtime",
                         path.resolve("scripts/babel-plugin-obfuscate-classnames.js"),
                     ],
