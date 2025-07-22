@@ -75,6 +75,11 @@ export default {
                 },
             },
             {
+                test: /\.(graphql|gql)$/,
+                exclude: /node_modules/,
+                loader: "graphql-tag/loader",
+            },
+            {
                 test: /\.(png|jpg|jpeg|svg)$/,
                 type: "asset/inline",
             },
