@@ -2,7 +2,7 @@ import React from "react";
 import { LoaderIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { Centered } from "folio-react/components/ui/centered.jsx";
-import { Client, useClient } from "../contexts/client.jsx";
+import { Client, useClient } from "../contexts/client.tsx";
 
 export type LoadingState = {
     loading?: boolean;
@@ -46,7 +46,7 @@ export const Login = (): React.JSX.Element => {
                         placeholder="Enter your access token..."
                         ref={accessTokenRef}
                         disabled={state.loading}
-                        onKeyDown={(event: React.SyntheticEvent) => {
+                        onKeyDown={(event: React.KeyboardEvent) => {
                             if (event.key === "Enter") {
                                 event.preventDefault();
                                 handleLogin();
@@ -59,7 +59,7 @@ export const Login = (): React.JSX.Element => {
                 </div>
                 <div className="w-full">
                     {!state.loading && (
-                        <Button className="w-full" onClick={handleLogin}>
+                        <Button className="w-full" disabled={false} onClick={handleLogin}>
                             <span>Continue</span>
                         </Button>
                     )}

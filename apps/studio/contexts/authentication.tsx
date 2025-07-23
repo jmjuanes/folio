@@ -10,22 +10,22 @@ export type AuthenticatedUser = {
 
 // the authentication context saves information about the current
 // authenticated user
-export const AuthenticationContext = React.createContext<AuthenticatedUser>(null);
+export const AuthenticationContext = React.createContext<AuthenticatedUser|null>(null);
 
 // @description get the information about the current authenticated user
-export const useAuthenticatedUser = (): AuthenticatedUser => {
+export const useAuthenticatedUser = (): AuthenticatedUser|null => {
     return React.useContext(AuthenticationContext);
 };
 
 // @description provider component for the authentication context
 export const AuthenticationProvider = ({ children }) => {
-    const [user, setUser] = React.useState<AuthenticathedUser>(null);
+    const [user, setUser] = React.useState<AuthenticatedUser|null>(null);
     const client = useClient();
 
     React.useEffect(() => {
         setUser(null);
         if (client.token) {
-            client.getUser()
+            client.user()
                 .then(userData => setUser(userData))
                 .catch(error => {
                     console.error("Failed to fetch user data:", error);

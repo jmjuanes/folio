@@ -1,11 +1,11 @@
 import React from "react";
 
-export type ApiClient = (method: String, path: string, data: any) => Promise<any>;
+export type ApiClient = (method: string, path: string, data?: any) => Promise<any>;
 
-export const useApiClient = (token: string): ApiClient => {
-    return React.useCallback((method: string, path: string, data: any): Promise<any> => {
+export const useApi = (token: string): ApiClient => {
+    return React.useCallback<ApiClient>((method: string, path: string, data?: any): Promise<any> => {
         // construct the URL based on the base URL and path
-        const options = {
+        const options: RequestInit = {
             method: method || "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -13,10 +13,10 @@ export const useApiClient = (token: string): ApiClient => {
         };
         // include the Authorization header if token is set
         if (token) {
-            options.headers["Authorization"] = `Bearer ${token}`;
+            (options.headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
         }
         // include the body if method is POST or PATCH and data is provided
-        if (data && (method === "POST" || method === "PATCH")) {
+        if (data && (method === "POST" || method === "PATCH" || method === "PUT")) {
             options.body = JSON.stringify(data);
         }
         // perform the request

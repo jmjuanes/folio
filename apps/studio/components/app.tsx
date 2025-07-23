@@ -8,19 +8,24 @@ import { Sidebar } from "./sidebar.tsx";
 import { Welcome } from "./welcome.tsx";
 import { Board } from "./board.tsx";
 import { BoardRenameDialog } from "./dialogs/board-rename.tsx";
+import GetDocuments from "../graphql/get-documents.graphql";
 
 export const App = (): React.JSX.Element => {
     const client = useClient();
-    const [boards, setBoards] = React.useState([]);
+    const [boards, setBoards] = React.useState<any[]>([]);
     const [hash, redirect] = useRouter();
     const {showConfirm} = useConfirm();
     const {showDialog} = useDialog();
     
     // after any change, force to update boards list by calling the /boards endpoint
     const updateBoards = React.useCallback(() => {
-        client.getUserBoards().then(data => {
-            return setBoards(data);
-        });
+        client.query(GetDocuments, {collection: "boards"})
+            .then(response => {
+                setBoards(response?.data?.getDocuments || []);
+            })
+            .catch(response => {
+                console.error("Error fetching boards:", JSON.stringify(response.errors, null, "    "));
+            });
     }, [client, setBoards]);
 
     // when a board is created, we redirect to the board id and force to

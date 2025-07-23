@@ -1,26 +1,13 @@
 import React from "react";
 import { useLocalStorage } from "react-use";
-import { useApiClient } from "../hooks/use-api-client.ts";
-import { useGraphqlClient } from "../hooks/use-graphql-client.ts";
-import {
-    CREATE_BOARD_QUERY,
-    DELETE_BOARD_QUERY,
-    GET_BOARD_QUERY,
-    GET_BOARDS_QUERY,
-    GET_USER_QUERY,
-    UPDATE_BOARD_QUERY,
-} from "../constants.ts";
+import { useApi } from "../hooks/use-api.ts";
 
 export type Client = {
     token: string;
     login: (credentials: any) => Promise<void>;
     logout: () => void;
-    getUser: () => Promise<any>;
-    getBoards: () => Promise<any>;
-    getBoard: (id: string) => Promise<any>;
-    createBoard: (content: string) => Promise<any>;
-    updateBoard: (id: string, content: string) => Promise<any>;
-    deleteBoard: (id: string) => Promise<any>;
+    user: () => Promise<any>;
+    query: (query: string, variables?: any) => Promise<any>;
 };
 
 // main client context
@@ -32,37 +19,30 @@ export const useClient = (): Client => {
 };
 
 // @description client context provider
-export const ClientProvider = ({ children }) => {
-    const [token, setToken, removeToken] = useLocalStorage(props.sessionKey || "folio-session");
-    const api = useApiClient(token);
-    const graphql = useGraphqlClient(token, "/_graphql");
+export const ClientProvider = ({ sessionKey = "", children }): React.JSX.Element => {
+    const [token, setToken, removeToken] = useLocalStorage(sessionKey || "folio-session");
+    const api = useApi(token as string);
 
     // api to access to the REST API
     const client: Client = React.useMemo(() => ({
-        token: token,
+        token: token as string,
         logout: () => removeToken(),
-        login: (credentials: any): Promise<void> => {
+        login: (credentials) => {
             return api("POST", "/_login", credentials || {}).then(data => {
                 setToken(data.token);
             });
         },
-        getUser: (): Promise<any> => {
-            return graphql(GET_USER_QUERY, {});
+        user: () => {
+            return api("GET", "/_user");
         },
-        getBoards: (): Promise<any> => {
-            return graphql(GET_BOARDS_QUERY, {});
-        },
-        createBoard: (content: string): Promise<any> => {
-            return graphql(CREATE_BOARD_QUERY, { content });
-        },
-        getBoard: (id: string): Promise<any> => {
-            return graphql(GET_BOARD_QUERY, { id });
-        },
-        updateBoard: (id: string, content: string): Promise<any> => {
-            return graphql(UPDATE_BOARD_QUERY, { id, content });
-        },
-        deleteBoard: (id: string): Promise<any> => {
-            return graphql(DELETE_BOARD_QUERY, { id });
+        query: (query, variables) => {
+            return api("POST", "/_graphql", {query, variables}).then(response => {
+                if (response.errors) {
+                    return Promise.reject(response);
+                }
+                // return response object
+                return response;
+            });
         },
     }), [token, setToken, removeToken]);
 
