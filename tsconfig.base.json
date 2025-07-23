@@ -1,0 +1,7 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "folio-react/*": ["./folio-react/*"]
+        }
+    }
+}
