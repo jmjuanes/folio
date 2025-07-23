@@ -2,9 +2,9 @@ import path from "node:path";
 import webpack from "webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import {createApi} from "./scripts/create-api.js";
-import pkg from "../../package.json" with {type: "json"};
-import apiRules from "./api.json" with {type: "json"};
+import { createServer } from "./server.js";
+
+import pkg from "../../package.json" with { type: "json" };
 
 export default {
     mode: process.env.NODE_ENV || "development",
@@ -41,13 +41,11 @@ export default {
                 {from: /^\/index.html$/, to: "app.html"},
             ],
         },
-        setupMiddlewares: createApi({
-            source: path.join(process.cwd(), "__stubs"),
-            entry: "/api/*",
+        setupMiddlewares: createServer({
+            entry: "*",
             headers: {
                 "Content-Type": "application/json",
             },
-            rules: apiRules,
         }),
         devMiddleware: {
             writeToDisk: true,
@@ -77,7 +75,7 @@ export default {
             {
                 test: /\.(graphql|gql)$/,
                 exclude: /node_modules/,
-                loader: "graphql-tag/loader",
+                loader: "raw-loader",
             },
             {
                 test: /\.(png|jpg|jpeg|svg)$/,
