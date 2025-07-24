@@ -41,12 +41,7 @@ export default {
                 {from: /^\/index.html$/, to: "app.html"},
             ],
         },
-        setupMiddlewares: createServer({
-            entry: "*",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }),
+        setupMiddlewares: createServer(),
         devMiddleware: {
             writeToDisk: true,
         },
@@ -73,11 +68,6 @@ export default {
                 },
             },
             {
-                test: /\.(graphql|gql)$/,
-                exclude: /node_modules/,
-                loader: "raw-loader",
-            },
-            {
                 test: /\.(png|jpg|jpeg|svg)$/,
                 type: "asset/inline",
             },
@@ -86,6 +76,7 @@ export default {
     plugins: [
         new webpack.ProgressPlugin(),
         new webpack.DefinePlugin({
+            "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development"),
             "process.env.VERSION": JSON.stringify(pkg.version),
             "process.env.URL_REPOSITORY": JSON.stringify(pkg.repository),
             "process.env.URL_ISSUES": JSON.stringify(pkg.bugs),

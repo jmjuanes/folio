@@ -8,7 +8,19 @@ import { Sidebar } from "./sidebar.tsx";
 import { Welcome } from "./welcome.tsx";
 import { Board } from "./board.tsx";
 import { BoardRenameDialog } from "./dialogs/board-rename.tsx";
-import GetDocuments from "../graphql/get-documents.graphql";
+
+const GET_USER_BOARDS_QUERY = `
+    query GetUserBoards {
+        boards {
+            id
+            created_at
+            updated_at
+            attributes {
+                name
+            }
+        }
+    }
+`;
 
 export const App = (): React.JSX.Element => {
     const client = useClient();
@@ -17,9 +29,9 @@ export const App = (): React.JSX.Element => {
     const {showConfirm} = useConfirm();
     const {showDialog} = useDialog();
     
-    // after any change, force to update boards list by calling the /boards endpoint
+    // after any change, force to update boards list
     const updateBoards = React.useCallback(() => {
-        client.query(GetDocuments, {collection: "boards"})
+        client.query(GET_USER_BOARDS_QUERY, {})
             .then(response => {
                 setBoards(response?.data?.getDocuments || []);
             })

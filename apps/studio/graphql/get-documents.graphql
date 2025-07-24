@@ -1,7 +1,0 @@
-query GetDocuments($collection: String) {
-    getDocuments(collection: $collection) {
-        id
-        created_at
-        updated_at
-    }
-}

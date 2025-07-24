@@ -3,6 +3,14 @@ import { Loading } from "folio-react/components/loading.jsx";
 import { useClient } from "./client.tsx";
 import { Login } from "../components/login.tsx";
 
+const GET_USER_QUERY = `
+    query GetUser {
+        user {
+            name
+        }
+    }
+`;
+
 // contains the information about the authenticated user
 export type AuthenticatedUser = {
     name: string;
@@ -25,10 +33,12 @@ export const AuthenticationProvider = ({ children }) => {
     React.useEffect(() => {
         setUser(null);
         if (client.token) {
-            client.user()
-                .then(userData => setUser(userData))
-                .catch(error => {
-                    console.error("Failed to fetch user data:", error);
+            client.query(GET_USER_QUERY, {})
+                .then(response => {
+                    return setUser(response?.data?.user || null);
+                })
+                .catch(response => {
+                    console.error("Failed to fetch user data: ", response);
                     client.logout();
                 });
         }

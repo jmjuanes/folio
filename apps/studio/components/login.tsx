@@ -24,7 +24,7 @@ export const Login = (): React.JSX.Element => {
         }
         // try to login with the provided access token
         setState({loading: true});
-        client.login(accessToken).catch(error => {
+        client.login({ token: accessToken }).catch(error => {
             console.error("Login failed:", error);
             return setState({
                 error: `The provided access token is invalid. Please try again.`,
