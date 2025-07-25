@@ -1,46 +1,5 @@
 import bodyParser from "body-parser";
-
-const graphqlResponses = {
-    "GetUser": {
-        user: {
-            name: "test",
-        },
-    },
-    "GetUserBoards": {
-        boards: [
-            {
-                id: "board1",
-                created_at: "2025-06-27 00:00:00",
-                updated_at: "2025-06-27 00:00:00",
-                attributes: {
-                    name: "Board 1",
-                    pinned: true,
-                },
-            },
-            {
-                id: "board2",
-                created_at: "2025-06-27 00:00:00",
-                updated_at: "2025-06-27 00:00:00",
-                attributes: {
-                    name: "Board 2",
-                    pinned: false,
-                },
-            }
-        ],
-    },
-    "GetBoard": {
-        board: {
-            id: "board1",
-            created_at: "2025-06-27 00:00:00",
-            updated_at: "2025-06-27 00:00:00",
-            attributes: {
-                name: "Board 1",
-                pinned: true,
-            },
-            content: "{}",
-        },
-    },
-};
+import graphqlResponses from "./__stubs/graphql.json" with { type: "json" };
 
 // fake rules for the API
 const rules = [
@@ -66,7 +25,7 @@ const rules = [
         response: {
             fn: request => {
                 // console.log("GraphQL request:", request.body);
-                const query = (request?.body?.query || "").trim().match(/query (\w+)/)?.[1] || "";
+                const query = (request?.body?.query || "").trim().match(/(?:query|mutation) (\w+)/)?.[1] || "";
                 return Promise.resolve({
                     data: graphqlResponses[query] || {},
                 });
