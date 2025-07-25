@@ -127,35 +127,59 @@ export const Sidebar = (props: any): React.JSX.Element => {
     const client = useClient();
     const sidebarClass = classNames({
         "h-full bg-gray-50 shrink-0 flex flex-col justify-between border-r-1 border-gray-200": true,
-        "w-16": collapsed,
+        "w-16 cursor-e-resize": collapsed,
         "w-64": !collapsed,
     });
 
+    // note that this event will not be triggered if the sidebar is collapsed
+    const handleToggleCollapsed = React.useCallback(() => {
+        if (collapsed) {
+            toggleCollapsed();
+        }
+    }, [collapsed, toggleCollapsed]);
+
     return (
-        <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}}>
+        <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
             <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
-                <div className="sticky z-50 top-0 text-3xl leading-none select-none bg-gray-50 py-5 px-3 flex items-center justify-between">
+                <div className="sticky z-50 top-0 text-3xl leading-none select-none bg-gray-50 p-3 flex items-center justify-between">
                     <div className="text-gray-950 font-brand select-none shrink-0 overflow-hidden">
                         {!collapsed && (<span>folio.</span>)}
                     </div>
                     <div className="shrink-0">
                         <ActionButton
-                            onClick={() => toggleCollapsed()}
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                                toggleCollapsed();
+                            }}
                             icon={collapsed ? "sidebar-left-open" : "sidebar-left-close"}
                         />
                     </div>
                 </div>
                 <div className="flex flex-col gap-4 h-full px-3 select-none">
                     <div className="flex flex-col gap-1 mb-2">
-                        <ActionButton collapsed={collapsed} href="#" icon="home" text="Home" />
                         <ActionButton
-                            onClick={() => props.onBoardCreate()}
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                            }}
+                            collapsed={collapsed}
+                            href="#"
+                            icon="home"
+                            text="Home"
+                        />
+                        <ActionButton
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                                props.onBoardCreate();
+                            }}
                             collapsed={collapsed}
                             icon="plus"
                             text="Create a new board"
                         />
                         <ActionButton
-                            onClick={() => props.onBoardImport()}
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                                props.onBoardImport();
+                            }}
                             collapsed={collapsed}
                             icon="upload"
                             text="Import board from file"
@@ -172,7 +196,10 @@ export const Sidebar = (props: any): React.JSX.Element => {
             </div>
             <div className="px-3 pt-3 pb-3 bg-gray-50">
                 <ActionButton
-                    onClick={() => client.logout()}
+                    onClick={(event: React.SyntheticEvent) => {
+                        event.stopPropagation();
+                        client.logout();
+                    }}
                     collapsed={collapsed}
                     icon="logout"
                     text="Sign out"
