@@ -2,14 +2,7 @@ import React from "react";
 import { Loading } from "folio-react/components/loading.jsx";
 import { useClient } from "./client.tsx";
 import { Login } from "../components/login.tsx";
-
-const GET_USER_QUERY = `
-    query GetUser {
-        user {
-            name
-        }
-    }
-`;
+import { GET_USER_QUERY } from "../graphql.ts";
 
 // contains the information about the authenticated user
 export type AuthenticatedUser = {
@@ -33,7 +26,7 @@ export const AuthenticationProvider = ({ children }) => {
     React.useEffect(() => {
         setUser(null);
         if (client.token) {
-            client.query(GET_USER_QUERY, {})
+            client.graphql(GET_USER_QUERY, {})
                 .then(response => {
                     return setUser(response?.data?.user || null);
                 })

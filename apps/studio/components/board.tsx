@@ -3,17 +3,16 @@ import { Editor } from "folio-react/components/editor.jsx";
 import { Loading } from "folio-react/components/loading.jsx";
 import { Client, useClient } from "../contexts/client.tsx";
 import { NotFound } from "./not-found.tsx";
+import { GET_BOARD_QUERY, UPDATE_BOARD_MUTATION } from "../graphql.ts";
 
 export const Board = (props: any): React.JSX.Element => {
+    const [initialData, setInitialData] = React.useState<any>(null);
     const [exists, setExists] = React.useState<boolean>(null);
     const client = useClient() as Client;
 
-    // handle loading data from api
     const handleDataLoad = React.useCallback(() => {
-        return client.getBoard(props.id).then(board => {
-            return board.content;
-        });
-    }, [props.id, client]);
+        return JSON.parse(initialData?.content || "{}");
+    }, [props.id, initialData]);
 
     // const handleLibraryLoad = React.useCallback(() => {
     //     return client.getUserLibrary().then(library => {
@@ -23,7 +22,13 @@ export const Board = (props: any): React.JSX.Element => {
 
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {
-        return client.updateBoard(props.id, data);
+        const payload = {
+            id: props.id,
+            content: JSON.stringify(data),
+        };
+        return client.graphql(UPDATE_BOARD_MUTATION, payload).catch(error => {
+            console.error("Error updating board:", error);
+        });
     }, [props.id, client]);
 
     // const handleLibraryChange = React.useCallback(data => {
@@ -38,9 +43,17 @@ export const Board = (props: any): React.JSX.Element => {
             if (!didEnter) {
                 return;
             }
-            // check if board exists
-            client.getBoard(props.id)
-                .then(() => setExists(true))
+            // check if board exists and get the initial data
+            client.graphql(GET_BOARD_QUERY, { id: props.id })
+                .then(response => {
+                    if (response?.data?.board?.id) {
+                        setInitialData(response.data.board);
+                        setExists(true);
+                    }
+                    else {
+                        setExists(false);
+                    }
+                })
                 .catch(error => {
                     console.error(error);
                     setExists(false); // Assume board does not exist on error
@@ -54,7 +67,7 @@ export const Board = (props: any): React.JSX.Element => {
     }, [props.id, client]);
 
     // we do not know (yet) if the board exists, so we set it to null
-    if (exists === null) {
+    if (exists === null || initialData === null) {
         return <Loading />;
     }
 

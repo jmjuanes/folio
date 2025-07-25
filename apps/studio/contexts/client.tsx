@@ -6,7 +6,7 @@ export type Client = {
     token: string;
     login: (credentials: any) => Promise<void>;
     logout: () => void;
-    query: (query: string, variables?: any) => Promise<any>;
+    graphql: (query: string, variables?: any) => Promise<any>;
 };
 
 // main client context
@@ -31,7 +31,7 @@ export const ClientProvider = ({ sessionKey = "", children }): React.JSX.Element
                 setToken(data.token);
             });
         },
-        query: (query, variables) => {
+        graphql: (query, variables) => {
             return api("POST", "/_graphql", {query, variables}).then(response => {
                 if (response.errors) {
                     return Promise.reject(response);

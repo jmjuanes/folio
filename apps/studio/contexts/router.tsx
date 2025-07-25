@@ -2,13 +2,13 @@
 import React from "react";
 import { useHash } from "../hooks/use-hash.ts";
 
-export type Router = {
-    hash: string;
-    redirect: (hash: string) => void;
-};
+export type Router = [
+    currentHash: string,
+    redirect: (newHash: string) => void,
+];
 
 export type RouteProps = {
-    test: RegExp;
+    test: RegExp | string;
     render: () => React.JSX.Element;
 };
 
@@ -20,11 +20,15 @@ export const useRouter = (): Router|null => {
 
 export const Route = (props: RouteProps): React.JSX.Element|null => {
     const [currentHash] = useRouter();
-    // Check if the current hash matches the provided regex
-    if (props.test.test(currentHash)) {
-        return props.render();
+
+    // check if the current hash matches the provided regex
+    if (props.test instanceof RegExp) {
+        if (props.test.test(currentHash)) {
+            return props.render();
+        }
     }
-    // Other case, return nothing
+
+    // other case, return nothing
     return null;
 };
 
@@ -37,8 +41,14 @@ export const Switch = ({ children }) => {
         if (!matchFound && React.isValidElement(child)) {
             // Save this element --> If no route matches, we will render the last child automatically
             element = child;
-            if (child.props.test) {
-                matchFound = child.props.test === "*" || child.props.test.test(currentHash);
+            const childProps = child.props as RouteProps;
+            if (childProps?.test) {
+                if (typeof childProps.test === "string") {
+                    matchFound = childProps.test === "*";
+                }
+                else if (childProps?.test instanceof RegExp) {
+                    matchFound = childProps.test.test(currentHash);
+                }
             }
         }
     });
