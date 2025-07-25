@@ -18,19 +18,19 @@ type ActionButtonProps = {
 // @description action button component (create, import, settings, etc.)
 const ActionButton = ({ href, icon, text = "", collapsed = false, onClick }: ActionButtonProps): React.JSX.Element => {
     const actionClass = classNames({
-        "h-8 flex items-center gap-2 cursor-pointer rounded-md hover:bg-gray-200 py-1 text-gray-700 hover:text-gray-950": true,
-        "justify-center": collapsed,
-        "px-2": !collapsed,
+        "h-8 px-2 py-1": true,
+        "flex items-center flex-nowrap gap-2 cursor-pointer rounded-md overflow-hidden": true,
+        "hover:bg-gray-200 text-gray-700 hover:text-gray-950": true,
     });
     return (
         <a className={actionClass} href={href} onClick={onClick}>
             {icon && (
-                <div className="flex text-xl">
+                <div className="flex text-xl w-6 justify-center shrink-0">
                     {renderIcon(icon)}
                 </div>
             )}
             {!collapsed && text && (
-                <div className="text-sm font-medium">{text}</div>
+                <div className="text-sm font-medium shrink-0">{text}</div>
             )}
         </a>
     );
@@ -40,8 +40,8 @@ const BoardsGroup = ({ title, boards, onRename, onDelete }): React.JSX.Element =
     const [hash] = useRouter();
     return (
         <div className="flex flex-col gap-1">
-            <div className="text-xs font-bold text-gray-600 mb-0 px-2">
-                <span>{title || ""}</span>
+            <div className="text-xs font-bold text-gray-600 mb-0 px-2 flex overflow-hidden">
+                <div className="shrink-0">{title || ""}</div>
             </div>
             {(boards || []).map(item => (
                 <BoardLink
@@ -127,34 +127,59 @@ export const Sidebar = (props: any): React.JSX.Element => {
     const client = useClient();
     const sidebarClass = classNames({
         "h-full bg-gray-50 shrink-0 flex flex-col justify-between border-r-1 border-gray-200": true,
+        "w-16 cursor-e-resize": collapsed,
         "w-64": !collapsed,
     });
 
+    // note that this event will not be triggered if the sidebar is collapsed
+    const handleToggleCollapsed = React.useCallback(() => {
+        if (collapsed) {
+            toggleCollapsed();
+        }
+    }, [collapsed, toggleCollapsed]);
+
     return (
-        <div className={sidebarClass}>
+        <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
             <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
-                <div className="sticky z-50 top-0 text-3xl leading-none select-none bg-gray-50 py-5 px-3 flex items-center justify-between">
-                    <div className="text-gray-950 font-brand select-none">
-                        {!collapsed && (<span>folio.</span>)}
+                <div className="sticky z-50 top-0 text-3xl leading-none select-none bg-gray-50 p-3 flex items-start justify-between flex-nowrap">
+                    <div className="text-gray-950 font-brand select-none overflow-hidden">
+                        {!collapsed && (<div className="">folio.</div>)}
                     </div>
-                    <div className="">
+                    <div className="shrink-0">
                         <ActionButton
-                            onClick={() => toggleCollapsed()}
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                                toggleCollapsed();
+                            }}
                             icon={collapsed ? "sidebar-left-open" : "sidebar-left-close"}
                         />
                     </div>
                 </div>
                 <div className="flex flex-col gap-4 h-full px-3 select-none">
                     <div className="flex flex-col gap-1 mb-2">
-                        <ActionButton collapsed={collapsed} href="#" icon="home" text="Home" />
                         <ActionButton
-                            onClick={() => props.onBoardCreate()}
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                            }}
+                            collapsed={collapsed}
+                            href="#"
+                            icon="home"
+                            text="Home"
+                        />
+                        <ActionButton
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                                props.onBoardCreate();
+                            }}
                             collapsed={collapsed}
                             icon="plus"
                             text="Create a new board"
                         />
                         <ActionButton
-                            onClick={() => props.onBoardImport()}
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                                props.onBoardImport();
+                            }}
                             collapsed={collapsed}
                             icon="upload"
                             text="Import board from file"
@@ -171,7 +196,10 @@ export const Sidebar = (props: any): React.JSX.Element => {
             </div>
             <div className="px-3 pt-3 pb-3 bg-gray-50">
                 <ActionButton
-                    onClick={() => client.logout()}
+                    onClick={(event: React.SyntheticEvent) => {
+                        event.stopPropagation();
+                        client.logout();
+                    }}
                     collapsed={collapsed}
                     icon="logout"
                     text="Sign out"
