@@ -40,8 +40,8 @@ const BoardsGroup = ({ title, boards, onRename, onDelete }): React.JSX.Element =
     const [hash] = useRouter();
     return (
         <div className="flex flex-col gap-1">
-            <div className="text-xs font-bold text-gray-600 mb-0 px-2">
-                <span>{title || ""}</span>
+            <div className="text-xs font-bold text-gray-600 mb-0 px-2 flex overflow-hidden">
+                <div className="shrink-0">{title || ""}</div>
             </div>
             {(boards || []).map(item => (
                 <BoardLink
