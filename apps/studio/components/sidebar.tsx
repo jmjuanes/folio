@@ -141,9 +141,9 @@ export const Sidebar = (props: any): React.JSX.Element => {
     return (
         <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
             <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
-                <div className="sticky z-50 top-0 text-3xl leading-none select-none bg-gray-50 p-3 flex items-center justify-between">
-                    <div className="text-gray-950 font-brand select-none shrink-0 overflow-hidden">
-                        {!collapsed && (<span>folio.</span>)}
+                <div className="sticky z-50 top-0 text-3xl leading-none select-none bg-gray-50 p-3 flex items-start justify-between flex-nowrap">
+                    <div className="text-gray-950 font-brand select-none overflow-hidden">
+                        {!collapsed && (<div className="">folio.</div>)}
                     </div>
                     <div className="shrink-0">
                         <ActionButton
