@@ -2,33 +2,38 @@ import React from "react";
 import { loadFromJson } from "folio-react/lib/json.js";
 import { useConfirm } from "folio-react/contexts/confirm.jsx";
 import { useDialog } from "folio-react/contexts/dialogs.jsx";
-import { useClient } from "../contexts/client.jsx";
-import { useRouter, Route, Switch } from "../contexts/router.jsx";
-import { Sidebar } from "./sidebar.jsx";
-import { Welcome } from "./welcome.jsx";
-import { Board } from "./board.jsx";
-import { BoardRenameDialog } from "./dialogs/board-rename.jsx";
+import { useClient } from "../contexts/client.tsx";
+import { useRouter, Route, Switch } from "../contexts/router.tsx";
+import { Sidebar } from "./sidebar.tsx";
+import { Welcome } from "./welcome.tsx";
+import { Board } from "./board.tsx";
+import { BoardRenameDialog } from "./board-rename.tsx";
+import { GET_USER_BOARDS_QUERY, CREATE_BOARD_MUTATION, DELETE_BOARD_MUTATION } from "../graphql.ts";
 
-export const App = () => {
+export const App = (): React.JSX.Element => {
     const client = useClient();
-    const [boards, setBoards] = React.useState([]);
+    const [boards, setBoards] = React.useState<any[]>([]);
     const [hash, redirect] = useRouter();
     const {showConfirm} = useConfirm();
     const {showDialog} = useDialog();
     
-    // after any change, force to update boards list by calling the /boards endpoint
+    // after any change, force to update boards list
     const updateBoards = React.useCallback(() => {
-        client.getUserBoards().then(data => {
-            return setBoards(data);
-        });
+        client.graphql(GET_USER_BOARDS_QUERY, {})
+            .then(response => {
+                setBoards(response?.data?.boards || []);
+            })
+            .catch(response => {
+                console.error("Error fetching boards:", JSON.stringify(response.errors, null, "    "));
+            });
     }, [client, setBoards]);
 
     // when a board is created, we redirect to the board id and force to
     // update the boards list displayed in the sidebar
-    const handleBoardCreate = React.useCallback((data = {}) => {
-        return client.createBoard(data).then(response => {
+    const handleBoardCreate = React.useCallback((attributes = {}, content = "{}") => {
+        return client.graphql(CREATE_BOARD_MUTATION, {attributes, content}).then(response => {
             updateBoards();
-            redirect(response.id);
+            redirect(response.data.createBoard.id);
         });
     }, [client, updateBoards, redirect]);
 
@@ -36,7 +41,8 @@ export const App = () => {
     // calls handleBoardCreate to save it in the server
     const handleBoardImport = React.useCallback(() => {
         return loadFromJson().then(boardData => {
-            return handleBoardCreate(boardData);
+            const name = boardData?.title || "Untitled"; // default name if not provided
+            return handleBoardCreate({ name }, JSON.stringify(boardData));
         });
     }, [handleBoardCreate]);
 
@@ -48,11 +54,11 @@ export const App = () => {
             dialogClassName: "w-full max-w-sm",
             props: {
                 id: id,
-                // board: boards.find(board => board.id === id),
+                board: boards.find(board => board.id === id),
                 onSubmit: updateBoards, // update the boards list after renaming
             },
         });
-    }, [showDialog, updateBoards]);
+    }, [showDialog, updateBoards, boards]);
 
     // to delete a board we just display a confirmation component
     const handleBoardDelete = React.useCallback(id => {
@@ -60,7 +66,7 @@ export const App = () => {
             title: "Delete board",
             message: "Are you sure? This action can not be undone.",
             callback: () => {
-                client.deleteBoard(id).then(() => {
+                client.graphql(DELETE_BOARD_MUTATION, { id }).then(() => {
                     // TODO: display a confirmation message?
                     if (id === hash) {
                         redirect("");

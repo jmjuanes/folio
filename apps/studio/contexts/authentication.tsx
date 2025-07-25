@@ -1,29 +1,37 @@
 import React from "react";
 import { Loading } from "folio-react/components/loading.jsx";
-import {useClient} from "./client.jsx";
-import {Login} from "../components/login.jsx";
+import { useClient } from "./client.tsx";
+import { Login } from "../components/login.tsx";
+import { GET_USER_QUERY } from "../graphql.ts";
+
+// contains the information about the authenticated user
+export type AuthenticatedUser = {
+    name: string;
+};
 
 // the authentication context saves information about the current
 // authenticated user
-export const AuthenticationContext = React.createContext(null);
+export const AuthenticationContext = React.createContext<AuthenticatedUser|null>(null);
 
 // @description get the information about the current authenticated user
-export const useAuthenticatedUser = () => {
+export const useAuthenticatedUser = (): AuthenticatedUser|null => {
     return React.useContext(AuthenticationContext);
 };
 
 // @description provider component for the authentication context
-export const AuthenticationProvider = ({children}) => {
-    const [user, setUser] = React.useState(null);
+export const AuthenticationProvider = ({ children }) => {
+    const [user, setUser] = React.useState<AuthenticatedUser|null>(null);
     const client = useClient();
 
     React.useEffect(() => {
         setUser(null);
         if (client.token) {
-            client.getUser()
-                .then(userData => setUser(userData))
-                .catch(error => {
-                    console.error("Failed to fetch user data:", error);
+            client.graphql(GET_USER_QUERY, {})
+                .then(response => {
+                    return setUser(response?.data?.user || null);
+                })
+                .catch(response => {
+                    console.error("Failed to fetch user data: ", response);
                     client.logout();
                 });
         }

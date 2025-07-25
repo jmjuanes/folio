@@ -1,14 +1,16 @@
 import React from "react";
 
+export type HashChange = (newHash: string) => void;
+
 // @description hook to access to the current path and redirect to a new hash
 // @returns [hash, redirect]
-export const useHash = () => {
+export const useHash = (): [string, HashChange]  => {
     const [currentHash, setCurrentHash] = React.useState(() => {
         return window.location.hash || "#";
     });
 
     // hook to redirect to a new hash
-    const handleRedirect = React.useCallback(newHash => {
+    const handleRedirect: HashChange = React.useCallback((newHash: string) => {
         window.location.hash = newHash;
     }, []);
 

@@ -2,11 +2,11 @@ import React from "react";
 import { FolderIcon, DrawingIcon, ClockIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
-import { BoardLink } from "./board-link.jsx";
-import { getGreetingMessage } from "../utils/dates.js";
+import { BoardLink } from "./board-link.tsx";
+import { getGreetingMessage } from "../utils/dates.ts";
 
 // @description render recent boards
-const RecentBoards = props => (
+const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
     <div className="mt-2 select-none">
         <div className="flex items-center gap-1 mb-3 text-gray-600">
             <div className="text-base flex">
@@ -15,7 +15,7 @@ const RecentBoards = props => (
             <div className="text-xs font-bold">Your recent boards</div>
         </div>
         <div className="w-full grid grid-cols-3 gap-2">
-            {props.boards.slice(0, props.maxRecentBoards).map(item => (
+            {(boards || []).slice(0, maxRecentBoards || 6).map(item => (
                 <BoardLink
                     key={item.id}
                     board={item}
@@ -26,7 +26,7 @@ const RecentBoards = props => (
 );
 
 // @description welcome component
-export const Welcome = props => (
+export const Welcome = (props: any): React.JSX.Element => (
     <Centered className="min-h-full bg-white">
         <div className="w-full max-w-2xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
             <div className="pt-4 pb-12 select-none">

@@ -2,11 +2,7 @@
 export default {
     testEnvironment: "jsdom",
     transform: {
-        "^.+\\.(js|jsx)$": "babel-jest",
+        "^.+\\.(j|t)sx?$": "babel-jest",
     },
-    extensionsToTreatAsEsm: [".jsx"],
-    moduleNameMapper: {
-        "^@lib(.*)$": "<rootDir>/lib$1",
-        "^@components(.*)$": "<rootDir>/components$1",
-    }
+    extensionsToTreatAsEsm: [".jsx", ".tsx", ".ts"],
 };

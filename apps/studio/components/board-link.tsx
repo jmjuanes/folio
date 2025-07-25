@@ -3,27 +3,24 @@ import { createPortal } from "react-dom";
 import classNames from "classnames";
 import { renderIcon, DotsIcon } from "@josemi-icons/react";
 import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
-import { getPropertyByKey } from "../utils/properties.js";
 
-const BoardLinkAction = props => (
-    <Dropdown.Item as={props.as || "div"} onClick={props.onClick}>
-        <Dropdown.Icon icon={props.icon} />
-        <span>{props.text}</span>
-    </Dropdown.Item>
-);
+export type BoardLinkProps = {
+    board: any,
+    active?: boolean,
+    onRename?: (event?: React.SyntheticEvent) => void;
+    onDelete?: (event?: React.SyntheticEvent) => void;
+};
 
-export const BoardLink = props => {
+export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
     const [actionsMenuOpen, setActionsMenuOpen] = React.useState(false);
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
     const hasActions = typeof props.onRename === "function" || typeof props.onDelete === "function";
-    const title = React.useMemo(() => {
-        return getPropertyByKey(props.board?.properties, "title")?.content?.value || "Untitled";
-    }, [props.board?.id, props.board?.properties]);
+    const title = props.board?.attributes?.name || "Untitled";
 
     // when clicking on the action item, open the actions menu
     // and position it below the clicked item
-    const handleActionsMenuClick = React.useCallback(event => {
+    const handleActionsMenuClick = React.useCallback((event: React.SyntheticEvent) => {
         event.preventDefault();
         if (event.currentTarget) {
             const rect = event.currentTarget.getBoundingClientRect();
@@ -35,9 +32,29 @@ export const BoardLink = props => {
         }
     }, [setActionsMenuOpen]);
 
+    // listener to handle board renaming
+    // it will close the actions menu and call the onRename callback if provided
+    const handleBoardRename = React.useCallback((event: React.SyntheticEvent) => {
+        event.preventDefault();
+        setActionsMenuOpen(false);
+        if (typeof props.onRename === "function") {
+            props.onRename(event);
+        }
+    }, [props.onRename, setActionsMenuOpen]);
+
+    // listener to handle board deletion
+    // it will close the actions menu and call the onDelete callback if provided
+    const handleBoardDelete = React.useCallback((event: React.SyntheticEvent) => {
+        event.preventDefault();
+        setActionsMenuOpen(false);
+        if (typeof props.onDelete === "function") {
+            props.onDelete(event);
+        }
+    }, [props.onDelete, setActionsMenuOpen]);
+
     React.useEffect(() => {
         if (actionsMenuOpen) {
-            const handleClickOutside = event => {
+            const handleClickOutside = (event: Event) => {
                 event.preventDefault();
                 if (actionsMenuRef.current && !actionsMenuRef.current.contains(event.target)) {
                     setActionsMenuOpen(false);
@@ -52,16 +69,18 @@ export const BoardLink = props => {
 
     const itemClass = classNames({
         "relative group rounded-md w-full flex items-center py-1 px-2": true,
-        "bg-gray-100 text-gray-900": props.active || actionsMenuOpen,
-        "hover:bg-gray-100 text-gray-600 hover:text-gray-900": !props.active,
+        "bg-gray-200 text-gray-900": props.active || actionsMenuOpen,
+        "hover:bg-gray-200 text-gray-600 hover:text-gray-900": !props.active,
     });
     return (
         <a href={`#${props.board.id}`} className={itemClass} title={title}>
             <div className="cursor-pointer flex items-center gap-2">
                 <div className="text-lg flex items-center text-gray-600">
-                    {renderIcon(props.icon || "file")}
+                    {renderIcon("file")}
                 </div>
-                <div className="font-medium text-sm w-32 truncate">{title}</div>
+                <div className="font-medium text-sm w-32 truncate">
+                    {title}
+                </div>
             </div>
             {hasActions && (
                 <div className="opacity-0 group-hover:opacity-100 flex cursor-pointer items-center ml-auto text-base p-0">
@@ -74,30 +93,19 @@ export const BoardLink = props => {
                 <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                 <Dropdown key="sidebar:board:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={position.current}>
                     {typeof props.onRename === "function" && (
-                        <BoardLinkAction
-                            onClick={event => {
-                                event.preventDefault();
-                                setActionsMenuOpen(false);
-                                props.onRename();
-                            }}
-                            icon="edit"
-                            text="Rename"
-                        />
+                        <Dropdown.Item as="div" onClick={handleBoardRename}>
+                            <Dropdown.Icon icon="edit" />
+                            <span>Rename</span>
+                        </Dropdown.Item>
                     )}
                     {typeof props.onDelete === "function" && (
-                        <BoardLinkAction
-                            onClick={event => {
-                                event.preventDefault();
-                                setActionsMenuOpen(false);
-                                props.onDelete();
-                            }}
-                            icon="trash"
-                            text="Delete"
-                        />
+                        <Dropdown.Item as="div" onClick={handleBoardDelete}>
+                            <Dropdown.Icon icon="trash" />
+                            <span>Delete</span>
+                        </Dropdown.Item>
                     )}
                 </Dropdown>,
             ], document.body)}
         </a>
     );
 };
-
