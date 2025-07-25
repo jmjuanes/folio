@@ -135,10 +135,10 @@ export const Sidebar = (props: any): React.JSX.Element => {
         <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}}>
             <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
                 <div className="sticky z-50 top-0 text-3xl leading-none select-none bg-gray-50 py-5 px-3 flex items-center justify-between">
-                    <div className="text-gray-950 font-brand select-none">
+                    <div className="text-gray-950 font-brand select-none shrink-0 overflow-hidden">
                         {!collapsed && (<span>folio.</span>)}
                     </div>
-                    <div className="">
+                    <div className="shrink-0">
                         <ActionButton
                             onClick={() => toggleCollapsed()}
                             icon={collapsed ? "sidebar-left-open" : "sidebar-left-close"}
