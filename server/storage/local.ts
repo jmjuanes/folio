@@ -68,6 +68,7 @@ export const createLocalStore = async (storeConfig: LocalStorageConfig): Promise
             );
             // force to convert attributes field into object
             result.attributes = JSON.parse(result.attributes || "{}");
+            delete result.collection; // remove collection from returned fields
             return result;
         },
 
@@ -75,8 +76,9 @@ export const createLocalStore = async (storeConfig: LocalStorageConfig): Promise
             await db.each(`SELECT * FROM ${TABLE_NAME} WHERE collection = ?`, [collection], (error: any, result: any) => {
                 if (!error && result) {
                     result.attributes = JSON.parse(result.attributes || "{}");
+                    delete result.collection; // remove collection from returned fields
+                    callback(result);
                 }
-                callback(error, result);
             });
         },
 
