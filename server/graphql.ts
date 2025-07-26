@@ -105,8 +105,8 @@ export const schema = new graphql.GraphQLSchema({
                         description: "the ID of the board to retrieve",
                     },
                 },
-                resolve: (source, args, context) => {
-                    return context.store.get(Collections.BOARD, args.id);
+                resolve: async (source, args, context) => {
+                    return await context.store.get(Collections.BOARD, args.id);
                 },
             },
         },
@@ -129,7 +129,14 @@ export const schema = new graphql.GraphQLSchema({
                 },
                 resolve: async (source, args, context) => {
                     const id = uid(20); // generate a unique ID for the object
-                    await context.store.add(Collections.BOARD, id, context.username, args.attributes || {}, args.content || "{}");
+                    const attributes = args?.attributes || {}; // default attributes value
+                    try {
+                        await context.store.add(Collections.BOARD, id, context.username, attributes, args.content || "{}");
+                    }
+                    catch (error) {
+                        console.error(error);
+                        throw new graphql.GraphQLError(error.message);
+                    }
                     return { id };
                 },
             },
@@ -151,7 +158,14 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    await context.store.set(Collections.BOARD, args.id, context.username, args.attributes, args.content);
+                    try {
+                        await context.store.set(Collections.BOARD, args.id, context.username, args.attributes, args.content);
+                    }
+                    catch (error) {
+                        // possible errors: board does not exist, user does not have permission to edit this board
+                        console.error(error);
+                        throw new graphql.GraphQLError(error.message);
+                    }
                     return { id: args.id };
                 },
             },
@@ -165,7 +179,14 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    await context.store.delete(Collections.BOARD, args.id, context.username);
+                    try {
+                        await context.store.delete(Collections.BOARD, args.id, context.username);
+                    }
+                    catch (error) {
+                        // possible errors: board does not exist, user does not have permission to delete this board
+                        console.error(error);
+                        throw new graphql.GraphQLError(error.message);
+                    }
                     return { id: args.id };
                 },
             },
