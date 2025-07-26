@@ -170,7 +170,7 @@ export const schema = new graphql.GraphQLSchema({
                 },
             },
             deleteBoard: {
-                type: documentType,
+                type: boardType,
                 description: "delete a board by ID",
                 args: {
                     id: {

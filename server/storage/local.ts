@@ -70,7 +70,7 @@ export const createLocalStore = async (storeConfig: LocalStorageConfig): Promise
             return result;
         },
 
-        cursor: async (collection: Collections, callback: (error: any, row: object) => void): Promise<void> => {
+        cursor: async (collection: Collections, callback: (row: object) => void): Promise<void> => {
             await db.each(`SELECT * FROM ${TABLE_NAME} WHERE collection = ?`, [collection], (error: any, result: any) => {
                 if (!error && result) {
                     result.attributes = JSON.parse(result.attributes || "{}");
