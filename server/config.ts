@@ -15,8 +15,7 @@ export type AuthConfig = {
 };
 
 export type LocalStorageConfig = {
-    store_path?: string;
-    store_name?: string;
+    file?: string;
 };
 
 export type StorageConfig = {
