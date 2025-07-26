@@ -63,8 +63,7 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
     const fields = {
         "port": environment.FOLIO_PORT,
         "authentication.access_token.token": environment.FOLIO_ACCESS_TOKEN,
-        "storage.local.storage_path": environment.FOLIO_STORAGE_PATH,
-        "storage.local.storage_name": environment.FOLIO_STORAGE_NAME,
+        "storage.local.file": environment.FOLIO_STORAGE_FILE,
         "website.directory": environment.FOLIO_WEBSITE_PATH,
         "security.jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "security.jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
