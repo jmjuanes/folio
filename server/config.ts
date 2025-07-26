@@ -5,7 +5,9 @@ import { environment } from "./env.js";
 
 export type AccessTokenAuthConfig = {
     token?: string;
-    user?: string;
+    username?: string;
+    display_name?: string;
+    avatar_url?: string;
 };
 
 export type AuthConfig = {

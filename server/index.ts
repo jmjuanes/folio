@@ -45,6 +45,7 @@ export const startServer = async (config: Config): Promise<any> => {
         ctx.state.store = store;
         ctx.state.auth = auth;
         ctx.state.config = config;
+        ctx.state.username = null;
 
         // global error handler
         try {

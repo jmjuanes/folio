@@ -12,7 +12,9 @@ export const loginRouter = new Router();
 // GET - login route
 loginRouter.get("/", async (ctx: ExtendedContext) => {
     return ctx.send(HTTP_CODES.METHOD_NOT_ALLOWED, {
-        message: API_ERROR_MESSAGES.METHOD_NOT_ALLOWED,
+        errors: [
+            API_ERROR_MESSAGES.METHOD_NOT_ALLOWED,
+        ],
     });
 });
 
@@ -26,24 +28,32 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
         const payload: User|null = await ctx.state.auth.authenticate(ctx.request.body);
         if (!payload) {
             return ctx.send(HTTP_CODES.UNAUTHORIZED, {
-                message: API_ERROR_MESSAGES.INVALID_TOKEN,
+                errors: [
+                    API_ERROR_MESSAGES.INVALID_TOKEN,
+                ],
             });
         }
 
         // generate the JWT token for API access and return it as part 
         // of the response object
         return ctx.ok({
-            token: generateJwtToken({
-                secret: securityConfig?.jwt_token_secret,
-                expiration: securityConfig?.jwt_token_expiration,
-                payload: payload,
-            }),
+            data: {
+                token: generateJwtToken({
+                    secret: securityConfig?.jwt_token_secret,
+                    expiration: securityConfig?.jwt_token_expiration,
+                    payload: {
+                        username: payload.username,
+                    },
+                }),
+            },
         });
     }
     catch (error) {
         log.error(`error authenticating user: '${error.message}'`);
         return ctx.send(HTTP_CODES.INTERNAL_SERVER_ERROR, {
-            message: API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+            errors: [
+                API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+            ],
         });
     }
 });

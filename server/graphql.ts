@@ -76,8 +76,8 @@ export const schema = new graphql.GraphQLSchema({
             user: {
                 type: userType,
                 description: "retrieve the information about the logged-in user",
-                resolve: (source, args, context) => {
-                    return context.user || null;
+                resolve: async (source, args, context) => {
+                    return context.auth.getUser(context.username);
                 },
             },
             boards: {
@@ -129,7 +129,7 @@ export const schema = new graphql.GraphQLSchema({
                 },
                 resolve: async (source, args, context) => {
                     const id = uid(20); // generate a unique ID for the object
-                    await context.store.add(Collections.BOARD, id, context.user.name, args.attributes || {}, args.content || "{}");
+                    await context.store.add(Collections.BOARD, id, context.username, args.attributes || {}, args.content || "{}");
                     return { id };
                 },
             },
@@ -151,7 +151,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    await context.store.set(Collections.BOARD, args.id, context.user.name, args.attributes, args.content);
+                    await context.store.set(Collections.BOARD, args.id, context.username, args.attributes, args.content);
                     return { id: args.id };
                 },
             },
@@ -165,7 +165,7 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    await context.store.delete(Collections.BOARD, args.id, context.user.name);
+                    await context.store.delete(Collections.BOARD, args.id, context.username);
                     return { id: args.id };
                 },
             },

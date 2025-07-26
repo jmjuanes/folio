@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 export type JwtTokenGenerationOptions = {
     secret?: string; // secret key used to sign the JWT
     expiration?: string; // expiration time for the JWT, e.g., "1h", "2d"
-    payload?: object; // additional payload to include in the JWT
+    payload?: any; // additional payload to include in the JWT
 };
 
 export type JwtTokenVerificationOptions = {
