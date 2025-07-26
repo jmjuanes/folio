@@ -13,14 +13,16 @@ authentication:
     ## if not provided, a new one will be generated and printed in logs every time the server is restarted
     ## you can override this token also using the FOLIO_ACCESS_TOKEN env variable
     # token: "123456abcd"
-    user: "folio"
+    ## additional information about the user
+    username: 'folio'
+    display_name: 'John Doe'
+    # avatar_url: 'https://....'
 
 ## settings for storage, but only one storage method is allowed
 ## you can configure local or memory storage
 storage:
   local:
-    store_path: "data"
-    store_name: "folio.db"
+    file: 'data/folio.db'
 
 ## security configuration
 security:
@@ -37,4 +39,3 @@ security:
 ## website configuration
 website:
   enabled: true
-  directory: "app"

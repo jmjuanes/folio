@@ -47,7 +47,7 @@ export const CREATE_BOARD_MUTATION = `
 
 // mutation to update a board by id
 export const UPDATE_BOARD_MUTATION = `
-    mutation UpdateBoard($id: ID!, $attributes: BoardAttributesInput, $content: String) {
+    mutation UpdateBoard($id: String!, $attributes: BoardAttributesInput, $content: String) {
         updateBoard(id: $id, attributes: $attributes, content: $content) {
             id
         }
@@ -56,7 +56,7 @@ export const UPDATE_BOARD_MUTATION = `
 
 // mutation to delete a board by id
 export const DELETE_BOARD_MUTATION = `
-    mutation DeleteBoard($id: ID!) {
+    mutation DeleteBoard($id: String!) {
         deleteBoard(id: $id) {
             id
         }

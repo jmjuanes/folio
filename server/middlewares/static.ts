@@ -26,7 +26,9 @@ export const staticContent = (options: any = {}) => {
         }
         catch (error) {
             ctx.send(HTTP_CODES.NOT_FOUND, {
-                message: API_ERROR_MESSAGES.NOT_FOUND,
+                errors: [
+                    API_ERROR_MESSAGES.NOT_FOUND,
+                ],
             });
         }
     };

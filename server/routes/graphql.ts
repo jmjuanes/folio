@@ -15,7 +15,9 @@ graphqlRouter.use(authentication);
 // GET - graphql route
 graphqlRouter.get("/", async (ctx: ExtendedContext) => {
     return ctx.send(HTTP_CODES.METHOD_NOT_ALLOWED, {
-        message: API_ERROR_MESSAGES.METHOD_NOT_ALLOWED,
+        errors: [
+            API_ERROR_MESSAGES.METHOD_NOT_ALLOWED,
+        ],
     });
 });
 
@@ -28,7 +30,7 @@ graphqlRouter.post("/", async (ctx: ExtendedContext) => {
             source: query || "",
             variableValues: variables,
             contextValue: {
-                user: ctx.state.user,
+                username: ctx.state.username,
                 store: ctx.state.store,
                 auth: ctx.state.auth,
             },
@@ -39,7 +41,9 @@ graphqlRouter.post("/", async (ctx: ExtendedContext) => {
     catch (error) {
         log.error(`error executing graphql query: ${error.message}`);
         return ctx.send(HTTP_CODES.INTERNAL_SERVER_ERROR, {
-            message: API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+            errors: [
+                API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+            ],
         });
     }
 });

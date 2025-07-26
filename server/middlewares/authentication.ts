@@ -14,24 +14,28 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
     // if not, return 401 Unauthorized
     if (!token) {
         return ctx.send(HTTP_CODES.UNAUTHORIZED, {
-            message: API_ERROR_MESSAGES.AUTHENTICATION_REQUIRED,
+            errors: [
+                API_ERROR_MESSAGES.AUTHENTICATION_REQUIRED,
+            ],
         });
     }
 
     // verify the token and extract user information
     // if the JWT is not valid, this method will return null
-    const payload: User | null = verifyJwtToken(token, {
+    const payload: Partial<User>|null = verifyJwtToken(token, {
         secret: securityConfig?.jwt_token_secret,
     });
 
-    if (!payload) {
+    if (!payload || !payload?.username) {
         return ctx.send(HTTP_CODES.FORBIDDEN, {
-            message: API_ERROR_MESSAGES.INVALID_TOKEN,
+            errors: [
+                API_ERROR_MESSAGES.INVALID_TOKEN,
+            ],
         });
     }
 
     // attach user information to the context state for use in subsequent middleware or routes
-    ctx.state.user = payload;
+    ctx.state.username = payload.username;
 
     await next();
 };
