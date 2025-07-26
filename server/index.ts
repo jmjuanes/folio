@@ -54,7 +54,9 @@ export const startServer = async (config: Config): Promise<any> => {
         catch (error) {
             console.error(error);
             ctx.send(error.status || HTTP_CODES.INTERNAL_SERVER_ERROR, {
-                message: error.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+                errors: [
+                    error.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+                ],
             });
         }
     });
@@ -79,12 +81,12 @@ export const startServer = async (config: Config): Promise<any> => {
     // website configuration
     const websiteConfig = config?.website as WebsiteConfig;
     if (!websiteConfig?.enabled === false) {
-        const websiteDirectory = path.resolve(websiteConfig?.directory || "app");
+        const websiteDirectory = path.resolve(websiteConfig?.directory || "./app");
         debug(`Website is enabled. Reading content from ${websiteDirectory}`);
         app.use(staticContent({
             // directory: path.resolve(websiteConfig?.directory || "app"),
             directory: websiteDirectory,
-            index: websiteConfig?.index || "index.html",
+            index: websiteConfig?.index || "app.html",
         }));
     }
 
