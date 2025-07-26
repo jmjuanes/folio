@@ -27,8 +27,8 @@ export const ClientProvider = ({ sessionKey = "", children }): React.JSX.Element
         token: token as string,
         logout: () => removeToken(),
         login: (credentials) => {
-            return api("POST", "/_login", credentials || {}).then(data => {
-                setToken(data.token);
+            return api("POST", "/_login", credentials || {}).then(response => {
+                setToken(response.data.token);
             });
         },
         graphql: (query, variables) => {
