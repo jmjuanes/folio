@@ -1,28 +1,35 @@
 import React from "react";
 import { Editor } from "folio-react/components/editor.jsx";
 import { Loading } from "../../../folio-react/components/loading.jsx";
-import { Welcome } from "./welcome.jsx";
+import { Welcome } from "./welcome.tsx";
+import type { Store } from "../types/store.ts";
 
-export const Demo = props => {
-    const [ready, setReady] = React.useState(false);
-    const componentsOverrides = React.useMemo(() => ({
-        OverTheCanvas: Welcome,
-    }), [props.store]);
+export type AppProps = {
+    store: Store;
+};
+
+export const App = (props: AppProps): React.JSX.Element => {
+    const [ready, setReady] = React.useState<boolean>(false);
+    const componentsOverrides = React.useMemo(() => {
+        return {
+            OverTheCanvas: Welcome,
+        };
+    }, [props.store]);
 
     // when the data in the editor changes, run store.updateData
-    const handleDataChange = React.useCallback(data => {
-        return props.store.updateData(data);
+    const handleDataChange = React.useCallback((data: any) => {
+        props.store.updateData(data);
     }, [props.store]);
 
     // when the library in the editor changes, run store.updateLibrary
-    const handleLibraryChange = React.useCallback(library => {
-        return props.store.updateLibrary(library);
+    const handleLibraryChange = React.useCallback((library: any) => {
+        props.store.updateLibrary(library);
     }, [props.store]);
 
     // on mount, initialize the store
     React.useEffect(() => {
         props.store.initialize().then(() => {
-            return setReady(true);
+            setReady(true);
         });
     }, [props.store]);
 
