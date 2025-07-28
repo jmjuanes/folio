@@ -11,6 +11,7 @@ import { logger } from "./middlewares/logger.ts";
 import { staticContent } from "./middlewares/static.ts";
 import { loginRouter } from "./routes/login.ts";
 import { statusRouter } from "./routes/status.ts";
+import { configRouter } from "./routes/config.ts";
 import { graphqlRouter } from "./routes/graphql.ts";
 import { createLogger } from "./utils/logger.ts";
 import type { Config, SecurityConfig, WebsiteConfig } from "./config.ts";
@@ -93,6 +94,7 @@ export const startServer = async (config: Config): Promise<any> => {
     // create app routes
     const router = new Router();
     router.use("/_login", loginRouter.routes(), loginRouter.allowedMethods());
+    router.use("/_config", configRouter.routes(), configRouter.allowedMethods());
     router.use("/_status", statusRouter.routes(), statusRouter.allowedMethods());
     router.use("/_graphql", graphqlRouter.routes(), graphqlRouter.allowedMethods());
 
