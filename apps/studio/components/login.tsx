@@ -1,8 +1,9 @@
 import React from "react";
-import { LoaderIcon } from "@josemi-icons/react";
+import { LoaderIcon, ExclamationTriangleIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Client, useClient } from "../contexts/client.tsx";
+import { useConfiguration } from "../contexts/configuration.tsx";
 
 export type LoadingState = {
     loading?: boolean;
@@ -12,6 +13,7 @@ export type LoadingState = {
 // @description login component
 export const Login = (): React.JSX.Element => {
     const client = useClient() as Client;
+    const websiteConfig = useConfiguration();
     const [state, setState] = React.useState<LoadingState>({});
     const accessTokenRef = React.useRef(null);
 
@@ -30,14 +32,16 @@ export const Login = (): React.JSX.Element => {
                 error: `The provided access token is invalid. Please try again.`,
             });
         });
-    }, [accessTokenRef, client]);
+    }, [client]);
 
     return (
         <Centered className="h-screen">
-            <div className="w-88 pb-20">
-                <div className="font-serif text-7xl mb-6 leading-none font-brand select-none">folio.</div>
+            <div className="w-96 pb-20">
+                <div className="font-serif text-5xl mb-6 leading-none font-brand select-none">
+                    <span>{websiteConfig.title}</span>
+                </div>
                 <div className="text-sm text-gray-700 mb-4">
-                    <span>Welcome to your private <b>folio</b> instance. You need to log in with your access token to continue.</span>
+                    <span>You need to log in with your access token to continue.</span>
                 </div>
                 <div className="mb-5">
                     <input
@@ -72,8 +76,11 @@ export const Login = (): React.JSX.Element => {
                     )}
                 </div>
                 {state.error && (
-                    <div className="mt-3 text-xs text-gray-600 text-center">
-                        {state.error}
+                    <div className="mt-3 text-xs text-gray-600 flex gap-1 items-center justify-center">
+                        <span className="inline-flex items-center text-base animation-pulse">
+                            <ExclamationTriangleIcon />
+                        </span>
+                        <span className="">{state.error}</span>
                     </div>
                 )}
             </div>
