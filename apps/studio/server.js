@@ -16,6 +16,22 @@ const rules = [
         },
     },
     {
+        method: "GET",
+        path: "/_config",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        response: {
+            body: {
+                data: {
+                    title: "folio.",
+                    environment: "demo",
+                    show_experimentalWarnings: true,
+                },
+            },
+        },
+    },
+    {
         method: "POST",
         path: "/_graphql",
         secure: true,
