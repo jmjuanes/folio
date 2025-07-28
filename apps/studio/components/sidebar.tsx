@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { renderIcon, DrawingIcon } from "@josemi-icons/react";
 import { useClient } from "../contexts/client.tsx";
 import { useRouter } from "../contexts/router.tsx";
+import { useConfiguration } from "../contexts/configuration.tsx";
 import { BoardLink } from "./board-link.tsx";
 import { groupByDate } from "../utils/dates.ts";
 
@@ -125,10 +126,11 @@ const BoardsList = ({ boards, onRename, onDelete }): React.JSX.Element => {
 export const Sidebar = (props: any): React.JSX.Element => {
     const [collapsed, toggleCollapsed] = useToggle(!!props.defaultCollapsed);
     const client = useClient();
+    const websiteConfig = useConfiguration();
     const sidebarClass = classNames({
         "h-full bg-gray-50 shrink-0 flex flex-col justify-between border-r-1 border-gray-200": true,
         "w-16 cursor-e-resize": collapsed,
-        "w-64": !collapsed,
+        "w-72": !collapsed,
     });
 
     // note that this event will not be triggered if the sidebar is collapsed
@@ -141,9 +143,11 @@ export const Sidebar = (props: any): React.JSX.Element => {
     return (
         <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
             <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden">
-                <div className="sticky z-50 top-0 text-3xl leading-none select-none bg-gray-50 p-3 flex items-start justify-between flex-nowrap">
+                <div className="sticky z-50 top-0 text-2xl leading-none select-none bg-gray-50 p-3 flex items-center justify-between flex-nowrap">
                     <div className="text-gray-950 font-brand select-none overflow-hidden">
-                        {!collapsed && (<div className="">folio.</div>)}
+                        {!collapsed && (
+                            <div className="">{websiteConfig.title}</div>
+                        )}
                     </div>
                     <div className="shrink-0">
                         <ActionButton
