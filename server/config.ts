@@ -3,6 +3,8 @@ import path from "node:path";
 import yaml from "yaml";
 import { environment } from "./env.js";
 
+export const WEB_TITLE = "folio.";
+
 export type AccessTokenAuthConfig = {
     token?: string;
     username?: string;
@@ -30,10 +32,18 @@ export type SecurityConfig = {
     jwt_token_expiration?: string;
 };
 
+// supported environments for the website
+// demo means that the website is running in a demo mode, with limited features
+export type WebsiteEnvironment = "development" | "demo" | "production" | null;
+
 export type WebsiteConfig = {
     enabled?: boolean;
     directory?: string;
     index?: string;
+    environment?: WebsiteEnvironment;
+    title?: string;
+    logo?: string;
+    favicon?: string;
 };
 
 // configuration for folio server
@@ -66,6 +76,7 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "authentication.access_token.token": environment.FOLIO_ACCESS_TOKEN,
         "storage.local.file": environment.FOLIO_STORAGE_FILE,
         "website.directory": environment.FOLIO_WEBSITE_PATH,
+        "website.environment": environment.FOLIO_ENVIRONMENT,
         "security.jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "security.jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
     };
