@@ -1,15 +1,16 @@
 import * as idb from "idb-keyval";
 import { VERSION } from "folio-react/constants.js";
 import { migrate } from "folio-react/lib/migrate.js";
+import type { Store } from "../types/store.ts";
 
 // @private internal store version
 const STORE_VERSION = "1";
 
 // @private store keys
-const STORE_KEYS = {
-    VERSION: "folio:version",
-    DATA: "folio:data",
-    LIBRARY: "folio:library",
+enum STORE_KEYS {
+    VERSION = "folio:version",
+    DATA = "folio:data",
+    LIBRARY = "folio:library",
 };
 
 // @description create a new local store instance
@@ -17,7 +18,7 @@ const STORE_KEYS = {
 // @param {string} options.key key to use for the IDB store (aka database name)
 // @returns {object} store local store manager
 // @returns {function} store.initialize method to initialize the store
-export const createLocalStore = (options = {}) => {
+export const createLocalStore = (options: any = {}): Store => {
     const databaseName = options.key || "folio"; // database to use
     const store = idb.createStore(databaseName, "folio-store");
     return {
@@ -66,15 +67,15 @@ export const createLocalStore = (options = {}) => {
             // Return migrated data
             return data;
         },
-        updateData: data => {
+        updateData: (data: any = {}) => {
             return idb.update(STORE_KEYS.DATA, prev => ({...prev, ...data}), store);
         },
 
         getInitialLibrary: () => {
             return idb.get(STORE_KEYS.LIBRARY, store);
         },
-        updateLibrary: library => {
+        updateLibrary: (library: any = {}) => {
             return idb.set(STORE_KEYS.LIBRARY, library, store);
         },
-    };
+    } as Store;
 };

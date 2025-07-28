@@ -23,7 +23,7 @@ const defaultWelcomeFeatures = [
     },
 ];
 
-export const Welcome = () => {
+export const Welcome = (): React.JSX.Element => {
     const editor = useEditor();
     const [welcomeVisible, setWelcomeVisible] = React.useState(() => {
         return editor.pages?.length === 1 && editor.page?.elements?.length === 0;
