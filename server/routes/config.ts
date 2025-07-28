@@ -16,7 +16,7 @@ configRouter.get("/", (ctx: ExtendedContext) => {
             logo: config.logo,
             favicon: config.favicon,
             environment: (config.environment || "production") as WebsiteEnvironment,
-            show_experimentalWarnings: true,
+            show_experimental_warnings: true,
         },
     });
 });
