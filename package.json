@@ -20,7 +20,7 @@
         "build:demo": "yarn build:lite",
         "build:dist": "cross-env NODE_ENV=production webpack build",
         "build:landing": "yarn workspace landing build",
-        "buid:lite": "yarn workspace folio-lite build",
+        "build:lite": "yarn workspace folio-lite build",
         "build:server": "yarn workspace folio-server build",
         "build:studio": "yarn workspace folio-studio build",
         "build:website": "yarn build:lite && yarn build:landing",
