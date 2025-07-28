@@ -11,7 +11,9 @@ const rules = [
         },
         response: {
             body: {
-                token: "12345",
+                data: {
+                    token: "12345",
+                },
             },
         },
     },
@@ -26,7 +28,7 @@ const rules = [
                 data: {
                     title: "folio.",
                     environment: "demo",
-                    show_experimentalWarnings: true,
+                    show_experimental_warnings: true,
                 },
             },
         },
