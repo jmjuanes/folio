@@ -9,8 +9,8 @@ import { RouterProvider } from "./contexts/router.tsx";
 import { App } from "./components/app.tsx";
 
 createRoot(document.getElementById("root")).render((
-    <ConfigurationProvider>
-        <ClientProvider>
+    <ClientProvider>
+        <ConfigurationProvider>
             <AuthenticationProvider>
                 <RouterProvider>
                     <DialogsProvider>
@@ -20,6 +20,6 @@ createRoot(document.getElementById("root")).render((
                     </DialogsProvider>
                 </RouterProvider>
             </AuthenticationProvider>
-        </ClientProvider>
-    </ConfigurationProvider>
+        </ConfigurationProvider>
+    </ClientProvider>
 ));
