@@ -4,16 +4,38 @@ import graphqlResponses from "./__stubs/graphql.json" with { type: "json" };
 // fake rules for the API
 const rules = [
     {
+        method: "GET",
+        path: "/_status",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        response: {
+            body: {
+                message: "ok",
+            },
+        },
+    },
+    {
         method: "POST",
         path: "/_login",
         headers: {
             "Content-Type": "application/json",
         },
         response: {
-            body: {
-                data: {
-                    token: "12345",
-                },
+            fn: request => {
+                if (request?.body?.token === "12345") {
+                    return Promise.resolve({
+                        data: {
+                            token: "12345",
+                        },
+                    });
+                }
+                // return a fake error if the token is not 12345
+                return Promise.resolve({
+                    errors: [
+                        { message: "Invalid token" },
+                    ],
+                });
             },
         },
     },
@@ -28,7 +50,7 @@ const rules = [
                 data: {
                     title: "folio.",
                     environment: "demo",
-                    show_experimental_warnings: true,
+                    hide_experimental_warning: false,
                 },
             },
         },
