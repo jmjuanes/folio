@@ -39,3 +39,5 @@ security:
 ## website configuration
 website:
   enabled: true
+  ## change the title of the website. It will be displayed in the login and in the sidebar
+  # title: "folio."
