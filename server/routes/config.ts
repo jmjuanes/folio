@@ -1,6 +1,6 @@
 import Router from "@koa/router";
-import { WEB_TITLE } from "../config.ts";
-import type { WebsiteConfig, WebsiteEnvironment } from "../config.ts";
+import { WEB_TITLE, WebsiteEnvironment} from "../config.ts";
+import type { WebsiteConfig } from "../config.ts";
 import type { ExtendedContext } from "../types/custom.ts";
 
 // configuration router
@@ -15,8 +15,8 @@ configRouter.get("/", (ctx: ExtendedContext) => {
             title: config.title || WEB_TITLE,
             logo: config.logo,
             favicon: config.favicon,
-            environment: (config.environment || "production") as WebsiteEnvironment,
-            show_experimental_warnings: true,
+            environment: config.environment || WebsiteEnvironment.PRODUCTION,
+            hide_experimental_warning: config.hide_experimental_warning ?? false,
         },
     });
 });
