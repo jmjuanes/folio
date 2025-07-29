@@ -34,7 +34,11 @@ export type SecurityConfig = {
 
 // supported environments for the website
 // demo means that the website is running in a demo mode, with limited features
-export type WebsiteEnvironment = "development" | "demo" | "production" | null;
+export enum WebsiteEnvironment {
+    DEVELOPMENT = "development",
+    DEMO = "demo",
+    PRODUCTION = "production",
+};
 
 export type WebsiteConfig = {
     enabled?: boolean;
@@ -44,6 +48,7 @@ export type WebsiteConfig = {
     title?: string;
     logo?: string;
     favicon?: string;
+    hide_experimental_warning?: boolean;
 };
 
 // configuration for folio server
@@ -53,6 +58,17 @@ export type Config = {
     authentication?: AuthConfig;
     security?: SecurityConfig;
     website?: WebsiteConfig;
+};
+
+// convert a string value to a boolean
+const toBoolean = (value: string|boolean, defaultValue: boolean = false): boolean => {
+    if (typeof value === "boolean") {
+        return value;
+    }
+    if (typeof value === "string") {
+        return value.toLowerCase() === "true" || value === "1" || value.toLowerCase() === "yes";
+    }
+    return defaultValue;
 };
 
 // @description resolve configuration file path
@@ -77,26 +93,31 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "storage.local.file": environment.FOLIO_STORAGE_FILE,
         "website.directory": environment.FOLIO_WEBSITE_PATH,
         "website.environment": environment.FOLIO_ENVIRONMENT,
+        "website.hide_experimental_warning": toBoolean(environment.FOLIO_HIDE_EXPERIMENTAL_WARNING, false),
         "security.jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "security.jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
     };
 
-    Object.keys(fields)
-        .filter(field => typeof fields[field] === "string" && !!fields[field])
-        .forEach(field => {
+    // iterate over the fields and set the values in the config object
+    // if the field is not defined in the config object, it will be skipped
+    // this allows to override only the fields that are defined in the config object
+    // and to keep the default values for the fields that are not defined
+    Object.keys(fields).forEach(field => {
+        if (typeof fields[field] !== "undefined") {
             const keys = field.split(".");
             let current = config;
 
             // traverse the config object to set the value
             for (let i = 0; i < keys.length - 1; i++) {
                 // if the key does not exist, skip setting the value
-                if (!current[keys[i]]) {
+                if (typeof current[keys[i]] === "undefined") {
                     return;
                 }
                 current = current[keys[i]];
             }
             current[keys[keys.length - 1]] = fields[field];
-        });
+        }
+    });
 
     return config;
 };
