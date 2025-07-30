@@ -1,9 +1,10 @@
 import React from "react";
-import { LoaderIcon, ExclamationTriangleIcon } from "@josemi-icons/react";
+import { LoaderIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Client, useClient } from "../contexts/client.tsx";
 import { useConfiguration, WebsiteEnvironment } from "../contexts/configuration.tsx";
+import { useToaster } from "../contexts/toaster.tsx";
 
 export type LoadingState = {
     loading?: boolean;
@@ -12,6 +13,7 @@ export type LoadingState = {
 
 // @description login component
 export const Login = (): React.JSX.Element => {
+    const toaster = useToaster();
     const client = useClient() as Client;
     const websiteConfig = useConfiguration();
     const [state, setState] = React.useState<LoadingState>({});
@@ -38,19 +40,14 @@ export const Login = (): React.JSX.Element => {
 
         const accessToken = (accessTokenRef.current?.value || "").trim();
         if (!accessToken) {
-            return setState({
-                error: `The access token is required to log in.`,
-            });
+            return toaster.error("The access token is required to log in.");
         }
 
         // try to login with the provided access token
         setState({loading: true});
         client.login({ token: accessToken }).catch(response => {
-            console.log(response);
-            console.error("Login failed:", response.errors[0]);
-            return setState({
-                error: `The provided access token is invalid. Please try again.`,
-            });
+            toaster.error(response.errors[0]?.message || "An error occurred while trying to log in.");
+            setState({ loading: false });
         });
     }, [client, isLoginEnabled]);
 
@@ -101,7 +98,7 @@ export const Login = (): React.JSX.Element => {
                                     setExperimentalWarningChecked(event.target.checked);
                                 }}
                             />
-                            <span className="ml-2 text-sm text-gray-700">
+                            <span className="ml-2 text-sm text-gray-700 leading-none">
                                 I have read and understood the experimental warning.
                             </span>
                         </label>
@@ -151,14 +148,6 @@ export const Login = (): React.JSX.Element => {
                         </div>
                     )}
                 </div>
-                {state.error && (
-                    <div className="mt-3 text-xs text-gray-600 flex gap-1 items-center justify-center">
-                        <span className="inline-flex items-center text-base animation-pulse">
-                            <ExclamationTriangleIcon />
-                        </span>
-                        <span className="">{state.error}</span>
-                    </div>
-                )}
             </div>
         </Centered>
     );
