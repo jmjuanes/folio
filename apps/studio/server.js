@@ -49,7 +49,7 @@ const rules = [
             body: {
                 data: {
                     title: "folio.",
-                    environment: "demo",
+                    environment: "development",
                     hide_experimental_warning: false,
                 },
             },
