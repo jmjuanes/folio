@@ -19,6 +19,7 @@ export type ActiveToast = {
 
 // export the type to display a new toast
 export type Toaster = {
+    success: (message: string) => void;
     error: (message: string) => void;
     dismiss: () => void;
 };
@@ -71,6 +72,9 @@ export const ToasterProvider = ({ children }): React.JSX.Element => {
             }, toast?.duration || TOAST_DURATION);
         };
         return {
+            success: (message: string) => {
+                createToast({ message, icon: "check-circle" });
+            },
             error: (message: string) => {
                 createToast({ message, icon: "x-circle" });
             },
