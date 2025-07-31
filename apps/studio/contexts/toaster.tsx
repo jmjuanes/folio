@@ -1,42 +1,26 @@
 import React from "react";
 import classNames from "classnames";
 import { renderIcon } from "@josemi-icons/react";
-import { uid } from "uid/secure";
 
-export enum ToastType {
-    SUCCESS = "success",
-    ERROR = "error",
-    WARNING = "warning",
-    DEFAULT = "default",
-};
+// amount of time in milliseconds to wait before automatically removing a toast
+const TOAST_DURATION = 4000;
 
 export type Toast = {
-    title: string;
-    type: ToastType;
-    id?: string;
-    icon?: string; // optional icon
     message?: string;
+    icon?: string; // optional icon
+    iconClassName?: string; // optional icon class name
     duration?: number; // duration in milliseconds
 };
 
-export type ToastOptions = {
-    message?: string;
-    icon?: string;
+export type ActiveToast = {
+    data: Toast | null;
+    visible: boolean;
 };
 
+// export the type to display a new toast
 export type Toaster = {
-    default: (title: string, options: ToastOptions) => void;
-    success: (title: string, options?: ToastOptions) => void;
-    error: (title: string, options?: ToastOptions) => void;
-    warning: (title: string, options?: ToastOptions) => void;
-};
-
-// available toast icons
-const toastIcons = {
-    [ToastType.SUCCESS]: "check-circle",
-    [ToastType.ERROR]: "x-circle",
-    [ToastType.WARNING]: "exclamation-triangle",
-    [ToastType.DEFAULT]: "info-circle",
+    error: (message: string) => void;
+    dismiss: () => void;
 };
 
 // toaster context
@@ -49,96 +33,62 @@ export const useToaster = (): Toaster => {
 
 // Toast component
 export const ToastComponent = ({ toast }: { toast: Toast }): React.JSX.Element => {
-    const icon = toastIcons[toast.type] || toastIcons[ToastType.DEFAULT];
     const toastClass = classNames({
-        "flex items-start gap-2 px-4 py-4 mb-2 rounded-lg shadow-sm border-1": true,
-        "bg-green-50 text-green-900 border-green-100": toast.type === ToastType.SUCCESS,
-        "bg-red-50 text-red-900 border-red-100": toast.type === ToastType.ERROR,
-        "bg-yellow-50 text-yellow-900 border-yellow-100": toast.type === ToastType.WARNING,
-        "bg-white text-gray-900 border-gray-200": toast.type === ToastType.DEFAULT,
+        "flex items-start gap-2 px-4 py-4 rounded-lg shadow-sm": true,
+        "bg-gray-950 text-white": true,
     });
 
     return (
         <div className={toastClass}>
-            <div className="flex leading-none">
-                {renderIcon(icon)}
-            </div>
-            <div className="flex flex-col gap-1 mt-px">
-                <div className="min-h-4 font-medium tracking-tight leading-none text-sm">
-                    {toast.title || "Notification"}
+            {toast?.icon && (
+                <div className={classNames("flex leading-none", toast.iconClassName)}>
+                    {renderIcon(toast.icon)}
                 </div>
-                {toast.message && (
-                    <div className="text-xs opacity-60">
-                        {toast.message}
-                    </div>
-                )}
+            )}
+            <div className="flex flex-col gap-1 mt-px">
+                <div className="min-h-4 font-bold tracking-tight leading-none text-sm">
+                    {toast?.message || ""}
+                </div>
             </div>
         </div>
     );
 }
 
 // ToasterProvider component
-export const ToasterProvider = ({ defaultDuration = 5000, children }): React.JSX.Element => {
-    const [ toasts, setToasts ] = React.useState<Toast[]>([]);
+export const ToasterProvider = ({ children }): React.JSX.Element => {
+    const [ toast, setToast ] = React.useState<ActiveToast>({ data: null, visible: false });
+    const toastTimmer = React.useRef<NodeJS.Timeout | null>(null);
 
-    const addToast = React.useCallback((toast: Toast) => {
-        const id = toast.id || uid();
-        setToasts((prevToasts) => {
-            return [...prevToasts, {...toast, id: id}];
-        });
-        // Automatically remove the toast after its duration
-        setTimeout(() => {
-            setToasts((prevToasts) => prevToasts.filter(t => t.id !== id));
-        }, toast.duration || defaultDuration);
-    }, [setToasts, defaultDuration]);
-
+    // Function to add a toast and automatically execute the removal after its duration
     const toaster = React.useMemo<Toaster>(() => {
+        const createToast = (toast: Toast) => {
+            clearTimeout(toastTimmer.current as NodeJS.Timeout); // clear previous timer if exists
+            setToast({ data: toast, visible: true });
+
+            // automatically remove the toast after its duration
+            toastTimmer.current = setTimeout(() => {
+                setToast({ visible: false, data: toast });
+            }, toast?.duration || TOAST_DURATION);
+        };
         return {
-            [ToastType.DEFAULT]: (title: string, options: Partial<Toast> = {}) => {
-                return addToast({
-                    title: title,
-                    type: ToastType.DEFAULT,
-                    icon: options?.icon || "info-circle",
-                    message: options?.message,
-                });
+            error: (message: string) => {
+                createToast({ message, icon: "x-circle" });
             },
-            [ToastType.SUCCESS]: (title: string, options: Partial<Toast> = {}) => {
-                return addToast({
-                    title: title,
-                    type: ToastType.SUCCESS,
-                    icon: options?.icon || "check-circle",
-                    message: options?.message,
-                });
-            },
-            [ToastType.ERROR]: (title: string, options: Partial<Toast> = {}) => {
-                return addToast({
-                    title: title,
-                    type: ToastType.ERROR,
-                    icon: options?.icon || "x-circle",
-                    message: options?.message,
-                });
-            },
-            [ToastType.WARNING]: (title: string, options: Partial<Toast> = {}) => {
-                return addToast({
-                    title: title,
-                    type: ToastType.WARNING,
-                    icon: options?.icon || "exclamation-triangle",
-                    message: options?.message,
-                });
+            dismiss: () => {
+                clearTimeout(toastTimmer.current as NodeJS.Timeout);
+                setToast({ visible: false, data: null });
             },
         } as Toaster;
-    }, [addToast]);
+    }, [ setToast ]);
 
     return (
         <ToasterContext.Provider value={toaster}>
             {children}
-            {toasts.length > 0 && (
-                <div className="fixed top-0 left-half z-50 mt-4 w-full max-w-xl" style={{ transform: "translateX(-50%)" }}>
-                    {toasts.map((toast) => (
-                        <ToastComponent key={toast.id} toast={toast} />
-                    ))}
+            <div className="fixed bottom-0 left-half z-50" style={{ transform: "translateX(-50%)" }}>
+                <div className="relative" style={{ transition: "bottom 0.3s linear", bottom: toast.visible ? "1rem" : "-6rem" }}>
+                    <ToastComponent toast={toast.data} />
                 </div>
-            )}
+            </div>
         </ToasterContext.Provider>
     );
 };
