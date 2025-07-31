@@ -2,6 +2,15 @@ import React from "react";
 
 export type ApiClient = (method: string, path: string, data?: any) => Promise<any>;
 
+// internal method to reject the promise with a standardized error format
+const rejectResponse = (response: any): Promise<Error> => {
+    if (response && Array.isArray(response.errors) && response.errors[0]?.message) {
+        return Promise.reject(new Error(response.errors[0].message));
+    }
+    // generic error if the response is not in the expected format
+    return Promise.reject(new Error("An error occurred while processing the request."));
+};
+
 export const useApi = (token: string): ApiClient => {
     return React.useCallback<ApiClient>((method: string, path: string, data?: any): Promise<any> => {
         // construct the URL based on the base URL and path
@@ -26,7 +35,7 @@ export const useApi = (token: string): ApiClient => {
                 if (!response.ok) {
                     // try to parse the response as JSON to get the errors
                     return response.json().then(responseData => {
-                        return Promise.reject(responseData);
+                        return rejectResponse(responseData);
                     });
                 }
                 // if the response is ok, we return the response as JSON
@@ -36,22 +45,10 @@ export const useApi = (token: string): ApiClient => {
                 // if there is a field named "errors" in the response, we reject the promise
                 // this is a common pattern in GraphQL responses, but can also be used in REST
                 if (responseData.errors) {
-                    return Promise.reject(responseData);
+                    return rejectResponse(responseData);
                 }
                 // return the response object to process
                 return responseData;
-            })
-            .catch(response => {
-                // make sure that the response contains an errors array
-                if (response && Array.isArray(response.errors)) {
-                    return Promise.reject(response);
-                }
-                // if the response is not an object, we throw a generic error
-                return Promise.reject({
-                    errors: [
-                        { message: "An error occurred while processing the request." },
-                    ],
-                });
             });
     }, [token]);
 };
