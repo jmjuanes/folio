@@ -1,22 +1,18 @@
 import React from "react";
-import { LoaderIcon, ExclamationTriangleIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Client, useClient } from "../contexts/client.tsx";
 import { useConfiguration, WebsiteEnvironment } from "../contexts/configuration.tsx";
-
-export type LoadingState = {
-    loading?: boolean;
-    error?: string;
-};
+import { useToaster } from "../contexts/toaster.tsx";
 
 // @description login component
 export const Login = (): React.JSX.Element => {
+    const toaster = useToaster();
     const client = useClient() as Client;
     const websiteConfig = useConfiguration();
-    const [state, setState] = React.useState<LoadingState>({});
-    const [experimentalWarningChecked, setExperimentalWarningChecked] = React.useState<boolean>(false);
-    const [demoWarningChecked, setDemoWarningChecked] = React.useState<boolean>(false);
+    const [ loading, setLoading ] = React.useState<boolean>(false);
+    const [ experimentalWarningChecked, setExperimentalWarningChecked ] = React.useState<boolean>(false);
+    const [ demoWarningChecked, setDemoWarningChecked ] = React.useState<boolean>(false);
     const accessTokenRef = React.useRef<HTMLInputElement>(null);
 
     const isLoginEnabled = React.useMemo(() => {
@@ -38,20 +34,16 @@ export const Login = (): React.JSX.Element => {
 
         const accessToken = (accessTokenRef.current?.value || "").trim();
         if (!accessToken) {
-            return setState({
-                error: `The access token is required to log in.`,
-            });
+            return toaster.error("The access token is required to log in.");
         }
 
         // try to login with the provided access token
-        setState({loading: true});
-        client.login({ token: accessToken }).catch(response => {
-            console.log(response);
-            console.error("Login failed:", response.errors[0]);
-            return setState({
-                error: `The provided access token is invalid. Please try again.`,
-            });
-        });
+        setLoading(true);
+        client.login({ token: accessToken })
+            .catch(error => {
+                toaster.error(error?.message || "An error occurred while logging in.");
+            })
+            .finally(() => setLoading(false));
     }, [client, isLoginEnabled]);
 
     return (
@@ -69,7 +61,7 @@ export const Login = (): React.JSX.Element => {
                         className="w-full p-2 border-1 border-gray-200 text-gray-950 text-sm rounded-md outline-gray-950"
                         placeholder="Enter your access token..."
                         ref={accessTokenRef}
-                        disabled={state.loading}
+                        disabled={loading}
                         onKeyDown={(event: React.KeyboardEvent) => {
                             if (event.key === "Enter") {
                                 event.preventDefault();
@@ -96,12 +88,11 @@ export const Login = (): React.JSX.Element => {
                             <input
                                 type="checkbox"
                                 className="rounded-md border-1 border-gray-200 text-gray-950"
-                                disabled={state.loading}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                     setExperimentalWarningChecked(event.target.checked);
                                 }}
                             />
-                            <span className="ml-2 text-sm text-gray-700">
+                            <span className="ml-2 text-sm text-gray-700 leading-none">
                                 I have read and understood the experimental warning.
                             </span>
                         </label>
@@ -125,7 +116,6 @@ export const Login = (): React.JSX.Element => {
                                 <input
                                     type="checkbox"
                                     className="rounded-md border-1 border-gray-200 text-gray-950 cursor-pointer"
-                                    disabled={state.loading}
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                         setDemoWarningChecked(event.target.checked);
                                     }}
@@ -138,27 +128,10 @@ export const Login = (): React.JSX.Element => {
                     </div>
                 )}
                 <div className="w-full">
-                    {!state.loading && (
-                        <Button className="w-full" disabled={!isLoginEnabled} onClick={handleLogin}>
-                            <span>Continue</span>
-                        </Button>
-                    )}
-                    {state.loading && (
-                        <div className="flex items-center justify-center w-full">
-                            <div className="flex animation-spin text-gray-600 text-lg">
-                                <LoaderIcon />
-                            </div>
-                        </div>
-                    )}
+                    <Button className="w-full" disabled={!isLoginEnabled || loading} onClick={handleLogin}>
+                        <span>Continue</span>
+                    </Button>
                 </div>
-                {state.error && (
-                    <div className="mt-3 text-xs text-gray-600 flex gap-1 items-center justify-center">
-                        <span className="inline-flex items-center text-base animation-pulse">
-                            <ExclamationTriangleIcon />
-                        </span>
-                        <span className="">{state.error}</span>
-                    </div>
-                )}
             </div>
         </Centered>
     );

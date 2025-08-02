@@ -13,11 +13,7 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
     // validate that token has been provided in the authorization header
     // if not, return 401 Unauthorized
     if (!token) {
-        return ctx.send(HTTP_CODES.UNAUTHORIZED, {
-            errors: [
-                API_ERROR_MESSAGES.AUTHENTICATION_REQUIRED,
-            ],
-        });
+        return ctx.error(HTTP_CODES.UNAUTHORIZED, API_ERROR_MESSAGES.AUTHENTICATION_REQUIRED);
     }
 
     // verify the token and extract user information
@@ -27,11 +23,7 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
     });
 
     if (!payload || !payload?.username) {
-        return ctx.send(HTTP_CODES.FORBIDDEN, {
-            errors: [
-                API_ERROR_MESSAGES.INVALID_TOKEN,
-            ],
-        });
+        return ctx.error(HTTP_CODES.FORBIDDEN, API_ERROR_MESSAGES.INVALID_TOKEN);
     }
 
     // attach user information to the context state for use in subsequent middleware or routes

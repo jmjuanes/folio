@@ -6,20 +6,23 @@ import { ConfigurationProvider } from "./contexts/configuration.tsx";
 import { ClientProvider } from "./contexts/client.tsx";
 import { AuthenticationProvider } from "./contexts/authentication.tsx";
 import { RouterProvider } from "./contexts/router.tsx";
+import { ToasterProvider } from "./contexts/toaster.tsx";
 import { App } from "./components/app.tsx";
 
 createRoot(document.getElementById("root")).render((
-    <ClientProvider>
-        <ConfigurationProvider>
-            <AuthenticationProvider>
-                <RouterProvider>
-                    <DialogsProvider>
-                        <ConfirmProvider>
-                            <App />
-                        </ConfirmProvider>
-                    </DialogsProvider>
-                </RouterProvider>
-            </AuthenticationProvider>
-        </ConfigurationProvider>
-    </ClientProvider>
+    <ToasterProvider>
+        <ClientProvider>
+            <ConfigurationProvider>
+                <AuthenticationProvider>
+                    <RouterProvider>
+                        <DialogsProvider>
+                            <ConfirmProvider>
+                                <App />
+                            </ConfirmProvider>
+                        </DialogsProvider>
+                    </RouterProvider>
+                </AuthenticationProvider>
+            </ConfigurationProvider>
+        </ClientProvider>
+    </ToasterProvider>
 ));

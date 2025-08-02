@@ -37,6 +37,15 @@ export const startServer = async (config: Config): Promise<any> => {
             ctx.body = bodyContent;
         };
 
+        // send an error message with a status code
+        ctx.error = (status: number, messageText: string) => {
+            ctx.send(status, {
+                errors: [
+                    { message: messageText },
+                ],
+            });
+        };
+
         // to avoid adding the 200 status code to every response, we can use ctx.ok instead
         ctx.ok = (bodyContent: object = {}) => {
             ctx.send(HTTP_CODES.OK, bodyContent);
@@ -54,11 +63,7 @@ export const startServer = async (config: Config): Promise<any> => {
         }
         catch (error) {
             console.error(error);
-            ctx.send(error.status || HTTP_CODES.INTERNAL_SERVER_ERROR, {
-                errors: [
-                    error.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-                ],
-            });
+            ctx.error(error.status || HTTP_CODES.INTERNAL_SERVER_ERROR, error.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
         }
     });
 

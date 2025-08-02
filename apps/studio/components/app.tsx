@@ -4,6 +4,7 @@ import { useConfirm } from "folio-react/contexts/confirm.jsx";
 import { useDialog } from "folio-react/contexts/dialogs.jsx";
 import { useClient } from "../contexts/client.tsx";
 import { useRouter, Route, Switch } from "../contexts/router.tsx";
+import { useToaster } from "../contexts/toaster.tsx";
 import { Sidebar } from "./sidebar.tsx";
 import { Welcome } from "./welcome.tsx";
 import { Board } from "./board.tsx";
@@ -12,6 +13,7 @@ import { GET_USER_BOARDS_QUERY, CREATE_BOARD_MUTATION, DELETE_BOARD_MUTATION } f
 
 export const App = (): React.JSX.Element => {
     const client = useClient();
+    const toaster = useToaster();
     const [boards, setBoards] = React.useState<any[]>([]);
     const [hash, redirect] = useRouter();
     const {showConfirm} = useConfirm();
@@ -23,18 +25,22 @@ export const App = (): React.JSX.Element => {
             .then(response => {
                 setBoards(response?.data?.boards || []);
             })
-            .catch(response => {
-                console.error("Error fetching boards:", JSON.stringify(response.errors, null, "    "));
+            .catch(error => {
+                toaster.error(error.message || "An error occurred while fetching boards.");
             });
     }, [client, setBoards]);
 
     // when a board is created, we redirect to the board id and force to
     // update the boards list displayed in the sidebar
     const handleBoardCreate = React.useCallback((attributes = {}, content = "{}") => {
-        return client.graphql(CREATE_BOARD_MUTATION, {attributes, content}).then(response => {
-            updateBoards();
-            redirect(response.data.createBoard.id);
-        });
+        client.graphql(CREATE_BOARD_MUTATION, {attributes, content})
+            .then(response => {
+                updateBoards();
+                redirect(response.data.createBoard.id);
+            })
+            .catch(error => {
+                toaster.error(error?.message || "An error occurred while creating the board.");
+            });
     }, [client, updateBoards, redirect]);
 
     // importing a new board just loads it from a local file and
