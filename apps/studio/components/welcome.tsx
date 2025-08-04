@@ -2,8 +2,13 @@ import React from "react";
 import { FolderIcon, DrawingIcon, ClockIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
+import { useActions } from "../hooks/use-actions.ts";
+import { useClient } from "../contexts/client.tsx";
+import { useEventListener } from "../hooks/use-events.ts";
 import { BoardLink } from "./board-link.tsx";
 import { getGreetingMessage } from "../utils/dates.ts";
+import { ACTIONS, EVENT_NAMES } from "../constants.ts";
+import { GET_USER_BOARDS_QUERY } from "../graphql.ts";
 
 // @description render recent boards
 const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
@@ -26,38 +31,67 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
 );
 
 // @description welcome component
-export const Welcome = (props: any): React.JSX.Element => (
-    <Centered className="min-h-full bg-white">
-        <div className="w-full max-w-2xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
-            <div className="pt-4 pb-12 select-none">
-                <div className="font-bold text-4xl mb-4 text-gray-950 leading-none text-center">
-                    <span>{getGreetingMessage()}</span>
+export const Welcome = (): React.JSX.Element => {
+    const client = useClient();
+    const dispatchAction = useActions();
+    const eventData = useEventListener(EVENT_NAMES.BOARD_UPDATE);
+    const [ boards, setBoards ] = React.useState<any[]>(null);
+
+    // handle board creation
+    const handleBoardCreate = React.useCallback(() => {
+        // TODO
+    }, [ dispatchAction ]);
+
+    // handle board import
+    const handleBoardImport = React.useCallback(() => {
+        // TODO
+    }, [ dispatchAction ]);
+
+    // update boards when the event is triggered
+    React.useEffect(() => {
+        setBoards(null);
+        client.graphql(GET_USER_BOARDS_QUERY, {})
+            .then(response => {
+                setBoards(response.data.getUserBoards);
+            })
+            .catch(error => {
+                console.error("Error fetching boards:", error);
+            });
+    }, [eventData, client]);
+
+    return (
+        <Centered className="min-h-full bg-white">
+            <div className="w-full max-w-2xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
+                <div className="pt-4 pb-12 select-none">
+                    <div className="font-bold text-4xl mb-4 text-gray-950 leading-none text-center">
+                        <span>{getGreetingMessage()}</span>
+                    </div>
+                    <div className="text-gray-700 text-center mb-6">
+                        <span>Here you can create boards to organize your ideas, tasks, and projects. </span>
+                        <span>Use the sidebar to navigate through your boards, or create a new one to get started.</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button className="w-full" onClick={() => handleBoardCreate()}>
+                            <div className="flex items-center text-lg">
+                                <DrawingIcon />
+                            </div>
+                            <div className="font-medium">Create new</div>
+                        </Button>
+                        <Button variant="secondary" className="w-full" onClick={() => handleBoardImport()}>
+                            <div className="flex items-center text-lg">
+                                <FolderIcon />
+                            </div>
+                            <div className="font-medium">Import from file</div>
+                        </Button>
+                    </div>
                 </div>
-                <div className="text-gray-700 text-center mb-6">
-                    <span>Here you can create boards to organize your ideas, tasks, and projects. </span>
-                    <span>Use the sidebar to navigate through your boards, or create a new one to get started.</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Button className="w-full" onClick={() => props.onBoardCreate()}>
-                        <div className="flex items-center text-lg">
-                            <DrawingIcon />
-                        </div>
-                        <div className="font-medium">Create new</div>
-                    </Button>
-                    <Button variant="secondary" className="w-full" onClick={() => props.onBoardImport()}>
-                        <div className="flex items-center text-lg">
-                            <FolderIcon />
-                        </div>
-                        <div className="font-medium">Import from file</div>
-                    </Button>
-                </div>
+                {boards && boards?.length > 0 && (
+                    <RecentBoards
+                        boards={boards}
+                        maxRecentBoards={6}
+                    />
+                )}
             </div>
-            {props.boards.length > 0 && (
-                <RecentBoards
-                    boards={props.boards}
-                    maxRecentBoards={6}
-                />
-            )}
-        </div>
-    </Centered>
-);
+        </Centered>
+    );
+};
