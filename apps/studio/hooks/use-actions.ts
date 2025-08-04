@@ -6,7 +6,7 @@ import { useClient } from "../contexts/client.tsx";
 import { useRouter } from "../contexts/router.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
 import { BoardRenameDialog } from "../components/board-rename.tsx";
-import { GET_USER_BOARDS_QUERY, CREATE_BOARD_MUTATION, DELETE_BOARD_MUTATION } from "../graphql.ts";
+import { CREATE_BOARD_MUTATION, DELETE_BOARD_MUTATION } from "../graphql.ts";
 import { ACTIONS } from "../constants.ts";
 
 export type ActionDispatcher = (actionName: string, payload: any) => Promise<any>;
@@ -15,6 +15,8 @@ export type ActionDispatcher = (actionName: string, payload: any) => Promise<any
 export const useActions = (): ActionDispatcher => {
     const client = useClient();
     const toaster = useToaster();
+    const { showConfirm } = useConfirm();
+    const { showDialog } = useDialog();
     const [ hash, redirect ] = useRouter();
 
     const actions = React.useMemo(() => ({
@@ -46,7 +48,42 @@ export const useActions = (): ActionDispatcher => {
                     toaster.error(error?.message || "An error occurred while creating the board.");
                 });
         },
-    }), []);
+        [ACTIONS.DELETE_BOARD]: async (payload: any) => {
+            return new Promise(resolve => {
+                showConfirm({
+                    title: "Delete Board",
+                    message: `Are you sure you want to delete the board "${payload.board.attributes.name}"? This action cannot be undone.`,
+                    confirmText: "Delete",
+                    onConfirm: () => {
+                        client.graphql(DELETE_BOARD_MUTATION, { id: payload.board.id })
+                            .then(() => {
+                                // if the deleted board is the current one, redirect to the home page
+                                if (payload.board.id === hash) {
+                                    redirect("");
+                                }
+                                toaster.success("Board deleted successfully.");
+                            })
+                            .catch(error => {
+                                toaster.error(error?.message || "An error occurred while deleting the board.");
+                            })
+                            .finally(() => resolve(null));
+                    },
+                });
+            });
+        },
+        [ACTIONS.SHOW_RENAME_BOARD_DIALOG]: async (payload: any) => {
+            return showDialog({
+                component: BoardRenameDialog,
+                dialogClassName: "w-full max-w-sm",
+                props: {
+                    id: payload.board.id,
+                    board: payload.board,
+                    onSubmit: payload.onSubmit,
+                },
+            });
+        },
+
+    }), [ hash ]);
 
     // return a callback method to dispatch an action
     return React.useCallback<ActionDispatcher>((actionName: string, payload: any = {}): Promise<any> => {
