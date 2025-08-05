@@ -34,17 +34,17 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
 export const Welcome = (): React.JSX.Element => {
     const client = useClient();
     const dispatchAction = useActions();
-    const eventData = useEventListener(EVENT_NAMES.BOARD_UPDATE);
+    const eventData = useEventListener<any>(EVENT_NAMES.BOARD_ACTION, null);
     const [ boards, setBoards ] = React.useState<any[]>(null);
 
     // handle board creation
     const handleBoardCreate = React.useCallback(() => {
-        // TODO
+        dispatchAction(ACTIONS.CREATE_BOARD, {});
     }, [ dispatchAction ]);
 
     // handle board import
     const handleBoardImport = React.useCallback(() => {
-        // TODO
+        dispatchAction(ACTIONS.IMPORT_BOARD, {});
     }, [ dispatchAction ]);
 
     // update boards when the event is triggered
@@ -52,12 +52,12 @@ export const Welcome = (): React.JSX.Element => {
         setBoards(null);
         client.graphql(GET_USER_BOARDS_QUERY, {})
             .then(response => {
-                setBoards(response.data.getUserBoards);
+                setBoards(response.data.boards);
             })
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [eventData, client]);
+    }, [ setBoards, eventData?.date, client ]);
 
     return (
         <Centered className="min-h-full bg-white">

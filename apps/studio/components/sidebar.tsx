@@ -5,7 +5,7 @@ import { renderIcon, DrawingIcon } from "@josemi-icons/react";
 import { useClient } from "../contexts/client.tsx";
 import { useRouter } from "../contexts/router.tsx";
 import { useConfiguration } from "../contexts/configuration.tsx";
-import { useEventListener, useEventEmitter } from "../hooks/use-events.ts";
+import { useEventListener } from "../hooks/use-events.ts";
 import { useActions } from "../hooks/use-actions.ts";
 import { BoardLink } from "./board-link.tsx";
 import { groupByDate } from "../utils/dates.ts";
@@ -128,9 +128,8 @@ const BoardsList = ({ boards, onRename, onDelete }): React.JSX.Element => {
 
 // export the sidebar component
 export const Sidebar = (): React.JSX.Element => {
-    const [ boards, setBoards ] = React.useState(null);
-    const eventData = useEventListener(EVENT_NAMES.BOARD_UPDATE);
-    const dispatchEvent = useEventEmitter(EVENT_NAMES.BOARD_UPDATE);
+    const [ boards, setBoards ] = React.useState<any[]>(null);
+    const eventData = useEventListener<any>(EVENT_NAMES.BOARD_ACTION, null);
     const dispatchAction = useActions();
     const [ collapsed, toggleCollapsed ] = useToggle(false);
     const client = useClient();
@@ -152,7 +151,7 @@ export const Sidebar = (): React.JSX.Element => {
                     console.error(error);
                 });
         }
-    }, [ collapsed, eventData, client ]);
+    }, [ collapsed, eventData?.date, client ]);
 
     // note that this event will not be triggered if the sidebar is collapsed
     const handleToggleCollapsed = React.useCallback(() => {
@@ -194,9 +193,7 @@ export const Sidebar = (): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                dispatchAction(ACTIONS.CREATE_BOARD, {}).then(newBoard => {
-                                    dispatchEvent({ id: newBoard.id });
-                                });
+                                dispatchAction(ACTIONS.CREATE_BOARD, {})
                             }}
                             collapsed={collapsed}
                             icon="plus"
@@ -205,9 +202,7 @@ export const Sidebar = (): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                dispatchAction(ACTIONS.IMPORT_BOARD, {}).then(newBoard => {
-                                    dispatchEvent({ id: newBoard.id });
-                                });
+                                dispatchAction(ACTIONS.IMPORT_BOARD, {})
                             }}
                             collapsed={collapsed}
                             icon="upload"
@@ -220,15 +215,10 @@ export const Sidebar = (): React.JSX.Element => {
                             onRename={(board: any) => {
                                 dispatchAction(ACTIONS.SHOW_RENAME_BOARD_DIALOG, {
                                     board: board,
-                                    onSubmit: () => {
-                                        dispatchEvent({ id: board.id });
-                                    },
                                 });
                             }}
                             onDelete={(board: any) => {
-                                dispatchAction(ACTIONS.DELETE_BOARD, { board: board }).then(() => {
-                                    dispatchEvent({ id: board.id });
-                                });
+                                dispatchAction(ACTIONS.DELETE_BOARD, { board: board });
                             }}
                         />
                     )}
