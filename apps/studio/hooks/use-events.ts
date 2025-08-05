@@ -4,16 +4,16 @@ import React from "react";
 const globalEventEmitter = new EventTarget();
 
 // export the hook to dispatch an event
-export const useEventEmitter = (eventName: string) => {
-    return React.useCallback((eventData: any) => {
+export const useEventEmitter = () => {
+    return React.useCallback((eventName: string, eventData: any) => {
         const event = new CustomEvent(eventName, { detail: eventData });
         globalEventEmitter.dispatchEvent(event);
-    }, [ eventName ]);
+    }, []);
 };
 
 // export the hook to listen to an event
-export const useEventListener = <T>(eventName: string): T => {
-    const [ eventData, setEventData ] = React.useState<T>(null);
+export const useEventListener = <T>(eventName: string, initialData?: T): T => {
+    const [ eventData, setEventData ] = React.useState<T>(initialData ?? null);
 
     // listen to eventName
     React.useEffect(() => {
