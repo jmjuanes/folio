@@ -5,14 +5,16 @@ import { useDialog } from "folio-react/contexts/dialogs.jsx";
 import { useClient } from "../contexts/client.tsx";
 import { useRouter } from "../contexts/router.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
+import { useEventEmitter } from "./use-events.ts";
 import { BoardRenameDialog } from "../components/board-rename.tsx";
-import { CREATE_BOARD_MUTATION, DELETE_BOARD_MUTATION } from "../graphql.ts";
-import { ACTIONS } from "../constants.ts";
+import { CREATE_BOARD_MUTATION, DELETE_BOARD_MUTATION, UPDATE_BOARD_MUTATION } from "../graphql.ts";
+import { ACTIONS, EVENT_NAMES } from "../constants.ts";
 
 export type ActionDispatcher = (actionName: string, payload: any) => Promise<any>;
 
 // export the actions hook
 export const useActions = (): ActionDispatcher => {
+    const eventEmitter = useEventEmitter();
     const client = useClient();
     const toaster = useToaster();
     const { showConfirm } = useConfirm();
@@ -24,7 +26,11 @@ export const useActions = (): ActionDispatcher => {
             return client.graphql(CREATE_BOARD_MUTATION, { attributes: {}, content: "{}" })
                 .then(response => {
                     redirect(response.data.createBoard.id);
-                    return response.data.createBoard;
+                    eventEmitter(EVENT_NAMES.BOARD_ACTION, {
+                        action: "create",
+                        id: response.data.createBoard.id,
+                        date: Date.now(),
+                    });
                 })
                 .catch(error => {
                     toaster.error(error?.message || "An error occurred while creating the board.");
@@ -42,7 +48,11 @@ export const useActions = (): ActionDispatcher => {
                 })
                 .then(response => {
                     redirect(response.data.createBoard.id);
-                    return response.data.createBoard;
+                    eventEmitter(EVENT_NAMES.BOARD_ACTION, {
+                        action: "import",
+                        id: response.data.createBoard.id,
+                        date: Date.now(),
+                    });
                 })
                 .catch(error => {
                     toaster.error(error?.message || "An error occurred while creating the board.");
@@ -62,6 +72,11 @@ export const useActions = (): ActionDispatcher => {
                                     redirect("");
                                 }
                                 toaster.success("Board deleted successfully.");
+                                eventEmitter(EVENT_NAMES.BOARD_ACTION, {
+                                    action: "delete",
+                                    id: payload.board.id,
+                                    date: Date.now(),
+                                });
                             })
                             .catch(error => {
                                 toaster.error(error?.message || "An error occurred while deleting the board.");
@@ -71,6 +86,18 @@ export const useActions = (): ActionDispatcher => {
                 });
             });
         },
+        [ACTIONS.UPDATE_BOARD_ATTRIBUTES]: async ({ id, attributes = {} }) => {
+            return client.graphql(UPDATE_BOARD_MUTATION, { id, attributes }).then(response => {
+                eventEmitter(EVENT_NAMES.BOARD_ACTION, {
+                    action: "updateAttributes",
+                    id: response.data.updateBoard.id,
+                    date: Date.now(),
+                });
+            });
+        },
+        [ACTIONS.UPDATE_BOARD_CONTENT]: async ({ id, content = "{}" }) => {
+            return client.graphql(UPDATE_BOARD_MUTATION, { id, content: content });
+        },
         [ACTIONS.SHOW_RENAME_BOARD_DIALOG]: async (payload: any) => {
             return showDialog({
                 component: BoardRenameDialog,
@@ -78,7 +105,6 @@ export const useActions = (): ActionDispatcher => {
                 props: {
                     id: payload.board.id,
                     board: payload.board,
-                    onSubmit: payload.onSubmit,
                 },
             });
         },

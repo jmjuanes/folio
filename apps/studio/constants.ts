@@ -3,8 +3,10 @@ export enum ACTIONS {
     IMPORT_BOARD = "importBoard",
     DELETE_BOARD = "deleteBoard",
     SHOW_RENAME_BOARD_DIALOG = "showRenameBoardDialog",
+    UPDATE_BOARD_ATTRIBUTES = "updateBoardAttributes",
+    UPDATE_BOARD_CONTENT = "updateBoardContent",
 };
 
 export enum EVENT_NAMES {
-    BOARD_UPDATE = "board:update",
+    BOARD_ACTION = "board:action",
 };
