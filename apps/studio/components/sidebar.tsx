@@ -5,8 +5,12 @@ import { renderIcon, DrawingIcon } from "@josemi-icons/react";
 import { useClient } from "../contexts/client.tsx";
 import { useRouter } from "../contexts/router.tsx";
 import { useConfiguration } from "../contexts/configuration.tsx";
+import { useEventListener } from "../hooks/use-events.ts";
+import { useActions } from "../hooks/use-actions.ts";
 import { BoardLink } from "./board-link.tsx";
 import { groupByDate } from "../utils/dates.ts";
+import { GET_USER_BOARDS_QUERY } from "../graphql.ts";
+import { EVENT_NAMES, ACTIONS } from "../constants.ts";
 
 type ActionButtonProps = {
     href?: string;
@@ -49,8 +53,8 @@ const BoardsGroup = ({ title, boards, onRename, onDelete }): React.JSX.Element =
                     key={`board:item:${item.id}`}
                     board={item}
                     active={hash === item.id}
-                    onRename={() => onRename(item.id)}
-                    onDelete={() => onDelete(item.id)}
+                    onRename={() => onRename(item)}
+                    onDelete={() => onDelete(item)}
                 />
             ))}
         </div>
@@ -123,8 +127,11 @@ const BoardsList = ({ boards, onRename, onDelete }): React.JSX.Element => {
 };
 
 // export the sidebar component
-export const Sidebar = (props: any): React.JSX.Element => {
-    const [collapsed, toggleCollapsed] = useToggle(!!props.defaultCollapsed);
+export const Sidebar = (): React.JSX.Element => {
+    const [ boards, setBoards ] = React.useState<any[]>(null);
+    const eventData = useEventListener<any>(EVENT_NAMES.BOARD_ACTION, null);
+    const dispatchAction = useActions();
+    const [ collapsed, toggleCollapsed ] = useToggle(false);
     const client = useClient();
     const websiteConfig = useConfiguration();
     const sidebarClass = classNames({
@@ -133,12 +140,25 @@ export const Sidebar = (props: any): React.JSX.Element => {
         "w-72": !collapsed,
     });
 
+    // listener to update the boards of the user
+    React.useEffect(() => {
+        if (!collapsed) {
+            client.graphql(GET_USER_BOARDS_QUERY, {})
+                .then(response => {
+                    setBoards(response.data.boards);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    }, [ collapsed, eventData?.date, client ]);
+
     // note that this event will not be triggered if the sidebar is collapsed
     const handleToggleCollapsed = React.useCallback(() => {
         if (collapsed) {
             toggleCollapsed();
         }
-    }, [collapsed, toggleCollapsed]);
+    }, [ collapsed, toggleCollapsed ]);
 
     return (
         <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
@@ -173,7 +193,7 @@ export const Sidebar = (props: any): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                props.onBoardCreate();
+                                dispatchAction(ACTIONS.CREATE_BOARD, {})
                             }}
                             collapsed={collapsed}
                             icon="plus"
@@ -182,18 +202,24 @@ export const Sidebar = (props: any): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                props.onBoardImport();
+                                dispatchAction(ACTIONS.IMPORT_BOARD, {})
                             }}
                             collapsed={collapsed}
                             icon="upload"
                             text="Import board from file"
                         />
                     </div>
-                    {!collapsed && (
+                    {!collapsed && boards && (
                         <BoardsList
-                            boards={props.boards}
-                            onRename={props.onBoardRename}
-                            onDelete={props.onBoardDelete}
+                            boards={boards}
+                            onRename={(board: any) => {
+                                dispatchAction(ACTIONS.SHOW_RENAME_BOARD_DIALOG, {
+                                    board: board,
+                                });
+                            }}
+                            onDelete={(board: any) => {
+                                dispatchAction(ACTIONS.DELETE_BOARD, { board: board });
+                            }}
                         />
                     )}
                 </div>
