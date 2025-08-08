@@ -2,27 +2,39 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { PurgeCSS } from "purgecss";
+import CleanCSS from "clean-css";
 
 // main script
 const main = async (inputConfig, inputJs, output) => {
     const config = JSON.parse(fs.readFileSync(path.resolve(inputConfig), "utf8"));
-    let css = fs.readFileSync(path.resolve(config.input), "utf8"); // read original CSS file
+    const cleanCss = new CleanCSS({ level: 2 });
 
-    // a. replace class names in CSS
-    Object.keys(config.classNames).forEach(key => {
-        const className = key.replace(/:/g, "\\\\:");
-        css = css.replace(new RegExp(`\\.${className}(?=[\\s,{.:#>\\[])`, "g"), `.${config.classNames[key]}`);
-    });
+    // read css files and obfuscate class names, variables, and keyframes
+    const inputs = config.input.map(inputFile => {
+        let css = fs.readFileSync(path.resolve(inputFile), "utf8"); // read original CSS file
 
-    // b. replace CSS variables in CSS
-    Object.keys(config.variables).forEach(key => {
-        css = css.replace(new RegExp(key + "(?![a-zA-Z0-9_-])", "g"), config.variables[key]);
-    });
+        // a. replace class names in CSS
+        Object.keys(config.classNames).forEach(key => {
+            const className = key.replace(/:/g, "\\\\:");
+            css = css.replace(new RegExp(`\\.${className}(?=[\\s,{.:#>\\[])`, "g"), `.${config.classNames[key]}`);
+        });
 
-    // c. replace keyframes in CSS
-    Object.keys(config.keyframes).forEach(key => {
-        css = css.replace(new RegExp(`@keyframes\\s+${key}(?![a-zA-Z0-9_-])`, "g"), `@keyframes ${config.keyframes[key]}`);
-        css = css.replace(new RegExp(`:\\s?${key}\\s`, "g"), `: ${config.keyframes[key]} `);
+        // b. replace CSS variables in CSS
+        Object.keys(config.variables).forEach(key => {
+            css = css.replace(new RegExp(key + "(?![a-zA-Z0-9_-])", "g"), config.variables[key]);
+        });
+
+        // c. replace keyframes in CSS
+        Object.keys(config.keyframes).forEach(key => {
+            css = css.replace(new RegExp(`@keyframes\\s+${key}(?![a-zA-Z0-9_-])`, "g"), `@keyframes ${config.keyframes[key]}`);
+            css = css.replace(new RegExp(`:\\s?${key}\\s`, "g"), `: ${config.keyframes[key]} `);
+        });
+
+        // return the css content
+        return {
+            source: inputFile,
+            css: css,
+        };
     });
 
     // const usedClassNames = extractUsedClassNames(js, config);
@@ -32,17 +44,20 @@ const main = async (inputConfig, inputJs, output) => {
             raw: fs.readFileSync(path.resolve(inputJs), "utf8"),
             extension: "js",
         }],
-        css: [{
-            raw: css,
-        }],
+        css: inputs.map(input => ({
+            raw: input.css,
+        })),
         defaultExtractor: content => {
             return content.match(/[\w-:./]+(?<!:)/g) || [];
         },
         variables: true,
     });
 
+    // generate the final CSS output
+    const css = results.map(result => cleanCss.minify(result.css).styles).join("");
+
     // const purgedCss = purgeAndRenameCss(css, usedClassNames, usedVariables, config);
-    fs.writeFileSync(path.resolve(output), results[0].css, "utf8");
+    fs.writeFileSync(path.resolve(output), css, "utf8");
 };
 
 // get the arguments from the command line
