@@ -82,6 +82,14 @@ export default {
         new CopyWebpackPlugin({
             patterns: [
                 path.resolve("../../node_modules/lowcss/low.css"),
+                {
+                    from: path.resolve("../../node_modules/lowcss-helpers/index.css"),
+                    to: "low.helpers.css",
+                },
+                {
+                    from: path.resolve("../../node_modules/lowcss-forms/index.css"),
+                    to: "low.forms.css",
+                },
             ],
         }),
         new HtmlWebpackPlugin({
