@@ -2,7 +2,7 @@ import React from "react";
 import { Centered } from "./ui/centered.jsx";
 
 export const LoadingSpinner = () => (
-    <div className="animation-spin h-6 w-6 relative">
+    <div className="animate-spin h-6 w-6 relative">
         <div className="absolute top-0 left-0 w-full h-full rounded-full border-current border-4 border-solid opacity-20" />
         <div
             className="absolute top-0 left-0 w-full h-full rounded-full border-transparent border-4 border-solid opacity-90"

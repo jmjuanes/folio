@@ -12,7 +12,7 @@ const defaultStyle = {
 
 export const Hint = props => {
     const classList = classNames({
-        "absolute z-10 animation-fadein": true,
+        "absolute z-10 animate-fadein": true,
         "bottom-full left-half mb-2": props.position === HINT_POSITION_TOP,
         "top-full left-half mt-2": props.position === HINT_POSITION_BOTTOM,
     }, props.className);
@@ -20,7 +20,7 @@ export const Hint = props => {
     return (
         <div className={classList} style={defaultStyle}>
             {props.position === HINT_POSITION_BOTTOM && (
-                <div className="flex justify-center text-xl mb-1 animation-pulse text-gray-600">
+                <div className="flex justify-center text-xl mb-1 animate-pulse text-gray-600">
                     <ArrowUpIcon />
                 </div>
             )}
@@ -33,7 +33,7 @@ export const Hint = props => {
                 </div>
             </div>
             {props.position === HINT_POSITION_TOP && (
-                <div className="flex justify-center text-xl mt-2 animation-pulse text-gray-600">
+                <div className="flex justify-center text-xl mt-2 animate-pulse text-gray-600">
                     <ArrowDownIcon />
                 </div>
             )}
