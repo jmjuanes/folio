@@ -17,46 +17,54 @@ const getObfuscatedName = (index = 0, prefix = "", minLength = 3) => {
 };
 
 // find all occurrences of a pattern in a string
-const findAllOccurrences = (str, pattern) => {
-    return Array.from(new Set((str.matchAll(pattern) || []).map(match => match[1])));
+const findAllOccurrences = (str, output, pattern) => {
+    // return Array.from(new Set((str.matchAll(pattern) || []).map(match => match[1])));
+    (str.matchAll(pattern) || []).forEach(match => {
+        output.add(match[1]);
+    });
 };
 
-const main = (input, output) => {
-    // 1. read CSS file
-    let css = fs.readFileSync(path.resolve(input), "utf8");
+const main = (inputFiles, output) => {
+    // 0 initialize sets for class names, variables, and keyframes
+    const classSet = new Set(), varSet = new Set(), keyframesSet = new Set();
     const prefixes = {
         classNames: "fl-c",
         variables: "fl-v",
         keyframes: "fl-k",
     };
 
-    // 2a. find all class selectors (including state utilities)
-    // Matches .bg-gray-100, .hover:bg-gray-200, .group-focus-within:block, etc.
-    const classSet = findAllOccurrences(css, /\.((?:[a-z][a-zA-Z0-9_-]+\\:)*[a-z][a-zA-Z0-9_-]+)(?=[\s,{.:#>\[])/g);
+    // 1. read all input files
+    inputFiles.forEach(input => {
+        const css = fs.readFileSync(path.resolve(input), "utf8");
 
-    // 2b. find all CSS variables (e.g., --color-gray-100)
-    const varSet = findAllOccurrences(css, /(--[a-zA-Z0-9_-]+)/g);
+        // 2a. find all class selectors (including state utilities)
+        // Matches .bg-gray-100, .hover:bg-gray-200, .group-focus-within:block, etc.
+        findAllOccurrences(css, classSet, /\.((?:[a-z][a-zA-Z0-9_-]+\\:)*[a-z][a-zA-Z0-9_-]+)(?=[\s,{.:#>\[])/g);
 
-    // 2c. find all keyframes definitions (e.g., @keyframes fade-in)
-    const keyframesSet = findAllOccurrences(css, /@keyframes\s+([a-zA-Z0-9_-]+)/g);
+        // 2b. find all CSS variables (e.g., --color-gray-100)
+        findAllOccurrences(css, varSet, /(--[a-zA-Z0-9_-]+)/g);
+
+        // 2c. find all keyframes definitions (e.g., @keyframes fade-in)
+        findAllOccurrences(css, keyframesSet, /@keyframes\s+([a-zA-Z0-9_-]+)/g);
+    });
 
     // 3. generate output data
     const data = {
-        input: input,
+        input: inputFiles,
         prefixes: prefixes,
-        classNames: Object.fromEntries(classSet.map((className, index) => {
+        classNames: Object.fromEntries(Array.from(classSet).map((className, index) => {
             return [
                 className.replace(/\\/g, ""),
                 getObfuscatedName(index, prefixes.classNames, 3),
             ];
         })),
-        variables: Object.fromEntries(varSet.map((varName, index) => {
+        variables: Object.fromEntries(Array.from(varSet).map((varName, index) => {
             return [
                 varName,
                 "--" + getObfuscatedName(index, prefixes.variables, 2),
             ];
         })),
-        keyframes: Object.fromEntries(keyframesSet.map((keyframesName, index) => {
+        keyframes: Object.fromEntries(Array.from(keyframesSet).map((keyframesName, index) => {
             return [
                 keyframesName,
                 getObfuscatedName(index, prefixes.keyframes, 2),
@@ -75,6 +83,7 @@ const { values } = parseArgs({
     options: {
         input: {
             type: "string",
+            multiple: true,
         },
         output: {
             type: "string",
