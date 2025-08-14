@@ -5,31 +5,12 @@ import { environment } from "./env.js";
 
 export const WEB_TITLE = "folio.";
 
-export type AccessTokenAuthConfig = {
-    token?: string;
-    username?: string;
-    display_name?: string;
-    avatar_url?: string;
+export enum AuthenticationTypes {
+    ACCESS_TOKEN = "access_token",
 };
 
-export type AuthConfig = {
-    access_token?: AccessTokenAuthConfig;
-};
-
-export type LocalStorageConfig = {
-    file?: string;
-};
-
-export type StorageConfig = {
-    local?: LocalStorageConfig,
-};
-
-export type SecurityConfig = {
-    cors?: boolean;
-    cors_origin?: string;
-    cors_allowed_methods?: string;
-    jwt_token_secret?: string;
-    jwt_token_expiration?: string;
+export enum StorageTypes {
+    LOCAL = "local",
 };
 
 // supported environments for the website
@@ -40,25 +21,49 @@ export enum WebsiteEnvironment {
     PRODUCTION = "production",
 };
 
+export type AccessTokenAuthConfig = {
+    access_token?: string;
+    user_name?: string;
+    user_display_name?: string;
+    user_avatar_url?: string;
+};
+
+export type LocalStorageConfig = {
+    storage_file?: string;
+};
+
+export type SecurityConfig = {
+    cors?: boolean;
+    cors_origin?: string;
+    cors_allowed_methods?: string;
+    jwt_token_secret?: string;
+    jwt_token_expiration?: string;
+};
+
 export type WebsiteConfig = {
-    enabled?: boolean;
-    directory?: string;
-    index?: string;
-    environment?: WebsiteEnvironment;
-    title?: string;
-    logo?: string;
-    favicon?: string;
-    hide_experimental_warning?: boolean;
+    website?: boolean;
+    website_directory?: string;
+    website_index?: string;
+    website_environment?: WebsiteEnvironment;
+    website_title?: string;
+    website_logo?: string;
+    website_favicon?: string;
+    website_hide_experimental_warning?: boolean;
+};
+
+export type BaseConfig = {
+    port?: number;
+    storage: StorageTypes;
+    authentication: AuthenticationTypes;
 };
 
 // configuration for folio server
-export type Config = {
-    port?: number;
-    storage?: StorageConfig;
-    authentication?: AuthConfig;
-    security?: SecurityConfig;
-    website?: WebsiteConfig;
-};
+export type Config = 
+    BaseConfig &
+    WebsiteConfig &
+    SecurityConfig &
+    LocalStorageConfig &
+    AccessTokenAuthConfig;
 
 // convert a string value to a boolean
 const toBoolean = (value: string|boolean, defaultValue: boolean = false): boolean => {
@@ -89,13 +94,13 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
     // get fields to override with custom environment values
     const fields = {
         "port": environment.FOLIO_PORT,
-        "authentication.access_token.token": environment.FOLIO_ACCESS_TOKEN,
-        "storage.local.file": environment.FOLIO_STORAGE_FILE,
-        "website.directory": environment.FOLIO_WEBSITE_PATH,
-        "website.environment": environment.FOLIO_ENVIRONMENT,
-        "website.hide_experimental_warning": toBoolean(environment.FOLIO_HIDE_EXPERIMENTAL_WARNING, false),
-        "security.jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
-        "security.jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
+        "access_token": environment.FOLIO_ACCESS_TOKEN,
+        "storage_file": environment.FOLIO_STORAGE_FILE,
+        "website_directory": environment.FOLIO_WEBSITE_PATH,
+        "website_environment": environment.FOLIO_ENVIRONMENT,
+        "website_hide_experimental_warning": toBoolean(environment.FOLIO_HIDE_EXPERIMENTAL_WARNING, false),
+        "jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
+        "jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
     };
 
     // iterate over the fields and set the values in the config object
@@ -104,18 +109,7 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
     // and to keep the default values for the fields that are not defined
     Object.keys(fields).forEach(field => {
         if (typeof fields[field] !== "undefined") {
-            const keys = field.split(".");
-            let current = config;
-
-            // traverse the config object to set the value
-            for (let i = 0; i < keys.length - 1; i++) {
-                // if the key does not exist, skip setting the value
-                if (typeof current[keys[i]] === "undefined") {
-                    return;
-                }
-                current = current[keys[i]];
-            }
-            current[keys[keys.length - 1]] = fields[field];
+            config[field] = fields[field];
         }
     });
 

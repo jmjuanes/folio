@@ -1,12 +1,12 @@
 import { verifyJwtToken } from "../token.ts";
 import { API_ERROR_MESSAGES, HTTP_CODES } from "../constants.ts";
-import type { SecurityConfig } from "../config.ts";
+import type { Config } from "../config.ts";
 import type { ExtendedContext } from "../types/custom.ts";
 import type { User } from "../types/user.ts";
 
 // authentication middleware
 export const authentication = async (ctx: ExtendedContext, next: () => Promise<any>) => {
-    const securityConfig = ctx.state?.config?.security as SecurityConfig;
+    const config = ctx.state?.config as Config;
     const authHeader = ctx.headers?.authorization as string | undefined;
     const token = authHeader && authHeader.split(" ")[1];
 
@@ -19,7 +19,7 @@ export const authentication = async (ctx: ExtendedContext, next: () => Promise<a
     // verify the token and extract user information
     // if the JWT is not valid, this method will return null
     const payload: Partial<User>|null = verifyJwtToken(token, {
-        secret: securityConfig?.jwt_token_secret,
+        secret: config?.jwt_token_secret,
     });
 
     if (!payload || !payload?.username) {

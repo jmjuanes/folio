@@ -14,7 +14,7 @@ import { statusRouter } from "./routes/status.ts";
 import { configRouter } from "./routes/config.ts";
 import { graphqlRouter } from "./routes/graphql.ts";
 import { createLogger } from "./utils/logger.ts";
-import type { Config, SecurityConfig, WebsiteConfig } from "./config.ts";
+import type { Config } from "./config.ts";
 
 const DEFAULT_PORT = 8080;
 
@@ -67,16 +67,14 @@ export const startServer = async (config: Config): Promise<any> => {
         }
     });
 
-    // register security middlewares
-    const securityConfig = config?.security as SecurityConfig;
     // app.use(helmet({
     //     contentSecurityPolicy: false,
     // }));
-    if (securityConfig?.cors) {
+    if (config?.cors) {
         debug("Enabling CORS...");
         app.use(cors({
-            origin: securityConfig?.cors_origin || "*",
-            allowMethods: securityConfig?.cors_allowed_methods || "GET,POST",
+            origin: config.cors_origin || "*",
+            allowMethods: config?.cors_allowed_methods || "GET,POST",
         }));
     }
 
@@ -85,14 +83,12 @@ export const startServer = async (config: Config): Promise<any> => {
     app.use(logger());
 
     // website configuration
-    const websiteConfig = config?.website as WebsiteConfig;
-    if (!websiteConfig?.enabled === false) {
-        const websiteDirectory = path.resolve(websiteConfig?.directory || "./app");
+    if (!config?.website === false) {
+        const websiteDirectory = path.resolve(config.website_directory || "./app");
         debug(`Website is enabled. Reading content from ${websiteDirectory}`);
         app.use(staticContent({
-            // directory: path.resolve(websiteConfig?.directory || "app"),
             directory: websiteDirectory,
-            index: websiteConfig?.index || "app.html",
+            index: config.website_index || "app.html",
         }));
     }
 

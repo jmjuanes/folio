@@ -3,7 +3,7 @@ import { generateJwtToken } from "../token.ts";
 import { createLogger } from "../utils/logger.ts";
 import { API_ERROR_MESSAGES, HTTP_CODES } from "../constants.ts";
 import type { ExtendedContext } from "../types/custom.ts";
-import type { SecurityConfig } from "../config.ts";
+import type { Config } from "../config.ts";
 import type { User } from "../types/user.ts";
 
 const log = createLogger("folio:route:login");
@@ -16,7 +16,7 @@ loginRouter.get("/", async (ctx: ExtendedContext) => {
 
 // POST - login route
 loginRouter.post("/", async (ctx: ExtendedContext) => {
-    const securityConfig = ctx.state.config?.security as SecurityConfig;
+    const config = ctx.state.config as Config;
 
     // pass the request body object to the authenticate method
     // it should return the user information of the user, or null
@@ -31,8 +31,8 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
         return ctx.ok({
             data: {
                 token: generateJwtToken({
-                    secret: securityConfig?.jwt_token_secret,
-                    expiration: securityConfig?.jwt_token_expiration,
+                    secret: config?.jwt_token_secret,
+                    expiration: config?.jwt_token_expiration,
                     payload: {
                         username: payload.username,
                     },

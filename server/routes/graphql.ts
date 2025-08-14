@@ -3,7 +3,7 @@ import { graphql } from "graphql";
 import { authentication } from "../middlewares/authentication.ts";
 import { schema } from "../graphql.ts";
 import { createLogger } from "../utils/logger.ts";
-import type { ExtendedContext } from "../types/custom.d.ts";
+import type { ExtendedContext } from "../types/custom.ts";
 import { API_ERROR_MESSAGES, HTTP_CODES } from "../constants.ts";
 
 export const graphqlRouter = new Router();

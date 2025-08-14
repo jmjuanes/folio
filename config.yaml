@@ -5,39 +5,40 @@
 ## this value can be overrided using the FOLIO_PORT env variable
 port: 8080
 
-## settings for the authentication, but only one authentication method is allowecd
-## at this moment only the acessToken plugin is enabled
-authentication:
-  access_token:
-    ## configure here your access token, if want a fixed access token
-    ## if not provided, a new one will be generated and printed in logs every time the server is restarted
-    ## you can override this token also using the FOLIO_ACCESS_TOKEN env variable
-    # token: "123456abcd"
-    ## additional information about the user
-    username: 'folio'
-    display_name: 'John Doe'
-    # avatar_url: 'https://....'
+## configure the authentication method
+## allowed values: "access_token"
+authentication: 'access_token'
 
-## settings for storage, but only one storage method is allowed
-## you can configure local or memory storage
-storage:
-  local:
-    file: 'data/folio.db'
+## configure here your access token, if want a fixed access token
+## if not provided, a new one will be generated and printed in logs every time the server is restarted
+## you can override this token also using the FOLIO_ACCESS_TOKEN env variable
+# access_token: "123456abcd"
 
-## security configuration
-security:
-  ## enable or disable cross origin requests
-  # cors: false
-  # cors_origin: "*"
-  # cors_allowed_methods: "GET,POST"
-  ## configure the generation of JWT tokens for authentication
-  ## secret: allows to specify a fixed secret key to generate jwt tokens.
-  ## expiration: specify the expiration time. Times are parsed by https://www.npmjs.com/package/ms
-  # jwt_token_secret: "abcd"
-  # jwt_token_expiration: "1y"
+## information about the user to display in the website
+## only applicable if the authentication method is 'access_token'
+user_name: 'john_doe'
+user_display_name: 'John Doe'
+# user_avatar_url: 'https://....'
+
+## configure the storage method to use
+## allowed values: 'local', 'memory'
+storage: 'local'
+
+## configure the local storage
+## only applicable if the storage method is 'local'
+storage_file: 'data/folio.db'
+
+## enable or disable cross origin requests
+# cors: false
+# cors_origin: "*"
+# cors_allowed_methods: "GET,POST"
+
+## configure the generation of JWT tokens for authentication
+## secret: allows to specify a fixed secret key to generate jwt tokens.
+# jwt_token_secret: "abcd"
+## expiration: specify the expiration time. Times are parsed by https://www.npmjs.com/package/ms
+# jwt_token_expiration: "1y"
 
 ## website configuration
-website:
-  enabled: true
-  ## change the title of the website. It will be displayed in the login and in the sidebar
-  # title: "folio."
+website: true
+# website_title: "folio."
