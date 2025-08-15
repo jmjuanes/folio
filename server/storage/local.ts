@@ -5,12 +5,23 @@ import { open } from "sqlite";
 import { Collections } from "../types/storage.ts";
 import { createLogger } from "../utils/logger.ts";
 import type { Config } from "../config.ts";
-import type { StoreContext } from "../types/storage.ts";
+import type { StoreContext, Document, DocumentData } from "../types/storage.ts";
 
 const { debug } = createLogger("folio:storage:local");
 
 const DB_PATH = "data/folio.db";
-const TABLE_NAME = "collections";
+const TABLE = "documents";
+
+// decode a document data to get attributes and content in the correct format
+const parseDocument = (rawDocument: any): Document => {
+    const { data, ...attributes } = rawDocument; // extract internal values and data from document
+    return {
+        ...JSON.parse(data || "{}"),
+        _id: attributes.id,
+        _created_at: attributes.created_at,
+        _updated_at: attributes.updated_at,
+    };
+};
 
 // create an instance of a store
 export const createLocalStore = async (config: Config): Promise<StoreContext> => {
@@ -31,82 +42,51 @@ export const createLocalStore = async (config: Config): Promise<StoreContext> =>
 
     // 3. create store table if it doesn't exist
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS ${TABLE_NAME} (
-            id TEXT NOT NULL,
-            parent TEXT,
+        CREATE TABLE IF NOT EXISTS ${TABLE} (
             collection TEXT NOT NULL,
+            id TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            attributes TEXT,
-            content TEXT,
-            PRIMARY KEY (id)
+            data TEXT,
+            PRIMARY KEY (_id)
         );
-        CREATE INDEX IF NOT EXISTS idx_${TABLE_NAME}_id ON ${TABLE_NAME} (id);
-        CREATE INDEX IF NOT EXISTS idx_${TABLE_NAME}_id_collection ON ${TABLE_NAME} (id, collection);
-        CREATE INDEX IF NOT EXISTS idx_${TABLE_NAME}_id_parent ON ${TABLE_NAME} (id, parent);
-        CREATE INDEX IF NOT EXISTS idx_${TABLE_NAME}_id_parent_collection ON ${TABLE_NAME} (id, parent, collection);
+        CREATE INDEX IF NOT EXISTS idx_${TABLE}_id ON ${TABLE} (id);
+        CREATE INDEX IF NOT EXISTS idx_${TABLE}_id_collection ON ${TABLE} (id, collection);
     `);
-
-    // verify that the table has a record for the user object
-    // if the root user object does not exist, create it
-    // const userExists = await db.get(`SELECT COUNT(*) as count FROM ${TABLE_NAME} WHERE object = ?`, [Collections.USER]);
-    // if (userExists.count === 0) {
-    //     await db.run(
-    //         `INSERT INTO ${TABLE_NAME} (id, object, attributes, content) VALUES (?, ?, ?, ?)`,
-    //         [uid(20), Collections.USER, "{}", "{}"],
-    //     );
-    // }
 
     // return api to access to the database
     return {
-        get: async (collection: Collections, id: string): Promise<any> => {
-            const result = await db.get(
-                `SELECT * FROM ${TABLE_NAME} WHERE id = ? AND collection = ?`,
-                [id, collection],
-            );
-            // force to convert attributes field into object
-            result.attributes = JSON.parse(result.attributes || "{}");
-            delete result.collection; // remove collection from returned fields
-            return result;
-        },
-
-        cursor: async (collection: Collections, callback: (row: object) => void): Promise<void> => {
-            await db.each(`SELECT * FROM ${TABLE_NAME} WHERE collection = ?`, [collection], (error: any, result: any) => {
-                if (!error && result) {
-                    result.attributes = JSON.parse(result.attributes || "{}");
-                    delete result.collection; // remove collection from returned fields
-                    callback(result);
-                }
+        all: async (collection: Collections): Promise<Document[]> => {
+            const results = await db.all(`SELECT * FROM ${TABLE} WHERE collection = ?`, [ collection ]);
+            return results.map((result: any): Document => {
+                return parseDocument(result);
             });
         },
 
-        add: async (collection: Collections, id: string, parent: string = "", attributes: any = {}, content: string = ""): Promise<void> => {
+        get: async (collection: Collections, id: string): Promise<Document> => {
+            const result = await db.get(
+                `SELECT * FROM ${TABLE} WHERE id = ? AND collection = ?`,
+                [ id, collection ],
+            );
+            return parseDocument(result);
+        },
+
+        add: async (collection: Collections, id: string, data: DocumentData = {}): Promise<void> => {
             await db.run(
-                `INSERT INTO ${TABLE_NAME} (id, collection, parent, attributes, content) VALUES (?, ?, ?, ?, ?)`,
-                [id, collection, parent || "", JSON.stringify(attributes || {}), content],
+                `INSERT INTO ${TABLE} (id, collection, data) VALUES (?, ?, ?)`,
+                [ id, collection, JSON.stringify(data) ],
             );
         },
 
-        set: async (collection: Collections, id: string, parent: string, attributes: any, content: string): Promise<void> => {
-            if (typeof attributes === "object" && !!attributes) {
-                await db.run(
-                    `UPDATE ${TABLE_NAME} SET attributes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND collection = ? AND parent = ?`,
-                    [JSON.stringify(attributes || {}), id, collection, parent],
-                );
-            }
-            if (typeof content === "string") {
-                await db.run(
-                    `UPDATE ${TABLE_NAME} SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND collection = ? AND parent = ?`,
-                    [content || "", id, collection, parent],
-                );
-            }
+        set: async (collection: Collections, id: string, data: DocumentData = {}): Promise<void> => {
+            await db.run(
+                `UPDATE ${TABLE} SET data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND collection = ?`,
+                [ JSON.stringify(data), id, collection ],
+            );
         },
 
-        delete: async (collection: Collections, id: string, parent: string): Promise<void> => {
-            await db.run(
-                `DELETE FROM ${TABLE_NAME} WHERE id = ? AND collection = ? AND parent = ?`,
-                [id, collection, parent],
-            );
+        delete: async (collection: Collections, id: string): Promise<void> => {
+            await db.run(`DELETE FROM ${TABLE} WHERE id = ? AND collection = ?`, [ id, collection ]);
         },
     };
 };

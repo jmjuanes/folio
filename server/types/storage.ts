@@ -4,11 +4,19 @@ export enum Collections {
     LIBRARY = "library",
 };
 
+export type DocumentData = Record<string, any>;
+
+export type Document = DocumentData & {
+    _id: string,
+    _created_at: string,
+    _updated_at: string,
+};
+
 // objects store context
 export type StoreContext = {
-    get: (collection: Collections, id: string) => Promise<any>;
-    cursor: (collection: Collections, callback: (row: object) => void) => Promise<void>;
-    add: (collection: Collections, id: string, parent: string, attributes: any, content: string) => Promise<void>;
-    set: (collection: Collections, id: string, parent: string, attributes: any, content: string) => Promise<void>;
-    delete: (collection: Collections, id: string, parent: string) => Promise<void>;
+    all: (collection: Collections) => Promise<Document[]>;
+    get: (collection: Collections, id: string) => Promise<Document>;
+    add: (collection: Collections, id: string, data: DocumentData) => Promise<void>;
+    set: (collection: Collections, id: string, data: DocumentData) => Promise<void>;
+    delete: (collection: Collections, id: string) => Promise<void>;
 };
