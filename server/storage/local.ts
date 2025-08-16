@@ -48,7 +48,7 @@ export const createLocalStore = async (config: Config): Promise<StoreContext> =>
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             data TEXT,
-            PRIMARY KEY (_id)
+            PRIMARY KEY (id)
         );
         CREATE INDEX IF NOT EXISTS idx_${TABLE}_id ON ${TABLE} (id);
         CREATE INDEX IF NOT EXISTS idx_${TABLE}_id_collection ON ${TABLE} (id, collection);
