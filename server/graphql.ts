@@ -4,7 +4,7 @@ import { Collections } from "./types/storage.ts";
 
 // custom any type
 const GraphQlAnyType = new graphql.GraphQLScalarType({
-	name: "AnyType",
+	name: "Any",
 	serialize: (value: any) => value
 });
 
