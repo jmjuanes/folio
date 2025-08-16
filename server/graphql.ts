@@ -130,8 +130,8 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
+                    const { id, ...data } = args;
                     try {
-                        const { id, ...data } = args;
                         await context.store.set(Collections.BOARD, id, data);
                     }
                     catch (error) {
