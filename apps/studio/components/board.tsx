@@ -47,7 +47,7 @@ export const Board = (props: any): React.JSX.Element => {
             // check if board exists and get the initial data
             client.graphql(GET_BOARD_QUERY, { id: props.id })
                 .then(response => {
-                    if (response?.data?.board?.id) {
+                    if (response?.data?.board?._id) {
                         setInitialData(response.data.board);
                         setExists(true);
                     }

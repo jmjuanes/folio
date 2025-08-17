@@ -21,7 +21,7 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
         <div className="w-full grid grid-cols-3 gap-2">
             {(boards || []).slice(0, maxRecentBoards || 6).map(item => (
                 <BoardLink
-                    key={item.id}
+                    key={item._id}
                     board={item}
                 />
             ))}

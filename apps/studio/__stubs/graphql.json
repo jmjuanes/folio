@@ -4,7 +4,7 @@
             "name": "test"
         }
     },
-    "GetUserBoards": {
+    "GetBoards": {
         "boards": [
             {
                 "_id": "board1",
