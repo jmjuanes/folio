@@ -5,12 +5,10 @@ import { renderIcon, DrawingIcon } from "@josemi-icons/react";
 import { useClient } from "../contexts/client.tsx";
 import { useRouter } from "../contexts/router.tsx";
 import { useConfiguration } from "../contexts/configuration.tsx";
-import { useEventListener } from "../hooks/use-events.ts";
 import { useActions } from "../hooks/use-actions.ts";
 import { BoardLink } from "./board-link.tsx";
 import { groupByDate } from "../utils/dates.ts";
-import { GET_USER_BOARDS_QUERY } from "../graphql.ts";
-import { EVENT_NAMES, ACTIONS } from "../constants.ts";
+import { ACTIONS } from "../constants.ts";
 
 type ActionButtonProps = {
     href?: string;
@@ -128,8 +126,6 @@ const BoardsList = ({ boards, onRename, onDelete }): React.JSX.Element => {
 
 // export the sidebar component
 export const Sidebar = (): React.JSX.Element => {
-    const [ boards, setBoards ] = React.useState<any[]>(null);
-    const eventData = useEventListener<any>(EVENT_NAMES.BOARD_ACTION, null);
     const dispatchAction = useActions();
     const [ collapsed, toggleCollapsed ] = useToggle(false);
     const client = useClient();
@@ -139,19 +135,6 @@ export const Sidebar = (): React.JSX.Element => {
         "w-16 cursor-e-resize": collapsed,
         "w-72": !collapsed,
     });
-
-    // listener to update the boards of the user
-    React.useEffect(() => {
-        if (!collapsed) {
-            client.graphql(GET_USER_BOARDS_QUERY, {})
-                .then(response => {
-                    setBoards(response.data.boards);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-    }, [ collapsed, eventData?.date, client ]);
 
     // note that this event will not be triggered if the sidebar is collapsed
     const handleToggleCollapsed = React.useCallback(() => {
@@ -209,19 +192,6 @@ export const Sidebar = (): React.JSX.Element => {
                             text="Import board from file"
                         />
                     </div>
-                    {!collapsed && boards && (
-                        <BoardsList
-                            boards={boards}
-                            onRename={(board: any) => {
-                                dispatchAction(ACTIONS.SHOW_RENAME_BOARD_DIALOG, {
-                                    board: board,
-                                });
-                            }}
-                            onDelete={(board: any) => {
-                                dispatchAction(ACTIONS.DELETE_BOARD, { board: board });
-                            }}
-                        />
-                    )}
                 </div>
             </div>
             <div className="px-3 pt-3 pb-3 bg-gray-50">

@@ -4,10 +4,9 @@ import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useActions } from "../hooks/use-actions.ts";
 import { useClient } from "../contexts/client.tsx";
-import { useEventListener } from "../hooks/use-events.ts";
 import { BoardLink } from "./board-link.tsx";
 import { getGreetingMessage } from "../utils/dates.ts";
-import { ACTIONS, EVENT_NAMES } from "../constants.ts";
+import { ACTIONS } from "../constants.ts";
 import { GET_USER_BOARDS_QUERY } from "../graphql.ts";
 
 // @description render recent boards
@@ -34,7 +33,6 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
 export const Welcome = (): React.JSX.Element => {
     const client = useClient();
     const dispatchAction = useActions();
-    const eventData = useEventListener<any>(EVENT_NAMES.BOARD_ACTION, null);
     const [ boards, setBoards ] = React.useState<any[]>(null);
 
     // handle board creation
@@ -49,7 +47,6 @@ export const Welcome = (): React.JSX.Element => {
 
     // update boards when the event is triggered
     React.useEffect(() => {
-        setBoards(null);
         client.graphql(GET_USER_BOARDS_QUERY, {})
             .then(response => {
                 setBoards(response.data.boards);
@@ -57,7 +54,7 @@ export const Welcome = (): React.JSX.Element => {
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [ setBoards, eventData?.date, client ]);
+    }, [ setBoards, client ]);
 
     return (
         <Centered className="min-h-full bg-white">
