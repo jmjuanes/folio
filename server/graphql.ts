@@ -109,7 +109,7 @@ export const schema = new graphql.GraphQLSchema({
                         console.error(error);
                         throw new graphql.GraphQLError(error.message);
                     }
-                    return { id };
+                    return { _id: id };
                 },
             },
             updateBoard: {
@@ -139,7 +139,7 @@ export const schema = new graphql.GraphQLSchema({
                         console.error(error);
                         throw new graphql.GraphQLError(error.message);
                     }
-                    return { id };
+                    return { _id: args.id };
                 },
             },
             deleteBoard: {
@@ -160,7 +160,7 @@ export const schema = new graphql.GraphQLSchema({
                         console.error(error);
                         throw new graphql.GraphQLError(error.message);
                     }
-                    return { id: args.id };
+                    return { _id: args.id };
                 },
             },
         },
