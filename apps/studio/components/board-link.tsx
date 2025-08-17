@@ -16,7 +16,7 @@ export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
     const hasActions = typeof props.onRename === "function" || typeof props.onDelete === "function";
-    const title = props.board?.attributes?.name || "Untitled";
+    const title = props.board?.name || "Untitled";
 
     // when clicking on the action item, open the actions menu
     // and position it below the clicked item
@@ -73,7 +73,7 @@ export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
         "hover:bg-gray-200 text-gray-600 hover:text-gray-900": !props.active,
     });
     return (
-        <a href={`#${props.board.id}`} className={itemClass} title={title}>
+        <a href={`#${props.board._id}`} className={itemClass} title={title}>
             <div className="cursor-pointer flex items-center gap-2 overflow-hidden w-full">
                 <div className="text-lg flex items-center text-gray-600 shrink-0">
                     {renderIcon("file")}

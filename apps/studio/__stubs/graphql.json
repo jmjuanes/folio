@@ -4,80 +4,62 @@
             "name": "test"
         }
     },
-    "GetUserBoards": {
+    "GetBoards": {
         "boards": [
             {
-                "id": "board1",
-                "created_at": "2025-07-25 00:00:00",
-                "updated_at": "2025-07-25 00:00:00",
-                "attributes": {
-                    "name": "Board 1",
-                    "pinned": true
-                }
+                "_id": "board1",
+                "_created_at": "2025-07-25 00:00:00",
+                "_updated_at": "2025-07-25 00:00:00",
+                "name": "Board 1"
             },
             {
-                "id": "board5",
-                "created_at": "2025-07-20 00:00:00",
-                "updated_at": "2025-07-20 00:00:00",
-                "attributes": {
-                    "name": "Board 5",
-                    "pinned": false
-                }
+                "_id": "board5",
+                "_created_at": "2025-07-20 00:00:00",
+                "_updated_at": "2025-07-20 00:00:00",
+                "_name": "Board 5"
             },
             {
-                "id": "board2",
-                "created_at": "2025-07-15 00:00:00",
-                "updated_at": "2025-07-15 00:00:00",
-                "attributes": {
-                    "name": "Board 2",
-                    "pinned": false
-                }
+                "_id": "board2",
+                "_created_at": "2025-07-15 00:00:00",
+                "_updated_at": "2025-07-15 00:00:00",
+                "name": "Board 2"
             },
             {
-                "id": "board4",
-                "created_at": "2025-07-14 00:00:00",
-                "updated_at": "2025-07-14 00:00:00",
-                "attributes": {
-                    "name": "Board 4",
-                    "pinned": true
-                }
+                "_id": "board4",
+                "_created_at": "2025-07-14 00:00:00",
+                "_updated_at": "2025-07-14 00:00:00",
+                "name": "Board 4"
             },
             {
-                "id": "board3",
-                "created_at": "2025-06-27 00:00:00",
-                "updated_at": "2025-06-27 00:00:00",
-                "attributes": {
-                    "name": "Board 3",
-                    "pinned": false
-                }
+                "_id": "board3",
+                "_created_at": "2025-06-27 00:00:00",
+                "_updated_at": "2025-06-27 00:00:00",
+                "name": "Board 3"
             }
         ]
     },
     "GetBoard": {
         "board": {
-            "id": "board1",
-            "created_at": "2025-06-27 00:00:00",
-            "updated_at": "2025-06-27 00:00:00",
-            "attributes": {
-                "name": "Board 1",
-                "pinned": true
-            },
-            "content": "{}"
+            "_id": "board1",
+            "_created_at": "2025-06-27 00:00:00",
+            "_updated_at": "2025-06-27 00:00:00",
+            "name": "Board 1",
+            "content": {}
         }
     },
     "CreateBoard": {
         "createBoard": {
-            "id": "board1"
+            "_id": "board1"
         }
     },
     "UpdateBoard": {
         "updateBoard": {
-            "id": "board1"
+            "_id": "board1"
         }
     },
     "DeleteBoard": {
         "deleteBoard": {
-            "id": "board1"
+            "_id": "board1"
         }
     }
 }

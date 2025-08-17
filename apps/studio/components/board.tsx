@@ -6,12 +6,12 @@ import { NotFound } from "./not-found.tsx";
 import { GET_BOARD_QUERY, UPDATE_BOARD_MUTATION } from "../graphql.ts";
 
 export const Board = (props: any): React.JSX.Element => {
-    const [initialData, setInitialData] = React.useState<any>(null);
-    const [exists, setExists] = React.useState<boolean>(null);
+    const [ initialData, setInitialData ] = React.useState<any>(null);
+    const [ exists, setExists ] = React.useState<boolean>(null);
     const client = useClient() as Client;
 
     const handleDataLoad = React.useCallback(() => {
-        return JSON.parse(initialData?.content || "{}");
+        return initialData?.content || {};
     }, [props.id, initialData]);
 
     // const handleLibraryLoad = React.useCallback(() => {
@@ -24,7 +24,8 @@ export const Board = (props: any): React.JSX.Element => {
     const handleDataChange = React.useCallback(data => {
         const payload = {
             id: props.id,
-            content: JSON.stringify(data),
+            name: data?.title || "Untitled",
+            content: data,
         };
         return client.graphql(UPDATE_BOARD_MUTATION, payload).catch(error => {
             console.error("Error updating board:", error);
@@ -46,7 +47,7 @@ export const Board = (props: any): React.JSX.Element => {
             // check if board exists and get the initial data
             client.graphql(GET_BOARD_QUERY, { id: props.id })
                 .then(response => {
-                    if (response?.data?.board?.id) {
+                    if (response?.data?.board?._id) {
                         setInitialData(response.data.board);
                         setExists(true);
                     }
