@@ -7,7 +7,7 @@ import { useClient } from "../contexts/client.tsx";
 import { BoardLink } from "./board-link.tsx";
 import { getGreetingMessage } from "../utils/dates.ts";
 import { ACTIONS } from "../constants.ts";
-import { GET_USER_BOARDS_QUERY } from "../graphql.ts";
+import { GET_BOARDS_QUERY } from "../graphql.ts";
 
 // @description render recent boards
 const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
@@ -47,7 +47,7 @@ export const Welcome = (): React.JSX.Element => {
 
     // update boards when the event is triggered
     React.useEffect(() => {
-        client.graphql(GET_USER_BOARDS_QUERY, {})
+        client.graphql(GET_BOARDS_QUERY, {})
             .then(response => {
                 setBoards(response.data.boards);
             })
