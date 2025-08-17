@@ -29,8 +29,8 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
     </div>
 );
 
-// @description welcome component
-export const Welcome = (): React.JSX.Element => {
+// @description home view component
+export const Home = (): React.JSX.Element => {
     const client = useClient();
     const dispatchAction = useActions();
     const [ boards, setBoards ] = React.useState<any[]>(null);
