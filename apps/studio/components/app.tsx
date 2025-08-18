@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter, Route, Switch } from "../contexts/router.tsx";
 import { Sidebar } from "./sidebar.tsx";
 import { Home } from "./home.tsx";
+import { Boards } from "./boards.tsx";
 import { Board } from "./board.tsx";
 
 export const App = (): React.JSX.Element => {
@@ -15,7 +16,7 @@ export const App = (): React.JSX.Element => {
                     <Home />
                 )} />
                 <Route test={/^boards$/} render={() => (
-                    <div>Boards</div>
+                    <Boards />
                 )} />
                 <Route test={/^\w+$/} render={() => (
                     <Board key={hash} id={hash} />
