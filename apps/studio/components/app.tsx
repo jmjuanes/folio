@@ -14,6 +14,9 @@ export const App = (): React.JSX.Element => {
                 <Route test={/^(|home)$/} render={() => (
                     <Home />
                 )} />
+                <Route test={/^boards$/} render={() => (
+                    <div>Boards</div>
+                )} />
                 <Route test={/^\w+$/} render={() => (
                     <Board key={hash} id={hash} />
                 )} />
