@@ -18,7 +18,7 @@ export const App = (): React.JSX.Element => {
                 <Route test={/^boards$/} render={() => (
                     <Boards />
                 )} />
-                <Route test={/^\w+$/} render={() => (
+                <Route test={/^b\/\w+$/} render={() => (
                     <Board key={hash} id={hash} />
                 )} />
             </Switch>

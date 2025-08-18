@@ -19,10 +19,11 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
             <div className="text-xs font-bold">Your recent boards</div>
         </div>
         <div className="w-full grid grid-cols-3 gap-2">
-            {(boards || []).slice(0, maxRecentBoards || 6).map(item => (
+            {(boards || []).slice(0, maxRecentBoards || 6).map(board => (
                 <BoardLink
-                    key={item._id}
-                    board={item}
+                    key={board._id}
+                    id={board._id}
+                    board={board.name}
                 />
             ))}
         </div>
