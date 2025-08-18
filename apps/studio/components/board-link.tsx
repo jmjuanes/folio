@@ -1,7 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import classNames from "classnames";
-import { renderIcon, DotsIcon } from "@josemi-icons/react";
+import { ImageIcon, DotsVerticalIcon } from "@josemi-icons/react";
 import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
 
 export type BoardLinkProps = {
@@ -64,41 +63,30 @@ export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
         }
     }, [actionsMenuOpen]);
 
-    const itemClass = classNames({
-        "relative group rounded-md w-full ": true,
-        "bg-gray-200 text-gray-900": props.active || actionsMenuOpen,
-        "hover:bg-gray-200 text-gray-600 hover:text-gray-900": !props.active,
-    });
     return (
-        <a href={`#b/${props.id}`} className="block relative rounded-md border border-gray-200 overflow-hidden">
-            <div className="w-full h-48 bg-gray-100 flex items-center">
-                No image
+        <a href={`#b/${props.id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
+            <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
+                <div className="flex text-gray-600 text-3xl">
+                    <ImageIcon />
+                </div>
             </div>
-            <div className="flex items-center gap-2 w-full">
+            <div className="flex items-center gap-2 w-full p-3">
                 <div className="font-medium text-sm w-32 truncate shrink-0">
                     {title}
                 </div>
                 <div className="flex cursor-pointer items-center ml-auto text-base p-0">
                     <div className="flex items-center p-1 rounded-sm hover:bg-gray-200 text-gray-600" onClick={handleActionsMenuClick}>
-                        <DotsIcon />
+                        <DotsVerticalIcon />
                     </div>
                 </div>
             </div>
             {actionsMenuOpen && createPortal([
                 <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                 <Dropdown key="sidebar:board:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={position.current}>
-                    {typeof props.onRename === "function" && (
-                        <Dropdown.Item as="div" onClick={handleBoardRename}>
-                            <Dropdown.Icon icon="edit" />
-                            <span>Rename</span>
-                        </Dropdown.Item>
-                    )}
-                    {typeof props.onDelete === "function" && (
-                        <Dropdown.Item as="div" onClick={handleBoardDelete}>
-                            <Dropdown.Icon icon="trash" />
-                            <span>Delete</span>
-                        </Dropdown.Item>
-                    )}
+                    <Dropdown.Item as="div" onClick={handleBoardDelete}>
+                        <Dropdown.Icon icon="trash" />
+                        <span>Delete</span>
+                    </Dropdown.Item>
                 </Dropdown>,
             ], document.body)}
         </a>
