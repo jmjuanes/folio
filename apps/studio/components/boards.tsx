@@ -9,7 +9,7 @@ import { EVENT_NAMES } from "../constants.ts";
 // export the boards list component
 export const Boards = (): React.JSX.Element => {
     const [ boards, setBoards ] = React.useState(null);
-    const eventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
+    const boardActionEventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
     const client = useClient();
 
     // update boards when the component is rendered
@@ -22,7 +22,7 @@ export const Boards = (): React.JSX.Element => {
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [ setBoards, client, eventData ]);
+    }, [ setBoards, client, boardActionEventData ]);
 
     return (
         <div className="mx-auto w-full max-w-2xl px-6 py-12">

@@ -35,7 +35,7 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
 export const Home = (): React.JSX.Element => {
     const client = useClient();
     const dispatchAction = useActions();
-    const eventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
+    const boardActionEventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
     const [ boards, setBoards ] = React.useState<any[]>(null);
 
     // handle board creation
@@ -58,7 +58,7 @@ export const Home = (): React.JSX.Element => {
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [ setBoards, client, eventData ]);
+    }, [ setBoards, client, boardActionEventData ]);
 
     return (
         <Centered className="min-h-full bg-white">
