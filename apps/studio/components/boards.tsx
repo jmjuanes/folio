@@ -2,6 +2,7 @@ import React from "react";
 import { DrawingIcon } from "@josemi-icons/react";
 import { useClient } from "../contexts/client.tsx";
 import { BoardLink } from "./board-link.tsx";
+import { GET_BOARDS_QUERY } from "../graphql.js";
 
 // export the boards list component
 export const Boards = (): React.JSX.Element => {
