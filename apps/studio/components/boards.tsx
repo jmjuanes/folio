@@ -95,19 +95,17 @@ export const Boards = (): React.JSX.Element => {
 
     return (
         <div className="mx-auto w-full max-w-2xl px-6 py-12">
-            <div className="pt-4 pb-12 select-none">
-                <div className="font-bold text-4xl mb-4 text-gray-950 leading-none">
-                    <span>Your Boards</span>
-                </div>
+            <div className="font-bold text-3xl mb-6 text-gray-950 leading-none">
+                <span>All Boards</span>
             </div>
             {(boards || []).length === 0 && (
-                <div className="bg-gray-50 rounded-lg p-6 border-0 border-gray-200">
-                    <div className="flex items-center justify-center text-gray-700 text-3xl mb-1">
+                <div className="bg-gray-50 rounded-lg py-12 px-6">
+                    <div className="flex items-center justify-center text-gray-700 text-4xl mb-1">
                         <DrawingIcon />
                     </div>
-                    <div className="text-center font-bold text-gray-700 text-sm mb-1">
+                    <div className="text-center font-bold text-gray-700">
                         <span>No boards available</span>
-                        </div> 
+                    </div> 
                     <div className="text-center text-xs text-gray-500">
                         <span>Your created boards will be displayed here.</span>
                     </div>
