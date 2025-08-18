@@ -5,7 +5,7 @@ import { Client, useClient } from "../contexts/client.tsx";
 import { NotFound } from "./not-found.tsx";
 import { GET_BOARD_QUERY, UPDATE_BOARD_MUTATION } from "../graphql.ts";
 
-export const Board = (props: any): React.JSX.Element => {
+export const BoardEditor = (props: any): React.JSX.Element => {
     const [ initialData, setInitialData ] = React.useState<any>(null);
     const [ exists, setExists ] = React.useState<boolean>(null);
     const client = useClient() as Client;
