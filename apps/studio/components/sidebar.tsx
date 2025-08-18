@@ -38,7 +38,7 @@ const ActionButton = ({ href, icon, text = "", collapsed = false, onClick }: Act
 
 // @description separator for the sidebar
 const Separator = (): React.JSX.Element => (
-    <div className="border-t-1 border-gray-200 w-full shrink-0 my-0" />
+    <div className="border-t-1 border-gray-200 w-full shrink-0 my-2" />
 );
 
 // export the sidebar component
