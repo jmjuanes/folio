@@ -39,7 +39,7 @@ export const Boards = (): React.JSX.Element => {
                 </div>
             )}
             {(boards || []).length > 0 && (
-                <div className="w-full grid grid-cols-3 gap-2">
+                <div className="w-full grid grid-cols-3 gap-4">
                     {(boards || []).map(board => (
                         <BoardLink
                             key={`board:${board._id}`}

@@ -1,6 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import { ImageIcon, DotsVerticalIcon } from "@josemi-icons/react";
+import { ImageSlashIcon, DotsVerticalIcon } from "@josemi-icons/react";
 import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
 
 export type BoardLinkProps = {
@@ -66,18 +66,16 @@ export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
     return (
         <a href={`#b/${props.id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
             <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
-                <div className="flex text-gray-600 text-3xl">
-                    <ImageIcon />
+                <div className="flex text-gray-500 text-3xl">
+                    <ImageSlashIcon />
                 </div>
             </div>
-            <div className="flex items-center gap-2 w-full p-2">
-                <div className="font-medium text-sm w-32 truncate shrink-0 p-2">
+            <div className="flex items-center justify-between gap-2 w-full p-2">
+                <div className="font-medium text-sm w-32 truncate shrink-0 py-1">
                     {title}
                 </div>
-                <div className="flex cursor-pointer items-center ml-auto text-base p-0">
-                    <div className="flex items-center rounded-sm hover:bg-gray-200 text-gray-600" onClick={handleActionsMenuClick}>
-                        <DotsVerticalIcon />
-                    </div>
+                <div className="flex items-center rounded-md py-1 hover:bg-gray-100 text-gray-600" onClick={handleActionsMenuClick}>
+                    <DotsVerticalIcon />
                 </div>
             </div>
             {actionsMenuOpen && createPortal([
