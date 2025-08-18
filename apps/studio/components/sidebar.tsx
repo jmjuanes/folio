@@ -109,6 +109,15 @@ export const Sidebar = (): React.JSX.Element => {
                             icon="home"
                             text="Home"
                         />
+                        <ActionButton
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
+                            }}
+                            collapsed={collapsed}
+                            href="#boards"
+                            icon="grid"
+                            text="All Boards"
+                        />
                     </div>
                 </div>
             </div>
