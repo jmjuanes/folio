@@ -23,7 +23,7 @@ export const useActions = (): ActionDispatcher => {
         [ACTIONS.CREATE_BOARD]: async () => {
             return client.graphql(CREATE_BOARD_MUTATION, { content: {} })
                 .then(response => {
-                    redirect(response.data.createBoard._id);
+                    redirect("b/" + response.data.createBoard._id);
                 })
                 .catch(error => {
                     toaster.error(error?.message || "An error occurred while creating the board.");
@@ -38,7 +38,7 @@ export const useActions = (): ActionDispatcher => {
                     });
                 })
                 .then(response => {
-                    redirect(response.data.createBoard._id);
+                    redirect("b/" + response.data.createBoard._id);
                 })
                 .catch(error => {
                     toaster.error(error?.message || "An error occurred while creating the board.");
