@@ -70,12 +70,12 @@ export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
                     <ImageIcon />
                 </div>
             </div>
-            <div className="flex items-center gap-2 w-full p-3">
-                <div className="font-medium text-sm w-32 truncate shrink-0">
+            <div className="flex items-center gap-2 w-full p-2">
+                <div className="font-medium text-sm w-32 truncate shrink-0 p-2">
                     {title}
                 </div>
                 <div className="flex cursor-pointer items-center ml-auto text-base p-0">
-                    <div className="flex items-center p-1 rounded-sm hover:bg-gray-200 text-gray-600" onClick={handleActionsMenuClick}>
+                    <div className="flex items-center rounded-sm hover:bg-gray-200 text-gray-600" onClick={handleActionsMenuClick}>
                         <DotsVerticalIcon />
                     </div>
                 </div>
