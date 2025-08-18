@@ -73,7 +73,7 @@ export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
 
     return (
         <a href={`#b/${props.id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
-            <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
+            <div className="w-full h-24 bg-gray-100 flex items-center justify-center">
                 <div className="flex text-gray-500 text-3xl">
                     <ImageSlashIcon />
                 </div>
