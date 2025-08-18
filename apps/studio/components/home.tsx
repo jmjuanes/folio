@@ -3,10 +3,11 @@ import { FolderIcon, DrawingIcon, ClockIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useActions } from "../hooks/use-actions.ts";
+import { useEventListener } from "../hooks/use-events.ts";
 import { useClient } from "../contexts/client.tsx";
-import { BoardLink } from "./board-link.tsx";
+import { BoardCard } from "./board-card.tsx";
 import { getGreetingMessage } from "../utils/dates.ts";
-import { ACTIONS } from "../constants.ts";
+import { ACTIONS, EVENT_NAMES } from "../constants.ts";
 import { GET_BOARDS_QUERY } from "../graphql.ts";
 
 // @description render recent boards
@@ -18,21 +19,23 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
             </div>
             <div className="text-xs font-bold">Your recent boards</div>
         </div>
-        <div className="w-full grid grid-cols-3 gap-2">
-            {(boards || []).slice(0, maxRecentBoards || 6).map(item => (
-                <BoardLink
-                    key={item._id}
-                    board={item}
+        <div className="w-full grid grid-cols-3 gap-4">
+            {(boards || []).slice(0, maxRecentBoards || 6).map(board => (
+                <BoardCard
+                    key={board._id}
+                    id={board._id}
+                    board={board.name}
                 />
             ))}
         </div>
     </div>
 );
 
-// @description welcome component
-export const Welcome = (): React.JSX.Element => {
+// @description home view component
+export const Home = (): React.JSX.Element => {
     const client = useClient();
     const dispatchAction = useActions();
+    const boardActionEventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
     const [ boards, setBoards ] = React.useState<any[]>(null);
 
     // handle board creation
@@ -47,14 +50,15 @@ export const Welcome = (): React.JSX.Element => {
 
     // update boards when the event is triggered
     React.useEffect(() => {
+        setBoards(null);
         client.graphql(GET_BOARDS_QUERY, {})
             .then(response => {
-                setBoards(response.data.boards);
+                setBoards(response?.data?.boards || []);
             })
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [ setBoards, client ]);
+    }, [ setBoards, client, boardActionEventData ]);
 
     return (
         <Centered className="min-h-full bg-white">
