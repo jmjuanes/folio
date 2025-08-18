@@ -5,7 +5,7 @@ import { Button } from "folio-react/components/ui/button.jsx";
 import { useActions } from "../hooks/use-actions.ts";
 import { useEventListener } from "../hooks/use-events.ts";
 import { useClient } from "../contexts/client.tsx";
-import { BoardLink } from "./board-link.tsx";
+import { BoardCard } from "./board-card.tsx";
 import { getGreetingMessage } from "../utils/dates.ts";
 import { ACTIONS, EVENT_NAMES } from "../constants.ts";
 import { GET_BOARDS_QUERY } from "../graphql.ts";
@@ -21,7 +21,7 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
         </div>
         <div className="w-full grid grid-cols-3 gap-4">
             {(boards || []).slice(0, maxRecentBoards || 6).map(board => (
-                <BoardLink
+                <BoardCard
                     key={board._id}
                     id={board._id}
                     board={board.name}

@@ -2,7 +2,7 @@ import React from "react";
 import { DrawingIcon } from "@josemi-icons/react";
 import { useClient } from "../contexts/client.tsx";
 import { useEventListener } from "../hooks/use-events.ts";
-import { BoardLink } from "./board-link.tsx";
+import { BoardCard } from "./board-card.tsx";
 import { GET_BOARDS_QUERY } from "../graphql.ts";
 import { EVENT_NAMES } from "../constants.ts";
 
@@ -45,7 +45,7 @@ export const Boards = (): React.JSX.Element => {
             {boards && boards?.length > 0 && (
                 <div className="w-full grid grid-cols-3 gap-4">
                     {(boards || []).map(board => (
-                        <BoardLink
+                        <BoardCard
                             key={`board:${board._id}`}
                             id={board._id}
                             name={board.name || "Untitled"}

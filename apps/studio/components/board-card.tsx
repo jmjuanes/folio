@@ -6,12 +6,13 @@ import { useActions } from "../hooks/use-actions.ts";
 import { useEventEmitter } from "../hooks/use-events.ts";
 import { ACTIONS, EVENT_NAMES } from "../constants.ts";
 
-export type BoardLinkProps = {
+export type BoardCardProps = {
     id: string,
     name: string,
 };
 
-export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
+// @description board card component
+export const BoardCard = (props: BoardCardProps): React.JSX.Element => {
     const [actionsMenuOpen, setActionsMenuOpen] = React.useState(false);
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
