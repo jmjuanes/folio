@@ -3,10 +3,11 @@ import { FolderIcon, DrawingIcon, ClockIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useActions } from "../hooks/use-actions.ts";
+import { useEventListener } from "../hooks/use-events.ts";
 import { useClient } from "../contexts/client.tsx";
 import { BoardLink } from "./board-link.tsx";
 import { getGreetingMessage } from "../utils/dates.ts";
-import { ACTIONS } from "../constants.ts";
+import { ACTIONS, EVENT_NAMES } from "../constants.ts";
 import { GET_BOARDS_QUERY } from "../graphql.ts";
 
 // @description render recent boards
@@ -34,6 +35,7 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
 export const Home = (): React.JSX.Element => {
     const client = useClient();
     const dispatchAction = useActions();
+    const eventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
     const [ boards, setBoards ] = React.useState<any[]>(null);
 
     // handle board creation
@@ -48,14 +50,15 @@ export const Home = (): React.JSX.Element => {
 
     // update boards when the event is triggered
     React.useEffect(() => {
+        setBoards(null);
         client.graphql(GET_BOARDS_QUERY, {})
             .then(response => {
-                setBoards(response.data.boards);
+                setBoards(response?.data?.boards || []);
             })
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [ setBoards, client ]);
+    }, [ setBoards, client, eventData ]);
 
     return (
         <Centered className="min-h-full bg-white">

@@ -2,6 +2,9 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { ImageSlashIcon, DotsVerticalIcon } from "@josemi-icons/react";
 import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
+import { useActions } from "../hooks/use-actions.ts";
+import { useEventEmitter } from "../hooks/use-events.ts";
+import { ACTIONS, EVENT_NAMES } from "../constants.ts";
 
 export type BoardLinkProps = {
     id: string,
@@ -12,6 +15,8 @@ export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
     const [actionsMenuOpen, setActionsMenuOpen] = React.useState(false);
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
+    const dispatchAction = useActions();
+    const dispatchEvent = useEventEmitter();
     const title = props?.name || "Untitled";
 
     // when clicking on the action item, open the actions menu
@@ -30,23 +35,26 @@ export const BoardLink = (props: BoardLinkProps): React.JSX.Element => {
 
     // listener to handle board renaming
     // it will close the actions menu and call the onRename callback if provided
-    const handleBoardRename = React.useCallback((event: React.SyntheticEvent) => {
-        event.preventDefault();
-        setActionsMenuOpen(false);
-        if (typeof props.onRename === "function") {
-            props.onRename(event);
-        }
-    }, [props.onRename, setActionsMenuOpen]);
+    // const handleBoardRename = React.useCallback((event: React.SyntheticEvent) => {
+    //     event.preventDefault();
+    //     setActionsMenuOpen(false);
+    //     if (typeof props.onRename === "function") {
+    //         props.onRename(event);
+    //     }
+    // }, [props.onRename, setActionsMenuOpen]);
 
     // listener to handle board deletion
     // it will close the actions menu and call the onDelete callback if provided
     const handleBoardDelete = React.useCallback((event: React.SyntheticEvent) => {
         event.preventDefault();
         setActionsMenuOpen(false);
-        if (typeof props.onDelete === "function") {
-            props.onDelete(event);
-        }
-    }, [props.onDelete, setActionsMenuOpen]);
+        dispatchAction(ACTIONS.DELETE_BOARD, props).then(() => {
+            dispatchEvent(EVENT_NAMES.BOARD_ACTION, {
+                action: "board:delete",
+                id: props.id,
+            });
+        });
+    }, [ setActionsMenuOpen, dispatchAction, dispatchEvent, props.id ]);
 
     React.useEffect(() => {
         if (actionsMenuOpen) {

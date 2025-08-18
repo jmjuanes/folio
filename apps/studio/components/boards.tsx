@@ -1,31 +1,35 @@
 import React from "react";
 import { DrawingIcon } from "@josemi-icons/react";
 import { useClient } from "../contexts/client.tsx";
+import { useEventListener } from "../hooks/use-events.ts";
 import { BoardLink } from "./board-link.tsx";
 import { GET_BOARDS_QUERY } from "../graphql.ts";
+import { EVENT_NAMES } from "../constants.ts";
 
 // export the boards list component
 export const Boards = (): React.JSX.Element => {
     const [ boards, setBoards ] = React.useState(null);
+    const eventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
     const client = useClient();
 
     // update boards when the component is rendered
     React.useEffect(() => {
+        setBoards(null);
         client.graphql(GET_BOARDS_QUERY, {})
             .then(response => {
-                setBoards(response.data.boards);
+                setBoards(response?.data?.boards || []);
             })
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [ setBoards, client ]);
+    }, [ setBoards, client, eventData ]);
 
     return (
         <div className="mx-auto w-full max-w-2xl px-6 py-12">
             <div className="font-bold text-3xl mb-6 text-gray-950 leading-none">
                 <span>All Boards</span>
             </div>
-            {(boards || []).length === 0 && (
+            {boards && boards?.length === 0 && (
                 <div className="bg-gray-50 rounded-lg py-12 px-6">
                     <div className="flex items-center justify-center text-gray-800 text-4xl mb-1">
                         <DrawingIcon />
@@ -38,7 +42,7 @@ export const Boards = (): React.JSX.Element => {
                     </div>
                 </div>
             )}
-            {(boards || []).length > 0 && (
+            {boards && boards?.length > 0 && (
                 <div className="w-full grid grid-cols-3 gap-4">
                     {(boards || []).map(board => (
                         <BoardLink
