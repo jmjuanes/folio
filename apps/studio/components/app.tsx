@@ -19,7 +19,10 @@ export const App = (): React.JSX.Element => {
                     <Boards />
                 )} />
                 <Route test={/^b\/\w+$/} render={() => (
-                    <BoardEditor key={hash} id={hash} />
+                    <BoardEditor
+                        key={hash}
+                        id={hash.replace(/^b\//, "")}
+                    />
                 )} />
             </Switch>
         </div>
