@@ -13,8 +13,9 @@ import { loginRouter } from "./routes/login.ts";
 import { statusRouter } from "./routes/status.ts";
 import { configRouter } from "./routes/config.ts";
 import { graphqlRouter } from "./routes/graphql.ts";
+import { developmentRouter } from "./routes/dev.ts";
 import { createLogger } from "./utils/logger.ts";
-import type { Config } from "./config.ts";
+import { WebsiteEnvironment, type Config } from "./config.ts";
 
 const DEFAULT_PORT = 8080;
 
@@ -98,6 +99,11 @@ export const startServer = async (config: Config): Promise<any> => {
     router.use("/_config", configRouter.routes(), configRouter.allowedMethods());
     router.use("/_status", statusRouter.routes(), statusRouter.allowedMethods());
     router.use("/_graphql", graphqlRouter.routes(), graphqlRouter.allowedMethods());
+
+    // enable development route
+    if (config?.website_environment === WebsiteEnvironment.DEVELOPMENT) {
+        router.use("/_dev", developmentRouter.routes(), developmentRouter.allowedMethods());
+    }
 
     // register all routes
     app.use(router.routes());
