@@ -14,13 +14,19 @@ const TABLE = "documents";
 
 // decode a document data to get attributes and content in the correct format
 const parseDocument = (rawDocument: any): Document => {
-    const { data, ...attributes } = rawDocument; // extract internal values and data from document
-    return {
-        ...JSON.parse(data || "{}"),
-        _id: attributes.id,
-        _created_at: attributes.created_at,
-        _updated_at: attributes.updated_at,
-    };
+    if (rawDocument) {
+        // extract internal values and data from document
+        const { data, ...attributes } = rawDocument;
+        return {
+            ...JSON.parse(data || "{}"),
+            _id: attributes.id,
+            _created_at: attributes.created_at,
+            _updated_at: attributes.updated_at,
+        };
+    }
+    // rawDocument may not be defined for example when user tries to acces to a non
+    // existent document
+    return null;
 };
 
 // create an instance of a store
