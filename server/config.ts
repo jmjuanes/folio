@@ -11,6 +11,7 @@ export enum AuthenticationTypes {
 
 export enum StorageTypes {
     LOCAL = "local",
+    MEMORY = "memory",
 };
 
 // supported environments for the website
