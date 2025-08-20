@@ -14,7 +14,11 @@ const TABLE = "documents";
 
 // decode a document data to get attributes and content in the correct format
 const parseDocument = (rawDocument: any): Document => {
-    const { data, ...attributes } = rawDocument; // extract internal values and data from document
+    if (!rawDocument) {
+        return null;
+    }
+    // extract internal values and data from document
+    const { data, ...attributes } = rawDocument;
     return {
         ...JSON.parse(data || "{}"),
         _id: attributes.id,
