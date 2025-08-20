@@ -10,10 +10,6 @@ export const BoardEditor = (props: any): React.JSX.Element => {
     const [ exists, setExists ] = React.useState<boolean>(null);
     const client = useClient() as Client;
 
-    const handleDataLoad = React.useCallback(() => {
-        return initialData?.content || {};
-    }, [props.id, initialData]);
-
     // const handleLibraryLoad = React.useCallback(() => {
     //     return client.getUserLibrary().then(library => {
     //         return library?.content || {};
@@ -52,11 +48,13 @@ export const BoardEditor = (props: any): React.JSX.Element => {
                         setExists(true);
                     }
                     else {
+                        setInitialData({});
                         setExists(false);
                     }
                 })
                 .catch(error => {
                     console.error(error);
+                    setInitialData({});
                     setExists(false); // Assume board does not exist on error
                 });
         }, 1200);
@@ -80,7 +78,9 @@ export const BoardEditor = (props: any): React.JSX.Element => {
     return (
         <Editor
             key={props.id}
-            data={handleDataLoad}
+            data={() => {
+                return initialData?.content || {};
+            }}
             onChange={handleDataChange}
         />
     );
