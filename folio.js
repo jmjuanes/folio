@@ -108,7 +108,7 @@ const main = async (command = "", options = {}) => {
             });
             const responseData = await getResponseData(response);
             info(`authentication: OK`);
-            info(`token: '${responseData.token}'`);
+            info(`token: '${responseData?.data?.token}'`);
             process.exit(0);
         } catch (responseError) {
             error(`login error: ${responseError.message}`);
