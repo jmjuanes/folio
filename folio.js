@@ -56,8 +56,8 @@ const getResponseData = response => {
         response.on("end", () => {
             resolve(JSON.parse(chunks.join("")));
         });
-        response.on("error", error => {
-            reject(error);
+        response.on("error", responseError => {
+            reject(responseError);
         });
     });
 };
@@ -88,9 +88,9 @@ const main = async (command = "", options = {}) => {
                 path: "/_status",
             });
             process.exit(0);
-        } catch (error) {
-            error(`health check failed due to a request error: ${error.message}`);
-            console.error(error);
+        } catch (responseError) {
+            error(`health check failed due to a request error: ${responseError.message}`);
+            console.error(responseError);
             process.exit(1);
         }
     }
@@ -107,8 +107,8 @@ const main = async (command = "", options = {}) => {
             info(`authentication: OK`);
             info(`token: '${responseData.token}'`);
             process.exit(0);
-        } catch (error) {
-            error(`login error: ${error.message}`);
+        } catch (responseError) {
+            error(`login error: ${responseError.message}`);
             process.exit(1);
         }
     }
