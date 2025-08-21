@@ -74,6 +74,9 @@ const main = async (command = "", options = {}) => {
         port: parseInt(config.port || environment.FOLIO_PORT),
         timeout: 5000,
         path: "/",
+        headers: {
+            "Content-Type": "application/json",
+        },
     };
 
     // 1. start the folio server
