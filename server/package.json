@@ -14,7 +14,8 @@
     },
     "scripts": {
         "build": "yarn compile",
-        "compile": "tsc --project tsconfig.json"
+        "compile": "tsc --project tsconfig.json",
+        "test": "tsc --project tsconfig.json --noEmit"
     },
     "dependencies": {
         "@koa/bodyparser": "^6.0.0",
