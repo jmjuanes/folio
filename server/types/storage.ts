@@ -7,6 +7,7 @@ export enum Collections {
 export type DocumentData = Record<string, any>;
 
 export type Document = DocumentData & {
+    _collection?: string,
     _id: string,
     _created_at: string,
     _updated_at: string,
