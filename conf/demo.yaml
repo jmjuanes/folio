@@ -1,0 +1,6 @@
+## this is the configuration used in our demo environment
+## it extends the base configuration
+extends: '../config.yaml'
+
+## using memory storage instead of local storage
+storage: 'memory'
