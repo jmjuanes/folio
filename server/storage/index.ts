@@ -13,7 +13,7 @@ export const createStore = async (config: Config): Promise<StoreContext> => {
     if (config?.storage === StorageTypes.LOCAL) {
         store = await createLocalStore(config);
     }
-    else if (config?.store === StorageTypes.MEMORY) {
+    else if (config?.storage === StorageTypes.MEMORY) {
         store = await createMemoryStore(config);
     }
     else {
