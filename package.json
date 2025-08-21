@@ -42,7 +42,8 @@
         "start": "yarn server:start",
         "server:start": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js start",
         "server:ping": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js ping",
-        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "test:server": "yarn workspace folio-server test"
     },
     "dependencies": {
         "react": "^18.2.0",
