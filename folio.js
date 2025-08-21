@@ -11,6 +11,12 @@ import { createLogger } from "./server/dist/utils/logger.js";
 // it is used to resolve paths to the data and www directories
 const ROOT_PATH = process.cwd();
 
+// available commands
+const COMMANDS = {
+    START: "start",
+    PING: "ping",
+};
+
 const { debug, error } = createLogger("folio:cli");
 
 // main method to handle user commands
@@ -19,11 +25,11 @@ const main = async (command = "", options = {}) => {
     const config = await getConfiguration(configPath);
 
     // 1. start the folio server
-    if (command === "start") {
+    if (command === COMMANDS.START) {
         return startServer(config);
     }
     // 2. health check
-    else if (command === "ping") {
+    else if (command === COMMANDS.PING) {
         const options = {
             hostname: "localhost", 
             port: parseInt(config.port || environment.FOLIO_PORT),
@@ -52,7 +58,8 @@ const main = async (command = "", options = {}) => {
         request.end();
     }
     else {
-        error(`unknown command '${command}'. Available commands: start, ping.`);
+        const commandsList = Object.values(COMMANDS).join(", ");
+        error(`unknown command '${command}'. Available commands: ${commandsList}.`);
         process.exit(1);
     }
 };
