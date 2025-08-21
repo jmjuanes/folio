@@ -22,8 +22,8 @@ export const createMemoryStore = async (config: Config): Promise<StoreContext> =
             storage.push({
                 _id: id,
                 _collection: collection,
-                _created_at: Date.now(),
-                _updated_at: Date.now(),
+                _created_at: new Date().toISOString(),
+                _updated_at: new Date().toISOString(),
                 ...data,
             });
         },
@@ -33,7 +33,7 @@ export const createMemoryStore = async (config: Config): Promise<StoreContext> =
             });
             if (document) {
                 Object.assign(document, data);
-                document._updated_at = Date.now();
+                document._updated_at = new Date().toISOString();
             }
         },
         delete: async (collection: Collections, id: string): Promise<void> => {
