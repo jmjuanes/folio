@@ -6,7 +6,8 @@
     "scripts": {
         "build": "yarn clean && cross-env NODE_ENV=production webpack build",
         "clean": "rm -rf www",
-        "dev": "yarn clean && webpack serve"
+        "dev": "yarn clean && webpack serve",
+        "typecheck": "tsc --noEmit"
     },
     "dependencies": {
         "@josemi-icons/react": "^0.7.0",

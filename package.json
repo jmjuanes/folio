@@ -42,7 +42,11 @@
         "start": "yarn server:start",
         "server:start": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js start",
         "server:ping": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js ping",
-        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "typecheck": "yarn typecheck:server",
+        "typecheck:server": "yarn workspace folio-server typecheck",
+        "typecheck:lite": "yarn workspace folio-lite typecheck",
+        "typecheck:studio": "yarn workspace folio-studio typecheck"
     },
     "dependencies": {
         "react": "^18.2.0",
