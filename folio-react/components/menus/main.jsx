@@ -8,7 +8,7 @@ import { useActions } from "../../hooks/use-actions.js";
 import { getShortcutByAction, printShortcut } from "../../lib/actions.js";
 
 // @private menu link component
-const MenuLinkItem = props => (
+export const MainMenuLink = props => (
     <Dropdown.Item as="a" href={props.url} target="_blank">
         <Dropdown.Icon icon={props.icon || "external-link"} />
         <span>{props.text}</span>
@@ -16,7 +16,7 @@ const MenuLinkItem = props => (
 );
 
 // @private menu dropdown item component
-const MenuDropdownItem = props => (
+export const MainMenuAction = props => (
     <Dropdown.Item className={props.className} disabled={!!props.disabled} onClick={props.onClick}>
         <Dropdown.Icon icon={props.icon} />
         <span>{props.text}</span>
@@ -36,17 +36,17 @@ export const MainMenuSeparator = () => (
 // menu links wrapper
 export const MainMenuLinks = () => (
     <React.Fragment>
-        <MenuLinkItem
+        <MainMenuLink
             url={process.env.URL_HOMEPAGE}
             icon="info-circle"
             text="About folio"
         />
-        <MenuLinkItem
+        <MainMenuLink
             url={process.env.URL_ISSUES}
             icon="bug"
             text="Report an issue"
         />
-        <MenuLinkItem
+        <MainMenuLink
             url={process.env.URL_REPOSITORY}
             icon="code"
             text="Source code"
@@ -59,7 +59,7 @@ export const MainMenuOpenAction = () => {
     const dispatchAction = useActions();
     const shortcutsEnabled = true;
     return (
-        <MenuDropdownItem
+        <MainMenuAction
             icon="folder"
             text="Open..."
             shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.OPEN)}
@@ -75,7 +75,7 @@ export const MainMenuSaveAction = () => {
     const dispatchAction = useActions();
     const shortcutsEnabled = true;
     return (
-        <MenuDropdownItem
+        <MainMenuAction
             icon="download"
             text="Save a copy"
             shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.SAVE)}
@@ -93,7 +93,7 @@ export const MainMenuExportAction = () => {
     const elements = editor.getElements();
     const shortcutsEnabled = true;
     return (
-        <MenuDropdownItem
+        <MainMenuAction
             icon="image"
             text="Export as image"
             shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.SHOW_EXPORT_DIALOG)}
@@ -114,7 +114,7 @@ export const MainMenuResetAction = () => {
     const editor = useEditor();
     const elements = editor.getElements();
     return (
-        <MenuDropdownItem
+        <MainMenuAction
             icon="trash"
             text="Reset"
             disabled={elements.length === 0}
@@ -130,7 +130,7 @@ export const MainMenuResetAction = () => {
 
 // action to display the shortcuts menu
 export const MainMenuShowShortcutsAction = () => (
-    <MenuDropdownItem
+    <MainMenuAction
         icon="keyboard"
         text="Keyboard shortcuts"
         onClick={() => {
