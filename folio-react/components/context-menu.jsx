@@ -113,7 +113,7 @@ export const ContextMenu = props => {
                     <Menu.Separator />
                 </React.Fragment>
             )} 
-            {selectedElements.length > 0 && (!!LibraryAddDialog && !! LibraryMenu) && (
+            {selectedElements.length > 0 && (!!LibraryAddDialog && !!LibraryMenu) && (
                 <React.Fragment>
                     <ContextMenuItem
                         icon="album"
