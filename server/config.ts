@@ -85,17 +85,19 @@ export const resolveConfigPath = (currentWorkingDir: string, defaultConfigPath: 
 
 // @description read configuration file recursive
 export const readConfig = async (configPath: string, processedConfigs: any): Promise<Config> => {
-    const contentStr = await fs.readFile(path.resolve(configPath), "utf8");
-    const content = yaml.parse(contentStr);
-    if (content?.extends) {
-        const extendConfigPath = path.resolve(path.dirname(configPath), content.extends);
+    const configStr = await fs.readFile(path.resolve(configPath), "utf8");
+    const config = yaml.parse(configStr);
+    // check if this configuration file extends another configuration
+    if (typeof config?.extends === "string" && !!config?.extends) {
+        const extendConfigPath = path.resolve(path.dirname(configPath), config.extends);
         if (!processedConfigs.has(extendConfigPath)) {
             processedConfigs.add(extendConfigPath); // prevent circular reading
             const extendConfig = await readConfig(extendConfigPath, processedConfigs);
             Object.assign(extendConfig, config);
         }
     }
-    return content;
+    // return configuration object
+    return config;
 };
 
 // read the configuration file
