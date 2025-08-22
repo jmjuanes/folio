@@ -8,7 +8,7 @@ import {LibraryExportDialog} from "../components/dialogs/library-export.jsx";
 import {PageEditDialog} from "../components/dialogs/page-edit.jsx";
 import {KeyboardShortcutsDialog} from "../components/dialogs/keyboard-shortcuts.jsx";
 import {LibraryMenu} from "../components/menus/library.jsx";
-import {MainMenu} from "../components/menus/main.jsx";
+import {MainMenu} from "../components/menus/main.tsx";
 import {PagesMenu} from "../components/menus/pages.jsx";
 import {SettingsMenu} from "../components/menus/settings.jsx";
 import {EditionPanel} from "../components/panels/edition.jsx";

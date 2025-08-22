@@ -63,7 +63,16 @@ export {PageEditDialog} from "./components/dialogs/page-edit.jsx";
 export {
     MainMenu,
     MainMenuContent,
-} from "./components/menus/main.jsx";
+    MainMenuLink,
+    MainMenuAction,
+    MainMenuSeparator,
+    MainMenuLinks,
+    MainMenuExportAction,
+    MainMenuOpenAction,
+    MainMenuResetAction,
+    MainMenuSaveAction,
+    MainMenuShowShortcutsAction,
+} from "./components/menus/main.tsx";
 export {
     LibraryMenu,
     LibraryMenuContent,
