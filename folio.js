@@ -71,7 +71,7 @@ const main = async (command = "", options = {}) => {
     // initialize base request options
     const baseRequestOptions = {
         hostname: "localhost", 
-        port: parseInt(config.port || environment.FOLIO_PORT),
+        port: parseInt(config.port),
         timeout: 5000,
         path: "/",
         headers: {
