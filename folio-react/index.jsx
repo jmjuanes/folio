@@ -43,7 +43,7 @@ export {
 export {
     EditorComponentsProvider,
     useEditorComponents,
-} from "./contexts/editor-components.jsx";
+} from "./contexts/editor-components.tsx";
 export {
     EditorProvider,
     useEditor,
@@ -56,18 +56,21 @@ export {Pointer} from "./components/pointer.jsx";
 export {ContextMenu} from "./components/context-menu.jsx";
 export {Layout} from "./components/layout.jsx";
 export {ExportDialog} from "./components/dialogs/export.jsx";
-export {LibraryAddDialog} from "./components/dialogs/library-add.jsx";
-export {LibraryExportDialog} from "./components/dialogs/library-export.jsx";
 export {KeyboardShortcutsDialog} from "./components/dialogs/keyboard-shortcuts.jsx";
 export {PageEditDialog} from "./components/dialogs/page-edit.jsx";
 export {
     MainMenu,
     MainMenuContent,
-} from "./components/menus/main.jsx";
-export {
-    LibraryMenu,
-    LibraryMenuContent,
-} from "./components/menus/library.jsx";
+    MainMenuLink,
+    MainMenuAction,
+    MainMenuSeparator,
+    MainMenuLinks,
+    MainMenuExportAction,
+    MainMenuOpenAction,
+    MainMenuResetAction,
+    MainMenuSaveAction,
+    MainMenuShowShortcutsAction,
+} from "./components/menus/main.tsx";
 export {
     PagesMenu,
     PagesMenuContent,

@@ -3,6 +3,7 @@ import { ACTIONS, ELEMENTS } from "../constants.js";
 import { ContextMenu as Menu } from "./ui/context-menu.jsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
+import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { getShortcutByAction, printShortcut } from "../lib/actions.js";
 
@@ -33,6 +34,7 @@ const ContextMenuItem = props => (
 export const ContextMenu = props => {
     const editor = useEditor();
     const dispatchAction = useActions();
+    const { LibraryAddDialog, LibraryMenu } = useEditorComponents();
     const { hideContextMenu } = useContextMenu();
     const selectedElements = editor.getSelection();
     const shortcutsEnabled = true;
@@ -111,7 +113,7 @@ export const ContextMenu = props => {
                     <Menu.Separator />
                 </React.Fragment>
             )} 
-            {selectedElements.length > 0 && (
+            {selectedElements.length > 0 && (!!LibraryAddDialog && !!LibraryMenu) && (
                 <React.Fragment>
                     <ContextMenuItem
                         icon="album"

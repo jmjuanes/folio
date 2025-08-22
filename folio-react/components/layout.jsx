@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert } from "./ui/alert.jsx";
 import { Island } from "./ui/island.jsx";
-import { useEditorComponents } from "../contexts/editor-components.jsx";
+import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 
 // @description: default editor layout
