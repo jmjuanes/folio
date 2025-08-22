@@ -89,11 +89,13 @@ export const readConfig = async (configPath: string, processedConfigs: any): Pro
     const config = yaml.parse(configStr);
     // check if this configuration file extends another configuration
     if (typeof config?.extends === "string" && !!config?.extends) {
-        const extendConfigPath = path.resolve(path.dirname(configPath), config.extends);
-        if (!processedConfigs.has(extendConfigPath)) {
-            processedConfigs.add(extendConfigPath); // prevent circular reading
-            const extendConfig = await readConfig(extendConfigPath, processedConfigs);
-            Object.assign(extendConfig, config);
+        const baseConfigPath = path.resolve(path.dirname(configPath), config.extends);
+        if (!processedConfigs.has(baseConfigPath)) {
+            processedConfigs.add(baseConfigPath); // prevent circular reading
+            const baseConfig = await readConfig(baseConfigPath, processedConfigs);
+            // extend the base configuration with the fields of the current configuration
+            // config --> extends --> baseConfig
+            return Object.assign(baseConfig, config);
         }
     }
     // return configuration object
