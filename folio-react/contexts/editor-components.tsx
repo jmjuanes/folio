@@ -38,7 +38,7 @@ export type EditorComponentsProviderProps = {
 // @param {object} props.components Editor components
 // @param {React.ReactNode} props.children React children
 export const EditorComponentsProvider = (props: EditorComponentsProviderProps): React.JSX.Element => {
-    const editorComponents = React.useMemo(() => {
+    const editorComponents = React.useMemo<EditorComponentsMap>(() => {
         return {
             // general components
             Loading: Loading,
