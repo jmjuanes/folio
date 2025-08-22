@@ -144,15 +144,18 @@ export const MainMenuResetAction = (): React.JSX.Element => {
 };
 
 // action to display the shortcuts menu
-export const MainMenuShowShortcutsAction = (): React.JSX.Element => (
-    <MainMenuAction
-        icon="keyboard"
-        text="Keyboard shortcuts"
-        onClick={() => {
-            dispatchAction(ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG);
-        }}
-    />
-);
+export const MainMenuShowShortcutsAction = (): React.JSX.Element => {
+    const dispatchAction = useActions();
+    return (
+        <MainMenuAction
+            icon="keyboard"
+            text="Keyboard shortcuts"
+            onClick={() => {
+                dispatchAction(ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG);
+            }}
+        />
+    );
+};
 
 // @description default content of the main menu
 export const MainMenuContent = (): React.JSX.Element => (
