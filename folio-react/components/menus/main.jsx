@@ -28,81 +28,130 @@ const MenuDropdownItem = props => (
     </Dropdown.Item>
 );
 
-// @description default content of the main menu
-export const MainMenuContent = () => {
+// alias to Dropdown.Separator
+export const MainMenuSeparator = () => (
+    <Dropdown.Separator />
+);
+
+// menu links wrapper
+export const MainMenuLinks = () => (
+    <React.Fragment>
+        <MenuLinkItem
+            url={process.env.URL_HOMEPAGE}
+            icon="info-circle"
+            text="About folio"
+        />
+        <MenuLinkItem
+            url={process.env.URL_ISSUES}
+            icon="bug"
+            text="Report an issue"
+        />
+        <MenuLinkItem
+            url={process.env.URL_REPOSITORY}
+            icon="code"
+            text="Source code"
+        />
+    </React.Fragment>
+);
+
+// action to open a .folio file from the local computer of the user
+export const MainMenuOpenAction = () => {
+    const dispatchAction = useActions();
+    const shortcutsEnabled = true;
+    return (
+        <MenuDropdownItem
+            icon="folder"
+            text="Open..."
+            shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.OPEN)}
+            onClick={() => {
+                dispatchAction(ACTIONS.OPEN);
+            }}
+        />
+    );
+};
+
+// action to save the current content to a file
+export const MainMenuSaveAction = () => {
+    const dispatchAction = useActions();
+    const shortcutsEnabled = true;
+    return (
+        <MenuDropdownItem
+            icon="download"
+            text="Save a copy"
+            shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.SAVE)}
+            onClick={() => {
+                dispatchAction(ACTIONS.SAVE);
+            }}
+        />
+    );
+};
+
+// action to export the current page to an image
+export const MainMenuExportAction = () => {
     const dispatchAction = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
-    const shortcutsEnabled = true; // !!editor?.preferences?.[PREFERENCES_FIELDS.KEYBOARD_SHORTCUTS];
-
+    const shortcutsEnabled = true;
     return (
-        <React.Fragment>
-            <MenuDropdownItem
-                icon="folder"
-                text="Open..."
-                shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.OPEN)}
-                onClick={() => {
-                    dispatchAction(ACTIONS.OPEN);
-                }}
-            />
-            <MenuDropdownItem
-                icon="download"
-                text="Save a copy"
-                shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.SAVE)}
-                onClick={() => {
-                    dispatchAction(ACTIONS.SAVE);
-                }}
-            />
-            <MenuDropdownItem
-                icon="image"
-                text="Export as image"
-                shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.SHOW_EXPORT_DIALOG)}
-                disabled={elements.length === 0}
-                className={classnames({
-                    "pointer-events-none": elements.length === 0,
-                })}
-                onClick={() => {
-                    dispatchAction(ACTIONS.SHOW_EXPORT_DIALOG, {elements});
-                }}
-            />
-            <MenuDropdownItem
-                icon="trash"
-                text="Reset"
-                disabled={elements.length === 0}
-                className={classnames({
-                    "pointer-events-none": elements.length === 0,
-                })}
-                onClick={() => {
-                    dispatchAction(ACTIONS.CLEAR);
-                }}
-            />
-            <Dropdown.Separator />
-            <MenuDropdownItem
-                icon="keyboard"
-                text="Keyboard shortcuts"
-                onClick={() => {
-                    dispatchAction(ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG);
-                }}
-            />
-            <Dropdown.Separator />
-            <MenuLinkItem
-                url={process.env.URL_HOMEPAGE}
-                icon="info-circle"
-                text="About folio"
-            />
-            <MenuLinkItem
-                url={process.env.URL_ISSUES}
-                icon="bug"
-                text="Report an issue"
-            />
-            <MenuLinkItem
-                url={process.env.URL_REPOSITORY}
-                icon="code"
-                text="Source code"
-            />
-        </React.Fragment>
+        <MenuDropdownItem
+            icon="image"
+            text="Export as image"
+            shortcut={shortcutsEnabled && getShortcutByAction(ACTIONS.SHOW_EXPORT_DIALOG)}
+            disabled={elements.length === 0}
+            className={classnames({
+                "pointer-events-none": elements.length === 0,
+            })}
+            onClick={() => {
+                dispatchAction(ACTIONS.SHOW_EXPORT_DIALOG, {elements});
+            }}
+        />
     );
 };
+
+// action to remove the content of the board
+export const MainMenuResetAction = () => {
+    const dispatchAction = useActions();
+    const editor = useEditor();
+    const elements = editor.getElements();
+    return (
+        <MenuDropdownItem
+            icon="trash"
+            text="Reset"
+            disabled={elements.length === 0}
+            className={classnames({
+                "pointer-events-none": elements.length === 0,
+            })}
+            onClick={() => {
+                dispatchAction(ACTIONS.CLEAR);
+            }}
+        />
+    );
+};
+
+// action to display the shortcuts menu
+export const MainMenuShowShortcutsAction = () => (
+    <MenuDropdownItem
+        icon="keyboard"
+        text="Keyboard shortcuts"
+        onClick={() => {
+            dispatchAction(ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG);
+        }}
+    />
+);
+
+// @description default content of the main menu
+export const MainMenuContent = () => (
+    <React.Fragment>
+        <MainMenuOpenAction />
+        <MainMenuSaveAction />
+        <MainMenuExportAction />
+        <MainMenuResetAction />
+        <MainMenuSeparator />
+        <MainMenuShowShortcutsAction />
+        <MainMenuSeparator />
+        <MainMenuLinks />
+    </React.Fragment>
+);
 
 // @description main menu component
 export const MainMenu = props => {
