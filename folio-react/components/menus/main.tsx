@@ -7,16 +7,31 @@ import { useEditor } from "../../contexts/editor.jsx";
 import { useActions } from "../../hooks/use-actions.js";
 import { getShortcutByAction, printShortcut } from "../../lib/actions.js";
 
-// @private menu link component
-export const MainMenuLink = props => (
+export type MainMenuLinkProps = {
+    url: string,
+    icon?: string,
+    text: string,
+};
+
+// wrapper to display links in the main menu
+export const MainMenuLink = (props: MainMenuLinkProps): React.JSX.Element => (
     <Dropdown.Item as="a" href={props.url} target="_blank">
         <Dropdown.Icon icon={props.icon || "external-link"} />
         <span>{props.text}</span>
     </Dropdown.Item>
 );
 
-// @private menu dropdown item component
-export const MainMenuAction = props => (
+export type MainMenuActionProps = {
+    className?: string,
+    disabled?: boolean,
+    text: string,
+    icon?: string,
+    shortcut?: string,
+    onClick: (event: React.SyntheticEvent) => void,
+};
+
+// wrapper to display a button in the menu for an action
+export const MainMenuAction = (props: MainMenuActionProps): React.JSX.Element => (
     <Dropdown.Item className={props.className} disabled={!!props.disabled} onClick={props.onClick}>
         <Dropdown.Icon icon={props.icon} />
         <span>{props.text}</span>
@@ -29,12 +44,12 @@ export const MainMenuAction = props => (
 );
 
 // alias to Dropdown.Separator
-export const MainMenuSeparator = () => (
+export const MainMenuSeparator = (): React.JSX.Element => (
     <Dropdown.Separator />
 );
 
 // menu links wrapper
-export const MainMenuLinks = () => (
+export const MainMenuLinks = (): React.JSX.Element => (
     <React.Fragment>
         <MainMenuLink
             url={process.env.URL_HOMEPAGE}
@@ -55,7 +70,7 @@ export const MainMenuLinks = () => (
 );
 
 // action to open a .folio file from the local computer of the user
-export const MainMenuOpenAction = () => {
+export const MainMenuOpenAction = (): React.JSX.Element => {
     const dispatchAction = useActions();
     const shortcutsEnabled = true;
     return (
@@ -71,7 +86,7 @@ export const MainMenuOpenAction = () => {
 };
 
 // action to save the current content to a file
-export const MainMenuSaveAction = () => {
+export const MainMenuSaveAction = (): React.JSX.Element => {
     const dispatchAction = useActions();
     const shortcutsEnabled = true;
     return (
@@ -87,7 +102,7 @@ export const MainMenuSaveAction = () => {
 };
 
 // action to export the current page to an image
-export const MainMenuExportAction = () => {
+export const MainMenuExportAction = (): React.JSX.Element => {
     const dispatchAction = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
@@ -109,7 +124,7 @@ export const MainMenuExportAction = () => {
 };
 
 // action to remove the content of the board
-export const MainMenuResetAction = () => {
+export const MainMenuResetAction = (): React.JSX.Element => {
     const dispatchAction = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
@@ -129,7 +144,7 @@ export const MainMenuResetAction = () => {
 };
 
 // action to display the shortcuts menu
-export const MainMenuShowShortcutsAction = () => (
+export const MainMenuShowShortcutsAction = (): React.JSX.Element => (
     <MainMenuAction
         icon="keyboard"
         text="Keyboard shortcuts"
@@ -140,7 +155,7 @@ export const MainMenuShowShortcutsAction = () => (
 );
 
 // @description default content of the main menu
-export const MainMenuContent = () => (
+export const MainMenuContent = (): React.JSX.Element => (
     <React.Fragment>
         <MainMenuOpenAction />
         <MainMenuSaveAction />
@@ -153,8 +168,13 @@ export const MainMenuContent = () => (
     </React.Fragment>
 );
 
+// props for the main menu component
+export type MainMenuProps = {
+    children?: React.Node,
+};
+
 // @description main menu component
-export const MainMenu = props => {
+export const MainMenu = (props: MainMenuProps): React.JSX.Element => {
     const content = props.children ?? <MainMenuContent />;
 
     return (
