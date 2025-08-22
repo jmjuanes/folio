@@ -1,5 +1,5 @@
 import React from "react";
-import {useEditorComponents} from "./editor-components.jsx";
+import { useEditorComponents } from "./editor-components.tsx";
 
 // @description internal context to allow editor show/hide the context menu
 const ContextMenuContext = React.createContext(null);

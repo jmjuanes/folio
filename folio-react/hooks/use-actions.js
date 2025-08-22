@@ -3,7 +3,7 @@ import { ACTIONS, ZOOM_STEP } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useDialog } from "../contexts/dialogs.jsx";
-import { useEditorComponents } from "../contexts/editor-components.jsx";
+import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 
 // @description hook to dispatch an action in the editor

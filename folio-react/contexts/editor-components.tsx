@@ -16,19 +16,28 @@ import { ZoomPanel } from "../components/panels/zoom.jsx";
 import { LayersPanel } from "../components/panels/layers.jsx";
 import { MenuPanel } from "../components/panels/menu.jsx";
 
+// export type for the editor components
+export type EditorComponentsMap = Record<string, React.Node | null>;
+
 // @description editor components context
-export const EditorComponentsContext = React.createContext(null);
+export const EditorComponentsContext = React.createContext<EditorComponentsMap>(null);
 
 // @description hook to access to editor components
-export const useEditorComponents = () => {
+export const useEditorComponents = (): EditorComponentsMap => {
     return React.useContext(EditorComponentsContext);
+};
+
+// type definitions for the editor components provider
+export type EditorComponentsProviderProps = {
+    components: Partial<EditorComponentsMap>,
+    children: React.Node,
 };
 
 // @description editor components provider
 // @param {object} props React props
 // @param {object} props.components Editor components
 // @param {React.ReactNode} props.children React children
-export const EditorComponentsProvider = ({ components = {}, children }) => {
+export const EditorComponentsProvider = (props: EditorComponentsProviderProps): React.JSX.Element => {
     const editorComponents = React.useMemo(() => {
         return {
             // general components
@@ -58,13 +67,13 @@ export const EditorComponentsProvider = ({ components = {}, children }) => {
             BehindTheCanvas: null,
             OverTheCanvas: null,
             // overrides
-            ...components,
+            ...props.components,
         };
-    }, [ components ]);
+    }, [ props.components ]);
 
     return (
         <EditorComponentsContext.Provider value={editorComponents}>
-            {children}
+            {props.children}
         </EditorComponentsContext.Provider>
     );
 };

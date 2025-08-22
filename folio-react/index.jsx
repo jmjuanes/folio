@@ -43,7 +43,7 @@ export {
 export {
     EditorComponentsProvider,
     useEditorComponents,
-} from "./contexts/editor-components.jsx";
+} from "./contexts/editor-components.tsx";
 export {
     EditorProvider,
     useEditor,
