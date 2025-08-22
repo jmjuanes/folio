@@ -81,6 +81,7 @@ COPY --chown=node:node server/ ./server/
 COPY --chown=node:node folio.js ./
 COPY --chown=node:node .env.example ./.env
 COPY --chown=node:node config.yaml ./
+COPY --chown=node:node conf ./conf
 
 # Copy builds from previous stage
 COPY --from=server --chown=node:node $FOLIO_APPDIR/server/node_modules ./server/node_modules

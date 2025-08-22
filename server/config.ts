@@ -53,6 +53,7 @@ export type WebsiteConfig = {
 };
 
 export type BaseConfig = {
+    extends?: string;
     port?: number;
     storage: StorageTypes;
     authentication: AuthenticationTypes;
@@ -82,15 +83,26 @@ export const resolveConfigPath = (currentWorkingDir: string, defaultConfigPath: 
     return path.resolve(currentWorkingDir, defaultConfigPath || environment.FOLIO_CONFIG_PATH || "config.yaml");
 };
 
-// @description read configuration file
-export const readConfig = async (configPath: string): Promise<Config> => {
-    const content = await fs.readFile(path.resolve(configPath), "utf8");
-    return yaml.parse(content);
+// @description read configuration file recursive
+export const readConfig = async (configPath: string, processedConfigs: any): Promise<Config> => {
+    const configStr = await fs.readFile(path.resolve(configPath), "utf8");
+    const config = yaml.parse(configStr);
+    // check if this configuration file extends another configuration
+    if (typeof config?.extends === "string" && !!config?.extends) {
+        const extendConfigPath = path.resolve(path.dirname(configPath), config.extends);
+        if (!processedConfigs.has(extendConfigPath)) {
+            processedConfigs.add(extendConfigPath); // prevent circular reading
+            const extendConfig = await readConfig(extendConfigPath, processedConfigs);
+            Object.assign(extendConfig, config);
+        }
+    }
+    // return configuration object
+    return config;
 };
 
 // read the configuration file
 export const getConfiguration = async (configPath: string): Promise<Config> => {
-    const config = await readConfig(configPath) as Config;
+    const config = await readConfig(configPath, new Set()) as Config;
 
     // get fields to override with custom environment values
     const fields = {
