@@ -93,7 +93,8 @@ export const readConfig = async (configPath: string, processedConfigs: any): Pro
         if (!processedConfigs.has(extendConfigPath)) {
             processedConfigs.add(extendConfigPath); // prevent circular reading
             const extendConfig = await readConfig(extendConfigPath, processedConfigs);
-            Object.assign(extendConfig, config);
+            // extend the configuration 
+            return Object.assign(extendConfig, config);
         }
     }
     // return configuration object
