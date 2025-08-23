@@ -34,7 +34,7 @@ press({
         })),
         press.ContentPagePlugin(),
         press.CopyAssetsPlugin({
-            basePath: "vendor",
+            basePath: "docs/vendor",
             patterns: [
                 {from: "node_modules/lowcss/low.css", to: "low.css"},
                 {from: "node_modules/highlight.js/styles/atom-one-light.css", to: "highlight.css"},
