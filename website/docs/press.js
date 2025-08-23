@@ -1,4 +1,4 @@
-import * as path from "node:path";
+import path from "node:path";
 import mikel from "mikel";
 import press from "mikel-press";
 import markdown from "mikel-markdown";
@@ -36,8 +36,14 @@ press({
         press.CopyAssetsPlugin({
             basePath: "docs/vendor",
             patterns: [
-                {from: "node_modules/lowcss/low.css", to: "low.css"},
-                {from: "node_modules/highlight.js/styles/atom-one-light.css", to: "highlight.css"},
+                {
+                    from: path.resolve("node_modules/lowcss/low.css"),
+                    to: "low.css",
+                },
+                {
+                    from: path.resolve("node_modules/highlight.js/styles/atom-one-light.css"),
+                    to: "highlight.css",
+                },
             ],
         }),
     ],
