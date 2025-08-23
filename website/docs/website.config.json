@@ -1,9 +1,7 @@
 {
-    "global": {
-        "title": "Folio Docs",
-        "description": "Documentation for folio.",
-        "url": "https://folio.josemi.xyz/docs"
-    },
+    "title": "Folio Docs",
+    "description": "Documentation for folio.",
+    "url": "https://folio.josemi.xyz/docs",
     "meta": [
         {
             "name": "og:type",
@@ -36,20 +34,12 @@
             "url": "https://github.com/jmjuanes/folio"
         }
     ],
-    "footer": {
-        "links": [
-            {
-                "title": "Privacy",
-                "url": "/privacy"
-            },
-            {
-                "title": "Report a bug",
-                "url": "https://github.com/jmjuanes/folio/issues"
-            },
-            {
-                "title": "Changelog",
-                "url": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
-            }
-        ]
-    }
+    "sidebar": [
+        {
+            "category": "Getting Started",
+            "items": [
+                {"url": "/docs/index.html", "text": "Introduction"}
+            ]
+        }
+    ]
 }
