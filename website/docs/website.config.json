@@ -1,0 +1,55 @@
+{
+    "global": {
+        "title": "Folio Docs",
+        "description": "Documentation for folio.",
+        "url": "https://folio.josemi.xyz/docs"
+    },
+    "meta": [
+        {
+            "name": "og:type",
+            "value": "website"
+        },
+        {
+            "name": "og:site_name",
+            "value": "Folio"
+        },
+        {
+            "name": "og:description",
+            "value": "Folio is a digital whiteboard for sketching and prototyping"
+        },
+        {
+            "name": "og:image",
+            "value": "/og-image.png"
+        },
+        {
+            "name": "og:url",
+            "value": "https://folio.josemi.xyz/docs"
+        }
+    ],
+    "navigation": [
+        {
+            "title": "Try",
+            "url": "/app"
+        },
+        {
+            "title": "GitHub",
+            "url": "https://github.com/jmjuanes/folio"
+        }
+    ],
+    "footer": {
+        "links": [
+            {
+                "title": "Privacy",
+                "url": "/privacy"
+            },
+            {
+                "title": "Report a bug",
+                "url": "https://github.com/jmjuanes/folio/issues"
+            },
+            {
+                "title": "Changelog",
+                "url": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
+            }
+        ]
+    }
+}
