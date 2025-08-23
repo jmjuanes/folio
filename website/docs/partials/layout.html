@@ -23,9 +23,9 @@
 </head>
 <body class="m-0 p-0 font-sans leading-normal bg-white text-gray-800 min-h-screen">
     <header class="flex items-center justify-between w-full px-6 py-6">
-        <a href="/" class="flex items-center gap-2 cursor-pointer">
-            <div class="text-2xl font-brand">folio.</div>
-            <div class="text-2xl font-medium tracking-tight text-gray-600">docs</div>
+        <a href="/" class="flex items-center gap-1 cursor-pointer">
+            <div class="text-2xl font-brand leading-none text-gray-950">folio.</div>
+            <div class="text-xl font-medium leading-none tracking-tight text-gray-600">docs</div>
         </a>
         <div class="flex gap-6 items-center">
             {{#each site.navigation}}
@@ -35,12 +35,12 @@
             {{/each}}
         </div>
     </header>
-    <main class="w-full px-6 pt-2 pb-6">
+    <main class="w-full px-6">
         <div class="w-full flex flex-row flex-nowrap md:gap-12">
             <div class="hidden lg:block w-64 shrink-0">
-                <div class="sticky top-0 h-screen overflow-y-auto overflow-x-hidden py-6">
+                <div class="sticky top-0 h-screen overflow-y-auto overflow-x-hidden py-4">
                     {{#each site.sidebar}}
-                    <div class="mb-2 ml-2 text-gray-950 font-bold">{{category}}</div>
+                    <div class="mb-2 text-gray-950 font-bold">{{category}}</div>
                     <div class="mb-4">
                         {{#each items}}
                         <a href="{{url}}" class="block text-sm mb-1 font-medium text-gray-950 hover:bg-gray-100 px-2 py-1 rounded-lg">
@@ -51,7 +51,7 @@
                     {{/each}}
                 </div>
             </div>
-            <div class="w-full max-w-4xl min-w-0 mx-auto">
+            <div class="w-full max-w-4xl min-w-0 mx-auto py-4">
                 {{!@content}}
             </div>
         </div>
