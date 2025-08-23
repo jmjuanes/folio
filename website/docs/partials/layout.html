@@ -52,6 +52,16 @@
                 </div>
             </div>
             <div class="w-full max-w-4xl min-w-0 mx-auto py-4">
+                <div class="mb-8">
+                    <h1 class="text-4xl font-extrabold tracking-tight text-gray-950 mb-0 mt-0 leading-none">
+                        <span>{{page.attributes.title}}</span>
+                    </h1>
+                    {{#if page.attributes.description}}
+                    <div class="max-w-2xl mt-4 text-lg leading-relaxed">
+                        <span class="text-gray-800">{{description}}</span>
+                    </div>
+                    {{/if}}
+                </div>
                 {{!@content}}
             </div>
         </div>
