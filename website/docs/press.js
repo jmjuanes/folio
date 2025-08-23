@@ -37,11 +37,11 @@ press({
             basePath: "docs/vendor",
             patterns: [
                 {
-                    from: path.resolve("node_modules/lowcss/low.css"),
+                    from: path.resolve("../../node_modules/lowcss/low.css"),
                     to: "low.css",
                 },
                 {
-                    from: path.resolve("node_modules/highlight.js/styles/atom-one-light.css"),
+                    from: path.resolve("../../node_modules/highlight.js/styles/atom-one-light.css"),
                     to: "highlight.css",
                 },
             ],
