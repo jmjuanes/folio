@@ -24,6 +24,7 @@ press({
         }),
         press.PartialsPlugin({
             folder: "partials",
+            extensions: [ ".html", ".mustache" ],
         }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
