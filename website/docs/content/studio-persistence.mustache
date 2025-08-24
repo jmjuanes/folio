@@ -14,6 +14,8 @@ By default, Folio Studio uses `storage=local`, which enables persistent storage 
 This setup ensures that all boards and user data are retained across sessions. However, when running Folio Studio in a containerized environment, it's important to understand that the container filesystem is ephemeral. If the container is deleted or rebuilt, any data stored inside it will be lost unless a volume is mounted.
 {{/prose-paragraph.html}}
 
+{{>prose-heading.html level="h2" text="Persist data using a volume"}}
+
 {{>>prose-paragraph.html}}
 To preserve data between container restarts or image updates, you should mount a persistent volume to `/opt/folio/data`. This allows the SQLite database to live outside the container and remain intact even if the container is removed. For example, you can run Folio Studio with a volume like this:
 {{/prose-paragraph.html}}
@@ -30,8 +32,10 @@ $ docker run -d \
 In this example, the local folder `folio-data` will store the SQLite database, ensuring full persistence across deployments. This approach is highly recommended for production or long-term usage.
 {{/prose-paragraph.html}}
 
+{{>prose-heading.html level="h2" text="Memory storage"}}
+
 {{>>prose-paragraph.html}}
-If you prefer not to persist data, you can switch the storage mode to `memory`, which stores everything in RAM and discards it when the application stops. This is useful for testing or temporary sessions, but not suitable for real use cases where data retention is required.
+If you prefer not to persist data, you can also switch the storage mode to `memory`, which stores everything in RAM and discards it when the application stops. This is useful for testing or temporary sessions, but not suitable for real use cases where data retention is required.
 {{/prose-paragraph.html}}
 
 {{/layout.html}}
