@@ -3,10 +3,12 @@ import mikel from "mikel";
 import press from "mikel-press";
 import markdown from "mikel-markdown";
 import hljs from "highlight.js";
-import websiteConfig from "./website.config.json" with {type: "json"};
+import websiteConfig from "./website.config.json" with { type: "json" };
+import pkg from "../../package.json" with { type: "json" };
 
 press({
     destination: "www",
+    extensions: [ ".html", ".mustache" ],
     template: mikel.create({
         functions: {
             highlight: params => {
@@ -14,6 +16,7 @@ press({
             },
         },
     }),
+    version: pkg.version,
     ...websiteConfig,
     plugins: [
         press.SourcePlugin({

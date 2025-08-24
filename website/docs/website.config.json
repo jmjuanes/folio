@@ -36,6 +36,12 @@
             "items": [
                 {"url": "/docs/index.html", "text": "Introduction"}
             ]
+        },
+        {
+            "category": "Studio",
+            "items": [
+                {"url": "/docs/studio/installation.html", "text": "Installation"}
+            ]
         }
     ]
 }

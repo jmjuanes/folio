@@ -1,0 +1,23 @@
+---
+{
+    "title": "Install Folio Studio",
+    "permalink": "/docs/studio/installation.html"
+}
+---
+{{>>layout.html}}
+
+{{>>prose-paragraph.html}}
+**Folio Studio** is the full-featured version of Folio, designed for local use with support for multiple boards and advanced configuration. It runs as a Docker container and can be installed on Linux, macOS, or Windows.
+{{/prose-paragraph.html}}
+
+{{>prose-heading.html level="h2" text="Quick Installation"}}
+
+{{>>prose-paragraph.html}}
+To pull Folio Studio using Docker:
+{{/prose-paragraph.html}}
+
+{{>>prose-code.html code="bash" label="Terminal"}}
+$ docker pull ghcr.io/jmjuanes/folio-studio:{{site.version}}
+{{/prose-code.html}}
+
+{{/layout.html}}
