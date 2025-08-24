@@ -40,7 +40,8 @@
         {
             "category": "Studio",
             "items": [
-                {"url": "/docs/studio/installation.html", "text": "Installation"}
+                {"url": "/docs/studio/installation.html", "text": "Installation"},
+                {"url": "/docs/studio/configuration.html", "text": "Configuration"}
             ]
         }
     ]
