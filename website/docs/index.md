@@ -1,7 +1,8 @@
 ---
 {
     "title": "Introduction",
-    "permalink": "/docs/index.html"
+    "permalink": "/docs/index.html",
+    "nextPage": "/docs/installation.html"
 }
 ---
 {{>>layout.mustache}}

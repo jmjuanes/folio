@@ -11,7 +11,10 @@ press({
     extensions: [ ".md" ],
     template: mikel.create({
         helpers: {
-
+            withPage: params => {
+                const p = params?.data?.site?.pages?.find(p => p.path === params.args[0]);
+                return p ? params.fn(p) : "";
+            },
         },
         functions: {
             icon: params => {
