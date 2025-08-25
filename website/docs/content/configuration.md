@@ -51,19 +51,47 @@ The `port` field defines the port where Folio Studio will listen for incoming re
 
 ### Authentication
 
-Authentication is configured using the `authentication` block. The default method is `access_token`, which can be paired with a fixed token using the `access_token` field. If no token is provided, Folio Studio will generate one automatically on each restart. For more details, refer to the Authentication guide.
+Authentication is configured using the `authentication` block. The default method is `access_token`, which can be paired with a fixed token using the `access_token` field.
+
+```yaml
+authentication: 'access_token'
+```
+
+If no token is provided, Folio Studio will generate one automatically on each restart.
 
 ### User Information
 
 User information is defined using `user_name`, `user_display_name`, and optionally `user_avatar_url`. These values personalize the interface and help identify the user within the application.
 
+```yaml
+user_name: 'john'
+user_display_name: 'John Doe'
+user_avatar_url: 'https://gravatar.com/avatar/12345'
+```
+
 ### Storage
 
-Storage settings are managed through the `storage` section. The default backend is `local`, which stores data in a file defined by `storage_file`. Alternatively, the `memory` option can be used for ephemeral sessions. For more information, see the Persistence guide.
+Storage settings are managed through the `storage` section. The default backend is `local`, which stores data in a file defined by `storage_file`.
+
+```yaml
+storage: 'local'
+storage_file: 'data/folio.db'
+```
+
+Alternatively, the `memory` option can be used for ephemeral sessions. For more information, see the Persistence guide.
+
+```yaml
+storage: 'memory'
+```
 
 ### JWT Tokens
 
 JWT token behavior is controlled using `jwt_token_secret` and `jwt_token_expiration`. These fields define the secret key used for signing tokens and the duration for which they remain valid.
+
+```yaml
+jwt_token_secret: 'abcde12345'
+jwt_token_expiration: '1y'
+```
 
 ### Website configuration
 
@@ -73,14 +101,13 @@ The `website` section allows you to enable or disable the built-in UI. You can a
 
 Folio Studio supports a small set of environment variables for quick configuration:
 
-| Variable               | Description                                                                 | Example                   |
-|------------------------|-----------------------------------------------------------------------------|---------------------------|
-| `FOLIO_PORT`           | Port where the server will run                                              | `FOLIO_PORT=8080`         |
-| `FOLIO_STORAGE_FILE`   | Path to the local storage file                                              | `FOLIO_STORAGE_FILE=data/folio.db` |
-| `FOLIO_TOKEN_SECRET`   | Secret key used to sign JWT tokens                                          | `FOLIO_TOKEN_SECRET=abcd12345` |
-| `FOLIO_TOKEN_EXPIRATION` | Expiration time for JWT tokens (e.g. `7d`, `30d`, `1y`)                    | `FOLIO_TOKEN_EXPIRATION=7d` |
-| `FOLIO_ACCESS_TOKEN`   | Fixed access token (not recommended; for testing only)                      | `FOLIO_ACCESS_TOKEN=your_fixed_access_token` |
-
+| Variable | Description |
+|----------|-------------|
+| `FOLIO_PORT` | Port where the server will run. |
+| `FOLIO_STORAGE_FILE` | Path to the local storage file. |
+| `FOLIO_TOKEN_SECRET` | Secret key used to sign JWT tokens. |
+| `FOLIO_TOKEN_EXPIRATION` | Expiration time for JWT tokens (e.g. `7d`, `30d`, `1y`). |
+| `FOLIO_ACCESS_TOKEN` | Fixed access token (not recommended; for testing only). |
 
 Environment variables always take precedence over values defined in `config.yaml`, making them ideal for temporary overrides or container-based deployments.
 
