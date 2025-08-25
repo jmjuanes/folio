@@ -1,43 +1,32 @@
 ---
 {
-    "title": "Studio Authentication",
-    "permalink": "/docs/studio/authentication.html"
+    "title": "Authentication",
+    "description": "How authentication works in folio studio.",
+    "permalink": "/docs/authentication.html"
 }
 ---
-{{>>layout.html}}
+{{>>layout.mustache}}
 
-{{>>prose-paragraph.html}}
 Folio Studio currently supports a single authentication method: **access token-based authentication**. This mechanism ensures that only authorized users can interact with the application.
-{{/prose-paragraph.html}}
 
-{{>>prose-paragraph.html}}
 By default, when Folio Studio starts, it automatically generates a random access token. This token is printed to the console during startup, meaning only the person who launched the Docker container has access to it. This approach is ideal for local or internal deployments where a single trusted user is expected to operate the instance.
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h2" text="Customize the access token"}}
+## Customize the access token
 
-{{>>prose-paragraph.html}}
 For more control, you can define a **fixed access token**. This can be done in two ways:
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h3" text="In the configuration file"}}
+### Customize the access token in configuration file
 
-{{>>prose-paragraph.html}}
 You can customize the access token by setting the `access_token` field in the `config.yaml` file:
-{{/prose-paragraph.html}}
 
-{{>>prose-code.html language="yaml" label="config.yaml"}}
+```yaml
 access_token: 'your_fixed_access_token'
-{{/prose-code.html}}
+```
 
-{{>prose-heading.html level="h3" text="Using an environment variable"}}
+### Customize the access token using an environment variable
 
-{{>>prose-paragraph.html}}
 You can also customize the access token by defining an environment variable called `FOLIO_ACCESS_TOKEN` with your desired access token.
-{{/prose-paragraph.html}}
 
-{{>>prose-paragraph.html}}
 If both are provided, the environment variable takes precedence over the YAML configuration.
-{{/prose-paragraph.html}}
 
-{{/layout.html}}
+{{/layout.mustache}}
