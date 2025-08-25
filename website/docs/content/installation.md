@@ -9,9 +9,7 @@
 
 **Folio Studio** is the full-featured version of Folio, designed for local use with support for multiple boards and advanced configuration. It runs as a Docker container and can be installed on Linux, macOS, or Windows.
 
-> Folio Studio is **not designed to be exposed to public networks or the open internet**. 
-> It is intended for **local or internal use only**, such as on a personal machine or within a private LAN. 
-> If you choose to expose it externally, **you do so entirely at your own risk and responsibility**.
+> Folio Studio is **not designed to be exposed to public networks or the open internet**. It is intended for **local or internal use only**, such as on a personal machine or within a private LAN. If you choose to expose it externally, **you do so entirely at your own risk and responsibility**.
 
 ## Requirements
 
@@ -25,15 +23,15 @@ Before installing Folio Studio, make sure you have the following minimum require
 
 First, you have to pull Folio Studio using `docker pull`:
 
-{{>>prose-code.html code="bash" label="terminal"}}
+{{>>code.mustache code="bash" label="terminal"}}
 $ docker pull ghcr.io/jmjuanes/folio-studio:{{site.version}}
-{{/prose-code.html}}
+{{/code.mustache}}
 
 Then, you can launch a new docker container with `docker run`: 
 
-{{>>prose-code.html code="bash" label="terminal"}}
+{{>>code.mustache code="bash" label="terminal"}}
 $ docker run -it --name folio-studio -p 8080:8080 jmjuanes/folio-studio
-{{/prose-code.html}}
+{{/code.mustache}}
 
 Open a new browser window and type `localhost:8080` to start using **Folio**.
 
