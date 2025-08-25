@@ -12,7 +12,7 @@
 ⚠️ **Folio Studio** is currently in an **experimental phase**. Breaking changes may occur between versions, potentially leading to data loss. **Please use with caution and make regular backups**.
 {{/alert.mustache}}
 
-## What is folio?
+## What is Folio?
 
 **Folio** is a modular, open-source whiteboard engine built with **React** and **SVG**, designed for flexibility, extensibility, and seamless integration.
 
