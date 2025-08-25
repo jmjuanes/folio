@@ -1,7 +1,8 @@
 ---
 {
-    "title": "Studio Persistence",
-    "permalink": "/docs/studio/persistence.html"
+    "title": "Persistence",
+    "description": "Persist data across sessions.",
+    "permalink": "/docs/persistence.html"
 }
 ---
 {{>>layout.mustache}}
