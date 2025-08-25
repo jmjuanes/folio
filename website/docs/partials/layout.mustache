@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
     <link rel="stylesheet" href="/docs/low.css">
+    <link rel="stylesheet" href="/docs/low.prose.css">
     <link rel="stylesheet" href="/docs/highlight.css">
     <title>{{page.attributes.title}} - folio docs</title>
     <style>
@@ -63,7 +64,9 @@
                     </div>
                     {{/if}}
                 </div>
+                {{#markdown}}
                 {{!@content}}
+                {{/markdown}}
                 <div class="grid items-center grid-cols-2 gap-4 py-6">
                     <div class="w-full">
                         {{#withPage page.attributes.prevPage}}

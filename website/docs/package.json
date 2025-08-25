@@ -10,7 +10,8 @@
     },
     "dependencies": {
         "@josemi-icons/svg": "^0.7.0",
-        "lowcss": "^0.32.0"
+        "lowcss": "^0.32.0",
+        "lowcss-prose": "^0.32.0"
     },
     "devDependencies": {
         "highlight.js": "^11.11.1",

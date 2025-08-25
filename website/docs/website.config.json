@@ -32,18 +32,18 @@
     ],
     "sidebar": [
         {
-            "category": "Getting Started",
+            "category": "Overview",
             "items": [
                 {"url": "/docs/index.html", "text": "Introduction"}
             ]
         },
         {
-            "category": "Studio",
+            "category": "Getting Started",
             "items": [
-                {"url": "/docs/studio/installation.html", "text": "Installation"},
-                {"url": "/docs/studio/configuration.html", "text": "Configuration"},
-                {"url": "/docs/studio/persistence.html", "text": "Persistence"},
-                {"url": "/docs/studio/authentication.html", "text": "Authentication"}
+                {"url": "/docs/installation.html", "text": "Installation"},
+                {"url": "/docs/configuration.html", "text": "Configuration"},
+                {"url": "/docs/persistence.html", "text": "Persistence"},
+                {"url": "/docs/authentication.html", "text": "Authentication"}
             ]
         }
     ]

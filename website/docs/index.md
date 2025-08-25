@@ -4,10 +4,8 @@
     "permalink": "/docs/index.html"
 }
 ---
-{{>>layout.html}}
+{{>>layout.mustache}}
 
-{{>>prose-paragraph.html}}
 **Folio** is a modular, open-source whiteboard engine built with **React** and **SVG**, designed for flexibility, extensibility, and seamless integration. Whether you're building a collaborative design tool, an educational sketchpad, or a visual editor for your app, Folio gives you the foundation to create rich, interactive canvas experiences.
-{{/prose-paragraph.html}}
 
-{{/layout.html}}
+{{/layout.mustache}}

@@ -8,7 +8,7 @@ import pkg from "../../package.json" with { type: "json" };
 
 press({
     destination: "www",
-    extensions: [ ".html", ".mustache" ],
+    extensions: [ ".md" ],
     template: mikel.create({
         helpers: {
 
@@ -27,10 +27,11 @@ press({
     plugins: [
         press.SourcePlugin({
             folder: "content",
+            extensions: [ ".md" ],
         }),
         press.PartialsPlugin({
             folder: "partials",
-            extensions: [ ".html", ".mustache" ],
+            extensions: [ ".mustache" ],
         }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
@@ -49,6 +50,10 @@ press({
                 {
                     from: path.resolve("../../node_modules/lowcss/low.css"),
                     to: "low.css",
+                },
+                {
+                    from: path.resolve("../../node_modules/lowcss-prose/index.css"),
+                    to: "low.prose.css",
                 },
                 {
                     from: path.resolve("../../node_modules/highlight.js/styles/atom-one-light.css"),
