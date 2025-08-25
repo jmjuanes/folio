@@ -16,6 +16,10 @@
     <link rel="stylesheet" href="/docs/highlight.css">
     <title>{{page.attributes.title}} - folio docs</title>
     <style>
+        :root {
+            --prose-h2-border-bottom-width: 0px !important;
+            --prose-h2-padding-bottom: 0px !important;
+        }
         .font-brand {
             font-family: Poppins, serif;
             font-weight: 700 !important;
@@ -59,7 +63,7 @@
                         <span>{{page.attributes.title}}</span>
                     </h1>
                     {{#if page.attributes.description}}
-                    <div class="mt-4 text-lg leading-relaxed">
+                    <div class="mt-3 text-lg leading-relaxed">
                         <span class="text-gray-800">{{page.attributes.description}}</span>
                     </div>
                     {{/if}}
