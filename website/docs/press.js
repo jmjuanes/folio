@@ -18,7 +18,7 @@ press({
         },
         functions: {
             icon: params => {
-                return `<svg class=""><use xlink:href="/docs/icons.svg#${params.opt.icon}"></use></svg>`;
+                return `<svg width="1em" height="1em"><use xlink:href="/docs/icons.svg#${params.opt.icon}"></use></svg>`;
             },
             highlight: params => {
                 return hljs.highlight((params?.opt?.code || "").trim(), {language: params.opt.language || "html"}).value;
