@@ -10,7 +10,13 @@ press({
     destination: "www",
     extensions: [ ".html", ".mustache" ],
     template: mikel.create({
+        helpers: {
+
+        },
         functions: {
+            icon: params => {
+                return `<svg class=""><use xlink:href="/docs/icons.svg#${params.opt.icon}"></use></svg>`;
+            },
             highlight: params => {
                 return hljs.highlight((params?.opt?.code || "").trim(), {language: params.opt.language || "html"}).value;
             },
@@ -38,7 +44,7 @@ press({
         })),
         press.ContentPagePlugin(),
         press.CopyAssetsPlugin({
-            basePath: "docs/vendor",
+            basePath: "docs",
             patterns: [
                 {
                     from: path.resolve("../../node_modules/lowcss/low.css"),
@@ -47,6 +53,10 @@ press({
                 {
                     from: path.resolve("../../node_modules/highlight.js/styles/atom-one-light.css"),
                     to: "highlight.css",
+                },
+                {
+                    from: path.resolve("../../node_modules/@josemi-icons/svg/sprite.svg"),
+                    to: "sprite.svg",
                 },
             ],
         }),
