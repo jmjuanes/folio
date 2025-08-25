@@ -1,26 +1,21 @@
 ---
 {
-    "title": "Studio Configuration",
-    "permalink": "/docs/studio/configuration.html"
+    "title": "Configuration",
+    "description": "Setting up all necessary configuration to run folio studio.",
+    "permalink": "/docs/configuration.html"
 }
 ---
-{{>>layout.html}}
+{{>>layout.mustache}}
 
-{{>>prose-paragraph.html}}
 Folio Studio supports two levels of configuration: environment variables and a YAML configuration file. Environment variables take precedence over the YAML file and are useful for quick overrides, although they only expose a limited subset of the full configuration options.
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h2" text="Configuration file"}}
+## Configuration file
 
-{{>>prose-paragraph.html}}
 The main configuration file is located at `/opt/folio/config.yaml`. It allows for detailed customization across several areas of the application.
-{{/prose-paragraph.html}}
 
-{{>>prose-paragraph.html}}
 This is the default configuration:
-{{/prose-paragraph.html}}
 
-{{>>prose-code.html label="config.yaml" language="yaml"}}
+```yaml
 ## port where folio server will listen
 port: 8080
 
@@ -48,51 +43,35 @@ storage_file: 'data/folio.db'
 ## website configuration
 website: true
 website_title: "folio."
-{{/prose-code.html}}
+```
 
-{{>prose-heading.html level="h3" text="PORT"}}
+### Configure Port
 
-{{>>prose-paragraph.html}}
 The `port` field defines the port where Folio Studio will listen for incoming requests. By default, this is set to `8080`, but it can be overridden using the `FOLIO_PORT` environment variable.
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h3" text="Authentication"}}
+### Authentication
 
-{{>>prose-paragraph.html}}
 Authentication is configured using the `authentication` block. The default method is `access_token`, which can be paired with a fixed token using the `access_token` field. If no token is provided, Folio Studio will generate one automatically on each restart. For more details, refer to the Authentication guide.
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h3" text="User Information"}}
+### User Information
 
-{{>>prose-paragraph.html}}
 User information is defined using `user_name`, `user_display_name`, and optionally `user_avatar_url`. These values personalize the interface and help identify the user within the application.
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h3" text="Storage"}}
+### Storage
 
-{{>>prose-paragraph.html}}
 Storage settings are managed through the `storage` section. The default backend is `local`, which stores data in a file defined by `storage_file`. Alternatively, the `memory` option can be used for ephemeral sessions. For more information, see the Persistence guide.
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h3" text="Security"}}
+### JWT Tokens
 
-{{>>prose-paragraph.html}}
 JWT token behavior is controlled using `jwt_token_secret` and `jwt_token_expiration`. These fields define the secret key used for signing tokens and the duration for which they remain valid.
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h3" text="Website"}}
+### Website configuration
 
-{{>>prose-paragraph.html}}
 The `website` section allows you to enable or disable the built-in UI. You can also customize the browser title using `website_title`.
-{{/prose-paragraph.html}}
 
-{{>prose-heading.html level="h2" text="Environment Variables"}}
+## Environment Variables
 
-{{>>prose-paragraph.html}}
 Folio Studio supports a small set of environment variables for quick configuration:
-{{/prose-paragraph.html}}
-
-{{#markdown}}
 
 | Variable               | Description                                                                 | Example                   |
 |------------------------|-----------------------------------------------------------------------------|---------------------------|
@@ -102,10 +81,7 @@ Folio Studio supports a small set of environment variables for quick configurati
 | `FOLIO_TOKEN_EXPIRATION` | Expiration time for JWT tokens (e.g. `7d`, `30d`, `1y`)                    | `FOLIO_TOKEN_EXPIRATION=7d` |
 | `FOLIO_ACCESS_TOKEN`   | Fixed access token (not recommended; for testing only)                      | `FOLIO_ACCESS_TOKEN=your_fixed_access_token` |
 
-{{/markdown}}
 
-{{>>prose-paragraph.html}}
 Environment variables always take precedence over values defined in `config.yaml`, making them ideal for temporary overrides or container-based deployments.
-{{/prose-paragraph.html}}
 
-{{/layout.html}}
+{{/layout.mustache}}
