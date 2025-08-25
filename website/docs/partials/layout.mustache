@@ -74,7 +74,7 @@
                 {{/markdown}}
                 </div>
                 <div class="grid items-center grid-cols-2 gap-4 py-6">
-                    <div class="w-full">
+                    <div class="w-full flex justify-start">
                         {{#withPage page.attributes.prevPage}}
                         <a href="{{url}}" class="flex flex-nowrap items-center gap-2 text-gray-950">
                             <div class="flex items-center text-xl">
@@ -84,9 +84,9 @@
                         </a>
                         {{/withPage}}
                     </div>
-                    <div class="w-full">
+                    <div class="w-full flex justify-end">
                         {{#withPage page.attributes.nextPage}}
-                        <a href="{{url}}" class="flex flex-nowrap justify-end items-center gap-2 text-gray-950">
+                        <a href="{{url}}" class="flex flex-nowrap items-center gap-2 text-gray-950">
                             <div class="font-medium">{{attributes.title}}</div>
                             <div class="flex items-center text-xl">
                                 {{=icon icon="chevron-right"}}

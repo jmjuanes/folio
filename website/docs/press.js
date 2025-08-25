@@ -64,7 +64,7 @@ press({
                 },
                 {
                     from: path.resolve("../../node_modules/@josemi-icons/svg/sprite.svg"),
-                    to: "sprite.svg",
+                    to: "icons.svg",
                 },
             ],
         }),
