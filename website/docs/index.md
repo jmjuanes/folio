@@ -12,6 +12,10 @@
 
 **Folio** is a modular, open-source whiteboard engine built with **React** and **SVG**, designed for flexibility, extensibility, and seamless integration.
 
+## What is Folio Studio?
+
+**Folio Studio** is the full-featured version of Folio, designed for local use with support for multiple boards and advanced configuration. 
+
 ## Quickstart
 
 
