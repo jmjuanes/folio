@@ -38,10 +38,15 @@
             ]
         },
         {
-            "category": "Getting Started",
+            "category": "Deployment",
             "items": [
                 {"url": "/docs/installation.html", "text": "Installation"},
-                {"url": "/docs/configuration.html", "text": "Configuration"},
+                {"url": "/docs/configuration.html", "text": "Configuration"}
+            ]
+        },
+        {
+            "category": "Advanced Guides",
+            "items": [
                 {"url": "/docs/persistence.html", "text": "Persistence"},
                 {"url": "/docs/authentication.html", "text": "Authentication"}
             ]
