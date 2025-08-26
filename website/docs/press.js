@@ -50,6 +50,8 @@ press({
                 table: "w-full mb-6",
                 tableColumn: "p-3 border-b-1 border-gray-800",
                 tableHead: "font-bold",
+                list: "list-inside mb-6 pl-6",
+                listItem: "mb-3 pl-1",
                 paragraph: "block leading-relaxed mb-6 opacity-80",
             },
         })),
