@@ -11,9 +11,8 @@
 
 **Folio Studio** runs as a Docker container and can be installed on Linux, macOS, or Windows.
 
-
 {{>>alert.mustache}}
-Folio Studio is **not designed to be exposed to public networks or the open internet**. It is intended for **local or internal use only**, such as on a personal machine or within a private LAN. If you choose to expose it externally, **you do so entirely at your own risk and responsibility**.
+⚠️ Folio Studio is **not designed to be exposed to public networks or the open internet**. It is intended for **local or internal use only**, such as on a personal machine or within a private LAN. If you choose to expose it externally, **you do so entirely at your own risk and responsibility**.
 {{/alert.mustache}}
 
 ## Requirements
