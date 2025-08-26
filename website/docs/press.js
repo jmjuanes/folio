@@ -44,11 +44,12 @@ press({
         press.UsePlugin(markdown({
             expressions: markdown.expressions,
             classNames: {
-                // link: "font-medium underline",
-                // code: "bg-gray-100 rounded-md py-1 px-2 text-xs font-mono font-medium",
-                // table: "w-full mb-6",
-                // tableColumn: "p-3 border-b-1 border-gray-200",
-                // tableHead: "font-bold",
+                link: "font-medium underline",
+                code: "bg-gray-100 rounded-md py-1 px-2 text-xs font-mono font-medium bg-gray-900",
+                table: "w-full mb-6",
+                tableColumn: "p-3 border-b-1 border-gray-200",
+                tableHead: "font-bold",
+                paragraph: "leading-relaxed mb-6 opacity-80",
             },
         })),
         press.ContentPagePlugin(),
