@@ -17,8 +17,18 @@
     <title>{{page.attributes.title}} - folio docs</title>
     <style>
         :root {
+            --prose-color: var(--color-white);
             --prose-h2-border-bottom-width: 0px !important;
             --prose-h2-padding-bottom: 0px !important;
+            --prose-code-color: var(--color-white);
+            --prose-code-bg: var(--color-gray-800);
+            --prose-pre-color: var(--color-white);
+            --prose-pre-bg: var(--color-gray-800);
+            --prose-link-color: var(--color-white);
+            --prose-thead-color: var(--color-white);
+            --prose-thead-bolder-color: var(--color-gray-700);
+            --prose-tbody-border-color: var(--color-gray-700);
+            --prose-tbody-bg: var(--color-gray-800);
         }
         .font-brand {
             font-family: Poppins, serif;
@@ -26,14 +36,14 @@
         }
     </style>
 </head>
-<body class="m-0 p-0 font-sans leading-normal bg-white text-gray-800 min-h-screen">
+<body class="m-0 p-0 font-sans leading-normal bg-gray-950 text-white min-h-screen">
     <header class="flex items-center justify-between w-full max-w-8xl mx-auto px-8 py-8">
         <a href="/docs/index.html" class="flex items-center gap-1 cursor-pointer leading-none">
-            <div class="text-4xl font-brand text-gray-950">folio.</div>
+            <div class="text-4xl font-brand text-current">folio.</div>
         </a>
         <div class="flex gap-6 items-center">
             {{#each site.navigation}}
-            <a href="{{url}}" class="cursor-pointer font-medium hover:underline text-gray-950 text-lg">
+            <a href="{{url}}" class="cursor-pointer font-medium hover:underline text-current text-lg">
                 <span>{{text}}</span>
             </a>
             {{/each}}

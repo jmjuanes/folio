@@ -27,15 +27,15 @@ Before installing Folio Studio, make sure you have the following minimum require
 
 First, you have to pull Folio Studio using `docker pull`:
 
-```bash
+{{>>code.mustache language="bash" label="terminal" icon="code"}}
 $ docker pull ghcr.io/jmjuanes/folio-studio:{{site.version}}
-```
+{{/code.mustache}}
 
 Then, you can launch a new docker container with `docker run`: 
 
-```bash
+{{>>code.mustache language="bash" label="terminal" icon="code"}}
 $ docker run -it --name folio-studio -p 8080:8080 jmjuanes/folio-studio
-```
+{{/code.mustache}}
 
 Open a new browser window and type `localhost:8080` to start using **Folio**.
 
