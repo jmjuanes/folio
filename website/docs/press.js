@@ -42,15 +42,7 @@ press({
         }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
-            expressions: {
-                ...markdown.expressions,
-                pre: {
-                    regex: markdown.expressions.pre.regex,
-                    replace: (args, cn) => {
-                        return markdown.render("pre", { class: cn.pre }, highlightCode(args[1], args[0]));
-                    },
-                },
-            },
+            expressions: markdown.expressions,
             classNames: {
                 // link: "font-medium underline",
                 // code: "bg-gray-100 rounded-md py-1 px-2 text-xs font-mono font-medium",
