@@ -54,7 +54,7 @@ press({
             classNames: {
                 link: "font-medium underline",
                 code: "bg-gray-100 rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-900",
-                pre: "w-full overflow-x-auto bg-gray-900 text-white text-xs font-mono leading-relaxed p-4",
+                pre: "w-full overflow-x-auto bg-gray-900 text-white text-xs font-mono leading-relaxed p-4 mb-6 rounded-md",
                 heading: "font-bold mb-4 first:mt-0 mt-8 text-2xl",
                 table: "w-full mb-6",
                 tableColumn: "p-3 border-b-1 border-gray-800",
