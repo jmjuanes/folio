@@ -39,12 +39,12 @@
 <!--html-->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
 {{#each page.attributes.quickstart}}
-    <a href="{{this.url}}" class="p-6 border-1 border-gray-800 rounded-lg">
-        <div class="flex items-center text-3xl mb-2">
+    <a href="{{this.url}}" class="p-6 border-1 border-gray-800 rounded-xl">
+        <div class="flex items-center text-3xl mb-3">
             {{=icon icon=this.icon}}
         </div>
-        <div class="font-bold text-lg mb-2">{{this.title}}</div>
-        <div class="opacity-80">{{this.description}}</div>
+        <div class="font-bold text-base mb-1">{{this.title}}</div>
+        <div class="opacity-80 text-sm">{{this.description}}</div>
     </a>
 {{/each}}
 </div>
