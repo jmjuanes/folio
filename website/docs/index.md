@@ -3,7 +3,21 @@
     "title": "Introduction",
     "description": "Quick overview of what Folio is and how to get started.",
     "permalink": "/docs/index.html",
-    "nextPage": "/docs/installation.html"
+    "nextPage": "/docs/installation.html",
+    "quickstart": [
+        {
+            "icon": "globe",
+            "title": "Web App",
+            "description": "Use our web app version of Folio directly in your browser.",
+            "url": "/app"
+        },
+        {
+            "icon": "server",
+            "title": "Self Hosted",
+            "description": "Install Folio Studio in your local machine for full control.",
+            "url": "/docs/installation.html"
+        }
+    ]
 }
 ---
 {{>>layout.mustache}}
@@ -22,5 +36,18 @@
 
 ## Quickstart
 
+<!--html-->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+{{#each page.attributes.quickstart}}
+    <a href="{{this.url}}" class="p-6 border-1 border-gray-800 rounded-lg">
+        <div class="flex items-center text-3xl mb-2">
+            {{=icon icon=this.icon}}
+        </div>
+        <div class="font-bold text-lg mb-2">{{this.title}}</div>
+        <div class="opacity-80">{{this.description}}</div>
+    </a>
+{{/each}}
+</div>
+<!--/html-->
 
 {{/layout.mustache}}
