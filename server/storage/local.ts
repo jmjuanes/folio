@@ -5,7 +5,7 @@ import { open } from "sqlite";
 import { Collections } from "../types/storage.ts";
 import { createLogger } from "../utils/logger.ts";
 import type { Config } from "../config.ts";
-import type { StoreContext, Document, DocumentData } from "../types/storage.ts";
+import type { StoreContext, Document, Attributes } from "../types/storage.ts";
 
 const { debug } = createLogger("folio:storage:local");
 
@@ -14,19 +14,12 @@ const TABLE = "documents";
 
 // decode a document data to get attributes and content in the correct format
 const parseDocument = (rawDocument: any): Document => {
-    if (rawDocument) {
-        // extract internal values and data from document
-        const { data, ...attributes } = rawDocument;
-        return {
-            ...JSON.parse(data || "{}"),
-            _id: attributes.id,
-            _created_at: attributes.created_at,
-            _updated_at: attributes.updated_at,
-        };
-    }
     // rawDocument may not be defined for example when user tries to acces to a non
     // existent document
-    return null;
+    if (rawDocument) {
+        rawDocument.attributes = JSON.parse(rawDocument.attributes || "{}");
+    }
+    return rawDocument;
 };
 
 // create an instance of a store
@@ -51,8 +44,10 @@ export const createLocalStore = async (config: Config): Promise<StoreContext> =>
         CREATE TABLE IF NOT EXISTS ${TABLE} (
             collection TEXT NOT NULL,
             id TEXT NOT NULL,
+            owner TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            attributes TEXT,
             data TEXT,
             PRIMARY KEY (id)
         );
@@ -62,8 +57,11 @@ export const createLocalStore = async (config: Config): Promise<StoreContext> =>
 
     // return api to access to the database
     return {
-        all: async (collection: Collections): Promise<Document[]> => {
-            const results = await db.all(`SELECT * FROM ${TABLE} WHERE collection = ?`, [ collection ]);
+        list: async (collection: Collections): Promise<Document[]> => {
+            const results = await db.all(
+                `SELECT id,created_at,updated_at,attributes FROM ${TABLE} WHERE collection = ?`,
+                [ collection ],
+            );
             return results.map((result: any): Document => {
                 return parseDocument(result);
             });
@@ -77,18 +75,26 @@ export const createLocalStore = async (config: Config): Promise<StoreContext> =>
             return parseDocument(result);
         },
 
-        add: async (collection: Collections, id: string, data: DocumentData = {}): Promise<void> => {
+        add: async (collection: Collections, id: string, attributes?: Attributes, data?: string): Promise<void> => {
             await db.run(
-                `INSERT INTO ${TABLE} (id, collection, data) VALUES (?, ?, ?)`,
-                [ id, collection, JSON.stringify(data) ],
+                `INSERT INTO ${TABLE} (id, collection, attributes, data) VALUES (?, ?, ?, ?)`,
+                [ id, collection, JSON.stringify(attributes || {}), data || "" ],
             );
         },
 
-        set: async (collection: Collections, id: string, data: DocumentData = {}): Promise<void> => {
-            await db.run(
-                `UPDATE ${TABLE} SET data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND collection = ?`,
-                [ JSON.stringify(data), id, collection ],
-            );
+        update: async (collection: Collections, id: string, attributes?: Attributes, data?: string): Promise<void> => {
+            if (attributes && typeof attributes === "object") {
+                await db.run(
+                    `UPDATE ${TABLE} SET attributes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND collection = ?`,
+                    [ JSON.stringify(attributes), id, collection ],
+                );
+            }
+            if (data && typeof data === "string") {
+                await db.run(
+                    `UPDATE ${TABLE} SET data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND collection = ?`,
+                    [ data, id, collection ],
+                );
+            }
         },
 
         delete: async (collection: Collections, id: string): Promise<void> => {
