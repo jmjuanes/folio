@@ -73,10 +73,6 @@ press({
                     to: "low.css",
                 },
                 {
-                    from: path.resolve("../../node_modules/lowcss-prose/index.css"),
-                    to: "low.prose.css",
-                },
-                {
                     from: path.resolve("../../node_modules/highlight.js/styles/atom-one-dark.css"),
                     to: "highlight.css",
                 },
