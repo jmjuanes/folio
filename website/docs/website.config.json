@@ -1,0 +1,55 @@
+{
+    "title": "Folio Docs",
+    "description": "Documentation for folio.",
+    "url": "https://folio.josemi.xyz/docs",
+    "meta": [
+        {
+            "name": "og:type",
+            "value": "website"
+        },
+        {
+            "name": "og:site_name",
+            "value": "Folio"
+        },
+        {
+            "name": "og:description",
+            "value": "Folio is a digital whiteboard for sketching and prototyping"
+        },
+        {
+            "name": "og:image",
+            "value": "/og-image.png"
+        },
+        {
+            "name": "og:url",
+            "value": "https://folio.josemi.xyz/docs"
+        }
+    ],
+    "navigation": [
+        {
+            "text": "GitHub",
+            "url": "https://github.com/jmjuanes/folio"
+        }
+    ],
+    "sidebar": [
+        {
+            "category": "Overview",
+            "items": [
+                {"url": "/docs/index.html", "text": "Introduction"}
+            ]
+        },
+        {
+            "category": "Deployment",
+            "items": [
+                {"url": "/docs/installation.html", "text": "Installation"},
+                {"url": "/docs/configuration.html", "text": "Configuration"}
+            ]
+        },
+        {
+            "category": "Advanced Guides",
+            "items": [
+                {"url": "/docs/persistence.html", "text": "Persistence"},
+                {"url": "/docs/authentication.html", "text": "Authentication"}
+            ]
+        }
+    ]
+}
