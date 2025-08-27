@@ -1,28 +1,11 @@
 import * as graphql from "graphql";
 import { uid } from "uid/secure";
-import { Collections } from "./types/storage.ts";
 
 // custom any type
 const GraphQlAnyType = new graphql.GraphQLScalarType({
 	name: "Any",
-	serialize: (value: any) => value
+	serialize: (value: any) => value,
 });
-
-// declare the common fields in any object
-const commonFields = {
-    _id: {
-        type: graphql.GraphQLString,
-        description: "the unique identifier of the document",
-    },
-    _created_at: {
-        type: graphql.GraphQLString,
-        description: "the timestamp when the document was created",
-    },
-    _updated_at: {
-        type: graphql.GraphQLString,
-        description: "the timestamp when the document was last updated",
-    },
-};
 
 // declare the primary user type
 const userType = new graphql.GraphQLObjectType({
@@ -35,18 +18,29 @@ const userType = new graphql.GraphQLObjectType({
     },
 }) as graphql.GraphQLObjectType;
 
-// board document type
-const boardType = new graphql.GraphQLObjectType({
-    name: "Board",
+// generic document type
+const DocumentType = new graphql.GraphQLObjectType({
+    name: "Document",
     fields: {
-        ...commonFields,
-        name: {
+        id: {
             type: graphql.GraphQLString,
-            description: "the name of the board",
+            description: "the unique identifier of the document",
         },
-        content: {
+        created_at: {
+            type: graphql.GraphQLString,
+            description: "the timestamp when the document was created",
+        },
+        updated_at: {
+            type: graphql.GraphQLString,
+            description: "the timestamp when the document was last updated",
+        },
+        attributes: {
             type: GraphQlAnyType,
-            description: "the content of the board",
+            description: "additional attributes of the document",
+        },
+        data: {
+            type: graphql.GraphQLString,
+            description: "data assigned to the document",
         },
     },
 }) as graphql.GraphQLObjectType;
@@ -63,23 +57,33 @@ export const schema = new graphql.GraphQLSchema({
                     return context.auth.getUser(context.username);
                 },
             },
-            boards: {
-                type: new graphql.GraphQLList(boardType),
-                description: "retrieve all boards",
-                resolve: async (source, args, context) => {
-                    return await context.store.all(Collections.BOARD);
-                },
-            },
-            board: {
-                type: boardType,
+            listDocuments: {
+                type: new graphql.GraphQLList(DocumentType),
+                description: "retrieve all documents of the specified collection",
                 args: {
-                    id: {
+                    collection: {
                         type: graphql.GraphQLString,
-                        description: "the ID of the board to retrieve",
+                        description: "collection to retrieve documents",
                     },
                 },
                 resolve: async (source, args, context) => {
-                    return await context.store.get(Collections.BOARD, args.id);
+                    return await context.store.list(args.collection);
+                },
+            },
+            getDocument: {
+                type: DocumentType,
+                args: {
+                    collection: {
+                        type: graphql.GraphQLString,
+                        description: "the collection of the document",
+                    },
+                    id: {
+                        type: graphql.GraphQLString,
+                        description: "the ID of the document to retrieve",
+                    },
+                },
+                resolve: async (source, args, context) => {
+                    return await context.store.get(args.collection, args.id);
                 },
             },
         },
@@ -87,80 +91,86 @@ export const schema = new graphql.GraphQLSchema({
     mutation: new graphql.GraphQLObjectType({
         name: "Mutation",
         fields: {
-            createBoard: {
-                type: boardType,
-                description: "create a new board",
+            addDocument: {
+                type: DocumentType,
+                description: "create a new document",
                 args: {
-                    name: {
+                    collection: {
                         type: graphql.GraphQLString,
-                        description: "the name of the new board",
                     },
-                    content: {
+                    attributes: {
                         type: GraphQlAnyType,
-                        description: "the content of the board",
+                        description: "attributes assigned to the document",
+                    },
+                    data: {
+                        type: graphql.GraphQLString,
+                        description: "data assigned to the document",
                     },
                 },
                 resolve: async (source, args, context) => {
                     const id = uid(20); // generate a unique ID for the object
                     try {
-                        await context.store.add(Collections.BOARD, id, args);
+                        await context.store.add(args.collection, id, args.attributes, args.data);
                     }
                     catch (error) {
                         console.error(error);
                         throw new graphql.GraphQLError(error.message);
                     }
-                    return { _id: id };
+                    return { id: id };
                 },
             },
-            updateBoard: {
-                type: boardType,
-                description: "update a board's content",
+            updateDocument: {
+                type: DocumentType,
+                description: "update a document",
                 args: {
+                    collection: {
+                        type: graphql.GraphQLString,
+                    },
                     id: {
                         type: graphql.GraphQLString,
-                        description: "the ID of the board to update",
                     },
-                    name: {
-                        type: graphql.GraphQLString,
-                        description: "the name of the new board",
-                    },
-                    content: {
+                    attributes: {
                         type: GraphQlAnyType,
-                        description: "the new content for the board",
+                        description: "the attributes of the document to update",
+                    },
+                    data: {
+                        type: graphql.GraphQLString,
+                        description: "the data of the document to update",
                     },
                 },
                 resolve: async (source, args, context) => {
-                    const { id, ...data } = args;
                     try {
-                        await context.store.set(Collections.BOARD, id, data);
+                        await context.store.update(args.collection, args.id, args.attributes, args.data);
                     }
                     catch (error) {
-                        // possible errors: board does not exist, user does not have permission to edit this board
+                        // possible errors: document does not exist, user does not have permission to edit this document
                         console.error(error);
                         throw new graphql.GraphQLError(error.message);
                     }
-                    return { _id: args.id };
+                    return { id: args.id };
                 },
             },
-            deleteBoard: {
-                type: boardType,
-                description: "delete a board by ID",
+            deleteDocument: {
+                type: DocumentType,
+                description: "delete a document by ID",
                 args: {
+                    collection: {
+                        type: graphql.GraphQLString,
+                    },
                     id: {
                         type: graphql.GraphQLString,
-                        description: "the ID of the board to delete",
                     },
                 },
                 resolve: async (source, args, context) => {
                     try {
-                        await context.store.delete(Collections.BOARD, args.id);
+                        await context.store.delete(args.collection, args.id);
                     }
                     catch (error) {
-                        // possible errors: board does not exist, user does not have permission to delete this board
+                        // possible errors: document does not exist, user does not have permission to delete this document
                         console.error(error);
                         throw new graphql.GraphQLError(error.message);
                     }
-                    return { _id: args.id };
+                    return { id: args.id };
                 },
             },
         },
