@@ -1,3 +1,4 @@
+// @deprecated
 // get information about the authenticated user
 export const GET_USER_QUERY = `
     query GetUser {
@@ -7,54 +8,55 @@ export const GET_USER_QUERY = `
     }
 `;
 
-// note that this query does not include the 'content' field of the boards
-export const GET_BOARDS_QUERY = `
-    query GetBoards {
-        boards {
-            _id
-            _created_at
-            _updated_at
-            name
+// @description get a list of documents that matches the specified collection
+// @params collection the id of the collection (board, user)
+export const LIST_DOCUMENTS_QUERY = `
+    query List($collection: String!) {
+        listDocuments(collection: $collection) {
+            id
+            created_at
+            updated_at
+            attributes
         }
     }
 `;
 
-// get a single board data by id
-export const GET_BOARD_QUERY = `
-    query GetBoard($id: String!) {
-        board(id: $id) {
-            _id
-            _created_at
-            _updated_at
-            name
-            content
+// @description get a single document by id
+export const GET_DOCUMENT_QUERY = `
+    query Get($collection: String!, $id: String!) {
+        getDocument(collection: $collection, id: $id) {
+            id
+            created_at
+            updated_at
+            attributes
+            data
         }
     }
 `;
 
-// mutation to create a new board
-export const CREATE_BOARD_MUTATION = `
-    mutation CreateBoard($name: String, $content: Any) {
-        createBoard(name: $name, content: $content) {
-            _id
+// @description mutation to create a new document
+export const ADD_DOCUMENT_MUTATION = `
+    mutation Add($collection: String!, $id: String!, $attributes: Any, $data: String) {
+        addDocument(collection: $collection, id: $id, attributes: $attributes, data: $data) {
+            id
         }
     }
 `;
 
-// mutation to update a board by id
-export const UPDATE_BOARD_MUTATION = `
-    mutation UpdateBoard($id: String!, $name: String, $content: Any) {
-        updateBoard(id: $id, name: $name, content: $content) {
-            _id
+// @description mutation to update a document by id
+export const UPDATE_DOCUMENT_MUTATION = `
+    mutation Update($collection: String!, $id: String!, $attributes: Any, $data: String) {
+        updateDocument(collection: $collection, id: $id, attributes: $attributes, data: $data) {
+            id
         }
     }
 `;
 
-// mutation to delete a board by id
-export const DELETE_BOARD_MUTATION = `
-    mutation DeleteBoard($id: String!) {
-        deleteBoard(id: $id) {
-            _id
+// @description mutation to delete a document
+export const DELETE_DOCUMENT_MUTATION = `
+    mutation Delete($collection: String!, $id: String!) {
+        deleteDocument(collection: $collection, id: $id) {
+            id
         }
     }
 `;
