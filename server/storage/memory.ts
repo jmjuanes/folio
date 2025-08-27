@@ -1,6 +1,7 @@
-import { Collections } from "../types/storage.ts";
+import { Collections } from "../types/collection.ts";
 import type { Config } from "../config.ts";
-import type { StoreContext, Document, Attributes } from "../types/storage.ts";
+import type { Document, Attributes } from "../types/collection.ts";
+import type { StoreContext } from "../types/storage.ts";
 
 // create an instance of a store
 export const createMemoryStore = async (config: Config): Promise<StoreContext> => {

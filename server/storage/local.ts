@@ -2,10 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import { Collections } from "../types/storage.ts";
+import { Collections } from "../types/collection.ts";
 import { createLogger } from "../utils/logger.ts";
 import type { Config } from "../config.ts";
-import type { StoreContext, Document, Attributes } from "../types/storage.ts";
+import type { Document, Attributes } from "../types/collection.ts";
+import type { StoreContext } from "../types/storage.ts";
 
 const { debug } = createLogger("folio:storage:local");
 

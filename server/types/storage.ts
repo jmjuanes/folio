@@ -1,19 +1,4 @@
-// available collections in the store
-export enum Collections {
-    BOARD = "board",
-};
-
-export type Attributes = Record<string, any>;
-
-export type Document = {
-    collection?: string,
-    owner: string,
-    id: string,
-    created_at: string,
-    updated_at: string,
-    attributes: Attributes,
-    data?: string,
-};
+import type { Collections, Document, Attributes } from "./collection.ts";
 
 // objects store context
 export type StoreContext = {
