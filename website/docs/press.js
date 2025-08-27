@@ -42,20 +42,17 @@ press({
         }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
-            expressions: {
-                ...markdown.expressions,
-                pre: {
-                    regex: markdown.expressions.pre.regex,
-                    replace: (args, cn) => {
-                        return markdown.render("pre", { class: cn.pre }, highlightCode(args[1], "yaml"));
-                    },
-                },
+            highlight: (code, language) => {
+                return highlightCode(code, language);
             },
             classNames: {
                 link: "font-medium underline",
                 code: "bg-gray-100 rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-900",
                 pre: "w-full overflow-x-auto bg-gray-900 text-white text-xs font-mono leading-relaxed p-4 mb-6 rounded-md border-1 border-gray-800",
-                heading: "font-bold mb-4 first:mt-0 mt-8 text-2xl",
+                heading: "font-bold mb-4 first:mt-0 mt-8",
+                heading2: "text-2xl",
+                heading3: "text-xl",
+                heading4: "text-lg",
                 table: "w-full mb-6",
                 tableColumn: "p-3 border-b-1 border-gray-800",
                 tableHead: "font-bold",
