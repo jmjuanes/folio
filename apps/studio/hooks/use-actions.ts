@@ -69,7 +69,7 @@ export const useActions = (): ActionDispatcher => {
                     title: "Delete Board",
                     message: `Are you sure you want to delete the board "${payload.name}"? This action cannot be undone.`,
                     confirmText: "Delete",
-                    onConfirm: () => {
+                    callback: () => {
                         return client.deleteDocument(COLLECTIONS.BOARD, payload.id)
                             .then(() => {
                                 // if the deleted board is the current one, redirect to the home page
