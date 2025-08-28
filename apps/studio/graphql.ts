@@ -36,8 +36,8 @@ export const GET_DOCUMENT_QUERY = `
 
 // @description mutation to create a new document
 export const ADD_DOCUMENT_MUTATION = `
-    mutation Add($collection: String!, $id: String!, $attributes: Any, $data: String) {
-        addDocument(collection: $collection, id: $id, attributes: $attributes, data: $data) {
+    mutation Add($collection: String!, $attributes: Any, $data: String) {
+        addDocument(collection: $collection, attributes: $attributes, data: $data) {
             id
         }
     }

@@ -1,28 +1,27 @@
 import React from "react";
 import { DrawingIcon } from "@josemi-icons/react";
-import { useClient } from "../contexts/client.tsx";
 import { useEventListener } from "../hooks/use-events.ts";
+import { useActions } from "../hooks/use-actions.ts";
 import { BoardCard } from "./board-card.tsx";
-import { GET_BOARDS_QUERY } from "../graphql.ts";
-import { EVENT_NAMES } from "../constants.ts";
+import { EVENT_NAMES, ACTIONS } from "../constants.ts";
 
 // export the boards list component
 export const Boards = (): React.JSX.Element => {
     const [ boards, setBoards ] = React.useState(null);
     const boardActionEventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
-    const client = useClient();
+    const dispatchAction = useActions();
 
     // update boards when the component is rendered
     React.useEffect(() => {
         setBoards(null);
-        client.graphql(GET_BOARDS_QUERY, {})
-            .then(response => {
-                setBoards(response?.data?.boards || []);
+        dispatchAction(ACTIONS.GET_RECENT_BOARDS, {})
+            .then(boards => {
+                setBoards(boards);
             })
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [ setBoards, client, boardActionEventData ]);
+    }, [ setBoards, boardActionEventData ]);
 
     return (
         <div className="mx-auto w-full max-w-2xl px-6 py-12">
@@ -46,9 +45,9 @@ export const Boards = (): React.JSX.Element => {
                 <div className="w-full grid grid-cols-3 gap-4">
                     {(boards || []).map(board => (
                         <BoardCard
-                            key={`board:${board._id}`}
-                            id={board._id}
-                            name={board.name || "Untitled"}
+                            key={`board:${board.id}`}
+                            id={board.id}
+                            name={board.attributes?.name || "Untitled"}
                         />
                     ))}
                 </div>

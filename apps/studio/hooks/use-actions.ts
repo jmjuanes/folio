@@ -6,8 +6,14 @@ import { useClient } from "../contexts/client.tsx";
 import { useRouter } from "../contexts/router.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
 import { BoardRenameDialog } from "../components/board-rename.tsx";
-import { CREATE_BOARD_MUTATION, DELETE_BOARD_MUTATION, UPDATE_BOARD_MUTATION } from "../graphql.ts";
-import { ACTIONS } from "../constants.ts";
+import { ACTIONS, COLLECTIONS } from "../constants.ts";
+import {
+    GET_DOCUMENT_QUERY,
+    ADD_DOCUMENT_MUTATION,
+    UPDATE_DOCUMENT_MUTATION,
+    DELETE_DOCUMENT_MUTATION,
+    LIST_DOCUMENTS_QUERY,
+} from "../graphql.ts";
 
 export type ActionDispatcher = (actionName: string, payload: any) => Promise<any>;
 
@@ -20,10 +26,43 @@ export const useActions = (): ActionDispatcher => {
     const [ hash, redirect ] = useRouter();
 
     const actions = React.useMemo(() => ({
-        [ACTIONS.CREATE_BOARD]: async () => {
-            return client.graphql(CREATE_BOARD_MUTATION, { content: {} })
+        [ACTIONS.GET_BOARD]: async (payload: any) => {
+            return Promise.resolve(null)
+                .then(() => {
+                    return client.graphql(GET_DOCUMENT_QUERY, {
+                        collection: COLLECTIONS.BOARD,
+                        id: payload.id,
+                    });
+                })
                 .then(response => {
-                    redirect("b/" + response.data.createBoard._id);
+                    return response?.data?.getDocument || null;
+                });
+        },
+        [ACTIONS.GET_RECENT_BOARDS]: async () => {
+            return Promise.resolve(null)
+                .then(() => {
+                    return client.graphql(LIST_DOCUMENTS_QUERY, {
+                        collection: COLLECTIONS.BOARD,
+                    });
+                })
+                .then(response => {
+                    return response?.data?.listDocuments || [];
+                });
+        },
+        [ACTIONS.CREATE_BOARD]: async () => {
+            return Promise.resolve(null)
+                .then(() => {
+                    return client.graphql(ADD_DOCUMENT_MUTATION, {
+                        collection: COLLECTIONS.BOARD,
+                        attributes: {
+                            name: "Untitled",
+                            preview: null,
+                        },
+                        data: JSON.stringify({}),
+                    });
+                })
+                .then(response => {
+                    redirect("b/" + response.data.addDocument.id);
                 })
                 .catch(error => {
                     toaster.error(error?.message || "An error occurred while creating the board.");
@@ -32,13 +71,17 @@ export const useActions = (): ActionDispatcher => {
         [ACTIONS.IMPORT_BOARD]: async () => {
             return loadFromJson().
                 then(boardData => {
-                    return client.graphql(CREATE_BOARD_MUTATION, {
-                        name: boardData?.title || "Untitled",
-                        content: boardData || {},
+                    return client.graphql(ADD_DOCUMENT_MUTATION, {
+                        collection: COLLECTIONS.BOARD,
+                        attributes: {
+                            name: boardData?.title || "Untitled",
+                            preview: null,
+                        },
+                        data: JSON.stringify(boardData || {}),
                     });
                 })
                 .then(response => {
-                    redirect("b/" + response.data.createBoard._id);
+                    redirect("b/" + response.data.addDocument.id);
                 })
                 .catch(error => {
                     toaster.error(error?.message || "An error occurred while creating the board.");
@@ -51,7 +94,13 @@ export const useActions = (): ActionDispatcher => {
                     message: `Are you sure you want to delete the board "${payload.name}"? This action cannot be undone.`,
                     confirmText: "Delete",
                     onConfirm: () => {
-                        client.graphql(DELETE_BOARD_MUTATION, { id: payload.id })
+                        return Promise.resolve(null)
+                            .then(() => {
+                                return client.graphql(DELETE_DOCUMENT_MUTATION, {
+                                    collection: COLLECTIONS.BOARD,
+                                    id: payload.id,
+                                });
+                            })
                             .then(() => {
                                 // if the deleted board is the current one, redirect to the home page
                                 if (payload.id === hash) {
@@ -68,7 +117,12 @@ export const useActions = (): ActionDispatcher => {
             });
         },
         [ACTIONS.UPDATE_BOARD]: async (payload: any) => {
-            return client.graphql(UPDATE_BOARD_MUTATION, payload);
+            return client.graphql(UPDATE_DOCUMENT_MUTATION, {
+                collection: COLLECTIONS.BOARD,
+                id: payload.id,
+                attributes: payload.attributes,
+                data: payload.data,
+            });
         },
         [ACTIONS.SHOW_RENAME_BOARD_DIALOG]: async (payload: any) => {
             return new Promise((resolve) => {
@@ -82,7 +136,6 @@ export const useActions = (): ActionDispatcher => {
                 });
             });
         },
-
     }), [ hash ]);
 
     // return a callback method to dispatch an action

@@ -4,11 +4,9 @@ import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useActions } from "../hooks/use-actions.ts";
 import { useEventListener } from "../hooks/use-events.ts";
-import { useClient } from "../contexts/client.tsx";
 import { BoardCard } from "./board-card.tsx";
 import { getGreetingMessage } from "../utils/dates.ts";
 import { ACTIONS, EVENT_NAMES } from "../constants.ts";
-import { GET_BOARDS_QUERY } from "../graphql.ts";
 
 // @description render recent boards
 const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
@@ -22,9 +20,9 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
         <div className="w-full grid grid-cols-3 gap-4">
             {(boards || []).slice(0, maxRecentBoards || 6).map(board => (
                 <BoardCard
-                    key={board._id}
-                    id={board._id}
-                    board={board.name}
+                    key={board.id}
+                    id={board.id}
+                    name={board.attributes?.name || "Untitled"}
                 />
             ))}
         </div>
@@ -33,7 +31,6 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
 
 // @description home view component
 export const Home = (): React.JSX.Element => {
-    const client = useClient();
     const dispatchAction = useActions();
     const boardActionEventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
     const [ boards, setBoards ] = React.useState<any[]>(null);
@@ -51,14 +48,12 @@ export const Home = (): React.JSX.Element => {
     // update boards when the event is triggered
     React.useEffect(() => {
         setBoards(null);
-        client.graphql(GET_BOARDS_QUERY, {})
-            .then(response => {
-                setBoards(response?.data?.boards || []);
-            })
+        dispatchAction(ACTIONS.GET_RECENT_BOARDS, {})
+            .then(boards => setBoards(boards))
             .catch(error => {
                 console.error("Error fetching boards:", error);
             });
-    }, [ setBoards, client, boardActionEventData ]);
+    }, [ setBoards, boardActionEventData ]);
 
     return (
         <Centered className="min-h-full bg-white">
