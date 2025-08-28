@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocalStorage } from "react-use";
 import { useApi } from "../hooks/use-api.ts";
+import { COLLECTIONS } from "../constants.ts";
 
 export type Client = {
     token: string;
@@ -8,6 +9,11 @@ export type Client = {
     login: (credentials: any) => Promise<void>;
     logout: () => void;
     graphql: (query: string, variables?: any) => Promise<any>;
+    documents: (collection: COLLECTIONS) => Promise<any[]>;
+    addDocument: (collection: COLLECTIONS, payload: any) => Promise<any>;
+    getDocument: (collection: COLLECTIONS, id: string) => Promise<any>;
+    updateDocument: (collection: COLLECTIONS, id: string, payload: any) => Promise<any>;
+    deleteDocument: (collection: COLLECTIONS, id: string) => Promise<any>;
 };
 
 // main client context
@@ -41,6 +47,21 @@ export const ClientProvider = ({ sessionKey = "", children }): React.JSX.Element
         },
         graphql: (query, variables) => {
             return api("POST", "/_graphql", { query, variables });
+        },
+        documents: (collection: COLLECTIONS) => {
+            return api("GET", `/_documents/${collection}`);
+        },
+        addDocument: (collection: COLLECTIONS, payload: any = {}) => {
+            return api("POST", `/_documents/${collection}`, payload);
+        },
+        getDocument: (collection: COLLECTIONS, id: string) => {
+            return api("GET", `/_documents/${collection}/${id}`);
+        },
+        updateDocument: (collection: COLLECTIONS, id: string, payload: any = {}) => {
+            return api("PATCH", `/_documents/${collection}/${id}`, payload);
+        },
+        deleteDocument: (collection: COLLECTIONS, id: string) => {
+            return api("DELETE", `/_documents/${collection}/${id}`);
         },
     }), [token, setToken, removeToken]);
 
