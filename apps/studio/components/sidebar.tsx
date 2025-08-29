@@ -199,7 +199,7 @@ export const Sidebar = (): React.JSX.Element => {
 
     // group boards by the updated_at field
     const groups = React.useMemo(() => {
-        return boards ? groupByDate(boards, "updated_at") : [];
+        return groupByDate(boards || [], "updated_at");
     }, [ boards, boards?.length ]);
 
     return (
