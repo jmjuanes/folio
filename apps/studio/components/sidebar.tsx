@@ -56,7 +56,7 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
     const dispatchAction = useActions();
 
     const title = props.board?.attributes?.name || "Untitled";
-    const active = hash === `#b/${props.board.id}`;
+    const active = hash === `b/${props.board.id}`;
 
     // when clicking on the action item, open the actions menu
     // and position it below the clicked item

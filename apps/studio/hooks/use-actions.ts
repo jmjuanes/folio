@@ -73,7 +73,7 @@ export const useActions = (): ActionDispatcher => {
                         return client.deleteDocument(COLLECTIONS.BOARD, payload.id)
                             .then(() => {
                                 // if the deleted board is the current one, redirect to the home page
-                                if (payload.id === hash) {
+                                if (`b/${payload.id}` === hash) {
                                     redirect("");
                                 }
                                 toaster.success("Board deleted successfully.");
