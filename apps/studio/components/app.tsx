@@ -2,7 +2,6 @@ import React from "react";
 import { useRouter, Route, Switch } from "../contexts/router.tsx";
 import { Sidebar } from "./sidebar.tsx";
 import { Home } from "./home.tsx";
-import { Boards } from "./boards.tsx";
 import { BoardEditor } from "./board-editor.tsx";
 import { NotFound } from "./not-found.tsx";
 
@@ -15,9 +14,6 @@ export const App = (): React.JSX.Element => {
             <Switch>
                 <Route test={/^(|home)$/} render={() => (
                     <Home />
-                )} />
-                <Route test={/^boards$/} render={() => (
-                    <Boards />
                 )} />
                 <Route test={/^b\/\w+$/} render={() => (
                     <BoardEditor
