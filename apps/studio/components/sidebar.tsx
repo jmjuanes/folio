@@ -226,6 +226,15 @@ export const Sidebar = (): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
+                            }}
+                            collapsed={collapsed}
+                            href="#"
+                            icon="home"
+                            text="Home"
+                        />
+                        <ActionButton
+                            onClick={(event: React.SyntheticEvent) => {
+                                event.stopPropagation();
                                 dispatchAction(ACTIONS.CREATE_BOARD, {})
                             }}
                             collapsed={collapsed}
@@ -240,16 +249,6 @@ export const Sidebar = (): React.JSX.Element => {
                             collapsed={collapsed}
                             icon="upload"
                             text="Import board from file"
-                        />
-                        <Separator />
-                        <ActionButton
-                            onClick={(event: React.SyntheticEvent) => {
-                                event.stopPropagation();
-                            }}
-                            collapsed={collapsed}
-                            href="#"
-                            icon="home"
-                            text="Home"
                         />
                     </div>
                     {!collapsed && groups.today.length > 0 && (
