@@ -7,17 +7,6 @@ const GraphQlAnyType = new graphql.GraphQLScalarType({
 	serialize: (value: any) => value,
 });
 
-// declare the primary user type
-const userType = new graphql.GraphQLObjectType({
-    name: "User",
-    fields: {
-        name: {
-            type: graphql.GraphQLString,
-            description: "the unique identifier of the user",
-        },
-    },
-}) as graphql.GraphQLObjectType;
-
 // generic document type
 const DocumentType = new graphql.GraphQLObjectType({
     name: "Document",
@@ -50,13 +39,6 @@ export const schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
         name: "Query",
         fields: {
-            user: {
-                type: userType,
-                description: "retrieve the information about the logged-in user",
-                resolve: async (source, args, context) => {
-                    return context.auth.getUser(context.username);
-                },
-            },
             listDocuments: {
                 type: new graphql.GraphQLList(DocumentType),
                 description: "retrieve all documents of the specified collection",
