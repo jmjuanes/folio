@@ -5,24 +5,22 @@ import { useAppState } from "../../contexts/app-state.tsx";
 import { NotFound } from "../not-found.tsx";
 
 export const BoardRoute = (props: any): React.JSX.Element => {
+    const isFirstUpdate = React.useRef(true);
     const [ initialData, setInitialData ] = React.useState<any>(null);
     const [ exists, setExists ] = React.useState<boolean>(null);
     const { app } = useAppState();
 
-    // const handleLibraryLoad = React.useCallback(() => {
-    //     return client.getUserLibrary().then(library => {
-    //         return library?.content || {};
-    //     });
-    // }, [props.id, client]);
-
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {
-        app.updateBoard(props.id, null, JSON.stringify(data));
+        app.updateBoard(props.id, null, JSON.stringify(data)).then(() => {
+            // if this is the first time that we have updated the document
+            // we have to perform a refresh of the user documents
+            if (isFirstUpdate.current) {
+                app.refresh();
+                isFirstUpdate.current = false;
+            }
+        });
     }, [ props.id, app ]);
-
-    // const handleLibraryChange = React.useCallback(data => {
-    //     return client.updateUserLibrary(data);
-    // }, [props.id, client]);
 
     // on mount, check if the board exists
     // it includes a little protection against rapid board entering/exit
