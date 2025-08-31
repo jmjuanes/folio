@@ -58,7 +58,7 @@ export const RenameDialog = ({ id, onClose }): React.JSX.Element => {
                 />
             </Dialog.Body>
             <Dialog.Footer>
-                <Button variant="secondary" onClick={props.onClose}>
+                <Button variant="secondary" onClick={onClose}>
                     <span>Cancel</span>
                 </Button>
                 <Button variant="primary" disabled={!isSubmitEnabled} onClick={handleSubmit}>
