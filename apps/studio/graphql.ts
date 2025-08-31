@@ -1,13 +1,3 @@
-// @deprecated
-// get information about the authenticated user
-export const GET_USER_QUERY = `
-    query GetUser {
-        user {
-            name
-        }
-    }
-`;
-
 // @description get a list of documents that matches the specified collection
 // @params collection the id of the collection (board, user)
 export const LIST_DOCUMENTS_QUERY = `
