@@ -21,25 +21,22 @@ export const createAccessTokenAuth = async (config: Config): Promise<AuthContext
     info(`Use '${accessToken}' to login.`);
 
     return {
-        authenticate: async (requestBody: any): Promise<User|null> => {
+        authenticate: async (requestBody: any): Promise<string|null> => {
             if (requestBody?.token && requestBody.token === accessToken) {
-                return {
-                    username: username,
-                };
+                return username;
             }
             // authentication not valid
             return null;
         },
         getUser: async (username: string): Promise<User|null> => {
-            return {
+            return Promise.resolve({
                 username: username,
                 name: username,
                 display_name: config.user_display_name || username,
                 avatar_url: config.user_avatar_url || null,
                 initials: (config.user_display_name || username)[0].toUpperCase(),
                 color: "#000000",
-            };
-            return null;
+            });
         },
     };
 };

@@ -12,6 +12,7 @@ export const HTTP_CODES: Record<string,number> = {
 
 export const API_ERROR_MESSAGES = {
     NOT_FOUND: "resource not found",
+    NOT_IMPLEMENTED: "this method has not been implemented yet",
     METHOD_NOT_ALLOWED: "method not allowed",
     INTERNAL_SERVER_ERROR: "internal server error",
     AUTHENTICATION_REQUIRED: "authentication required to access this resource",

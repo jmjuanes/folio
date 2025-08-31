@@ -4,7 +4,7 @@ import { createLogger } from "../utils/logger.ts";
 import { API_ERROR_MESSAGES, HTTP_CODES } from "../constants.ts";
 import type { ExtendedContext } from "../types/custom.ts";
 import type { Config } from "../config.ts";
-import type { User } from "../types/user.ts";
+import type { TokenPayload } from "../types/authentication.ts";
 
 const log = createLogger("folio:route:login");
 export const loginRouter = new Router();
@@ -21,8 +21,8 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
     // pass the request body object to the authenticate method
     // it should return the user information of the user, or null
     try {
-        const payload: User|null = await ctx.state.auth.authenticate(ctx.request.body);
-        if (!payload) {
+        const username: string|null = await ctx.state.auth.authenticate(ctx.request.body);
+        if (!username) {
             return ctx.error(HTTP_CODES.UNAUTHORIZED, API_ERROR_MESSAGES.INVALID_TOKEN);
         }
 
@@ -34,8 +34,8 @@ loginRouter.post("/", async (ctx: ExtendedContext) => {
                     secret: config?.jwt_token_secret,
                     expiration: config?.jwt_token_expiration,
                     payload: {
-                        username: payload.username,
-                    },
+                        username: username,
+                    } as TokenPayload,
                 }),
             },
         });

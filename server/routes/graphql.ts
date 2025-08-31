@@ -26,7 +26,7 @@ graphqlRouter.post("/", async (ctx: ExtendedContext) => {
             source: query || "",
             variableValues: variables,
             contextValue: {
-                username: ctx.state.username,
+                user: ctx.state.user,
                 store: ctx.state.store,
                 auth: ctx.state.auth,
             },
