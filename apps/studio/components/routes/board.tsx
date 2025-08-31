@@ -17,7 +17,7 @@ export const BoardRoute = (props: any): React.JSX.Element => {
 
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {
-        app.updateBoard(props.id, JSON.stringify(data));
+        app.updateBoard(props.id, null, JSON.stringify(data));
     }, [ props.id, app ]);
 
     // const handleLibraryChange = React.useCallback(data => {
