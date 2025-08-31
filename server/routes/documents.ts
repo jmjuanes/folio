@@ -1,11 +1,15 @@
 import Router from "@koa/router";
 import { uid } from "uid/secure";
 import { createLogger } from "../utils/logger.ts";
+import { authentication } from "../middlewares/authentication.ts";
 import { API_ERROR_MESSAGES, HTTP_CODES } from "../constants.ts";
 import type { ExtendedContext } from "../types/custom.ts";
 
 const log = createLogger("folio:route:documents");
 export const documentsRouter = new Router();
+
+// accessing documents routes requires authentication
+documentsRouter.use(authentication);
 
 // GET /
 documentsRouter.get("/", async (ctx: ExtendedContext) => {
