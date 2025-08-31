@@ -103,7 +103,7 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
                 console.error(error);
                 toaster.error(error?.message || "An error occurred while deleting the board.");
             });
-    }, [ props.board, setActionsMenuOpen, showConfirm, title, active, app ]);
+    }, [ props.board, setActionsMenuOpen, active, app ]);
 
     React.useEffect(() => {
         if (actionsMenuOpen) {
