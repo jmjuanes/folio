@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { renderIcon, DotsIcon } from "@josemi-icons/react";
 import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
 import { useDialog } from "folio-react/contexts/dialogs.jsx";
+import { useConfirm } from "folio-react/contexts/confirm.jsx";
 import { useConfiguration } from "../contexts/configuration.tsx";
 import { useAppState } from "../contexts/app-state.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
@@ -52,6 +53,7 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
     const { showDialog } = useDialog();
+    const { showConfirm } = useConfirm();
     const { app } = useAppState();
     const toaster = useToaster();
 
@@ -90,19 +92,26 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
     const handleBoardDelete = React.useCallback((event: React.SyntheticEvent) => {
         event.preventDefault();
         setActionsMenuOpen(false);
-        app.showConfirmToDeleteBoard(props.board.id)
-            .then(() => {
-                // if the deleted board is the current one, redirect to the home page
-                if (active) {
-                    app.openHome();
-                }
-                app.refresh();
-                toaster.success("Board deleted successfully.");
-            })
-            .catch(error => {
-                console.error(error);
-                toaster.error(error?.message || "An error occurred while deleting the board.");
-            });
+        showConfirm({
+            title: "Delete Board",
+            message: `Are you sure you want to delete this board? This action cannot be undone.`,
+            confirmText: "Delete",
+            callback: () => {
+                app.deleteBoard(boardId)
+                .then(() => {
+                    // if the deleted board is the current one, redirect to the home page
+                    if (active) {
+                        app.openHome();
+                    }
+                    app.refresh();
+                    toaster.success("Board deleted successfully.");
+                })
+                .catch(error => {
+                    console.error(error);
+                    toaster.error(error?.message || "An error occurred while deleting the board.");
+                });
+            },
+        });
     }, [ props.board, setActionsMenuOpen, active, app ]);
 
     React.useEffect(() => {
