@@ -6,8 +6,33 @@ import { useSession } from "./authentication.tsx";
 import { getCurrentHash } from "../utils/hash.ts";
 import { COLLECTIONS } from "../constants.ts";
 
+// application state type
+export type AppState = {
+    documents: {
+        boards: any[];
+    };
+    refresh: () => void;
+
+    // app routing
+    openHome: () => void;
+    openBoard: (boardId: string) => void;
+    isBoardOpen: (boardId: string) => boolean;
+
+    // create or import documents
+    createBoard: (initialData: any) => Promise<any>;
+    importBoard: () => Promise<any>;
+
+    // manipulating a document
+    getBoard: (boardId: string) => Promise<any>;
+    updateBoard: (boardId: string, attributes: any, data: string) => Promise<void>;
+    deleteBoard: (boardId: string) => Promise<void>;
+
+    // user and session management
+    logout: () => void;
+};
+
 // internal app state context
-const AppStateContext = React.createContext(null);
+const AppStateContext = React.createContext<{app: AppState, appVersion: number}>(null);
 
 // @description hook to use app state
 export const useAppState = () => {
