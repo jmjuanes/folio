@@ -2,9 +2,9 @@ import React from "react";
 import { FolderIcon, DrawingIcon, ClockIcon, ImageSlashIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
-import { useAppState } from "../contexts/app-state.tsx";
-import { getGreetingMessage } from "../utils/dates.ts";
-import { useToaster } from "../contexts/toaster.tsx";
+import { useAppState } from "../../contexts/app-state.tsx";
+import { getGreetingMessage } from "../../utils/dates.ts";
+import { useToaster } from "../../contexts/toaster.tsx";
 
 // @description board card component
 export const BoardCard = ({ id, attributes }): React.JSX.Element => (
@@ -43,8 +43,7 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
     </div>
 );
 
-// @description home view component
-export const Home = (): React.JSX.Element => {
+export const HomeRoute = (): React.JSX.Element => {
     const { app } = useAppState();
     const toaster = useToaster();
 

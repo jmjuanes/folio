@@ -1,8 +1,8 @@
 import React from "react";
 import { useRouter, Route, Switch } from "../contexts/router.tsx";
 import { Sidebar } from "./sidebar.tsx";
-import { Home } from "./home.tsx";
-import { Board } from "./board.tsx";
+import { HomeRoute } from "./routes/home.tsx";
+import { BoardRoute } from "./routes/board.tsx";
 import { NotFound } from "./not-found.tsx";
 
 export const App = (): React.JSX.Element => {
@@ -13,10 +13,10 @@ export const App = (): React.JSX.Element => {
             <Sidebar />
             <Switch>
                 <Route test={/^(|home)$/} render={() => (
-                    <Home />
+                    <HomeRoute />
                 )} />
                 <Route test={/^b\/\w+$/} render={() => (
-                    <Board
+                    <BoardRoute
                         key={hash}
                         id={hash.replace(/^b\//, "")}
                     />

@@ -1,10 +1,10 @@
 import React from "react";
 import { Editor } from "folio-react/components/editor.jsx";
 import { Loading } from "folio-react/components/loading.jsx";
-import { useAppState } from "../contexts/app-state.tsx";
-import { NotFound } from "./not-found.tsx";
+import { useAppState } from "../../contexts/app-state.tsx";
+import { NotFound } from "../not-found.tsx";
 
-export const Board = (props: any): React.JSX.Element => {
+export const BoardRoute = (props: any): React.JSX.Element => {
     const [ initialData, setInitialData ] = React.useState<any>(null);
     const [ exists, setExists ] = React.useState<boolean>(null);
     const { app } = useAppState();
