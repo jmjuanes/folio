@@ -241,7 +241,10 @@ export const Sidebar = (): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                dispatchAction(ACTIONS.CREATE_BOARD, {})
+                                app.createBoard().then((board: any) => {
+                                    app.openBoard(board.id);
+                                    app.refresh();
+                                });
                             }}
                             collapsed={collapsed}
                             icon="plus"
@@ -250,7 +253,10 @@ export const Sidebar = (): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                dispatchAction(ACTIONS.IMPORT_BOARD, {})
+                                app.importBoard().then((board: any) => {
+                                    app.openBoard(board.id);
+                                    app.refresh();
+                                });
                             }}
                             collapsed={collapsed}
                             icon="upload"

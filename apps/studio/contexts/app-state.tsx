@@ -15,7 +15,7 @@ export const useAppState = () => {
 
 // @description app state provider
 export const AppStateProvider = ({ children }): React.JSX.Element => {
-    const [ appVersion, incrementAppVersion ] = React.useReducer<number>((x: number): number => x + 1, 0);
+    const [ appVersion, incrementAppVersion ] = React.useReducer((x: number): number => x + 1, 0);
     const session = useSession();
     const app = React.useRef({}).current;
     const api = useApi(session.token as string);
@@ -45,7 +45,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
             isBoardOpen: (boardId: string) => {
                 return hash === `b/${boardId}`;
             },
-            createBoard: async (initialData?: any = {}) => {
+            createBoard: async (initialData: any = {}) => {
                 const response = await api("POST", `/_documents/${COLLECTIONS.BOARD}`, {
                     attributes: {
                         name: initialData?.title || "Untitled",
