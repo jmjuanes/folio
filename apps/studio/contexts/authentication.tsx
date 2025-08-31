@@ -1,50 +1,58 @@
 import React from "react";
+import { useLocalStorage } from "react-use";
 import { Loading } from "folio-react/components/loading.jsx";
-import { useClient } from "./client.tsx";
+import { useApi } from "../hooks/use-api.ts";
 import { Login } from "../components/login.tsx";
-import { GET_USER_QUERY } from "../graphql.ts";
 
-// contains the information about the authenticated user
-export type AuthenticatedUser = {
-    name: string;
+const SESSION_KEY = "folio-session";
+
+// contains the information about the Session
+export type Session = {
+    token: string;
+    destroy: () => void;
 };
 
-// the authentication context saves information about the current
-// authenticated user
-export const AuthenticationContext = React.createContext<AuthenticatedUser|null>(null);
+// the authentication context stores the 
+export const AuthenticationContext = React.createContext<Session|null>(null);
 
-// @description get the information about the current authenticated user
-export const useAuthenticatedUser = (): AuthenticatedUser|null => {
+// hook to get the information about the current session
+export const useSession = (): Session|null => {
     return React.useContext(AuthenticationContext);
 };
 
 // @description provider component for the authentication context
 export const AuthenticationProvider = ({ children }) => {
-    const [user, setUser] = React.useState<AuthenticatedUser|null>(null);
-    const client = useClient();
+    const [ token, setToken, removeToken ] = useLocalStorage(SESSION_KEY);
+    const [ sessionValid, setSessionValid ] = React.useState<Boolean>(false);
+    const api = useApi();
 
+    // hook to validate session
     React.useEffect(() => {
-        setUser(null);
-        if (client.token) {
-            client.graphql(GET_USER_QUERY, {})
-                .then(response => {
-                    return setUser(response?.data?.user || null);
-                })
-                .catch(response => {
-                    console.error("Failed to fetch user data: ", response);
-                    client.logout();
-                });
+        // setSessionValid(false);
+        if (token) {
+            // TODO: we have to perform a query to the api to check if the session is valid
+            setSessionValid(true);
         }
-    }, [client.token]);
+    }, [ token ]);
 
     // if token is not set, the user is not authenticated, so we have to display
     // the login screen
-    if (!client.token) {
-        return <Login />;
+    if (!token) {
+        return (
+            <Login
+                onLogin={(credentials: any): Promise<void> => {
+                    return api("POST", "/_login", credentials).then(response => {
+                        if (response?.data?.token) {
+                            setToken(response.data.token);
+                        }
+                    });
+                }}
+            />
+        );
     }
 
-    // if the user is not authenticated, do not render the children
-    if (!user) {
+    // if the session has not been validated, display a loading screen
+    if (!sessionValid) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <Loading />
@@ -53,7 +61,7 @@ export const AuthenticationProvider = ({ children }) => {
     }
 
     return (
-        <AuthenticationContext.Provider value={user}>
+        <AuthenticationContext.Provider value={{ token, destroy: removeToken }}>
             {children}
         </AuthenticationContext.Provider>
     );

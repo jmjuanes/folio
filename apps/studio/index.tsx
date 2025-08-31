@@ -7,22 +7,23 @@ import { ClientProvider } from "./contexts/client.tsx";
 import { AuthenticationProvider } from "./contexts/authentication.tsx";
 import { RouterProvider } from "./contexts/router.tsx";
 import { ToasterProvider } from "./contexts/toaster.tsx";
+import { AppStateProvider } from "./contexts/app-state.tsx";
 import { App } from "./components/app.tsx";
 
 createRoot(document.getElementById("root")).render((
     <ToasterProvider>
-        <ClientProvider>
-            <ConfigurationProvider>
-                <AuthenticationProvider>
-                    <RouterProvider>
-                        <DialogsProvider>
-                            <ConfirmProvider>
+        <ConfigurationProvider>
+            <AuthenticationProvider>
+                <RouterProvider>
+                    <DialogsProvider>
+                        <ConfirmProvider>
+                            <AppStateProvider>
                                 <App />
-                            </ConfirmProvider>
-                        </DialogsProvider>
-                    </RouterProvider>
-                </AuthenticationProvider>
-            </ConfigurationProvider>
-        </ClientProvider>
+                            </AppStateProvider>
+                        </ConfirmProvider>
+                    </DialogsProvider>
+                </RouterProvider>
+            </AuthenticationProvider>
+        </ConfigurationProvider>
     </ToasterProvider>
 ));

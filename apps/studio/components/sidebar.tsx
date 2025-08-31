@@ -4,13 +4,12 @@ import { useToggle } from "react-use";
 import classNames from "classnames";
 import { renderIcon, DotsIcon } from "@josemi-icons/react";
 import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
-import { useRouter } from "../contexts/router.tsx";
-import { useClient } from "../contexts/client.tsx";
+import { useDialog } from "folio-react/contexts/dialogs.jsx";
 import { useConfiguration } from "../contexts/configuration.tsx";
-import { useActions } from "../hooks/use-actions.ts";
-import { useEventListener } from "../hooks/use-events.ts";
+import { useAppState } from "../contexts/app-state.tsx";
+import { useToaster } from "../contexts/toaster.tsx";
+import { RenameDialog } from "./dialogs/rename.tsx";
 import { groupByDate } from "../utils/dates.ts";
-import { EVENT_NAMES, ACTIONS } from "../constants.ts";
 
 type ActionButtonProps = {
     href?: string;
@@ -52,11 +51,12 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
     const [ actionsMenuOpen, setActionsMenuOpen ] = React.useState(false);
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
-    const [ hash ] = useRouter();
-    const dispatchAction = useActions();
+    const { showDialog } = useDialog();
+    const { app } = useAppState();
+    const toaster = useToaster();
 
     const title = props.board?.attributes?.name || "Untitled";
-    const active = hash === `b/${props.board.id}`;
+    const active = app.isBoardOpen(props.board?.id);
 
     // when clicking on the action item, open the actions menu
     // and position it below the clicked item
@@ -77,22 +77,33 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
     const handleBoardRename = React.useCallback((event: React.SyntheticEvent) => {
         event.preventDefault();
         setActionsMenuOpen(false);
-        dispatchAction(ACTIONS.SHOW_RENAME_BOARD_DIALOG, {
-            id: props.board.id,
-            attributes: props.board.attributes,
+        showDialog({
+            component: ({ onClose }) => (
+                <RenameDialog id={props.board.id} onClose={onClose} />
+            ),
+            dialogClassName: "w-full max-w-sm",
         });
-    }, [ props.board, setActionsMenuOpen ]);
+    }, [ props.board, setActionsMenuOpen, showDialog ]);
 
     // listener to handle board deletion
     // it will close the actions menu and call the onDelete callback if provided
     const handleBoardDelete = React.useCallback((event: React.SyntheticEvent) => {
         event.preventDefault();
         setActionsMenuOpen(false);
-        dispatchAction(ACTIONS.DELETE_BOARD, {
-            id: props.board.id,
-            attributes: props.board.attributes,
-        });
-    }, [ props.board, setActionsMenuOpen ]);
+        app.showConfirmToDeleteBoard(props.board.id)
+            .then(() => {
+                // if the deleted board is the current one, redirect to the home page
+                if (active) {
+                    app.openHome();
+                }
+                app.refresh();
+                toaster.success("Board deleted successfully.");
+            })
+            .catch(error => {
+                console.error(error);
+                toaster.error(error?.message || "An error occurred while deleting the board.");
+            });
+    }, [ props.board, setActionsMenuOpen, showConfirm, title, active, app ]);
 
     React.useEffect(() => {
         if (actionsMenuOpen) {
@@ -167,28 +178,14 @@ const Separator = (): React.JSX.Element => (
 
 // export the sidebar component
 export const Sidebar = (): React.JSX.Element => {
-    const [ boards, setBoards ] = React.useState<any[]>(null);
-    const eventData = useEventListener<any>(EVENT_NAMES.BOARD_ACTION, null);
-    const dispatchAction = useActions();
+    const { app } = useAppState();
     const [ collapsed, toggleCollapsed ] = useToggle(false);
-    const client = useClient();
     const websiteConfig = useConfiguration();
     const sidebarClass = classNames({
         "h-full bg-gray-50 shrink-0 flex flex-col justify-between border-r-1 border-gray-200": true,
         "w-16 cursor-e-resize": collapsed,
         "w-64": !collapsed,
     });
-
-    // listener to update the boards of the user
-    React.useEffect(() => {
-        if (!collapsed) {
-            dispatchAction(ACTIONS.GET_RECENT_BOARDS, {})
-                .then(boards => setBoards(boards))
-                .catch(error => {
-                    console.error("Error fetching boards:", error);
-                });
-        }
-    }, [ collapsed, eventData?.date, dispatchAction ]);
 
     // note that this event will not be triggered if the sidebar is collapsed
     const handleToggleCollapsed = React.useCallback(() => {
@@ -199,8 +196,8 @@ export const Sidebar = (): React.JSX.Element => {
 
     // group boards by the updated_at field
     const groups = React.useMemo(() => {
-        return groupByDate(boards || [], "updated_at");
-    }, [ boards, boards?.length ]);
+        return groupByDate(app.documents?.boards || [], "updated_at");
+    }, [ app.documents?.boards ]);
 
     return (
         <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
@@ -287,7 +284,7 @@ export const Sidebar = (): React.JSX.Element => {
                 <ActionButton
                     onClick={(event: React.SyntheticEvent) => {
                         event.stopPropagation();
-                        client.logout();
+                        app.logout();
                     }}
                     collapsed={collapsed}
                     icon="logout"

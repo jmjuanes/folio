@@ -1,14 +1,12 @@
 import React from "react";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { Centered } from "folio-react/components/ui/centered.jsx";
-import { Client, useClient } from "../contexts/client.tsx";
 import { useConfiguration, WebsiteEnvironment } from "../contexts/configuration.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
 
 // @description login component
-export const Login = (): React.JSX.Element => {
+export const Login = ({ onLogin }): React.JSX.Element => {
     const toaster = useToaster();
-    const client = useClient() as Client;
     const websiteConfig = useConfiguration();
     const [ loading, setLoading ] = React.useState<boolean>(false);
     const [ experimentalWarningChecked, setExperimentalWarningChecked ] = React.useState<boolean>(false);
@@ -25,10 +23,10 @@ export const Login = (): React.JSX.Element => {
         }
         // to enable the login button, all checks must be true
         return checks.every(check => check);
-    }, [websiteConfig, experimentalWarningChecked, demoWarningChecked]);
+    }, [ websiteConfig, experimentalWarningChecked, demoWarningChecked ]);
 
     const handleLogin = React.useCallback(() => {
-        if (!isLoginEnabled) {
+        if (!isLoginEnabled || !typeof onLogin === "function") {
             return;
         }
 
@@ -39,12 +37,12 @@ export const Login = (): React.JSX.Element => {
 
         // try to login with the provided access token
         setLoading(true);
-        client.login({ token: accessToken })
+        onLogin({ token: accessToken })
             .catch(error => {
                 toaster.error(error?.message || "An error occurred while logging in.");
             })
             .finally(() => setLoading(false));
-    }, [client, isLoginEnabled]);
+    }, [ onLogin, isLoginEnabled ]);
 
     return (
         <Centered className="h-screen">

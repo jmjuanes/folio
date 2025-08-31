@@ -1,12 +1,26 @@
 import React from "react";
-import { FolderIcon, DrawingIcon, ClockIcon } from "@josemi-icons/react";
+import { FolderIcon, DrawingIcon, ClockIcon, ImageSlashIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
-import { useActions } from "../hooks/use-actions.ts";
-import { useEventListener } from "../hooks/use-events.ts";
-import { BoardCard } from "./board-card.tsx";
+import { useAppState } from "../contexts/app-state.tsx";
 import { getGreetingMessage } from "../utils/dates.ts";
-import { ACTIONS, EVENT_NAMES } from "../constants.ts";
+import { useToaster } from "../contexts/toaster.tsx";
+
+// @description board card component
+export const BoardCard = ({ id, attributes }): React.JSX.Element => (
+    <a href={`#b/${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
+        <div className="w-full h-24 bg-gray-100 flex items-center justify-center">
+            <div className="flex text-gray-500 text-3xl">
+                <ImageSlashIcon />
+            </div>
+        </div>
+        <div className="flex items-center justify-between gap-2 w-full p-2">
+            <div className="font-medium text-sm w-32 truncate shrink-0 py-1">
+                {attributes?.name || "Untitled"}
+            </div>
+        </div>
+    </a>
+);
 
 // @description render recent boards
 const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
@@ -22,7 +36,7 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
                 <BoardCard
                     key={board.id}
                     id={board.id}
-                    name={board.attributes?.name || "Untitled"}
+                    attributes={board.attributes}
                 />
             ))}
         </div>
@@ -31,29 +45,34 @@ const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
 
 // @description home view component
 export const Home = (): React.JSX.Element => {
-    const dispatchAction = useActions();
-    const boardActionEventData = useEventListener(EVENT_NAMES.BOARD_ACTION, {});
-    const [ boards, setBoards ] = React.useState<any[]>(null);
+    const { app } = useAppState();
+    const toaster = useToaster();
 
     // handle board creation
     const handleBoardCreate = React.useCallback(() => {
-        dispatchAction(ACTIONS.CREATE_BOARD, {});
-    }, [ dispatchAction ]);
+        return app.createBoard({})
+            .then(newBoard => {
+                app.refresh();
+                app.openBoard(newBoard.id);
+            })
+            .catch(error => {
+                console.error(error);
+                toaster.error(error.message || "Error creating board.");
+            });
+    }, [ app ]);
 
     // handle board import
     const handleBoardImport = React.useCallback(() => {
-        dispatchAction(ACTIONS.IMPORT_BOARD, {});
-    }, [ dispatchAction ]);
-
-    // update boards when the event is triggered
-    React.useEffect(() => {
-        setBoards(null);
-        dispatchAction(ACTIONS.GET_RECENT_BOARDS, {})
-            .then(boards => setBoards(boards))
+        return app.importBoard()
+            .then(newBoard => {
+                app.refresh();
+                app.openBoard(newBoard.id);
+            })
             .catch(error => {
-                console.error("Error fetching boards:", error);
+                console.error(error);
+                toaster.error(error.message || "Error importing board");
             });
-    }, [ setBoards, boardActionEventData ]);
+    }, [ app ]);
 
     return (
         <Centered className="min-h-full bg-white">
@@ -81,9 +100,9 @@ export const Home = (): React.JSX.Element => {
                         </Button>
                     </div>
                 </div>
-                {boards && boards?.length > 0 && (
+                {app?.documents?.boards?.length > 0 && (
                     <RecentBoards
-                        boards={boards}
+                        boards={app.documents.boards}
                         maxRecentBoards={6}
                     />
                 )}

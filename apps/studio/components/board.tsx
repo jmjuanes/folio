@@ -1,16 +1,13 @@
 import React from "react";
 import { Editor } from "folio-react/components/editor.jsx";
 import { Loading } from "folio-react/components/loading.jsx";
-import { Client, useClient } from "../contexts/client.tsx";
-import { useActions } from "../hooks/use-actions.ts";
+import { useAppState } from "../contexts/app-state.tsx";
 import { NotFound } from "./not-found.tsx";
-import { ACTIONS } from "../constants.ts";
 
-export const BoardEditor = (props: any): React.JSX.Element => {
+export const Board = (props: any): React.JSX.Element => {
     const [ initialData, setInitialData ] = React.useState<any>(null);
     const [ exists, setExists ] = React.useState<boolean>(null);
-    const client = useClient() as Client;
-    const dispatchAction = useActions();
+    const { app } = useAppState();
 
     // const handleLibraryLoad = React.useCallback(() => {
     //     return client.getUserLibrary().then(library => {
@@ -20,14 +17,8 @@ export const BoardEditor = (props: any): React.JSX.Element => {
 
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {
-        return dispatchAction(ACTIONS.UPDATE_BOARD, {
-            id: props.id,
-            data: JSON.stringify(data),
-        });
-        // return client.graphql(UPDATE_BOARD_MUTATION, payload).catch(error => {
-        //     console.error("Error updating board:", error);
-        // });
-    }, [ props.id, client, dispatchAction ]);
+        app.updateBoard(props.id, JSON.stringify(data));
+    }, [ props.id, app ]);
 
     // const handleLibraryChange = React.useCallback(data => {
     //     return client.updateUserLibrary(data);
@@ -42,10 +33,10 @@ export const BoardEditor = (props: any): React.JSX.Element => {
                 return;
             }
             // check if board exists and get the initial data
-            dispatchAction(ACTIONS.GET_BOARD, { id: props.id })
-                .then(board => {
-                    if (board?.id) {
-                        setInitialData(board);
+            app.getBoard(props.id)
+                .then(boardData => {
+                    if (boardData?.id) {
+                        setInitialData(boardData);
                         setExists(true);
                     }
                     else {
@@ -64,7 +55,7 @@ export const BoardEditor = (props: any): React.JSX.Element => {
             window.clearTimeout(timer);
             didEnter = false;
         };
-    }, [props.id, client]);
+    }, [ props.id, app ]);
 
     // we do not know (yet) if the board exists, so we set it to null
     if (exists === null || initialData === null) {
