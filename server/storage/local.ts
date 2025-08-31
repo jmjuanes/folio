@@ -60,7 +60,7 @@ export const createLocalStore = async (config: Config): Promise<StoreContext> =>
     return {
         list: async (collection: Collections): Promise<Document[]> => {
             const results = await db.all(
-                `SELECT id,created_at,updated_at,attributes FROM ${TABLE} WHERE collection = ?`,
+                `SELECT id,created_at,updated_at,attributes FROM ${TABLE} WHERE collection = ? ORDER BY updated_at DESC`,
                 [ collection ],
             );
             return results.map((result: any): Document => {
