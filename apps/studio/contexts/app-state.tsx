@@ -28,6 +28,7 @@ export type AppState = {
     deleteBoard: (boardId: string) => Promise<void>;
 
     // user and session management
+    getUser: () => Promise<any>;
     logout: () => void;
 };
 
@@ -71,7 +72,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
             isBoardOpen: (boardId: string) => {
                 return getCurrentHash() === `#b/${boardId}`;
             },
-            createBoard: async (initialData: any = {}) => {
+            createBoard: (initialData: any = {}) => {
                 const response = await api("POST", `/_documents/${COLLECTIONS.BOARD}`, {
                     attributes: {
                         name: initialData?.title || "Untitled",
@@ -81,7 +82,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 });
                 return response.data || {};
             },
-            importBoard: async () => {
+            importBoard: () => {
                 return loadFromJson().then(boardData => {
                     return app.createBoard(boardData);
                 });
@@ -91,13 +92,18 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                     return response?.data || null;
                 });
             },
-            deleteBoard: async (id: string) => {
+            deleteBoard: (id: string) => {
                 return api("DELETE", `/_documents/${COLLECTIONS.BOARD}/${id}`);
             },
-            updateBoard: async (id: string, attributes?: any, data?: string) => {
+            updateBoard: (id: string, attributes?: any, data?: string) => {
                 return api("PATCH", `/_documents/${COLLECTIONS.BOARD}/${id}`, {
                     attributes: attributes,
                     data: data,
+                });
+            },
+            getUser: () => {
+                return api("GET", "/_user").then(response => {
+                    return response?.data || null;
                 });
             },
             logout: () => {

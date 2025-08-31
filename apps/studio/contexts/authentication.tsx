@@ -27,13 +27,18 @@ export const AuthenticationProvider = ({ children }) => {
     const api = useApi();
 
     // hook to validate session
+    // we have to perform a query to the api to check if the session is valid
     React.useEffect(() => {
-        // setSessionValid(false);
+        setSessionValid(false);
         if (token) {
-            // TODO: we have to perform a query to the api to check if the session is valid
-            setSessionValid(true);
+            api("GET", "/_user")
+                .then(() => setSessionValid(true))
+                .catch(error => {
+                    console.error(error);
+                    removeToken();
+                });
         }
-    }, [ token ]);
+    }, [ token, removeToken ]);
 
     // if token is not set, the user is not authenticated, so we have to display
     // the login screen
