@@ -27,13 +27,14 @@ export const RenameDialog = ({ id, onClose }): React.JSX.Element => {
         app.updateBoard(id, data)
             .then(() => {
                 onClose();
+                app.refresh();
                 toaster.success("Document renamed.");
             })
             .catch(error => {
                 console.error(error);
                 toaster.error(error?.message || "Error renaming board.");
             });
-    }, [ id, app, data, originalDocument ]);
+    }, [ id, app, data ]);
 
     // on mount fetch document details
     React.useEffect(() => {
