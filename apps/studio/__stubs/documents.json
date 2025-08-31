@@ -1,0 +1,122 @@
+[
+    {
+        "method": "GET",
+        "path": "/_documents/boards",
+        "secure": true,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": [
+                    {
+                        "id": "board1",
+                        "created_at": "2025-07-25 00:00:00",
+                        "updated_at": "2025-07-25 00:00:00",
+                        "attributes": {
+                            "name": "Board 1"
+                        }
+                    },
+                    {
+                        "id": "board5",
+                        "created_at": "2025-07-20 00:00:00",
+                        "updated_at": "2025-07-20 00:00:00",
+                        "attributes": {
+                            "name": "Board 5"
+                        }
+                    },
+                    {
+                        "id": "board2",
+                        "created_at": "2025-07-15 00:00:00",
+                        "updated_at": "2025-07-15 00:00:00",
+                        "attributes": {
+                            "name": "Board 2"
+                        }
+                    },
+                    {
+                        "id": "board4",
+                        "created_at": "2025-07-14 00:00:00",
+                        "updated_at": "2025-07-14 00:00:00",
+                        "attributes": {
+                            "name": "Board 4"
+                        }
+                    },
+                    {
+                        "id": "board3",
+                        "created_at": "2025-06-27 00:00:00",
+                        "updated_at": "2025-06-27 00:00:00",
+                        "attributes": {
+                            "name": "Board 3"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "method": "POST",
+        "path": "/_documents/boards",
+        "secure": true,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "id": "board1"
+                }
+            }
+        }
+    },
+    {
+        "method": "GET",
+        "path": "/_documents/boards/board1",
+        "secure": true,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "id": "board1",
+                    "created_at": "2025-06-27 00:00:00",
+                    "updated_at": "2025-06-27 00:00:00",
+                    "attributes": {
+                        "name": "Board 1"
+                    },
+                    "data": "{}"
+                }
+            }
+        }
+    },
+    {
+        "method": "PATCH",
+        "path": "/_documents/boards/board1",
+        "secure": true,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "id": "board1"
+                }
+            }
+        }
+    },
+    {
+        "method": "DELETE",
+        "path": "/_documents/boards/board1",
+        "secure": true,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "id": "board1"
+                }
+            }
+        }
+    }
+]

@@ -1,6 +1,7 @@
-import { Collections } from "../types/storage.ts";
+import { Collections } from "../types/collection.ts";
 import type { Config } from "../config.ts";
-import type { StoreContext, Document, DocumentData } from "../types/storage.ts";
+import type { Document, Attributes } from "../types/collection.ts";
+import type { StoreContext } from "../types/storage.ts";
 
 // create an instance of a store
 export const createMemoryStore = async (config: Config): Promise<StoreContext> => {
@@ -8,37 +9,45 @@ export const createMemoryStore = async (config: Config): Promise<StoreContext> =
 
     // return api to access to the memory storage
     return {
-        all: async (collection: Collections): Promise<Document[]> => {
+        list: async (collection: Collections): Promise<Document[]> => {
             return storage.filter(document => {
-                return document._collection === collection;
+                return document.collection === collection;
             });
         },
         get: async (collection: Collections, id: string): Promise<Document> => {
             return storage.find(document => {
-                return document._collection === collection && document._id === id;
+                return document.collection === collection && document.id === id;
             });
         },
-        add: async (collection: Collections, id: string, data: DocumentData = {}): Promise<void> => {
+        add: async (collection: Collections, id: string, attributes?: Attributes, data?: string): Promise<void> => {
             storage.push({
-                _id: id,
-                _collection: collection,
-                _created_at: new Date().toISOString(),
-                _updated_at: new Date().toISOString(),
-                ...data,
+                id: id,
+                collection: collection,
+                owner: null,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                attributes: attributes || {},
+                data: data || "",
             });
         },
-        set: async (collection: Collections, id: string, data: DocumentData = {}): Promise<void> => {
+        update: async (collection: Collections, id: string, attributes?: Attributes, data?: string): Promise<void> => {
             const document = storage.find(document => {
-                return document._collection === collection && document._id === id;
+                return document.collection === collection && document.id === id;
             });
             if (document) {
-                Object.assign(document, data);
-                document._updated_at = new Date().toISOString();
+                if (typeof attributes === "object" && !!attributes) {
+                    document.attributes = attributes;
+                }
+                if (typeof data === "string") {
+                    document.data = data;
+                }
+                // change the updated_at date
+                document.updated_at = new Date().toISOString();
             }
         },
         delete: async (collection: Collections, id: string): Promise<void> => {
             const index = storage.findIndex(document => {
-                return document._id === id && document._collection === collection;
+                return document.id === id && document.collection === collection;
             });
             if (index > -1) {
                 storage.splice(index, 1);
