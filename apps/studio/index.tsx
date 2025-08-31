@@ -13,15 +13,15 @@ createRoot(document.getElementById("root")).render((
     <ToasterProvider>
         <ConfigurationProvider>
             <AuthenticationProvider>
-                <AppStateProvider>
-                    <RouterProvider>
+                <RouterProvider>
+                    <AppStateProvider>
                         <DialogsProvider>
                             <ConfirmProvider>
                                 <App />
                             </ConfirmProvider>
                         </DialogsProvider>
-                    </RouterProvider>
-                </AppStateProvider>
+                    </AppStateProvider>
+                </RouterProvider>
             </AuthenticationProvider>
         </ConfigurationProvider>
     </ToasterProvider>
