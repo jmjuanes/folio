@@ -83,7 +83,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                         message: `Are you sure you want to delete this board? This action cannot be undone.`,
                         confirmText: "Delete",
                         callback: () => {
-                            app.deleteBoard(props.board.id)
+                            app.deleteBoard(boardId)
                                 .then(() => resolve())
                                 .catch(error => reject(error));
                         },
