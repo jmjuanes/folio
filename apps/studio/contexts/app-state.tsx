@@ -3,6 +3,7 @@ import { loadFromJson } from "folio-react/lib/json.js";
 import { useApi } from "../hooks/use-api.ts";
 import { useRouter } from "./router.tsx";
 import { useSession } from "./authentication.tsx";
+import { getCurrentHash } from "../utils/hash.ts";
 import { COLLECTIONS } from "../constants.ts";
 
 // internal app state context
@@ -30,8 +31,8 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
         });
     }, [ api, incrementAppVersion ]);
 
-    // assign app actions
-    React.useEffect(() => {
+    // initialize app actions
+    if (!app.refresh) {
         Object.assign(app, {
             refresh: () => {
                 fetchUserDocuments();
@@ -43,7 +44,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 redirect(`#b/${boardId}`);
             },
             isBoardOpen: (boardId: string) => {
-                return hash === `b/${boardId}`;
+                return getCurrentHash() === `#b/${boardId}`;
             },
             createBoard: async (initialData: any = {}) => {
                 const response = await api("POST", `/_documents/${COLLECTIONS.BOARD}`, {
@@ -80,7 +81,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 session.destroy();
             },
         });
-    }, [ api, fetchUserDocuments, hash ]);
+    }
 
     // when the app is mounted, fetch documents of the logged-in user
     React.useEffect(() => {

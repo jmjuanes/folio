@@ -12,13 +12,13 @@ export const App = (): React.JSX.Element => {
         <div className="fixed top-0 left-0 h-full w-full bg-white text-gray-800 flex">
             <Sidebar />
             <Switch>
-                <Route test={/^(|home)$/} render={() => (
+                <Route test={/^#(|home)$/} render={() => (
                     <HomeRoute />
                 )} />
-                <Route test={/^b\/\w+$/} render={() => (
+                <Route test={/^#b\/\w+$/} render={() => (
                     <BoardRoute
                         key={hash}
-                        id={hash.replace(/^b\//, "")}
+                        id={hash.replace(/^#b\//, "")}
                     />
                 )} />
                 <Route test="*" render={() => (
