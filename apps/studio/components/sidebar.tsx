@@ -97,7 +97,7 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
             message: `Are you sure you want to delete this board? This action cannot be undone.`,
             confirmText: "Delete",
             callback: () => {
-                app.deleteBoard(boardId)
+                app.deleteBoard(props.board.id)
                 .then(() => {
                     // if the deleted board is the current one, redirect to the home page
                     if (active) {
