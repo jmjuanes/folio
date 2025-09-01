@@ -26,7 +26,7 @@ export const Login = ({ onLogin }): React.JSX.Element => {
     }, [ websiteConfig, experimentalWarningChecked, demoWarningChecked ]);
 
     const handleLogin = React.useCallback(() => {
-        if (!isLoginEnabled || !typeof onLogin === "function") {
+        if (!isLoginEnabled || typeof onLogin !== "function") {
             return;
         }
 
