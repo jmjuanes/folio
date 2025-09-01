@@ -1,18 +1,16 @@
 // @description list of available collections
-export enum Collections {
+export enum Collection {
     BOARD = "board",
 };
 
-// @description type for the agnostic attributes object
-export type Attributes = Record<string, any>;
-
 // @description main document 
 export type Document = {
-    collection?: string,
+    collection?: Collection,
     owner?: string,
     id: string,
     created_at: string,
     updated_at: string,
-    attributes?: Attributes,
+    name?: string,
+    thumbnail?: string,
     data?: string,
 };
