@@ -1,0 +1,19 @@
+[
+    {
+        "method": "GET",
+        "path": "/_user",
+        "secure": true,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "username": "folio",
+                    "name": "folio",
+                    "display_name": "Folio User"
+                }
+            }
+        }
+    }
+]

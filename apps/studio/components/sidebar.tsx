@@ -241,7 +241,7 @@ export const Sidebar = (): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                app.createBoard().then((board: any) => {
+                                app.createBoard({}).then((board: any) => {
                                     app.openBoard(board.id);
                                     app.refresh();
                                 });

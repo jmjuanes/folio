@@ -11,7 +11,7 @@ const rejectResponse = (response: any): Promise<Error> => {
     return Promise.reject(new Error("An error occurred while processing the request."));
 };
 
-export const useApi = (token: string): ApiClient => {
+export const useApi = (token?: string): ApiClient => {
     return React.useCallback<ApiClient>((method: string, path: string, data?: any): Promise<any> => {
         // construct the URL based on the base URL and path
         const options: RequestInit = {

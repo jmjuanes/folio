@@ -19,6 +19,7 @@ export default {
     resolve: {
         alias: {
             "folio-react": path.resolve("../../folio-react/"),
+            "folio-server": path.resolve("../../server/"),
         },
         extensions: [".tsx", ".ts", ".js", ".jsx"],
     },

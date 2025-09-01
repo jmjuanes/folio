@@ -6,10 +6,12 @@ import { useSession } from "./authentication.tsx";
 import { getCurrentHash } from "../utils/hash.ts";
 import { COLLECTIONS } from "../constants.ts";
 
+import type { User } from "folio-server/types/user.ts";
+
 // application state type
 export type AppState = {
     documents: {
-        boards: any[];
+        boards?: any[];
     };
     refresh: () => void;
 
@@ -19,15 +21,16 @@ export type AppState = {
     isBoardOpen: (boardId: string) => boolean;
 
     // create or import documents
-    createBoard: (initialData: any) => Promise<any>;
+    createBoard: (initialData?: any) => Promise<any>;
     importBoard: () => Promise<any>;
 
     // manipulating a document
     getBoard: (boardId: string) => Promise<any>;
-    updateBoard: (boardId: string, attributes: any, data: string) => Promise<void>;
+    updateBoard: (boardId: string, attributes?: any, data?: string) => Promise<void>;
     deleteBoard: (boardId: string) => Promise<void>;
 
     // user and session management
+    getUser: () => Promise<User | null>;
     logout: () => void;
 };
 
@@ -43,7 +46,7 @@ export const useAppState = () => {
 export const AppStateProvider = ({ children }): React.JSX.Element => {
     const [ appVersion, incrementAppVersion ] = React.useReducer((x: number): number => x + 1, 0);
     const session = useSession();
-    const app = React.useRef({}).current;
+    const app = React.useRef({}).current as AppState;
     const api = useApi(session.token as string);
     const [ hash, redirect ] = useRouter();
 
@@ -71,7 +74,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
             isBoardOpen: (boardId: string) => {
                 return getCurrentHash() === `#b/${boardId}`;
             },
-            createBoard: async (initialData: any = {}) => {
+            createBoard: async (initialData?: any) => {
                 const response = await api("POST", `/_documents/${COLLECTIONS.BOARD}`, {
                     attributes: {
                         name: initialData?.title || "Untitled",
@@ -81,7 +84,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 });
                 return response.data || {};
             },
-            importBoard: async () => {
+            importBoard: () => {
                 return loadFromJson().then(boardData => {
                     return app.createBoard(boardData);
                 });
@@ -91,13 +94,18 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                     return response?.data || null;
                 });
             },
-            deleteBoard: async (id: string) => {
+            deleteBoard: (id: string) => {
                 return api("DELETE", `/_documents/${COLLECTIONS.BOARD}/${id}`);
             },
-            updateBoard: async (id: string, attributes?: any, data?: string) => {
+            updateBoard: (id: string, attributes?: any, data?: string) => {
                 return api("PATCH", `/_documents/${COLLECTIONS.BOARD}/${id}`, {
                     attributes: attributes,
                     data: data,
+                });
+            },
+            getUser: () => {
+                return api("GET", "/_user").then(response => {
+                    return response?.data as User || null;
                 });
             },
             logout: () => {

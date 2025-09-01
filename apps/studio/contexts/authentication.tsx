@@ -22,18 +22,23 @@ export const useSession = (): Session|null => {
 
 // @description provider component for the authentication context
 export const AuthenticationProvider = ({ children }) => {
-    const [ token, setToken, removeToken ] = useLocalStorage(SESSION_KEY);
+    const [ token, setToken, removeToken ] = useLocalStorage<string>(SESSION_KEY);
     const [ sessionValid, setSessionValid ] = React.useState<Boolean>(false);
-    const api = useApi();
+    const api = useApi(token as string);
 
     // hook to validate session
+    // we have to perform a query to the api to check if the session is valid
     React.useEffect(() => {
-        // setSessionValid(false);
+        setSessionValid(false);
         if (token) {
-            // TODO: we have to perform a query to the api to check if the session is valid
-            setSessionValid(true);
+            api("GET", "/_user")
+                .then(() => setSessionValid(true))
+                .catch(error => {
+                    console.error(error);
+                    removeToken();
+                });
         }
-    }, [ token ]);
+    }, [ token, removeToken, api ]);
 
     // if token is not set, the user is not authenticated, so we have to display
     // the login screen
