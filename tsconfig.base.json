@@ -1,7 +1,12 @@
 {
     "compilerOptions": {
         "paths": {
-            "folio-react/*": ["./folio-react/*"]
+            "folio-react/*": ["./folio-react/*"],
+            "folio-server/*": ["./server/*"]
         }
-    }
+    },
+    "exclude": [
+        "node_modules/**/*",
+        "**/*.js"
+    ]
 }
