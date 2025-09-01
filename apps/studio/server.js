@@ -1,6 +1,7 @@
 import bodyParser from "body-parser";
 import graphqlResponses from "./__stubs/graphql.json" with { type: "json" };
 import documentsRules from "./__stubs/documents.json" with { type: "json" };
+import userRules from "./__stubs/user.json" with { type: "json" };
 
 // fake rules for the API
 const rules = [
@@ -74,6 +75,7 @@ const rules = [
         },
     },
     ...documentsRules,
+    ...userRules,
 ];
 
 export const createServer = () => {

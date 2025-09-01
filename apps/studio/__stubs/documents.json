@@ -1,7 +1,7 @@
 [
     {
         "method": "GET",
-        "path": "/_documents/boards",
+        "path": "/_documents/board",
         "secure": true,
         "headers": {
             "Content-Type": "application/json"
@@ -55,7 +55,7 @@
     },
     {
         "method": "POST",
-        "path": "/_documents/boards",
+        "path": "/_documents/board",
         "secure": true,
         "headers": {
             "Content-Type": "application/json"
@@ -70,7 +70,7 @@
     },
     {
         "method": "GET",
-        "path": "/_documents/boards/board1",
+        "path": "/_documents/board/board1",
         "secure": true,
         "headers": {
             "Content-Type": "application/json"
@@ -91,7 +91,7 @@
     },
     {
         "method": "PATCH",
-        "path": "/_documents/boards/board1",
+        "path": "/_documents/board/board1",
         "secure": true,
         "headers": {
             "Content-Type": "application/json"
@@ -106,7 +106,7 @@
     },
     {
         "method": "DELETE",
-        "path": "/_documents/boards/board1",
+        "path": "/_documents/board/board1",
         "secure": true,
         "headers": {
             "Content-Type": "application/json"
