@@ -12,7 +12,7 @@ export const BoardRoute = (props: any): React.JSX.Element => {
 
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {
-        app.updateBoard(props.id, null, JSON.stringify(data)).then(() => {
+        app.updateDocument(props.id, { data: JSON.stringify(data) }).then(() => {
             // if this is the first time that we have updated the document
             // we have to perform a refresh of the user documents
             if (isFirstUpdate.current) {
@@ -31,7 +31,7 @@ export const BoardRoute = (props: any): React.JSX.Element => {
                 return;
             }
             // check if board exists and get the initial data
-            app.getBoard(props.id)
+            app.getDocument(props.id)
                 .then(boardData => {
                     if (boardData?.id) {
                         setInitialData(boardData);

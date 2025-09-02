@@ -3,13 +3,14 @@ import { createPortal } from "react-dom";
 import { useToggle } from "react-use";
 import classNames from "classnames";
 import { renderIcon, DotsIcon } from "@josemi-icons/react";
+import { Collection } from "folio-server/types/document.ts";
 import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
 import { useDialog } from "folio-react/contexts/dialogs.jsx";
 import { useConfirm } from "folio-react/contexts/confirm.jsx";
 import { useConfiguration } from "../contexts/configuration.tsx";
 import { useAppState } from "../contexts/app-state.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
-import { RenameDialog } from "./dialogs/rename.tsx";
+import { RenameDocumentDialog } from "./dialogs/rename-document.tsx";
 import { groupByDate } from "../utils/dates.ts";
 
 type ActionButtonProps = {
@@ -41,14 +42,12 @@ const ActionButton = ({ href, icon, text = "", collapsed = false, onClick }: Act
     );
 };
 
-type BoardButtonProps = {
-    board: {
-        id: string,
-        attributes: any,
-    },
+type DocumentButtonProps = {
+    id: string;
+    name: string;
 };
 
-const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
+const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
     const [ actionsMenuOpen, setActionsMenuOpen ] = React.useState(false);
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
@@ -57,8 +56,8 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
     const { app } = useAppState();
     const toaster = useToaster();
 
-    const title = props.board?.attributes?.name || "Untitled";
-    const active = app.isBoardOpen(props.board?.id);
+    const title = props?.name || "Untitled";
+    const active = app.isBoardOpen(props?.id);
 
     // when clicking on the action item, open the actions menu
     // and position it below the clicked item
@@ -74,45 +73,45 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
         }
     }, [ setActionsMenuOpen ]);
 
-    // listener to handle board renaming
+    // listener to handle renaming the document
     // it will close the actions menu and call the onRename callback if provided
-    const handleBoardRename = React.useCallback((event: React.SyntheticEvent) => {
+    const handleRename = React.useCallback((event: React.SyntheticEvent) => {
         event.preventDefault();
         setActionsMenuOpen(false);
         showDialog({
             component: ({ onClose }) => (
-                <RenameDialog id={props.board.id} onClose={onClose} />
+                <RenameDocumentDialog id={props.id} currentName={props.name} onClose={onClose} />
             ),
             dialogClassName: "w-full max-w-sm",
         });
-    }, [ props.board, setActionsMenuOpen, showDialog ]);
+    }, [ props.id, setActionsMenuOpen, showDialog ]);
 
-    // listener to handle board deletion
+    // listener to handle deletion of a document
     // it will close the actions menu and call the onDelete callback if provided
-    const handleBoardDelete = React.useCallback((event: React.SyntheticEvent) => {
+    const handleDelete = React.useCallback((event: React.SyntheticEvent) => {
         event.preventDefault();
         setActionsMenuOpen(false);
         showConfirm({
-            title: "Delete Board",
-            message: `Are you sure you want to delete this board? This action cannot be undone.`,
+            title: "Delete Document",
+            message: `Are you sure you want to delete this document? This action cannot be undone.`,
             confirmText: "Delete",
             callback: () => {
-                app.deleteBoard(props.board.id)
+                app.deleteDocument(props.id)
                 .then(() => {
                     // if the deleted board is the current one, redirect to the home page
                     if (active) {
                         app.openHome();
                     }
                     app.refresh();
-                    toaster.success("Board deleted successfully.");
+                    toaster.success("Document deleted successfully.");
                 })
                 .catch(error => {
                     console.error(error);
-                    toaster.error(error?.message || "An error occurred while deleting the board.");
+                    toaster.error(error?.message || "An error occurred while deleting the document.");
                 });
             },
         });
-    }, [ props.board, setActionsMenuOpen, active, app ]);
+    }, [ props.id, setActionsMenuOpen, active, app ]);
 
     React.useEffect(() => {
         if (actionsMenuOpen) {
@@ -135,7 +134,7 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
         "hover:bg-gray-200 text-gray-600 hover:text-gray-900": !active,
     });
     return (
-        <a href={`#b/${props.board.id}`} className={itemClass} title={title}>
+        <a href={`#b/${props.id}`} className={itemClass} title={title}>
             <div className="cursor-pointer flex items-center gap-2 overflow-hidden w-full">
                 <div className="text-lg flex items-center text-gray-600 shrink-0">
                     {renderIcon("file")}
@@ -152,11 +151,11 @@ const BoardButton = (props: BoardButtonProps): React.JSX.Element => {
             {actionsMenuOpen && createPortal([
                 <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                 <Dropdown key="sidebar:board:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={position.current}>
-                    <Dropdown.Item as="div" onClick={handleBoardRename}>
+                    <Dropdown.Item as="div" onClick={handleRename}>
                         <Dropdown.Icon icon="edit" />
                         <span>Rename</span>
                     </Dropdown.Item>
-                    <Dropdown.Item as="div" onClick={handleBoardDelete}>
+                    <Dropdown.Item as="div" onClick={handleDelete}>
                         <Dropdown.Icon icon="trash" />
                         <span>Delete</span>
                     </Dropdown.Item>
@@ -172,9 +171,10 @@ const Group = ({ title, items }): React.JSX.Element => (
             <div className="shrink-0">{title || ""}</div>
         </div>
         {(items || []).map(item => (
-            <BoardButton
-                key={`board:${item.id}`}
-                board={item}
+            <DocumentButton
+                key={`document:item:${item.id}`}
+                id={item.id}
+                name={item.name}
             />
         ))}
     </div>
@@ -205,8 +205,8 @@ export const Sidebar = (): React.JSX.Element => {
 
     // group boards by the updated_at field
     const groups = React.useMemo(() => {
-        return groupByDate(app.documents?.boards || [], "updated_at");
-    }, [ app.documents?.boards ]);
+        return groupByDate(app.documents || [], "updated_at");
+    }, [ app.documents ]);
 
     return (
         <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
@@ -241,7 +241,7 @@ export const Sidebar = (): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                app.createBoard({}).then((board: any) => {
+                                app.createDocument(Collection.BOARD, {}).then((board: any) => {
                                     app.openBoard(board.id);
                                     app.refresh();
                                 });
@@ -253,7 +253,7 @@ export const Sidebar = (): React.JSX.Element => {
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
                                 event.stopPropagation();
-                                app.importBoard().then((board: any) => {
+                                app.importDocument().then((board: any) => {
                                     app.openBoard(board.id);
                                     app.refresh();
                                 });
