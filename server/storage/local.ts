@@ -11,7 +11,7 @@ import type { Storage } from "../types/storage.ts";
 const { debug } = createLogger("folio:storage:local");
 
 const DB_PATH = "data/documents.db";
-const TABLE = "documents";
+const DOCUMENTS_TABLE = "documents";
 
 // create an instance of a store
 export const createLocalStore = async (config: Config): Promise<Storage> => {
@@ -32,7 +32,7 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
 
     // 3. create store table if it doesn't exist
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS ${TABLE} (
+        CREATE TABLE IF NOT EXISTS ${DOCUMENTS_TABLE} (
             collection TEXT NOT NULL,
             id TEXT NOT NULL,
             owner TEXT NOT NULL,
@@ -43,16 +43,16 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
             data TEXT,
             PRIMARY KEY (id)
         );
-        CREATE INDEX IF NOT EXISTS idx_${TABLE}_owner ON ${TABLE} (owner);
-        CREATE INDEX IF NOT EXISTS idx_${TABLE}_owner_id ON ${TABLE} (owner, id);
-        CREATE INDEX IF NOT EXISTS idx_${TABLE}_owner_collection ON ${TABLE} (owner, collection);
-        CREATE INDEX IF NOT EXISTS idx_${TABLE}_owner_id_collection ON ${TABLE} (owner, id, collection);
+        CREATE INDEX IF NOT EXISTS idx_${DOCUMENTS_TABLE}_owner ON ${DOCUMENTS_TABLE} (owner);
+        CREATE INDEX IF NOT EXISTS idx_${DOCUMENTS_TABLE}_owner_id ON ${DOCUMENTS_TABLE} (owner, id);
+        CREATE INDEX IF NOT EXISTS idx_${DOCUMENTS_TABLE}_owner_collection ON ${DOCUMENTS_TABLE} (owner, collection);
+        CREATE INDEX IF NOT EXISTS idx_${DOCUMENTS_TABLE}_owner_id_collection ON ${DOCUMENTS_TABLE} (owner, id, collection);
     `);
 
     // return api to access to the database
     return {
         // get all documents for an owner
-        all: async (owner: string, filter?: DocumentFilter): Promise<Document[]> => {
+        queryDocuments: async (owner: string, filter?: DocumentFilter): Promise<Document[]> => {
             const whereClauses = [`owner = ?`]; // always filter by owner
             const params: (string)[] = [ owner ]; // parameters for the query
 
@@ -64,15 +64,15 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
 
             // construct the final query
             const whereSQL = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
-            const sql = `SELECT id,owner,collection,created_at,updated_at,name,thumbnail FROM ${TABLE} ${whereSQL} ORDER BY updated_at DESC`;
+            const sql = `SELECT id,owner,collection,created_at,updated_at,name,thumbnail FROM ${DOCUMENTS_TABLE} ${whereSQL} ORDER BY updated_at DESC`;
             return await db.all(sql, params);
         },
 
-        get: async (owner: string, id: string): Promise<Document> => {
-            return await db.get(`SELECT * FROM ${TABLE} WHERE id = ? AND owner = ?`, [ id, owner ]);
+        getDocument: async (owner: string, id: string): Promise<Document> => {
+            return await db.get(`SELECT * FROM ${DOCUMENTS_TABLE} WHERE id = ? AND owner = ?`, [ id, owner ]);
         },
 
-        add: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
+        addDocument: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
             const collection = payload.collection as Collection;
             if (!collection) {
                 throw new Error("collection is required when creating a new document");
@@ -81,13 +81,13 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
                 throw new Error(`Invalid collection '${collection}', must be one of: ${Object.values(Collection).join(", ")}`);
             }
             await db.run(
-                `INSERT INTO ${TABLE} (owner, id, collection, name, thumbnail, data) VALUES (?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO ${DOCUMENTS_TABLE} (owner, id, collection, name, thumbnail, data) VALUES (?, ?, ?, ?, ?, ?)`,
                 [ owner, id, collection, payload.name || "Untitled", payload.thumbnail || "", payload.data || "" ],
             );
         },
 
-        update: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
-            const document = await db.get(`SELECT id FROM ${TABLE} WHERE id = ? AND owner = ?`, [ id, owner ]);
+        updateDocument: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
+            const document = await db.get(`SELECT id FROM ${DOCUMENTS_TABLE} WHERE id = ? AND owner = ?`, [ id, owner ]);
             if (!document) {
                 throw new Error(`Document with id '${id}' not found for owner '${owner}'`);
             }
@@ -105,13 +105,13 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
 
             // construct the final query
             if (setClauses.length > 1) {
-                const sql = `UPDATE ${TABLE} SET ${setClauses.join(", ")} WHERE id = ? AND owner = ?`;
+                const sql = `UPDATE ${DOCUMENTS_TABLE} SET ${setClauses.join(", ")} WHERE id = ? AND owner = ?`;
                 await db.run(sql, [...params, id, owner]);
             }
         },
 
-        delete: async (owner: string, id: string): Promise<void> => {
-            await db.run(`DELETE FROM ${TABLE} WHERE id = ? AND owner = ?`, [ id, owner ]);
+        deleteDocument: async (owner: string, id: string): Promise<void> => {
+            await db.run(`DELETE FROM ${DOCUMENTS_TABLE} WHERE id = ? AND owner = ?`, [ id, owner ]);
         },
     };
 };

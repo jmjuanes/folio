@@ -9,7 +9,7 @@ export const createMemoryStore = async (config: Config): Promise<Storage> => {
 
     // return api to access to the memory storage
     return {
-        all: async (owner: string, filter: DocumentFilter): Promise<Document[]> => {
+        queryDocuments: async (owner: string, filter: DocumentFilter): Promise<Document[]> => {
             return storage.filter(document => {
                 if (document.owner !== owner) {
                     return false;
@@ -23,12 +23,12 @@ export const createMemoryStore = async (config: Config): Promise<Storage> => {
                 return true; // no filter, return all documents for the owner
             });
         },
-        get: async (owner: string, id: string): Promise<Document> => {
+        getDocument: async (owner: string, id: string): Promise<Document> => {
             return storage.find(document => {
                 return document.owner === owner && document.id === id;
             });
         },
-        add: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
+        addDocument: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
             storage.push({
                 id: id,
                 collection: payload.collection as Collection,
@@ -40,7 +40,7 @@ export const createMemoryStore = async (config: Config): Promise<Storage> => {
                 data: payload.data || "",
             });
         },
-        update: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
+        updateDocument: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
             const document = storage.find(document => {
                 return document.owner === owner && document.id === id;
             });
@@ -54,7 +54,7 @@ export const createMemoryStore = async (config: Config): Promise<Storage> => {
                 document.updated_at = new Date().toISOString();
             }
         },
-        delete: async (owner: string, id: string): Promise<void> => {
+        deleteDocument: async (owner: string, id: string): Promise<void> => {
             const index = storage.findIndex(document => {
                 return document.id === id && document.owner === owner;
             });

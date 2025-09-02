@@ -1,5 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
 import Router from "@koa/router";
-import { uid } from "uid/secure";
 import { createLogger } from "../utils/logger.ts";
 import { authentication } from "../middlewares/authentication.ts";
 import { API_ERROR_MESSAGES, HTTP_CODES } from "../constants.ts";
@@ -17,7 +17,9 @@ documentsRouter.get("/", async (ctx: ExtendedContext) => {
     const filters = ctx.request.query || {} as DocumentFilter;
     const username = ctx.state.username as string;
     try {
-        const results = await ctx.state.store.all(username, filters);
+        const results = await ctx.state.store.queryDocuments(username, {
+            collection: filters.collection || null,
+        });
         return ctx.ok({
             data: results,
         });
@@ -32,8 +34,8 @@ documentsRouter.post("/", async (ctx: ExtendedContext) => {
     const username = ctx.state.username as string;
     const { collection, name, thumbnail, data } = ctx.request.body;
     try {
-        const newDocumentId = uid(20); // generate a unique ID for the object
-        await ctx.state.store.add(username, newDocumentId, { collection, name, thumbnail, data });
+        const newDocumentId = uuidv4(); // generate a unique ID for the object
+        await ctx.state.store.addDocument(username, newDocumentId, { collection, name, thumbnail, data });
         return ctx.ok({
             data: {
                 id: newDocumentId,
@@ -50,7 +52,7 @@ documentsRouter.get("/:id", async (ctx: ExtendedContext) => {
     const { id } = ctx.params;
     const username = ctx.state.username as string;
     try {
-        const result = await ctx.state.store.get(username, id);
+        const result = await ctx.state.store.getDocument(username, id);
         return ctx.ok({
             data: result,
         });
@@ -66,7 +68,7 @@ documentsRouter.patch("/:id", async (ctx: ExtendedContext) => {
     const { id } = ctx.params;
     const { name, thumbnail, data } = ctx.request.body;
     try {
-        await ctx.state.store.update(username, id, { name, thumbnail, data });
+        await ctx.state.store.updateDocument(username, id, { name, thumbnail, data });
         return ctx.ok({
             data: {
                 id: id,
@@ -83,7 +85,7 @@ documentsRouter.delete("/:id", async (ctx: ExtendedContext) => {
     const username = ctx.state.username as string;
     const { id } = ctx.params;
     try {
-        await ctx.state.store.delete(username, id);
+        await ctx.state.store.deleteDocument(username, id);
         return ctx.ok({
             data: {
                 id: id,
