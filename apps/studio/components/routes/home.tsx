@@ -1,4 +1,5 @@
 import React from "react";
+import { Collection } from "folio-server/types/document.ts";
 import { FolderIcon, DrawingIcon, ClockIcon, ImageSlashIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
@@ -6,8 +7,8 @@ import { useAppState } from "../../contexts/app-state.tsx";
 import { getGreetingMessage } from "../../utils/dates.ts";
 import { useToaster } from "../../contexts/toaster.tsx";
 
-// @description board card component
-export const BoardCard = ({ id, attributes }): React.JSX.Element => (
+// @description document card component
+export const DocumentCard = ({ id, name }): React.JSX.Element => (
     <a href={`#b/${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
         <div className="w-full h-24 bg-gray-100 flex items-center justify-center">
             <div className="flex text-gray-500 text-3xl">
@@ -16,27 +17,27 @@ export const BoardCard = ({ id, attributes }): React.JSX.Element => (
         </div>
         <div className="flex items-center justify-between gap-2 w-full p-2">
             <div className="font-medium text-sm w-32 truncate shrink-0 py-1">
-                {attributes?.name || "Untitled"}
+                {name || "Untitled"}
             </div>
         </div>
     </a>
 );
 
-// @description render recent boards
-const RecentBoards = ({ boards, maxRecentBoards }): React.JSX.Element => (
+// @description render recent documents
+const RecentDocuments = ({ documents, maxRecentDocuments }): React.JSX.Element => (
     <div className="mt-2 select-none">
         <div className="flex items-center gap-1 mb-3 text-gray-600">
             <div className="text-base flex">
                 <ClockIcon />
             </div>
-            <div className="text-xs font-bold">Your recent boards</div>
+            <div className="text-xs font-bold">Your recent documents</div>
         </div>
         <div className="w-full grid grid-cols-3 gap-4">
-            {(boards || []).slice(0, maxRecentBoards || 6).map(board => (
-                <BoardCard
-                    key={board.id}
-                    id={board.id}
-                    attributes={board.attributes}
+            {(documents || []).slice(0, maxRecentDocuments || 6).map(documentItem => (
+                <DocumentCard
+                    key={documentItem.id}
+                    id={documentItem.id}
+                    name={documentItem.name}
                 />
             ))}
         </div>
@@ -47,9 +48,9 @@ export const HomeRoute = (): React.JSX.Element => {
     const { app } = useAppState();
     const toaster = useToaster();
 
-    // handle board creation
-    const handleBoardCreate = React.useCallback(() => {
-        return app.createBoard({})
+    // handle document creation
+    const handleDocumentCreate = React.useCallback(() => {
+        return app.createDocument(Collection.BOARD, {})
             .then(newBoard => {
                 app.refresh();
                 app.openBoard(newBoard.id);
@@ -60,9 +61,9 @@ export const HomeRoute = (): React.JSX.Element => {
             });
     }, [ app ]);
 
-    // handle board import
-    const handleBoardImport = React.useCallback(() => {
-        return app.importBoard()
+    // handle document import
+    const handleDocumentImport = React.useCallback(() => {
+        return app.importDocument()
             .then(newBoard => {
                 app.refresh();
                 app.openBoard(newBoard.id);
@@ -85,13 +86,13 @@ export const HomeRoute = (): React.JSX.Element => {
                         <span>Use the sidebar to navigate through your boards, or create a new one to get started.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button className="w-full" onClick={() => handleBoardCreate()}>
+                        <Button className="w-full" onClick={() => handleDocumentCreate()}>
                             <div className="flex items-center text-lg">
                                 <DrawingIcon />
                             </div>
                             <div className="font-medium">Create new</div>
                         </Button>
-                        <Button variant="secondary" className="w-full" onClick={() => handleBoardImport()}>
+                        <Button variant="secondary" className="w-full" onClick={() => handleDocumentImport()}>
                             <div className="flex items-center text-lg">
                                 <FolderIcon />
                             </div>
@@ -99,10 +100,10 @@ export const HomeRoute = (): React.JSX.Element => {
                         </Button>
                     </div>
                 </div>
-                {app?.documents?.boards?.length > 0 && (
-                    <RecentBoards
-                        boards={app.documents.boards}
-                        maxRecentBoards={6}
+                {app?.documents?.length > 0 && (
+                    <RecentDocuments
+                        documents={app.documents}
+                        maxRecentDocuments={6}
                     />
                 )}
             </div>

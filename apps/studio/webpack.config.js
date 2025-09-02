@@ -54,6 +54,7 @@ export default {
                 include: [
                     path.resolve("."),
                     path.resolve("../../folio-react"),
+                    path.resolve("../../server"),
                 ],
                 exclude: /(node_modules|www)/,
                 loader: "babel-loader",

@@ -1,53 +1,62 @@
-import { Collections } from "../types/collection.ts";
+import { Collection } from "../types/document.ts";
 import type { Config } from "../config.ts";
-import type { Document, Attributes } from "../types/collection.ts";
-import type { StoreContext } from "../types/storage.ts";
+import type { Document, DocumentFilter, DocumentPayload } from "../types/document.ts";
+import type { Storage } from "../types/storage.ts";
 
 // create an instance of a store
-export const createMemoryStore = async (config: Config): Promise<StoreContext> => {
+export const createMemoryStore = async (config: Config): Promise<Storage> => {
     const storage: Document[] = [];
 
     // return api to access to the memory storage
     return {
-        list: async (collection: Collections): Promise<Document[]> => {
+        queryDocuments: async (owner: string, filter: DocumentFilter): Promise<Document[]> => {
             return storage.filter(document => {
-                return document.collection === collection;
+                if (document.owner !== owner) {
+                    return false;
+                }
+                // validate filters
+                if (filter && Object.keys(filter).length > 0) {
+                    return Object.keys(filter || {}).every(key => {
+                        return document[key] === filter[key];
+                    });
+                }
+                return true; // no filter, return all documents for the owner
             });
         },
-        get: async (collection: Collections, id: string): Promise<Document> => {
+        getDocument: async (owner: string, id: string): Promise<Document> => {
             return storage.find(document => {
-                return document.collection === collection && document.id === id;
+                return document.owner === owner && document.id === id;
             });
         },
-        add: async (collection: Collections, id: string, attributes?: Attributes, data?: string): Promise<void> => {
+        addDocument: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
             storage.push({
                 id: id,
-                collection: collection,
-                owner: null,
+                collection: payload.collection as Collection,
+                owner: owner,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
-                attributes: attributes || {},
-                data: data || "",
+                name: payload.name || "Untitled",
+                thumbnail: payload.thumbnail || "",
+                data: payload.data || "",
             });
         },
-        update: async (collection: Collections, id: string, attributes?: Attributes, data?: string): Promise<void> => {
+        updateDocument: async (owner: string, id: string, payload: DocumentPayload): Promise<void> => {
             const document = storage.find(document => {
-                return document.collection === collection && document.id === id;
+                return document.owner === owner && document.id === id;
             });
-            if (document) {
-                if (typeof attributes === "object" && !!attributes) {
-                    document.attributes = attributes;
-                }
-                if (typeof data === "string") {
-                    document.data = data;
-                }
+            if (document && payload) {
+                [ "name", "thumbnail", "data" ].forEach(field => {
+                    if (typeof payload[field] === "string") {
+                        document[field] = payload[field];
+                    }
+                });
                 // change the updated_at date
                 document.updated_at = new Date().toISOString();
             }
         },
-        delete: async (collection: Collections, id: string): Promise<void> => {
+        deleteDocument: async (owner: string, id: string): Promise<void> => {
             const index = storage.findIndex(document => {
-                return document.id === id && document.collection === collection;
+                return document.id === id && document.owner === owner;
             });
             if (index > -1) {
                 storage.splice(index, 1);
