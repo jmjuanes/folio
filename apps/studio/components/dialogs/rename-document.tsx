@@ -4,8 +4,8 @@ import { Dialog } from "folio-react/components/ui/dialog.jsx";
 import { Form } from "folio-react/components/form/index.jsx";
 import { FORM_OPTIONS } from "folio-react/constants.js";
 import { useFormData } from "folio-react/hooks/use-form-data.js";
-import { useAppState } from "../../contexts/app-state";
-import { useToaster } from "../../contexts/toaster";
+import { useAppState } from "../../contexts/app-state.tsx";
+import { useToaster } from "../../contexts/toaster.tsx";
 
 const fields = {
     name: {
@@ -16,15 +16,17 @@ const fields = {
 };
 
 // @description component to rename a document
-export const RenameDialog = ({ id, onClose }): React.JSX.Element => {
+export const RenameDocumentDialog = ({ id, currentName, onClose }): React.JSX.Element => {
     const { app } = useAppState();
     const toaster = useToaster();
-    const [ data, setData, resetData ] = useFormData({});
+    const [ data, setData ] = useFormData({
+        name: currentName || "Untitled",
+    });
     const isSubmitEnabled = !!data.name?.trim();
 
     // handle submit update board metadata
     const handleSubmit = React.useCallback(() => {
-        app.updateBoard(id, data)
+        app.updateDocument(id, data)
             .then(() => {
                 onClose();
                 app.refresh();
@@ -32,19 +34,19 @@ export const RenameDialog = ({ id, onClose }): React.JSX.Element => {
             })
             .catch(error => {
                 console.error(error);
-                toaster.error(error?.message || "Error renaming board.");
+                toaster.error(error?.message || "Error renaming document.");
             });
     }, [ id, app, data ]);
 
-    // on mount fetch document details
-    React.useEffect(() => {
-        app.getBoard(id).then(originalDocument => {
-            resetData({
-                ...originalDocument?.attributes,
-                name: originalDocument?.attributes?.name || "Untitled",
-            });
-        });
-    }, [ id ]);
+    // // on mount fetch document details
+    // React.useEffect(() => {
+    //     app.getBoard(id).then(originalDocument => {
+    //         resetData({
+    //             ...originalDocument?.attributes,
+    //             name: originalDocument?.attributes?.name || "Untitled",
+    //         });
+    //     });
+    // }, [ id ]);
 
     return (
         <React.Fragment>
