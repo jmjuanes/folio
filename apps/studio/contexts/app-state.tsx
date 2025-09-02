@@ -1,18 +1,18 @@
 import React from "react";
+import { Collection } from "folio-server/types/document.ts";
 import { loadFromJson } from "folio-react/lib/json.js";
 import { useApi } from "../hooks/use-api.ts";
 import { useRouter } from "./router.tsx";
 import { useSession } from "./authentication.tsx";
 import { getCurrentHash } from "../utils/hash.ts";
-import { COLLECTIONS } from "../constants.ts";
 
 import type { User } from "folio-server/types/user.ts";
+import type { Document, DocumentPayload } from "folio-server/types/document.ts";
 
 // application state type
 export type AppState = {
-    documents: {
-        boards?: any[];
-    };
+    documents: Document[],
+
     refresh: () => void;
 
     // app routing
@@ -21,13 +21,13 @@ export type AppState = {
     isBoardOpen: (boardId: string) => boolean;
 
     // create or import documents
-    createBoard: (initialData?: any) => Promise<any>;
-    importBoard: () => Promise<any>;
+    createDocument: (collection: Collection, initialData: any) => Promise<Document>;
+    importDocument: () => Promise<Document>;
 
     // manipulating a document
-    getBoard: (boardId: string) => Promise<any>;
-    updateBoard: (boardId: string, attributes?: any, data?: string) => Promise<void>;
-    deleteBoard: (boardId: string) => Promise<void>;
+    getDocument: (id: string) => Promise<Document | null>;
+    updateDocument: (id: string, payload: DocumentPayload) => Promise<Document>;
+    deleteDocument: (id: string) => Promise<Document>;
 
     // user and session management
     getUser: () => Promise<User | null>;
@@ -52,9 +52,9 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
 
     // internal method to fetch documents of the logged user
     const fetchUserDocuments = React.useCallback(() => {
-        app.documents = {}; // clean documents reference
-        api("GET", `/_documents/${COLLECTIONS.BOARD}`).then(response => {
-            app.documents.boards = response?.data || [];
+        app.documents = []; // clean documents reference
+        api("GET", `/_documents`).then(response => {
+            app.documents = response?.data || [];
             incrementAppVersion();
         });
     }, [ api, incrementAppVersion ]);
@@ -74,35 +74,34 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
             isBoardOpen: (boardId: string) => {
                 return getCurrentHash() === `#b/${boardId}`;
             },
-            createBoard: async (initialData?: any) => {
-                const response = await api("POST", `/_documents/${COLLECTIONS.BOARD}`, {
-                    attributes: {
-                        name: initialData?.title || "Untitled",
-                        thumbnail: null,
-                    },
+
+            createDocument: async (collection: Collection, initialData: any = {}) => {
+                const response = await api("POST", `/_documents`, {
+                    collection: collection,
+                    name: initialData?.title || "Untitled",
+                    thumbnail: null,
                     data: JSON.stringify(initialData || {}),
                 });
                 return response.data || {};
             },
-            importBoard: () => {
+            importDocument: () => {
                 return loadFromJson().then(boardData => {
-                    return app.createBoard(boardData);
+                    return app.createDocument(Collection.BOARD, boardData);
                 });
             },
-            getBoard: (id: string) => {
-                return api("GET", `/_documents/${COLLECTIONS.BOARD}/${id}`).then(response => {
+
+            getDocument: (id: string) => {
+                return api("GET", `/_documents/${id}`).then(response => {
                     return response?.data || null;
                 });
             },
-            deleteBoard: (id: string) => {
-                return api("DELETE", `/_documents/${COLLECTIONS.BOARD}/${id}`);
+            deleteDocument: (id: string) => {
+                return api("DELETE", `/_documents/${id}`);
             },
-            updateBoard: (id: string, attributes?: any, data?: string) => {
-                return api("PATCH", `/_documents/${COLLECTIONS.BOARD}/${id}`, {
-                    attributes: attributes,
-                    data: data,
-                });
+            updateDocument: (id: string, payload: DocumentPayload) => {
+                return api("PATCH", `/_documents/${id}`, payload);
             },
+
             getUser: () => {
                 return api("GET", "/_user").then(response => {
                     return response?.data as User || null;
