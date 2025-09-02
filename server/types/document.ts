@@ -14,3 +14,17 @@ export type Document = {
     thumbnail?: string,
     data?: string,
 };
+
+// declare document payload
+// this is the accepted payload when creating or updating a document
+export type DocumentPayload = {
+    collection?: Collection; // collection is only required when creating a new document
+    name?: string;
+    thumbnail?: string;
+    data?: string;
+};
+
+// accepted fields to filter documents
+export type DocumentFilter = {
+    collection?: Collection;
+};
