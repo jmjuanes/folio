@@ -12,10 +12,10 @@ import { staticContent } from "./middlewares/static.ts";
 import { loginRouter } from "./routes/login.ts";
 import { statusRouter } from "./routes/status.ts";
 import { configRouter } from "./routes/config.ts";
-import { graphqlRouter } from "./routes/graphql.ts";
+// import { graphqlRouter } from "./routes/graphql.ts";
 import { documentsRouter } from "./routes/documents.ts";
 import { userRouter } from "./routes/user.ts";
-import { developmentRouter } from "./routes/dev.ts";
+// import { developmentRouter } from "./routes/dev.ts";
 import { createLogger } from "./utils/logger.ts";
 import { WebsiteEnvironment, type Config } from "./config.ts";
 
@@ -102,12 +102,12 @@ export const startServer = async (config: Config): Promise<any> => {
     router.use("/_status", statusRouter.routes(), statusRouter.allowedMethods());
     router.use("/_documents", documentsRouter.routes(), documentsRouter.allowedMethods());
     router.use("/_user", userRouter.routes(), userRouter.allowedMethods());
-    router.use("/_graphql", graphqlRouter.routes(), graphqlRouter.allowedMethods());
+    // router.use("/_graphql", graphqlRouter.routes(), graphqlRouter.allowedMethods());
 
     // enable development route
-    if (config?.website_environment === WebsiteEnvironment.DEVELOPMENT) {
-        router.use("/_dev", developmentRouter.routes(), developmentRouter.allowedMethods());
-    }
+    // if (config?.website_environment === WebsiteEnvironment.DEVELOPMENT) {
+    //     router.use("/_dev", developmentRouter.routes(), developmentRouter.allowedMethods());
+    // }
 
     // register all routes
     app.use(router.routes());
