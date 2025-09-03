@@ -1,7 +1,7 @@
 import * as graphql from "graphql";
 import { v4 as uuidv4 } from "uuid";
 
-const DocumentType = new graphql.GraphQLObjectType({
+export const DocumentType = new graphql.GraphQLObjectType({
     name: "Document",
     fields: {
         owner: {
@@ -39,6 +39,36 @@ const DocumentType = new graphql.GraphQLObjectType({
     },
 }) as graphql.GraphQLObjectType;
 
+export const UserType = new graphql.GraphQLObjectType({
+    name: "User",
+    fields: {
+        username: {
+            type: graphql.GraphQLString,
+            description: "the unique username of the user",
+        },
+        name: {
+            type: graphql.GraphQLString,
+            description: "name of the user or 'username' if not defined",
+        },
+        display_name: {
+            type: graphql.GraphQLString,
+            description: "display name of the user or 'name' if not defined",
+        },
+        avatar_url: {
+            type: graphql.GraphQLString,
+            description: "link to the avatar image of the user",
+        },
+        initials: {
+            type: graphql.GraphQLString,
+            description: "initials of the user, used to generate an avatar if 'avatar_url' is not defined",
+        },
+        color: {
+            type: graphql.GraphQLString,
+            description: "color associated to the user, used to generate an avatar if 'avatar_url' is not defined",
+        },
+    },
+}) as graphql.GraphQLObjectType;
+
 // declare the full schema object
 export const schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
@@ -61,6 +91,7 @@ export const schema = new graphql.GraphQLSchema({
             },
             getDocument: {
                 type: DocumentType,
+                description: "retrieve a single document by ID",
                 args: {
                     id: {
                         type: graphql.GraphQLString,
@@ -68,6 +99,13 @@ export const schema = new graphql.GraphQLSchema({
                 },
                 resolve: async (source, args, context) => {
                     return await context.store.getDocument(context.username, args.id);
+                },
+            },
+            getUser: {
+                type: UserType,
+                description: "retrieve information about the authenticated user",
+                resolve: async (source, args, context) => {
+                    return await context.auth.getUser(context.username);
                 },
             },
         },
