@@ -1,10 +1,17 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
 import { loadFromJson } from "folio-react/lib/json.js";
-import { useApi } from "../hooks/use-api.ts";
+import { useClient } from "./client.tsx";
 import { useRouter } from "./router.tsx";
-import { useSession } from "./authentication.tsx";
 import { getCurrentHash } from "../utils/hash.ts";
+import {
+    QUERY_DOCUMENTS,
+    GET_DOCUMENT,
+    ADD_DOCUMENT,
+    UPDATE_DOCUMENT,
+    DELETE_DOCUMENT,
+    GET_USER,
+} from "../graphql.ts";
 
 import type { User } from "folio-server/types/user.ts";
 import type { Document, DocumentPayload } from "folio-server/types/document.ts";
@@ -45,19 +52,18 @@ export const useAppState = () => {
 // @description app state provider
 export const AppStateProvider = ({ children }): React.JSX.Element => {
     const [ appVersion, incrementAppVersion ] = React.useReducer((x: number): number => x + 1, 0);
-    const session = useSession();
     const app = React.useRef({}).current as AppState;
-    const api = useApi(session.token as string);
+    const client = useClient();
     const [ hash, redirect ] = useRouter();
 
     // internal method to fetch documents of the logged user
     const fetchUserDocuments = React.useCallback(() => {
         app.documents = []; // clean documents reference
-        api("GET", `/_documents`).then(response => {
-            app.documents = response?.data || [];
+        client.graphql(QUERY_DOCUMENTS, {}).then(response => {
+            app.documents = response?.queryDocuments || [];
             incrementAppVersion();
         });
-    }, [ api, incrementAppVersion ]);
+    }, [ client, incrementAppVersion ]);
 
     // initialize app actions
     if (!app.refresh) {
@@ -76,13 +82,13 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
             },
 
             createDocument: async (collection: Collection, initialData: any = {}) => {
-                const response = await api("POST", `/_documents`, {
+                const response = await client.graphql(ADD_DOCUMENT, {
                     collection: collection,
                     name: initialData?.title || "Untitled",
                     thumbnail: null,
                     data: JSON.stringify(initialData || {}),
                 });
-                return response.data || {};
+                return response?.addDocument || null;
             },
             importDocument: () => {
                 return loadFromJson().then(boardData => {
@@ -90,27 +96,36 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 });
             },
 
-            getDocument: (id: string) => {
-                return api("GET", `/_documents/${id}`).then(response => {
-                    return response?.data || null;
+            getDocument: async (documentId: string) => {
+                const response = await client.graphql(GET_DOCUMENT, {
+                    id: documentId,
                 });
+                return response?.getDocument || null;
             },
-            deleteDocument: (id: string) => {
-                return api("DELETE", `/_documents/${id}`);
+            deleteDocument: async (documentId: string) => {
+                const response = await client.graphql(DELETE_DOCUMENT, {
+                    id: documentId,
+                });
+                return response?.deleteDocument || null;
             },
-            updateDocument: (id: string, payload: DocumentPayload) => {
-                return api("PATCH", `/_documents/${id}`, payload);
+            updateDocument: async (documentId: string, documentPayload: DocumentPayload) => {
+                const response = await client.graphql(UPDATE_DOCUMENT, {
+                    id: documentId,
+                    name: documentPayload.name,
+                    thumbnail: documentPayload.thumbnail,
+                    data: documentPayload.data,
+                });
+                return response?.updateDocument || null;
             },
 
-            getUser: () => {
-                return api("GET", "/_user").then(response => {
-                    return response?.data as User || null;
-                });
+            getUser: async () => {
+                const response = await client.graphql(GET_USER, {});
+                return response?.getUser as User || null;
             },
             logout: () => {
                 // on logout, we just destroy the session. This will automatically
                 // display the login screen
-                session.destroy();
+                client.logout();
             },
         });
     }

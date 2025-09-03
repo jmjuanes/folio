@@ -1,6 +1,6 @@
 import React from "react";
 import { Loading } from "folio-react/components/loading.jsx";
-import { useApi } from "../hooks/use-api.ts";
+import { useClient } from "./client.tsx";
 
 export enum WebsiteEnvironment {
     DEVELOPMENT = "development",
@@ -25,19 +25,16 @@ export const useConfiguration = (): Configuration => {
 // @description configuration context provider
 export const ConfigurationProvider = ({ children }): React.JSX.Element => {
     const [ websiteConfig, setWebsiteConfig ] = React.useState<Configuration>(null);
-    const api = useApi();
+    const client = useClient();
 
     // on mount, fetch website configuration for the current environment
     React.useEffect(() => {
-        api("GET", "/_config")
-            .then(response => setWebsiteConfig(response.data))
-            .catch(response => {
-                console.error("Failed to fetch website configuration:", response);
+        client.config()
+            .then(configurationData => setWebsiteConfig(configurationData))
+            .catch(error => {
+                console.error("Failed to fetch website configuration:");
+                console.error(error);
             });
-        // TODO: we must handle errors when fetching website configuration
-        // api("GET", "/_config").then(response => {
-        //     setWebsiteConfig(response.data);
-        // });
     }, []);
 
     // if the website configuration is not yet loaded, we display a loading screen
