@@ -12,12 +12,9 @@ import { staticContent } from "./middlewares/static.ts";
 import { loginRouter } from "./routes/login.ts";
 import { statusRouter } from "./routes/status.ts";
 import { configRouter } from "./routes/config.ts";
-// import { graphqlRouter } from "./routes/graphql.ts";
-import { documentsRouter } from "./routes/documents.ts";
-import { userRouter } from "./routes/user.ts";
-// import { developmentRouter } from "./routes/dev.ts";
+import { graphqlRouter } from "./routes/graphql.ts";
 import { createLogger } from "./utils/logger.ts";
-import { WebsiteEnvironment, type Config } from "./config.ts";
+import type { Config } from "./config.ts";
 
 const DEFAULT_PORT = 8080;
 
@@ -100,14 +97,7 @@ export const startServer = async (config: Config): Promise<any> => {
     router.use("/_login", loginRouter.routes(), loginRouter.allowedMethods());
     router.use("/_config", configRouter.routes(), configRouter.allowedMethods());
     router.use("/_status", statusRouter.routes(), statusRouter.allowedMethods());
-    router.use("/_documents", documentsRouter.routes(), documentsRouter.allowedMethods());
-    router.use("/_user", userRouter.routes(), userRouter.allowedMethods());
-    // router.use("/_graphql", graphqlRouter.routes(), graphqlRouter.allowedMethods());
-
-    // enable development route
-    // if (config?.website_environment === WebsiteEnvironment.DEVELOPMENT) {
-    //     router.use("/_dev", developmentRouter.routes(), developmentRouter.allowedMethods());
-    // }
+    router.use("/_graphql", graphqlRouter.routes(), graphqlRouter.allowedMethods());
 
     // register all routes
     app.use(router.routes());
