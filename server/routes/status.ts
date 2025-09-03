@@ -7,6 +7,8 @@ export const statusRouter = new Router();
 // health check endpoint
 statusRouter.get("/", (ctx: ExtendedContext) => {
     ctx.ok({
-        message: "ok",
+        data: {
+            message: "ok",
+        },
     });
 });

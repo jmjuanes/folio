@@ -47,8 +47,8 @@ export const useApi = (token?: string): ApiClient => {
                 if (responseData.errors) {
                     return rejectResponse(responseData);
                 }
-                // return the response object to process
-                return responseData;
+                // return the response data object to process
+                return responseData?.data || null;
             });
     }, [token]);
 };

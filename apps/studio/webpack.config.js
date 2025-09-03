@@ -86,6 +86,7 @@ export default {
         }),
         new CopyWebpackPlugin({
             patterns: [
+                path.resolve("public/"),
                 path.resolve("../../node_modules/lowcss/low.css"),
                 {
                     from: path.resolve("../../node_modules/lowcss-forms/index.css"),
