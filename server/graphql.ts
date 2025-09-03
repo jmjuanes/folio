@@ -93,15 +93,11 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    const id = uuidv4(); // generate a unique ID for the object
-                    try {
-                        await context.store.addDocument(context.username, id, args || {});
-                    }
-                    catch (error) {
-                        console.error(error);
-                        throw new graphql.GraphQLError(error.message);
-                    }
-                    return { id: id };
+                    const newDocumentId = uuidv4(); // generate a unique ID for the object
+                    await context.store.addDocument(context.username, newDocumentId, args || {});
+                    return {
+                        id: newDocumentId,
+                    };
                 },
             },
             updateDocument: {
@@ -122,15 +118,10 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    try {
-                        await context.store.updateDocument(context.username, args.id, args || {});
-                    }
-                    catch (error) {
-                        // possible errors: document does not exist, user does not have permission to edit this document
-                        console.error(error);
-                        throw new graphql.GraphQLError(error.message);
-                    }
-                    return { id: args.id };
+                    await context.store.updateDocument(context.username, args.id, args || {});
+                    return {
+                        id: args.id,
+                    };
                 },
             },
             deleteDocument: {
@@ -142,15 +133,10 @@ export const schema = new graphql.GraphQLSchema({
                     },
                 },
                 resolve: async (source, args, context) => {
-                    try {
-                        await context.store.deleteDocument(context.username, args.id);
-                    }
-                    catch (error) {
-                        // possible errors: document does not exist, user does not have permission to delete this document
-                        console.error(error);
-                        throw new graphql.GraphQLError(error.message);
-                    }
-                    return { id: args.id };
+                    await context.store.deleteDocument(context.username, args.id);
+                    return {
+                        id: args.id,
+                    };
                 },
             },
         },
