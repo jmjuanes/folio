@@ -6,8 +6,10 @@ globalThis.fetch = jest.fn((url: any, options: any): Promise<any> => {
         ok: true,
         json: jest.fn((): Promise<any> => {
             return Promise.resolve({
-                url: url,
-                options: options,
+                data: {
+                    url: url,
+                    options: options,
+                },
             } as any);
         }),
     });
