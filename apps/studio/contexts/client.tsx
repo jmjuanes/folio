@@ -21,7 +21,7 @@ export const useClient = (): Client => {
 };
 
 // @description client context provider
-export const ClientProvider = ({ sessionKey = "", children }): React.JSX.Element => {
+export const ClientProvider = ({ children }): React.JSX.Element => {
     const [ token, setToken, removeToken ] = useLocalStorage<string>(SESSION_KEY, "");
     const api = useApi(token);
 
@@ -32,17 +32,17 @@ export const ClientProvider = ({ sessionKey = "", children }): React.JSX.Element
             removeToken();
         },
         login: (credentials = {}) => {
-            return api("POST", "/_login", credentials).then(response => {
-                if (response?.data?.token) {
-                    setToken(response.data.token);
+            return api("POST", "/_login", credentials).then(responseData => {
+                if (responseData?.token) {
+                    setToken(responseData.token);
                 }
             });
         },
         config: () => {
-            return api("GET", "/_config").then(res => res?.data);
+            return api("GET", "/_config");
         },
         graphql: (query, variables) => {
-            return api("POST", "/_graphql", { query, variables }).then(res => res?.data);
+            return api("POST", "/_graphql", { query, variables });
         },
     }), [ token, setToken, removeToken ]);
 
