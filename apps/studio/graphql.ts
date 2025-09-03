@@ -1,52 +1,75 @@
 // @description get a list of documents that matches the specified collection
-// @params collection the id of the collection (board, user)
-export const LIST_DOCUMENTS_QUERY = `
-    query List($collection: String!) {
-        listDocuments(collection: $collection) {
+// @params collection - the id of the collection (board, drawing, library, etc)
+export const QUERY_DOCUMENTS = `
+    query QueryDocuments($collection: String) {
+        queryDocuments(collection: $collection) {
             id
-            created_at
+            collection
             updated_at
-            attributes
+            name
+            thumbnail
         }
     }
 `;
 
 // @description get a single document by id
-export const GET_DOCUMENT_QUERY = `
-    query Get($collection: String!, $id: String!) {
-        getDocument(collection: $collection, id: $id) {
+// @params id - the id of the document (REQUIRED)
+export const GET_DOCUMENT = `
+    query GetDocument($id: String!) {
+        getDocument(id: $id) {
             id
+            collection
             created_at
             updated_at
-            attributes
+            name
+            thumbnail
             data
         }
     }
 `;
 
 // @description mutation to create a new document
-export const ADD_DOCUMENT_MUTATION = `
-    mutation Add($collection: String!, $attributes: Any, $data: String) {
-        addDocument(collection: $collection, attributes: $attributes, data: $data) {
+// @params collection - the id of the collection (board, drawing, library, etc) (REQUIRED)
+// @params name - the name of the document
+// @params thumbnail - the thumbnail of the document
+// @params data - the data of the document (JSON stringified)
+export const ADD_DOCUMENT = `
+    mutation AddDocument($collection: String!, $name: String, $thumbnail: String, $data: String) {
+        addDocument(collection: $collection, name: $name, thumbnail: $thumbnail, data: $data) {
             id
         }
     }
 `;
 
 // @description mutation to update a document by id
-export const UPDATE_DOCUMENT_MUTATION = `
-    mutation Update($collection: String!, $id: String!, $attributes: Any, $data: String) {
-        updateDocument(collection: $collection, id: $id, attributes: $attributes, data: $data) {
+// @params id - the id of the document (REQUIRED)
+// @params name - the name of the document
+// @params thumbnail - the thumbnail of the document
+// @params data - the data of the document (JSON stringified)
+export const UPDATE_DOCUMENT = `
+    mutation UpdateDocument($id: String!, $name: String, $thumbnail: String, $data: String) {
+        updateDocument(id: $id, name: $name, thumbnail: $thumbnail, data: $data) {
             id
         }
     }
 `;
 
 // @description mutation to delete a document
-export const DELETE_DOCUMENT_MUTATION = `
-    mutation Delete($collection: String!, $id: String!) {
-        deleteDocument(collection: $collection, id: $id) {
+// @params id - the id of the document (REQUIRED)
+export const DELETE_DOCUMENT = `
+    mutation DeleteDocument($id: String!) {
+        deleteDocument(id: $id) {
             id
+        }
+    }
+`;
+
+// @description get the current authenticated user
+export const GET_USER = `
+    query GetUser {
+        getUser {
+            username
+            display_name
         }
     }
 `;
