@@ -1,61 +1,57 @@
 {
     "GetUser": {
-        "user": {
-            "name": "test"
+        "getUser": {
+            "username": "folio",
+            "display_name": "Folio"
         }
     },
-    "listDocuments": {
-        "listDocuments": [
+    "QueryDocuments": {
+        "queryDocuments": [
             {
                 "id": "board1",
+                "collection": "board",
                 "created_at": "2025-07-25 00:00:00",
-                "updated_at": "2025-07-25 00:00:00",
-                "attributes": {
-                    "name": "Board 1"
-                }
+                "updated_at": "2025-09-02 00:00:00",
+                "name": "Board 1"
             },
             {
                 "id": "board5",
+                "collection": "board",
                 "created_at": "2025-07-20 00:00:00",
-                "updated_at": "2025-07-20 00:00:00",
-                "attributes": {
-                    "name": "Board 5"
-                }
+                "updated_at": "2025-09-01 00:00:00",
+                "name": "Board 5"
             },
             {
                 "id": "board2",
+                "collection": "board",
                 "created_at": "2025-07-15 00:00:00",
-                "updated_at": "2025-07-15 00:00:00",
-                "attributes": {
-                    "name": "Board 2"
-                }
+                "updated_at": "2025-08-15 00:00:00",
+                "name": "Board 2"
             },
             {
                 "id": "board4",
+                "collection": "board",
                 "created_at": "2025-07-14 00:00:00",
                 "updated_at": "2025-07-14 00:00:00",
-                "attributes": {
-                    "name": "Board 4"
-                }
+                "name": "Board 4"
             },
             {
                 "id": "board3",
+                "collection": "board",
                 "created_at": "2025-06-27 00:00:00",
                 "updated_at": "2025-06-27 00:00:00",
-                "attributes": {
-                    "name": "Board 3"
-                }
+                "name": "Board 3"
             }
         ]
     },
     "GetDocument": {
         "getDocument": {
             "id": "board1",
+            "collection": "board",
             "created_at": "2025-06-27 00:00:00",
             "updated_at": "2025-06-27 00:00:00",
-            "attributes": {
-                "name": "Board 1"
-            },
+            "name": "Board 1",
+            "thumbnail": "",
             "data": "{}"
         }
     },
