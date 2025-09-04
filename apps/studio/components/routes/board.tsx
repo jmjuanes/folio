@@ -1,5 +1,14 @@
 import React from "react";
 import { Editor } from "folio-react/components/editor.jsx";
+import {
+    MainMenu,
+    MainMenuOpenAction,
+    MainMenuSaveAction,
+    MainMenuExportAction,
+    MainMenuResetAction,
+    MainMenuSeparator,
+    MainMenuShowShortcutsAction,
+} from "folio-react/components/menus/main.tsx";
 import { Loading } from "folio-react/components/loading.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
 import { NotFound } from "../not-found.tsx";
@@ -55,6 +64,20 @@ export const BoardRoute = (props: any): React.JSX.Element => {
         };
     }, [ props.id, app ]);
 
+    // gneerate custom components for the editor
+    const customComponents = React.useMemo(() => ({
+        MainMenu: () => (
+            <MainMenu>
+                <MainMenuOpenAction />
+                <MainMenuSaveAction />
+                <MainMenuExportAction />
+                <MainMenuResetAction />
+                <MainMenuSeparator />
+                <MainMenuShowShortcutsAction />
+            </MainMenu>
+        ),
+    }), []);
+
     // we do not know (yet) if the board exists, so we set it to null
     if (exists === null || initialData === null) {
         return <Loading />;
@@ -71,6 +94,7 @@ export const BoardRoute = (props: any): React.JSX.Element => {
             data={() => {
                 return JSON.parse(initialData?.data || "{}");
             }}
+            components={customComponents}
             onChange={handleDataChange}
         />
     );
