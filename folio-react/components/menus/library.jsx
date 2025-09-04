@@ -1,13 +1,13 @@
 import React from "react";
-import {AlbumIcon, PlusIcon, CloseIcon} from "@josemi-icons/react";
-import {ACTIONS} from "../../constants.js";
-import {Dropdown} from "../ui/dropdown.jsx";
-import {Island} from "../ui/island.jsx";
-import {useEditor} from "../../contexts/editor.jsx";
-import {useConfirm} from "../../contexts/confirm.jsx";
-import {useActions} from "../../hooks/use-actions.js";
-import {loadLibraryFromJson} from "../../lib/library.js";
-import {clearFocus} from "../../utils/dom.js";
+import { AlbumIcon, PlusIcon, CloseIcon } from "@josemi-icons/react";
+import { ACTIONS } from "../../constants.js";
+import { Dropdown } from "../ui/dropdown.tsx";
+import { Island } from "../ui/island.jsx";
+import { useEditor } from "../../contexts/editor.jsx";
+import { useConfirm } from "../../contexts/confirm.jsx";
+import { useActions } from "../../hooks/use-actions.js";
+import { loadLibraryFromJson } from "../../lib/library.js";
+import { clearFocus } from "../../utils/dom.js";
 
 // @description display an empty library message
 const EmptyLibrary = () => (

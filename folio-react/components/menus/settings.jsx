@@ -1,10 +1,10 @@
 import React from "react";
-import {FORM_OPTIONS} from "../../constants.js";
-import {BACKGROUND_COLOR_PALETTE} from "../../utils/colors.js";
-import {Dropdown} from "../ui/dropdown.jsx";
-import {Island} from "../ui/island.jsx";
-import {Form} from "../form/index.jsx";
-import {useEditor} from "../../contexts/editor.jsx";
+import { FORM_OPTIONS } from "../../constants.js";
+import { BACKGROUND_COLOR_PALETTE } from "../../utils/colors.js";
+import { Dropdown } from "../ui/dropdown.tsx";
+import { Island } from "../ui/island.jsx";
+import { Form } from "../form/index.jsx";
+import { useEditor } from "../../contexts/editor.jsx";
 
 // settings fields
 const FIELDS = {

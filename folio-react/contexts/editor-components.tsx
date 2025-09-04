@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout } from "../components/layout.jsx";
+import { Layout } from "../components/layout.tsx";
 import { Loading } from "../components/loading.jsx";
 import { ContextMenu } from "../components/context-menu.jsx";
 import { ExportDialog } from "../components/dialogs/export.jsx";
@@ -10,14 +10,13 @@ import { PagesMenu } from "../components/menus/pages.jsx";
 import { SettingsMenu } from "../components/menus/settings.jsx";
 import { EditionPanel } from "../components/panels/edition.jsx";
 import { HistoryPanel } from "../components/panels/history.jsx";
-import { MinimapPanel } from "../components/panels/minimap.jsx";
-import { ToolbarPanel } from "../components/panels/toolbar.jsx";
 import { ZoomPanel } from "../components/panels/zoom.jsx";
-import { LayersPanel } from "../components/panels/layers.jsx";
-import { MenuPanel } from "../components/panels/menu.jsx";
+import { Minimap } from "../components/minimap.tsx";
+import { Toolbar } from "../components/toolbar.tsx";
+import { Layers } from "../components/layers.tsx";
 
 // export type for the editor components
-export type EditorComponentsMap = Record<string, React.Node | null>;
+export type EditorComponentsMap = Record<string, (props: any) => React.JSX.Element | null>;
 
 // @description editor components context
 export const EditorComponentsContext = React.createContext<EditorComponentsMap>(null);
@@ -30,7 +29,7 @@ export const useEditorComponents = (): EditorComponentsMap => {
 // type definitions for the editor components provider
 export type EditorComponentsProviderProps = {
     components: Partial<EditorComponentsMap>,
-    children: React.Node,
+    children: React.ReactNode,
 };
 
 // @description editor components provider
@@ -56,19 +55,19 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             PagesMenu: PagesMenu,
             SettingsMenu: SettingsMenu,
             // panels
-            MenuPanel: MenuPanel,
             EditionPanel: EditionPanel,
             HistoryPanel: HistoryPanel,
-            MinimapPanel: MinimapPanel,
             ZoomPanel: ZoomPanel,
-            Toolbar: ToolbarPanel,
-            Layers: LayersPanel,
+            Minimap: Minimap,
+            Toolbar: Toolbar,
+            Layers: Layers,
+            Title: null,
             // canvas
             BehindTheCanvas: null,
             OverTheCanvas: null,
             // overrides
             ...props.components,
-        };
+        } as EditorComponentsMap;
     }, [ props.components ]);
 
     return (

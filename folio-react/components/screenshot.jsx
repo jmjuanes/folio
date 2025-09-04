@@ -12,7 +12,7 @@ import {Handlers} from "./handlers.jsx";
 import {SvgContainer} from "./svg.jsx";
 import {ObjectDimensions} from "./object-dimensions.jsx";
 import {Island} from "./island.jsx";
-import {Dropdown} from "./ui/dropdown.jsx";
+import {Dropdown} from "./ui/dropdown.tsx";
 import {clearFocus} from "../utils/dom.js";
 
 const getScreenshotCommand = r => {

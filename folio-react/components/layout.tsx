@@ -1,23 +1,35 @@
 import React from "react";
-import { Alert } from "./ui/alert.jsx";
+import { Alert } from "./ui/alert.tsx";
 import { Island } from "./ui/island.jsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.jsx";
+import { useActions } from "../hooks/use-actions.js";
+import { ACTIONS } from "../constants.js";
+
+export type LayoutProps = {
+    hideUi?: boolean,
+    children: React.ReactNode,
+};
 
 // @description: default editor layout
 // @param {object} props React props
 // @param {React.ReactNode} props.children React children
-export const Layout = props => {
-    const hideUi = false;
-    const [layersVisible, setLayersVisible] = React.useState(false);
+export const Layout = (props: LayoutProps): React.JSX.Element => {
+    const hideUi = props.hideUi ?? false;
+    const [ layersVisible, setLayersVisible ] = React.useState(false);
     const editor = useEditor();
+    const dispatchAction = useActions();
     const {
-        MenuPanel,
+        MainMenu,
+        PagesMenu,
+        SettingsMenu,
+        LibraryMenu,
+        Title,
         Toolbar,
         Layers,
         EditionPanel,
         HistoryPanel,
-        MinimapPanel,
+        Minimap,
         ZoomPanel,
     } = useEditorComponents();
 
@@ -29,11 +41,31 @@ export const Layout = props => {
             {props.children}
             {!hideUi && (
                 <React.Fragment>
-                    {!!MenuPanel && (
-                        <div className="absolute top-0 left-0 pt-4 pl-4 z-40 flex gap-2">
-                            <MenuPanel />
-                        </div>
-                    )}
+                    <div className="absolute top-0 left-0 pt-4 pl-4 z-40 flex gap-2">
+                        {!!MainMenu && (
+                            <Island>
+                                <MainMenu />
+                            </Island>
+                        )}
+                        <Island>
+                            {!!Title && (
+                                <React.Fragment>
+                                    <Title />
+                                    <Island.Separator />
+                                </React.Fragment>
+                            )}
+                            {!!PagesMenu && <PagesMenu />}
+                            {!!LibraryMenu && <LibraryMenu />}
+                            {!!SettingsMenu && <SettingsMenu />}
+                            <Island.Button
+                                icon="trash"
+                                onClick={() => {
+                                    dispatchAction(ACTIONS.CLEAR_PAGE);
+                                }}
+                                disabled={editor.page.readonly}
+                            />
+                        </Island>
+                    </div>
                     {(!!HistoryPanel || !!ZoomPanel || !!Layers) && (
                         <div className="absolute top-0 right-0 pt-4 pr-4 z-40 flex gap-2">
                             {!!HistoryPanel && <HistoryPanel />}
@@ -61,9 +93,9 @@ export const Layout = props => {
                             <Toolbar />
                         </div>
                     )}
-                    {!!MinimapPanel && (
+                    {!!Minimap && (
                         <div className="absolute z-20 bottom-0 mb-4 left-0 ml-4">
-                            <MinimapPanel />
+                            <Minimap />
                         </div>
                     )}
                     {!editor.page.readonly && selectedElements.length > 0 && (
