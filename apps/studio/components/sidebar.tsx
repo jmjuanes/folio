@@ -4,7 +4,7 @@ import { useToggle } from "react-use";
 import classNames from "classnames";
 import { renderIcon, DotsIcon } from "@josemi-icons/react";
 import { Collection } from "folio-server/types/document.ts";
-import { Dropdown } from "folio-react/components/ui/dropdown.jsx";
+import { Dropdown } from "folio-react/components/ui/dropdown.tsx";
 import { useDialog } from "folio-react/contexts/dialogs.jsx";
 import { useConfirm } from "folio-react/contexts/confirm.jsx";
 import { useConfiguration } from "../contexts/configuration.tsx";

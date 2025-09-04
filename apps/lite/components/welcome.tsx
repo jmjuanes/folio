@@ -56,12 +56,13 @@ export const Welcome = (): React.JSX.Element => {
             <Overlay className="z-50" />
             <Centered className="fixed h-full z-50">
                 <div className="w-full max-w-lg p-8 rounded-3xl border-1 border-gray-200 bg-white shadow-lg">
-                    <div className="pt-12 pb-4 select-none">
-                        <div className="font-black text-5xl mb-6 leading-none">
-                            <span>Hello 👋</span>
+                    <div className="pt-12 pb-8 select-none">
+                        <div className="mb-4 leading-none">
+                            <span className="font-brand text-7xl tracking-tight">folio</span>
+                            <span className="font-medium text-7xl text-gray-600 tracking-tight">lite</span>
                         </div>
                         <div className="">
-                            Welcome to <b>folio</b>, our work-in-progress minimal digital whiteboard for sketching and prototyping.
+                            Welcome to <b>folio</b>, the minimal and infinite whiteboard for sketching and prototyping.
                         </div>
                     </div>
                     <div className="flex gap-2 w-full pb-6">
