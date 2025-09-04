@@ -8,7 +8,7 @@ jest.unstable_mockModule("@josemi-icons/react", () => ({
     renderIcon: icon => icon.toUpperCase(),
 }));
 
-import { Dropdown } from "../dropdown.jsx";
+import { Dropdown } from "../dropdown.tsx";
 
 describe("<Dropdown />", () => {
     it("should render", () => {
