@@ -2,13 +2,13 @@ import React from "react";
 import classNames from "classnames";
 import { useUpdate } from "react-use";
 import { LockIcon, UnlockIcon, DotsVerticalIcon, renderIcon } from "@josemi-icons/react";
-import { Dropdown } from "../ui/dropdown.jsx";
-import { Form } from "../form/index.jsx";
-import { useEditor } from "../../contexts/editor.jsx";
-import { useContextMenu } from "../../contexts/context-menu.jsx";
-import { useTools } from "../../hooks/use-tools.js";
+import { Dropdown } from "./ui/dropdown.tsx";
+import { Form } from "./form/index.jsx";
+import { useEditor } from "../contexts/editor.jsx";
+import { useContextMenu } from "../contexts/context-menu.jsx";
+import { useTools } from "../hooks/use-tools.js";
 
-const PickPanel = props => (
+const PickPanel = ({ values, items, onChange}): React.JSX.Element => (
     <div
         className={classNames({
             "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
@@ -20,17 +20,17 @@ const PickPanel = props => (
     >
         <Form
             className="flex flex-row gap-2"
-            data={props.values}
-            items={props.items}
+            data={values}
+            items={items}
             separator={(
                 <div className="w-px h-6 bg-gray-200" />
             )}
-            onChange={props.onChange}
+            onChange={onChange}
         />
     </div>
 );
 
-const ToolbarButton = props => {
+const ToolbarButton = (props: any): React.JSX.Element => {
     const classList = classNames({
         "flex flex-col justify-center items-center px-4 py-2 gap-1 rounded-xl": true,
         "cursor-pointer": !props.active,
@@ -56,7 +56,7 @@ const ToolbarButton = props => {
 };
 
 // @description toolbar panel dropdown item
-const ToolbarDropdownItem = ({checked, disabled, onClick, icon, text}) => (
+const ToolbarDropdownItem = ({ checked, disabled, onClick, icon, text }): React.JSX.Element => (
     <Dropdown.CheckItem checked={checked} disabled={disabled} onClick={onClick}>
         <Dropdown.Icon icon={icon} />
         <span>{text}</span>
@@ -64,7 +64,7 @@ const ToolbarDropdownItem = ({checked, disabled, onClick, icon, text}) => (
 );
 
 // @description Toolbar panel component
-export const ToolbarPanel = () => {
+export const Toolbar = (): React.JSX.Element => {
     const update = useUpdate();
     const editor = useEditor();
     const tools = useTools();
@@ -129,7 +129,7 @@ export const ToolbarPanel = () => {
                     </div>
                 ))}
                 {secondaryTools.length > 0 && (
-                    <div className="flex self-stretch relative group" tabIndex="0">
+                    <div className="flex self-stretch relative group" tabIndex={0}>
                         <div className="flex items-center cursor-pointer rounded-xl px-1 hover:bg-gray-200 group-focus-within:bg-gray-200">
                             <div className="flex items-center text-xl">
                                 <DotsVerticalIcon />
