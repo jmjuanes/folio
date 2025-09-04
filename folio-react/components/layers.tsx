@@ -1,18 +1,18 @@
 import React from "react";
 import classNames from "classnames";
 import {CloseIcon} from "@josemi-icons/react";
-import {useEditor} from "../../contexts/editor.jsx";
-import {exportToDataURL} from "../../lib/export.js";
-import {FIELDS, TOOLS, TRANSPARENT} from "../../constants.js";
+import {useEditor} from "../contexts/editor.jsx";
+import {exportToDataURL} from "../lib/export.js";
+import {FIELDS, TOOLS, TRANSPARENT} from "../constants.js";
 
 // Layers preview variables
 const LAYER_PREVIEW_SIZE = 64;
 const LAYER_PREVIEW_BACKGROUND = TRANSPARENT;
 
 // Tiny hook to generate the preview of the element
-const useElementPreview = (elements, dependencies = []) => {
+const useElementPreview = (elements: any[], dependencies = []): string | null => {
     const editor = useEditor();
-    const [previewImage, setPreviewImage] = React.useState(null);
+    const [ previewImage, setPreviewImage ] = React.useState<string | null>(null);
     React.useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
@@ -29,7 +29,14 @@ const useElementPreview = (elements, dependencies = []) => {
     return previewImage;
 };
 
-const LayerItem = ({elements, active = false, onClick, onDoubleClick}) => {
+export type LayerItemProps = {
+    elements: any[],
+    active?: boolean,
+    onClick: () => void,
+    onDoubleClick?: () => void,
+};
+
+export const LayerItem = ({ elements, active = false, onClick, onDoubleClick }: LayerItemProps): React.JSX.Element => {
     const previewImage = useElementPreview(elements, elements.map(el => el.version));
     const layerClass = classNames({
         "relative shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white border-2 p-2": true,
@@ -50,7 +57,14 @@ const LayerItem = ({elements, active = false, onClick, onDoubleClick}) => {
     );
 };
 
-export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
+export type LayersProps = {
+    maxHeight?: string,
+};
+
+// @description Layers panel component
+// @param {object} props React props
+// @param {string} [props.maxHeight] Maximum height of the layers panel
+export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.Element => {
     // const [activeGroup, setActiveGroup] = React.useState("");
     const editor = useEditor();
     const activeGroup = editor.page.activeGroup || "";
@@ -79,7 +93,7 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
             }
         });
         return groupsMap;
-    }, [key]);
+    }, [ key ]);
 
     // get the elements to be displayed in the layers panel
     const visibleElements = React.useMemo(() => {
@@ -89,14 +103,14 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
         }
         // 2. activeGroup is empty, return all the elements
         return editor.page.elements;
-    }, [editor, key, activeGroup]);
+    }, [ editor, key, activeGroup ]);
 
     // exit the current active group
     const handleCloseActiveGroup = React.useCallback(() => {
         editor.setTool(TOOLS.SELECT);
         editor.page.activeGroup = "";
         editor.update();
-    }, [editor]);
+    }, [ editor ]);
 
     // handle click on a layer item
     const handleClick = React.useCallback(elements => {
@@ -105,7 +119,7 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
             editor.setSelection(elements.map(el => el.id));
             editor.update();
         }
-    }, [editor, editor.page, editor.page.readonly]);
+    }, [ editor, editor.page, editor.page.readonly ]);
 
     // handle double click on a group item
     const handleDoubleClick = React.useCallback(groupId => {
@@ -114,15 +128,15 @@ export const LayersPanel = ({maxHeight = "100vh - 5rem"}) => {
             editor.page.activeGroup = groupId;
             editor.update();
         }
-    }, [editor, editor.page, editor.page.readonly]);
+    }, [ editor, editor.page, editor.page.readonly ]);
 
     // calculate the container style
-    const containerStyle = React.useMemo(() => {
+    const containerStyle = React.useMemo<React.CSSProperties>(() => {
         return {
             maxHeight: `calc(${maxHeight} - ${activeGroup ? "3rem" : "0rem"})`,
             scrollbarWidth: "none",
-        };
-    }, [activeGroup, maxHeight]);
+        } as React.CSSProperties;
+    }, [ activeGroup, maxHeight ]);
 
     return (
         <React.Fragment>
