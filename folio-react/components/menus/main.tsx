@@ -1,7 +1,7 @@
 import React from "react";
 import classnames from "classnames";
 import { ACTIONS } from "../../constants.js";
-import { Dropdown } from "../ui/dropdown.jsx";
+import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.jsx";
 import { useEditor } from "../../contexts/editor.jsx";
 import { useActions } from "../../hooks/use-actions.js";
@@ -173,7 +173,7 @@ export const MainMenuContent = (): React.JSX.Element => (
 
 // props for the main menu component
 export type MainMenuProps = {
-    children?: React.Node,
+    children?: React.ReactNode,
 };
 
 // @description main menu component
