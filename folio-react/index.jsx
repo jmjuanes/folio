@@ -54,7 +54,12 @@ export {Editor} from "./components/editor.jsx";
 export {Pointer} from "./components/pointer.jsx";
 
 export {ContextMenu} from "./components/context-menu.jsx";
-export {Layout} from "./components/layout.jsx";
+export { Layout } from "./components/layout.tsx";
+export { Title } from "./components/title.tsx";
+export { Layers } from "./components/layers.tsx";
+export { Minimap } from "./components/minimap.tsx";
+export { Toolbar } from "./components/toolbar.tsx";
+
 export {ExportDialog} from "./components/dialogs/export.jsx";
 export {KeyboardShortcutsDialog} from "./components/dialogs/keyboard-shortcuts.jsx";
 export {PageEditDialog} from "./components/dialogs/page-edit.jsx";
@@ -81,10 +86,6 @@ export {
 } from "./components/menus/settings.jsx";
 export {EditionPanel} from "./components/panels/edition.jsx";
 export {HistoryPanel} from "./components/panels/history.jsx";
-export {LayersPanel} from "./components/panels/layers.jsx";
-export {MenuPanel} from "./components/panels/menu.jsx";
-export {MinimapPanel} from "./components/panels/minimap.jsx";
-export {ToolbarPanel} from "./components/panels/toolbar.jsx";
 export {ZoomPanel} from "./components/panels/zoom.jsx";
 
 export {
@@ -102,11 +103,11 @@ export {TextElement} from "./components/elements/text.jsx";
 export {Arrowhead} from "./components/elements/arrow-head.jsx";
 export {EditableText} from "./components/elements/editable-text.jsx";
 
-export {Alert} from "./components/ui/alert.jsx";
+export {Alert} from "./components/ui/alert.tsx";
 export {Button} from "./components/ui/button.jsx";
 export {Centered} from "./components/ui/centered.jsx";
 export {Dialog} from "./components/ui/dialog.jsx";
-export {Dropdown} from "./components/ui/dropdown.jsx";
+export {Dropdown} from "./components/ui/dropdown.tsx";
 export {Island} from "./components/ui/island.jsx";
 export {Overlay} from "./components/ui/overlay.jsx";
 export {Panel} from "./components/ui/panel.jsx";
