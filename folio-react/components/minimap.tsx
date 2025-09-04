@@ -7,13 +7,18 @@ import {
     MINIMAP_VISIBLE_RADIUS,
     MINIMAL_ELEMENT_FILL,
     MINIMAP_ELEMENT_RADIUS,
-} from "../../constants.js";
-import {Island} from "../ui/island.jsx";
-import {useEditor} from "../../contexts/editor.jsx";
-import {getRectangleBounds} from "../../utils/math.js";
+} from "../constants.js";
+import {Island} from "./ui/island.jsx";
+import {useEditor} from "../contexts/editor.jsx";
+import {getRectangleBounds} from "../utils/math.js";
+
+export type MinimapProps = {
+    width?: number,
+    height?: number,
+};
 
 // @description minimap panel component
-export const MinimapPanel = ({width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT}) => {
+export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: MinimapProps): React.JSX.Element => {
     const editor = useEditor();
     // TODO: handle if minimap is not visible
 
@@ -21,7 +26,7 @@ export const MinimapPanel = ({width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT}) =
         if (!editor.width || !editor.height) {
             return null;
         }
-        const bounds = editor.page.elements.length > 0 ? getRectangleBounds(editor.page.elements) : {};
+        const bounds = editor.page.elements.length > 0 ? getRectangleBounds(editor.page.elements) : {} as any;
         // calculate the start and end points for the minimap
         const x1 = Math.min(bounds.x1 ?? Infinity, (-1) * editor.page.translateX / editor.page.zoom);
         const y1 = Math.min(bounds.y1 ?? Infinity, (-1) * editor.page.translateY / editor.page.zoom);
