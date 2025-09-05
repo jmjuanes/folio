@@ -297,7 +297,10 @@ export const Canvas = props => {
                 )}
                 {props.showHandlers && props.handlers && (
                     <Handlers
-                        handlers={props.handlers}
+                        width={props.handlers.width || 0}
+                        height={props.handlers.height || 0}
+                        rotation={props.handlers.rotation ?? 0}
+                        handlers={props.handlers?.items || []}
                         zoom={props.zoom}
                         onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
                     />
