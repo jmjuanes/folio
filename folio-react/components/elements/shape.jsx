@@ -13,6 +13,7 @@ import {
     HATCH_GAP,
 } from "../../constants.js";
 import {
+    convertRadiansToDegrees,
     getBalancedDash,
     getEllipsePerimeter,
     getPointsDistance,
@@ -22,21 +23,20 @@ import {
     getPolygonHatchPath,
     getEllipseHatchPath,
 } from "../../utils/paths.js";
+import { getElementSize } from "../../lib/elements.js";
 
 const HatchFill = props => {
-    const lines = React.useMemo(
-        () => {
-            const center = [props.width / 2, props.height / 2];
-            const gap = HATCH_GAP * props.strokeWidth;
-            if (props.type === SHAPES.ELLIPSE) {
-                return getEllipseHatchPath(props.width, props.height, center, HATCH_ANGLE, gap);
-            }
-            else {
-                return getPolygonHatchPath(props.path, center, HATCH_ANGLE, gap);
-            }
-        },
-        [props.type, props.width, props.height, props.strokeWidth],
-    );
+    const lines = React.useMemo(() => {
+        const center = [props.width / 2, props.height / 2];
+        const gap = HATCH_GAP * props.strokeWidth;
+        if (props.type === SHAPES.ELLIPSE) {
+            return getEllipseHatchPath(props.width, props.height, center, HATCH_ANGLE, gap);
+        }
+        else {
+            return getPolygonHatchPath(props.path, center, HATCH_ANGLE, gap);
+        }
+    }, [ props.type, props.width, props.height, props.strokeWidth ]);
+
     return (
         <React.Fragment>
             {lines.map((line, index) => (
@@ -56,20 +56,18 @@ const HatchFill = props => {
 
 const SimpleLine = props => {
     const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
-    const [strokeDasharray, strokeDashoffset] = React.useMemo(
-        () => {
-            const strokeStyle = props.strokeStyle;
-            const length = getPointsDistance(
-                [props.x1, props.y1],
-                [props.x2, props.y2],
-            );
-            if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
-                return getBalancedDash(length, props.strokeWidth, strokeStyle);
-            }
-            return ["none", "none"];
-        },
-        [props.strokeWidth, props.strokeStyle, props.x1, props.y1, props.x2, props.y2],
-    );
+    const [strokeDasharray, strokeDashoffset] = React.useMemo(() => {
+        const strokeStyle = props.strokeStyle;
+        const length = getPointsDistance(
+            [props.x1, props.y1],
+            [props.x2, props.y2],
+        );
+        if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
+            return getBalancedDash(length, props.strokeWidth, strokeStyle);
+        }
+        return [ "none", "none" ];
+    }, [ props.strokeWidth, props.strokeStyle, props.x1, props.y1, props.x2, props.y2 ]);
+
     return (
         <line
             x1={props.x1}
@@ -92,17 +90,14 @@ const EllipseShape = props => {
     const rx = props.width / 2;
     const ry = props.height / 2;
     const strokeOpacity = props.strokeStyle === STROKES.NONE ? OPACITY_NONE : OPACITY_FULL;
-    const [strokeDasharray, strokeDashoffset] = React.useMemo(
-        () => {
-            const length = getEllipsePerimeter(rx, ry);
-            const strokeStyle = props.strokeStyle;
-            if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
-                return getBalancedDash(length, props.strokeWidth, strokeStyle);
-            }
-            return ["none", "none"];
-        },
-        [rx, ry, props.strokeWidth, props.strokeStyle],
-    );
+    const [strokeDasharray, strokeDashoffset] = React.useMemo(() => {
+        const length = getEllipsePerimeter(rx, ry);
+        const strokeStyle = props.strokeStyle;
+        if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
+            return getBalancedDash(length, props.strokeWidth, strokeStyle);
+        }
+        return [ "none", "none" ];
+    }, [ rx, ry, props.strokeWidth, props.strokeStyle ]);
     return (
         <React.Fragment>
             {props.fillColor !== TRANSPARENT && props.width > 1 && props.height > 1 && (
@@ -149,10 +144,9 @@ const EllipseShape = props => {
 
 const PolygonShape = props => {
     const polygonOpacity = props.fillStyle === FILL_STYLES.TRANSPARENT ? OPACITY_HALF : OPACITY_FULL;
-    const polygonPath = React.useMemo(
-        () => getPolygonPath(props.type, props.width, props.height),
-        [props.type, props.width, props.height],
-    );
+    const polygonPath = React.useMemo(() => {
+        return getPolygonPath(props.type, props.width, props.height);
+    }, [ props.type, props.width, props.height ]);
 
     return (
         <React.Fragment>
@@ -195,15 +189,15 @@ const PolygonShape = props => {
 };
 
 export const ShapeElement = props => {
-    const x = Math.min(props.x1, props.x2);
-    const y = Math.min(props.y1, props.y2);
-    const width = Math.abs(props.x2 - props.x1);
-    const height = Math.abs(props.y2 - props.y1);
+    const cx = (props.x1 + props.x2) / 2;
+    const cy = (props.y1 + props.y2) / 2;
+    const [ width, height, x, y] = getElementSize(props);
+    const rotation = convertRadiansToDegrees(props.rotation || 0);
     const fillColor = props.fillColor ?? TRANSPARENT;
     const strokeColor = props.strokeColor ?? BLACK;
     const strokeWidth = props.strokeWidth ?? 0;
     return (
-        <g transform={`translate(${x},${y})`} opacity={props.opacity}>
+        <g transform={`translate(${x},${y}) rotate(${rotation}, ${cx - x}, ${cy - y})`} opacity={props.opacity}>
             {props.shape !== SHAPES.ELLIPSE && (
                 <PolygonShape
                     type={props.shape}
