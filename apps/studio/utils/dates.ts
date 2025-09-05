@@ -29,6 +29,8 @@ export type GroupedDates = {
 export const groupByDate = (items: any[] = [], field: string = "updated_at"): GroupedDates => {
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(startOfDay);
+    yesterday.setDate(yesterday.getDate() - 1);
     const startOfWeek = new Date(startOfDay);
     startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay());
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -44,7 +46,7 @@ export const groupByDate = (items: any[] = [], field: string = "updated_at"): Gr
         const itemDate = new Date(item[field]);
         if (itemDate >= startOfDay) {
             groups.today.push(item);
-        } else if (itemDate >= new Date(startOfDay.setDate(startOfDay.getDate() - 1))) {
+        } else if (itemDate >= yesterday) {
             groups.yesterday.push(item);
         } else if (itemDate >= startOfWeek) {
             groups.thisWeek.push(item);
