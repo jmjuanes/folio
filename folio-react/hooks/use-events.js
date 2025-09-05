@@ -1,5 +1,5 @@
 import React from "react";
-import {useUpdate} from "react-use";
+import { useUpdate } from "react-use";
 import {
     ACTIONS,
     ELEMENTS,
@@ -15,20 +15,26 @@ import {
     SNAP_EDGE_Y,
     FIELDS,
 } from "../constants.js";
-import {normalizeBounds, getRectangleBounds} from "../utils/math.js";
-import {isArrowKey} from "../utils/keys.js";
-import {isInputTarget} from "../utils/events.js";
+import {
+    normalizeBounds,
+    getRectangleBounds,
+    clampAngle,
+    snapAngle,
+    rotatePoints,
+} from "../utils/math.js";
+import { isArrowKey } from "../utils/keys.js";
+import { isInputTarget } from "../utils/events.js";
 import {
     getElementConfig, 
     createElement,
     getElementsSnappingEdges,
     getElementSnappingPoints,
 } from "../lib/elements.js";
-import {useEditor} from "../contexts/editor.jsx";
-import {useContextMenu} from "../contexts/context-menu.jsx";
-import {useActions} from "./use-actions.js";
-import {useTools, getToolByShortcut} from "./use-tools.js";
-import {getActionByKeysCombination} from "../lib/actions.js";
+import { useEditor } from "../contexts/editor.jsx";
+import { useContextMenu } from "../contexts/context-menu.jsx";
+import { useActions } from "./use-actions.js";
+import { useTools, getToolByShortcut } from "./use-tools.js";
+import { getActionByKeysCombination } from "../lib/actions.js";
 
 // internal list with all elements
 const elementsNames = new Set(Object.values(ELEMENTS));
@@ -41,7 +47,7 @@ const isElementTool = toolName => {
 // @public use editor events listeners
 export const useEvents = () => {
     const update = useUpdate();
-    const {hideContextMenu} = useContextMenu();
+    const { hideContextMenu } = useContextMenu();
     const editor = useEditor();
     const tools = useTools();
     const dispatchAction = useActions();
@@ -318,53 +324,76 @@ export const useEvents = () => {
                 isResized = true;
                 const element = editor.getElement(snapshot[0].id);
                 const elementConfig = getElementConfig(element);
-                if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                    element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
-                    element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                if (event.handler === HANDLERS.ROTATION) {
+                    const cx = (snapshot[0].x1 + snapshot[0].x2) / 2;
+                    const cy = (snapshot[0].y1 + snapshot[0].y2) / 2;
+                    const prevAngle = Math.atan2(event.originalY - cy, event.originalX - cx) + Math.PI / 2;
+                    const currentAngle = Math.atan2(event.currentY - cy, event.currentX - cx) + Math.PI / 2;
+                    const deltaAngle = clampAngle(event.shiftKey ? snapAngle(currentAngle - prevAngle) : currentAngle - prevAngle);
+                    const angle = clampAngle((snapshot[0].rotation || 0) + deltaAngle);
+                    element.rotation = angle;
+                    const newPoints = rotatePoints([[snapshot[0].x1, snapshot[0].y1], [snapshot[0].x2, snapshot[0].y2]], [cx, cy], deltaAngle);
+                    element.x1 = newPoints[0][0];
+                    element.y1 = newPoints[0][1];
+                    element.x2 = newPoints[1][0];
+                    element.y2 = newPoints[1][1];
                 }
-                else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                    element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
-                    element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
-                }
-                else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                    element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
-                    element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
-                }
-                else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                    element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
-                    element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
-                }
-                else if (event.handler === HANDLERS.EDGE_TOP) {
-                    element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
-                }
-                else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-                    element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
-                }
-                else if (event.handler === HANDLERS.EDGE_LEFT) {
-                    element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
-                }
-                else if (event.handler === HANDLERS.EDGE_RIGHT) {
-                    element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
-                }
-                else if (event.handler === HANDLERS.NODE_START) {
-                    element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
-                    element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
-                }
-                else if (event.handler === HANDLERS.NODE_END) {
-                    element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
-                    element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
-                }
-                // Execute onResize handler
-                elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
-                // Set visible snap edges
-                if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
-                    editor.state.snapEdges = activeSnapEdges.map(snapEdge => ({
-                        // ...snapEdge,
-                        points: [
-                            ...snapEdge.points,
-                            ...getElementSnappingPoints(element, snapEdge),
-                        ],
-                    }));
+                else {
+                    // if (snapshot[0].rotation !== 0) {
+                    //     const cos = Math.cos(-snapshot[0].rotation);
+                    //     const sin = Math.sin(-snapshot[0].rotation);
+                    //     const { dx, dy } = event;
+                    //     event.dx = dx * cos - dy * sin;
+                    //     event.dy = dx * sin + dy * cos;
+                    // }
+                    if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                    }
+                    else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                    }
+                    else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                    }
+                    else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                    }
+                    else if (event.handler === HANDLERS.EDGE_TOP) {
+                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                    }
+                    else if (event.handler === HANDLERS.EDGE_BOTTOM) {
+                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                    }
+                    else if (event.handler === HANDLERS.EDGE_LEFT) {
+                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
+                    }
+                    else if (event.handler === HANDLERS.EDGE_RIGHT) {
+                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
+                    }
+                    else if (event.handler === HANDLERS.NODE_START) {
+                        element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
+                        element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
+                    }
+                    else if (event.handler === HANDLERS.NODE_END) {
+                        element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
+                        element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
+                    }
+                    // Execute onResize handler
+                    elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
+                    // Set visible snap edges
+                    if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
+                        editor.state.snapEdges = activeSnapEdges.map(snapEdge => ({
+                            // ...snapEdge,
+                            points: [
+                                ...snapEdge.points,
+                                ...getElementSnappingPoints(element, snapEdge),
+                            ],
+                        }));
+                    }
                 }
             }
             // else if (editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT) {
