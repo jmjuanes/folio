@@ -36,9 +36,10 @@ import {
     getPointInQuadraticCurve,
     getPointsBounds,
     getRectangleBounds,
+    rotatePoints,
 } from "../utils/math.js";
 import {getCurvePath, getConnectorPath} from "../utils/paths.js";
-import {isCornerHandler} from "./handlers.js";
+import { isCornerHandler } from "./handlers.ts";
 
 // Generate default handlers
 const getDefaultElementHandlers = element => ([
@@ -81,6 +82,11 @@ const getDefaultElementHandlers = element => ([
         type: HANDLERS.CORNER_BOTTOM_RIGHT,
         x: element.x2,
         y: element.y2,
+    },
+    {
+        type: HANDLERS.ROTATION,
+        x: (element.x1 + element.x2) / 2,
+        y: element.y1 - 30,
     },
 ]);
 
@@ -622,6 +628,7 @@ export const createElement = elementType => {
         [FIELDS.Y_START]: 0,
         [FIELDS.X_END]: 0,
         [FIELDS.Y_END]: 0,
+        [FIELDS.ROTATION]: 0,
         [FIELDS.SELECTED]: false,
         [FIELDS.CREATING]: false,
         [FIELDS.EDITING]: false,
@@ -713,6 +720,32 @@ export const getElementSnappingPoints = (element, snapEdge) => {
 // @public generate display name for the provided element
 export const getElementDisplayName = element => {
     return getElementConfig(element).displayName;
+};
+
+// calculate the size of an element
+export const getElementSize = (element) => {
+    // check if the element has no rotation applied
+    if (!element.rotation || element.rotation === 0) {
+        return [
+            Math.abs(element.x2 - element.x1),
+            Math.abs(element.y2 - element.y1),
+            Math.min(element.x1, element.x2),
+            Math.min(element.y1, element.y2),
+        ];
+    }
+    const cx = (element.x1 + element.x2) / 2;
+    const cy = (element.y1 + element.y2) / 2;
+    const points = [
+        [element.x1, element.y1],
+        [element.x2, element.y2]
+    ];
+    const unrotatedPoints = rotatePoints(points, [cx, cy], -element.rotation);
+    return [
+        Math.abs(unrotatedPoints[1][0] - unrotatedPoints[0][0]),
+        Math.abs(unrotatedPoints[1][1] - unrotatedPoints[0][1]),
+        Math.min(unrotatedPoints[0][0], unrotatedPoints[1][0]),
+        Math.min(unrotatedPoints[0][1], unrotatedPoints[1][1]),
+    ];
 };
 
 // @public get the bounds of the provided elements
