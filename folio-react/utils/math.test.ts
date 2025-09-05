@@ -4,7 +4,7 @@ import {
     getRectangleBounds,
     simplifyPath,
     getPointDistanceToLine,
-} from "./math.js";
+} from "./math.ts";
 
 describe("getPointsDistance", () => {
     it("should calculate the distance between two points", () => {

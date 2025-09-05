@@ -9,10 +9,10 @@ import {
     OPACITY_NONE,
 } from "../../constants.js";
 import {
-    getPointsCenter,
+    getCenter,
     getBalancedDash,
     getPointsDistance,
-} from "../../utils/math.js";
+} from "../../utils/math.ts";
 
 const getPath = points => {
     let lastPoint = points[0];
@@ -21,7 +21,7 @@ const getPath = points => {
     ];
     for (let i = 1; i < points.length; i++) {
         const point = points[i];
-        const center = getPointsCenter(lastPoint, point);
+        const center = getCenter(lastPoint, point);
         commands.push(`Q${lastPoint[0]},${lastPoint[1]} ${center[0]},${center[1]}`);
         lastPoint = point;
     }

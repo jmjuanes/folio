@@ -9,7 +9,7 @@ import {
     isHorizontalEdgeHandler,
 } from "../lib/handlers.ts";
 import { SvgContainer } from "./svg.jsx";
-import { convertRadiansToDegrees } from "../utils/math.js";
+import { convertRadiansToDegrees } from "../utils/math.ts";
 
 const cursorsByHandlerType = {
     [HANDLERS.EDGE_TOP]: CURSORS.RESIZE_NS,

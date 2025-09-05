@@ -10,7 +10,7 @@ import {
 } from "../constants.js";
 import {Island} from "./ui/island.jsx";
 import {useEditor} from "../contexts/editor.jsx";
-import {getRectangleBounds} from "../utils/math.js";
+import {getRectangleBounds} from "../utils/math.ts";
 
 export type MinimapProps = {
     width?: number,

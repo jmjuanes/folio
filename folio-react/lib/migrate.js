@@ -21,7 +21,7 @@ import {
     ARROW_SHAPES,
 } from "../constants.js";
 import {BACKGROUND_COLORS} from "../utils/colors.js";
-import {measureText} from "../utils/math.js";
+import {measureText} from "../utils/math.ts";
 import {loadImage} from "../utils/image.js";
 
 export const migrateElements = (elements, version) => {

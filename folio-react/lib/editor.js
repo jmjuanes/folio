@@ -14,7 +14,7 @@ import {BACKGROUND_COLORS} from "../utils/colors.js";
 import {blobToDataUrl} from "../utils/blob.js";
 import {loadImage} from "../utils/image.js";
 import {isLink, getLinkMetadata} from "../utils/link.js";
-import {getRectangleBounds} from "../utils/math.js";
+import {getRectangleBounds} from "../utils/math.ts";
 import {
     copyTextToClipboard,
     getClipboardContents,

@@ -6,7 +6,7 @@ import {
     TEXT_ALIGNS,
     TEXT_VERTICAL_ALIGNS,
 } from "../../constants.js";
-import {measureText} from "../../utils/math.js";
+import {measureText} from "../../utils/math.ts";
 import {EditableText} from "./editable-text.jsx";
 
 const getTextVerticalPosition = (align, height, textHeight) => {

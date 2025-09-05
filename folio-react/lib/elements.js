@@ -37,7 +37,7 @@ import {
     getPointsBounds,
     getRectangleBounds,
     rotatePoints,
-} from "../utils/math.js";
+} from "../utils/math.ts";
 import {getCurvePath, getConnectorPath} from "../utils/paths.js";
 import { isCornerHandler } from "./handlers.ts";
 

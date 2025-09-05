@@ -2,16 +2,22 @@ export const PI = Math.PI;
 export const TWO_PI = 2 * Math.PI;
 export const HALF_PI = Math.PI / 2;
 
-// Returns the sign of the provided value
-export const sign = value => value < 0 ? -1 : +1;
+export type Point = [x: number, y: number];
+export type Segment = [start: Point, end: Point];
+export type Line = Segment;
 
-// Calculate the hipotenuse
-export const hypotenuse = (x, y) => {
+//@description returns the sign of the provided value
+export const sign = (value: number): number => {
+    return value < 0 ? -1 : +1;
+};
+
+// @description calculate the hipotenuse
+export const hypotenuse = (x: number, y: number): number => {
     return Math.sqrt(x * x + y * y);
 };
 
-// Calculate the distance between the provided list of points
-export const getPointsDistance = (...points) => {
+// @description calculate the distance between the provided list of points
+export const getPointsDistance = (...points: Point[]): number => {
     let length = 0;
     for (let i = 1; i < points.length; i++) {
         const x = points[i][0] - points[i-1][0];
@@ -21,25 +27,31 @@ export const getPointsDistance = (...points) => {
     return length;
 };
 
-// Calculate the center between two points
-export const getPointsCenter = (p1, p2) => {
-    return [(p2[0] + p1[0]) / 2, (p2[1] + p1[1]) / 2];
+// @description calculate the center between two points
+export const getCenter = (p1: Point, p2: Point): Point => {
+    return [
+        (p2[0] + p1[0]) / 2,
+        (p2[1] + p1[1]) / 2,
+    ];
 };
 
-// Calculate the distance of a point to a line
-export const getPointDistanceToLine = (point, line) => {
+// @description calculate the distance of a point to a line
+export const getPointDistanceToLine = (point: Point, line: Segment): number => {
     const x = line[1][0] - line[0][0];
     const y = line[1][1] - line[0][1];
     const a = (point[0] * y) - (point[1] * x) + (line[1][0] * line[0][1]) - (line[1][1] * line[0][0]);
     return Math.abs(a) / hypotenuse(y, x);    
 };
 
-// Get the projection of a point to a line
-export const getPointProjectionToLine = (point, line) => {
+// @description get the projection of a point to a line
+export const getPointProjectionToLine = (point: Point, line: Segment): Point => {
     const ax = line[1][0] - line[0][0], ay = line[1][1] - line[0][1];
     const bx = point[0] - line[0][0], by = point[1] - line[0][1];
     const p = ((ax * bx) + (ay * by)) / ((ax * ax) + (ay * ay));
-    return [line[0][0] + p * ax, line[0][1] + p * ay];
+    return [
+        line[0][0] + p * ax,
+        line[0][1] + p * ay,
+    ];
 };
 
 // get a point in a quadratig curve
@@ -149,7 +161,7 @@ export const measureText = (text, textSize, textFont, maxWidth) => {
 };
 
 // Canculate the distance from the point p to the segment [p1, p2]
-export const distanceToSegment = (p, p1, p2) => {
+export const distanceToSegment = (p: Point, p1: Point, p2: Point) => {
     const m = (p2[1]- p1[1]) / (p2[0] - p1[0]);
     const b = p1[1] - m * p1[0];
     const d = [
@@ -165,7 +177,7 @@ export const distanceToSegment = (p, p1, p2) => {
 };
 
 // Path simplification based on the Ramer-Douglas-Peucker algorithm
-export const simplifyPath = (points, tolerance) => {
+export const simplifyPath = (points: Points[], tolerance: number): Points[] => {
     if (points.length <= 2) {
         return points;
     }
@@ -191,7 +203,7 @@ export const simplifyPath = (points, tolerance) => {
 };
 
 // Rotate the provided points list
-export const rotatePoints = (points, center, angle) => {
+export const rotatePoints = (points: Points[], center: Point, angle: number): Points[]=> {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
     return (points || []).map(point => {
@@ -203,8 +215,10 @@ export const rotatePoints = (points, center, angle) => {
 };
   
 // Rotate the provided lines list
-export const rotateLines = (lines, center, angle) => {
-    return (lines || []).map(points => rotatePoints(points, center, angle));
+export const rotateLines = (lines: Segment[], center: Point, angle: number): Segment[] => {
+    return (lines || []).map(points => {
+        return rotatePoints(points, center, angle);
+    });
 };
 
 // Snap angle to 15 degree increments

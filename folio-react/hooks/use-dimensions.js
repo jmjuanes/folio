@@ -1,6 +1,6 @@
 import {ELEMENTS, FIELDS, TOOLS} from "../constants.js";
 import {useEditor} from "../contexts/editor.jsx";
-import {getRectangleBounds} from "../utils/math.js";
+import {getRectangleBounds} from "../utils/math.ts";
 
 const generateDimensionLabel = el => ({
     value: [

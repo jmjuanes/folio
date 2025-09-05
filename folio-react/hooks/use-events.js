@@ -21,7 +21,7 @@ import {
     clampAngle,
     snapAngle,
     rotatePoints,
-} from "../utils/math.js";
+} from "../utils/math.ts";
 import { isArrowKey } from "../utils/keys.js";
 import { isInputTarget } from "../utils/events.js";
 import {

@@ -9,7 +9,7 @@ import {
 } from "../constants.js";
 import {renderStaticElement} from "../components/elements/index.jsx";
 import {blobToFile, blobToClipboard, blobToDataUrl} from "../utils/blob.js";
-import {getRectangleBounds} from "../utils/math.js";
+import {getRectangleBounds} from "../utils/math.ts";
 import {getElementConfig} from "./elements.js";
 import {getFontsCss} from "./fonts.js";
 

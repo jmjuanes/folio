@@ -17,7 +17,7 @@ import {
     getBalancedDash,
     getEllipsePerimeter,
     getPointsDistance,
-} from "../../utils/math.js";
+} from "../../utils/math.ts";
 import {
     getPolygonPath,
     getPolygonHatchPath,

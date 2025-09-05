@@ -11,7 +11,7 @@ import {
     POINTER_TENSION,
     POINTER_SIZE,
 } from "../constants.js";
-import {hypotenuse} from "../utils/math.js";
+import {hypotenuse} from "../utils/math.ts";
 import {SvgContainer} from "./svg.jsx";
 
 // alias for setInterval
