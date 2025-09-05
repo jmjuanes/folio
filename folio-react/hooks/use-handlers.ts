@@ -8,14 +8,7 @@ export type HandlerPosition = {
     y: number;
 };
 
-export type Handlers = {
-    width?: number;
-    height?: number;
-    rotation?: number;
-    items?: HandlerPosition[];
-};
-
-export const useHandlers = (): Handlers => {
+export const useHandlers = (): HandlerPosition[] => {
     const editor = useEditor();
 
     // if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {
@@ -28,16 +21,11 @@ export const useHandlers = (): Handlers => {
         if (selectedElements.length === 1 && !selectedElements[0].locked && !selectedElements[0].editing) {
             const config = getElementConfig(selectedElements[0]);
             if (typeof config.getHandlers === "function") {
-                return {
-                    width: (selectedElements[0].x1 + selectedElements[0].x2) / 2,
-                    height: (selectedElements[0].y1 + selectedElements[0].y2) / 2,
-                    rotation: selectedElements[0].rotation ?? 0,
-                    items: config.getHandlers(selectedElements[0]),
-                };
+                return config.getHandlers(selectedElements[0]);
             }
         }
     }
 
     // No handlers to display
-    return {};
+    return [];
 };
