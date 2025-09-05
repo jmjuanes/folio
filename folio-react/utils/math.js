@@ -1,3 +1,7 @@
+export const PI = Math.PI;
+export const TWO_PI = 2 * Math.PI;
+export const HALF_PI = Math.PI / 2;
+
 // Returns the sign of the provided value
 export const sign = value => value < 0 ? -1 : +1;
 
@@ -201,4 +205,19 @@ export const rotatePoints = (points, center, angle) => {
 // Rotate the provided lines list
 export const rotateLines = (lines, center, angle) => {
     return (lines || []).map(points => rotatePoints(points, center, angle));
+};
+
+// Snap angle to 15 degree increments
+export const snapAngle = (angle = 0, snapIncrement = Math.PI / 12) => {
+    return Math.round(angle / snapIncrement) * snapIncrement;
+};
+
+// Clamp angle between 0 and 2*PI
+export const clampAngle = (angle = 0) => {
+    return ((angle % TWO_PI) + TWO_PI) % TWO_PI;
+};
+
+// @description convert radians to degrees
+export const convertRadiansToDegrees = (radians = 0) => {
+    return (radians * 180) / Math.PI;
 };
