@@ -190,6 +190,7 @@ export const HANDLERS = {
     NODE_START: "node-start",
     NODE_END: "node-end",
     NODE_MIDDLE: "node-middle",
+    ROTATION: "rotation",
 };
 
 // Default font faces
@@ -294,6 +295,7 @@ export const FIELDS = {
     X_END: "x2",
     Y_START: "y1",
     Y_END: "y2",
+    ROTATION: "rotation",
     FILL_COLOR: "fillColor",
     FILL_STYLE: "fillStyle",
     STROKE_COLOR: "strokeColor",
