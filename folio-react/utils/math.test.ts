@@ -1,7 +1,7 @@
 import {
     normalizeBounds,
     getPointsDistance,
-    getRectangleBounds,
+    getBoundingRectangle,
     simplifyPath,
     getPointDistanceToLine,
 } from "./math.ts";
@@ -28,18 +28,18 @@ describe("normalizeBounds", () => {
     });
 });
 
-describe("getRectangleBounds", () => {
+describe("getBoundingRectangle", () => {
     it("should generate the bounds", () => {
         const originalBounds = [
-            {x1: 10, y1: 10, x2: 15, y2: 15},
-            {x1: 12, y1: 5, x2: 5, y2: 20},
+            [[ 10, 10 ], [ 15, 15 ]],
+            [[ 12, 5 ], [5, 20 ]],
         ];
-        const newBounds = getRectangleBounds(originalBounds);
+        const newBounds = getBoundingRectangle(originalBounds);
 
-        expect(newBounds.x1).toEqual(5);
-        expect(newBounds.x2).toEqual(15);
-        expect(newBounds.y1).toEqual(5);
-        expect(newBounds.y2).toEqual(20);
+        expect(newBounds[0][0]).toEqual(5);
+        expect(newBounds[1][0]).toEqual(15);
+        expect(newBounds[0][1]).toEqual(5);
+        expect(newBounds[1][1]).toEqual(20);
     });
 });
 

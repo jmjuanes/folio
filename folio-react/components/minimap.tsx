@@ -8,9 +8,9 @@ import {
     MINIMAL_ELEMENT_FILL,
     MINIMAP_ELEMENT_RADIUS,
 } from "../constants.js";
-import {Island} from "./ui/island.jsx";
-import {useEditor} from "../contexts/editor.jsx";
-import {getRectangleBounds} from "../utils/math.ts";
+import { Island } from "./ui/island.jsx";
+import { useEditor } from "../contexts/editor.jsx";
+import { getElementsBoundingRectangle } from "../lib/elements.js";
 
 export type MinimapProps = {
     width?: number,
@@ -26,12 +26,12 @@ export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: Mini
         if (!editor.width || !editor.height) {
             return null;
         }
-        const bounds = editor.page.elements.length > 0 ? getRectangleBounds(editor.page.elements) : {} as any;
+        const bounds = editor.page.elements.length > 0 ? getElementsBoundingRectangle(editor.page.elements) : [];
         // calculate the start and end points for the minimap
-        const x1 = Math.min(bounds.x1 ?? Infinity, (-1) * editor.page.translateX / editor.page.zoom);
-        const y1 = Math.min(bounds.y1 ?? Infinity, (-1) * editor.page.translateY / editor.page.zoom);
-        const x2 = Math.max(bounds.x2 ?? -Infinity, ((-1) * editor.page.translateX + editor.width) / editor.page.zoom);
-        const y2 = Math.max(bounds.y2 ?? -Infinity, ((-1) * editor.page.translateY + editor.height) / editor.page.zoom);
+        const x1 = Math.min(bounds[0]?.[0] ?? Infinity, (-1) * editor.page.translateX / editor.page.zoom);
+        const y1 = Math.min(bounds[0]?.[1] ?? Infinity, (-1) * editor.page.translateY / editor.page.zoom);
+        const x2 = Math.max(bounds[1]?.[0] ?? -Infinity, ((-1) * editor.page.translateX + editor.width) / editor.page.zoom);
+        const y2 = Math.max(bounds[1]?.[1] ?? -Infinity, ((-1) * editor.page.translateY + editor.height) / editor.page.zoom);
         // calculate the scale factor for the minimap
         const ratio = Math.min(width / Math.max(1, x2 - x1), height / Math.max(1, y2 - y1));
         return {

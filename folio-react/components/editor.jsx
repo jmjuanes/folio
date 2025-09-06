@@ -2,7 +2,7 @@ import React from "react";
 // import classNames from "classnames";
 import { TOOLS } from "../constants.js";
 import { useHandlers } from "../hooks/use-handlers.ts";
-import { useBounds } from "../hooks/use-bounds.js";
+import { useBounds } from "../hooks/use-bounds.ts";
 import { useCursor } from "../hooks/use-cursor.js";
 import { useEvents } from "../hooks/use-events.js";
 import { useDimensions } from "../hooks/use-dimensions.js";

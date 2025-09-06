@@ -2,8 +2,8 @@ export const PI = Math.PI;
 export const TWO_PI = 2 * Math.PI;
 export const HALF_PI = Math.PI / 2;
 
-export type Point = [x: number, y: number];
-export type Segment = [start: Point, end: Point];
+export type Point = [ x: number, y: number ];
+export type Segment = [ start: Point, end: Point ];
 export type Line = Segment;
 
 //@description returns the sign of the provided value
@@ -83,13 +83,28 @@ export const getRoundedRectanglePerimeter = (width, height, radius = 0) => {
     return getRectanglePerimeter(width, height) - (2 * radius) + getCirclePerimeter(radius);
 };
 
+// @description get the rectangle defined by two points
+export const getRectangle = (p1: Point, p2: Point, angle: number = 0): Points[] => {
+    if (angle === 0) {
+        return [p1, [ p2[0], p1[1] ], p2, [ p1[0], p2[1] ]];
+    }
+    // calcualte the center and rotate back the points to its original position
+    const center = getCenter(p1, p2);
+    const originalPoints = rotatePoints([p1, p2], center, -angle);
+    const newPoints = [
+        [ originalPoints[1][0], originalPoints[0][1] ],
+        [ originalPoints[0][0], originalPoints[1][1] ],
+    ];
+    // rotate the new points to generate the other rectangle vertex points
+    const [ p3, p4 ] = rotatePoints(newPoints, center, angle);
+    return [ p1, p3, p2, p4 ];
+};
+
 // Generate the minumun rectangle points that contains all points in the provided list
-export const getRectangleBounds = bounds => ({
-    x1: Math.min.apply(null, bounds.map(b => Math.min(b.x1, b.x2))),
-    x2: Math.max.apply(null, bounds.map(b => Math.max(b.x1, b.x2))),
-    y1: Math.min.apply(null, bounds.map(b => Math.min(b.y1, b.y2))),
-    y2: Math.max.apply(null, bounds.map(b => Math.max(b.y1, b.y2))),
-});
+export const getBoundingRectangle = (points: Point[]): Points[] => ([
+    [ Math.min.apply(null, points.map(p => p[0])), Math.min.apply(null, points.map(p => p[1])) ],
+    [ Math.max.apply(null, points.map(p => p[0])), Math.max.apply(null, points.map(p => p[1])) ],
+]);
 
 // get bounds containing the provided points
 export const getPointsBounds = points => ({

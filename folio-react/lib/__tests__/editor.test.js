@@ -5,7 +5,7 @@ jest.unstable_mockModule("../elements.js", () => ({
     createElement: () => ({
         id: ""
     }),
-    getElementsBounds: jest.fn(),
+    getElementsBoundingRectangle: jest.fn(),
     measureTextInElement: jest.fn(),
     getElementDisplayName: jest.fn(),
 }));

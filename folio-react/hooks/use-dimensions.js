@@ -1,17 +1,18 @@
-import {ELEMENTS, FIELDS, TOOLS} from "../constants.js";
-import {useEditor} from "../contexts/editor.jsx";
-import {getRectangleBounds} from "../utils/math.ts";
+import { ELEMENTS, FIELDS, TOOLS } from "../constants.js";
+import { useEditor } from "../contexts/editor.jsx";
+import { getElementSize, getElementsBoundingRectangle } from "../lib/elements.js";
 
-const generateDimensionLabel = el => ({
-    value: [
-        Math.floor(Math.abs(el.x2 - el.x1)),
-        Math.floor(Math.abs(el.y2 - el.y1)),
-    ].join(" x "),
-    x: Math.max(el.x1, el.x2),
-    y: Math.max(el.y1, el.y2),
-    // translateX: "-100%",
-    // translateY: "0.5rem",
-});
+const generateDimensionLabel = (elements = []) => {
+    const rectangle = getElementsBoundingRectangle(elements);
+    return {
+        value: [
+            Math.floor(Math.abs(rectangle[1][0] - rectangle[0][0])),
+            Math.floor(Math.abs(rectangle[0][1] - rectangle[3][1])),
+        ].join(" x "),
+        x: Math.max(...rectangle.map(p => p[0])),
+        y: Math.max(...rectangle.map(p => p[1])),
+    };
+};
 
 // @description returns the dimensions of the selected elements
 // @returns {object} dimensions
@@ -31,13 +32,18 @@ export const useDimensions = () => {
             if (selectedElements.length === 1) {
                 const el = selectedElements[0];
                 if (el.type === ELEMENTS.SHAPE || el.type === ELEMENTS.DRAW || el.type === ELEMENTS.TEXT || el.type === ELEMENTS.IMAGE) {
-                    dimensions.push(generateDimensionLabel(el));
+                    const sizes = getElementSize(el);
+                    dimensions.push({
+                        value: `${Math.floor(sizes[0])} x ${Math.floor(sizes[1])}`,
+                        x: Math.max(el.x1, el.x2),
+                        y: Math.max(el.y1, el.y2),
+                    });
                 }
             }
             // Case 1.2. We have more than one element selected
             // In this case, calculate the dimension of the selection
             else if (selectedElements.length > 1) {
-                dimensions.push(generateDimensionLabel(getRectangleBounds(selectedElements)));
+                dimensions.push(generateDimensionLabel(selectedElements));
             }
         }
         // Case 2. We are creating an element
@@ -46,7 +52,7 @@ export const useDimensions = () => {
         else if (editor.state.tool === ELEMENTS.SHAPE || editor.state.tool === ELEMENTS.TEXT) {
             const el = editor.getElements().find(element => element[FIELDS.CREATING]);
             if (el) {
-                dimensions.push(generateDimensionLabel(el));
+                dimensions.push(generateDimensionLabel([ el ]));
             }
         }
     }

@@ -17,7 +17,7 @@ import {
 } from "../constants.js";
 import {
     normalizeBounds,
-    getRectangleBounds,
+    getBoundingRectangle,
     clampAngle,
     snapAngle,
     rotatePoints,
@@ -29,6 +29,7 @@ import {
     createElement,
     getElementsSnappingEdges,
     getElementSnappingPoints,
+    getElementsBoundingRectangle,
 } from "../lib/elements.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
@@ -200,7 +201,7 @@ export const useEvents = () => {
                     // }
                     // Save a snapshot of the current selection for calculating the correct element position
                     snapshot = editor.getSelection().map(el => ({...el}));
-                    snapshotBounds = getRectangleBounds(snapshot);
+                    snapshotBounds = getElementsBoundingRectangle(snapshot);
                     // Check for calling the onResizeStart listener
                     // if (action === ACTIONS.RESIZE && snapshot.length === 1) {
                     if (event.handler && snapshot.length === 1) {
@@ -295,8 +296,8 @@ export const useEvents = () => {
                 isDragged = true;
                 const elements = editor.getSelection();
                 const includeCenter = elements.length > 1 || elements[0].type !== ELEMENTS.ARROW;
-                const dx = getPosition(snapshotBounds.x1 + event.dx, SNAP_EDGE_X, snapshotBounds.x2 - snapshotBounds.x1, includeCenter) - snapshotBounds.x1;
-                const dy = getPosition(snapshotBounds.y1 + event.dy, SNAP_EDGE_Y, snapshotBounds.y2 - snapshotBounds.y1, includeCenter) - snapshotBounds.y1;
+                const dx = getPosition(snapshotBounds[0][0] + event.dx, SNAP_EDGE_X, snapshotBounds[1][0] - snapshotBounds[0][0], includeCenter) - snapshotBounds[0][0];
+                const dy = getPosition(snapshotBounds[0][1] + event.dy, SNAP_EDGE_Y, snapshotBounds[1][1] - snapshotBounds[0][1], includeCenter) - snapshotBounds[0][1];
                 elements.forEach((element, index) => {
                     element.x1 = snapshot[index].x1 + dx;
                     element.x2 = snapshot[index].x2 + dx;
@@ -306,12 +307,21 @@ export const useEvents = () => {
                     getElementConfig(element)?.onDrag?.(element, snapshot[index], event);
                 });
                 if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
-                    const bounds = elements.length === 1 ? elements[0] : getRectangleBounds(elements);
+                    let boundElement = elements[0];
+                    if (elements.length > 1) {
+                        const bounds = getElementsBoundingRectangle(elements);
+                        boundElement = {
+                            x1: bounds[0][0],
+                            y1: bounds[0][1],
+                            x2: bounds[1][0],
+                            y2: bounds[1][1],
+                        };
+                    }
                     editor.state.snapEdges = activeSnapEdges.map(snapEdge => ({
                         // ...snapEdge,
                         points: [
                             ...snapEdge.points,
-                            ...getElementSnappingPoints(bounds, snapEdge),
+                            ...getElementSnappingPoints(boundElement, snapEdge),
                         ],
                     }));
                 }
