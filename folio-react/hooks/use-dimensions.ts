@@ -1,6 +1,7 @@
 import { ELEMENTS, FIELDS, TOOLS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { getElementSize, getElementsBoundingRectangle } from "../lib/elements.js";
+import { getRectangle } from "../utils/math.ts";
 
 export type DimensionLabel = {
     value: string; // label to be displayed in the dimension badge
@@ -8,6 +9,12 @@ export type DimensionLabel = {
     y: number;     // y position of the dimension badge
 };
 
+// @description generate a dimension label for the provided elements
+// @param {array} elements list of elements to calculate the dimension
+// @returns {object} dimension label
+// @returns {string} dimension label.value label to be displayed in the dimension badge
+// @returns {number} dimension label.x x position of the dimension badge
+// @returns {number} dimension label.y y position of the dimension badge
 const generateDimensionLabel = (elements: any[] = []): DimensionLabel => {
     const rectangle = getElementsBoundingRectangle(elements);
     return {
@@ -18,6 +25,12 @@ const generateDimensionLabel = (elements: any[] = []): DimensionLabel => {
         x: Math.max(...rectangle.map(p => p[0])),
         y: Math.max(...rectangle.map(p => p[1])),
     };
+};
+
+const getBottomRightPoint = (points: number[][]): number[] => {
+    return points.reduce((best, current) => {
+        return (current[1] > best[1] || (current[1] === best[1] && current[0] > best[0])) ? current : best;
+    }, points[0]);
 };
 
 // @description returns the dimensions of the selected elements
@@ -39,10 +52,12 @@ export const useDimensions = () => {
                 const el = selectedElements[0];
                 if (el.type === ELEMENTS.SHAPE || el.type === ELEMENTS.DRAW || el.type === ELEMENTS.TEXT || el.type === ELEMENTS.IMAGE) {
                     const sizes = getElementSize(el);
+                    const rectangle = getRectangle([ el.x1, el.y1 ], [ el.x2, el.y2 ], el.rotation || 0);
+                    const bottomRightPoint = getBottomRightPoint(rectangle);
                     dimensions.push({
                         value: `${Math.floor(sizes[0])} x ${Math.floor(sizes[1])}`,
-                        x: Math.max(el.x1, el.x2),
-                        y: Math.max(el.y1, el.y2),
+                        x: bottomRightPoint[0],
+                        y: bottomRightPoint[1],
                     });
                 }
             }
