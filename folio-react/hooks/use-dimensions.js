@@ -7,7 +7,7 @@ const generateDimensionLabel = (elements = []) => {
     return {
         value: [
             Math.floor(Math.abs(rectangle[1][0] - rectangle[0][0])),
-            Math.floor(Math.abs(rectangle[0][1] - rectangle[3][1])),
+            Math.floor(Math.abs(rectangle[0][1] - rectangle[1][1])),
         ].join(" x "),
         x: Math.max(...rectangle.map(p => p[0])),
         y: Math.max(...rectangle.map(p => p[1])),

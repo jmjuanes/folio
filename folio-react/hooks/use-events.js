@@ -16,7 +16,6 @@ import {
     FIELDS,
 } from "../constants.js";
 import {
-    normalizeBounds,
     getBoundingRectangle,
     clampAngle,
     snapAngle,
@@ -30,6 +29,7 @@ import {
     getElementsSnappingEdges,
     getElementSnappingPoints,
     getElementsBoundingRectangle,
+    normalizeElementCoordinates,
 } from "../lib/elements.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
@@ -272,7 +272,7 @@ export const useEvents = () => {
                 const y = event.originalY + event.dy;
                 editor.getElements().forEach(element => {
                     if (!element.erased) {
-                        const b = element.type === ELEMENTS.ARROW ? normalizeBounds(element) : element;
+                        const b = element.type === ELEMENTS.ARROW ? normalizeElementCoordinates(element) : element;
                         if (b.x1 <= x && x <= b.x2 && b.y1 <= y && y <= b.y2) {
                             element.erased = true;
                         }

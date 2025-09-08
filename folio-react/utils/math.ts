@@ -6,6 +6,11 @@ export type Point = [ x: number, y: number ];
 export type Segment = [ start: Point, end: Point ];
 export type Line = Segment;
 
+// internal variable to sotre the PRE element used to measure text
+const measureTextElement = {
+    current: null as HTMLPreElement | null,
+};
+
 //@description returns the sign of the provided value
 export const sign = (value: number): number => {
     return value < 0 ? -1 : +1;
@@ -55,43 +60,43 @@ export const getPointProjectionToLine = (point: Point, line: Segment): Point => 
 };
 
 // get a point in a quadratig curve
-export const getPointInQuadraticCurve = (p1, p2, p3, t = 0.5) => {
-    // const t = 0.5; // (p1[0] - p2[0]) / (p1[0] + p3[0] - 2 * p2[0]);
-    const x = (p1[0] * (1 - t) * (1 - t)) + (p2[0] * 2 * t * (1 - t)) + (p3[0] * t * t);
-    const y = (p1[1] * (1 - t) * (1 - t)) + (p2[1] * 2 * t * (1 - t)) + (p3[1] * t * t);
-    return [x, y];
+export const getPointInQuadraticCurve = (p1: Point, p2: Point, p3: Point, t: number = 0.5): Point => {
+    return [
+        (p1[0] * (1 - t) * (1 - t)) + (p2[0] * 2 * t * (1 - t)) + (p3[0] * t * t),
+        (p1[1] * (1 - t) * (1 - t)) + (p2[1] * 2 * t * (1 - t)) + (p3[1] * t * t),
+    ];
 };
 
 // Calculate the perimeter of an ellipse using Ramanujan approximation
-export const getEllipsePerimeter = (rx, ry) => {
+export const getEllipsePerimeter = (rx: number, ry: number): number => {
     const lambda = Math.pow((rx - ry) / (rx + ry), 2);
     return Math.PI * (rx + ry) * (1 + (3 * lambda) / (10 + Math.sqrt(4 - 3 * lambda)));
 };
 
 // Calculate the perimeter of a circle
-export const getCirclePerimeter = radius => {
+export const getCirclePerimeter = (radius: number): number => {
     return 2 * Math.PI * radius;
 };
 
 // Calculate the perimeter of a rectangle
-export const getRectanglePerimeter = (width, height) => {
+export const getRectanglePerimeter = (width: number, height: number): number => {
     return 2 * (width + height);
 };
 
 // Calculate the perimeter of a rounded rectangle
-export const getRoundedRectanglePerimeter = (width, height, radius = 0) => {
+export const getRoundedRectanglePerimeter = (width: number, height: number, radius: number = 0): number => {
     return getRectanglePerimeter(width, height) - (2 * radius) + getCirclePerimeter(radius);
 };
 
 // @description get the rectangle defined by two points
-export const getRectangle = (p1: Point, p2: Point, angle: number = 0): Points[] => {
+export const getRectangle = (p1: Point, p2: Point, angle: number = 0): Point[] => {
     if (angle === 0) {
         return [p1, [ p2[0], p1[1] ], p2, [ p1[0], p2[1] ]];
     }
     // calcualte the center and rotate back the points to its original position
     const center = getCenter(p1, p2);
     const originalPoints = rotatePoints([p1, p2], center, -angle);
-    const newPoints = [
+    const newPoints: Point[] = [
         [ originalPoints[1][0], originalPoints[0][1] ],
         [ originalPoints[0][0], originalPoints[1][1] ],
     ];
@@ -101,33 +106,16 @@ export const getRectangle = (p1: Point, p2: Point, angle: number = 0): Points[] 
 };
 
 // Generate the minumun rectangle points that contains all points in the provided list
-export const getBoundingRectangle = (points: Point[]): Points[] => ([
+export const getBoundingRectangle = (points: Point[]): Point[] => ([
     [ Math.min.apply(null, points.map(p => p[0])), Math.min.apply(null, points.map(p => p[1])) ],
     [ Math.max.apply(null, points.map(p => p[0])), Math.max.apply(null, points.map(p => p[1])) ],
 ]);
 
-// get bounds containing the provided points
-export const getPointsBounds = points => ({
-    x1: Math.min.apply(null, points.map(p => p[0])),
-    x2: Math.max.apply(null, points.map(p => p[0])),
-    y1: Math.min.apply(null, points.map(p => p[1])),
-    y2: Math.max.apply(null, points.map(p => p[1])),
-});
-
-// Normalize bounds
-// @param bounds: a bounds object containing the coordinates x1,y1 and x2,y2
-export const normalizeBounds = bounds => ({
-    x1: Math.min(bounds.x1, bounds.x2),
-    x2: Math.max(bounds.x1, bounds.x2),
-    y1: Math.min(bounds.y1, bounds.y2),
-    y2: Math.max(bounds.y1, bounds.y2),
-});
-
 // Generate a balanced dash line
 // Adapted from https://gist.github.com/steveruizok/7b30a30f915362f219d0516073f92d69 
-export const getBalancedDash = (length = 0, strokeWidth = 0, style = "dashed") => {
-    let strokeDasharray = "none";
-    let strokeDashoffset = "none";
+export const getBalancedDash = (length: number = 0, strokeWidth: number = 0, style: string = "dashed"): [string, string] => {
+    let strokeDasharray: string = "none";
+    let strokeDashoffset: string = "none";
     if (strokeWidth > 0 && length > 0) {
         if (style === "dotted" || style === "dashed") {
             const ratio = style === "dotted" ? 100 : 1;
@@ -136,47 +124,46 @@ export const getBalancedDash = (length = 0, strokeWidth = 0, style = "dashed") =
             const gapLength = Math.max(dashLength, (length - dashes * dashLength) / dashes);
 
             strokeDasharray = [dashLength, gapLength].join(" ");
-            strokeDashoffset = style === "dotted" ? 0 : dashLength / 2;
+            strokeDashoffset = style === "dotted" ? "0" : "" + (dashLength / 2);
         }
     }
     return [strokeDasharray, strokeDashoffset];
 };
 
 // Measure text size
-export const measureText = (text, textSize, textFont, maxWidth) => {
+export const measureText = (text: string, textSize: string | number, textFont: string, maxWidth: string): number[] => {
     let width = 0, height = 0;
     if (text.length > 0) {
-        if (!measureText.container) {
-            measureText.container = document.createElement("pre");
-            measureText.container.style.position = "absolute";
-            measureText.container.style.visibility = "hidden";
-            measureText.container.style.top = "-9999px";
-            measureText.container.style.left = "-9999px";
-            measureText.container.style.lineHeight = "normal"; // Set line-height as normal
-            measureText.container.style.whiteSpace = "pre-wrap";
+        if (!measureTextElement.current) {
+            measureTextElement.current = document.createElement("pre") as HTMLPreElement;
+            measureTextElement.current.style.position = "absolute";
+            measureTextElement.current.style.visibility = "hidden";
+            measureTextElement.current.style.top = "-9999px";
+            measureTextElement.current.style.left = "-9999px";
+            measureTextElement.current.style.lineHeight = "normal"; // Set line-height as normal
+            measureTextElement.current.style.whiteSpace = "pre-wrap";
             // measureText.container.style.wordBreak = "keep-all";
-            measureText.container.style.overflowWrap = "break-word";
-            measureText.container.style.minHeight = "1em";
-            measureText.container.style.minWidth = "1em";
-            measureText.container.style.margin = "0";
-            measureText.container.style.padding = "0";
-            document.body.appendChild(measureText.container);
+            measureTextElement.current.style.overflowWrap = "break-word";
+            measureTextElement.current.style.minHeight = "1em";
+            measureTextElement.current.style.minWidth = "1em";
+            measureTextElement.current.style.margin = "0";
+            measureTextElement.current.style.padding = "0";
+            document.body.appendChild(measureTextElement.current);
         }
         // .replace(/\r\n?/g, "\n"); // .split("\n").join("<br>");
-        measureText.container.textContent = text.charAt(text.length - 1) === "\n" ? text + " " : text;
-        measureText.container.style.fontFamily = textFont;
-        measureText.container.style.fontSize = textSize + "px";
-        measureText.container.style.maxWidth = maxWidth ?? "auto";
-        width = measureText.container.offsetWidth; // Set computed width
-        height = measureText.container.offsetHeight; // Set computed height
-        // document.body.removeChild(div); // Remove div from DOM
+        measureTextElement.current.textContent = text.charAt(text.length - 1) === "\n" ? text + " " : text;
+        measureTextElement.current.style.fontFamily = textFont;
+        measureTextElement.current.style.fontSize = textSize + "px";
+        measureTextElement.current.style.maxWidth = maxWidth ?? "auto";
+        width = measureTextElement.current.offsetWidth; // Set computed width
+        height = measureTextElement.current.offsetHeight; // Set computed height
     }
-    // Return the text size
-    return [width, height];
+    // return the text size
+    return [ width, height ];
 };
 
 // Canculate the distance from the point p to the segment [p1, p2]
-export const distanceToSegment = (p: Point, p1: Point, p2: Point) => {
+export const distanceToSegment = (p: Point, p1: Point, p2: Point): number => {
     const m = (p2[1]- p1[1]) / (p2[0] - p1[0]);
     const b = p1[1] - m * p1[0];
     const d = [
@@ -192,7 +179,7 @@ export const distanceToSegment = (p: Point, p1: Point, p2: Point) => {
 };
 
 // Path simplification based on the Ramer-Douglas-Peucker algorithm
-export const simplifyPath = (points: Points[], tolerance: number): Points[] => {
+export const simplifyPath = (points: Point[], tolerance: number): Point[] => {
     if (points.length <= 2) {
         return points;
     }
@@ -218,7 +205,7 @@ export const simplifyPath = (points: Points[], tolerance: number): Points[] => {
 };
 
 // Rotate the provided points list
-export const rotatePoints = (points: Points[], center: Point, angle: number): Points[]=> {
+export const rotatePoints = (points: Point[], center: Point, angle: number): Point[]=> {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
     return (points || []).map(point => {
@@ -232,7 +219,7 @@ export const rotatePoints = (points: Points[], center: Point, angle: number): Po
 // Rotate the provided lines list
 export const rotateLines = (lines: Segment[], center: Point, angle: number): Segment[] => {
     return (lines || []).map(points => {
-        return rotatePoints(points, center, angle);
+        return rotatePoints(points, center, angle) as Segment;
     });
 };
 

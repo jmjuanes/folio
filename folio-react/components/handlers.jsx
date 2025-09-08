@@ -59,7 +59,7 @@ export const ResizeHandler = props => (
 
 export const Handlers = props => (
     <SvgContainer>
-        <g transform={`rotate(${convertRadiansToDegrees(props.rotation)}, ${props.width}, ${props.height})`}>
+        <g transform={`rotate(${convertRadiansToDegrees(props.rotation)}, ${props.width ?? 0}, ${props.height ?? 0})`}>
             {(props.handlers || []).map(handler => (
                 <React.Fragment key={handler.id ?? handler.type}>
                     {(isCornerHandler(handler.type) || isEdgeHandler(handler.type)) && (

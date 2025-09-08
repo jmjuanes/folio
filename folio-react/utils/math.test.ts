@@ -1,5 +1,4 @@
 import {
-    normalizeBounds,
     getPointsDistance,
     getBoundingRectangle,
     simplifyPath,
@@ -13,18 +12,6 @@ describe("getPointsDistance", () => {
 
     it("should calculate the distance between the given points", () => {
         expect(getPointsDistance([0,0], [10,0], [10,5])).toEqual(15);
-    });
-});
-
-describe("normalizeBounds", () => {
-    it("should return normalized bounds", () => {
-        const originalBound = {x1: 10, x2: 0, y1: 0, y2: 10};
-        const newBounds = normalizeBounds(originalBound);
-
-        expect(newBounds.x1).toEqual(originalBound.x2);
-        expect(newBounds.x2).toEqual(originalBound.x1);
-        expect(newBounds.y1).toEqual(originalBound.y1);
-        expect(newBounds.y2).toEqual(originalBound.y2);
     });
 });
 
