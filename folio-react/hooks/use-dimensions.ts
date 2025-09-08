@@ -2,7 +2,13 @@ import { ELEMENTS, FIELDS, TOOLS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { getElementSize, getElementsBoundingRectangle } from "../lib/elements.js";
 
-const generateDimensionLabel = (elements = []) => {
+export type DimensionLabel = {
+    value: string; // label to be displayed in the dimension badge
+    x: number;     // x position of the dimension badge
+    y: number;     // y position of the dimension badge
+};
+
+const generateDimensionLabel = (elements: any[] = []): DimensionLabel => {
     const rectangle = getElementsBoundingRectangle(elements);
     return {
         value: [
@@ -21,7 +27,7 @@ const generateDimensionLabel = (elements = []) => {
 // @returns {number} dimensions.y y position of the dimension badge
 export const useDimensions = () => {
     const editor = useEditor();
-    const dimensions = [];
+    const dimensions: DimensionLabel[] = [];
     if (editor?.appState?.objectDimensions) {
         // Case 1. No tool or action or we are translating or resizing the element
         // if ((!tool && !action) || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {

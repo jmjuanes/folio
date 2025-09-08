@@ -5,7 +5,7 @@ import { useHandlers } from "../hooks/use-handlers.ts";
 import { useBounds } from "../hooks/use-bounds.ts";
 import { useCursor } from "../hooks/use-cursor.js";
 import { useEvents } from "../hooks/use-events.js";
-import { useDimensions } from "../hooks/use-dimensions.js";
+import { useDimensions } from "../hooks/use-dimensions.ts";
 import { Canvas } from "./canvas.jsx";
 import { Pointer } from "./pointer.jsx";
 import { EditorProvider, useEditor } from "../contexts/editor.jsx";
