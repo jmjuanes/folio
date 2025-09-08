@@ -42,53 +42,63 @@ import { getCurvePath, getConnectorPath } from "../utils/paths.js";
 import { isCornerHandler } from "./handlers.ts";
 
 // Generate default handlers
-const getDefaultElementHandlers = element => ([
-    {
-        type: HANDLERS.EDGE_TOP,
-        x: (element.x1 + element.x2) / 2,
-        y: element.y1,
-    },
-    {
-        type: HANDLERS.EDGE_BOTTOM,
-        x: (element.x1 + element.x2) / 2,
-        y: element.y2,
-    },
-    {
-        type: HANDLERS.EDGE_LEFT,
-        x: element.x1,
-        y: (element.y1 + element.y2) / 2,
-    },
-    {
-        type: HANDLERS.EDGE_RIGHT,
-        x: element.x2,
-        y: (element.y1 + element.y2) / 2,
-    },
-    {
-        type: HANDLERS.CORNER_TOP_LEFT,
-        x: element.x1,
-        y: element.y1,
-    },
-    {
-        type: HANDLERS.CORNER_TOP_RIGHT,
-        x: element.x2,
-        y: element.y1,
-    },
-    {
-        type: HANDLERS.CORNER_BOTTOM_LEFT,
-        x: element.x1,
-        y: element.y2,
-    },
-    {
-        type: HANDLERS.CORNER_BOTTOM_RIGHT,
-        x: element.x2,
-        y: element.y2,
-    },
-    {
-        type: HANDLERS.ROTATION,
-        x: (element.x1 + element.x2) / 2,
-        y: element.y1 - 30,
-    },
-]);
+const getDefaultElementHandlers = element => {
+    const rectangle = getRectangle([ element.x1, element.y1 ], [ element.x2, element.y2 ], element.rotation || 0);
+    return [
+        {
+            type: HANDLERS.EDGE_TOP,
+            x: (rectangle[0][0] + rectangle[1][0]) / 2,
+            y: (rectangle[0][1] + rectangle[1][1]) / 2,
+            rotation: element.rotation || 0,
+        },
+        {
+            type: HANDLERS.EDGE_BOTTOM,
+            x: (rectangle[2][0] + rectangle[3][0]) / 2,
+            y: (rectangle[2][1] + rectangle[3][1]) / 2,
+            rotation: element.rotation || 0,
+        },
+        {
+            type: HANDLERS.EDGE_LEFT,
+            x: (rectangle[0][0] + rectangle[3][0]) / 2,
+            y: (rectangle[0][1] + rectangle[3][1]) / 2,
+            rotation: element.rotation || 0,
+        },
+        {
+            type: HANDLERS.EDGE_RIGHT,
+            x: (rectangle[1][0] + rectangle[2][0]) / 2,
+            y: (rectangle[1][1] + rectangle[2][1]) / 2,
+            rotation: element.rotation || 0,
+        },
+        {
+            type: HANDLERS.CORNER_TOP_LEFT,
+            x: rectangle[0][0],
+            y: rectangle[0][1],
+        },
+        {
+            type: HANDLERS.CORNER_TOP_RIGHT,
+            x: rectangle[1][0],
+            y: rectangle[1][1],
+        },
+        {
+            type: HANDLERS.CORNER_BOTTOM_LEFT,
+            x: rectangle[3][0],
+            y: rectangle[3][1],
+        },
+        {
+            type: HANDLERS.CORNER_BOTTOM_RIGHT,
+            x: rectangle[2][0],
+            y: rectangle[2][1],
+        },
+        {
+            type: HANDLERS.ROTATION,
+            x: (rectangle[0][0] + rectangle[1][0]) / 2,
+            y: (rectangle[0][1] + rectangle[1][1]) / 2,
+            offsetX: 0,
+            offsetY: -30,
+            rotation: element.rotation || 0,
+        },
+    ];
+};
 
 // Tiny utility to prevent having empty strokes
 const checkStrokeStyleValue = initialValue => {

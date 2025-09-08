@@ -7,6 +7,9 @@ export type HandlerPosition = {
     type: string; // TODO: change to enum
     x: number;
     y: number;
+    rotation?: number;
+    offsetX?: number;
+    offsetY?: number;
 };
 
 export const useHandlers = (): HandlerPosition[] => {

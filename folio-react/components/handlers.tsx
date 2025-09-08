@@ -9,6 +9,7 @@ import {
     isHorizontalEdgeHandler,
 } from "../lib/handlers.ts";
 import { SvgContainer } from "./svg.tsx";
+import { convertRadiansToDegrees } from "../utils/math.ts";
 import type { HandlerPosition } from "../hooks/use-handlers.ts";
 
 const cursorsByHandlerType = {
@@ -40,6 +41,9 @@ export type NodeHandlerProps = {
     strokeColor?: string;
     strokeWidth?: number;
     zoom: number;
+    rotation?: number;
+    offsetX?: number;
+    offsetY?: number;
     onPointerDown?: (event: React.PointerEvent<SVGElement>) => void;
 };
 
@@ -54,41 +58,46 @@ export type ResizeHandlerProps = {
     strokeColor?: string;
     strokeWidth?: number;
     zoom: number;
+    rotation?: number;
     onPointerDown?: (event: React.PointerEvent<SVGElement>) => void;
 };
 
 export const NodeHandler = (props: NodeHandlerProps): React.JSX.Element => (
-    <circle
-        data-handler={props.type}
-        cx={props.x}
-        cy={props.y}
-        r={props.radius / props.zoom}
-        fill={props.fillColor ?? HANDLERS_FILL_COLOR}
-        stroke={props.strokeColor ?? HANDLERS_STROKE_COLOR}
-        strokeWidth={(props.strokeWidth ?? 0) / props.zoom}
-        style={{
-            cursor: CURSORS.GRAB,
-        }}
-        onPointerDown={props.onPointerDown}
-    />
+    <g transform={`rotate(${convertRadiansToDegrees(props.rotation ?? 0)}, ${props.x}, ${props.y})`}>
+        <circle
+            data-handler={props.type}
+            cx={props.x + (props.offsetX ?? 0)}
+            cy={props.y + (props.offsetY ?? 0)}
+            r={props.radius / props.zoom}
+            fill={props.fillColor ?? HANDLERS_FILL_COLOR}
+            stroke={props.strokeColor ?? HANDLERS_STROKE_COLOR}
+            strokeWidth={(props.strokeWidth ?? 0) / props.zoom}
+            style={{
+                cursor: CURSORS.GRAB,
+            }}
+            onPointerDown={props.onPointerDown}
+        />
+    </g>
 );
 
 export const ResizeHandler = (props: ResizeHandlerProps): React.JSX.Element => (
-    <rect
-        data-handler={props.type}
-        x={props.x - (props.width / props.zoom) / 2}
-        y={props.y - (props.height / props.zoom) / 2}
-        width={props.width / props.zoom}
-        height={props.height / props.zoom}
-        rx={props.radius / props.zoom}
-        fill={props.fillColor ?? HANDLERS_FILL_COLOR}
-        stroke={props.strokeColor ?? HANDLERS_STROKE_COLOR}
-        strokeWidth={(props.strokeWidth ?? 0) / props.zoom}
-        style={{
-            cursor: cursorsByHandlerType[props.type],
-        }}
-        onPointerDown={props.onPointerDown}
-    />
+    <g transform={`rotate(${convertRadiansToDegrees(props.rotation ?? 0)}, ${props.x}, ${props.y})`}>
+        <rect
+            data-handler={props.type}
+            x={props.x - (props.width / props.zoom) / 2}
+            y={props.y - (props.height / props.zoom) / 2}
+            width={props.width / props.zoom}
+            height={props.height / props.zoom}
+            rx={props.radius / props.zoom}
+            fill={props.fillColor ?? HANDLERS_FILL_COLOR}
+            stroke={props.strokeColor ?? HANDLERS_STROKE_COLOR}
+            strokeWidth={(props.strokeWidth ?? 0) / props.zoom}
+            style={{
+                cursor: cursorsByHandlerType[props.type],
+            }}
+            onPointerDown={props.onPointerDown}
+        />
+    </g>
 );
 
 export const Handlers = (props: HandlersProps): React.JSX.Element => (
@@ -107,6 +116,7 @@ export const Handlers = (props: HandlersProps): React.JSX.Element => (
                         strokeWidth={4}
                         radius={isEdgeHandler(handler.type) ? 6 : 4}
                         zoom={props.zoom ?? 1}
+                        rotation={handler.rotation ?? 0}
                         onPointerDown={props.onPointerDown}
                     />
                 )}
@@ -120,6 +130,9 @@ export const Handlers = (props: HandlersProps): React.JSX.Element => (
                         strokeColor={props.strokeColor}
                         strokeWidth={4}
                         zoom={props.zoom ?? 1}
+                        rotation={handler.rotation ?? 0}
+                        offsetX={handler.offsetX}
+                        offsetY={handler.offsetY}
                         onPointerDown={props.onPointerDown}
                     />
                 )}
