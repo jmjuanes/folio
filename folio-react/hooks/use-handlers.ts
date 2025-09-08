@@ -3,6 +3,7 @@ import { getElementConfig } from "../lib/elements.js";
 import { useEditor } from "../contexts/editor.jsx";
 
 export type HandlerPosition = {
+    id?: string;
     type: string; // TODO: change to enum
     x: number;
     y: number;

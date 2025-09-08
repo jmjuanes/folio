@@ -12,7 +12,7 @@ import {
     POINTER_SIZE,
 } from "../constants.js";
 import {hypotenuse} from "../utils/math.ts";
-import {SvgContainer} from "./svg.jsx";
+import {SvgContainer} from "./svg.tsx";
 
 // alias for setInterval
 const createInterval = (ms, listener) => setInterval(listener, ms);

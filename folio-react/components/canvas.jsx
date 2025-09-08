@@ -15,14 +15,14 @@ import {
     BOUNDS_STROKE_WIDTH,
     BOUNDS_STROKE_DASH,
 } from "../constants.js";
-import {AssetsProvider} from "../contexts/assets.jsx";
-import {renderElement} from "./elements/index.jsx";
-import {SvgContainer} from "./svg.jsx";
-import {Handlers} from "./handlers.jsx";
-import {Grid} from "./grid.jsx";
-import {ObjectDimensions} from "./object-dimensions.jsx";
-import {clearFocus} from "../utils/dom.js";
-import {preventDefault, isTouchOrPenEvent} from "../utils/events.js";
+import { AssetsProvider } from "../contexts/assets.jsx";
+import { renderElement } from "./elements/index.jsx";
+import { SvgContainer } from "./svg.tsx";
+import { Handlers } from "./handlers.tsx";
+import { Grid } from "./grid.jsx";
+import { ObjectDimensions } from "./object-dimensions.jsx";
+import { clearFocus } from "../utils/dom.js";
+import { preventDefault, isTouchOrPenEvent } from "../utils/events.js";
 
 const delay = (timeout, cb) => window.setTimeout(cb, timeout);
 
