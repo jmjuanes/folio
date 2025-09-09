@@ -44,6 +44,9 @@ import { isCornerHandler } from "./handlers.ts";
 // Generate default handlers
 const getDefaultElementHandlers = element => {
     const rectangle = getRectangle([ element.x1, element.y1 ], [ element.x2, element.y2 ], element.rotation || 0);
+    const center = [ (element.x1 + element.x2) / 2, (element.y1 + element.y2) / 2 ];
+    const originalPoints = rotatePoints([ [ element.x1, element.y1 ], [ element.x2, element.y2 ] ], center, -(element.rotation || 0));
+    const diff = originalPoints[0][1] - originalPoints[1][1];
     return [
         {
             type: HANDLERS.EDGE_TOP,
@@ -94,7 +97,7 @@ const getDefaultElementHandlers = element => {
             x: (rectangle[0][0] + rectangle[1][0]) / 2,
             y: (rectangle[0][1] + rectangle[1][1]) / 2,
             offsetX: 0,
-            offsetY: -30,
+            offsetY: diff < 0 ? -30 : +30,
             rotation: element.rotation || 0,
         },
     ];
