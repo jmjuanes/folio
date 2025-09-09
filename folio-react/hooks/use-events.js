@@ -16,10 +16,10 @@ import {
     FIELDS,
 } from "../constants.js";
 import {
-    getBoundingRectangle,
     clampAngle,
     snapAngle,
     rotatePoints,
+    getRectangle,
 } from "../utils/math.ts";
 import { isArrowKey } from "../utils/keys.js";
 import { isInputTarget } from "../utils/events.js";
@@ -349,28 +349,38 @@ export const useEvents = () => {
                     element.y2 = newPoints[1][1];
                 }
                 else {
-                    // if (snapshot[0].rotation !== 0) {
-                    //     const cos = Math.cos(-snapshot[0].rotation);
-                    //     const sin = Math.sin(-snapshot[0].rotation);
-                    //     const { dx, dy } = event;
-                    //     event.dx = dx * cos - dy * sin;
-                    //     event.dy = dx * sin + dy * cos;
-                    // }
+                    // get the rectangle of the element
+                    const rect = getRectangle([snapshot[0].x1, snapshot[0].y1], [snapshot[0].x2, snapshot[0].y2], snapshot[0].rotation);
+
                     if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                        element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
+                        element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
                     }
                     else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
-                        element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                        const newCorner = [
+                            getPosition(rect[1][0] + event.dx, SNAP_EDGE_X),
+                            getPosition(rect[1][1] + event.dy, SNAP_EDGE_Y),
+                        ];
+                        const newRect = getRectangle(rect[3], newCorner, snapshot[0].rotation);
+                        element.x1 = newRect[3][0];
+                        element.y1 = newRect[3][1];
+                        element.x2 = newRect[1][0];
+                        element.y2 = newRect[1][1];
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                        element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                        const newCorner = [
+                            getPosition(rect[3][0] + event.dx, SNAP_EDGE_X),
+                            getPosition(rect[3][1] + event.dy, SNAP_EDGE_Y),
+                        ];
+                        const newRect = getRectangle(newCorner, rect[1], snapshot[0].rotation);
+                        element.x1 = newRect[3][0];
+                        element.y1 = newRect[3][1];
+                        element.x2 = newRect[1][0];
+                        element.y2 = newRect[1][1];
                     }
                     else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                        element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
-                        element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                        element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
+                        element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
                     }
                     else if (event.handler === HANDLERS.EDGE_TOP) {
                         element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
