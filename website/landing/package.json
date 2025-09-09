@@ -10,12 +10,12 @@
     },
     "dependencies": {
         "@josemi-icons/svg": "^0.7.0",
-        "lowcss": "^0.30.2"
+        "lowcss": "^0.32.0"
     },
     "devDependencies": {
-        "mikel": "^0.24.0",
-        "mikel-markdown": "^0.24.0",
-        "mikel-press": "^0.24.0",
+        "mikel": "^0.26.2",
+        "mikel-markdown": "^0.26.2",
+        "mikel-press": "^0.26.2",
         "serve": "^14.2.4"
     },
     "license": "MIT"
