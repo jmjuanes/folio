@@ -24,7 +24,7 @@ press({
         functions: {
             icon: params => {
                 return [
-                    `<svg width="1em" height="1em">`,
+                    `<svg class="${params.opt.className || ""}">`,
                     `<use xlink:href="/icons.svg#${params.opt.icon}"></use>`,
                     `</svg>`,
                 ].join("");
