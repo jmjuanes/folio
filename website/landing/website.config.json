@@ -26,6 +26,10 @@
     ],
     "navigation": [
         {
+            "title": "Studio",
+            "url": "/studio"
+        },
+        {
             "title": "Try",
             "url": "/app"
         },
