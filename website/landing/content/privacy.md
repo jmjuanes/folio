@@ -1,7 +1,8 @@
 ---
 {
     "title": "Privacy Policy",
-    "layout": "legal"
+    "layout": "legal",
+    "permalink": "/privacy.html"
 }
 ---
 
