@@ -1,7 +1,32 @@
 ---
 {
     "title": "Minimal whiteboard for sketching and prototyping",
-    "layout": "default"
+    "layout": "default",
+    "features": {
+        "title": "Sketch and Design with freedom.",
+        "highlights": [
+            {
+                "icon": "shield",
+                "title": "Design with total Privacy.",
+                "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
+            },
+            {
+                "icon": "drawing",
+                "title": "Boundless Canvas.",
+                "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
+            },
+            {
+                "icon": "files",
+                "title": "Organize your ideas.",
+                "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
+            },
+            {
+                "icon": "album",
+                "title": "Save, Organize, and Reuse Elements",
+                "description": "Use the <b>Library</b> to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
+            }
+        ]
+    }
 }
 ---
 <section class="min-h-screen px-6 py-20 md:py-32 flex flex-col justify-center items-center">
@@ -27,20 +52,20 @@
 <div class="w-32 mx-auto h-px bg-white"></div>
 <section class="mx-auto max-w-4xl px-6 py-32 flex flex-col justify-center items-center">
     <div class="max-w-2xl font-extrabold text-5xl md:text-7xl leading-tight mb-24 md:mb-30 text-center">
-        <span>{{site.features.title}}</span>
+        <span>{{page.attributes.features.title}}</span>
     </div>
     <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-        {{#each site.features.highlights}}
+        {{#each page.attributes.features.highlights}}
         <div class="mb-2">
-            {{#if icon}}
+            {{#if this.icon}}
             <div class="flex mb-6">
                 <div class="flex items-center">
-                    {{=icon icon=icon className="w-12 h-12"}}
+                    {{=icon icon=this.icon className="w-12 h-12"}}
                 </div>
             </div>
             {{/if}}
-            <div class="font-bold text-2xl leading-tight mb-4">{{!title}}</div>
-            <div class="text-gray-500">{{!description}}</div>
+            <div class="font-bold text-2xl leading-tight mb-4">{{!this.title}}</div>
+            <div class="text-gray-500">{{!this.description}}</div>
         </div>
         {{/each}}
     </div>
