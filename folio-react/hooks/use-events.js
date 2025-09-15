@@ -386,32 +386,43 @@ export const useEvents = () => {
                     }
                     else if (event.handler === HANDLERS.EDGE_TOP) {
                         const edgeTopPoint = getCenter(rect[0], rect[1]);
-                        const newPoint = getPointProjectionToLine([ edgeTopPoint[0] + event.dx, edgeTopPoint[1] + event.dy], [ rect[0], rect[3] ]);
-                        // element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
-                        // element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
-                        element.x1 = getPosition(newPoint[0], SNAP_EDGE_X);
-                        element.y1 = getPosition(newPoint[1], SNAP_EDGE_Y);
+                        const currentPoint = [
+                            getPosition(edgeTopPoint[0] + event.dx, null),
+                            getPosition(edgeTopPoint[1] + event.dy, null),
+                        ];
+                        const newPoint = getPointProjectionToLine(currentPoint, [ rect[0], rect[3] ]);
+                        element.x1 = newPoint[0];
+                        element.y1 = newPoint[1];
                     }
                     else if (event.handler === HANDLERS.EDGE_BOTTOM) {
                         const edgeBottomPoint = getCenter(rect[2], rect[3]);
-                        const newPoint = getPointProjectionToLine([ edgeBottomPoint[0] + event.dx, edgeBottomPoint[1] + event.dy], [ rect[1], rect[2] ]);
-                        element.x2 = getPosition(newPoint[0], SNAP_EDGE_X);
-                        element.y2 = getPosition(newPoint[1], SNAP_EDGE_Y);
-                        // element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
+                        const currentPoint = [
+                            getPosition(edgeBottomPoint[0] + event.dx, null),
+                            getPosition(edgeBottomPoint[1] + event.dy, null),
+                        ];
+                        const newPoint = getPointProjectionToLine(currentPoint, [ rect[1], rect[2] ]);
+                        element.x2 = newPoint[0];
+                        element.y2 = newPoint[1];
                     }
                     else if (event.handler === HANDLERS.EDGE_LEFT) {
                         const edgeLeftPoint = getCenter(rect[0], rect[3]);
-                        const newPoint = getPointProjectionToLine([ edgeLeftPoint[0] + event.dx, edgeLeftPoint[1] + event.dy], [ rect[0], rect[1] ]);
-                        element.x1 = getPosition(newPoint[0], SNAP_EDGE_X);
-                        element.y1 = getPosition(newPoint[1], SNAP_EDGE_Y);
-                        // element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
+                        const currentPoint = [
+                            getPosition(edgeLeftPoint[0] + event.dx, null),
+                            getPosition(edgeLeftPoint[1] + event.dy, null),
+                        ];
+                        const newPoint = getPointProjectionToLine(currentPoint, [ rect[0], rect[1] ]);
+                        element.x1 = newPoint[0];
+                        element.y1 = newPoint[1];
                     }
                     else if (event.handler === HANDLERS.EDGE_RIGHT) {
                         const edgeRightPoint = getCenter(rect[1], rect[2]);
-                        const newPoint = getPointProjectionToLine([ edgeRightPoint[0] + event.dx, edgeRightPoint[1] + event.dy], [ rect[2], rect[3] ]);
-                        element.x2 = getPosition(newPoint[0], SNAP_EDGE_X);
-                        element.y2 = getPosition(newPoint[1], SNAP_EDGE_Y);
-                        // element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
+                        const currentPoint = [
+                            getPosition(edgeRightPoint[0] + event.dx, null),
+                            getPosition(edgeRightPoint[1] + event.dy, null),
+                        ];
+                        const newPoint = getPointProjectionToLine(currentPoint, [ rect[2], rect[3] ]);
+                        element.x2 = newPoint[0];
+                        element.y2 = newPoint[1];
                     }
                     else if (event.handler === HANDLERS.NODE_START) {
                         element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
