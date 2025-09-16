@@ -524,7 +524,7 @@ export const useEvents = () => {
                     editor.addHistory({
                         type: CHANGES.UPDATE,
                         elements: selectedElements.map((element, index) => {
-                            const updatedFields = new Set(["x1", "x2", "y1", "y2", "version"]);
+                            const updatedFields = new Set(["x1", "x2", "y1", "y2", "rotation", "version"]);
                             // We need to check the fields that the element has updated internally
                             const elementConfig = getElementConfig(element);
                             if (typeof elementConfig.getUpdatedFields === "function") {
