@@ -71,7 +71,7 @@ export const useDimensions = () => {
         // In this case, only for shapes or text will be displayed
         // else if (action === ACTIONS.CREATE && (tool === ELEMENTS.SHAPE || tool === ELEMENTS.TEXT)) {
         else if (editor.state.tool === ELEMENTS.SHAPE || editor.state.tool === ELEMENTS.TEXT) {
-            const el = editor.getElements().find(element => element[FIELDS.CREATING]);
+            const el = editor.getElements().find((element: any) => element[FIELDS.CREATING]);
             if (el) {
                 dimensions.push(generateDimensionLabel([ el ]));
             }
