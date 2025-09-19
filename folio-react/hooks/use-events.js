@@ -22,6 +22,7 @@ import {
     getRectangle,
     getPointProjectionToLine,
     getCenter,
+    computeResizeDelta,
 } from "../utils/math.ts";
 import { isArrowKey } from "../utils/keys.js";
 import { isInputTarget } from "../utils/events.js";
@@ -32,12 +33,18 @@ import {
     getElementSnappingPoints,
     getElementsBoundingRectangle,
     normalizeElementCoordinates,
+    getElementSize,
 } from "../lib/elements.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useActions } from "./use-actions.js";
 import { useTools, getToolByShortcut } from "./use-tools.js";
 import { getActionByKeysCombination } from "../lib/actions.js";
+import {
+    isCornerHandler,
+    isEdgeHandler,
+    isNodeHandler,
+} from "../lib/handlers.ts";
 
 // internal list with all elements
 const elementsNames = new Set(Object.values(ELEMENTS));
@@ -351,86 +358,102 @@ export const useEvents = () => {
                     element.y2 = newPoints[1][1];
                 }
                 else {
-                    // get the rectangle of the element
-                    const rect = getRectangle([snapshot[0].x1, snapshot[0].y1], [snapshot[0].x2, snapshot[0].y2], snapshot[0].rotation);
-
-                    if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                        element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
-                        element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
+                    if (isNodeHandler(event.handler)) {
+                        if (event.handler === HANDLERS.NODE_START) {
+                            element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
+                            element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
+                        }
+                        else if (event.handler === HANDLERS.NODE_END) {
+                            element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
+                            element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
+                        }
                     }
-                    else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                        const newCorner = [
-                            getPosition(rect[1][0] + event.dx, SNAP_EDGE_X),
-                            getPosition(rect[1][1] + event.dy, SNAP_EDGE_Y),
-                        ];
-                        const newRect = getRectangle(rect[3], newCorner, snapshot[0].rotation);
-                        element.x1 = newRect[3][0];
-                        element.y1 = newRect[3][1];
-                        element.x2 = newRect[1][0];
-                        element.y2 = newRect[1][1];
-                    }
-                    else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                        const newCorner = [
-                            getPosition(rect[3][0] + event.dx, SNAP_EDGE_X),
-                            getPosition(rect[3][1] + event.dy, SNAP_EDGE_Y),
-                        ];
-                        const newRect = getRectangle(newCorner, rect[1], snapshot[0].rotation);
-                        element.x1 = newRect[3][0];
-                        element.y1 = newRect[3][1];
-                        element.x2 = newRect[1][0];
-                        element.y2 = newRect[1][1];
-                    }
-                    else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                        element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
-                        element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
-                    }
-                    else if (event.handler === HANDLERS.EDGE_TOP) {
-                        const edgeTopPoint = getCenter(rect[0], rect[1]);
-                        const currentPoint = [
-                            getPosition(edgeTopPoint[0] + event.dx, null),
-                            getPosition(edgeTopPoint[1] + event.dy, null),
-                        ];
-                        const newPoint = getPointProjectionToLine(currentPoint, [ rect[0], rect[3] ]);
-                        element.x1 = newPoint[0];
-                        element.y1 = newPoint[1];
-                    }
-                    else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-                        const edgeBottomPoint = getCenter(rect[2], rect[3]);
-                        const currentPoint = [
-                            getPosition(edgeBottomPoint[0] + event.dx, null),
-                            getPosition(edgeBottomPoint[1] + event.dy, null),
-                        ];
-                        const newPoint = getPointProjectionToLine(currentPoint, [ rect[1], rect[2] ]);
-                        element.x2 = newPoint[0];
-                        element.y2 = newPoint[1];
-                    }
-                    else if (event.handler === HANDLERS.EDGE_LEFT) {
-                        const edgeLeftPoint = getCenter(rect[0], rect[3]);
-                        const currentPoint = [
-                            getPosition(edgeLeftPoint[0] + event.dx, null),
-                            getPosition(edgeLeftPoint[1] + event.dy, null),
-                        ];
-                        const newPoint = getPointProjectionToLine(currentPoint, [ rect[0], rect[1] ]);
-                        element.x1 = newPoint[0];
-                        element.y1 = newPoint[1];
-                    }
-                    else if (event.handler === HANDLERS.EDGE_RIGHT) {
-                        const edgeRightPoint = getCenter(rect[1], rect[2]);
-                        const currentPoint = [
-                            getPosition(edgeRightPoint[0] + event.dx, null),
-                            getPosition(edgeRightPoint[1] + event.dy, null),
-                        ];
-                        const newPoint = getPointProjectionToLine(currentPoint, [ rect[2], rect[3] ]);
-                        element.x2 = newPoint[0];
-                        element.y2 = newPoint[1];
-                    }
-                    else if (event.handler === HANDLERS.NODE_START) {
-                        element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
-                        element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
-                    }
-                    else if (event.handler === HANDLERS.NODE_END) {
-                        element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
-                        element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
+                    else if (isCornerHandler(event.handler) || isEdgeHandler(event.handler)) {
+                        const rect = getRectangle([ snapshot[0].x1, snapshot[0].y1 ], [ snapshot[0].x2, snapshot[0].y2 ], snapshot[0].rotation);
+                        if (isCornerHandler(event.handler)) {
+                            const [ width, height ] = getElementSize(snapshot[0]);
+                            const diagLen = Math.hypot(width, height);
+                            if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
+                                const axisDir = [ (-1) * width / diagLen, (-1) * height / diagLen ];
+                                const [ gDx, gDy ] = computeResizeDelta([ event.dx, event.dy ], snapshot[0].rotation, axisDir, event.shiftKey);
+                                element.x1 = getPosition(snapshot[0].x1 + gDx);
+                                element.y1 = getPosition(snapshot[0].y1 + gDy);
+                            }
+                            else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                                const axisDir = [ width / diagLen, height / diagLen ];
+                                const [ gDx, gDy ] = computeResizeDelta([ event.dx, event.dy ], snapshot[0].rotation, axisDir, event.shiftKey);
+                                element.x2 = getPosition(snapshot[0].x2 + gDx);
+                                element.y2 = getPosition(snapshot[0].y2 + gDy);
+                            }
+                            else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
+                                const axisDir = [ (-1) * width / diagLen, height / diagLen ];
+                                const [ gDx, gDy ] = computeResizeDelta([ event.dx, event.dy ], snapshot[0].rotation, axisDir, event.shiftKey);
+                                const newCorner = [
+                                    getPosition(rect[1][0] + gDx, null),
+                                    getPosition(rect[1][1] + gDy, null),
+                                ];
+                                const newRect = getRectangle(rect[3], newCorner, snapshot[0].rotation);
+                                element.x1 = newRect[3][0];
+                                element.y1 = newRect[3][1];
+                                element.x2 = newRect[1][0];
+                                element.y2 = newRect[1][1];
+                            }
+                            else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                                const axisDir = [ width / diagLen, (-1) * height / diagLen ];
+                                const [ gDx, gDy ] = computeResizeDelta([ event.dx, event.dy ], snapshot[0].rotation, axisDir, event.shiftKey);
+                                const newCorner = [
+                                    getPosition(rect[3][0] + gDx, null),
+                                    getPosition(rect[3][1] + gDy, null),
+                                ];
+                                const newRect = getRectangle(newCorner, rect[1], snapshot[0].rotation);
+                                element.x1 = newRect[3][0];
+                                element.y1 = newRect[3][1];
+                                element.x2 = newRect[1][0];
+                                element.y2 = newRect[1][1];
+                            }
+                        }
+                        else {
+                            if (event.handler === HANDLERS.EDGE_TOP) {
+                                const edgeTopPoint = getCenter(rect[0], rect[1]);
+                                const currentPoint = [
+                                    getPosition(edgeTopPoint[0] + event.dx, null),
+                                    getPosition(edgeTopPoint[1] + event.dy, null),
+                                ];
+                                const newPoint = getPointProjectionToLine(currentPoint, [ rect[0], rect[3] ]);
+                                element.x1 = newPoint[0];
+                                element.y1 = newPoint[1];
+                            }
+                            else if (event.handler === HANDLERS.EDGE_BOTTOM) {
+                                const edgeBottomPoint = getCenter(rect[2], rect[3]);
+                                const currentPoint = [
+                                    getPosition(edgeBottomPoint[0] + event.dx, null),
+                                    getPosition(edgeBottomPoint[1] + event.dy, null),
+                                ];
+                                const newPoint = getPointProjectionToLine(currentPoint, [ rect[1], rect[2] ]);
+                                element.x2 = newPoint[0];
+                                element.y2 = newPoint[1];
+                            }
+                            else if (event.handler === HANDLERS.EDGE_LEFT) {
+                                const edgeLeftPoint = getCenter(rect[0], rect[3]);
+                                const currentPoint = [
+                                    getPosition(edgeLeftPoint[0] + event.dx, null),
+                                    getPosition(edgeLeftPoint[1] + event.dy, null),
+                                ];
+                                const newPoint = getPointProjectionToLine(currentPoint, [ rect[0], rect[1] ]);
+                                element.x1 = newPoint[0];
+                                element.y1 = newPoint[1];
+                            }
+                            else if (event.handler === HANDLERS.EDGE_RIGHT) {
+                                const edgeRightPoint = getCenter(rect[1], rect[2]);
+                                const currentPoint = [
+                                    getPosition(edgeRightPoint[0] + event.dx, null),
+                                    getPosition(edgeRightPoint[1] + event.dy, null),
+                                ];
+                                const newPoint = getPointProjectionToLine(currentPoint, [ rect[2], rect[3] ]);
+                                element.x2 = newPoint[0];
+                                element.y2 = newPoint[1];
+                            }
+                        }
                     }
                     // Execute onResize handler
                     elementConfig?.onResize?.(element, snapshot[0], event, getPosition);

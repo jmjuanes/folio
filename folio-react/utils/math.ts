@@ -59,6 +59,32 @@ export const getPointProjectionToLine = (point: Point, line: Segment): Point => 
     ];
 };
 
+// @description Computes the intersection point of two infinite lines, each defined by two points.
+// @param {{x:number, y:number}} A First point of line 1
+// @param {{x:number, y:number}} B Second point of line 1
+// @param {{x:number, y:number}} C First point of line 2
+// @param {{x:number, y:number}} D Second point of line 2
+// @returns {{x:number, y:number}|null}
+export const getIntersectionPoint = (line1: Segment, line2: Segment): Point | null => {
+    // 1. calculate the determinant of the system
+    const denom = (line1[0][0] - line1[1][0]) * (line2[0][1] - line2[1][1]) - (line1[0][1] - line1[1][1]) * (line2[0][0] - line2[1][0]);
+    if (denom === 0) {
+        // lines are parallel or coincident
+        return null;
+    }
+
+    // 2. calculate the determinants for each line
+    const det1 = line1[0][0] * line1[1][1] - line1[0][1] * line1[1][0];
+    const det2 = line2[0][0] * line2[1][1] - line2[0][1] * line2[1][0];
+
+    // 4. apply Cramer's rule to find intersection point
+    return [
+        (det1 * (line2[0][0] - line2[1][0]) - (line1[0][0] - line1[1][0]) * det2) / denom,
+        (det1 * (line2[0][1] - line2[1][1]) - (line1[0][1] - line1[1][1]) * det2) / denom,
+    ];
+};
+
+
 // get a point in a quadratig curve
 export const getPointInQuadraticCurve = (p1: Point, p2: Point, p3: Point, t: number = 0.5): Point => {
     return [
@@ -237,3 +263,25 @@ export const clampAngle = (angle = 0) => {
 export const convertRadiansToDegrees = (radians = 0) => {
     return (radians * 180) / Math.PI;
 };
+
+// Compute the constrained global delta for any corner.
+// - dx,dy are pointer deltas in screen coords.
+// - angle is the element’s current rotation.
+// - axisDir is the local direction you want to resize along
+//   (e.g. [-1,-1] normalized for TOP_LEFT → BR diagonal).
+// - lockAspect tells us to project onto axisDir, otherwise we keep full local delta.
+export const computeResizeDelta = (delta: Point, angle: number, axisDir: Point, lockAspect: boolean = false): Point => {
+    // 1. bring pointer delta into local coords
+    const [ localDelta ] = rotatePoints([ delta ], [ 0, 0 ], -angle);
+    let computedDeltaX = localDelta[0], computedDeltaY = localDelta[1];
+
+    // 2. optionally project onto the “resize axis”
+    if (lockAspect) {
+        const projection = (localDelta[0] * axisDir[0]) + (localDelta[1] * axisDir[1]);
+        computedDeltaX = projection * axisDir[0];
+        computedDeltaY = projection * axisDir[1];
+    }
+
+    // 3. back to global coords
+    return rotatePoints([ [ computedDeltaX, computedDeltaY ] ], [0, 0], angle)[0];
+}

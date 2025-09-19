@@ -108,59 +108,6 @@ const checkStrokeStyleValue = initialValue => {
     return initialValue === STROKES.NONE ? STROKES.SOLID : initialValue;
 };
 
-// allow to perserve the aspect ratio of the element
-const preserveAspectRatio = (element, snapshot, event) => {
-    const ratio = (snapshot.y2 - snapshot.y1) / Math.max(1, snapshot.x2 - snapshot.x1);
-    if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-        if (event.dx * ratio < event.dy) {
-            element.y1 = snapshot.y1 + ((element.x1 - snapshot.x1) * ratio);
-        }
-        else {
-            element.x1 = snapshot.x1 + ((element.y1 - snapshot.y1) / ratio);
-        }
-    }
-    else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-        if ((-1) * event.dx * ratio < event.dy) {
-            element.y1 = snapshot.y1 - ((element.x2 - snapshot.x2) * ratio);
-        }
-        else {
-            element.x2 = snapshot.x2 - ((element.y1 - snapshot.y1) / ratio);
-        }
-    }
-    else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-        if ((-1) * event.dx * ratio > event.dy) {
-            element.y2 = snapshot.y2 - ((element.x1 - snapshot.x1) * ratio);
-        }
-        else {
-            element.x1 = snapshot.x1 - ((element.y2 - snapshot.y2) / ratio);
-        }
-    }
-    else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-        if (event.dx * ratio > event.dy) {
-            element.y2 = snapshot.y2 + ((element.x2 - snapshot.x2) * ratio);
-        }
-        else {
-            element.x2 = snapshot.x2 + ((element.y2 - snapshot.y2) / ratio);
-        }
-    }
-    else if (event.handler === HANDLERS.EDGE_TOP) {
-        element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
-        element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
-    }
-    else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-        element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
-        element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
-    }
-    else if (event.handler === HANDLERS.EDGE_LEFT) {
-        element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
-        element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
-    }
-    else if (event.handler === HANDLERS.EDGE_RIGHT) {
-        element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
-        element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
-    }
-};
-
 export const elementsConfig = {
     [ELEMENTS.SHAPE]: {
         displayName: "Shape",
@@ -212,10 +159,6 @@ export const elementsConfig = {
             });
         },
         onResize: (element, snapshot, event) => {
-            if (event.shiftKey) {
-                preserveAspectRatio(element, snapshot, event);
-            }
-            // Check if we have a text inside the shape
             if (element.text) {
                 const width = Math.abs(element.x2 - element.x1);
                 const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
@@ -467,7 +410,6 @@ export const elementsConfig = {
         onResize: (element, snapshot, event) => {
             const handler = event.handler || "";
             if (isCornerHandler(handler) || handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.EDGE_TOP) {
-                preserveAspectRatio(element, snapshot, event);
                 const width = Math.abs(element.x2 - element.x1);
                 const height = Math.abs(element.y2 - element.y1);
                 let textSize = TEXT_SIZE_MIN;
@@ -551,11 +493,6 @@ export const elementsConfig = {
             element.drawWidth = Math.abs(element.x2 - element.x1);
             element.drawHeight = Math.abs(element.y2 - element.y1);
         },
-        onResize: (element, snapshot, event) => {
-            if (event.shiftKey) {
-                return preserveAspectRatio(element, snapshot, event);
-            }
-        },
     },
     [ELEMENTS.IMAGE]: {
         displayName: "Image",
@@ -564,11 +501,6 @@ export const elementsConfig = {
             [FIELDS.ASSET_ID]: "",
             [FIELDS.OPACITY]: DEFAULTS.OPACITY,
         }),
-        onResize: (element, snapshot, event) => {
-            if (event.shiftKey) {
-                return preserveAspectRatio(element, snapshot, event);
-            }
-        },
     },
     [ELEMENTS.NOTE]: {
         displayName: "Note",
