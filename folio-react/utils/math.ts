@@ -6,6 +6,8 @@ export type Point = [ x: number, y: number ];
 export type Segment = [ start: Point, end: Point ];
 export type Line = Segment;
 
+export type Corner = "top-left" | "top-right" | "bottom-right" | "bottom-left";
+
 // internal variable to sotre the PRE element used to measure text
 const measureTextElement = {
     current: null as HTMLPreElement | null,
@@ -131,6 +133,24 @@ export const getRectangle = (p1: Point, p2: Point, angle: number = 0): Point[] =
     return [ p1, p3, p2, p4 ];
 };
 
+// @description workaround to resize a rectangle from the given corner and angle
+export const resizeRectangleFromFixedCorner = (corner: Point, width: number, height: number, rotation: number, fromCorner: Corner): Point => {
+    const cos: number = Math.cos(rotation);
+    const sin: number = Math.sin(rotation);
+    const xAxis: [number, number] = [ cos, sin ];       // horizontal
+    const yAxis: [number, number] = [ -sin, cos ];      // vertical
+
+    // calculate the displacement direction according to the corner
+    const dx = fromCorner.includes("right") ? -width : width;
+    const dy = fromCorner.includes("bottom") ? -height : height;
+
+    // return the opposite corner
+    return [
+        corner[0] + xAxis[0] * dx + yAxis[0] * dy,
+        corner[1] + xAxis[1] * dx + yAxis[1] * dy,
+    ];
+};
+
 // Generate the minumun rectangle points that contains all points in the provided list
 export const getBoundingRectangle = (points: Point[]): Point[] => ([
     [ Math.min.apply(null, points.map(p => p[0])), Math.min.apply(null, points.map(p => p[1])) ],
@@ -230,6 +250,16 @@ export const simplifyPath = (points: Point[], tolerance: number): Point[] => {
     ];
 };
 
+// @description rotate the x coordinate
+export const rotateX = (x: number, y: number, center: Point, angle: number): number => {
+    return ((x - center[0]) * Math.cos(angle)) - ((y - center[1]) * Math.sin(angle)) + center[0];
+};
+
+// @description rotate the y coordinate
+export const rotateY = (x: number, y: number, center: Point, angle: number): number => {
+    return ((x - center[0]) * Math.sin(angle)) + ((y - center[1]) * Math.cos(angle)) + center[1];
+};
+
 // Rotate the provided points list
 export const rotatePoints = (points: Point[], center: Point, angle: number): Point[]=> {
     const cos = Math.cos(angle);
@@ -262,6 +292,11 @@ export const clampAngle = (angle = 0) => {
 // @description convert radians to degrees
 export const convertRadiansToDegrees = (radians = 0) => {
     return (radians * 180) / Math.PI;
+};
+
+// @description convert degrees to radians
+export const convertDegreesToRadians = (degrees = 0) => {
+    return (degrees * Math.PI) / 180;
 };
 
 // Compute the constrained global delta for any corner.

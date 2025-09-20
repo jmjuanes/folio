@@ -37,6 +37,7 @@ import {
     getBoundingRectangle,
     rotatePoints,
     getRectangle,
+    resizeRectangleFromFixedCorner,
 } from "../utils/math.ts";
 import { getCurvePath, getConnectorPath } from "../utils/paths.js";
 import { isCornerHandler } from "./handlers.ts";
@@ -120,7 +121,8 @@ export const elementsConfig = {
             }
             // Return 
             return {
-                opacity: DEFAULTS.OPACITY,
+                [FIELDS.ROTATION]: DEFAULTS.ROTATION,
+                [FIELDS.OPACITY]: DEFAULTS.OPACITY,
                 shape: values.shape || DEFAULTS.SHAPE,
                 fillColor: values?.fillColor ?? DEFAULTS.FILL_COLOR,
                 fillStyle: values?.fillStyle ?? DEFAULTS.FILL_STYLE,
@@ -150,26 +152,19 @@ export const elementsConfig = {
                 element.x2 = element.x1 + SHAPE_MIN_WIDTH;
                 element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
             }
-            // Update position of shape element
-            Object.assign(element, {
-                x1: Math.min(element.x1, element.x2),
-                y1: Math.min(element.y1, element.y2),
-                x2: Math.max(element.x1, element.x2),
-                y2: Math.max(element.y1, element.y2),
-            });
         },
         onResize: (element, snapshot, event) => {
             if (element.text) {
-                const width = Math.abs(element.x2 - element.x1);
-                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                const [ width ] = getElementSize(element);
+                const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = textWidth;
                 element.textHeight = textHeight;
             }
         },
         onUpdate: (element, changedKeys) => {
             if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
-                const width = Math.abs(element.x2 - element.x1);
-                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                const [ width ] = getElementSize(element);
+                const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = textWidth;
                 element.textHeight = textHeight;
             }
@@ -357,16 +352,17 @@ export const elementsConfig = {
     [ELEMENTS.TEXT]: {
         displayName: "Text",
         getHandlers: element => getDefaultElementHandlers(element),
-        getUpdatedFields: (element, snapshot) => {
-            return ["textSize", "textWidth", "textHeight"];
+        getUpdatedFields: () => {
+            return [ "textSize", "textWidth", "textHeight", "x1", "x2", "y1", "y2" ];
         },
         initialize: values => {
             // We need to measure the height of an empty text to calculate the height of the element
             const textSize = values?.textSize ?? DEFAULTS.TEXT_SIZE;
             const textFont = values?.textFont ?? DEFAULTS.TEXT_FONT;
-            const [textWidth, textHeight] = measureText(" ", textSize, textFont);
+            const [ textWidth, textHeight ] = measureText(" ", textSize, textFont);
             return ({
-                opacity: DEFAULTS.OPACITY,
+                [FIELDS.OPACITY]: DEFAULTS.OPACITY,
+                [FIELDS.ROTATION]: DEFAULTS.ROTATION,
                 text: "",
                 textColor: values?.textColor ?? DEFAULTS.TEXT_COLOR,
                 textFont: textFont,
@@ -398,20 +394,25 @@ export const elementsConfig = {
             element.y2 = element.y1 + Math.max(Math.abs(element.y2 - element.y1), GRID_SIZE, Math.ceil(element.textHeight / GRID_SIZE) * GRID_SIZE);
         },
         onUpdate: (element, changedKeys) => {
-            if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
-                const width = Math.abs(element.x2 - element.x1);
-                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
-                // Apply changes to element
-                element.textWidth = textWidth;
-                element.textHeight = textHeight;
-                element.y2 = element.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
+            if (changedKeys.has("textSize") || changedKeys.has("textFont") || changedKeys.has("text")) {
+                const [ width ] = getElementSize(element);
+                // check if we have to update the text size
+                if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
+                    const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                    element.textWidth = textWidth;
+                    element.textHeight = textHeight;
+                }
+                // fix the height of the text element
+                const height = Math.ceil(element.textHeight / GRID_SIZE) * GRID_SIZE;
+                const newPoint = resizeRectangleFromFixedCorner([ element.x1, element.y1 ], width, height, element.rotation || 0, "top-left");
+                element.x2 = newPoint[0];
+                element.y2 = newPoint[1];
             }
         },
         onResize: (element, snapshot, event) => {
             const handler = event.handler || "";
+            const [ width, height ] = getElementSize(element);
             if (isCornerHandler(handler) || handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.EDGE_TOP) {
-                const width = Math.abs(element.x2 - element.x1);
-                const height = Math.abs(element.y2 - element.y1);
                 let textSize = TEXT_SIZE_MIN;
                 while (textSize <= TEXT_SIZE_MAX) {
                     const size = measureText(element.text || " ", textSize, element.textFont, width + "px");
@@ -425,18 +426,28 @@ export const elementsConfig = {
                 }
             }
             else if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
-                const width = Math.abs(element.x2 - element.x1);
-                const sizes = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
-                element.textWidth = sizes[0];
-                element.textHeight = sizes[1];
-                element.y2 = element.y1 + element.textHeight; // fix height
+                const size = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                element.textWidth = size[0];
+                element.textHeight = size[1];
+                const newPoint = resizeRectangleFromFixedCorner([ element.x1, element.y1 ], width, element.textHeight, snapshot.rotation || 0, "top-left");
+                element.x2 = newPoint[0];
+                element.y2 = newPoint[1];
             }
-            // Terrible hack to prevent having 0px text elements
-            if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                element.x1 = Math.min(element.x1, element.x2 - element.textWidth);
-            }
-            else if (handler === HANDLERS.EDGE_RIGHT || handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                element.x2 = Math.max(element.x2, element.x1 + element.textWidth);
+            // this is a terrible hack to prevent having 0px text elements
+            if (isCornerHandler(handler) || handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
+                const [ newWidth, newHeight ] = getElementSize(element);
+                if (newWidth < element.textWidth) {
+                    if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                        const p = resizeRectangleFromFixedCorner([ element.x2, element.y2 ], element.textWidth, newHeight, snapshot.rotation || 0, "bottom-right");
+                        element.x1 = p[0];
+                        element.y1 = p[1];
+                    }
+                    else {
+                        const p = resizeRectangleFromFixedCorner([ element.x1, element.y1 ], element.textWidth, newHeight, snapshot.rotation || 0, "top-left");
+                        element.x2 = p[0];
+                        element.y2 = p[1];
+                    }
+                }
             }
         },
     },
@@ -573,7 +584,6 @@ export const createElement = elementType => {
         [FIELDS.Y_START]: 0,
         [FIELDS.X_END]: 0,
         [FIELDS.Y_END]: 0,
-        [FIELDS.ROTATION]: 0,
         [FIELDS.SELECTED]: false,
         [FIELDS.CREATING]: false,
         [FIELDS.EDITING]: false,

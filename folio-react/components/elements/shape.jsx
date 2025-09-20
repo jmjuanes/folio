@@ -191,7 +191,7 @@ const PolygonShape = props => {
 export const ShapeElement = props => {
     const cx = (props.x1 + props.x2) / 2;
     const cy = (props.y1 + props.y2) / 2;
-    const [ width, height, x, y] = getElementSize(props);
+    const [ width, height, x, y ] = getElementSize(props);
     const rotation = convertRadiansToDegrees(props.rotation || 0);
     const fillColor = props.fillColor ?? TRANSPARENT;
     const strokeColor = props.strokeColor ?? BLACK;

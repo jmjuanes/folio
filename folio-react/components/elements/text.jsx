@@ -2,46 +2,51 @@ import React from "react";
 import {
     BLACK,
     FONT_FACES,
-    GRID_SIZE,
     TEXT_ALIGNS,
     TEXT_VERTICAL_ALIGNS,
 } from "../../constants.js";
-import {measureText} from "../../utils/math.ts";
-import {EditableText} from "./editable-text.jsx";
+import { convertRadiansToDegrees, measureText } from "../../utils/math.ts";
+import { EditableText } from "./editable-text.jsx";
+import { getElementSize } from "../../lib/elements.js";
 
 const getTextVerticalPosition = (align, height, textHeight) => {
     // align text to top
     if (align === TEXT_VERTICAL_ALIGNS.TOP) {
-        return (-1) * height / 2;
+        return 0;
+        // return (-1) * height / 2;
     }
     // align text to bottom
     else if (align === TEXT_VERTICAL_ALIGNS.BOTTOM) {
-        return (height / 2) - textHeight;
+        // return (height / 2) - textHeight;
+        return height - textHeight;
     }
     // Other case, align to center
-    else {
-        return (-1) * textHeight / 2;
-    }
+    // return (-1) * textHeight / 2;
+    return (height / 2) - (textHeight / 2);
 };
 
 export const TextElement = props => {
     const padding = props.padding ?? 0;
-    const x = (props.x1 + props.x2) / 2;
-    const y = (props.y1 + props.y2) / 2;
-    const width = Math.abs(props.x2 - props.x1) - (2 * padding);
-    const height = Math.abs(props.y2 - props.y1) - (2 * padding);
+    const cx = (props.x1 + props.x2) / 2;
+    const cy = (props.y1 + props.y2) / 2;
+    const [ width, height, x, y ] = getElementSize(props);
+    const rotation = convertRadiansToDegrees(props.rotation || 0);
+    // const x = (props.x1 + props.x2) / 2;
+    // const y = (props.y1 + props.y2) / 2;
+    // const width = Math.abs(props.x2 - props.x1) - (2 * padding);
+    // const height = Math.abs(props.y2 - props.y1) - (2 * padding);
     const textSize = props.textSize ?? 0;
     const textFont = props.textFont ?? FONT_FACES.SANS;
     const textColor = props.textColor ?? BLACK;
 
     return (
-        <g transform={`translate(${x} ${y})`}>
+        <g transform={`translate(${x},${y}) rotate(${rotation}, ${cx - x}, ${cy - y})`}>
             {!props.embedded && (!!props.creating || props.editing) && (
                 <rect
-                    x={(-1) * width / 2}
-                    y={(-1) * height / 2}
-                    width={width}
-                    height={height}
+                    x={padding}
+                    y={padding}
+                    width={width - 2 * padding}
+                    height={height - 2 * padding}
                     fill={props.editing ? "#0d6efd" : "transparent"}
                     fillOpacity="0.1"
                     stroke={props.editing ? "none" : "#0d6efd"}
@@ -53,9 +58,9 @@ export const TextElement = props => {
             <EditableText
                 editing={props.editing}
                 autofocus={true}
-                x={(-1) * width / 2}
-                y={getTextVerticalPosition(props.textVerticalAlign, height, props.textHeight)}
-                width={width}
+                x={padding}
+                y={padding + getTextVerticalPosition(props.textVerticalAlign, height - 2 * padding, props.textHeight)}
+                width={width - 2 * padding}
                 height={props.textHeight}
                 text={props.text || ""}
                 textFont={textFont}
@@ -69,10 +74,6 @@ export const TextElement = props => {
                         const [textWidth, textHeight] = measureText(text || " ", textSize, textFont, width + "px");
                         const keys = ["text", "textWidth", "textHeight"];
                         const values = [text, textWidth, textHeight];
-                        if (!props.embedded) {
-                            keys.push("y2");
-                            values.push(props.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE);
-                        }
                         return props.onChange?.(keys, values);
                     }
                 }}
@@ -81,10 +82,10 @@ export const TextElement = props => {
             {!props.editing && (
                 <rect
                     data-element={props.id}
-                    x={(-1) * width / 2}
-                    y={(-1) * height / 2}
-                    width={Math.max(width, 0)}
-                    height={Math.max(height, 0)}
+                    x={padding}
+                    y={padding}
+                    width={Math.max(width - 2 * padding, 0)}
+                    height={Math.max(height - 2 * padding, 0)}
                     fill="transparent"
                     stroke="none"
                     onPointerDown={props.onPointerDown}
