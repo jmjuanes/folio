@@ -150,12 +150,7 @@ export const elementsConfig = {
         },
         onCreateEnd: (element, event) => {
             // normalize coordinates after creating the element
-            Object.assign(element, {
-                x1: Math.min(element.x1, element.x2),
-                y1: Math.min(element.y1, element.y2),
-                x2: Math.max(element.x1, element.x2),
-                y2: Math.max(element.y1, element.y2),
-            });
+            normalizeElementCoordinates(element);
             // prevent drawing 0-sized shapes
             if (!event.drag) {
                 element.x2 = element.x1 + SHAPE_MIN_WIDTH;
@@ -179,7 +174,7 @@ export const elementsConfig = {
             }
         },
         getUpdatedFields: element => {
-            return element.text ? ["textWidth", "textHeight"] : [];
+            return element.text ? [ "textWidth", "textHeight", "x1", "x2", "y1", "y2" ] : [];
         },
     },
     [ELEMENTS.ARROW]: {
@@ -385,12 +380,7 @@ export const elementsConfig = {
             element.y2 = element.y1 + element.textHeight;
         },
         onCreateEnd: element => {
-            Object.assign(element, {
-                x1: Math.min(element.x1, element.x2),
-                y1: Math.min(element.y1, element.y2),
-                x2: Math.max(element.x1, element.x2),
-                y2: Math.max(element.y1, element.y2),
-            });
+            normalizeElementCoordinates(element);
             // Fix text initial X position
             const deltax = Math.abs(element.x2 - element.x1);
             if (deltax < (EPSILON / 2)) {
@@ -745,6 +735,8 @@ export const getElementsBoundingRectangle = (elements = []) => {
     return getBoundingRectangle(bounds.flat());
 };
 
+// normalize element coordinates so x1,y1 is the top-left corner and x2,y2 the bottom-right corner
+// it is used usually when we finish creating an element
 export const normalizeElementCoordinates = (element) => {
     return {
         x1: Math.min(element.x1, element.x2),
@@ -752,6 +744,16 @@ export const normalizeElementCoordinates = (element) => {
         y1: Math.min(element.y1, element.y2),
         y2: Math.max(element.y1, element.y2),
     };
+};
+
+// allow to get the minimum size of an element based on its type
+export const getElementMinimumSize = element => {
+    const elementConfig = getElementConfig(element);
+    if (typeof elementConfig.getMinimumSize === "function") {
+        return elementConfig.getMinimumSize(element);
+    }
+    // default minimum size
+    return [ 0, 0 ];
 };
 
 // this method makes sure that the element has at least the provided minimum width and height in the provided corner

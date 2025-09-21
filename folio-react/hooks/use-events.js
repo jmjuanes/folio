@@ -33,6 +33,7 @@ import {
     getElementsBoundingRectangle,
     normalizeElementCoordinates,
     getElementSize,
+    getElementMinimumSize,
 } from "../lib/elements.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
@@ -372,6 +373,7 @@ export const useEvents = () => {
                     }
                     else if (isCornerHandler(event.handler) || isEdgeHandler(event.handler)) {
                         const rect = getRectangle([ snapshot[0].x1, snapshot[0].y1 ], [ snapshot[0].x2, snapshot[0].y2 ], snapshot[0].rotation);
+                        const [ minWidth, minHeight ] = getElementMinimumSize(element);
                         if (isCornerHandler(event.handler)) {
                             const [ width, height ] = getElementSize(snapshot[0]);
                             const diagLen = Math.hypot(width, height);
@@ -382,7 +384,7 @@ export const useEvents = () => {
                                     getPosition(snapshot[0].x1 + gDx, null),
                                     getPosition(snapshot[0].y1 + gDy, null),
                                 ];
-                                const clampedCorner = clampCornerResizeToMinSize(rect[2], newCorner, snapshot[0].rotation, 0, 0, "top-left");
+                                const clampedCorner = clampCornerResizeToMinSize(rect[2], newCorner, snapshot[0].rotation, minWidth, minHeight, "top-left");
                                 element.x1 = clampedCorner[0];
                                 element.y1 = clampedCorner[1];
                             }
@@ -393,7 +395,7 @@ export const useEvents = () => {
                                     getPosition(snapshot[0].x2 + gDx, null),
                                     getPosition(snapshot[0].y2 + gDy, null),
                                 ];
-                                const clampedCorner = clampCornerResizeToMinSize(rect[0], newCorner, snapshot[0].rotation, 0, 0, "bottom-right");
+                                const clampedCorner = clampCornerResizeToMinSize(rect[0], newCorner, snapshot[0].rotation, minWidth, minHeight, "bottom-right");
                                 element.x2 = clampedCorner[0];
                                 element.y2 = clampedCorner[1];
                             }
@@ -404,7 +406,7 @@ export const useEvents = () => {
                                     getPosition(rect[1][0] + gDx, null),
                                     getPosition(rect[1][1] + gDy, null),
                                 ];
-                                const clampedCorner = clampCornerResizeToMinSize(rect[3], newCorner, snapshot[0].rotation, 0, 0, "top-right");
+                                const clampedCorner = clampCornerResizeToMinSize(rect[3], newCorner, snapshot[0].rotation, minWidth, minHeight, "top-right");
                                 const newRect = getRectangle(rect[3], clampedCorner, snapshot[0].rotation);
                                 element.x1 = newRect[3][0];
                                 element.y1 = newRect[3][1];
@@ -418,7 +420,7 @@ export const useEvents = () => {
                                     getPosition(rect[3][0] + gDx, null),
                                     getPosition(rect[3][1] + gDy, null),
                                 ];
-                                const clampedCorner = clampCornerResizeToMinSize(rect[1], newCorner, snapshot[0].rotation, 0, 0, "bottom-left");
+                                const clampedCorner = clampCornerResizeToMinSize(rect[1], newCorner, snapshot[0].rotation, minWidth, minHeight, "bottom-left");
                                 const newRect = getRectangle(clampedCorner, rect[1], snapshot[0].rotation);
                                 element.x1 = newRect[3][0];
                                 element.y1 = newRect[3][1];
@@ -433,7 +435,7 @@ export const useEvents = () => {
                                     getPosition(edgeTopPoint[0] + event.dx, null),
                                     getPosition(edgeTopPoint[1] + event.dy, null),
                                 ];
-                                const clampedPoint = clampEdgeResizeToMinSize(rect[3], currentPoint, snapshot[0].rotation, 0, "top");
+                                const clampedPoint = clampEdgeResizeToMinSize(rect[3], currentPoint, snapshot[0].rotation, minHeight, "top");
                                 const newPoint = getPointProjectionToLine(clampedPoint, [ rect[0], rect[3] ]);
                                 element.x1 = newPoint[0];
                                 element.y1 = newPoint[1];
@@ -444,7 +446,7 @@ export const useEvents = () => {
                                     getPosition(edgeBottomPoint[0] + event.dx, null),
                                     getPosition(edgeBottomPoint[1] + event.dy, null),
                                 ];
-                                const clampedPoint = clampEdgeResizeToMinSize(rect[1], currentPoint, snapshot[0].rotation, 0, "bottom");
+                                const clampedPoint = clampEdgeResizeToMinSize(rect[1], currentPoint, snapshot[0].rotation, minHeight, "bottom");
                                 const newPoint = getPointProjectionToLine(clampedPoint, [ rect[1], rect[2] ]);
                                 element.x2 = newPoint[0];
                                 element.y2 = newPoint[1];
@@ -455,7 +457,7 @@ export const useEvents = () => {
                                     getPosition(edgeLeftPoint[0] + event.dx, null),
                                     getPosition(edgeLeftPoint[1] + event.dy, null),
                                 ];
-                                const clampedPoint = clampEdgeResizeToMinSize(rect[2], currentPoint, snapshot[0].rotation, 0, "left");
+                                const clampedPoint = clampEdgeResizeToMinSize(rect[2], currentPoint, snapshot[0].rotation, minWidth, "left");
                                 const newPoint = getPointProjectionToLine(clampedPoint, [ rect[0], rect[1] ]);
                                 element.x1 = newPoint[0];
                                 element.y1 = newPoint[1];
@@ -466,7 +468,7 @@ export const useEvents = () => {
                                     getPosition(edgeRightPoint[0] + event.dx, null),
                                     getPosition(edgeRightPoint[1] + event.dy, null),
                                 ];
-                                const clampedPoint = clampEdgeResizeToMinSize(rect[0], currentPoint, snapshot[0].rotation, 0, "right");
+                                const clampedPoint = clampEdgeResizeToMinSize(rect[0], currentPoint, snapshot[0].rotation, minHeight, "right");
                                 const newPoint = getPointProjectionToLine(clampedPoint, [ rect[2], rect[3] ]);
                                 element.x2 = newPoint[0];
                                 element.y2 = newPoint[1];
