@@ -37,10 +37,12 @@ import {
     getBoundingRectangle,
     rotatePoints,
     getRectangle,
-    resizeRectangleFromFixedCorner,
 } from "../utils/math.ts";
 import { getCurvePath, getConnectorPath } from "../utils/paths.js";
-import { isCornerHandler } from "./handlers.ts";
+import {
+    isCornerHandler,
+    resizeFromFixedCorner,
+} from "./handlers.ts";
 
 // Generate default handlers
 const getDefaultElementHandlers = element => {
@@ -147,7 +149,14 @@ export const elementsConfig = {
             }
         },
         onCreateEnd: (element, event) => {
-            // Prevent drawing 0-sized shapes
+            // normalize coordinates after creating the element
+            Object.assign(element, {
+                x1: Math.min(element.x1, element.x2),
+                y1: Math.min(element.y1, element.y2),
+                x2: Math.max(element.x1, element.x2),
+                y2: Math.max(element.y1, element.y2),
+            });
+            // prevent drawing 0-sized shapes
             if (!event.drag) {
                 element.x2 = element.x1 + SHAPE_MIN_WIDTH;
                 element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
@@ -404,7 +413,7 @@ export const elementsConfig = {
                 }
                 // fix the height of the text element
                 const height = Math.ceil(element.textHeight / GRID_SIZE) * GRID_SIZE;
-                const newPoint = resizeRectangleFromFixedCorner([ element.x1, element.y1 ], width, height, element.rotation || 0, "top-left");
+                const newPoint = resizeFromFixedCorner([ element.x1, element.y1 ], width, height, element.rotation || 0, "top-left");
                 element.x2 = newPoint[0];
                 element.y2 = newPoint[1];
             }
@@ -429,7 +438,7 @@ export const elementsConfig = {
                 const size = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = size[0];
                 element.textHeight = size[1];
-                const newPoint = resizeRectangleFromFixedCorner([ element.x1, element.y1 ], width, element.textHeight, snapshot.rotation || 0, "top-left");
+                const newPoint = resizeFromFixedCorner([ element.x1, element.y1 ], width, element.textHeight, snapshot.rotation || 0, "top-left");
                 element.x2 = newPoint[0];
                 element.y2 = newPoint[1];
             }
@@ -438,12 +447,12 @@ export const elementsConfig = {
                 const [ newWidth, newHeight ] = getElementSize(element);
                 if (newWidth < element.textWidth) {
                     if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                        const p = resizeRectangleFromFixedCorner([ element.x2, element.y2 ], element.textWidth, newHeight, snapshot.rotation || 0, "bottom-right");
+                        const p = resizeFromFixedCorner([ element.x2, element.y2 ], element.textWidth, newHeight, snapshot.rotation || 0, "bottom-right");
                         element.x1 = p[0];
                         element.y1 = p[1];
                     }
                     else {
-                        const p = resizeRectangleFromFixedCorner([ element.x1, element.y1 ], element.textWidth, newHeight, snapshot.rotation || 0, "top-left");
+                        const p = resizeFromFixedCorner([ element.x1, element.y1 ], element.textWidth, newHeight, snapshot.rotation || 0, "top-left");
                         element.x2 = p[0];
                         element.y2 = p[1];
                     }
@@ -744,3 +753,110 @@ export const normalizeElementCoordinates = (element) => {
         y2: Math.max(element.y1, element.y2),
     };
 };
+
+// this method makes sure that the element has at least the provided minimum width and height in the provided corner
+export const enforceElementMinimumSize = (element, minWidth, minHeight, handler) => {
+  const { x1, y1, x2, y2, rotation } = element;
+  const rect = getRectangle([x1, y1], [x2, y2], rotation);
+  const [width, height] = getElementSize(element);
+
+  const needsWidth = width < minWidth;
+  const needsHeight = height < minHeight;
+
+  if (!needsWidth && !needsHeight) return;
+
+  // Decide qué vértice es fijo y desde cuál se reconstruye
+  let fixed;
+  let fromCorner; // : "top-left" | "top-right" | "bottom-left" | "bottom-right";
+
+  switch (handler) {
+    case HANDLERS.CORNER_TOP_LEFT:
+      fixed = [x2, y2];
+      fromCorner = "bottom-right";
+      break;
+    case HANDLERS.CORNER_BOTTOM_RIGHT:
+      fixed = [x1, y1];
+      fromCorner = "top-left";
+      break;
+    case HANDLERS.CORNER_TOP_RIGHT:
+      fixed = rect[3]; // bottom-left
+      fromCorner = "bottom-left";
+      break;
+    case HANDLERS.CORNER_BOTTOM_LEFT:
+      fixed = rect[1]; // top-right
+      fromCorner = "top-right";
+      break;
+
+    // case HANDLERS.EDGE_LEFT:
+    //   if (!needsWidth) return;
+    //   // const edgeLeft = getCenter(rect[0], rect[3]);
+    //   const newLeft = resizeFromFixedCorner(
+    //     [x2, y2],
+    //     minWidth,
+    //     rotation,
+    //     "width",
+    //     -1
+    //   );
+    //   element.x1 = newLeft[0];
+    //   element.y1 = newLeft[1];
+    //   return;
+
+    // case HANDLERS.EDGE_RIGHT:
+    //   if (!needsWidth) return;
+    //   const newRight = resizeFromFixedCorner(
+    //     [x1, y1],
+    //     minWidth,
+    //     rotation,
+    //     "width",
+    //     1
+    //   );
+    //   element.x2 = newRight[0];
+    //   element.y2 = newRight[1];
+    //   return;
+
+    // case HANDLERS.EDGE_TOP:
+    //   if (!needsHeight) return;
+    //   const newTop = resizeFromFixedCorner(
+    //     [x2, y2],
+    //     minHeight,
+    //     rotation,
+    //     "height",
+    //     -1
+    //   );
+    //   element.x1 = newTop[0];
+    //   element.y1 = newTop[1];
+    //   return;
+
+    // case HANDLERS.EDGE_BOTTOM:
+    //   if (!needsHeight) return;
+    //   const newBottom = resizeFromFixedCorner(
+    //     [x1, y1],
+    //     minHeight,
+    //     rotation,
+    //     "height",
+    //     1
+    //   );
+    //   element.x2 = newBottom[0];
+    //   element.y2 = newBottom[1];
+    //   return;
+
+    // default:
+    //   return;
+  }
+
+  // Reconstrucción completa desde esquina
+  const newRect = resizeFromFixedCorner(
+    fixed[0],
+    fixed[1],
+    Math.max(width, minWidth),
+    Math.max(height, minHeight),
+    rotation,
+    fromCorner
+  );
+
+  element.x1 = newRect[0][0];
+  element.y1 = newRect[0][1];
+  element.x2 = newRect[2][0];
+  element.y2 = newRect[2][1];
+};
+

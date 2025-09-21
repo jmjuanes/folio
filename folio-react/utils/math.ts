@@ -6,8 +6,6 @@ export type Point = [ x: number, y: number ];
 export type Segment = [ start: Point, end: Point ];
 export type Line = Segment;
 
-export type Corner = "top-left" | "top-right" | "bottom-right" | "bottom-left";
-
 // internal variable to sotre the PRE element used to measure text
 const measureTextElement = {
     current: null as HTMLPreElement | null,
@@ -131,24 +129,6 @@ export const getRectangle = (p1: Point, p2: Point, angle: number = 0): Point[] =
     // rotate the new points to generate the other rectangle vertex points
     const [ p3, p4 ] = rotatePoints(newPoints, center, angle);
     return [ p1, p3, p2, p4 ];
-};
-
-// @description workaround to resize a rectangle from the given corner and angle
-export const resizeRectangleFromFixedCorner = (corner: Point, width: number, height: number, rotation: number, fromCorner: Corner): Point => {
-    const cos: number = Math.cos(rotation);
-    const sin: number = Math.sin(rotation);
-    const xAxis: [number, number] = [ cos, sin ];       // horizontal
-    const yAxis: [number, number] = [ -sin, cos ];      // vertical
-
-    // calculate the displacement direction according to the corner
-    const dx = fromCorner.includes("right") ? -width : width;
-    const dy = fromCorner.includes("bottom") ? -height : height;
-
-    // return the opposite corner
-    return [
-        corner[0] + xAxis[0] * dx + yAxis[0] * dy,
-        corner[1] + xAxis[1] * dx + yAxis[1] * dy,
-    ];
 };
 
 // Generate the minumun rectangle points that contains all points in the provided list
@@ -298,25 +278,3 @@ export const convertRadiansToDegrees = (radians = 0) => {
 export const convertDegreesToRadians = (degrees = 0) => {
     return (degrees * Math.PI) / 180;
 };
-
-// Compute the constrained global delta for any corner.
-// - dx,dy are pointer deltas in screen coords.
-// - angle is the element’s current rotation.
-// - axisDir is the local direction you want to resize along
-//   (e.g. [-1,-1] normalized for TOP_LEFT → BR diagonal).
-// - lockAspect tells us to project onto axisDir, otherwise we keep full local delta.
-export const computeResizeDelta = (delta: Point, angle: number, axisDir: Point, lockAspect: boolean = false): Point => {
-    // 1. bring pointer delta into local coords
-    const [ localDelta ] = rotatePoints([ delta ], [ 0, 0 ], -angle);
-    let computedDeltaX = localDelta[0], computedDeltaY = localDelta[1];
-
-    // 2. optionally project onto the “resize axis”
-    if (lockAspect) {
-        const projection = (localDelta[0] * axisDir[0]) + (localDelta[1] * axisDir[1]);
-        computedDeltaX = projection * axisDir[0];
-        computedDeltaY = projection * axisDir[1];
-    }
-
-    // 3. back to global coords
-    return rotatePoints([ [ computedDeltaX, computedDeltaY ] ], [0, 0], angle)[0];
-}
