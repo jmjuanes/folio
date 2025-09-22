@@ -1,14 +1,14 @@
 import React from "react";
-import {ELEMENTS, SHAPE_PADDING} from "../../constants.js";
-import {AssetsProvider} from "../../contexts/assets.jsx";
-import {ArrowElement} from "./arrow.jsx";
-import {DrawElement} from "./draw.jsx";
-import {TextElement} from "./text.jsx";
-import {ShapeElement} from "./shape.jsx";
-import {ImageElement} from "./image.jsx";
-import {NoteElement} from "./note.jsx";
-import {BookmarkElement} from "./bookmark.jsx";
-import {StickerElement} from "./sticker.jsx";
+import { ELEMENTS } from "../../constants.js";
+import { AssetsProvider } from "../../contexts/assets.jsx";
+import { ArrowElement } from "./arrow.jsx";
+import { DrawElement } from "./draw.jsx";
+import { TextElement } from "./text.jsx";
+import { ShapeElement } from "./shape.jsx";
+import { ImageElement } from "./image.jsx";
+import { NoteElement } from "./note.jsx";
+import { BookmarkElement } from "./bookmark.jsx";
+import { StickerElement } from "./sticker.jsx";
 
 const ElementContainer = props => (
     <g data-role="element" data-element={props.id}>
@@ -24,7 +24,6 @@ const elementsRenderer = {
             <TextElement
                 {...props}
                 embedded={true}
-                padding={SHAPE_PADDING}
             />
         </ElementContainer>
     ),
