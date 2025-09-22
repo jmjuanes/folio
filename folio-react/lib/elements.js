@@ -158,11 +158,59 @@ export const elementsConfig = {
             }
         },
         onResize: (element, snapshot, event) => {
+            const handler = event.handler || "";
             if (element.text) {
-                const [ width ] = getElementSize(element);
+                const [ width, height ] = getElementSize(element);
                 const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = textWidth;
                 element.textHeight = textHeight;
+                // 1. fix width and prevent text overflow
+                if (width <= element.textWidth) {
+                    const realHeight = Math.max(height, element.textHeight);
+                    if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT) {
+                        const p = resizeFromFixedCorner([ element.x2, element.y2 ], element.textWidth, realHeight, snapshot.rotation || 0, "bottom-right");
+                        element.x1 = p[0];
+                        element.y1 = p[1];
+                    }
+                    else if (handler === HANDLERS.EDGE_RIGHT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                        const p = resizeFromFixedCorner([ element.x1, element.y1 ], element.textWidth, realHeight, snapshot.rotation || 0, "top-left");
+                        element.x2 = p[0];
+                        element.y2 = p[1];
+                    }
+                    else if (handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                        const rect = getRectangle([ element.x1, element.y1 ], [ element.x2, element.y2 ], snapshot.rotation || 0);
+                        if (handler === HANDLERS.CORNER_TOP_RIGHT) {
+                            const p = resizeFromFixedCorner(rect[3], element.textWidth, realHeight, snapshot.rotation || 0, "bottom-left");
+                            const newRectangle = getRectangle(rect[3], p, snapshot.rotation || 0);
+                            element.x1 = newRectangle[3][0];
+                            element.y1 = newRectangle[3][1];
+                            element.x2 = newRectangle[1][0];
+                            element.y2 = newRectangle[1][1];
+                        }
+                        else if (handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                            const p = resizeFromFixedCorner(rect[1], element.textWidth, realHeight, snapshot.rotation || 0, "top-right");
+                            const newRectangle = getRectangle(rect[1], p, snapshot.rotation || 0);
+                            element.x1 = newRectangle[3][0];
+                            element.y1 = newRectangle[3][1];
+                            element.x2 = newRectangle[1][0];
+                            element.y2 = newRectangle[1][1];
+                        }
+                    }
+                }
+                // 2. fix height and prevent text overflow
+                else if (height < element.textHeight) {
+                    const realWidth = Math.max(width, element.textWidth);
+                    if (handler === HANDLERS.EDGE_TOP || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.EDGE_LEFT) {
+                        const p = resizeFromFixedCorner([ element.x2, element.y2 ], realWidth, element.textHeight, snapshot.rotation || 0, "bottom-right");
+                        element.x1 = p[0];
+                        element.y1 = p[1];
+                    }
+                    else if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT || handler === HANDLERS.EDGE_RIGHT) {
+                        const p = resizeFromFixedCorner([ element.x1, element.y1 ], realWidth, element.textHeight, snapshot.rotation || 0, "top-left");
+                        element.x2 = p[0];
+                        element.y2 = p[1];
+                    }
+                }
             }
         },
         onUpdate: (element, changedKeys) => {
@@ -422,6 +470,19 @@ export const elementsConfig = {
                     element.textWidth = size[0];
                     element.textHeight = size[1];
                     textSize = textSize + TEXT_SIZE_STEP;
+                }
+                // terrible hack to ensure that the text size is not too big for the box
+                if (element.textHeight > height) {
+                    if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                        const p = resizeFromFixedCorner([ element.x1, element.y1 ], width, element.textHeight, snapshot.rotation || 0, "top-left");
+                        element.x2 = p[0];
+                        element.y2 = p[1];
+                    }
+                    else {
+                        const p = resizeFromFixedCorner([ element.x2, element.y2 ], width, element.textHeight, snapshot.rotation || 0, "bottom-right");
+                        element.x1 = p[0];
+                        element.y1 = p[1];
+                    }
                 }
             }
             else if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {

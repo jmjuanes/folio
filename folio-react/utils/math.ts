@@ -84,7 +84,6 @@ export const getIntersectionPoint = (line1: Segment, line2: Segment): Point | nu
     ];
 };
 
-
 // get a point in a quadratig curve
 export const getPointInQuadraticCurve = (p1: Point, p2: Point, p3: Point, t: number = 0.5): Point => {
     return [
