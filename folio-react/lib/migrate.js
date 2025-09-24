@@ -121,6 +121,11 @@ export const migrateElements = (elements, version) => {
                 if (element.type === ELEMENTS.SHAPE) {
                     element[FIELDS.TEXT_VERTICAL_ALIGN] = element[FIELDS.TEXT_VERTICAL_ALIGN] ?? TEXT_VERTICAL_ALIGNS.MIDDLE;
                 }
+            case "13":
+                // add rotation field to shape, text, draw, and image elements
+                if ([ELEMENTS.SHAPE, ELEMENTS.TEXT, ELEMENTS.DRAW, ELEMENTS.IMAGE, ELEMENTS.NOTE].includes(element.type)) {
+                    element[FIELDS.ROTATION] = element[FIELDS.ROTATION] ?? 0;
+                }
         }
         return element;
     });

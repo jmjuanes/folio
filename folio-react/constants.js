@@ -1,6 +1,6 @@
 import {STICKYNOTE_COLORS} from "./utils/colors.js";
 
-export const VERSION = "13";
+export const VERSION = "14";
 
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
