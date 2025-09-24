@@ -516,7 +516,8 @@ export const elementsConfig = {
         getHandlers: element => getDefaultElementHandlers(element),
         initialize: values => {
             return {
-                opacity: DEFAULTS.OPACITY,
+                [FIELDS.ROTATION]: 0,
+                [FIELDS.OPACITY]: DEFAULTS.OPACITY,
                 points: [],
                 strokeColor: values?.strokeColor ?? DEFAULTS.STROKE_COLOR,
                 strokeWidth: values?.strokeWidth ?? DEFAULTS.STROKE_WIDTH,
@@ -571,6 +572,7 @@ export const elementsConfig = {
         initialize: () => ({
             [FIELDS.ASSET_ID]: "",
             [FIELDS.OPACITY]: DEFAULTS.OPACITY,
+            [FIELDS.ROTATION]: DEFAULTS.ROTATION,
         }),
     },
     [ELEMENTS.NOTE]: {
@@ -754,7 +756,7 @@ export const getElementSize = (element) => {
         [element.x1, element.y1],
         [element.x2, element.y2]
     ];
-    const unrotatedPoints = rotatePoints(points, [cx, cy], -element.rotation);
+    const unrotatedPoints = rotatePoints(points, [cx, cy], (-1) * (element.rotation || 0));
     return [
         Math.abs(unrotatedPoints[1][0] - unrotatedPoints[0][0]),
         Math.abs(unrotatedPoints[1][1] - unrotatedPoints[0][1]),
