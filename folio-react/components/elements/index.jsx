@@ -5,7 +5,7 @@ import { ArrowElement } from "./arrow.jsx";
 import { DrawElement } from "./draw.tsx";
 import { TextElement } from "./text.tsx";
 import { ShapeElement } from "./shape.jsx";
-import { ImageElement } from "./image.jsx";
+import { ImageElement } from "./image.tsx";
 import { NoteElement } from "./note.tsx";
 import { BookmarkElement } from "./bookmark.jsx";
 import { StickerElement } from "./sticker.tsx";

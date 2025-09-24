@@ -1,8 +1,21 @@
 import React from "react";
-import {useAssets} from "../../contexts/assets.jsx";
+import { useAssets } from "../../contexts/assets.jsx";
 
-export const ImageElement = props => {
-    const assets = useAssets();
+export type ImageElementProps = {
+    id: string;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    rotation?: number;
+    assetId: string;
+    opacity?: number;
+    onPointerDown?: (event: React.PointerEvent<SVGImageElement>) => void;
+    onDoubleClick?: (event: React.MouseEvent<SVGImageElement, MouseEvent>) => void;
+};
+
+export const ImageElement = (props: ImageElementProps): React.JSX.Element => {
+    const assets = useAssets() as any;
     const dataUrl = assets[props.assetId]?.data?.src || "";
 
     return (
