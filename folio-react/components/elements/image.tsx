@@ -1,5 +1,7 @@
 import React from "react";
 import { useAssets } from "../../contexts/assets.jsx";
+import { convertRadiansToDegrees, getCenter } from "../../utils/math.ts";
+import { getElementSize } from "../../lib/elements.js";
 
 export type ImageElementProps = {
     id: string;
@@ -15,17 +17,20 @@ export type ImageElementProps = {
 };
 
 export const ImageElement = (props: ImageElementProps): React.JSX.Element => {
+    const [ width, height, x, y ] = getElementSize(props);
+    const [ cx, cy ] = getCenter([ props.x1, props.y1 ], [ props.x2, props.y2 ]);
+    const rotation = convertRadiansToDegrees(props.rotation || 0);
     const assets = useAssets() as any;
     const dataUrl = assets[props.assetId]?.data?.src || "";
 
     return (
-        <g opacity={props.opacity}>
+        <g transform={`translate(${x},${y}) rotate(${rotation}, ${cx - x}, ${cy - y})`} opacity={props.opacity}>
             <image
                 data-element={props.id}
-                x={Math.min(props.x1, props.x2)}
-                y={Math.min(props.y1, props.y2)}
-                width={Math.abs(props.x2 - props.x1)}
-                height={Math.abs(props.y2 - props.y1)}
+                x={0}
+                y={0}
+                width={width}
+                height={height}
                 href={dataUrl}
                 preserveAspectRatio="none"
                 onPointerDown={props.onPointerDown}
