@@ -1,5 +1,5 @@
 import {EPSILON, POLYGON} from "../constants.js";
-import {rotateLines, sign} from "./math.js";
+import {rotateLines, sign} from "./math.ts";
 
 export const getPolygonPath = (type, width, height) => {
     if (type === POLYGON.RECTANGLE) {

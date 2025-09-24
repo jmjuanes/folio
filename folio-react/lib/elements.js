@@ -1,4 +1,4 @@
-import {uid} from "uid/secure";
+import { uid } from "uid/secure";
 import {
     HANDLERS,
     EPSILON,
@@ -34,112 +34,81 @@ import {
     getPointDistanceToLine,
     getPointProjectionToLine,
     getPointInQuadraticCurve,
-    getPointsBounds,
-    getRectangleBounds,
-} from "../utils/math.js";
-import {getCurvePath, getConnectorPath} from "../utils/paths.js";
-import {isCornerHandler} from "./handlers.js";
+    getBoundingRectangle,
+    rotatePoints,
+    getRectangle,
+} from "../utils/math.ts";
+import { getCurvePath, getConnectorPath } from "../utils/paths.js";
+import {
+    isCornerHandler,
+    resizeFromFixedCorner,
+} from "./handlers.ts";
 
 // Generate default handlers
-const getDefaultElementHandlers = element => ([
-    {
-        type: HANDLERS.EDGE_TOP,
-        x: (element.x1 + element.x2) / 2,
-        y: element.y1,
-    },
-    {
-        type: HANDLERS.EDGE_BOTTOM,
-        x: (element.x1 + element.x2) / 2,
-        y: element.y2,
-    },
-    {
-        type: HANDLERS.EDGE_LEFT,
-        x: element.x1,
-        y: (element.y1 + element.y2) / 2,
-    },
-    {
-        type: HANDLERS.EDGE_RIGHT,
-        x: element.x2,
-        y: (element.y1 + element.y2) / 2,
-    },
-    {
-        type: HANDLERS.CORNER_TOP_LEFT,
-        x: element.x1,
-        y: element.y1,
-    },
-    {
-        type: HANDLERS.CORNER_TOP_RIGHT,
-        x: element.x2,
-        y: element.y1,
-    },
-    {
-        type: HANDLERS.CORNER_BOTTOM_LEFT,
-        x: element.x1,
-        y: element.y2,
-    },
-    {
-        type: HANDLERS.CORNER_BOTTOM_RIGHT,
-        x: element.x2,
-        y: element.y2,
-    },
-]);
+const getDefaultElementHandlers = element => {
+    const rectangle = getRectangle([ element.x1, element.y1 ], [ element.x2, element.y2 ], element.rotation || 0);
+    const center = [ (element.x1 + element.x2) / 2, (element.y1 + element.y2) / 2 ];
+    const originalPoints = rotatePoints([ [ element.x1, element.y1 ], [ element.x2, element.y2 ] ], center, -(element.rotation || 0));
+    const diff = originalPoints[0][1] - originalPoints[1][1];
+    return [
+        {
+            type: HANDLERS.EDGE_TOP,
+            x: (rectangle[0][0] + rectangle[1][0]) / 2,
+            y: (rectangle[0][1] + rectangle[1][1]) / 2,
+            rotation: element.rotation || 0,
+        },
+        {
+            type: HANDLERS.EDGE_BOTTOM,
+            x: (rectangle[2][0] + rectangle[3][0]) / 2,
+            y: (rectangle[2][1] + rectangle[3][1]) / 2,
+            rotation: element.rotation || 0,
+        },
+        {
+            type: HANDLERS.EDGE_LEFT,
+            x: (rectangle[0][0] + rectangle[3][0]) / 2,
+            y: (rectangle[0][1] + rectangle[3][1]) / 2,
+            rotation: element.rotation || 0,
+        },
+        {
+            type: HANDLERS.EDGE_RIGHT,
+            x: (rectangle[1][0] + rectangle[2][0]) / 2,
+            y: (rectangle[1][1] + rectangle[2][1]) / 2,
+            rotation: element.rotation || 0,
+        },
+        {
+            type: HANDLERS.CORNER_TOP_LEFT,
+            x: rectangle[0][0],
+            y: rectangle[0][1],
+        },
+        {
+            type: HANDLERS.CORNER_TOP_RIGHT,
+            x: rectangle[1][0],
+            y: rectangle[1][1],
+        },
+        {
+            type: HANDLERS.CORNER_BOTTOM_LEFT,
+            x: rectangle[3][0],
+            y: rectangle[3][1],
+        },
+        {
+            type: HANDLERS.CORNER_BOTTOM_RIGHT,
+            x: rectangle[2][0],
+            y: rectangle[2][1],
+        },
+        {
+            type: HANDLERS.ROTATION,
+            x: (rectangle[0][0] + rectangle[1][0]) / 2,
+            y: (rectangle[0][1] + rectangle[1][1]) / 2,
+            offsetX: 0,
+            offsetY: diff <= 0 ? -30 : +30,
+            rotation: element.rotation || 0,
+        },
+    ];
+};
 
 // Tiny utility to prevent having empty strokes
 const checkStrokeStyleValue = initialValue => {
     return initialValue === STROKES.NONE ? STROKES.SOLID : initialValue;
-};
-
-// allow to perserve the aspect ratio of the element
-const preserveAspectRatio = (element, snapshot, event) => {
-    const ratio = (snapshot.y2 - snapshot.y1) / Math.max(1, snapshot.x2 - snapshot.x1);
-    if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-        if (event.dx * ratio < event.dy) {
-            element.y1 = snapshot.y1 + ((element.x1 - snapshot.x1) * ratio);
-        }
-        else {
-            element.x1 = snapshot.x1 + ((element.y1 - snapshot.y1) / ratio);
-        }
-    }
-    else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-        if ((-1) * event.dx * ratio < event.dy) {
-            element.y1 = snapshot.y1 - ((element.x2 - snapshot.x2) * ratio);
-        }
-        else {
-            element.x2 = snapshot.x2 - ((element.y1 - snapshot.y1) / ratio);
-        }
-    }
-    else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-        if ((-1) * event.dx * ratio > event.dy) {
-            element.y2 = snapshot.y2 - ((element.x1 - snapshot.x1) * ratio);
-        }
-        else {
-            element.x1 = snapshot.x1 - ((element.y2 - snapshot.y2) / ratio);
-        }
-    }
-    else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-        if (event.dx * ratio > event.dy) {
-            element.y2 = snapshot.y2 + ((element.x2 - snapshot.x2) * ratio);
-        }
-        else {
-            element.x2 = snapshot.x2 + ((element.y2 - snapshot.y2) / ratio);
-        }
-    }
-    else if (event.handler === HANDLERS.EDGE_TOP) {
-        element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
-        element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
-    }
-    else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-        element.x1 = snapshot.x1 + ((snapshot.x2 - snapshot.x1) / 2) - ((element.y2 - element.y1) / (2 * ratio));
-        element.x2 = snapshot.x2 - ((snapshot.x2 - snapshot.x1) / 2) + ((element.y2 - element.y1) / (2 * ratio));
-    }
-    else if (event.handler === HANDLERS.EDGE_LEFT) {
-        element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
-        element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
-    }
-    else if (event.handler === HANDLERS.EDGE_RIGHT) {
-        element.y1 = snapshot.y1 + ((snapshot.y2 - snapshot.y1) / 2) - ((element.x2 - element.x1) * ratio) / 2;
-        element.y2 = snapshot.y2 - ((snapshot.y2 - snapshot.y1) / 2) + ((element.x2 - element.x1) * ratio) / 2;
-    }
 };
 
 export const elementsConfig = {
@@ -154,7 +123,8 @@ export const elementsConfig = {
             }
             // Return 
             return {
-                opacity: DEFAULTS.OPACITY,
+                [FIELDS.ROTATION]: DEFAULTS.ROTATION,
+                [FIELDS.OPACITY]: DEFAULTS.OPACITY,
                 shape: values.shape || DEFAULTS.SHAPE,
                 fillColor: values?.fillColor ?? DEFAULTS.FILL_COLOR,
                 fillStyle: values?.fillStyle ?? DEFAULTS.FILL_STYLE,
@@ -179,41 +149,90 @@ export const elementsConfig = {
             }
         },
         onCreateEnd: (element, event) => {
-            // Prevent drawing 0-sized shapes
+            // normalize coordinates after creating the element
+            normalizeElementCoordinates(element);
+            // prevent drawing 0-sized shapes
             if (!event.drag) {
                 element.x2 = element.x1 + SHAPE_MIN_WIDTH;
                 element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
             }
-            // Update position of shape element
-            Object.assign(element, {
-                x1: Math.min(element.x1, element.x2),
-                y1: Math.min(element.y1, element.y2),
-                x2: Math.max(element.x1, element.x2),
-                y2: Math.max(element.y1, element.y2),
-            });
         },
         onResize: (element, snapshot, event) => {
-            if (event.shiftKey) {
-                preserveAspectRatio(element, snapshot, event);
-            }
-            // Check if we have a text inside the shape
+            const handler = event.handler || "";
             if (element.text) {
-                const width = Math.abs(element.x2 - element.x1);
-                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                const [ width, height ] = getElementSize(element);
+                const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
                 element.textWidth = textWidth;
                 element.textHeight = textHeight;
+                // 1. fix width and prevent text overflow
+                if (width <= element.textWidth) {
+                    const realHeight = Math.max(height, element.textHeight);
+                    if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT) {
+                        const p = resizeFromFixedCorner([ element.x2, element.y2 ], element.textWidth, realHeight, snapshot.rotation || 0, "bottom-right");
+                        element.x1 = p[0];
+                        element.y1 = p[1];
+                    }
+                    else if (handler === HANDLERS.EDGE_RIGHT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                        const p = resizeFromFixedCorner([ element.x1, element.y1 ], element.textWidth, realHeight, snapshot.rotation || 0, "top-left");
+                        element.x2 = p[0];
+                        element.y2 = p[1];
+                    }
+                    else if (handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                        const rect = getRectangle([ element.x1, element.y1 ], [ element.x2, element.y2 ], snapshot.rotation || 0);
+                        if (handler === HANDLERS.CORNER_TOP_RIGHT) {
+                            const p = resizeFromFixedCorner(rect[3], element.textWidth, realHeight, snapshot.rotation || 0, "bottom-left");
+                            const newRectangle = getRectangle(rect[3], p, snapshot.rotation || 0);
+                            element.x1 = newRectangle[3][0];
+                            element.y1 = newRectangle[3][1];
+                            element.x2 = newRectangle[1][0];
+                            element.y2 = newRectangle[1][1];
+                        }
+                        else if (handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                            const p = resizeFromFixedCorner(rect[1], element.textWidth, realHeight, snapshot.rotation || 0, "top-right");
+                            const newRectangle = getRectangle(rect[1], p, snapshot.rotation || 0);
+                            element.x1 = newRectangle[3][0];
+                            element.y1 = newRectangle[3][1];
+                            element.x2 = newRectangle[1][0];
+                            element.y2 = newRectangle[1][1];
+                        }
+                    }
+                }
+                // 2. fix height and prevent text overflow
+                if (height < element.textHeight) {
+                    const realWidth = Math.max(width, element.textWidth);
+                    if (handler === HANDLERS.EDGE_TOP || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.EDGE_LEFT) {
+                        const p = resizeFromFixedCorner([ element.x2, element.y2 ], realWidth, element.textHeight, snapshot.rotation || 0, "bottom-right");
+                        element.x1 = p[0];
+                        element.y1 = p[1];
+                    }
+                    else if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT || handler === HANDLERS.EDGE_RIGHT) {
+                        const p = resizeFromFixedCorner([ element.x1, element.y1 ], realWidth, element.textHeight, snapshot.rotation || 0, "top-left");
+                        element.x2 = p[0];
+                        element.y2 = p[1];
+                    }
+                }
             }
         },
         onUpdate: (element, changedKeys) => {
-            if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
-                const width = Math.abs(element.x2 - element.x1);
-                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
-                element.textWidth = textWidth;
-                element.textHeight = textHeight;
+            console.log(changedKeys);
+            if (element.text && (changedKeys.has("text") || changedKeys.has("textFont") || changedKeys.has("textSize"))) {
+                const [ width, height ] = getElementSize(element);
+                // 1. check if we have to update the text size
+                if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
+                    const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                    element.textWidth = textWidth;
+                    element.textHeight = textHeight;
+                }
+                // 2. fix the height of the text element
+                if (height < element.textHeight) {
+                    const newPoint = resizeFromFixedCorner([ element.x1, element.y1 ], width, element.textHeight, element.rotation || 0, "top-left");
+                    element.x2 = newPoint[0];
+                    element.y2 = newPoint[1];
+                }
             }
         },
         getUpdatedFields: element => {
-            return element.text ? ["textWidth", "textHeight"] : [];
+            return element.text ? [ "textWidth", "textHeight", "x1", "x2", "y1", "y2" ] : [];
         },
     },
     [ELEMENTS.ARROW]: {
@@ -273,13 +292,13 @@ export const elementsConfig = {
             return bounds;
         },
         getBoundingRectangle: el => {
+            let points = [];
             if (typeof el.xCenter === "number") {
-                const points = [0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 0.9].map(t => {
+                points = [0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 0.9].map(t => {
                     return getPointInQuadraticCurve([el.x1, el.y1], [el.xCenter, el.yCenter], [el.x2, el.y2], t);
                 });
-                return getPointsBounds([[el.x1, el.y1], [el.x2, el.y2], ...points]);
             }
-            return el;
+            return getBoundingRectangle([[el.x1, el.y1], [el.x2, el.y2], ...points]);
         },
         getUpdatedFields: (element, snapshot) => {
             return ["xCenter", "yCenter"];
@@ -395,16 +414,17 @@ export const elementsConfig = {
     [ELEMENTS.TEXT]: {
         displayName: "Text",
         getHandlers: element => getDefaultElementHandlers(element),
-        getUpdatedFields: (element, snapshot) => {
-            return ["textSize", "textWidth", "textHeight"];
+        getUpdatedFields: () => {
+            return [ "textSize", "textWidth", "textHeight", "x1", "x2", "y1", "y2" ];
         },
         initialize: values => {
             // We need to measure the height of an empty text to calculate the height of the element
             const textSize = values?.textSize ?? DEFAULTS.TEXT_SIZE;
             const textFont = values?.textFont ?? DEFAULTS.TEXT_FONT;
-            const [textWidth, textHeight] = measureText(" ", textSize, textFont);
+            const [ textWidth, textHeight ] = measureText(" ", textSize, textFont);
             return ({
-                opacity: DEFAULTS.OPACITY,
+                [FIELDS.OPACITY]: DEFAULTS.OPACITY,
+                [FIELDS.ROTATION]: DEFAULTS.ROTATION,
                 text: "",
                 textColor: values?.textColor ?? DEFAULTS.TEXT_COLOR,
                 textFont: textFont,
@@ -418,12 +438,7 @@ export const elementsConfig = {
             element.y2 = element.y1 + element.textHeight;
         },
         onCreateEnd: element => {
-            Object.assign(element, {
-                x1: Math.min(element.x1, element.x2),
-                y1: Math.min(element.y1, element.y2),
-                x2: Math.max(element.x1, element.x2),
-                y2: Math.max(element.y1, element.y2),
-            });
+            normalizeElementCoordinates(element);
             // Fix text initial X position
             const deltax = Math.abs(element.x2 - element.x1);
             if (deltax < (EPSILON / 2)) {
@@ -436,21 +451,25 @@ export const elementsConfig = {
             element.y2 = element.y1 + Math.max(Math.abs(element.y2 - element.y1), GRID_SIZE, Math.ceil(element.textHeight / GRID_SIZE) * GRID_SIZE);
         },
         onUpdate: (element, changedKeys) => {
-            if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
-                const width = Math.abs(element.x2 - element.x1);
-                const [textWidth, textHeight] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
-                // Apply changes to element
-                element.textWidth = textWidth;
-                element.textHeight = textHeight;
-                element.y2 = element.y1 + Math.ceil(textHeight / GRID_SIZE) * GRID_SIZE;
+            if (changedKeys.has("textSize") || changedKeys.has("textFont") || changedKeys.has("text")) {
+                const [ width ] = getElementSize(element);
+                // check if we have to update the text size
+                if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
+                    const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                    element.textWidth = textWidth;
+                    element.textHeight = textHeight;
+                }
+                // fix the height of the text element
+                const height = Math.ceil(element.textHeight / GRID_SIZE) * GRID_SIZE;
+                const newPoint = resizeFromFixedCorner([ element.x1, element.y1 ], width, height, element.rotation || 0, "top-left");
+                element.x2 = newPoint[0];
+                element.y2 = newPoint[1];
             }
         },
         onResize: (element, snapshot, event) => {
             const handler = event.handler || "";
+            const [ width, height ] = getElementSize(element);
             if (isCornerHandler(handler) || handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.EDGE_TOP) {
-                preserveAspectRatio(element, snapshot, event);
-                const width = Math.abs(element.x2 - element.x1);
-                const height = Math.abs(element.y2 - element.y1);
                 let textSize = TEXT_SIZE_MIN;
                 while (textSize <= TEXT_SIZE_MAX) {
                     const size = measureText(element.text || " ", textSize, element.textFont, width + "px");
@@ -462,20 +481,43 @@ export const elementsConfig = {
                     element.textHeight = size[1];
                     textSize = textSize + TEXT_SIZE_STEP;
                 }
+                // terrible hack to ensure that the text size is not too big for the box
+                if (element.textHeight > height) {
+                    if (handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.CORNER_BOTTOM_LEFT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                        const p = resizeFromFixedCorner([ element.x1, element.y1 ], width, element.textHeight, snapshot.rotation || 0, "top-left");
+                        element.x2 = p[0];
+                        element.y2 = p[1];
+                    }
+                    else {
+                        const p = resizeFromFixedCorner([ element.x2, element.y2 ], width, element.textHeight, snapshot.rotation || 0, "bottom-right");
+                        element.x1 = p[0];
+                        element.y1 = p[1];
+                    }
+                }
             }
             else if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
-                const width = Math.abs(element.x2 - element.x1);
-                const sizes = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
-                element.textWidth = sizes[0];
-                element.textHeight = sizes[1];
-                element.y2 = element.y1 + element.textHeight; // fix height
+                const size = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                element.textWidth = size[0];
+                element.textHeight = size[1];
+                const newPoint = resizeFromFixedCorner([ element.x1, element.y1 ], width, element.textHeight, snapshot.rotation || 0, "top-left");
+                element.x2 = newPoint[0];
+                element.y2 = newPoint[1];
             }
-            // Terrible hack to prevent having 0px text elements
-            if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                element.x1 = Math.min(element.x1, element.x2 - element.textWidth);
-            }
-            else if (handler === HANDLERS.EDGE_RIGHT || handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                element.x2 = Math.max(element.x2, element.x1 + element.textWidth);
+            // this is a terrible hack to prevent having 0px text elements
+            if (isCornerHandler(handler) || handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.EDGE_RIGHT) {
+                const [ newWidth, newHeight ] = getElementSize(element);
+                if (newWidth < element.textWidth) {
+                    if (handler === HANDLERS.EDGE_LEFT || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                        const p = resizeFromFixedCorner([ element.x2, element.y2 ], element.textWidth, newHeight, snapshot.rotation || 0, "bottom-right");
+                        element.x1 = p[0];
+                        element.y1 = p[1];
+                    }
+                    else {
+                        const p = resizeFromFixedCorner([ element.x1, element.y1 ], element.textWidth, newHeight, snapshot.rotation || 0, "top-left");
+                        element.x2 = p[0];
+                        element.y2 = p[1];
+                    }
+                }
             }
         },
     },
@@ -484,7 +526,8 @@ export const elementsConfig = {
         getHandlers: element => getDefaultElementHandlers(element),
         initialize: values => {
             return {
-                opacity: DEFAULTS.OPACITY,
+                [FIELDS.ROTATION]: 0,
+                [FIELDS.OPACITY]: DEFAULTS.OPACITY,
                 points: [],
                 strokeColor: values?.strokeColor ?? DEFAULTS.STROKE_COLOR,
                 strokeWidth: values?.strokeWidth ?? DEFAULTS.STROKE_WIDTH,
@@ -532,11 +575,6 @@ export const elementsConfig = {
             element.drawWidth = Math.abs(element.x2 - element.x1);
             element.drawHeight = Math.abs(element.y2 - element.y1);
         },
-        onResize: (element, snapshot, event) => {
-            if (event.shiftKey) {
-                return preserveAspectRatio(element, snapshot, event);
-            }
-        },
     },
     [ELEMENTS.IMAGE]: {
         displayName: "Image",
@@ -544,12 +582,8 @@ export const elementsConfig = {
         initialize: () => ({
             [FIELDS.ASSET_ID]: "",
             [FIELDS.OPACITY]: DEFAULTS.OPACITY,
+            [FIELDS.ROTATION]: DEFAULTS.ROTATION,
         }),
-        onResize: (element, snapshot, event) => {
-            if (event.shiftKey) {
-                return preserveAspectRatio(element, snapshot, event);
-            }
-        },
     },
     [ELEMENTS.NOTE]: {
         displayName: "Note",
@@ -646,7 +680,7 @@ export const measureTextInElement = (element, text, maxWidth = `${TEXT_BOX_MIN_W
 };
 
 // @public get snapping edges from elements
-export const getElementsSnappingEdges = (elements) => {
+export const getElementsSnappingEdges = (elements = []) => {
     const edges = [];
     elements.forEach(el => {
         // Selected or creating elements are excluded
@@ -715,13 +749,82 @@ export const getElementDisplayName = element => {
     return getElementConfig(element).displayName;
 };
 
+// calculate the size of an element
+export const getElementSize = (element) => {
+    // check if the element has no rotation applied
+    if (!element.rotation || element.rotation === 0) {
+        return [
+            Math.abs(element.x2 - element.x1),
+            Math.abs(element.y2 - element.y1),
+            Math.min(element.x1, element.x2),
+            Math.min(element.y1, element.y2),
+        ];
+    }
+    const cx = (element.x1 + element.x2) / 2;
+    const cy = (element.y1 + element.y2) / 2;
+    const points = [
+        [element.x1, element.y1],
+        [element.x2, element.y2]
+    ];
+    const unrotatedPoints = rotatePoints(points, [cx, cy], (-1) * (element.rotation || 0));
+    return [
+        Math.abs(unrotatedPoints[1][0] - unrotatedPoints[0][0]),
+        Math.abs(unrotatedPoints[1][1] - unrotatedPoints[0][1]),
+        Math.min(unrotatedPoints[0][0], unrotatedPoints[1][0]),
+        Math.min(unrotatedPoints[0][1], unrotatedPoints[1][1]),
+    ];
+};
+
+// @public get the bounds of this element
+export const getElementBounds = (el) => {
+    const elementConfig = getElementConfig(el);
+    if (typeof elementConfig.getBounds === "function") {
+        return elementConfig.getBounds(el);
+    }
+    // if not, we assume that the element is a rectangle
+    const rectangle = getRectangle([ el.x1, el.y1 ], [ el.x2, el.y2 ], el.rotation || 0);
+    const lines = [
+        [[ rectangle[0][0], rectangle[0][1] ], [ rectangle[1][0], rectangle[1][1] ]],
+        [[ rectangle[1][0], rectangle[1][1] ], [ rectangle[2][0], rectangle[2][1] ]],
+        [[ rectangle[2][0], rectangle[2][1] ], [ rectangle[3][0], rectangle[3][1] ]],
+        [[ rectangle[3][0], rectangle[3][1] ], [ rectangle[0][0], rectangle[0][1] ]],
+    ];
+    return lines.map(line => ({
+        path: getCurvePath(line),
+        strokeWidth: 4,
+    }));
+};
+
 // @public get the bounds of the provided elements
-export const getElementsBounds = (elements = []) => {
-    return getRectangleBounds(elements.map(el => {
+export const getElementsBoundingRectangle = (elements = []) => {
+    const bounds = elements.map(el => {
         const elementConfig = getElementConfig(el);
         if (typeof elementConfig.getBoundingRectangle === "function") {
             return elementConfig.getBoundingRectangle(el);
         }
-        return el;
-    }));
+        // get the rectangle generated by the element points
+        return getRectangle([ el.x1, el.y1 ], [ el.x2, el.y2 ], el.rotation || 0);
+    });
+    return getBoundingRectangle(bounds.flat());
+};
+
+// normalize element coordinates so x1,y1 is the top-left corner and x2,y2 the bottom-right corner
+// it is used usually when we finish creating an element
+export const normalizeElementCoordinates = (element) => {
+    return {
+        x1: Math.min(element.x1, element.x2),
+        x2: Math.max(element.x1, element.x2),
+        y1: Math.min(element.y1, element.y2),
+        y2: Math.max(element.y1, element.y2),
+    };
+};
+
+// allow to get the minimum size of an element based on its type
+export const getElementMinimumSize = element => {
+    const elementConfig = getElementConfig(element);
+    if (typeof elementConfig.getMinimumSize === "function") {
+        return elementConfig.getMinimumSize(element);
+    }
+    // default minimum size
+    return [ 1, 1 ];
 };

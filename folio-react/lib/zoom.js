@@ -1,5 +1,5 @@
-import {ZOOM_MAX, ZOOM_MIN} from "../constants.js";
-import {getRectangleBounds} from "../utils/math.js";
+import { ZOOM_MAX, ZOOM_MIN } from "../constants.js";
+import { getElementsBoundingRectangle } from "./elements.js";
 
 export const parseZoomValue = value => {
     return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, value));
@@ -25,13 +25,13 @@ export const getTranslateCoordinatesForNewZoom = (value, editor) => {
 // @param {number} editor.width Width value of the current editor
 // @param {number} editor.height Height value of the current editor
 export const getZoomToFitElements = (elements = [], editor) => {
-    const bounds = getRectangleBounds(elements);
-    const width = bounds.x2 - bounds.x1; // width of the bounding box
-    const height = bounds.y2 - bounds.y1; // height of the bounding box
+    const bounds = getElementsBoundingRectangle(elements);
+    const width = bounds[1][0] - bounds[0][0]; // width of the bounding box
+    const height = bounds[1][1] - bounds[0][1]; // height of the bounding box
     const zoom = parseZoomValue(Math.min(editor.width / width, editor.height / height));
     return {
         zoom: zoom,
-        translateX: -(bounds.x1 + width / 2) * zoom + editor.width / 2,
-        translateY: -(bounds.y1 + height / 2) * zoom + editor.height / 2,
+        translateX: -(bounds[0][0] + width / 2) * zoom + editor.width / 2,
+        translateY: -(bounds[0][1] + height / 2) * zoom + editor.height / 2,
     };
 };

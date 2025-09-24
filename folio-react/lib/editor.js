@@ -14,7 +14,6 @@ import {BACKGROUND_COLORS} from "../utils/colors.js";
 import {blobToDataUrl} from "../utils/blob.js";
 import {loadImage} from "../utils/image.js";
 import {isLink, getLinkMetadata} from "../utils/link.js";
-import {getRectangleBounds} from "../utils/math.js";
 import {
     copyTextToClipboard,
     getClipboardContents,
@@ -24,7 +23,7 @@ import {
     createElement,
     measureTextInElement,
     getElementDisplayName,
-    getElementsBounds,
+    getElementsBoundingRectangle,
 } from "./elements.js";
 import {
     parseZoomValue,
@@ -157,9 +156,9 @@ const parseTextDataToEditor = (editor, content = "", x = null, y = null) => {
                 }
                 return element;
             });
-            const bounds = getRectangleBounds(data?.elements || []);
-            const dx = x ? x - bounds.x1 : 0;
-            const dy = y ? y - bounds.y1 : 0;
+            const bounds = getElementsBoundingRectangle(data?.elements || []);
+            const dx = x ? x - bounds[0][0] : 0;
+            const dy = y ? y - bounds[0][1] : 0;
             editor.importElements(elements, dx, dy);
             return Promise.resolve(true);
         }
@@ -727,8 +726,8 @@ export const createEditor = (options = {}) => {
 
         // @description duplicate provided elements
         duplicateElements: elements => {
-            const bounds = getRectangleBounds(elements);
-            return editor.importElements(elements, (bounds.x2 + PASTE_OFFSET) - bounds.x1, 0);
+            const bounds = getElementsBoundingRectangle(elements || []);
+            return editor.importElements(elements, (bounds[1][0] + PASTE_OFFSET) - bounds[0][0], 0);
         },
 
         // @description lock elements
@@ -946,7 +945,7 @@ export const createEditor = (options = {}) => {
         addLibraryElement: (libraryItem, tx = null, ty = null) => {
             // editor.clearSelection();
             editor.setTool(TOOLS.SELECT);
-            const bounds = getElementsBounds(libraryItem.elements);
+            const bounds = getElementsBoundingRectangle(libraryItem.elements);
             const group = generateRandomId();
             const x = (tx ?? ((-1) * editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
             const y = (ty ?? ((-1) * editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;

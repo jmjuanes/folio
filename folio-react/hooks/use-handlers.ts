@@ -1,8 +1,18 @@
-import {TOOLS} from "../constants.js";
-import {getElementConfig} from "../lib/elements.js";
-import {useEditor} from "../contexts/editor.jsx";
+import { TOOLS } from "../constants.js";
+import { getElementConfig } from "../lib/elements.js";
+import { useEditor } from "../contexts/editor.jsx";
 
-export const useHandlers = () => {
+export type HandlerPosition = {
+    id?: string;
+    type: string; // TODO: change to enum
+    x: number;
+    y: number;
+    rotation?: number;
+    offsetX?: number;
+    offsetY?: number;
+};
+
+export const useHandlers = (): HandlerPosition[] => {
     const editor = useEditor();
 
     // if (!tool && (!action || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE)) {

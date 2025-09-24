@@ -16,7 +16,7 @@ import { Toolbar } from "../components/toolbar.tsx";
 import { Layers } from "../components/layers.tsx";
 
 // export type for the editor components
-export type EditorComponentsMap = Record<string, (props: any) => React.JSX.Element | null>;
+export type EditorComponentsMap = Record<string, ((props: any) => React.JSX.Element) | null> | null;
 
 // @description editor components context
 export const EditorComponentsContext = React.createContext<EditorComponentsMap>(null);
@@ -67,7 +67,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             OverTheCanvas: null,
             // overrides
             ...props.components,
-        } as EditorComponentsMap;
+        };
     }, [ props.components ]);
 
     return (

@@ -1,11 +1,24 @@
-import {TOOLS} from "../constants.js";
-import {getRectanglePath} from "../utils/paths.js";
-import {getElementConfig, getElementsBounds} from "../lib/elements.js";
-import {useEditor} from "../contexts/editor.jsx";
+import { TOOLS } from "../constants.js";
+import { getRectanglePath } from "../utils/paths.js";
+import { getElementBounds, getElementsBoundingRectangle } from "../lib/elements.js";
+import { useEditor } from "../contexts/editor.jsx";
 
-export const useBounds = () => {
+export type BoundSegment = {
+    path: string;
+    fillColor?: string;
+    strokeWidth?: number | string | null;
+    strokeDasharray?: number | null;
+    strokeColor?: string;
+};
+
+// alias to generate the rectangle path from two points
+const getRectanglePathFromPoints = (p1: number[], p2: number[]): string => {
+    return getRectanglePath([[p1[0], p1[1]], [p2[0], p1[1]], [p2[0], p2[1]], [p1[0], p2[1]]]);
+};
+
+export const useBounds = (): BoundSegment[] => {
     const editor = useEditor();
-    const bounds = [];
+    const bounds: BoundSegment[] = [];
     let hasCustomBounds = false;
     if (editor.state.tool === TOOLS.SELECT) {
         const selectedElements = editor.getSelection();
@@ -13,9 +26,9 @@ export const useBounds = () => {
         if (editor.page.activeGroup) {
             const elementsInGroup = editor.getElements().filter(el => el.group === editor.page.activeGroup);
             if (elementsInGroup.length > 0) {
-                const p = getElementsBounds(elementsInGroup);
+                const p = getElementsBoundingRectangle(elementsInGroup);
                 bounds.push({
-                    path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
+                    path: getRectanglePathFromPoints(p[0], p[1]),
                     strokeWidth: 2,
                     strokeDasharray: 5,
                 });
@@ -23,13 +36,10 @@ export const useBounds = () => {
         }
         // 2. Check if there is only one element in the selection
         if (selectedElements.length === 1) {
-            const elementConfig = getElementConfig(selectedElements[0]);
-            if (typeof elementConfig.getBounds === "function") {
-                (elementConfig.getBounds(selectedElements[0]) || []).map(b => {
-                    return bounds.push(b);
-                });
+            (getElementBounds(selectedElements[0]) || []).forEach((elementBound: BoundSegment) => {
+                bounds.push(elementBound);
                 hasCustomBounds = true;
-            }
+            });
         }
         // 3. Generate default bounds for selected elements
         if (selectedElements.length > 0) {
@@ -38,9 +48,9 @@ export const useBounds = () => {
                 const groups = new Set(selectedElements.map(el => el.group).filter(g => !!g));
                 Array.from(groups).forEach(group => {
                     const elements = selectedElements.filter(el => el.group === group);
-                    const p = getElementsBounds(elements);
+                    const p = getElementsBoundingRectangle(elements);
                     bounds.push({
-                        path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
+                        path: getRectanglePathFromPoints(p[0], p[1]),
                         strokeWidth: 2,
                         strokeDasharray: 5,
                     });
@@ -48,9 +58,9 @@ export const useBounds = () => {
             }
             // Note: we have to fix rectangle bounds for arrow elements
             if (!hasCustomBounds) {
-                const p = getElementsBounds(selectedElements);
+                const p = getElementsBoundingRectangle(selectedElements);
                 bounds.push({
-                    path: getRectanglePath([[p.x1, p.y1], [p.x2, p.y1], [p.x2, p.y2], [p.x1, p.y2]]),
+                    path: getRectanglePathFromPoints(p[0], p[1]),
                     strokeWidth: 4,
                 });
             }

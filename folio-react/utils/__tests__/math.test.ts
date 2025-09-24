@@ -1,10 +1,11 @@
 import {
-    normalizeBounds,
     getPointsDistance,
-    getRectangleBounds,
+    getBoundingRectangle,
     simplifyPath,
     getPointDistanceToLine,
-} from "./math.js";
+    Point,
+} from "../math.ts";
+
 
 describe("getPointsDistance", () => {
     it("should calculate the distance between two points", () => {
@@ -16,36 +17,21 @@ describe("getPointsDistance", () => {
     });
 });
 
-describe("normalizeBounds", () => {
-    it("should return normalized bounds", () => {
-        const originalBound = {x1: 10, x2: 0, y1: 0, y2: 10};
-        const newBounds = normalizeBounds(originalBound);
-
-        expect(newBounds.x1).toEqual(originalBound.x2);
-        expect(newBounds.x2).toEqual(originalBound.x1);
-        expect(newBounds.y1).toEqual(originalBound.y1);
-        expect(newBounds.y2).toEqual(originalBound.y2);
-    });
-});
-
-describe("getRectangleBounds", () => {
+describe("getBoundingRectangle", () => {
     it("should generate the bounds", () => {
-        const originalBounds = [
-            {x1: 10, y1: 10, x2: 15, y2: 15},
-            {x1: 12, y1: 5, x2: 5, y2: 20},
-        ];
-        const newBounds = getRectangleBounds(originalBounds);
+        const originalBounds = [ [ 10, 10 ], [ 15, 15 ], [ 12, 5 ], [5, 20 ]] as Point[];
+        const newBounds = getBoundingRectangle(originalBounds);
 
-        expect(newBounds.x1).toEqual(5);
-        expect(newBounds.x2).toEqual(15);
-        expect(newBounds.y1).toEqual(5);
-        expect(newBounds.y2).toEqual(20);
+        expect(newBounds[0][0]).toEqual(5);
+        expect(newBounds[1][0]).toEqual(15);
+        expect(newBounds[0][1]).toEqual(5);
+        expect(newBounds[1][1]).toEqual(20);
     });
 });
 
 describe("simplifyPath", () => {
-    const points = [
-        [0,0],[1,0.1],[2,-0.1],[3,5],[4,6],[5,7],[6,8.1],[7,9],[8,9],[9,9],
+    const points: Point[] = [
+        [ 0, 0 ], [ 1, 0.1 ], [ 2, -0.1 ], [ 3, 5 ], [ 4, 6 ], [ 5, 7 ], [ 6, 8.1 ], [ 7, 9 ], [ 8, 9 ], [ 9, 9 ],
     ];
 
     it("should return the same start and end", () => {

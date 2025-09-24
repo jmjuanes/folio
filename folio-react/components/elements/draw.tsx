@@ -9,19 +9,23 @@ import {
     OPACITY_NONE,
 } from "../../constants.js";
 import {
-    getPointsCenter,
+    getCenter,
     getBalancedDash,
     getPointsDistance,
-} from "../../utils/math.js";
+    convertRadiansToDegrees,
+} from "../../utils/math.ts";
+import { getElementSize } from "../../lib/elements.js";
 
-const getPath = points => {
+import type { Point } from "../../utils/math.ts";
+
+const getPath = (points: Point[]): string => {
     let lastPoint = points[0];
     const commands = [
         `M${lastPoint[0]},${lastPoint[1]}`,
     ];
     for (let i = 1; i < points.length; i++) {
         const point = points[i];
-        const center = getPointsCenter(lastPoint, point);
+        const center = getCenter(lastPoint, point);
         commands.push(`Q${lastPoint[0]},${lastPoint[1]} ${center[0]},${center[1]}`);
         lastPoint = point;
     }
@@ -29,9 +33,30 @@ const getPath = points => {
     return commands.join(" ");
 };
 
-export const DrawElement = props => {
-    const width = Math.abs(props.x2 - props.x1) || 1;
-    const height = Math.abs(props.y2 - props.y1) || 1;
+export type DrawElementProps = {
+    id: string;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    rotation?: number;
+    points: Point[];
+    drawWidth?: number;
+    drawHeight?: number;
+    strokeColor?: string;
+    strokeWidth?: number;
+    strokeStyle?: string;
+    opacity?: number;
+    creating?: boolean;
+    onPointerDown?: (event: React.PointerEvent<SVGPathElement | SVGRectElement>) => void;
+};
+
+export const DrawElement = (props: DrawElementProps): React.JSX.Element => {
+    const rotation = convertRadiansToDegrees(props.rotation || 0);
+    // const width = Math.abs(props.x2 - props.x1) || 1;
+    // const height = Math.abs(props.y2 - props.y1) || 1;
+    const [ width, height, x, y ] = getElementSize(props);
+    const [ cx, cy ] = getCenter([props.x1, props.y1], [props.x2, props.y2]);
     const drawWidth = props.drawWidth || width;
     const drawHeight = props.drawHeight || height;
     const points = props.points || [];
@@ -50,7 +75,7 @@ export const DrawElement = props => {
         [points.length, strokeWidth, props.strokeStyle],
     );
     return (
-        <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity}>
+        <g transform={`translate(${x},${y}) rotate(${rotation}, ${cx - x}, ${cy - y})`} opacity={props.opacity}>
             <g transform={`scale(${width/drawWidth} ${height/drawHeight})`}>
                 <rect
                     x={-GRID_SIZE / 2}

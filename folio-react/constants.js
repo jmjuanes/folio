@@ -1,6 +1,6 @@
 import {STICKYNOTE_COLORS} from "./utils/colors.js";
 
-export const VERSION = "13";
+export const VERSION = "14";
 
 export const IS_DARWIN = !!(/Mac|iPod|iPhone|iPad/.test(window.navigator.platform));
 
@@ -190,6 +190,7 @@ export const HANDLERS = {
     NODE_START: "node-start",
     NODE_END: "node-end",
     NODE_MIDDLE: "node-middle",
+    ROTATION: "rotation",
 };
 
 // Default font faces
@@ -277,6 +278,7 @@ export const DEFAULTS = {
     OPACITY: OPACITY_DEFAULT,
     NOTE_COLOR: STICKYNOTE_COLORS.yellow,
     STICKER: STICKERS.SMILING_FACE_WITH_HEART_EYES,
+    ROTATION: 0,
 };
 
 // Fields in elements
@@ -294,6 +296,7 @@ export const FIELDS = {
     X_END: "x2",
     Y_START: "y1",
     Y_END: "y2",
+    ROTATION: "rotation",
     FILL_COLOR: "fillColor",
     FILL_STYLE: "fillStyle",
     STROKE_COLOR: "strokeColor",

@@ -11,10 +11,25 @@ import {
     NOTE_TEXT_FONT,
     NOTE_TEXT_SIZE,
 } from "../../constants.js";
-import {measureText} from "../../utils/math.js";
-import {EditableText} from "./editable-text.jsx";
+import { measureText } from "../../utils/math.ts";
+import { EditableText } from "./editable-text.tsx";
 
-export const NoteElement = props => {
+export type NoteElementProps = {
+    id: string;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    creating?: boolean;
+    editing?: boolean;
+    [FIELDS.NOTE_TEXT]: string;
+    [FIELDS.NOTE_COLOR]: string;
+    onChange?: (keys: string[], values: any[]) => void;
+    onPointerDown?: (event: React.PointerEvent<SVGRectElement>) => void;
+    onDoubleClick?: (event: React.MouseEvent<SVGRectElement, MouseEvent>) => void;
+};
+
+export const NoteElement = (props: NoteElementProps): React.JSX.Element => {
     const x = props.creating ? props.x1 - NOTE_MIN_WIDTH / 2 : Math.min(props.x1, props.x2);
     const y = props.creating ? props.y1 - NOTE_MIN_HEIGHT / 2 : Math.min(props.y1, props.y2);
     const width  = props.creating ? NOTE_MIN_WIDTH : Math.abs(props.x2 - props.x1);
@@ -29,7 +44,7 @@ export const NoteElement = props => {
                 width={Math.max(1, width)}
                 height={Math.max(1, height)}
                 rx="0"
-                fill={props[FIELDS.NOTE_COLOR]}
+                fill={props[FIELDS.NOTE_COLOR] as string}
                 stroke={NONE}
                 style={{
                     WebkitFilter: "drop-shadow(rgba(0, 0, 0, 0.4) 6px 6px 10px)",
@@ -45,10 +60,10 @@ export const NoteElement = props => {
                     y={NOTE_PADDING}
                     width={width - 2 * NOTE_PADDING}
                     height={height - 2 * NOTE_PADDING}
-                    text={props[FIELDS.NOTE_TEXT] || ""}
+                    text={props[FIELDS.NOTE_TEXT] as string || ""}
                     textColor={NOTE_TEXT_COLOR}
                     textFont={NOTE_TEXT_FONT}
-                    textAlign={NOTE_TEXT_ALIGN}
+                    textAlign={NOTE_TEXT_ALIGN as "left" | "center" | "right"}
                     textSize={NOTE_TEXT_SIZE}
                     onChange={event => {
                         const text = event.target.value || "";

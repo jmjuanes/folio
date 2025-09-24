@@ -21,7 +21,7 @@ import {
     ARROW_SHAPES,
 } from "../constants.js";
 import {BACKGROUND_COLORS} from "../utils/colors.js";
-import {measureText} from "../utils/math.js";
+import {measureText} from "../utils/math.ts";
 import {loadImage} from "../utils/image.js";
 
 export const migrateElements = (elements, version) => {
@@ -120,6 +120,11 @@ export const migrateElements = (elements, version) => {
                 // add text vertical align field to shape elements
                 if (element.type === ELEMENTS.SHAPE) {
                     element[FIELDS.TEXT_VERTICAL_ALIGN] = element[FIELDS.TEXT_VERTICAL_ALIGN] ?? TEXT_VERTICAL_ALIGNS.MIDDLE;
+                }
+            case "13":
+                // add rotation field to shape, text, draw, and image elements
+                if ([ELEMENTS.SHAPE, ELEMENTS.TEXT, ELEMENTS.DRAW, ELEMENTS.IMAGE, ELEMENTS.NOTE].includes(element.type)) {
+                    element[FIELDS.ROTATION] = element[FIELDS.ROTATION] ?? 0;
                 }
         }
         return element;
