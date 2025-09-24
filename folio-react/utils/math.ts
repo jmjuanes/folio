@@ -115,7 +115,7 @@ export const getRoundedRectanglePerimeter = (width: number, height: number, radi
 
 // @description get the rectangle defined by two points
 export const getRectangle = (p1: Point, p2: Point, angle: number = 0): Point[] => {
-    if (angle === 0) {
+    if (!angle || angle === 0) {
         return [p1, [ p2[0], p1[1] ], p2, [ p1[0], p2[1] ]];
     }
     // calcualte the center and rotate back the points to its original position
