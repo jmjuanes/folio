@@ -214,11 +214,21 @@ export const elementsConfig = {
             }
         },
         onUpdate: (element, changedKeys) => {
-            if (element.text && (changedKeys.has("textFont") || changedKeys.has("textSize"))) {
-                const [ width ] = getElementSize(element);
-                const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
-                element.textWidth = textWidth;
-                element.textHeight = textHeight;
+            console.log(changedKeys);
+            if (element.text && (changedKeys.has("text") || changedKeys.has("textFont") || changedKeys.has("textSize"))) {
+                const [ width, height ] = getElementSize(element);
+                // 1. check if we have to update the text size
+                if (changedKeys.has("textSize") || changedKeys.has("textFont")) {
+                    const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
+                    element.textWidth = textWidth;
+                    element.textHeight = textHeight;
+                }
+                // 2. fix the height of the text element
+                if (height < element.textHeight) {
+                    const newPoint = resizeFromFixedCorner([ element.x1, element.y1 ], width, element.textHeight, element.rotation || 0, "top-left");
+                    element.x2 = newPoint[0];
+                    element.y2 = newPoint[1];
+                }
             }
         },
         getUpdatedFields: element => {
