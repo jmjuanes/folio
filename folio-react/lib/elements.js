@@ -100,7 +100,7 @@ const getDefaultElementHandlers = element => {
             x: (rectangle[0][0] + rectangle[1][0]) / 2,
             y: (rectangle[0][1] + rectangle[1][1]) / 2,
             offsetX: 0,
-            offsetY: diff < 0 ? -30 : +30,
+            offsetY: diff <= 0 ? -30 : +30,
             rotation: element.rotation || 0,
         },
     ];
@@ -814,5 +814,5 @@ export const getElementMinimumSize = element => {
         return elementConfig.getMinimumSize(element);
     }
     // default minimum size
-    return [ 0, 0 ];
+    return [ 1, 1 ];
 };

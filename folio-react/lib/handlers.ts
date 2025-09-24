@@ -86,11 +86,13 @@ export const clampCornerResizeToMinSize = (fixedCorner: Point, movingCorner: Poi
     const projectedWidth = vec[0] * xAxis[0] + vec[1] * xAxis[1];
     const projectedHeight = vec[0] * yAxis[0] + vec[1] * yAxis[1];
     // normalize the projections to the correct sign according to the corner
-    const normalizedProjectedWidth = corner.includes("right") ? projectedWidth : -projectedWidth;
-    const normalizedProjectedHeight = corner.includes("bottom") ? projectedHeight : -projectedHeight;
+    const normalizedProjectedWidth = corner.includes("right") ? projectedWidth : (-1) * projectedWidth;
+    const normalizedProjectedHeight = corner.includes("bottom") ? projectedHeight : (-1) * projectedHeight;
+    const signX = corner.includes("right") ? 1 : -1;
+    const signY = corner.includes("bottom") ? 1 : -1;
     // clamp to min dimensions while preserving the sign
-    const clampedWidth = Math.max(minWidth, normalizedProjectedWidth) * Math.sign(projectedWidth);
-    const clampedHeight = Math.max(minHeight, normalizedProjectedHeight) * Math.sign(projectedHeight);
+    const clampedWidth = Math.max(minWidth, normalizedProjectedWidth) * signX; // Math.sign(projectedWidth);
+    const clampedHeight = Math.max(minHeight, normalizedProjectedHeight) * signY; // Math.sign(projectedHeight);
     // return the clamped corner
     return [
         fixedCorner[0] + xAxis[0] * clampedWidth + yAxis[0] * clampedHeight,
@@ -115,7 +117,8 @@ export const clampEdgeResizeToMinSize = (fixedCorner: Point, movingPoint: Point,
     // project onto the axis
     const projected = vec[0] * axis[0] + vec[1] * axis[1];
     const normalizedProjected = (edge === "bottom" || edge === "right") ? projected : (-1) * projected;
-    const clamped = Math.max(minSize, normalizedProjected) * Math.sign(projected);
+    const sign = (edge === "bottom" || edge === "right") ? 1 : -1;
+    const clamped = Math.max(minSize, normalizedProjected) * sign;
     // return the clamped point
     return [
         fixedCorner[0] + axis[0] * clamped,
