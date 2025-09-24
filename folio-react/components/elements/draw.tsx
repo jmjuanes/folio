@@ -13,8 +13,9 @@ import {
     getBalancedDash,
     getPointsDistance,
 } from "../../utils/math.ts";
+import type { Point } from "../../utils/math.ts";
 
-const getPath = points => {
+const getPath = (points: Point[]): string => {
     let lastPoint = points[0];
     const commands = [
         `M${lastPoint[0]},${lastPoint[1]}`,
@@ -29,7 +30,24 @@ const getPath = points => {
     return commands.join(" ");
 };
 
-export const DrawElement = props => {
+export type DrawElementProps = {
+    id: string;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    points: Point[];
+    drawWidth?: number;
+    drawHeight?: number;
+    strokeColor?: string;
+    strokeWidth?: number;
+    strokeStyle?: string;
+    opacity?: number;
+    creating?: boolean;
+    onPointerDown?: (event: React.PointerEvent<SVGPathElement | SVGRectElement>) => void;
+};
+
+export const DrawElement = (props: DrawElementProps): React.JSX.Element => {
     const width = Math.abs(props.x2 - props.x1) || 1;
     const height = Math.abs(props.y2 - props.y1) || 1;
     const drawWidth = props.drawWidth || width;

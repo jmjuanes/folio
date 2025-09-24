@@ -6,7 +6,7 @@ import {
     TEXT_VERTICAL_ALIGNS,
 } from "../../constants.js";
 import { convertRadiansToDegrees, measureText } from "../../utils/math.ts";
-import { EditableText } from "./editable-text.jsx";
+import { EditableText } from "./editable-text.tsx";
 import { getElementSize } from "../../lib/elements.js";
 
 const getTextVerticalPosition = (align: string, height: number, textHeight: number): number => {
@@ -36,7 +36,7 @@ export type TextElementProps = {
     textSize?: number;
     textFont?: string;
     textColor?: string;
-    textAlign?: string;
+    textAlign?: "left" | "center" | "right";
     textVerticalAlign?: string;
     textHeight?: number;
     padding?: number;
@@ -86,12 +86,12 @@ export const TextElement = (props: TextElementProps): React.JSX.Element => {
                 x={padding}
                 y={padding + getTextVerticalPosition(props.textVerticalAlign || "center", height - 2 * padding, props.textHeight || 0)}
                 width={width - 2 * padding}
-                height={props.textHeight}
+                height={props.textHeight || 0}
                 text={props.text || ""}
                 textFont={textFont}
                 textSize={textSize}
                 textColor={textColor}
-                textAlign={props.textAlign || TEXT_ALIGNS.CENTER}
+                textAlign={(props.textAlign || TEXT_ALIGNS.CENTER) as "left" | "center" | "right"}
                 opacity={props.opacity}
                 onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
                     if (typeof props.onChange === "function") {

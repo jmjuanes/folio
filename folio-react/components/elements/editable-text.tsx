@@ -1,16 +1,38 @@
 import React from "react";
-import {stopEventPropagation} from "../../utils/events.js";
+import { stopEventPropagation } from "../../utils/events.js";
 
-const Placeholder = props => (
+type PlaceholderProps = {
+    value?: string;
+};
+
+const Placeholder = (props: PlaceholderProps): React.JSX.Element => (
     <span style={{opacity:"0.5"}}>{props.value || ""}</span>
 );
 
-export const EditableText = props => {
-    const input = React.useRef(null);
+export type EditableTextProps = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    text?: string;
+    textFont: string;
+    textSize: number;
+    textColor: string;
+    textAlign: "left" | "center" | "right";
+    placeholder?: string;
+    opacity?: number;
+    editing?: boolean;
+    autofocus?: boolean;
+    onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
+};
+
+export const EditableText = (props: EditableTextProps): React.JSX.Element => {
+    const input = React.useRef<HTMLTextAreaElement>(null);
     const width = Math.max(1, props.width);
     const height = Math.max(1, props.height);
     const opacity = props.editing ? 1 : props.opacity ?? 1;
-    const previewStyles = {
+    const previewStyles: React.CSSProperties = {
         width: props.width + "px",
         height: props.height + "px",
         whiteSpace: "pre-wrap",

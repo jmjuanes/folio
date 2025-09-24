@@ -2,13 +2,13 @@ import React from "react";
 import { ELEMENTS } from "../../constants.js";
 import { AssetsProvider } from "../../contexts/assets.jsx";
 import { ArrowElement } from "./arrow.jsx";
-import { DrawElement } from "./draw.jsx";
+import { DrawElement } from "./draw.tsx";
 import { TextElement } from "./text.tsx";
 import { ShapeElement } from "./shape.jsx";
 import { ImageElement } from "./image.jsx";
-import { NoteElement } from "./note.jsx";
+import { NoteElement } from "./note.tsx";
 import { BookmarkElement } from "./bookmark.jsx";
-import { StickerElement } from "./sticker.jsx";
+import { StickerElement } from "./sticker.tsx";
 
 const ElementContainer = props => (
     <g data-role="element" data-element={props.id}>
