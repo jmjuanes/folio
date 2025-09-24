@@ -12,7 +12,10 @@ import {
     getCenter,
     getBalancedDash,
     getPointsDistance,
+    convertRadiansToDegrees,
 } from "../../utils/math.ts";
+import { getElementSize } from "../../lib/elements.js";
+
 import type { Point } from "../../utils/math.ts";
 
 const getPath = (points: Point[]): string => {
@@ -36,6 +39,7 @@ export type DrawElementProps = {
     y1: number;
     x2: number;
     y2: number;
+    rotation?: number;
     points: Point[];
     drawWidth?: number;
     drawHeight?: number;
@@ -48,8 +52,11 @@ export type DrawElementProps = {
 };
 
 export const DrawElement = (props: DrawElementProps): React.JSX.Element => {
-    const width = Math.abs(props.x2 - props.x1) || 1;
-    const height = Math.abs(props.y2 - props.y1) || 1;
+    const rotation = convertRadiansToDegrees(props.rotation || 0);
+    // const width = Math.abs(props.x2 - props.x1) || 1;
+    // const height = Math.abs(props.y2 - props.y1) || 1;
+    const [ width, height, x, y ] = getElementSize(props);
+    const [ cx, cy ] = getCenter([props.x1, props.y1], [props.x2, props.y2]);
     const drawWidth = props.drawWidth || width;
     const drawHeight = props.drawHeight || height;
     const points = props.points || [];
@@ -68,7 +75,7 @@ export const DrawElement = (props: DrawElementProps): React.JSX.Element => {
         [points.length, strokeWidth, props.strokeStyle],
     );
     return (
-        <g transform={`translate(${props.x1},${props.y1})`} opacity={props.opacity}>
+        <g transform={`translate(${x},${y}) rotate(${rotation}, ${cx - x}, ${cy - y})`} opacity={props.opacity}>
             <g transform={`scale(${width/drawWidth} ${height/drawHeight})`}>
                 <rect
                     x={-GRID_SIZE / 2}
