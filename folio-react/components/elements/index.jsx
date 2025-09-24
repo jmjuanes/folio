@@ -3,7 +3,7 @@ import { ELEMENTS } from "../../constants.js";
 import { AssetsProvider } from "../../contexts/assets.jsx";
 import { ArrowElement } from "./arrow.jsx";
 import { DrawElement } from "./draw.jsx";
-import { TextElement } from "./text.jsx";
+import { TextElement } from "./text.tsx";
 import { ShapeElement } from "./shape.jsx";
 import { ImageElement } from "./image.jsx";
 import { NoteElement } from "./note.jsx";

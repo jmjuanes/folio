@@ -9,7 +9,7 @@ import { convertRadiansToDegrees, measureText } from "../../utils/math.ts";
 import { EditableText } from "./editable-text.jsx";
 import { getElementSize } from "../../lib/elements.js";
 
-const getTextVerticalPosition = (align, height, textHeight) => {
+const getTextVerticalPosition = (align: string, height: number, textHeight: number): number => {
     // align text to top
     if (align === TEXT_VERTICAL_ALIGNS.TOP) {
         return 0;
@@ -25,7 +25,32 @@ const getTextVerticalPosition = (align, height, textHeight) => {
     return (height / 2) - (textHeight / 2);
 };
 
-export const TextElement = props => {
+export type TextElementProps = {
+    id: string;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    rotation?: number;
+    text?: string;
+    textSize?: number;
+    textFont?: string;
+    textColor?: string;
+    textAlign?: string;
+    textVerticalAlign?: string;
+    textHeight?: number;
+    padding?: number;
+    opacity?: number;
+    embedded?: boolean;
+    creating?: boolean;
+    editing?: boolean;
+    onChange?: (keys: string[], values: any[]) => void;
+    onPointerDown?: (event: React.PointerEvent<SVGRectElement>) => void;
+    onDoubleClick?: (event: React.MouseEvent<SVGRectElement, MouseEvent>) => void;
+    onBlur?: (event: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
+};
+
+export const TextElement = (props: TextElementProps): React.JSX.Element => {
     const padding = props.padding ?? 0;
     const cx = (props.x1 + props.x2) / 2;
     const cy = (props.y1 + props.y2) / 2;
@@ -59,7 +84,7 @@ export const TextElement = props => {
                 editing={props.editing}
                 autofocus={true}
                 x={padding}
-                y={padding + getTextVerticalPosition(props.textVerticalAlign, height - 2 * padding, props.textHeight)}
+                y={padding + getTextVerticalPosition(props.textVerticalAlign || "center", height - 2 * padding, props.textHeight || 0)}
                 width={width - 2 * padding}
                 height={props.textHeight}
                 text={props.text || ""}
@@ -68,7 +93,7 @@ export const TextElement = props => {
                 textColor={textColor}
                 textAlign={props.textAlign || TEXT_ALIGNS.CENTER}
                 opacity={props.opacity}
-                onChange={event => {
+                onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
                     if (typeof props.onChange === "function") {
                         const text = event.target.value || "";
                         const [textWidth, textHeight] = measureText(text || " ", textSize, textFont, width + "px");
@@ -94,14 +119,4 @@ export const TextElement = props => {
             )}
         </g>
     );
-};
-
-TextElement.defaultProps = {
-    text: "",
-    padding: 0,
-    embedded: false,
-    verticalAlign: "center",
-    onChange: null,
-    onPointerDown: null,
-    onDoubleClick: null,
 };
