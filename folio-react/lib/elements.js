@@ -198,7 +198,7 @@ export const elementsConfig = {
                     }
                 }
                 // 2. fix height and prevent text overflow
-                else if (height < element.textHeight) {
+                if (height < element.textHeight) {
                     const realWidth = Math.max(width, element.textWidth);
                     if (handler === HANDLERS.EDGE_TOP || handler === HANDLERS.CORNER_TOP_LEFT || handler === HANDLERS.CORNER_TOP_RIGHT || handler === HANDLERS.EDGE_LEFT) {
                         const p = resizeFromFixedCorner([ element.x2, element.y2 ], realWidth, element.textHeight, snapshot.rotation || 0, "bottom-right");
