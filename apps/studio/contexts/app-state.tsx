@@ -72,13 +72,13 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 fetchUserDocuments();
             },
             openHome: () => {
-                redirect(`#`);
+                redirect(`#home`);
             },
             openBoard: (boardId: string) => {
-                redirect(`#b/${boardId}`);
+                redirect(`#${boardId}`);
             },
             isBoardOpen: (boardId: string) => {
-                return getCurrentHash() === `#b/${boardId}`;
+                return getCurrentHash() === `#${boardId}`;
             },
 
             createDocument: async (collection: Collection, initialData: any = {}) => {

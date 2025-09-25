@@ -1,5 +1,5 @@
 import React from "react";
-import {useUpdate} from "react-use";
+import { useUpdate } from "react-use";
 import {
     ACTIONS,
     ELEMENTS,
@@ -15,20 +15,39 @@ import {
     SNAP_EDGE_Y,
     FIELDS,
 } from "../constants.js";
-import {normalizeBounds, getRectangleBounds} from "../utils/math.js";
-import {isArrowKey} from "../utils/keys.js";
-import {isInputTarget} from "../utils/events.js";
+import {
+    clampAngle,
+    snapAngle,
+    rotatePoints,
+    getRectangle,
+    getPointProjectionToLine,
+    getCenter,
+} from "../utils/math.ts";
+import { isArrowKey } from "../utils/keys.js";
+import { isInputTarget } from "../utils/events.js";
 import {
     getElementConfig, 
     createElement,
     getElementsSnappingEdges,
     getElementSnappingPoints,
+    getElementsBoundingRectangle,
+    normalizeElementCoordinates,
+    getElementSize,
+    getElementMinimumSize,
 } from "../lib/elements.js";
-import {useEditor} from "../contexts/editor.jsx";
-import {useContextMenu} from "../contexts/context-menu.jsx";
-import {useActions} from "./use-actions.js";
-import {useTools, getToolByShortcut} from "./use-tools.js";
-import {getActionByKeysCombination} from "../lib/actions.js";
+import { useEditor } from "../contexts/editor.jsx";
+import { useContextMenu } from "../contexts/context-menu.jsx";
+import { useActions } from "./use-actions.js";
+import { useTools, getToolByShortcut } from "./use-tools.js";
+import { getActionByKeysCombination } from "../lib/actions.js";
+import {
+    isCornerHandler,
+    isEdgeHandler,
+    isNodeHandler,
+    computeResizeDelta,
+    clampCornerResizeToMinSize,
+    clampEdgeResizeToMinSize,
+} from "../lib/handlers.ts";
 
 // internal list with all elements
 const elementsNames = new Set(Object.values(ELEMENTS));
@@ -41,7 +60,7 @@ const isElementTool = toolName => {
 // @public use editor events listeners
 export const useEvents = () => {
     const update = useUpdate();
-    const {hideContextMenu} = useContextMenu();
+    const { hideContextMenu } = useContextMenu();
     const editor = useEditor();
     const tools = useTools();
     const dispatchAction = useActions();
@@ -194,7 +213,7 @@ export const useEvents = () => {
                     // }
                     // Save a snapshot of the current selection for calculating the correct element position
                     snapshot = editor.getSelection().map(el => ({...el}));
-                    snapshotBounds = getRectangleBounds(snapshot);
+                    snapshotBounds = getElementsBoundingRectangle(snapshot);
                     // Check for calling the onResizeStart listener
                     // if (action === ACTIONS.RESIZE && snapshot.length === 1) {
                     if (event.handler && snapshot.length === 1) {
@@ -265,7 +284,7 @@ export const useEvents = () => {
                 const y = event.originalY + event.dy;
                 editor.getElements().forEach(element => {
                     if (!element.erased) {
-                        const b = element.type === ELEMENTS.ARROW ? normalizeBounds(element) : element;
+                        const b = element.type === ELEMENTS.ARROW ? normalizeElementCoordinates(element) : element;
                         if (b.x1 <= x && x <= b.x2 && b.y1 <= y && y <= b.y2) {
                             element.erased = true;
                         }
@@ -289,8 +308,8 @@ export const useEvents = () => {
                 isDragged = true;
                 const elements = editor.getSelection();
                 const includeCenter = elements.length > 1 || elements[0].type !== ELEMENTS.ARROW;
-                const dx = getPosition(snapshotBounds.x1 + event.dx, SNAP_EDGE_X, snapshotBounds.x2 - snapshotBounds.x1, includeCenter) - snapshotBounds.x1;
-                const dy = getPosition(snapshotBounds.y1 + event.dy, SNAP_EDGE_Y, snapshotBounds.y2 - snapshotBounds.y1, includeCenter) - snapshotBounds.y1;
+                const dx = getPosition(snapshotBounds[0][0] + event.dx, SNAP_EDGE_X, snapshotBounds[1][0] - snapshotBounds[0][0], includeCenter) - snapshotBounds[0][0];
+                const dy = getPosition(snapshotBounds[0][1] + event.dy, SNAP_EDGE_Y, snapshotBounds[1][1] - snapshotBounds[0][1], includeCenter) - snapshotBounds[0][1];
                 elements.forEach((element, index) => {
                     element.x1 = snapshot[index].x1 + dx;
                     element.x2 = snapshot[index].x2 + dx;
@@ -300,12 +319,21 @@ export const useEvents = () => {
                     getElementConfig(element)?.onDrag?.(element, snapshot[index], event);
                 });
                 if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
-                    const bounds = elements.length === 1 ? elements[0] : getRectangleBounds(elements);
+                    let boundElement = elements[0];
+                    if (elements.length > 1) {
+                        const bounds = getElementsBoundingRectangle(elements);
+                        boundElement = {
+                            x1: bounds[0][0],
+                            y1: bounds[0][1],
+                            x2: bounds[1][0],
+                            y2: bounds[1][1],
+                        };
+                    }
                     editor.state.snapEdges = activeSnapEdges.map(snapEdge => ({
                         // ...snapEdge,
                         points: [
                             ...snapEdge.points,
-                            ...getElementSnappingPoints(bounds, snapEdge),
+                            ...getElementSnappingPoints(boundElement, snapEdge),
                         ],
                     }));
                 }
@@ -318,53 +346,147 @@ export const useEvents = () => {
                 isResized = true;
                 const element = editor.getElement(snapshot[0].id);
                 const elementConfig = getElementConfig(element);
-                if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                    element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
-                    element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
+                if (event.handler === HANDLERS.ROTATION) {
+                    const cx = (snapshot[0].x1 + snapshot[0].x2) / 2;
+                    const cy = (snapshot[0].y1 + snapshot[0].y2) / 2;
+                    const prevAngle = Math.atan2(event.originalY - cy, event.originalX - cx) + Math.PI / 2;
+                    const currentAngle = Math.atan2(event.currentY - cy, event.currentX - cx) + Math.PI / 2;
+                    const deltaAngle = clampAngle(event.shiftKey ? snapAngle(currentAngle - prevAngle) : currentAngle - prevAngle);
+                    const angle = clampAngle((snapshot[0].rotation || 0) + deltaAngle);
+                    element.rotation = angle;
+                    const newPoints = rotatePoints([[snapshot[0].x1, snapshot[0].y1], [snapshot[0].x2, snapshot[0].y2]], [cx, cy], deltaAngle);
+                    element.x1 = newPoints[0][0];
+                    element.y1 = newPoints[0][1];
+                    element.x2 = newPoints[1][0];
+                    element.y2 = newPoints[1][1];
                 }
-                else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                    element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
-                    element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
-                }
-                else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                    element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
-                    element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
-                }
-                else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                    element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
-                    element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
-                }
-                else if (event.handler === HANDLERS.EDGE_TOP) {
-                    element.y1 = Math.min(getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y), snapshot[0].y2);
-                }
-                else if (event.handler === HANDLERS.EDGE_BOTTOM) {
-                    element.y2 = Math.max(getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y), snapshot[0].y1);
-                }
-                else if (event.handler === HANDLERS.EDGE_LEFT) {
-                    element.x1 = Math.min(getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X), snapshot[0].x2);
-                }
-                else if (event.handler === HANDLERS.EDGE_RIGHT) {
-                    element.x2 = Math.max(getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X), snapshot[0].x1);
-                }
-                else if (event.handler === HANDLERS.NODE_START) {
-                    element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
-                    element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
-                }
-                else if (event.handler === HANDLERS.NODE_END) {
-                    element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
-                    element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
-                }
-                // Execute onResize handler
-                elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
-                // Set visible snap edges
-                if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
-                    editor.state.snapEdges = activeSnapEdges.map(snapEdge => ({
-                        // ...snapEdge,
-                        points: [
-                            ...snapEdge.points,
-                            ...getElementSnappingPoints(element, snapEdge),
-                        ],
-                    }));
+                else {
+                    if (isNodeHandler(event.handler)) {
+                        if (event.handler === HANDLERS.NODE_START) {
+                            element.x1 = getPosition(snapshot[0].x1 + event.dx, SNAP_EDGE_X);
+                            element.y1 = getPosition(snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
+                        }
+                        else if (event.handler === HANDLERS.NODE_END) {
+                            element.x2 = getPosition(snapshot[0].x2 + event.dx, SNAP_EDGE_X);
+                            element.y2 = getPosition(snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
+                        }
+                    }
+                    else if (isCornerHandler(event.handler) || isEdgeHandler(event.handler)) {
+                        const rect = getRectangle([ snapshot[0].x1, snapshot[0].y1 ], [ snapshot[0].x2, snapshot[0].y2 ], snapshot[0].rotation);
+                        const [ minWidth, minHeight ] = getElementMinimumSize(element);
+                        if (isCornerHandler(event.handler)) {
+                            const [ width, height ] = getElementSize(snapshot[0]);
+                            const diagLen = Math.hypot(width, height);
+                            if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
+                                const axisDir = [ (-1) * width / diagLen, (-1) * height / diagLen ];
+                                const [ gDx, gDy ] = computeResizeDelta([ event.dx, event.dy ], snapshot[0].rotation, axisDir, event.shiftKey);
+                                const newCorner = [
+                                    getPosition(snapshot[0].x1 + gDx, null),
+                                    getPosition(snapshot[0].y1 + gDy, null),
+                                ];
+                                const clampedCorner = clampCornerResizeToMinSize(rect[2], newCorner, snapshot[0].rotation, minWidth, minHeight, "top-left");
+                                element.x1 = clampedCorner[0];
+                                element.y1 = clampedCorner[1];
+                            }
+                            else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                                const axisDir = [ width / diagLen, height / diagLen ];
+                                const [ gDx, gDy ] = computeResizeDelta([ event.dx, event.dy ], snapshot[0].rotation, axisDir, event.shiftKey);
+                                const newCorner = [
+                                    getPosition(snapshot[0].x2 + gDx, null),
+                                    getPosition(snapshot[0].y2 + gDy, null),
+                                ];
+                                const clampedCorner = clampCornerResizeToMinSize(rect[0], newCorner, snapshot[0].rotation, minWidth, minHeight, "bottom-right");
+                                element.x2 = clampedCorner[0];
+                                element.y2 = clampedCorner[1];
+                            }
+                            else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
+                                const axisDir = [ (-1) * width / diagLen, height / diagLen ];
+                                const [ gDx, gDy ] = computeResizeDelta([ event.dx, event.dy ], snapshot[0].rotation, axisDir, event.shiftKey);
+                                const newCorner = [
+                                    getPosition(rect[1][0] + gDx, null),
+                                    getPosition(rect[1][1] + gDy, null),
+                                ];
+                                const clampedCorner = clampCornerResizeToMinSize(rect[3], newCorner, snapshot[0].rotation, minWidth, minHeight, "top-right");
+                                const newRect = getRectangle(rect[3], clampedCorner, snapshot[0].rotation);
+                                element.x1 = newRect[3][0];
+                                element.y1 = newRect[3][1];
+                                element.x2 = newRect[1][0];
+                                element.y2 = newRect[1][1];
+                            }
+                            else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                                const axisDir = [ width / diagLen, (-1) * height / diagLen ];
+                                const [ gDx, gDy ] = computeResizeDelta([ event.dx, event.dy ], snapshot[0].rotation, axisDir, event.shiftKey);
+                                const newCorner = [
+                                    getPosition(rect[3][0] + gDx, null),
+                                    getPosition(rect[3][1] + gDy, null),
+                                ];
+                                const clampedCorner = clampCornerResizeToMinSize(rect[1], newCorner, snapshot[0].rotation, minWidth, minHeight, "bottom-left");
+                                const newRect = getRectangle(clampedCorner, rect[1], snapshot[0].rotation);
+                                element.x1 = newRect[3][0];
+                                element.y1 = newRect[3][1];
+                                element.x2 = newRect[1][0];
+                                element.y2 = newRect[1][1];
+                            }
+                        }
+                        else {
+                            if (event.handler === HANDLERS.EDGE_TOP) {
+                                const edgeTopPoint = getCenter(rect[0], rect[1]);
+                                const currentPoint = [
+                                    getPosition(edgeTopPoint[0] + event.dx, null),
+                                    getPosition(edgeTopPoint[1] + event.dy, null),
+                                ];
+                                const clampedPoint = clampEdgeResizeToMinSize(rect[3], currentPoint, snapshot[0].rotation, minHeight, "top");
+                                const newPoint = getPointProjectionToLine(clampedPoint, [ rect[0], rect[3] ]);
+                                element.x1 = newPoint[0];
+                                element.y1 = newPoint[1];
+                            }
+                            else if (event.handler === HANDLERS.EDGE_BOTTOM) {
+                                const edgeBottomPoint = getCenter(rect[2], rect[3]);
+                                const currentPoint = [
+                                    getPosition(edgeBottomPoint[0] + event.dx, null),
+                                    getPosition(edgeBottomPoint[1] + event.dy, null),
+                                ];
+                                const clampedPoint = clampEdgeResizeToMinSize(rect[1], currentPoint, snapshot[0].rotation, minHeight, "bottom");
+                                const newPoint = getPointProjectionToLine(clampedPoint, [ rect[1], rect[2] ]);
+                                element.x2 = newPoint[0];
+                                element.y2 = newPoint[1];
+                            }
+                            else if (event.handler === HANDLERS.EDGE_LEFT) {
+                                const edgeLeftPoint = getCenter(rect[0], rect[3]);
+                                const currentPoint = [
+                                    getPosition(edgeLeftPoint[0] + event.dx, null),
+                                    getPosition(edgeLeftPoint[1] + event.dy, null),
+                                ];
+                                const clampedPoint = clampEdgeResizeToMinSize(rect[2], currentPoint, snapshot[0].rotation, minWidth, "left");
+                                const newPoint = getPointProjectionToLine(clampedPoint, [ rect[0], rect[1] ]);
+                                element.x1 = newPoint[0];
+                                element.y1 = newPoint[1];
+                            }
+                            else if (event.handler === HANDLERS.EDGE_RIGHT) {
+                                const edgeRightPoint = getCenter(rect[1], rect[2]);
+                                const currentPoint = [
+                                    getPosition(edgeRightPoint[0] + event.dx, null),
+                                    getPosition(edgeRightPoint[1] + event.dy, null),
+                                ];
+                                const clampedPoint = clampEdgeResizeToMinSize(rect[0], currentPoint, snapshot[0].rotation, minHeight, "right");
+                                const newPoint = getPointProjectionToLine(clampedPoint, [ rect[2], rect[3] ]);
+                                element.x2 = newPoint[0];
+                                element.y2 = newPoint[1];
+                            }
+                        }
+                    }
+                    // Execute onResize handler
+                    elementConfig?.onResize?.(element, snapshot[0], event, getPosition);
+                    // Set visible snap edges
+                    if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
+                        editor.state.snapEdges = activeSnapEdges.map(snapEdge => ({
+                            // ...snapEdge,
+                            points: [
+                                ...snapEdge.points,
+                                ...getElementSnappingPoints(element, snapEdge),
+                            ],
+                        }));
+                    }
                 }
             }
             // else if (editor.state.action === ACTIONS.SELECT || editor.state.action === ACTIONS.SCREENSHOT) {
@@ -445,7 +567,7 @@ export const useEvents = () => {
                     editor.addHistory({
                         type: CHANGES.UPDATE,
                         elements: selectedElements.map((element, index) => {
-                            const updatedFields = new Set(["x1", "x2", "y1", "y2", "version"]);
+                            const updatedFields = new Set(["x1", "x2", "y1", "y2", "rotation", "version"]);
                             // We need to check the fields that the element has updated internally
                             const elementConfig = getElementConfig(element);
                             if (typeof elementConfig.getUpdatedFields === "function") {

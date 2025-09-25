@@ -1,21 +1,21 @@
 import React from "react";
 // import classNames from "classnames";
-import {TOOLS} from "../constants.js";
-import {useHandlers} from "../hooks/use-handlers.js";
-import {useBounds} from "../hooks/use-bounds.js";
-import {useCursor} from "../hooks/use-cursor.js";
-import {useEvents} from "../hooks/use-events.js";
-import {useDimensions} from "../hooks/use-dimensions.js";
-import {Canvas} from "./canvas.jsx";
-import {Pointer} from "./pointer.jsx";
-import {EditorProvider, useEditor} from "../contexts/editor.jsx";
-import {ContextMenuProvider, useContextMenu} from "../contexts/context-menu.jsx";
+import { TOOLS } from "../constants.js";
+import { useHandlers } from "../hooks/use-handlers.ts";
+import { useBounds } from "../hooks/use-bounds.ts";
+import { useCursor } from "../hooks/use-cursor.js";
+import { useEvents } from "../hooks/use-events.js";
+import { useDimensions } from "../hooks/use-dimensions.ts";
+import { Canvas } from "./canvas.jsx";
+import { Pointer } from "./pointer.jsx";
+import { EditorProvider, useEditor } from "../contexts/editor.jsx";
+import { ContextMenuProvider, useContextMenu } from "../contexts/context-menu.jsx";
 import {
     EditorComponentsProvider,
     useEditorComponents,
 } from "../contexts/editor-components.tsx";
-import {ConfirmProvider} from "../contexts/confirm.jsx";
-import {DialogsProvider} from "../contexts/dialogs.jsx";
+import { ConfirmProvider } from "../contexts/confirm.jsx";
+import { DialogsProvider } from "../contexts/dialogs.jsx";
 
 // @private inner editor component
 const InnerEditor = () => {

@@ -13,7 +13,7 @@ import { Loading } from "folio-react/components/loading.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
 import { NotFound } from "../not-found.tsx";
 
-export const BoardRoute = (props: any): React.JSX.Element => {
+export const EditorRoute = (props: any): React.JSX.Element => {
     const isFirstUpdate = React.useRef(true);
     const [ initialData, setInitialData ] = React.useState<any>(null);
     const [ exists, setExists ] = React.useState<boolean>(null);

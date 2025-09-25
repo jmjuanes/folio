@@ -1,4 +1,4 @@
-import {renderToStaticMarkup} from "react-dom/server";
+import { renderToStaticMarkup } from "react-dom/server";
 import {
     EXPORT_FORMATS,
     EXPORT_OFFSET,
@@ -7,33 +7,17 @@ import {
     FILE_EXTENSIONS,
     FONT_SOURCES,
 } from "../constants.js";
-import {renderStaticElement} from "../components/elements/index.jsx";
-import {blobToFile, blobToClipboard, blobToDataUrl} from "../utils/blob.js";
-import {getRectangleBounds} from "../utils/math.js";
-import {getElementConfig} from "./elements.js";
-import {getFontsCss} from "./fonts.js";
-
-// get bounds for provided elements
-// this method prevents returning inf values when there are no elements
-const getElementsBounds = (elements = []) => {
-    if (elements.length === 0) {
-        return {x1: 0, y1: 0, x2: 0, y2: 0};
-    }
-    return getRectangleBounds(elements.map(el => {
-        const elementConfig = getElementConfig(el);
-        if (typeof elementConfig.getBoundingRectangle === "function") {
-            return elementConfig.getBoundingRectangle(el);
-        }
-        return el;
-    }));
-};
+import { renderStaticElement } from "../components/elements/index.jsx";
+import { blobToFile, blobToClipboard, blobToDataUrl } from "../utils/blob.js";
+import { getElementsBoundingRectangle } from "./elements.js";
+import { getFontsCss } from "./fonts.js";
 
 // Get image in SVG
 const getSvgImage = (elements = [], options = {}) => {
     const padding = options?.padding ?? EXPORT_PADDING;
     const fonts = options?.fonts || Object.values(FONT_SOURCES);
     return getFontsCss(fonts, !!options.embedFonts).then(fontsCss => {
-        const bounds = getElementsBounds(elements);
+        const bounds = getElementsBoundingRectangle(elements);
         // 1. Create a new SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -44,14 +28,14 @@ const getSvgImage = (elements = [], options = {}) => {
         svg.appendChild(group);
         // 2. Set new svg attributes
         svg.setAttribute("style", ""); // Reset style
-        svg.setAttribute("width", Math.abs(bounds.x2 - bounds.x1) + 2 * padding);
-        svg.setAttribute("height", Math.abs(bounds.y2 - bounds.y1) + 2 * padding);
+        svg.setAttribute("width", Math.abs(bounds[1][0] - bounds[0][0]) + 2 * padding);
+        svg.setAttribute("height", Math.abs(bounds[1][1] - bounds[0][1]) + 2 * padding);
         // 3. Set svg style
         svg.style.backgroundColor = options?.background || "#fff";
         // 4. Set internal styles
         style.textContent = fontsCss;
         // 5. Set group attributes
-        group.setAttribute("transform", `translate(${padding - bounds.x1} ${padding - bounds.y1})`);
+        group.setAttribute("transform", `translate(${padding - bounds[0][0]} ${padding - bounds[0][1]})`);
         // 6. Append elements into  group
         elements.forEach(element => {
             const html = renderToStaticMarkup(renderStaticElement(element, options.assets));
@@ -78,9 +62,9 @@ const getPngImage = (elements = [], options = {}) => {
             const padding = (options.padding ?? EXPORT_PADDING) + EXPORT_OFFSET;
             // 1. We have selected a region to crop
             if (options.crop && elements.length > 0) {
-                const bounds = getRectangleBounds(elements);
-                x = bounds.x1 - Math.min(options.crop.x1, options.crop.x2) - padding;
-                y = bounds.y1 - Math.min(options.crop.y1, options.crop.y2) - padding;
+                const bounds = getElementsBoundingRectangle(elements);
+                x = bounds[0][0] - Math.min(options.crop.x1, options.crop.x2) - padding;
+                y = bounds[0][1] - Math.min(options.crop.y1, options.crop.y2) - padding;
                 canvas.width = Math.abs(options.crop.x2 - options.crop.x1);
                 canvas.height = Math.abs(options.crop.y2 - options.crop.y1);
             }

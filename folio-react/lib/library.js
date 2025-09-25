@@ -9,7 +9,7 @@ import {
     LIBRARY_THUMBNAIL_WIDTH,
 } from "../constants.js";
 import {exportToDataURL} from "./export.js";
-import {getElementsBounds} from "./elements.js";
+import {getElementsBoundingRectangle} from "./elements.js";
 import {migrateElements} from "./migrate.js";
 import {blobToText} from "../utils/blob.js";
 
@@ -91,7 +91,7 @@ export const getLibraryStateFromInitialData = initialData => {
 // @param {string} data.name name for the library item
 // @param {string} data.description a description for the library item
 export const createLibraryItem = (elements = [], data = {}) => {
-    const bounds = getElementsBounds(elements);
+    const bounds = getElementsBoundingRectangle(elements);
     return getLibraryItemThumbnail(elements).then(thumbnail => {
         return {
             id: generateLibraryId(),
