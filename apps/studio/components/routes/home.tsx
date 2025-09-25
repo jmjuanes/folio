@@ -8,8 +8,12 @@ import { getGreetingMessage, formatDate } from "../../utils/dates.ts";
 import { useToaster } from "../../contexts/toaster.tsx";
 
 // @description document card component
+// it includes a placeholder image and the document name
+// @param {String} id - The document ID. Is required to link to the document.
+// @param {String} name - The document display name.
+// @param {String} updatedAt - The document last updated date.
 export const DocumentCard = ({ id, name, updatedAt }): React.JSX.Element => (
-    <a href={`#b/${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
+    <a href={`#${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
         <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
             <div className="flex text-gray-500 text-3xl">
                 <ImageSlashIcon />
@@ -41,9 +45,9 @@ const RecentDocuments = ({ documents, maxRecentDocuments }): React.JSX.Element =
             <div className="text-xs font-bold">Your recent documents</div>
         </div>
         <div className="w-full grid grid-cols-3 gap-4">
-            {(documents || []).slice(0, maxRecentDocuments || 6).map(documentItem => (
+            {(documents || []).slice(0, maxRecentDocuments).map((documentItem: any, index: number) => (
                 <DocumentCard
-                    key={documentItem.id}
+                    key={documentItem.id + ":" + index}
                     id={documentItem.id}
                     name={documentItem.name}
                     updatedAt={documentItem.updated_at}
@@ -112,7 +116,7 @@ export const HomeRoute = (): React.JSX.Element => {
                 {app?.documents?.length > 0 && (
                     <RecentDocuments
                         documents={app.documents}
-                        maxRecentDocuments={6}
+                        maxRecentDocuments={9}
                     />
                 )}
             </div>

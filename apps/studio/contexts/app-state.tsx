@@ -75,10 +75,10 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 redirect(`#`);
             },
             openBoard: (boardId: string) => {
-                redirect(`#b/${boardId}`);
+                redirect(`#${boardId}`);
             },
             isBoardOpen: (boardId: string) => {
-                return getCurrentHash() === `#b/${boardId}`;
+                return getCurrentHash() === `#${boardId}`;
             },
 
             createDocument: async (collection: Collection, initialData: any = {}) => {

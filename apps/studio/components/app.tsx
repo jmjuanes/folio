@@ -15,10 +15,10 @@ export const App = (): React.JSX.Element => {
                 <Route test={/^#(|home)$/} render={() => (
                     <HomeRoute />
                 )} />
-                <Route test={/^#b\/[\w-]+$/} render={() => (
+                <Route test={/^#[\w-]+$/} render={() => (
                     <BoardRoute
                         key={hash}
-                        id={hash.replace(/^#b\//, "")}
+                        id={hash.replace(/^#/, "")}
                     />
                 )} />
                 <Route test="*" render={() => (

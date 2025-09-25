@@ -134,7 +134,7 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
         "hover:bg-gray-200 text-gray-600 hover:text-gray-900": !active,
     });
     return (
-        <a href={`#b/${props.id}`} className={itemClass} title={title}>
+        <a href={`#${props.id}`} className={itemClass} title={title}>
             <div className="cursor-pointer flex items-center gap-2 overflow-hidden w-full">
                 <div className="text-lg flex items-center text-gray-600 shrink-0">
                     {renderIcon("file")}
