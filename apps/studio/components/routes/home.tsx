@@ -1,23 +1,31 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
-import { FolderIcon, PlusIcon, ClockIcon, ImageSlashIcon } from "@josemi-icons/react";
+import { FolderIcon, PlusIcon, ClockIcon, ImageSlashIcon, CalendarIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
-import { getGreetingMessage } from "../../utils/dates.ts";
+import { getGreetingMessage, formatDate } from "../../utils/dates.ts";
 import { useToaster } from "../../contexts/toaster.tsx";
 
 // @description document card component
-export const DocumentCard = ({ id, name }): React.JSX.Element => (
+export const DocumentCard = ({ id, name, updatedAt }): React.JSX.Element => (
     <a href={`#b/${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
-        <div className="w-full h-24 bg-gray-100 flex items-center justify-center">
+        <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
             <div className="flex text-gray-500 text-3xl">
                 <ImageSlashIcon />
             </div>
         </div>
-        <div className="flex items-center justify-between gap-2 w-full p-2">
-            <div className="font-medium text-sm w-32 truncate shrink-0 py-1">
-                {name || "Untitled"}
+        <div className="p-2 flex flex-col gap-1">
+            <div className="flex items-center justify-between gap-1 w-full">
+                <div className="font-medium text-sm w-48 truncate shrink-0 py-0">
+                    <span>{name || "Untitled"}</span>
+                </div>
+            </div>
+            <div className="opacity-60 text-xs flex items-center gap-1">
+                <div className="flex text-sm">
+                    <CalendarIcon />
+                </div>
+                <div>Last edited {formatDate(updatedAt)}</div>
             </div>
         </div>
     </a>
@@ -38,6 +46,7 @@ const RecentDocuments = ({ documents, maxRecentDocuments }): React.JSX.Element =
                     key={documentItem.id}
                     id={documentItem.id}
                     name={documentItem.name}
+                    updatedAt={documentItem.updated_at}
                 />
             ))}
         </div>
