@@ -1,23 +1,35 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
-import { FolderIcon, DrawingIcon, ClockIcon, ImageSlashIcon } from "@josemi-icons/react";
+import { FolderIcon, PlusIcon, ClockIcon, ImageSlashIcon, CalendarIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
-import { getGreetingMessage } from "../../utils/dates.ts";
+import { getGreetingMessage, formatDate } from "../../utils/dates.ts";
 import { useToaster } from "../../contexts/toaster.tsx";
 
 // @description document card component
-export const DocumentCard = ({ id, name }): React.JSX.Element => (
-    <a href={`#b/${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
-        <div className="w-full h-24 bg-gray-100 flex items-center justify-center">
+// it includes a placeholder image and the document name
+// @param {String} id - The document ID. Is required to link to the document.
+// @param {String} name - The document display name.
+// @param {String} updatedAt - The document last updated date.
+export const DocumentCard = ({ id, name, updatedAt }): React.JSX.Element => (
+    <a href={`#${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
+        <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
             <div className="flex text-gray-500 text-3xl">
                 <ImageSlashIcon />
             </div>
         </div>
-        <div className="flex items-center justify-between gap-2 w-full p-2">
-            <div className="font-medium text-sm w-32 truncate shrink-0 py-1">
-                {name || "Untitled"}
+        <div className="p-2 flex flex-col gap-1">
+            <div className="flex items-center justify-between gap-1 w-full">
+                <div className="font-medium text-sm w-48 truncate shrink-0 py-0">
+                    <span>{name || "Untitled"}</span>
+                </div>
+            </div>
+            <div className="opacity-60 text-xs flex items-center gap-1">
+                <div className="flex text-sm">
+                    <CalendarIcon />
+                </div>
+                <div>Last edited {formatDate(updatedAt)}</div>
             </div>
         </div>
     </a>
@@ -33,11 +45,12 @@ const RecentDocuments = ({ documents, maxRecentDocuments }): React.JSX.Element =
             <div className="text-xs font-bold">Your recent documents</div>
         </div>
         <div className="w-full grid grid-cols-3 gap-4">
-            {(documents || []).slice(0, maxRecentDocuments || 6).map(documentItem => (
+            {(documents || []).slice(0, maxRecentDocuments).map((documentItem: any, index: number) => (
                 <DocumentCard
-                    key={documentItem.id}
+                    key={documentItem.id + ":" + index}
                     id={documentItem.id}
                     name={documentItem.name}
+                    updatedAt={documentItem.updated_at}
                 />
             ))}
         </div>
@@ -76,34 +89,34 @@ export const HomeRoute = (): React.JSX.Element => {
 
     return (
         <Centered className="min-h-full bg-white">
-            <div className="w-full max-w-2xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
+            <div className="w-full max-w-4xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
                 <div className="pt-4 pb-12 select-none">
                     <div className="font-bold text-4xl mb-4 text-gray-950 leading-none text-center">
                         <span>{getGreetingMessage()}</span>
                     </div>
-                    <div className="text-gray-700 text-center mb-6">
+                    <div className="max-w-2xl mx-auto text-gray-700 text-center mb-6">
                         <span>Here you can create boards to organize your ideas, tasks, and projects. </span>
                         <span>Use the sidebar to navigate through your boards, or create a new one to get started.</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Button className="w-full" onClick={() => handleDocumentCreate()}>
+                    <div className="max-w-xl mx-auto flex items-center gap-2">
+                        <Button className="w-full" disabled={false} onClick={() => handleDocumentCreate()}>
                             <div className="flex items-center text-lg">
-                                <DrawingIcon />
+                                <PlusIcon />
                             </div>
-                            <div className="font-medium">Create new</div>
+                            <div className="font-medium">New Document</div>
                         </Button>
-                        <Button variant="secondary" className="w-full" onClick={() => handleDocumentImport()}>
+                        <Button variant="secondary" className="w-full" disabled={false} onClick={() => handleDocumentImport()}>
                             <div className="flex items-center text-lg">
                                 <FolderIcon />
                             </div>
-                            <div className="font-medium">Import from file</div>
+                            <div className="font-medium">Load from local</div>
                         </Button>
                     </div>
                 </div>
                 {app?.documents?.length > 0 && (
                     <RecentDocuments
                         documents={app.documents}
-                        maxRecentDocuments={6}
+                        maxRecentDocuments={9}
                     />
                 )}
             </div>
