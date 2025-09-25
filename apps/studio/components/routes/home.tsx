@@ -99,13 +99,13 @@ export const HomeRoute = (): React.JSX.Element => {
                         <span>Use the sidebar to navigate through your boards, or create a new one to get started.</span>
                     </div>
                     <div className="max-w-xl mx-auto flex items-center gap-2">
-                        <Button className="w-full" onClick={() => handleDocumentCreate()}>
+                        <Button className="w-full" disabled={false} onClick={() => handleDocumentCreate()}>
                             <div className="flex items-center text-lg">
                                 <PlusIcon />
                             </div>
                             <div className="font-medium">New Document</div>
                         </Button>
-                        <Button variant="secondary" className="w-full" onClick={() => handleDocumentImport()}>
+                        <Button variant="secondary" className="w-full" disabled={false} onClick={() => handleDocumentImport()}>
                             <div className="flex items-center text-lg">
                                 <FolderIcon />
                             </div>
