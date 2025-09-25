@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter, Route, Switch } from "../contexts/router.tsx";
 import { Sidebar } from "./sidebar.tsx";
 import { HomeRoute } from "./routes/home.tsx";
-import { BoardRoute } from "./routes/board.tsx";
+import { EditorRoute } from "./routes/editor.tsx";
 import { NotFound } from "./not-found.tsx";
 
 export const App = (): React.JSX.Element => {
@@ -16,7 +16,7 @@ export const App = (): React.JSX.Element => {
                     <HomeRoute />
                 )} />
                 <Route test={/^#[\w-]+$/} render={() => (
-                    <BoardRoute
+                    <EditorRoute
                         key={hash}
                         id={hash.replace(/^#/, "")}
                     />
