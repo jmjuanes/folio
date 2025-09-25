@@ -72,7 +72,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 fetchUserDocuments();
             },
             openHome: () => {
-                redirect(`#`);
+                redirect(`#home`);
             },
             openBoard: (boardId: string) => {
                 redirect(`#${boardId}`);

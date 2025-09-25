@@ -236,7 +236,7 @@ export const Sidebar = (): React.JSX.Element => {
                                 event.stopPropagation();
                             }}
                             collapsed={collapsed}
-                            href="#"
+                            href="#home"
                             icon="home"
                             text="Home"
                         />
