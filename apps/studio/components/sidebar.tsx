@@ -94,7 +94,7 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
         showConfirm({
             title: "Delete Document",
             message: `Are you sure you want to delete this document? This action cannot be undone.`,
-            confirmText: "Delete",
+            confirmText: "Yes, Delete",
             callback: () => {
                 app.deleteDocument(props.id)
                 .then(() => {
@@ -150,16 +150,18 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             </div>
             {actionsMenuOpen && createPortal([
                 <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
-                <Dropdown key="sidebar:board:action:menu" ref={actionsMenuRef} className="fixed top-0 left-0 z-50" style={position.current}>
-                    <Dropdown.Item as="div" onClick={handleRename}>
-                        <Dropdown.Icon icon="edit" />
-                        <span>Rename</span>
-                    </Dropdown.Item>
-                    <Dropdown.Item as="div" onClick={handleDelete}>
-                        <Dropdown.Icon icon="trash" />
-                        <span>Delete</span>
-                    </Dropdown.Item>
-                </Dropdown>,
+                <div key="sidebar:board:action:menu" className="fixed top-0 left-0 z-50" ref={actionsMenuRef} style={position.current}>
+                    <Dropdown className="">
+                        <Dropdown.Item as="div" onClick={handleRename}>
+                            <Dropdown.Icon icon="edit" />
+                            <span>Rename</span>
+                        </Dropdown.Item>
+                        <Dropdown.Item as="div" onClick={handleDelete}>
+                            <Dropdown.Icon icon="trash" />
+                            <span>Delete</span>
+                        </Dropdown.Item>
+                    </Dropdown>
+                </div>,
             ], document.body)}
         </a>
     );
@@ -170,9 +172,9 @@ const Group = ({ title, items }): React.JSX.Element => (
         <div className="text-xs font-bold text-gray-600 mb-0 px-2 flex overflow-hidden">
             <div className="shrink-0">{title || ""}</div>
         </div>
-        {(items || []).map(item => (
+        {(items || []).map((item: any, index: number) => (
             <DocumentButton
-                key={`document:item:${item.id}`}
+                key={`document:item:${index}:${item.id}`}
                 id={item.id}
                 name={item.name}
             />
