@@ -59,3 +59,14 @@ export const groupByDate = (items: any[] = [], field: string = "updated_at"): Gr
 
     return groups;
 };
+
+// @description format a date to a human-readable string
+// @param {String} dateStr - The date string to format.
+// @returns {String} The formatted date string.
+export const formatDate = (dateStr: string): string => {
+    return new Date(dateStr).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    });
+};
