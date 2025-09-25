@@ -1,6 +1,6 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
-import { FolderIcon, DrawingIcon, ClockIcon, ImageSlashIcon } from "@josemi-icons/react";
+import { FolderIcon, PlusIcon, ClockIcon, ImageSlashIcon } from "@josemi-icons/react";
 import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
@@ -76,27 +76,27 @@ export const HomeRoute = (): React.JSX.Element => {
 
     return (
         <Centered className="min-h-full bg-white">
-            <div className="w-full max-w-2xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
+            <div className="w-full max-w-4xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
                 <div className="pt-4 pb-12 select-none">
                     <div className="font-bold text-4xl mb-4 text-gray-950 leading-none text-center">
                         <span>{getGreetingMessage()}</span>
                     </div>
-                    <div className="text-gray-700 text-center mb-6">
+                    <div className="max-w-2xl mx-auto text-gray-700 text-center mb-6">
                         <span>Here you can create boards to organize your ideas, tasks, and projects. </span>
                         <span>Use the sidebar to navigate through your boards, or create a new one to get started.</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="max-w-xl mx-auto flex items-center gap-2">
                         <Button className="w-full" onClick={() => handleDocumentCreate()}>
                             <div className="flex items-center text-lg">
-                                <DrawingIcon />
+                                <PlusIcon />
                             </div>
-                            <div className="font-medium">Create new</div>
+                            <div className="font-medium">New Document</div>
                         </Button>
                         <Button variant="secondary" className="w-full" onClick={() => handleDocumentImport()}>
                             <div className="flex items-center text-lg">
                                 <FolderIcon />
                             </div>
-                            <div className="font-medium">Import from file</div>
+                            <div className="font-medium">Load from local</div>
                         </Button>
                     </div>
                 </div>
