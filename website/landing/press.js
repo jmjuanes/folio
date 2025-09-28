@@ -32,6 +32,8 @@ press({
         },
     }),
     ...websiteConfig,
+    version: pkg.version,
+    repository: pkg.repository,
     plugins: [
         press.SourcePlugin({
             folder: "content",
