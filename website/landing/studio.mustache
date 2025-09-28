@@ -3,23 +3,65 @@
     "title": "Studio",
     "layout": "default",
     "theme": "bg-white text-gray-950",
-    "permalink": "/studio.html"
+    "permalink": "/studio.html",
+    "features": [
+        {
+            "icon": "bolt",
+            "title": "Same Power, but local.",
+            "description": "iAll the features of Folio, running entirely on your machine."
+        },
+        {
+            "icon": "lock",
+            "title": "Your data always with you.",
+            "description": "No cloud, no tracking, no external dependencies. Folio Studio stores everything locally."
+        },
+        {
+            "icon": "files",
+            "title": "Many boards as you need.",
+            "description": "Organize ideas, prototypes, and systems in separate spaces. Folio Studio supports unlimited boards."
+        }
+    ]
 }
 ---
 <section class="min-h-screen px-6 py-32 flex flex-col justify-center items-center">
-    <div class="max-w-5xl mb-6 font-extrabold text-6xl md:text-8xl leading-none text-center">
-        <span>Prototype. Self-hosted.</span>
+    <div class="max-w-5xl mb-6 text-6xl md:text-8xl leading-none text-center">
+        <u class="font-normal">Prototype</u>. 
+        <i class="font-bold">Design</i>. 
+        <span class="font-extrabold">Self-hosted.</span>
     </div>
     <div class="max-w-4xl mb-10 text-2xl md:text-3xl text-center opacity-50">
         <span class="">A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.</span>
     </div>
-    <div class="flex flex-col items-center gap-1">
-        <div class="w-full max-w-sm d-flex flex-col bg-gray-950 text-white p-4 rounded-xl text-lg font-mono overflow-x-auto">
+    <div class="flex flex-col items-center gap-4">
+        <div class="w-full max-w-lg d-flex flex-col bg-gray-950 text-white p-5 rounded-2xl text-lg text-center font-mono">
             <div>$ docker pull ghcr.io/jmjuanes/folio-studio</div>
         </div>
-        <div class="text-sm select-none text-center opacity-40">
-            <span>No signup. Start in less than 5 seconds.</span>
+        <div class="flex align-items-center gap-4 opacity-40 text-lg md:text-xl text-center">
+            <a href="/docs" class="hover:underline">Documentation</a>
+            <a href="{{site.repository}}/pkgs/container/folio-studio" class="hover:underline">GitHub</a>
         </div>
     </div>
 </section>
+<section class="mx-auto max-w-4xl px-6 pt-16 pb-24 flex flex-col justify-center items-center">
+    <div class="max-w-2xl font-extrabold text-5xl md:text-7xl leading-tight mb-24 md:mb-30 text-center">
+        <span class="opacity-70">A live sketching platform. </span>
+        <span class="">Locally.</span>
+    </div>
+    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+        {{#each page.attributes.features}}
+        <div class="mb-2">
+            {{#if this.icon}}
+            <div class="flex mb-6">
+                <div class="flex items-center">
+                    {{=icon icon=this.icon className="w-12 h-12"}}
+                </div>
+            </div>
+            {{/if}}
+            <div class="font-bold text-2xl leading-tight mb-4">{{!this.title}}</div>
+            <div class="text-gray-500">{{!this.description}}</div>
+        </div>
+        {{/each}}
+    </div>
+</section>
+
 
