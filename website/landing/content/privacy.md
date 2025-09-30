@@ -1,7 +1,7 @@
 ---
 {
     "title": "Privacy Policy",
-    "layout": "legal",
+    "layout": "page.mustache",
     "permalink": "/privacy.html"
 }
 ---
