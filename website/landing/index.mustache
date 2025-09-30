@@ -1,7 +1,7 @@
 ---
 {
     "title": "Minimal whiteboard for sketching and prototyping",
-    "layout": "default",
+    "layout": "default.mustache",
     "permalink": "/index.html",
     "features": [
         {
@@ -27,7 +27,7 @@
     ]
 }
 ---
-<section class="min-h-screen px-6 py-32 flex flex-col justify-center items-center">
+<section class="min-h-screen px-6 py-40 flex flex-col justify-center items-center">
     <div class="mb-8">
         {{=icon icon="drawing" className="w-24 h-24 md:w-40 md:h-40"}}
     </div>
@@ -47,7 +47,7 @@
         </div>
     </div>
 </section>
-<div class="w-32 mx-auto h-px bg-current opacity-20"></div>
+{{>separator.mustache}}
 <section class="mx-auto max-w-4xl px-6 py-32 flex flex-col justify-center items-center">
     <div class="max-w-2xl font-extrabold text-5xl md:text-7xl leading-tight mb-24 md:mb-30 text-center">
         <span class="opacity-50">Sketch and Design. </span>
