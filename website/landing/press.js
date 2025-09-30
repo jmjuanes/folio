@@ -5,18 +5,6 @@ import markdown from "mikel-markdown";
 import websiteConfig from "./website.config.json" with { type: "json" };
 import pkg from "../../package.json" with { type: "json" };
 
-// @description layout plugin to automatically assign a page/post to a layout using
-// the page attributes
-const LayoutPlugin = () => ({
-    name: "LayoutPlugin",
-    transform: (context, node) => {
-        if (node.label === press.LABEL_PAGE && node.attributes?.layout && node.content) {
-            const layout = `layout-${node.attributes.layout}.mustache`;
-            node.content = `{{>>${layout}}}\n\n${node.content}\n\n{{/${layout}}}`;
-        }
-    },
-});
-
 press({
     destination: "www",
     extensions: [ ".mustache" ],
@@ -43,6 +31,10 @@ press({
             folder: "partials",
             extensions: [ ".mustache" ],
         }),
+        press.LayoutsPlugin({
+            folder: "layouts",
+            extensions: [ ".mustache" ],
+        }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
             // highlight: (code, language) => {
@@ -53,7 +45,7 @@ press({
                 code: "bg-gray-100 rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-900",
                 pre: "w-full overflow-x-auto bg-gray-900 text-white text-xs font-mono leading-relaxed p-4 mb-6 rounded-md border-1 border-gray-800",
                 heading: "font-bold mb-4 first:mt-0 mt-8",
-                heading1: "text-3xl",
+                heading1: "text-4xl font-extrabold",
                 heading2: "text-2xl",
                 heading3: "text-xl",
                 heading4: "text-lg",
@@ -65,7 +57,6 @@ press({
                 paragraph: "block leading-relaxed mb-6 opacity-80",
             },
         })),
-        LayoutPlugin(),
         press.ContentPagePlugin(),
         press.CopyAssetsPlugin({
             patterns: [
