@@ -58,25 +58,28 @@
     ]
 }
 ---
-<section class="min-h-screen px-6 py-40 sm:py-48 md:py-56 flex flex-col justify-center items-center">
-    <div class="max-w-4xl mb-6 text-6xl sm:text-7xl md:text-8xl text-center" style="line-height: 1.15;">
-        <span class="font-normal italic">Sketch</span>, 
-        <span class="font-normal bg-gray-950 text-white rounded-2xl px-4 py-2">Prototype</span>, 
-        <span class="font-bold"> and </span>
-        <span class="font-normal underline">Design</span>. 
-        <div class="">
-            <span class="font-bold">All </span>
-            <span class="font-extrabold">Self-hosted.</span>
+<section class="px-6 py-40 flex flex-col justify-center items-center">
+    <div class="mb-8 flex items-center justify-center">
+        <div class="bg-gray-100 text-gray-950 px-4 py-1 rounded-full text-sm">
+            <span class="font-medium">Introducing </span>
+            <span class="font-bold">Folio Studio</span>
         </div>
     </div>
-    <div class="max-w-4xl mb-12 text-2xl md:text-3xl text-center opacity-50">
+    <div class="max-w-4xl mb-6 text-6xl sm:text-7xl md:text-8xl text-center text-gray-950 leading-tight">
+        <span class="font-normal">Where </span> 
+        <span class="font-bold bg-gray-950 text-white rounded-2xl px-4 py-2">Ideas</span> 
+        <span class="font-normal"> take </span>
+        <span class="font-bold italic">Shape</span>. 
+        <span class="font-extrabold">Locally.</span>
+    </div>
+    <div class="max-w-2xl mb-12 text-xl md:text-2xl text-center text-gray-900">
         <span class="">A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.</span>
     </div>
     <div class="flex flex-col items-center gap-8">
         <div class="w-full max-w-lg d-flex flex-col bg-gray-950 text-white p-5 rounded-2xl text-lg text-center font-mono">
             <div>$ docker pull ghcr.io/jmjuanes/folio-studio</div>
         </div>
-        <div class="flex flex-col sm:flex-row items-center gap-4 opacity-80 text-center">
+        <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
             {{#each page.attributes.installation.links}}
             <a href="{{this.url}}" class="flex gap-4 items-center cursor-pointer font-bold hover:underline text-2xl md:text-3xl">
                 <span>{{this.text}} &rarr;</span>
@@ -86,32 +89,32 @@
     </div>
 </section>
 {{>separator.mustache}}
-<section class="mx-auto max-w-6xl px-6 pt-32 pb-32 flex flex-col justify-center items-center">
-    <div class="max-w-3xl text-5xl md:text-6xl leading-tight mb-24 md:mb-30 text-center">
-        <div class="font-medium italic opacity-90">Your sketching platform. </div>
-        <div class="font-extrabold">Fully Locally.</div>
+<section class="mx-auto max-w-6xl px-6 pt-28 pb-28 flex flex-col justify-center items-center">
+    <div class="max-w-3xl text-4xl md:text-5xl leading-tight mb-24 md:mb-30 text-center">
+        <div class="font-medium italic">Your sketching platform. </div>
+        <div class="font-extrabold text-gray-950">In your computer.</div>
     </div>
     <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
         {{#each page.attributes.features}}
         <div class="mb-2">
             {{#if this.icon}}
-            <div class="flex justify-center mb-6">
+            <div class="flex justify-start mb-6">
                 <div class="flex items-center p-3 bg-gray-100 rounded-3xl">
                     {{=icon icon=this.icon className="w-12 h-12"}}
                 </div>
             </div>
             {{/if}}
-            <div class="font-bold text-2xl leading-tight mb-4 text-center">{{!this.title}}</div>
-            <div class="opacity-60 leading-relaxed">{{!this.description}}</div>
+            <div class="font-bold text-2xl leading-tight mb-4 text-gray-950">{{!this.title}}</div>
+            <div class="leading-relaxed">{{!this.description}}</div>
         </div>
         {{/each}}
     </div>
 </section>
 {{>separator.mustache}}
-<section class="mx-auto max-w-6xl px-6 pt-32 pb-32 flex flex-col lg:flex-row gap-12">
-    <div class="shrink-0 w-full lg:max-w-sm text-5xl md:text-6xl leading-none">
-        <span class="font-medium italic">Frequently Asked</span>
-        <span class="font-extrabold">Questions</span>
+<section class="mx-auto max-w-6xl px-6 pt-28 pb-28 flex flex-col lg:flex-row gap-12">
+    <div class="shrink-0 w-full lg:max-w-xs text-4xl md:text-5xl leading-none">
+        <span class="font-medium italic">Questions &amp; </span>
+        <span class="font-extrabold text-gray-950">Answers</span>
     </div>
     <div class="grow-1">
         {{#each page.attributes.faq}}
@@ -120,19 +123,19 @@
                 <div class="font-bold text-left">{{!this.question}}</div>
                 <div class="" data-role="faq:toggle">+</div>
             </button>
-            <div class="hidden pt-2 pb-6 opacity-60 text-lg leading-relaxed" data-role="faq:answer">
+            <div class="hidden pt-2 pb-6 text-lg leading-relaxed" data-role="faq:answer">
                 {{!this.answer}}
             </div>
         </div>
         {{/each}}
     </div>
 </section>
-<section class="bg-gray-950 text-white px-6 pt-32 pb-32 text-center mx-auto max-w-8xl" style="border-radius:8rem;">
-    <div class="text-6xl md:text-8xl mb-10 text-center leading-none">
-        <div class="font-medium italic">Get Started with</div>
-        <div class="font-extrabold">Folio Studio.</div>
+<section class="bg-gray-950 text-white px-6 py-28 text-center mx-auto max-w-7xl rounded-4xl">
+    <div class="mx-auto max-w-4xl text-5xl md:text-6xl mb-8 text-center leading-none">
+        <span class="font-medium italic">Get Started with </span>
+        <span class="font-extrabold">Folio Studio.</span>
     </div>
-    <div class="opacity-90 text-3xl mb-16 max-w-3xl mx-auto">
+    <div class="opacity-90 text-2xl mb-12 max-w-2xl mx-auto">
         Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space.
     </div>
     <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
