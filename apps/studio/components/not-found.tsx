@@ -4,7 +4,7 @@ import { Centered } from "folio-react/components/ui/centered.jsx";
 // @description not found component
 export const NotFound = (): React.JSX.Element => {
     return (
-        <Centered>
+        <Centered className="h-full">
             <div className="text-center max-w-md mx-auto w-full p-8">
                 <div className="text-lg font-bold mb-2 text-gray-950">
                     <span>Sorry, this page was not found.</span>
