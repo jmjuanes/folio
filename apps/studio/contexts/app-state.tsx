@@ -30,12 +30,13 @@ export type AppState = {
     // create or import documents
     createDocument: (collection: Collection, initialData: any) => Promise<Document>;
     importDocument: () => Promise<Document>;
-    saveDocument: (documentId: string) => Promise<void>;
 
     // manipulating a document
     getDocument: (id: string) => Promise<Document | null>;
     updateDocument: (id: string, payload: DocumentPayload) => Promise<Document>;
     deleteDocument: (id: string) => Promise<Document>;
+    saveDocument: (documentId: string) => Promise<void>;
+    duplicateDocument: (documentId: string) => Promise<Document | null>;
 
     // user and session management
     getUser: () => Promise<User | null>;
@@ -96,12 +97,6 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                     return app.createDocument(Collection.BOARD, boardData);
                 });
             },
-            saveDocument: async (documentId: string) => {
-                const document = await app.getDocument(documentId);
-                if (document && document.data) {
-                    return saveAsJson(JSON.parse(document.data));
-                }
-            },
 
             getDocument: async (documentId: string) => {
                 const response = await client.graphql(GET_DOCUMENT, {
@@ -123,6 +118,28 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                     data: documentPayload.data,
                 });
                 return response?.updateDocument || null;
+            },
+            saveDocument: async (documentId: string) => {
+                const document = await app.getDocument(documentId);
+                if (document && document.data) {
+                    return saveAsJson(JSON.parse(document.data));
+                }
+            },
+            duplicateDocument: async (documentId: string) => {
+                const originalDocument = await app.getDocument(documentId);
+                const newDocumentName = `Copy of ${originalDocument.name || "Untitled"}`;
+                const response = await client.graphql(ADD_DOCUMENT, {
+                    collection: originalDocument?.collection || Collection.BOARD,
+                    name: newDocumentName,
+                    thumbnail: originalDocument?.thumbnail || null,
+                    data: originalDocument?.data || "{}",
+                });
+                // note: this is a terrible workaround until the backend returns the entired document
+                // after the creation. For now, we just return the new id and name
+                return {
+                    ...response?.addDocument,
+                    name: newDocumentName,
+                };
             },
 
             getUser: async () => {
