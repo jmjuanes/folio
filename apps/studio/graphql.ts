@@ -5,6 +5,7 @@ export const QUERY_DOCUMENTS = `
         queryDocuments(collection: $collection) {
             id
             collection
+            created_at
             updated_at
             name
             thumbnail
