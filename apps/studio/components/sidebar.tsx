@@ -103,6 +103,21 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             });
     }, [ props.id, setActionsMenuOpen ]);
 
+    // listener to handle duplicating the document
+    const handleDuplicate = React.useCallback((event: React.SyntheticEvent) => {
+        event.preventDefault();
+        setActionsMenuOpen(false);
+        app.duplicateDocument(props.id)
+            .then((newDocument) => {
+                app.refresh();
+                toaster.success(`Duplicate saved as '${newDocument?.name || "Untitled"}'.`);
+            })
+            .catch(error => {
+                console.error(error);
+                toaster.error(error?.message || "An error occurred while duplicating the document.");
+            });
+    }, [ props.id, setActionsMenuOpen ]);
+
     // listener to handle deletion of a document
     // it will close the actions menu and call the onDelete callback if provided
     const handleDelete = React.useCallback((event: React.SyntheticEvent) => {
@@ -176,6 +191,10 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
                         <Dropdown.Item as="div" onClick={handleSaveAs}>
                             <Dropdown.Icon icon="download" />
                             <span>Save a Copy</span>
+                        </Dropdown.Item>
+                        <Dropdown.Item as="div" onClick={handleDuplicate}>
+                            <Dropdown.Icon icon="copy" />
+                            <span>Duplicate</span>
                         </Dropdown.Item>
                         <Dropdown.Separator />
                         <Dropdown.Item as="div" onClick={handleDelete}>
