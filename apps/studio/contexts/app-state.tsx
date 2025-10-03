@@ -1,6 +1,6 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
-import { loadFromJson } from "folio-react/lib/json.js";
+import { loadFromJson, saveAsJson } from "folio-react/lib/json.js";
 import { useClient } from "./client.tsx";
 import { useRouter } from "./router.tsx";
 import { getCurrentHash } from "../utils/hash.ts";
@@ -30,6 +30,7 @@ export type AppState = {
     // create or import documents
     createDocument: (collection: Collection, initialData: any) => Promise<Document>;
     importDocument: () => Promise<Document>;
+    saveDocument: (documentId: string) => Promise<void>;
 
     // manipulating a document
     getDocument: (id: string) => Promise<Document | null>;
@@ -94,6 +95,12 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 return loadFromJson().then(boardData => {
                     return app.createDocument(Collection.BOARD, boardData);
                 });
+            },
+            saveDocument: async (documentId: string) => {
+                const document = await app.getDocument(documentId);
+                if (document && document.data) {
+                    return saveAsJson(JSON.parse(document.data));
+                }
             },
 
             getDocument: async (documentId: string) => {
