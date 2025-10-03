@@ -86,6 +86,21 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
         });
     }, [ props.id, setActionsMenuOpen, showDialog ]);
 
+    // listener to save a local copy of the document
+    // it will close the actions menu and execute the save as action
+    const handleSaveAs = React.useCallback((event: React.SyntheticEvent) => {
+        event.preventDefault();
+        setActionsMenuOpen(false);
+        app.saveDocument(props.id)
+            .then(() => {
+                toaster.success("Document saved.");
+            })
+            .catch(error => {
+                console.error(error);
+                toaster.error(error?.message || "An error occurred while saving the document.");
+            });
+    }, [ props.id, setActionsMenuOpen ]);
+
     // listener to handle deletion of a document
     // it will close the actions menu and call the onDelete callback if provided
     const handleDelete = React.useCallback((event: React.SyntheticEvent) => {
@@ -151,11 +166,16 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             {actionsMenuOpen && createPortal([
                 <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                 <div key="sidebar:board:action:menu" className="fixed top-0 left-0 z-50" ref={actionsMenuRef} style={position.current}>
-                    <Dropdown className="">
+                    <Dropdown className="w-36">
                         <Dropdown.Item as="div" onClick={handleRename}>
                             <Dropdown.Icon icon="edit" />
                             <span>Rename</span>
                         </Dropdown.Item>
+                        <Dropdown.Item as="div" onClick={handleSaveAs}>
+                            <Dropdown.Icon icon="download" />
+                            <span>Save a Copy</span>
+                        </Dropdown.Item>
+                        <Dropdown.Separator />
                         <Dropdown.Item as="div" onClick={handleDelete}>
                             <Dropdown.Icon icon="trash" />
                             <span>Delete</span>
