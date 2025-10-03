@@ -11,7 +11,7 @@ import { useConfiguration } from "../contexts/configuration.tsx";
 import { useAppState } from "../contexts/app-state.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
 import { RenameDocumentDialog } from "./dialogs/rename-document.tsx";
-import { groupByDate } from "../utils/dates.ts";
+import { groupByDate, formatDate } from "../utils/dates.ts";
 
 type ActionButtonProps = {
     href?: string;
@@ -45,6 +45,8 @@ const ActionButton = ({ href, icon, text = "", collapsed = false, onClick }: Act
 type DocumentButtonProps = {
     id: string;
     name: string;
+    created_at: string;
+    updated_at: string;
 };
 
 const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
@@ -166,7 +168,7 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             {actionsMenuOpen && createPortal([
                 <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                 <div key="sidebar:board:action:menu" className="fixed top-0 left-0 z-50" ref={actionsMenuRef} style={position.current}>
-                    <Dropdown className="w-36">
+                    <Dropdown className="w-48">
                         <Dropdown.Item as="div" onClick={handleRename}>
                             <Dropdown.Icon icon="edit" />
                             <span>Rename</span>
@@ -180,6 +182,11 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
                             <Dropdown.Icon icon="trash" />
                             <span>Delete</span>
                         </Dropdown.Item>
+                        <Dropdown.Separator />
+                        <div className="px-2 py-1 text-gray-500 text-2xs">
+                            <div className="">Created <b>{formatDate(props.created_at)}</b>.</div>
+                            <div className="">Last edited <b>{formatDate(props.updated_at)}</b>.</div>
+                        </div>
                     </Dropdown>
                 </div>,
             ], document.body)}
@@ -197,6 +204,8 @@ const Group = ({ title, items }): React.JSX.Element => (
                 key={`document:item:${index}:${item.id}`}
                 id={item.id}
                 name={item.name}
+                created_at={item.created_at}
+                updated_at={item.updated_at}
             />
         ))}
     </div>
