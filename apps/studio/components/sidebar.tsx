@@ -193,7 +193,7 @@ export const Sidebar = (): React.JSX.Element => {
     const [ collapsed, toggleCollapsed ] = useToggle(false);
     const websiteConfig = useConfiguration();
     const sidebarClass = classNames({
-        "h-full bg-gray-50 shrink-0 flex flex-col justify-between border-r-1 border-gray-200": true,
+        "h-full shrink-0 flex flex-col justify-between": true,
         "w-16 cursor-e-resize": collapsed,
         "w-64": !collapsed,
     });
@@ -213,7 +213,7 @@ export const Sidebar = (): React.JSX.Element => {
     return (
         <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
             <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
-                <div className="sticky z-50 top-0 text-2xl leading-none select-none bg-gray-50 p-3 flex items-center justify-between flex-nowrap">
+                <div className="sticky z-50 top-0 text-2xl leading-none select-none p-3 flex items-center justify-between flex-nowrap">
                     <div className="text-gray-950 font-brand select-none overflow-hidden">
                         {!collapsed && (
                             <div className="">{websiteConfig.title}</div>
@@ -297,7 +297,7 @@ export const Sidebar = (): React.JSX.Element => {
                     )}
                 </div>
             </div>
-            <div className="px-3 pt-3 pb-3 bg-gray-50">
+            <div className="px-3 pt-3 pb-3">
                 <ActionButton
                     onClick={(event: React.SyntheticEvent) => {
                         event.stopPropagation();
