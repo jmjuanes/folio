@@ -57,14 +57,14 @@
     ]
 }
 ---
-<section class="px-6 py-40 flex flex-col justify-center items-center">
+<section class="px-6 py-16 sm:py-24 md:py-32 flex flex-col justify-center items-center">
     <div class="mb-8 flex items-center justify-center">
-        <div class="text-gray-950 px-4 py-1 rounded-full text-base">
+        <div class="text-gray-950 px-4 py-1 rounded-full text-base bg-gray-100">
             <span class="font-medium">Introducing </span>
             <span class="font-bold">Folio Studio</span>
         </div>
     </div>
-    <div class="max-w-4xl mb-6 text-6xl sm:text-7xl md:text-8xl text-center text-gray-950 leading-tight">
+    <div class="max-w-3xl lg:max-w-4xl mb-6 text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-center text-gray-950 leading-tight">
         <span class="font-normal italic">Where </span> 
         <span class="font-bold bg-gray-950 text-white rounded-2xl px-4 py-2">Ideas</span> 
         <span class="font-normal italic"> take </span>
@@ -93,21 +93,7 @@
         <div class="font-medium italic">Your sketching platform. </div>
         <div class="font-extrabold text-gray-950">In your computer.</div>
     </div>
-    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
-        {{#each page.attributes.features}}
-        <div class="mb-2">
-            {{#if this.icon}}
-            <div class="flex justify-start mb-6">
-                <div class="flex items-center p-3 bg-gray-100 rounded-3xl">
-                    {{=icon icon=this.icon className="w-12 h-12"}}
-                </div>
-            </div>
-            {{/if}}
-            <div class="font-bold text-2xl leading-tight mb-4 text-gray-950">{{!this.title}}</div>
-            <div class="leading-relaxed">{{!this.description}}</div>
-        </div>
-        {{/each}}
-    </div>
+    {{>features.mustache features=page.attributes.features}}
 </section>
 {{>separator.mustache}}
 <section class="mx-auto max-w-6xl px-6 pt-28 pb-28 flex flex-col lg:flex-row gap-12">
