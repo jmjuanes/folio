@@ -80,12 +80,16 @@ export const EditorRoute = (props: any): React.JSX.Element => {
 
     // we do not know (yet) if the board exists, so we set it to null
     if (exists === null || initialData === null) {
-        return <Loading />;
+        return (
+            <Loading className="h-full" />
+        );
     }
 
     // if the board does not exist, we display a centered message
     if (!exists) {
-        return <NotFound />;
+        return (
+            <NotFound />
+        );
     }
 
     return (

@@ -1,7 +1,6 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
 import { FolderIcon, PlusIcon, ClockIcon, ImageSlashIcon, CalendarIcon } from "@josemi-icons/react";
-import { Centered } from "folio-react/components/ui/centered.jsx";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
 import { getGreetingMessage, formatDate } from "../../utils/dates.ts";
@@ -88,8 +87,8 @@ export const HomeRoute = (): React.JSX.Element => {
     }, [ app ]);
 
     return (
-        <Centered className="min-h-full bg-white">
-            <div className="w-full max-w-4xl px-6 py-20 bg-white border-none border-gray-200 rounded-lg shadow-none">
+        <div className="h-full overflow-y-auto">
+            <div className="mx-auto w-full max-w-5xl px-6 py-24">
                 <div className="pt-4 pb-12 select-none">
                     <div className="font-bold text-4xl mb-4 text-gray-950 leading-none text-center">
                         <span>{getGreetingMessage()}</span>
@@ -120,6 +119,6 @@ export const HomeRoute = (): React.JSX.Element => {
                     />
                 )}
             </div>
-        </Centered>
+        </div>
     );
 };

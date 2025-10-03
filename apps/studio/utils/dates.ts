@@ -60,13 +60,16 @@ export const groupByDate = (items: any[] = [], field: string = "updated_at"): Gr
     return groups;
 };
 
-// @description format a date to a human-readable string
+// @description format a date to a human-readable string with hour and minutes
 // @param {String} dateStr - The date string to format.
-// @returns {String} The formatted date string.
+// @returns {String} The formatted date string with time.
 export const formatDate = (dateStr: string): string => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
+    return new Date(dateStr).toLocaleString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
     });
 };

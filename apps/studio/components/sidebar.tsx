@@ -11,7 +11,7 @@ import { useConfiguration } from "../contexts/configuration.tsx";
 import { useAppState } from "../contexts/app-state.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
 import { RenameDocumentDialog } from "./dialogs/rename-document.tsx";
-import { groupByDate } from "../utils/dates.ts";
+import { groupByDate, formatDate } from "../utils/dates.ts";
 
 type ActionButtonProps = {
     href?: string;
@@ -45,6 +45,8 @@ const ActionButton = ({ href, icon, text = "", collapsed = false, onClick }: Act
 type DocumentButtonProps = {
     id: string;
     name: string;
+    created_at: string;
+    updated_at: string;
 };
 
 const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
@@ -85,6 +87,36 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             dialogClassName: "w-full max-w-sm",
         });
     }, [ props.id, setActionsMenuOpen, showDialog ]);
+
+    // listener to save a local copy of the document
+    // it will close the actions menu and execute the save as action
+    const handleSaveAs = React.useCallback((event: React.SyntheticEvent) => {
+        event.preventDefault();
+        setActionsMenuOpen(false);
+        app.saveDocument(props.id)
+            .then(() => {
+                toaster.success("Document saved.");
+            })
+            .catch(error => {
+                console.error(error);
+                toaster.error(error?.message || "An error occurred while saving the document.");
+            });
+    }, [ props.id, setActionsMenuOpen ]);
+
+    // listener to handle duplicating the document
+    const handleDuplicate = React.useCallback((event: React.SyntheticEvent) => {
+        event.preventDefault();
+        setActionsMenuOpen(false);
+        app.duplicateDocument(props.id)
+            .then((newDocument) => {
+                app.refresh();
+                toaster.success(`Duplicate saved as '${newDocument?.name || "Untitled"}'.`);
+            })
+            .catch(error => {
+                console.error(error);
+                toaster.error(error?.message || "An error occurred while duplicating the document.");
+            });
+    }, [ props.id, setActionsMenuOpen ]);
 
     // listener to handle deletion of a document
     // it will close the actions menu and call the onDelete callback if provided
@@ -151,15 +183,29 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             {actionsMenuOpen && createPortal([
                 <div key="sidebar:board:action:bg" className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                 <div key="sidebar:board:action:menu" className="fixed top-0 left-0 z-50" ref={actionsMenuRef} style={position.current}>
-                    <Dropdown className="">
+                    <Dropdown className="w-48">
                         <Dropdown.Item as="div" onClick={handleRename}>
                             <Dropdown.Icon icon="edit" />
                             <span>Rename</span>
                         </Dropdown.Item>
+                        <Dropdown.Item as="div" onClick={handleSaveAs}>
+                            <Dropdown.Icon icon="download" />
+                            <span>Save a Copy</span>
+                        </Dropdown.Item>
+                        <Dropdown.Item as="div" onClick={handleDuplicate}>
+                            <Dropdown.Icon icon="copy" />
+                            <span>Duplicate</span>
+                        </Dropdown.Item>
+                        <Dropdown.Separator />
                         <Dropdown.Item as="div" onClick={handleDelete}>
                             <Dropdown.Icon icon="trash" />
                             <span>Delete</span>
                         </Dropdown.Item>
+                        <Dropdown.Separator />
+                        <div className="px-2 py-1 text-gray-500 text-2xs">
+                            <div className="">Created <b>{formatDate(props.created_at)}</b>.</div>
+                            <div className="">Last edited <b>{formatDate(props.updated_at)}</b>.</div>
+                        </div>
                     </Dropdown>
                 </div>,
             ], document.body)}
@@ -177,6 +223,8 @@ const Group = ({ title, items }): React.JSX.Element => (
                 key={`document:item:${index}:${item.id}`}
                 id={item.id}
                 name={item.name}
+                created_at={item.created_at}
+                updated_at={item.updated_at}
             />
         ))}
     </div>
@@ -193,7 +241,7 @@ export const Sidebar = (): React.JSX.Element => {
     const [ collapsed, toggleCollapsed ] = useToggle(false);
     const websiteConfig = useConfiguration();
     const sidebarClass = classNames({
-        "h-full bg-gray-50 shrink-0 flex flex-col justify-between border-r-1 border-gray-200": true,
+        "h-full shrink-0 flex flex-col justify-between": true,
         "w-16 cursor-e-resize": collapsed,
         "w-64": !collapsed,
     });
@@ -213,7 +261,7 @@ export const Sidebar = (): React.JSX.Element => {
     return (
         <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
             <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
-                <div className="sticky z-50 top-0 text-2xl leading-none select-none bg-gray-50 p-3 flex items-center justify-between flex-nowrap">
+                <div className="sticky z-50 top-0 text-2xl leading-none select-none p-3 flex items-center justify-between flex-nowrap">
                     <div className="text-gray-950 font-brand select-none overflow-hidden">
                         {!collapsed && (
                             <div className="">{websiteConfig.title}</div>
@@ -297,7 +345,7 @@ export const Sidebar = (): React.JSX.Element => {
                     )}
                 </div>
             </div>
-            <div className="px-3 pt-3 pb-3 bg-gray-50">
+            <div className="px-3 pt-3 pb-3">
                 <ActionButton
                     onClick={(event: React.SyntheticEvent) => {
                         event.stopPropagation();
