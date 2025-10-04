@@ -1,6 +1,6 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
-import { FolderIcon, PlusIcon, ClockIcon, ImageSlashIcon, CalendarIcon } from "@josemi-icons/react";
+import { UploadIcon, PlusIcon, ClockIcon, ImageSlashIcon, CalendarIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
 import { getGreetingMessage, formatDate } from "../../utils/dates.ts";
@@ -11,12 +11,17 @@ import { useToaster } from "../../contexts/toaster.tsx";
 // @param {String} id - The document ID. Is required to link to the document.
 // @param {String} name - The document display name.
 // @param {String} updatedAt - The document last updated date.
-export const DocumentCard = ({ id, name, updatedAt }): React.JSX.Element => (
+export const DocumentCard = ({ id, name, thumbnail, updatedAt }): React.JSX.Element => (
     <a href={`#${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
-        <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
-            <div className="flex text-gray-500 text-3xl">
-                <ImageSlashIcon />
-            </div>
+        <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
+            {thumbnail && (
+                <img src={thumbnail} width="100%" />
+            )}
+            {!thumbnail && (
+                <div className="flex text-gray-500 text-3xl">
+                    <ImageSlashIcon />
+                </div>
+            )}
         </div>
         <div className="p-2 flex flex-col gap-1">
             <div className="flex items-center justify-between gap-1 w-full">
@@ -49,6 +54,7 @@ const RecentDocuments = ({ documents, maxRecentDocuments }): React.JSX.Element =
                     key={documentItem.id + ":" + index}
                     id={documentItem.id}
                     name={documentItem.name}
+                    thumbnail={documentItem.thumbnail}
                     updatedAt={documentItem.updated_at}
                 />
             ))}
@@ -94,8 +100,8 @@ export const HomeRoute = (): React.JSX.Element => {
                         <span>{getGreetingMessage()}</span>
                     </div>
                     <div className="max-w-2xl mx-auto text-gray-700 text-center mb-6">
-                        <span>Here you can create boards to organize your ideas, tasks, and projects. </span>
-                        <span>Use the sidebar to navigate through your boards, or create a new one to get started.</span>
+                        <span>Here you can create documents to organize your ideas, tasks, and projects. </span>
+                        <span>Use the sidebar to navigate through your documents, or create a new one to get started.</span>
                     </div>
                     <div className="max-w-xl mx-auto flex items-center gap-2">
                         <Button className="w-full" disabled={false} onClick={() => handleDocumentCreate()}>
@@ -106,7 +112,7 @@ export const HomeRoute = (): React.JSX.Element => {
                         </Button>
                         <Button variant="secondary" className="w-full" disabled={false} onClick={() => handleDocumentImport()}>
                             <div className="flex items-center text-lg">
-                                <FolderIcon />
+                                <UploadIcon />
                             </div>
                             <div className="font-medium">Load from local</div>
                         </Button>
