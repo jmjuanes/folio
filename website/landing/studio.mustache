@@ -87,21 +87,15 @@
         </div>
     </div>
 </section>
-{{>separator.mustache}}
-<section class="mx-auto max-w-6xl px-6 pt-28 pb-28 flex flex-col justify-center items-center">
-    <div class="max-w-3xl text-4xl md:text-5xl leading-tight mb-16 text-center">
-        <div class="font-medium italic">Your sketching platform. </div>
-        <div class="font-extrabold text-gray-950">In your computer.</div>
-    </div>
+
+{{!-- first features section --}}
+{{>>section.mustache title="Your sketching platform. In your computer."}}
     {{>features-simple.mustache items=page.attributes.features}}
-</section>
-{{>separator.mustache}}
-<section class="mx-auto max-w-6xl px-6 pt-28 pb-28 flex flex-col lg:flex-row gap-12">
-    <div class="shrink-0 w-full lg:max-w-xs text-4xl md:text-5xl leading-none">
-        <span class="font-medium italic">Questions &amp; </span>
-        <span class="font-extrabold text-gray-950">Answers</span>
-    </div>
-    <div class="grow-1">
+{{/section.mustache}}
+
+{{!-- questions and answers section --}}
+{{>>section.mustache title="Questions &amp; Answers"}}
+    <div class="">
         {{#each page.attributes.faq}}
         <div class="border-b-1 border-gray-200" data-role="faq:item">
             <button class="text-xl w-full flex justify-between items-center bg-white border-0 py-6 cursor-pointer" data-role="faq:question">
@@ -114,7 +108,8 @@
         </div>
         {{/each}}
     </div>
-</section>
+{{/section.mustache}}
+
 <section class="bg-gray-950 text-white px-6 py-28 text-center mx-auto max-w-7xl rounded-4xl">
     <div class="mx-auto max-w-4xl text-5xl md:text-6xl mb-8 text-center leading-none">
         <span class="font-medium italic">Get Started with </span>
