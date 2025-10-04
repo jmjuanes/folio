@@ -1,4 +1,5 @@
 import React from "react";
+import { exportToDataURL } from "folio-react/lib/export.js";
 import { Editor } from "folio-react/components/editor.jsx";
 import {
     MainMenu,
@@ -12,12 +13,50 @@ import {
 import { Loading } from "folio-react/components/loading.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
 import { NotFound } from "../not-found.tsx";
+import {
+    THUMBNAIL_WIDTH,
+    THUMBNAIL_HEIGHT,
+    THUMBNAIL_PADDING,
+    THUMBNAIL_DELAY
+} from "../../constants.ts";
 
+// @description editor route component
+// it handles loading the board data, checking if it exists, and saving changes
+// it also handles generating the thumbnail when the board is updated
 export const EditorRoute = (props: any): React.JSX.Element => {
-    const isFirstUpdate = React.useRef(true);
+    const isFirstUpdate = React.useRef<boolean>(true);
+    const lastUpdatedData = React.useRef<any>(null);
+    const thumbnailUpdateTimer = React.useRef<any>(null);
     const [ initialData, setInitialData ] = React.useState<any>(null);
     const [ exists, setExists ] = React.useState<boolean>(null);
     const { app } = useAppState();
+
+    // callback method to generate and save the thumbnail
+    const handleThumbnailUpdate = React.useCallback(() => {
+        if (lastUpdatedData.current) {
+            // TODO: get the last active page
+            const page = lastUpdatedData.current.pages?.[0] || null;
+            if (!page || !page.elements || page.elements.length === 0) {
+                return Promise.resolve(null);
+            }
+            const exportOptions = {
+                assets: lastUpdatedData.current.assets,
+                width: THUMBNAIL_WIDTH,
+                height: THUMBNAIL_HEIGHT,
+                background: page?.background || lastUpdatedData.current?.background || "#fff",
+                padding: THUMBNAIL_PADDING,
+            };
+            return exportToDataURL(page?.elements || [], exportOptions)
+                .then(thumbnailStr => {
+                    return app.updateDocument(props.id, {
+                        thumbnail: thumbnailStr,
+                    });
+                })
+                .catch(error => {
+                    console.error("Error updating thumbnail:", error);
+                });
+        }
+    }, [ props.id, app ]);
 
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {
@@ -29,7 +68,15 @@ export const EditorRoute = (props: any): React.JSX.Element => {
                 isFirstUpdate.current = false;
             }
         });
-    }, [ props.id, app ]);
+        // update the last updated data and schedule a thumbnail update
+        lastUpdatedData.current = data;
+        if (thumbnailUpdateTimer.current !== null) {
+            window.clearTimeout(thumbnailUpdateTimer.current);
+        }
+        thumbnailUpdateTimer.current = window.setTimeout(() => {
+            handleThumbnailUpdate();
+        }, THUMBNAIL_DELAY);
+    }, [ props.id, app, handleThumbnailUpdate ]);
 
     // on mount, check if the board exists
     // it includes a little protection against rapid board entering/exit
@@ -63,6 +110,21 @@ export const EditorRoute = (props: any): React.JSX.Element => {
             didEnter = false;
         };
     }, [ props.id, app ]);
+
+    // when app is unmounted, clear any pending thumbnail update
+    React.useEffect(() => {
+        return () => {
+            if (thumbnailUpdateTimer.current !== null) {
+                window.clearTimeout(thumbnailUpdateTimer.current);
+            }
+            // also, if there is a pending thumbnail update, do it now
+            if (lastUpdatedData.current) {
+                handleThumbnailUpdate().then(() => {
+                    app.refresh();
+                });
+            }
+        };
+    }, []);
 
     // gneerate custom components for the editor
     const customComponents = React.useMemo(() => ({
