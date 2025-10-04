@@ -298,7 +298,7 @@ export const Sidebar = (): React.JSX.Element => {
                             }}
                             collapsed={collapsed}
                             icon="plus"
-                            text="Create a new board"
+                            text="Create Document"
                         />
                         <ActionButton
                             onClick={(event: React.SyntheticEvent) => {
@@ -310,7 +310,7 @@ export const Sidebar = (): React.JSX.Element => {
                             }}
                             collapsed={collapsed}
                             icon="upload"
-                            text="Import board from file"
+                            text="Import Document"
                         />
                     </div>
                     {!collapsed && groups.today.length > 0 && (

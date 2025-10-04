@@ -1,6 +1,6 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
-import { FolderIcon, PlusIcon, ClockIcon, ImageSlashIcon, CalendarIcon } from "@josemi-icons/react";
+import { UploadIcon, PlusIcon, ClockIcon, ImageSlashIcon, CalendarIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
 import { getGreetingMessage, formatDate } from "../../utils/dates.ts";
@@ -100,8 +100,8 @@ export const HomeRoute = (): React.JSX.Element => {
                         <span>{getGreetingMessage()}</span>
                     </div>
                     <div className="max-w-2xl mx-auto text-gray-700 text-center mb-6">
-                        <span>Here you can create boards to organize your ideas, tasks, and projects. </span>
-                        <span>Use the sidebar to navigate through your boards, or create a new one to get started.</span>
+                        <span>Here you can create documents to organize your ideas, tasks, and projects. </span>
+                        <span>Use the sidebar to navigate through your documents, or create a new one to get started.</span>
                     </div>
                     <div className="max-w-xl mx-auto flex items-center gap-2">
                         <Button className="w-full" disabled={false} onClick={() => handleDocumentCreate()}>
@@ -112,7 +112,7 @@ export const HomeRoute = (): React.JSX.Element => {
                         </Button>
                         <Button variant="secondary" className="w-full" disabled={false} onClick={() => handleDocumentImport()}>
                             <div className="flex items-center text-lg">
-                                <FolderIcon />
+                                <UploadIcon />
                             </div>
                             <div className="font-medium">Load from local</div>
                         </Button>
