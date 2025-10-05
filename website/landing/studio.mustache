@@ -61,7 +61,7 @@
     ]
 }
 ---
-<section class="px-6 py-16 sm:py-24 md:py-32 flex flex-col justify-center items-center">
+<section class="px-6 py-16 sm:py-20 md:py-24 flex flex-col justify-center items-center">
     <div class="mb-8 flex items-center justify-center">
         <div class="text-gray-950 px-4 py-1 rounded-full text-base bg-gray-100">
             <span class="font-medium">Introducing </span>
@@ -94,7 +94,9 @@
 
 {{!-- first features section --}}
 {{>>section.mustache title=page.attributes.features.title description=page.attributes.features.description}}
-    <div class="mb-8"></div>
+    <div class="mb-8 w-full border-2 border-gray-200 rounded-2xl bg-white">
+        <div class="" style="height:320px;width:100%"></div>
+    </div>
     {{>features.mustache items=page.attributes.features.items}}
 {{/section.mustache}}
 
