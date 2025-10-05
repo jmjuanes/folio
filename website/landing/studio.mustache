@@ -3,9 +3,12 @@
     "title": "Studio",
     "layout": "default.mustache",
     "permalink": "/studio.html",
-    "installation": {
+    "hero": {
+        "label": "Introducing <b>Folio Studio</b>.",
+        "title": "Where <b class='font-bold bg-gray-950 text-white rounded-2xl px-4 py-2'>Ideas</b> take <i class='font-normal'>Shape</i>. <b class='font-black'>Locally.</b>",
+        "subtitle": "A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.",
         "command": "docker pull ghcr.io/jmjuanes/folio-studio",
-        "links": [
+        "actions": [
             {
                 "text": "Documentation",
                 "url": "/docs"
@@ -72,36 +75,14 @@
     }
 }
 ---
-<section class="px-6 py-16 sm:py-20 md:py-24 flex flex-col justify-center items-center">
-    <div class="mb-8 flex items-center justify-center">
-        <div class="text-gray-950 px-4 py-1 rounded-full text-base bg-gray-100">
-            <span class="font-medium">Introducing </span>
-            <span class="font-bold">Folio Studio</span>
-        </div>
-    </div>
-    <div class="max-w-3xl lg:max-w-4xl mb-6 text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-center text-gray-950 leading-tight">
-        <span class="font-normal italic">Where </span> 
-        <span class="font-bold bg-gray-950 text-white rounded-2xl px-4 py-2">Ideas</span> 
-        <span class="font-normal italic"> take </span>
-        <span class="font-bold underline">Shape</span>. 
-        <span class="font-black">Locally.</span>
-    </div>
-    <div class="max-w-2xl mb-12 text-xl md:text-2xl text-center text-gray-900">
-        <span class="">A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.</span>
-    </div>
-    <div class="flex flex-col items-center gap-8">
+{{!-- hero section --}}
+{{>>hero.mustache ...page.attributes.hero}}
+    <div class="flex justify-center">
         <div class="w-full max-w-lg d-flex flex-col bg-gray-950 text-white p-5 rounded-2xl text-lg text-center font-mono">
             <div>$ docker pull ghcr.io/jmjuanes/folio-studio</div>
         </div>
-        <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
-            {{#each page.attributes.installation.links}}
-            <a href="{{this.url}}" class="flex gap-4 items-center cursor-pointer font-bold hover:underline text-2xl md:text-3xl">
-                <span>{{this.text}} &rarr;</span>
-            </a>
-            {{/each}}
-        </div>
     </div>
-</section>
+{{/hero.mustache}}
 
 {{!-- first features section --}}
 {{>>section.mustache title=page.attributes.features.title description=page.attributes.features.description}}
