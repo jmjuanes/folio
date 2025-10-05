@@ -16,23 +16,27 @@
             }
         ]
     },
-    "features": [
-        {
-            "icon": "bolt",
-            "title": "Same Power, but local.",
-            "description": "All the features of Folio, but running entirely on your own server or computer without any external dependencies."
-        },
-        {
-            "icon": "lock",
-            "title": "Your data, your rules.",
-            "description": "No cloud, no tracking. Folio Studio stores everything locally on your server, ensuring that your data remains private and under your control."
-        },
-        {
-            "icon": "files",
-            "title": "Unlimited Creativity.",
-            "description": "Organize ideas and prototypes in separate spaces. Folio Studio supports unlimited boards to keep your projects tidy and accessible."
-        }
-    ],
+    "features": {
+        "title": "Your sketching platform. On your computer.",
+        "description": "Folio Studio runs locally, giving you full control over your boards, your flow, and your data.",
+        "items": [
+            {
+                "icon": "bolt",
+                "title": "Same Power, but local.",
+                "description": "All the features of Folio, but running entirely on your own server or computer without any external dependencies."
+            },
+            {
+                "icon": "lock",
+                "title": "Your data, your rules.",
+                "description": "No cloud, no tracking. Folio Studio stores everything locally on your server, ensuring that your data remains private and under your control."
+            },
+            {
+                "icon": "files",
+                "title": "Unlimited Creativity.",
+                "description": "Organize ideas and prototypes in separate spaces. Folio Studio supports unlimited boards to keep your projects tidy and accessible."
+            }
+        ],
+    },
     "faq": [
         {
             "question": "Is Folio Studio open source?",
@@ -89,8 +93,9 @@
 </section>
 
 {{!-- first features section --}}
-{{>>section.mustache title="Your sketching platform. In your computer."}}
-    {{>features-simple.mustache items=page.attributes.features}}
+{{>>section.mustache title=page.attributes.features.title description=page.attributes.features.description}}
+    <div class="mb-8"></div>
+    {{>features.mustache items=page.attributes.features.items}}
 {{/section.mustache}}
 
 {{!-- questions and answers section --}}
