@@ -17,7 +17,7 @@
         ]
     },
     "features": {
-        "title": "Your sketching platform. On your computer.",
+        "title": "<i class='font-medium'>Your sketching platform.</i> On your computer.",
         "description": "Folio Studio runs locally, giving you full control over your boards, your flow, and your data.",
         "items": [
             {
@@ -37,28 +37,39 @@
             }
         ]
     },
-    "faq": [
-        {
-            "question": "Is Folio Studio open source?",
-            "answer": "Yes. Folio Studio is part of the Folio ecosystem and released under the MIT license. You can inspect, modify, and contribute freely."
-        },
-        {
-            "question": "What are the system requirements?",
-            "answer": "Folio Studio can run on any system that supports Docker, including Linux, macOS, and Windows. For optimal performance, we recommend at least 512MB of RAM."
-        },
-        {
-            "question": "How can I get started with Folio Studio?",
-            "answer": "You can get started by pulling the Docker image from GitHub Container Registry and following the installation instructions in our <a href='/docs' class='underline'>documentation</a>."
-        },
-        {
-            "question": "Can I use it for multiple boards or projects?",
-            "answer": "Absolutely. Folio Studio supports unlimited boards, perfect for organizing ideas across projects."
-        },
-        {
-            "question": "Where is my data stored?",
-            "answer": "All data is stored locally on your device or server. Folio Studio does not send anything to the cloud or track your usage."
-        }
-    ]
+    "faq": {
+        "title": "<i class='font-medium'>Questions &amp;</i> Answers",
+        "items": [
+            {
+                "question": "Is Folio Studio open source?",
+                "answer": "Yes. Folio Studio is part of the Folio ecosystem and released under the MIT license. You can inspect, modify, and contribute freely."
+            },
+            {
+                "question": "What are the system requirements?",
+                "answer": "Folio Studio can run on any system that supports Docker, including Linux, macOS, and Windows. For optimal performance, we recommend at least 512MB of RAM."
+            },
+            {
+                "question": "How can I get started with Folio Studio?",
+                "answer": "You can get started by pulling the Docker image from GitHub Container Registry and following the installation instructions in our <a href='/docs' class='underline'>documentation</a>."
+            },
+            {
+                "question": "Can I use it for multiple boards or projects?",
+                "answer": "Absolutely. Folio Studio supports unlimited boards, perfect for organizing ideas across projects."
+            },
+            {
+                "question": "Where is my data stored?",
+                "answer": "All data is stored locally on your device or server. Folio Studio does not send anything to the cloud or track your usage."
+            }
+        ]
+    },
+    "callToAction": {
+        "title": "<i class='font-medium'>Get started with</i> Folio Studio."
+        "description": "Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space.",
+        "primaryActionText": "Read the docs",
+        "primaryActionLink": "/docs",
+        "secondaryActionText": "Pull from GitHub",
+        "secondaryActionLink": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio"
+    }
 }
 ---
 <section class="px-6 py-16 sm:py-20 md:py-24 flex flex-col justify-center items-center">
@@ -101,9 +112,9 @@
 {{/section.mustache}}
 
 {{!-- questions and answers section --}}
-{{>>section.mustache title="Questions &amp; Answers"}}
+{{>>section.mustache title=page.attributes.faq.title}}
     <div class="">
-        {{#each page.attributes.faq}}
+        {{#each page.attributes.faq.items}}
         <div class="border-b-1 border-gray-200" data-role="faq:item">
             <button class="text-xl w-full flex justify-between items-center bg-white border-0 py-6 cursor-pointer" data-role="faq:question">
                 <div class="font-bold text-left">{{!this.question}}</div>
@@ -117,23 +128,8 @@
     </div>
 {{/section.mustache}}
 
-<section class="bg-gray-950 text-white px-6 py-28 text-center mx-auto max-w-7xl rounded-4xl">
-    <div class="mx-auto max-w-4xl text-5xl md:text-6xl mb-8 text-center leading-none">
-        <span class="font-medium italic">Get Started with </span>
-        <span class="font-extrabold">Folio Studio.</span>
-    </div>
-    <div class="opacity-90 text-2xl mb-12 max-w-2xl mx-auto">
-        Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space.
-    </div>
-    <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
-        <a href="/docs" class="bg-white text-gray-950 px-6 py-4 rounded-3xl text-2xl font-bold hover:bg-gray-200">
-            <span>Read the Docs →</span>
-        </a>
-        <a href="https://github.com/jmjuanes/folio/pkgs/container/folio-studio" class="text-white font-bold text-2xl hover:underline">
-            <span>Pull from GitHub →</span>
-        </a>
-    </div>
-</section>
+{{!-- call to action --}}
+{{>cta.mustache ...page.attributes.callToAction}}
 
 <script>
     Array.from(document.querySelectorAll(`[data-role="faq:question"]`)).forEach(button => {
