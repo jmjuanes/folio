@@ -20,8 +20,8 @@
         ]
     },
     "features": {
-        "title": "<i class='font-medium'>Your sketching platform.</i> On your computer.",
-        "description": "Folio Studio runs locally, giving you full control over your boards, your flow, and your data.",
+        "title": "<div class='italic font-medium'>Your sketching platform.</div> On your computer.",
+        "description": "<b>Folio Studio</b> runs locally, giving you full control over your boards, your flow, and your data.",
         "items": [
             {
                 "icon": "bolt",
@@ -37,6 +37,17 @@
                 "icon": "files",
                 "title": "Unlimited Creativity.",
                 "description": "Organize ideas and prototypes in separate spaces. Folio Studio supports unlimited boards to keep your projects tidy and accessible."
+            }
+        ]
+    },
+    "usage": {
+        "title": "<div class='italic font-medium'>Manage everything</div> from one place.",
+        "description": "<b>Folio Studio</b> provides a centralized dashboard to create and manage all your boards effortlessly.",
+        "items": [
+            {
+                "title": "Manage your boards",
+                "description": "Rename, duplicate, save a local copy, or delete any of your boards from your sidebar.",
+                "image": "/screenshots/studio-manage-20251006.png"
             }
         ]
     },
@@ -79,17 +90,22 @@
 {{>>hero.mustache ...page.attributes.hero}}
     <div class="flex justify-center">
         <div class="w-full max-w-lg d-flex flex-col bg-gray-950 text-white p-5 rounded-2xl text-lg text-center font-mono">
-            <div>$ docker pull ghcr.io/jmjuanes/folio-studio</div>
+            <div>$ {{page.attributes.hero.command}}</div>
         </div>
     </div>
 {{/hero.mustache}}
 
 {{!-- first features section --}}
 {{>>section.mustache title=page.attributes.features.title description=page.attributes.features.description}}
-    <div class="mb-8 w-full border-2 border-gray-200 rounded-2xl bg-white">
-        <div class="" style="height:320px;width:100%"></div>
+    <div class="mb-8 w-full border-2 border-gray-200 rounded-2xl bg-white overflow-hidden">
+        <img src="/screenshots/studio-landing-20251006.png" alt="Folio Studio screenshot" width="100%" loading="lazy">
     </div>
-    {{>features.mustache items=page.attributes.features.items}}
+    {{>group.mustache size="3" items=page.attributes.features.items}}
+{{/section.mustache}}
+
+{{!-- usage features section --}}
+{{>>section.mustache title=page.attributes.usage.title description=page.attributes.usage.description}}
+    {{>group.mustache size="2" items=page.attributes.usage.items}}
 {{/section.mustache}}
 
 {{!-- questions and answers section --}}
