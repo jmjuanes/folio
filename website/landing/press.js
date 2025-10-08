@@ -9,6 +9,10 @@ press({
     destination: "www",
     extensions: [ ".mustache" ],
     template: mikel.create({
+        helpers: {
+            isArray: params => !!params.args[0] && Array.isArray(params.args[0]) ? params.fn(params.data) : "",
+            isString: params => typeof params.args[0] === "string" ? params.fn(params.data) : "",
+        },
         functions: {
             icon: params => {
                 return [

@@ -5,7 +5,26 @@
     "permalink": "/studio.html",
     "hero": {
         "label": "Introducing <b>Folio Studio</b>.",
-        "title": "Where <b class='font-bold bg-gray-950 text-white rounded-2xl px-4 py-2'>Ideas</b> take <i class='font-normal'>Shape</i>. <b class='font-black'>Locally.</b>",
+        "title": [
+            {
+                "text": "Where "
+            },
+            {
+                "className": "font-bold bg-gray-950 text-white rounded-2xl px-4 py-2",
+                "text": "Ideas"
+            },
+            {
+                "text": " take "
+            },
+            {
+                "className": "italic font-normal",
+                "text": "Shape."
+            },
+            {
+                "className": "font-black",
+                "text": " Locally."
+            }
+        ],
         "subtitle": "A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.",
         "command": "docker pull ghcr.io/jmjuanes/folio-studio",
         "actions": [
@@ -20,7 +39,15 @@
         ]
     },
     "features": {
-        "title": "<div class='italic font-medium'>Your sketching platform.</div> On your computer.",
+        "title": [
+            {
+                "className": "block italic font-medium",
+                "text": "Your sketching platform."
+            },
+            {
+                "text": " On your computer."
+            }
+        ],
         "description": "<b>Folio Studio</b> runs locally, giving you full control over your boards, your flow, and your data.",
         "items": [
             {
@@ -41,7 +68,15 @@
         ]
     },
     "usage": {
-        "title": "<div class='italic font-medium'>Manage everything</div> from one place.",
+        "title": [
+            {
+                "className": "block italic font-medium",
+                "text": "Manage everything"
+            },
+            {
+                "text": " from one place."
+            }
+        ],
         "description": "<b>Folio Studio</b> provides a centralized dashboard to create and manage all your boards effortlessly.",
         "items": [
             {
@@ -52,7 +87,15 @@
         ]
     },
     "faq": {
-        "title": "<i class='font-medium'>Questions &amp;</i> Answers",
+        "title": [
+            {
+                "className": "font-medium italic",
+                "text": "Questions &amp;"
+            },
+            {
+                "text": " Answers."
+            }
+        ],
         "items": [
             {
                 "question": "Is Folio Studio open source?",
@@ -97,9 +140,11 @@
 
 {{!-- first features section --}}
 {{>>section.mustache title=page.attributes.features.title description=page.attributes.features.description}}
+    {{!--
     <div class="mb-8 w-full border-2 border-gray-200 rounded-2xl bg-white overflow-hidden">
         <img src="/screenshots/studio-landing-20251006.png" alt="Folio Studio screenshot" width="100%" loading="lazy">
     </div>
+    --}}
     {{>group.mustache size="3" items=page.attributes.features.items}}
 {{/section.mustache}}
 

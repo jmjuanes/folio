@@ -1,10 +1,17 @@
-<section class="mx-auto max-w-6xl px-6 py-16 md:py-20" data-role="section">
-    <div class="flex flex-col gap-4 mb-12 items-center" data-role="section:header">
-        <div class="max-w-xl text-3xl md:text-4xl text-gray-950 leading-tight font-extrabold text-center">
-            {{!this.title}}
+<section class="mx-auto max-w-6xl px-6 py-20 md:py-28" data-role="section">
+    <div class="flex flex-col gap-8 mb-20 items-center" data-role="section:header">
+        <div class="max-w-3xl text-4xl sm:text-5xl md:text-6xl text-gray-950 leading-none font-extrabold text-center">
+        {{#isString this.title}}
+            <span class="">{{!this.title}}</span>
+        {{/isString}}
+        {{#isArray this.title}}
+            {{#each this.title}}
+            <span class="{{this.className}}">{{!this.text}}</span>
+            {{/each}}
+        {{/isArray}}
         </div>
         {{#if this.description}}
-        <div class="max-w-lg text-gray-900 text-lg text-center">
+        <div class="max-w-3xl text-gray-900 text-lg sm:text-xl md:text-2xl text-center">
             {{!this.description}}
         </div>
         {{/if}}

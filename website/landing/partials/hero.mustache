@@ -6,8 +6,15 @@
         </div>
     </div>
     {{/if}}
-    <div class="max-w-4xl mb-0 text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-center leading-tight">
-        <span class="text-gray-950 font-extrabold">{{!this.title}}</span>
+    <div class="max-w-4xl mb-0 text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-center leading-tight text-gray-950 font-extrabold">
+    {{#isString this.title}}
+        <span class="">{{!this.title}}</span>
+    {{/isString}}
+    {{#isArray this.title}}
+        {{#each this.title}}
+        <span class="{{this.className}}">{{!this.text}}</span>
+        {{/each}}
+    {{/isArray}}
     </div>
     <div class="max-w-2xl mb-0 text-xl md:text-2xl text-center text-gray-900">
         <span class="text-gray-900">{{!this.subtitle}}</span>
