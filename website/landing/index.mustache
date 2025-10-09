@@ -3,6 +3,24 @@
     "title": "Minimal whiteboard for sketching and prototyping",
     "layout": "default.mustache",
     "permalink": "/index.html",
+    "hero": {
+        "title": [
+            {
+                "text": "The "
+            },
+            {
+                "text": "Instant",
+                "className": "font-black"
+            },
+            {
+                "text": " sketching "
+            },
+            {
+                "text": "Platform",
+                "className": "underline"
+            }
+        ]
+    },
     "features": [
         {
             "icon": "shield",
@@ -27,6 +45,16 @@
     ]
 }
 ---
+{{>>hero.mustache ...page.attributes.hero}}
+    <div class="flex flex-col items-center gap-1">
+        <a href="/app" class="flex gap-4 items-center cursor-pointer font-bold hover:underline text-gray-950 text-3xl md:text-5xl">
+            <span>Try folio &rarr;</span>
+        </a>
+        <div class="text-sm select-none text-center text-gray-700">
+            <span>No signup. Start in less than 5 seconds.</span>
+        </div>
+    </div>
+{{/hero.mustache}}
 <section class="px-6 py-40 flex flex-col justify-center items-center">
     <div class="mb-8 hidden">
         <div class="flex border-8 border-gray-950 p-2 rounded-4xl bg-white shadow-md">
@@ -40,14 +68,6 @@
     <div class="max-w-3xl mb-10 text-xl md:text-2xl text-center text-gray-900">
         <span class=""><b>Folio</b> is an infinite canvas for your creative journey. </span>
         <span class="">Sketch, prototype, and bring your ideas to life with ease.</span>
-    </div>
-    <div class="flex flex-col items-center gap-1">
-        <a href="/app" class="flex gap-4 items-center cursor-pointer font-bold hover:underline text-gray-950 text-3xl md:text-5xl">
-            <span>Try folio &rarr;</span>
-        </a>
-        <div class="text-sm select-none text-center text-gray-700">
-            <span>No signup. Start in less than 5 seconds.</span>
-        </div>
     </div>
 </section>
 {{>separator.mustache}}
