@@ -39,16 +39,18 @@
         ]
     },
     "features": {
-        "title": [
-            {
-                "className": "opacity-60",
-                "text": "Your sketching platform."
-            },
-            {
-                "text": " On your computer."
-            }
-        ],
-        "description": "<b>Folio Studio</b> runs locally, giving you full control over your boards, your flow, and your data.",
+        "sectionOptions": {
+            "title": [
+                {
+                    "className": "opacity-60",
+                    "text": "Your sketching platform."
+                },
+                {
+                    "text": " On your computer."
+                }
+            ],
+            "description": "<b>Folio Studio</b> runs locally, giving you full control over your boards, your flow, and your data.",
+        },
         "items": [
             {
                 "icon": "bolt",
@@ -68,16 +70,20 @@
         ]
     },
     "usage": {
-        "title": [
-            {
-                "className": "block italic font-medium",
-                "text": "Manage everything"
-            },
-            {
-                "text": " from one place."
-            }
-        ],
-        "description": "<b>Folio Studio</b> provides a centralized dashboard to create and manage all your boards effortlessly.",
+        "sectionOptions": {
+            "title": [
+                {
+                    "className": "block opacity-60",
+                    "text": "Manage everything"
+                },
+                {
+                    "text": " from one place."
+                }
+            ],
+            "description": "<b>Folio Studio</b> provides a centralized dashboard to create and manage all your boards effortlessly.",
+            "className": "text-gray-950",
+            "style": "background-color:#bef264;"
+        },
         "items": [
             {
                 "title": "Manage your boards",
@@ -87,15 +93,17 @@
         ]
     },
     "faq": {
-        "title": [
-            {
-                "className": "font-medium italic",
-                "text": "Questions &amp;"
-            },
-            {
-                "text": " Answers."
-            }
-        ],
+        "sectionOptions": {
+            "title": [
+                {
+                    "className": "opacity-60",
+                    "text": "Questions &amp;"
+                },
+                {
+                    "text": " Answers."
+                }
+            ],
+        },
         "items": [
             {
                 "question": "Is Folio Studio open source?",
@@ -139,7 +147,7 @@
 {{/hero.mustache}}
 
 {{!-- first features section --}}
-{{>>section.mustache title=page.attributes.features.title description=page.attributes.features.description}}
+{{>>section.mustache ...page.attributes.features.sectionOptions}}
     {{!--
     <div class="mb-8 w-full border-2 border-gray-200 rounded-2xl bg-white overflow-hidden">
         <img src="/screenshots/studio-landing-20251006.png" alt="Folio Studio screenshot" width="100%" loading="lazy">
@@ -149,16 +157,16 @@
 {{/section.mustache}}
 
 {{!-- usage features section --}}
-{{>>section.mustache title=page.attributes.usage.title description=page.attributes.usage.description}}
+{{>>section.mustache ...page.attributes.usage.sectionOptions}}
     {{>group.mustache size="2" items=page.attributes.usage.items}}
 {{/section.mustache}}
 
 {{!-- questions and answers section --}}
-{{>>section.mustache title=page.attributes.faq.title}}
+{{>>section.mustache ...page.attributes.faq.sectionOptions}}
     <div class="">
         {{#each page.attributes.faq.items}}
-        <div class="border-b-1 border-gray-200" data-role="faq:item">
-            <button class="text-xl w-full flex justify-between items-center bg-white border-0 py-6 cursor-pointer" data-role="faq:question">
+        <div class="border-b-1 border-white" data-role="faq:item">
+            <button class="text-xl w-full flex justify-between items-center border-0 py-6 cursor-pointer" data-role="faq:question">
                 <div class="font-bold text-left">{{!this.question}}</div>
                 <div class="" data-role="faq:toggle">+</div>
             </button>

@@ -1,11 +1,16 @@
-<section class="w-full py-32 md:py-40 {{this.className}}" data-role="section">
+<section class="w-full py-32 md:py-40 {{this.className}}" style="{{this.style}}" data-role="section">
     <div class="mx-auto max-w-6xl px-6">
-        <div class="flex flex-col gap-8 mb-20 items-center" data-role="section:header">
+        <div class="flex flex-col gap-12 mb-24 items-center" data-role="section:header">
             {{#if this.icon}}
             <div class="flex mb-2">
                 <div class="flex items-center">
                     {{=icon icon=this.icon className="w-20 h-20"}}
                 </div>
+            </div>
+            {{/if}}
+            {{#if this.label}}
+            <div class="font-medium text-lg md:text-xl text-center opacity-70">
+                {{!this.label}}
             </div>
             {{/if}}
             <div class="max-w-4xl text-5xl sm:text-6xl md:text-7xl leading-none font-extrabold text-center">
