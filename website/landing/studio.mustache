@@ -3,6 +3,7 @@
     "title": "Studio",
     "layout": "default.mustache",
     "permalink": "/studio.html",
+    "command": "$ docker pull ghcr.io/jmjuanes/folio-studio",
     "hero": {
         "label": "Introducing <b>Folio Studio</b>.",
         "title": [
@@ -26,7 +27,6 @@
             }
         ],
         "subtitle": "A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.",
-        "command": "docker pull ghcr.io/jmjuanes/folio-studio",
         "actions": [
             {
                 "text": "Documentation",
@@ -162,8 +162,8 @@
 {{!-- hero section --}}
 {{>>hero.mustache ...page.attributes.hero}}
     <div class="flex justify-center py-8">
-        <div class="w-full d-flex flex-col text-current text-xl md:text-2xl text-center font-mono font-bold">
-            <div>$ {{page.attributes.hero.command}}</div>
+        <div class="w-full d-flex flex-col text-current text-xl sm:text-2xl md:text-3xl text-center font-mono font-bold">
+            <div>{{page.attributes.command}}</div>
         </div>
     </div>
 {{/hero.mustache}}
@@ -184,4 +184,10 @@
 {{/section.mustache}}
 
 {{!-- call to action --}}
-{{>section.mustache ...page.attributes.callToAction.sectionOptions}}
+{{>>section.mustache ...page.attributes.callToAction.sectionOptions}}
+    <div class="flex justify-center py-0">
+        <div class="w-full d-flex flex-col text-current text-xl sm:text-2xl md:text-3xl text-center font-mono font-bold">
+            <div>{{page.attributes.command}}</div>
+        </div>
+    </div>
+{{/section.mustache}}
