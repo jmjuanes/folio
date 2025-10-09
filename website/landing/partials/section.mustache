@@ -2,8 +2,8 @@
     <div class="mx-auto max-w-6xl px-6">
         <div class="flex flex-col gap-8 mb-24 items-center" data-role="section:header">
             {{#if this.icon}}
-            <div class="flex mb-2">
-                <div class="flex items-center">
+            <div class="flex mb-0">
+                <div class="flex items-center opacity-90">
                     {{=icon icon=this.icon className="w-28 h-28"}}
                 </div>
             </div>
@@ -19,7 +19,7 @@
             {{/each}}
             </div>
             {{#if this.description}}
-            <div class="max-w-3xl text-xl md:text-2xl text-center opacity-80">
+            <div class="max-w-2xl text-xl md:text-2xl text-center opacity-80">
                 {{!this.description}}
             </div>
             {{/if}}
