@@ -88,7 +88,7 @@
         "items": [
             {
                 "title": "Manage your boards",
-                "description": "Rename, duplicate, save a local copy, or delete any of your boards from your sidebar.",
+                "description": "Rename, duplicate, download, or delete your boards with a single click from your sidebar. Stay organized and in control.",
                 "image": "/screenshots/studio-manage-20251006.png"
             },
             {
@@ -184,10 +184,4 @@
 {{/section.mustache}}
 
 {{!-- call to action --}}
-{{>>section.mustache ...page.attributes.callToAction.sectionOptions}}
-    <div class="flex justify-center py-0">
-        <div class="w-full d-flex flex-col text-current text-xl sm:text-2xl md:text-3xl text-center font-mono font-bold">
-            <div>{{page.attributes.command}}</div>
-        </div>
-    </div>
-{{/section.mustache}}
+{{>section.mustache ...page.attributes.callToAction.sectionOptions}}
