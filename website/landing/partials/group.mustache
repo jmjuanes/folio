@@ -1,15 +1,19 @@
 <div class="w-full grid grid-cols-1 md:grid-cols-{{this.size}} gap-8" data-role="group">
     {{#each this.items}}
-    <article class="mb-2 bg-gray-50 rounded-4xl p-8 border-1 border-gray-200">
+    <article class="mb-2">
         {{#if this.icon}}
         <div class="flex justify-start mb-6">
-            <div class="flex items-center text-gray-950">
-                {{=icon icon=this.icon className="w-10 h-10"}}
+            <div class="flex items-center opacity-80">
+                {{=icon icon=this.icon className="w-12 h-12"}}
             </div>
         </div>
         {{/if}}
-        <div class="font-bold text-xl leading-tight mb-3 text-gray-950">{{!this.title}}</div>
-        <div class="leading-relaxed">{{!this.description}}</div>
+        <div class="font-extrabold text-2xl leading-tight mb-3">
+            <span>{{!this.title}}</span>
+        </div>
+        <div class="leading-relaxed opacity-80">
+            <span>{{!this.description}}</span>
+        </div>
         {{#if this.image}}
         <div class="mt-6 w-full rounded-2xl bg-white overflow-hidden">
             <img src="{{this.image}}" alt="{{this.title}} screenshot" width="100%" loading="lazy">
