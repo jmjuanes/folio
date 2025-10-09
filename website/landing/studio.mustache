@@ -133,25 +133,25 @@
         "sectionOptions": {
             "title": [
                 {
-                    "className": "opacity-60",
+                    "className": "block opacity-60",
                     "text": "Get started with "
                 },
                 {
                     "text": "Folio Studio."
                 }
             ],
-            "description": "Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space."
-        },
-        "items": [
-            {
-                "text": "Read the docs",
-                "url": "/docs"
-            },
-            {
-                "text": "Pull from GitHub",
-                "url": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio"
-            }
-        ]
+            "description": "Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space.",
+            "actions": [
+                {
+                    "text": "Read the docs",
+                    "url": "/docs"
+                },
+                {
+                    "text": "Pull from GitHub",
+                    "url": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio"
+                }
+            ]
+        }
     }
 }
 ---
@@ -180,6 +180,4 @@
 {{/section.mustache}}
 
 {{!-- call to action --}}
-{{>>section.mustache ...page.attributes.callToAction.sectionOptions}}
-    {{>actions.mustache items=page.attributes.callToAction.items}}
-{{/section.mustache}}
+{{>section.mustache ...page.attributes.callToAction.sectionOptions}}

@@ -23,6 +23,15 @@
                 {{!this.description}}
             </div>
             {{/if}}
+            {{#if this.actions}}
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                {{#each this.actions}}
+                <a href="{{this.url || this.link}}" class="text-white font-bold text-2xl hover:underline">
+                    <span>{{!this.text}} →</span>
+                </a>
+                {{/each}}
+            </div>
+            {{/if}}
         </div>
         {{!@content}}
     </div>
