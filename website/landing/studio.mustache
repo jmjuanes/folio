@@ -10,7 +10,7 @@
                 "text": "Where "
             },
             {
-                "className": "font-bold bg-gray-950 text-white rounded-2xl px-4 py-2",
+                "className": "underline font-bold",
                 "text": "Ideas"
             },
             {
@@ -103,7 +103,8 @@
                 {
                     "text": " Answers."
                 }
-            ]
+            ],
+            "className": "bg-white text-gray-950"
         },
         "items": [
             {
@@ -129,19 +130,35 @@
         ]
     },
     "callToAction": {
-        "title": "<i class='font-medium'>Get started with</i> Folio Studio.",
-        "description": "Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space.",
-        "primaryActionText": "Read the docs",
-        "primaryActionLink": "/docs",
-        "secondaryActionText": "Pull from GitHub",
-        "secondaryActionLink": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio"
+        "sectionOptions": {
+            "title": [
+                {
+                    "className": "opacity-60",
+                    "text": "Get started with "
+                },
+                {
+                    "text": "Folio Studio."
+                }
+            ]
+            "description": "Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space."
+        },
+        "items": [
+            {
+                "text": "Read the docs",
+                "url": "/docs"
+            },
+            {
+                "text": "Pull from GitHub",
+                "url": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio"
+            }
+        ]
     }
 }
 ---
 {{!-- hero section --}}
 {{>>hero.mustache ...page.attributes.hero}}
     <div class="flex justify-center">
-        <div class="w-full max-w-lg d-flex flex-col bg-gray-950 text-white p-5 rounded-2xl text-lg text-center font-mono">
+        <div class="w-full d-flex flex-col text-current text-xl text-center font-mono font-bold">
             <div>$ {{page.attributes.hero.command}}</div>
         </div>
     </div>
@@ -149,11 +166,6 @@
 
 {{!-- first features section --}}
 {{>>section.mustache ...page.attributes.features.sectionOptions}}
-    {{!--
-    <div class="mb-8 w-full border-2 border-gray-200 rounded-2xl bg-white overflow-hidden">
-        <img src="/screenshots/studio-landing-20251006.png" alt="Folio Studio screenshot" width="100%" loading="lazy">
-    </div>
-    --}}
     {{>group.mustache size="3" items=page.attributes.features.items}}
 {{/section.mustache}}
 
@@ -164,42 +176,10 @@
 
 {{!-- questions and answers section --}}
 {{>>section.mustache ...page.attributes.faq.sectionOptions}}
-    <div class="">
-        {{#each page.attributes.faq.items}}
-        <div class="border-b-1 border-white" data-role="faq:item">
-            <button class="bg-transparent text-xl w-full flex justify-between items-center border-0 py-6 cursor-pointer" data-role="faq:question">
-                <div class="font-bold text-left">{{!this.question}}</div>
-                <div class="" data-role="faq:toggle">+</div>
-            </button>
-            <div class="hidden pt-2 pb-6 text-lg leading-relaxed" data-role="faq:answer">
-                {{!this.answer}}
-            </div>
-        </div>
-        {{/each}}
-    </div>
+    {{>faq.mustache items=page.attributes.faq.items}}
 {{/section.mustache}}
 
 {{!-- call to action --}}
-{{>cta.mustache ...page.attributes.callToAction}}
-
-<script>
-    Array.from(document.querySelectorAll(`[data-role="faq:question"]`)).forEach(button => {
-        button.addEventListener("click", () => {
-            const item = button.closest(`[data-role="faq:item"]`);
-            const answer = item.querySelector(`[data-role="faq:answer"]`);
-            const isOpen = !answer.classList.contains("hidden");
-            // 1. we have to close all other items and change the toggle icon to a '+'
-            document.querySelectorAll(`[data-role="faq:answer"]`).forEach(otherAnswerItem => {
-                otherAnswerItem.classList.add("hidden");
-            });
-            document.querySelectorAll(`[data-role="faq:toggle"]`).forEach(otherToggleItem => {
-                otherToggleItem.textContent = "+";
-            });
-            // 2. Now, we toggle the current item
-            if (!isOpen) {
-                answer.classList.remove("hidden");
-                item.querySelector(`[data-role="faq:toggle"]`).textContent = "-";
-            }
-        });
-    });
-</script>
+{{>>section.mustache ...page.attributes.callToAction.sectionOptions}}
+    {{>actions.mustache items=page.attributes.callToAction.items}}
+{{/section.mustache}}

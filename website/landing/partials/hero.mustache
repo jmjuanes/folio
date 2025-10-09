@@ -1,30 +1,27 @@
 <section class="max-w-6xl mx-auto px-6 py-16 sm:py-20 md:py-24 flex flex-col justify-center items-center gap-6">
     {{#if this.label}}
     <div class="mb-2 flex items-center justify-center">
-        <div class="text-gray-950 px-4 py-1 rounded-full text-base bg-gray-100">
+        <div class="text-current px-4 py-1 rounded-full border-1 border-current text-base">
             <span class="font-medium">{{!this.label}}</span>
         </div>
     </div>
     {{/if}}
-    <div class="max-w-4xl mb-0 text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-center leading-tight text-gray-950 font-extrabold">
-    {{#isString this.title}}
-        <span class="">{{!this.title}}</span>
-    {{/isString}}
-    {{#isArray this.title}}
-        {{#each this.title}}
+    <div class="max-w-4xl mb-0 text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-center leading-tight font-extrabold">
+    {{#each this.title}}
         <span class="{{this.className}}">{{!this.text}}</span>
-        {{/each}}
-    {{/isArray}}
+    {{/each}}
     </div>
-    <div class="max-w-2xl mb-0 text-xl md:text-2xl text-center text-gray-900">
-        <span class="text-gray-900">{{!this.subtitle}}</span>
+    {{#if this.subtitle}}
+    <div class="max-w-2xl mb-0 text-xl md:text-2xl text-center">
+        <span class="opacity-80">{{!this.subtitle}}</span>
     </div>
+    {{/if}}
     {{!@content}}
     {{#if this.actions}}
     <div class="flex flex-col items-center gap-8">
         <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
             {{#each this.actions}}
-            <a href="{{this.url}}" class="flex items-center cursor-pointer hover:underline text-2xl md:text-3xl">
+            <a href="{{this.url}}" class="flex items-center cursor-pointer hover:underline text-current text-2xl md:text-3xl">
                 <span class="font-bold">{{!this.text}} &rarr;</span>
             </a>
             {{/each}}
