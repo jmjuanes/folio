@@ -1,7 +1,18 @@
 ---
 {
     "title": "Plans",
-    "layout": "default.mustache"
+    "layout": "default.mustache",
+    "permalink": "/plans.html",
+    "hero": {
+        "title": [
+            {
+                "text": "Plans."
+            }
+        ],
+        "subtitle": "Explore the different ways to use Folio — from quick sketches in the browser to fully hosted multi-user setups. No pricing, just possibilities."
+    }
 }
 ---
+{{>>hero.mustache ...page.attributes.hero}}{{/hero.mustache}}
+
 
