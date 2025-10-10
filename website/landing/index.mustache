@@ -6,37 +6,46 @@
     "hero": {
         "title": [
             {
-                "text": "Sketch. Design. Prototype. "
+                "text": "Instant ",
+                "className": "font-normal italic"
             },
             {
-                "text": "All in One.",
+                "text": "Sketching.",
                 "className": "font-black"
             }
         ],
         "subtitle": "<b>Folio</b> is an infinite canvas for your creative journey. Sketch, prototype, and bring your ideas to life with ease."
     },
-    "features": [
-        {
-            "icon": "shield",
-            "title": "Design with total Privacy.",
-            "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
+    "features": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "text": "Sketch and Design. ",
+                    "className": "opacity-60"
+                },
+                {
+                    "text": "With freedom."
+                }
+            ]
         },
-        {
-            "icon": "drawing",
-            "title": "Boundless Canvas.",
-            "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
-        },
-        {
-            "icon": "files",
-            "title": "Organize your ideas.",
-            "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
-        },
-        {
-            "icon": "album",
-            "title": "Save, Organize, and Reuse Elements",
-            "description": "Use the <b>Library</b> to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
-        }
-    ]
+        "items": [
+            {
+                "icon": "shield",
+                "title": "Design with total Privacy.",
+                "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
+            },
+            {
+                "icon": "drawing",
+                "title": "Boundless Canvas.",
+                "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
+            },
+            {
+                "icon": "files",
+                "title": "Organize your ideas.",
+                "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
+            }
+        ]
+    }
 }
 ---
 {{>>hero.mustache ...page.attributes.hero}}
@@ -49,41 +58,6 @@
         </div>
     </div>
 {{/hero.mustache}}
-<section class="px-6 py-40 flex flex-col justify-center items-center">
-    <div class="mb-8 hidden">
-        <div class="flex border-8 border-gray-950 p-2 rounded-4xl bg-white shadow-md">
-            {{=icon icon="drawing" className="w-24 h-24 md:w-40 md:h-40"}}
-        </div>
-    </div>
-    <div class="mx-auto max-w-5xl mb-6 text-6xl md:text-8xl leading-tight text-center text-gray-950">
-        <span class="font-bold">Instant </span>
-        <span class="font-extrabold bg-gray-950 text-white rounded-2xl px-4 py-2">Sketching</span>
-    </div>
-    <div class="max-w-3xl mb-10 text-xl md:text-2xl text-center text-gray-900">
-        <span class=""><b>Folio</b> is an infinite canvas for your creative journey. </span>
-        <span class="">Sketch, prototype, and bring your ideas to life with ease.</span>
-    </div>
-</section>
-{{>separator.mustache}}
-<section class="mx-auto max-w-4xl px-6 py-32 flex flex-col justify-center items-center">
-    <div class="max-w-2xl font-extrabold text-5xl md:text-7xl leading-tight mb-24 md:mb-30 text-center">
-        <span class="opacity-50">Sketch and Design. </span>
-        <span class="">With freedom.</span>
-    </div>
-    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-        {{#each page.attributes.features}}
-        <div class="mb-2">
-            {{#if this.icon}}
-            <div class="flex mb-6">
-                <div class="flex items-center">
-                    {{=icon icon=this.icon className="w-12 h-12"}}
-                </div>
-            </div>
-            {{/if}}
-            <div class="font-bold text-2xl leading-tight mb-4">{{!this.title}}</div>
-            <div class="text-gray-500">{{!this.description}}</div>
-        </div>
-        {{/each}}
-    </div>
-</section>
-
+{{>>section.mustache ...page.attributes.features.sectionOptions}}
+    {{>group.mustache size="3" items=page.attributes.features.items}}
+{{/section.mustache}}
