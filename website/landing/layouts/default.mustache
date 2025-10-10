@@ -34,19 +34,22 @@
         </div>
     </header>
     {{!@content}}
-    <footer class="pt-20 pb-32 px-6 flex flex-col justify-between items-center gap-8">
-        <div class="text-4xl md:text-6xl font-brand leading-none">folio.</div>
+    <footer class="pt-32 pb-16 px-6 w-full">
+        <div class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-brand leading-none">
+            <span>folio</span>
+            <span class="opacity-70">labs</span>
+        </div>
         <div class="flex flex-col justify-center">
             <div class="flex gap-4 justify-center mb-4 text-sm">
                 {{#each site.footer.links}}
                 <a href="{{url}}" class="hover:underline text-current font-bold">{{title}}</a>
                 {{/each}}
             </div>
-            <div class="mb-1 text-sm text-gray-400 text-center">
+            <div class="mb-1 text-sm opacity-60">
                 <div>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-current font-bold">Josemi</a> in Valencia, Spain.</div>
                 <div>Source code is available on <a href="{{site.repository}}" class="hover:underline text-current font-bold">GitHub</a>.</div>
             </div>
-            <div class="text-xs text-gray-600 text-center">
+            <div class="text-xs opacity-60">
                 <span>This site does not track you.</span>
             </div>
         </div>
