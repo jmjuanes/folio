@@ -133,7 +133,7 @@
             }
         ]
     },
-    "callToAction": {
+    "gettingStarted": {
         "sectionOptions": {
             "title": [
                 {
@@ -144,6 +144,7 @@
                     "text": "Folio Studio."
                 }
             ],
+            "icon": "rocket",
             "description": "Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space.",
             "actions": [
                 {
@@ -183,5 +184,5 @@
     {{>faq.mustache items=page.attributes.faq.items}}
 {{/section.mustache}}
 
-{{!-- call to action --}}
-{{>section.mustache ...page.attributes.callToAction.sectionOptions}}
+{{!-- getting started --}}
+{{>section.mustache ...page.attributes.gettingStarted.sectionOptions}}
