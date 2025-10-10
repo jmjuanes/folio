@@ -4,10 +4,11 @@
     "layout": "default.mustache",
     "permalink": "/index.html",
     "hero": {
+        "label": "Sketch. Design. Prototype.",
         "title": [
             {
                 "text": "Instant ",
-                "className": "font-normal italic"
+                "className": "font-normal"
             },
             {
                 "text": "Sketching.",
@@ -21,7 +22,7 @@
             "title": [
                 {
                     "text": "Sketch and Design. ",
-                    "className": "opacity-60"
+                    "className": "block opacity-60"
                 },
                 {
                     "text": "With freedom."
@@ -45,6 +46,32 @@
                 "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
             }
         ]
+    },
+    "studio": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "text": "Introducing ",
+                    "className": "opacity-60"
+                },
+                {
+                    "text": "Folio Studio"
+                }
+            ],
+            "description": "",
+            "className": "text-gray-950",
+            "style": "background-color:#bef264;",
+            "actions": [
+                {
+                    "text": "About Studio",
+                    "url": "/studio"
+                },
+                {
+                    "text": "Documentation",
+                    "url": "/docs"
+                }
+            ]
+        }
     }
 }
 ---
@@ -58,6 +85,9 @@
         </div>
     </div>
 {{/hero.mustache}}
+
 {{>>section.mustache ...page.attributes.features.sectionOptions}}
     {{>group.mustache size="3" items=page.attributes.features.items}}
 {{/section.mustache}}
+
+{{>section.mustache ...page.attributes.studio.sectionOptions}}
