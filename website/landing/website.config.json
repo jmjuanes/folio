@@ -30,12 +30,12 @@
             "url": "/studio"
         },
         {
-            "title": "Try",
-            "url": "/app"
+            "title": "Plans",
+            "url": "/plans"
         },
         {
-            "title": "GitHub",
-            "url": "https://github.com/jmjuanes/folio"
+            "title": "Try",
+            "url": "/app"
         }
     ],
     "footer": {
