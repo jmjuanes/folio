@@ -51,14 +51,15 @@
         "sectionOptions": {
             "title": [
                 {
-                    "text": "Introducing ",
-                    "className": "opacity-60"
+                    "text": "Introducing",
+                    "className": "block opacity-60"
                 },
                 {
                     "text": "Folio Studio"
                 }
             ],
-            "description": "",
+            "icon": "drawing",
+            "description": "A minimal editor for sketching ideas and systems. Fully self-hosted.",
             "className": "text-gray-950",
             "style": "background-color:#bef264;",
             "actions": [
@@ -85,6 +86,8 @@
         </div>
     </div>
 {{/hero.mustache}}
+
+{{>separator.mustache}}
 
 {{>>section.mustache ...page.attributes.features.sectionOptions}}
     {{>group.mustache size="3" items=page.attributes.features.items}}
