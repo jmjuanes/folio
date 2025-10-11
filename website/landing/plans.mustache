@@ -38,16 +38,16 @@
 }
 ---
 {{>>hero.mustache ...page.attributes.hero}}
-    <div class="py-16 grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <div class="py-16 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
     {{#each page.attributes.plans}}
         <div class="border-1 border-current rounded-4xl p-8">
             <div class="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold">{{this.title}}</div>
-            <div class="text-center text-lg font-medium opacity-80">{{this.description}}</div>
+            <div class="text-center text-lg sm:text-xl font-medium opacity-80">{{this.description}}</div>
             <div class="flex flex-col gap-4 mt-8">
             {{#each this.features}}
-                <div class="flex flex-row items-start gap-2">
-                    <div class="shrink-0 text-current">
-                        {{=icon icon="check" className="w-8 h-8"}}
+                <div class="flex flex-row items-start gap-4">
+                    <div class="shrink-0 text-current flex">
+                        {{=icon icon="check" className="w-4 h-4"}}
                     </div>
                     <div class="w-full opacity-80">{{!this}}</div>
                 </div>
