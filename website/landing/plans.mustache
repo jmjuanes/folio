@@ -27,6 +27,7 @@
             "features": [
                 "1 Single board.",
                 "1 User.",
+                "Extend Folio with Plugins (*).",
                 "Data is stored in your browser."
             ],
             "actionText": "Try it",
@@ -58,6 +59,10 @@
                 "Always accesible."
             ]
         }
+    ],
+    "notes": [
+        "<b>*</b>: Plugins will be available in <b>v0.28.0</b>.",
+        "<b>**</b>: Multiuser support and organize boards into folders will be available soon."
     ]
 }
 ---
@@ -79,13 +84,18 @@
             {{/each}}
             </div>
             {{#if this.actionText}}
-            <div class="mt-4 flex justify-center">
-                <a href="{{this.actionLink}}" class="font-bold text-xl hover:underline">
+            <div class="mt-8 flex justify-center">
+                <a href="{{this.actionLink}}" class="font-bold text-2xl hover:underline">
                     <span>{{!this.actionText}} →</span>
                 </a>
             </div>
             {{/if}}
         </div>
+    {{/each}}
+    </div>
+    <div class="flex flex-col items-center gap-2">
+    {{#each page.attributes.notes}}
+        <div class="text-sm opacity-50">{{this}}</div>
     {{/each}}
     </div>
 {{/hero.mustache}}
