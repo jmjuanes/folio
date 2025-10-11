@@ -22,7 +22,8 @@
     "plans": [
         {
             "title": "Folio Lite",
-            "description": "Sketch instantly. No setup.",
+            "subtitle": "Sketch instantly. No setup.",
+            "description": "Use Folio directly in your browser. One board saved locally, no signup, no installation — perfect for capturing ideas on the fly.",
             "features": [
                 "1 Single board.",
                 "1 User.",
@@ -31,23 +32,31 @@
         },
         {
             "title": "Folio Studio",
-            "description": "Host it. Share it. Scale it.",
+            "subtitle": "Host it. Share it. Scale it.",
+            "description": "Deploy Folio Studio via Docker on your machine or server. Perfect for teams or personal infrastructure.",
+            "features": []
+        },
+        {
+            "title": "Folio Plus",
+            "subtitle": "Cloud-based. Still yours.",
+            "description": "A future cloud version of Folio Studio. Multi-user, hosted, and always accessible — still just an idea, but maybe someday.",
             "features": []
         }
     ]
 }
 ---
 {{>>hero.mustache ...page.attributes.hero}}
-    <div class="py-16 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+    <div class="py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
     {{#each page.attributes.plans}}
         <div class="border-1 border-current rounded-4xl p-8">
-            <div class="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold">{{this.title}}</div>
-            <div class="text-center text-lg sm:text-xl font-medium opacity-80">{{this.description}}</div>
-            <div class="flex flex-col gap-4 mt-8">
+            <div class="text-center text-3xl sm:text-4xl md:text-4xl font-extrabold">{{this.title}}</div>
+            <div class="text-center text-xl font-medium opacity-90 mb-2">{{this.subtitle}}</div>
+            <div class="text-lg opacity-80 mb-4">{{this.description}}</div>
+            <div class="flex flex-col gap-4">
             {{#each this.features}}
                 <div class="flex flex-row items-start gap-4">
                     <div class="shrink-0 text-current flex">
-                        {{=icon icon="check" className="w-4 h-4"}}
+                        {{=icon icon="check" className="w-6 h-6"}}
                     </div>
                     <div class="w-full opacity-80">{{!this}}</div>
                 </div>
