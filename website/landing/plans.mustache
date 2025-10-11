@@ -27,15 +27,14 @@
     ]
 }
 ---
-{{>>hero.mustache ...page.attributes.hero}}{{/hero.mustache}}
-
-<section class="w-full py-32 sm:py-40 md:py-48">
-    <div class="mx-auto max-w-6xl px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+{{>>hero.mustache ...page.attributes.hero}}
+    <div class="py-16 grid grid-cols-1 md:grid-cols-3 gap-8">
     {{#each page.attributes.plans}}
         <div class="border-1 border-current rounded-4xl p-8">
-            <div class="text-center text-2xl font-extrabold">{{this.title}}</div>
+            <div class="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold">{{this.title}}</div>
             <div class="text-center text-lg font-medium opacity-80">{{this.description}}</div>
         </div>
     {{/each}}
     </div>
-</section>
+{{/hero.mustache}}
+
