@@ -6,13 +6,36 @@
     "hero": {
         "title": [
             {
-                "text": "Plans."
+                "text": "Plans &amp; Features."
             }
         ],
-        "subtitle": "Explore the different ways to use Folio — from quick sketches in the browser to fully hosted multi-user setups. No pricing, just possibilities."
-    }
+        "subtitle": "Explore the different ways to use Folio — from quick sketches in the browser to fully hosted multi-user setups."
+    },
+    "plans": [
+        {
+            "title": "Folio Lite",
+            "description": "Sketch instantly. No setup."
+        },
+        {
+            "title": "Folio Studio",
+            "description": "Host it. Share it. Scale it."
+        },
+        {
+            "title": "Folio Studio Plus",
+            "description": "Cloud-based. Still yours."
+        }
+    ]
 }
 ---
 {{>>hero.mustache ...page.attributes.hero}}{{/hero.mustache}}
 
-
+<section class="w-full py-32 sm:py-40 md:py-48">
+    <div class="mx-auto max-w-6xl px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+    {{#each page.attributes.plans}}
+        <div class="border-1 border-current rounded-4xl p-8">
+            <div class="text-center text-2xl font-extrabold">{{this.title}}</div>
+            <div class="text-center text-lg font-medium opacity-80">{{this.description}}</div>
+        </div>
+    {{/each}}
+    </div>
+</section>
