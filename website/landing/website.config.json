@@ -1,9 +1,7 @@
 {
-    "global": {
-        "title": "Minimal whiteboard for sketching and prototyping",
-        "description": "Folio is a minimalistic digital whiteboard for sketching and prototyping. It is designed to be simple and easy to use, with a focus on speed and efficiency.",
-        "url": "https://folio.josemi.xyz"
-    },
+    "title": "Minimal whiteboard for sketching and prototyping",
+    "description": "Folio is a minimalistic digital whiteboard for sketching and prototyping. It is designed to be simple and easy to use, with a focus on speed and efficiency.",
+    "url": "https://folio.josemi.xyz",
     "meta": [
         {
             "name": "og:type",
@@ -28,12 +26,16 @@
     ],
     "navigation": [
         {
-            "title": "Try",
-            "url": "/app"
+            "title": "Studio",
+            "url": "/studio"
         },
         {
-            "title": "GitHub",
-            "url": "https://github.com/jmjuanes/folio"
+            "title": "Plans",
+            "url": "/plans"
+        },
+        {
+            "title": "Try",
+            "url": "/app"
         }
     ],
     "footer": {
@@ -49,31 +51,6 @@
             {
                 "title": "Changelog",
                 "url": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
-            }
-        ]
-    },
-    "features": {
-        "title": "Sketch and Design with freedom.",
-        "highlights": [
-            {
-                "icon": "shield",
-                "title": "Design with total Privacy.",
-                "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
-            },
-            {
-                "icon": "drawing",
-                "title": "Boundless Canvas.",
-                "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
-            },
-            {
-                "icon": "files",
-                "title": "Organize your ideas.",
-                "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
-            },
-            {
-                "icon": "album",
-                "title": "Save, Organize, and Reuse Elements",
-                "description": "Use the <b>Library</b> to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
             }
         ]
     }
