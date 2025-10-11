@@ -28,7 +28,9 @@
                 "1 Single board.",
                 "1 User.",
                 "Data is stored in your browser."
-            ]
+            ],
+            "actionText": "Try it",
+            "actionLink": "/app"
         },
         {
             "title": "Folio Studio",
@@ -40,7 +42,9 @@
                 "Multiple users (**).",
                 "Organize boards into folders (**).",
                 "Data saved in your machine or your server."
-            ]
+            ],
+            "actionText": "Read the Docs",
+            "actionLink": "/docs"
         },
         {
             "title": "Folio Plus",
@@ -62,8 +66,8 @@
     {{#each page.attributes.plans}}
         <div class="border-1 border-current rounded-4xl p-8">
             <div class="text-center text-3xl sm:text-4xl md:text-4xl font-extrabold">{{this.title}}</div>
-            <div class="text-center text-xl font-medium opacity-90 mb-2">{{this.subtitle}}</div>
-            <div class="text-sm opacity-80 mb-4">{{this.description}}</div>
+            <div class="text-center text-xl font-medium opacity-90 mb-3">{{this.subtitle}}</div>
+            <div class="text-sm opacity-80 mb-6">{{this.description}}</div>
             <div class="flex flex-col gap-4">
             {{#each this.features}}
                 <div class="flex flex-row items-start gap-4">
@@ -74,6 +78,13 @@
                 </div>
             {{/each}}
             </div>
+            {{#if this.actionText}}
+            <div class="mt-4 flex justify-center">
+                <a href="{{this.actionLink}}" class="font-bold text-xl hover:underline">
+                    <span>{{!this.actionText}} →</span>
+                </a>
+            </div>
+            {{/if}}
         </div>
     {{/each}}
     </div>
