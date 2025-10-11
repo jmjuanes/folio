@@ -39,11 +39,6 @@ press({
             folder: "layouts",
             extensions: [ ".mustache" ],
         }),
-        press.AssetsPlugin({
-            folder: "public/screenshots",
-            basePath: "screenshots",
-            extensions: [ ".png", ".jpg", ".jpeg", ".gif", ".svg" ],
-        }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
             // highlight: (code, language) => {

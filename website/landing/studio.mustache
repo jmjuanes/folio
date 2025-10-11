@@ -87,13 +87,24 @@
         },
         "items": [
             {
-                "title": "Manage your boards",
-                "description": "Rename, duplicate, download, or delete your boards with a single click from your sidebar. Stay organized and in control.",
-                "image": "/screenshots/studio-manage-20251006.png"
+                "icon": "sidebar-left",
+                "title": "One Sidebar to Rule Them All.",
+                "description": "Rename, duplicate, download, or delete your boards with a single click from your sidebar. Stay organized and in control of your workspace."
             },
             {
-                "title": "Visual Previews of Your Boards",
-                "description": "Get a quick glance at your recent boards with live thumbnails, so you know exactly where to jump back in."
+                "icon": "image",
+                "title": "Visual Previews of Your Boards.",
+                "description": "Get a quick glance at your recent boards with live thumbnails. Your Home screen will show your recent boards with clarity, so you know exactly where to jump back in."
+            },
+            {
+                "icon": "plus",
+                "title": "Create New Boards Instantly.",
+                "description": "Start a new project in seconds. Click the <b>New Board</b> button, and you are ready to sketch your next big idea. No delays, just creativity."
+            },
+            {
+                "icon": "upload",
+                "title": "Import and Export with Ease.",
+                "description": "Easily import existing Folio boards or export your current work. Folio Studio allows seamless transitions between local and web versions, ensuring your creativity flows uninterrupted."
             }
         ]
     },
@@ -168,6 +179,8 @@
         </div>
     </div>
 {{/hero.mustache}}
+
+{{>separator.mustache}}
 
 {{!-- first features section --}}
 {{>>section.mustache ...page.attributes.features.sectionOptions}}

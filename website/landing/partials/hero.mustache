@@ -1,4 +1,4 @@
-<section class="max-w-6xl mx-auto px-6 py-16 sm:py-20 md:py-24 flex flex-col justify-center items-center gap-6">
+<section class="max-w-6xl mx-auto px-6 py-20 sm:py-32 md:py-48 flex flex-col justify-center items-center gap-6">
     {{#if this.label}}
     <div class="flex items-center justify-center">
         <div class="text-current px-4 py-1 rounded-full border-1 border-current text-base opacity-60">
@@ -6,13 +6,13 @@
         </div>
     </div>
     {{/if}}
-    <div class="max-w-4xl mb-0 text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-center leading-tight font-extrabold">
+    <div class="mb-0 text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-center leading-tight font-extrabold">
     {{#each this.title}}
         <span class="{{this.className}}">{{!this.text}}</span>
     {{/each}}
     </div>
     {{#if this.subtitle}}
-    <div class="max-w-2xl mb-0 text-xl md:text-2xl text-center">
+    <div class="max-w-4xl mb-0 text-2xl md:text-3xl text-center">
         <span class="opacity-80">{{!this.subtitle}}</span>
     </div>
     {{/if}}

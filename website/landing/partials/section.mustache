@@ -1,6 +1,6 @@
-<section class="w-full py-32 md:py-40 {{this.className}}" style="{{this.style}}" data-role="section">
+<section class="w-full py-32 sm:py-40 md:py-48 {{this.className}}" style="{{this.style}}" data-role="section">
     <div class="mx-auto max-w-6xl px-6">
-        <div class="flex flex-col gap-8 mb-24 items-center" data-role="section:header">
+        <div class="flex flex-col gap-8 items-center" data-role="section:header">
             {{#if this.icon}}
             <div class="flex mb-0">
                 <div class="flex items-center opacity-90">
@@ -8,15 +8,17 @@
                 </div>
             </div>
             {{/if}}
-            {{#if this.label}}
-            <div class="font-bold text-lg md:text-xl text-center opacity-70">
-                {{!this.label}}
-            </div>
-            {{/if}}
-            <div class="max-w-4xl text-5xl sm:text-6xl md:text-7xl leading-none font-extrabold text-center">
-            {{#each this.title}}
-                <span class="{{this.className}}">{{!this.text}}</span>
-            {{/each}}
+            <div class="max-w-4xl w-full mx-auto flex flex-col items-center">
+                {{#if this.label}}
+                <div class="mb-2 font-bold text-xl md:text-2xl text-center opacity-70">
+                    {{!this.label}}
+                </div>
+                {{/if}}
+                <div class="text-5xl sm:text-6xl md:text-7xl leading-none font-extrabold text-center">
+                {{#each this.title}}
+                    <span class="{{this.className}}">{{!this.text}}</span>
+                {{/each}}
+                </div>
             </div>
             {{#if this.description}}
             <div class="max-w-2xl text-xl md:text-2xl text-center opacity-80">
@@ -33,6 +35,10 @@
             </div>
             {{/if}}
         </div>
-        {{!@content}}
+        {{#if @content}}
+        <div class="mt-24">
+            {{!@content}}
+        </div>
+        {{/if}}
     </div>
 </section>

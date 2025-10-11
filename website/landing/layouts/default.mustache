@@ -21,9 +21,9 @@
     </style>
 </head>
 <body class="m-0 p-0 font-sans leading-normal bg-gray-950 text-white">
-    <header class="flex items-center justify-between w-full px-6 pt-6">
+    <header class="flex items-center justify-between w-full px-6 pt-6 max-w-8xl mx-auto">
         <a href="/" class="flex items-center gap-2 cursor-pointer text-current">
-            <div class="text-4xl font-brand">folio.</div>
+            <div class="text-3xl sm:text-4xl font-brand">folio.</div>
         </a>
         <div class="flex gap-6 items-center">
             {{#each site.navigation}}
@@ -34,22 +34,22 @@
         </div>
     </header>
     {{!@content}}
-    <footer class="pt-32 pb-16 px-6 w-full">
-        <div class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-brand leading-none">
-            <span>folio</span>
-            <span class="opacity-70">labs</span>
+    <div class="w-full h-px bg-current opacity-20"></div>
+    <footer class="pt-32 pb-24 px-6 w-full flex flex-col items-center gap-8">
+        <div class="text-6xl sm:text-8xl md:text-9xl font-brand leading-none">
+            <span>folio</span><span class="opacity-70">labs</span>
         </div>
         <div class="flex flex-col justify-center">
-            <div class="flex gap-4 justify-center mb-4 text-sm">
+            <div class="flex gap-4 justify-center mb-4">
                 {{#each site.footer.links}}
                 <a href="{{url}}" class="hover:underline text-current font-bold">{{title}}</a>
                 {{/each}}
             </div>
-            <div class="mb-1 text-sm opacity-60">
+            <div class="mb-1 text-sm opacity-60 text-center">
                 <div>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-current font-bold">Josemi</a> in Valencia, Spain.</div>
                 <div>Source code is available on <a href="{{site.repository}}" class="hover:underline text-current font-bold">GitHub</a>.</div>
             </div>
-            <div class="text-xs opacity-60">
+            <div class="text-xs opacity-60 text-center">
                 <span>This site does not track you.</span>
             </div>
         </div>
