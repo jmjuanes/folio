@@ -6,7 +6,15 @@
     "hero": {
         "title": [
             {
-                "text": "Plans &amp; Features."
+                "text": "Plans"
+            },
+            {
+                "text": " &amp; ",
+                "className": "opacity-60"
+            },
+            {
+                "text": "Features",
+                "className": "italic font-normal"
             }
         ],
         "subtitle": "Explore the different ways to use Folio — from quick sketches in the browser to fully hosted multi-user setups."
@@ -14,25 +22,37 @@
     "plans": [
         {
             "title": "Folio Lite",
-            "description": "Sketch instantly. No setup."
+            "description": "Sketch instantly. No setup.",
+            "features": [
+                "1 Single board.",
+                "1 User.",
+                "Data is stored in your browser."
+            ]
         },
         {
             "title": "Folio Studio",
-            "description": "Host it. Share it. Scale it."
-        },
-        {
-            "title": "Folio Studio Plus",
-            "description": "Cloud-based. Still yours."
+            "description": "Host it. Share it. Scale it.",
+            "features": []
         }
     ]
 }
 ---
 {{>>hero.mustache ...page.attributes.hero}}
-    <div class="py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div class="py-16 grid grid-cols-1 sm:grid-cols-2 gap-6">
     {{#each page.attributes.plans}}
         <div class="border-1 border-current rounded-4xl p-8">
-            <div class="text-center text-3xl sm:text-4xl md:text-4xl font-extrabold">{{this.title}}</div>
+            <div class="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold">{{this.title}}</div>
             <div class="text-center text-lg font-medium opacity-80">{{this.description}}</div>
+            <div class="flex flex-col gap-4 mt-8">
+            {{#each this.features}}
+                <div class="flex flex-row items-start gap-2">
+                    <div class="shrink-0 text-current">
+                        {{=icon icon="check" className="w-8 h-8"}}
+                    </div>
+                    <div class="w-full opacity-80">{{!this}}</div>
+                </div>
+            {{/each}}
+            </div>
         </div>
     {{/each}}
     </div>
