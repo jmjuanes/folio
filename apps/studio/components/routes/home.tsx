@@ -10,34 +10,38 @@ import { useToaster } from "../../contexts/toaster.tsx";
 // it includes a placeholder image and the document name
 // @param {String} id - The document ID. Is required to link to the document.
 // @param {String} name - The document display name.
+// @param {String} attributes - Additional attributes of the document
 // @param {String} updatedAt - The document last updated date.
-export const DocumentCard = ({ id, name, thumbnail, updatedAt }): React.JSX.Element => (
-    <a href={`#${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
-        <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
-            {thumbnail && (
-                <img src={thumbnail} width="100%" />
-            )}
-            {!thumbnail && (
-                <div className="flex text-gray-500 text-3xl">
-                    <ImageSlashIcon />
+export const DocumentCard = ({ id, name, attributes, updatedAt }): React.JSX.Element => {
+    const attributesData = JSON.parse(attributes || "{}");
+    return (
+        <a href={`#${id}`} className="block relative rounded-lg border-1 border-gray-200 overflow-hidden">
+            <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
+                {attributesData?.thumbnail && (
+                    <img src={attributesData.thumbnail} width="100%" />
+                )}
+                {!attributesData?.thumbnail && (
+                    <div className="flex text-gray-500 text-3xl">
+                        <ImageSlashIcon />
+                    </div>
+                )}
+            </div>
+            <div className="p-2 flex flex-col gap-1">
+                <div className="flex items-center justify-between gap-1 w-full">
+                    <div className="font-medium text-sm w-48 truncate shrink-0 py-0">
+                        <span>{name || "Untitled"}</span>
+                    </div>
                 </div>
-            )}
-        </div>
-        <div className="p-2 flex flex-col gap-1">
-            <div className="flex items-center justify-between gap-1 w-full">
-                <div className="font-medium text-sm w-48 truncate shrink-0 py-0">
-                    <span>{name || "Untitled"}</span>
+                <div className="opacity-60 text-xs flex items-center gap-1">
+                    <div className="flex text-sm">
+                        <CalendarIcon />
+                    </div>
+                    <div>Last edited {formatDate(updatedAt)}</div>
                 </div>
             </div>
-            <div className="opacity-60 text-xs flex items-center gap-1">
-                <div className="flex text-sm">
-                    <CalendarIcon />
-                </div>
-                <div>Last edited {formatDate(updatedAt)}</div>
-            </div>
-        </div>
-    </a>
-);
+        </a>
+    );
+};
 
 // @description render recent documents
 const RecentDocuments = ({ documents, maxRecentDocuments }): React.JSX.Element => (
@@ -54,7 +58,7 @@ const RecentDocuments = ({ documents, maxRecentDocuments }): React.JSX.Element =
                     key={documentItem.id + ":" + index}
                     id={documentItem.id}
                     name={documentItem.name}
-                    thumbnail={documentItem.thumbnail}
+                    attributes={documentItem.attributes}
                     updatedAt={documentItem.updated_at}
                 />
             ))}

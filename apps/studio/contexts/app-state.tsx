@@ -87,7 +87,6 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 const response = await client.graphql(ADD_DOCUMENT, {
                     collection: collection,
                     name: initialData?.title || "Untitled",
-                    thumbnail: null,
                     data: JSON.stringify(initialData || {}),
                 });
                 return response?.addDocument || null;
@@ -114,7 +113,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 const response = await client.graphql(UPDATE_DOCUMENT, {
                     id: documentId,
                     name: documentPayload.name,
-                    thumbnail: documentPayload.thumbnail,
+                    attributes: documentPayload.attributes,
                     data: documentPayload.data,
                 });
                 return response?.updateDocument || null;
@@ -131,7 +130,7 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 const response = await client.graphql(ADD_DOCUMENT, {
                     collection: originalDocument?.collection || Collection.BOARD,
                     name: newDocumentName,
-                    thumbnail: originalDocument?.thumbnail || null,
+                    // attributes: originalDocument?.attributes || "",
                     data: originalDocument?.data || "{}",
                 });
                 // note: this is a terrible workaround until the backend returns the entired document

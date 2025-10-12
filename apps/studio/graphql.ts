@@ -8,7 +8,7 @@ export const QUERY_DOCUMENTS = `
             created_at
             updated_at
             name
-            thumbnail
+            attributes
         }
     }
 `;
@@ -23,7 +23,7 @@ export const GET_DOCUMENT = `
             created_at
             updated_at
             name
-            thumbnail
+            attributes
             data
         }
     }
@@ -32,11 +32,11 @@ export const GET_DOCUMENT = `
 // @description mutation to create a new document
 // @params collection - the id of the collection (board, drawing, library, etc) (REQUIRED)
 // @params name - the name of the document
-// @params thumbnail - the thumbnail of the document
+// @params attributes - additional attributes of the document
 // @params data - the data of the document (JSON stringified)
 export const ADD_DOCUMENT = `
-    mutation AddDocument($collection: String!, $name: String, $thumbnail: String, $data: String) {
-        addDocument(collection: $collection, name: $name, thumbnail: $thumbnail, data: $data) {
+    mutation AddDocument($collection: String!, $name: String, $attributes: String, $data: String) {
+        addDocument(collection: $collection, name: $name, attributes: $attributes, data: $data) {
             id
         }
     }
@@ -45,11 +45,11 @@ export const ADD_DOCUMENT = `
 // @description mutation to update a document by id
 // @params id - the id of the document (REQUIRED)
 // @params name - the name of the document
-// @params thumbnail - the thumbnail of the document
+// @params attributes - additional attributes of the document
 // @params data - the data of the document (JSON stringified)
 export const UPDATE_DOCUMENT = `
-    mutation UpdateDocument($id: String!, $name: String, $thumbnail: String, $data: String) {
-        updateDocument(id: $id, name: $name, thumbnail: $thumbnail, data: $data) {
+    mutation UpdateDocument($id: String!, $name: String, $attributes: String, $data: String) {
+        updateDocument(id: $id, name: $name, attributes: $attributes, data: $data) {
             id
         }
     }
