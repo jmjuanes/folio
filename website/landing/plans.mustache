@@ -145,7 +145,7 @@
                                     "icon": "x"
                                 },
                                 {
-                                    "text": ""
+                                    "text": "*"
                                 },
                                 {
                                     "icon": "check"
@@ -186,34 +186,6 @@
                     "title": "Editor Features",
                     "rows": [
                         {
-                            "title": "Shared Library",
-                            "columns": [
-                                {
-                                    "icon": "check"
-                                },
-                                {
-                                    "icon": "check"
-                                },
-                                {
-                                    "icon": "check"
-                                }
-                            ]
-                        },
-                        {
-                            "title": "Plugins",
-                            "columns": [
-                                {
-                                    "icon": "check"
-                                },
-                                {
-                                    "icon": "check"
-                                },
-                                {
-                                    "icon": "check"
-                                }
-                            ]
-                        },
-                        {
                             "title": "Built-in Tools",
                             "columns": [
                                 {
@@ -242,13 +214,41 @@
                             ]
                         },
                         {
+                            "title": "Shared Library",
+                            "columns": [
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Plugins",
+                            "columns": [
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
                             "title": "Customization",
                             "columns": [
                                 {
                                     "icon": "x"
                                 },
                                 {
-                                    "icon": "minus"
+                                    "text": "*"
                                 },
                                 {
                                     "icon": "check"
@@ -370,19 +370,19 @@
     </div>
     {{#each page.attributes.comparison.table.body}}
     <div class="w-full">
-        <div class="opacity-60 py-2">
+        <div class="opacity-60 py-3">
             <span class="font-normal text-lg">{{this.title}}</span>
         </div>
         {{#each this.rows}}
         <div class="h-px w-full bg-current opacity-10"></div>
-        <div class="w-full grid grid-cols-5 gap-2 py-2">
+        <div class="w-full grid grid-cols-5 gap-2 py-3">
             <div class="col-span-2">
                 <span class="font-bold">{{this.title}}</span>
             </div>
             {{#each this.columns}}
-            <div class="flex justify-center w-full">
+            <div class="flex justify-center w-full text-center">
                 {{#if this.text}}
-                <span class="opacity-80">{{this.text}}</span>
+                <span class="opacity-80">{{!this.text}}</span>
                 {{/if}}
                 {{#if this.icon}}
                 <div class="flex items-center">
