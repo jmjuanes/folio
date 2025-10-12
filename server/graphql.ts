@@ -28,9 +28,9 @@ export const DocumentType = new graphql.GraphQLObjectType({
             type: graphql.GraphQLString,
             description: "name of the document",
         },
-        thumbnail: {
+        attributes: {
             type: graphql.GraphQLString,
-            description: "thumbnail image of the document",
+            description: "additional attributes of the document",
         },
         data: {
             type: graphql.GraphQLString,
@@ -123,7 +123,7 @@ export const schema = new graphql.GraphQLSchema({
                     name: {
                         type: graphql.GraphQLString,
                     },
-                    thumbnail: {
+                    attributes: {
                         type: graphql.GraphQLString,
                     },
                     data: {
@@ -148,7 +148,7 @@ export const schema = new graphql.GraphQLSchema({
                     name: {
                         type: graphql.GraphQLString,
                     },
-                    thumbnail: {
+                    attributes: {
                         type: graphql.GraphQLString,
                     },
                     data: {
