@@ -36,7 +36,7 @@ export const createMemoryStore = async (config: Config): Promise<Storage> => {
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
                 name: payload.name || "Untitled",
-                thumbnail: payload.thumbnail || "",
+                attributes: payload.attributes || "",
                 data: payload.data || "",
             });
         },
@@ -45,7 +45,7 @@ export const createMemoryStore = async (config: Config): Promise<Storage> => {
                 return document.owner === owner && document.id === id;
             });
             if (document && payload) {
-                [ "name", "thumbnail", "data" ].forEach(field => {
+                [ "name", "attributes", "data" ].forEach(field => {
                     if (typeof payload[field] === "string") {
                         document[field] = payload[field];
                     }
