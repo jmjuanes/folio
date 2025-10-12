@@ -359,8 +359,8 @@
     {{/if}}
 {{/hero.mustache}}
 {{>>section.mustache ...page.attributes.comparison.sectionOptions}}
-<div class="flex flex-col gap-4">
-    <div class="grid grid-cols-4 gap-2 w-full">
+<div class="flex flex-col gap-4 w-full">
+    <div class="grid grid-cols-5 gap-2 w-full">
         <div class="col-span-2"></div>
         {{#each page.attributes.comparison.table.header}}
         <div class="w-full text-center text-xl">
@@ -369,9 +369,9 @@
         {{/each}}
     </div>
     {{#each page.attributes.comparison.table.body}}
-    <div class="">
+    <div class="w-full">
         <div class="opacity-60">
-            <span class="font-bold text-lg">{{this.title}}</div>
+            <span class="font-normal text-lg">{{this.title}}</span>
         </div>
     </div>
     {{/each}}
