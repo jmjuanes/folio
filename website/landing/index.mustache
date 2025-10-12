@@ -1,0 +1,103 @@
+---
+{
+    "title": "Minimal whiteboard for sketching and prototyping",
+    "layout": "default.mustache",
+    "permalink": "/index.html",
+    "hero": {
+        "label": "Sketch. Design. Prototype.",
+        "title": [
+            {
+                "text": "Your "
+            },
+            {
+                "text": "Instant ",
+                "className": "font-normal italic"
+            },
+            {
+                "text": "Sketching ",
+                "className": "font-black"
+            },
+            {
+                "text": "Suite.",
+                "className": "opacity-80"
+            }
+        ],
+        "subtitle": "<b>Folio</b> is an infinite canvas for your creative journey. Sketch, prototype, and bring your ideas to life with ease."
+    },
+    "features": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "text": "Sketch and Design. ",
+                    "className": "block opacity-60"
+                },
+                {
+                    "text": "With freedom."
+                }
+            ]
+        },
+        "items": [
+            {
+                "icon": "shield",
+                "title": "Design with total Privacy.",
+                "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
+            },
+            {
+                "icon": "drawing",
+                "title": "Boundless Canvas.",
+                "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
+            },
+            {
+                "icon": "files",
+                "title": "Organize your ideas.",
+                "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
+            }
+        ]
+    },
+    "studio": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "text": "All Folio.",
+                    "className": "opacity-70"
+                },
+                {
+                    "text": "Self-Hosted."
+                }
+            ],
+            "icon": "sidebar-left",
+            "label": "Introducing <b>Folio Studio</b>.",
+            "description": "A lightweight editor for sketching structures, interfaces, and ideas. <b>Folio Studio</b> runs entirely on your machine.",
+            "className": "folio--secondary",
+            "actions": [
+                {
+                    "text": "About Studio",
+                    "url": "/studio"
+                },
+                {
+                    "text": "Documentation",
+                    "url": "/docs"
+                }
+            ]
+        }
+    }
+}
+---
+{{>>hero.mustache ...page.attributes.hero}}
+    <div class="flex flex-col items-center gap-1">
+        <a href="/app" class="flex gap-4 items-center cursor-pointer font-bold hover:underline text-current text-3xl md:text-5xl">
+            <span>Try folio &rarr;</span>
+        </a>
+        <div class="text-sm select-none text-center opacity-40">
+            <span>No signup. Start in less than 5 seconds.</span>
+        </div>
+    </div>
+{{/hero.mustache}}
+
+{{>separator.mustache}}
+
+{{>>section.mustache ...page.attributes.features.sectionOptions}}
+    {{>group.mustache size="3" items=page.attributes.features.items}}
+{{/section.mustache}}
+
+{{>section.mustache ...page.attributes.studio.sectionOptions}}

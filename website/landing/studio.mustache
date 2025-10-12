@@ -1,0 +1,201 @@
+---
+{
+    "title": "Studio",
+    "layout": "default.mustache",
+    "permalink": "/studio.html",
+    "command": "$ docker pull ghcr.io/jmjuanes/folio-studio",
+    "hero": {
+        "label": "Introducing <b>Folio Studio</b>.",
+        "title": [
+            {
+                "text": "Where "
+            },
+            {
+                "className": "underline font-bold",
+                "text": "Ideas"
+            },
+            {
+                "text": " take "
+            },
+            {
+                "className": "italic font-normal",
+                "text": "Shape."
+            },
+            {
+                "className": "font-black",
+                "text": " Locally."
+            }
+        ],
+        "subtitle": "A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.",
+        "actions": [
+            {
+                "text": "Documentation",
+                "url": "/docs"
+            },
+            {
+                "text": "GitHub",
+                "url": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio"
+            }
+        ]
+    },
+    "features": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "className": "opacity-60",
+                    "text": "Your sketching platform."
+                },
+                {
+                    "text": " On your computer."
+                }
+            ],
+            "description": "<b>Folio Studio</b> runs locally, giving you full control over your boards, your flow, and your data."
+        },
+        "items": [
+            {
+                "icon": "bolt",
+                "title": "Same Power, but local.",
+                "description": "All the features of Folio, but running entirely on your own server or computer without any external dependencies."
+            },
+            {
+                "icon": "lock",
+                "title": "Your data, your rules.",
+                "description": "No cloud, no tracking. Folio Studio stores everything locally on your server, ensuring that your data remains private and under your control."
+            },
+            {
+                "icon": "files",
+                "title": "Unlimited Creativity.",
+                "description": "Organize ideas and prototypes in separate spaces. Folio Studio supports unlimited boards to keep your projects tidy and accessible."
+            }
+        ]
+    },
+    "usage": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "className": "block opacity-60",
+                    "text": "Manage everything"
+                },
+                {
+                    "text": " from one place."
+                }
+            ],
+            "description": "<b>Folio Studio</b> provides a centralized dashboard to create and manage all your boards effortlessly.",
+            "className": "folio--secondary",
+            "icon": "template"
+        },
+        "items": [
+            {
+                "icon": "sidebar-left",
+                "title": "One Sidebar to Rule Them All.",
+                "description": "Rename, duplicate, download, or delete your boards with a single click from your sidebar. Stay organized and in control of your workspace."
+            },
+            {
+                "icon": "image",
+                "title": "Visual Previews of Your Boards.",
+                "description": "Get a quick glance at your recent boards with live thumbnails. Your Home screen will show your recent boards with clarity, so you know exactly where to jump back in."
+            },
+            {
+                "icon": "plus",
+                "title": "Create New Boards Instantly.",
+                "description": "Start a new project in seconds. Click the <b>New Board</b> button, and you are ready to sketch your next big idea. No delays, just creativity."
+            },
+            {
+                "icon": "upload",
+                "title": "Import and Export with Ease.",
+                "description": "Easily import existing Folio boards or export your current work. Folio Studio allows seamless transitions between local and web versions, ensuring your creativity flows uninterrupted."
+            }
+        ]
+    },
+    "faq": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "className": "opacity-60",
+                    "text": "Questions &amp;"
+                },
+                {
+                    "text": " Answers."
+                }
+            ],
+            "className": "folio--primary"
+        },
+        "items": [
+            {
+                "question": "Is Folio Studio open source?",
+                "answer": "Yes. Folio Studio is part of the Folio ecosystem and released under the MIT license. You can inspect, modify, and contribute freely."
+            },
+            {
+                "question": "What are the system requirements?",
+                "answer": "Folio Studio can run on any system that supports Docker, including Linux, macOS, and Windows. For optimal performance, we recommend at least 512MB of RAM."
+            },
+            {
+                "question": "How can I get started with Folio Studio?",
+                "answer": "You can get started by pulling the Docker image from GitHub Container Registry and following the installation instructions in our <a href='/docs' class='underline'>documentation</a>."
+            },
+            {
+                "question": "Can I use it for multiple boards or projects?",
+                "answer": "Absolutely. Folio Studio supports unlimited boards, perfect for organizing ideas across projects."
+            },
+            {
+                "question": "Where is my data stored?",
+                "answer": "All data is stored locally on your device or server. Folio Studio does not send anything to the cloud or track your usage."
+            }
+        ]
+    },
+    "gettingStarted": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "className": "block opacity-60",
+                    "text": "Get started with "
+                },
+                {
+                    "text": "Folio Studio."
+                }
+            ],
+            "icon": "rocket",
+            "description": "Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space.",
+            "className": "folio--secondary",
+            "actions": [
+                {
+                    "text": "Read the docs",
+                    "url": "/docs"
+                },
+                {
+                    "text": "Pull from GitHub",
+                    "url": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio"
+                }
+            ]
+        }
+    }
+}
+---
+{{!-- hero section --}}
+{{>>hero.mustache ...page.attributes.hero}}
+    <div class="flex justify-center py-8">
+        <div class="w-full d-flex flex-col text-current text-xl sm:text-2xl md:text-3xl text-center font-mono font-bold">
+            <div>{{page.attributes.command}}</div>
+        </div>
+    </div>
+{{/hero.mustache}}
+
+{{>separator.mustache}}
+
+{{!-- first features section --}}
+{{>>section.mustache ...page.attributes.features.sectionOptions}}
+    {{>group.mustache size="3" items=page.attributes.features.items}}
+{{/section.mustache}}
+
+{{!-- usage features section --}}
+{{>>section.mustache ...page.attributes.usage.sectionOptions}}
+    {{>group.mustache size="2" items=page.attributes.usage.items}}
+{{/section.mustache}}
+
+{{!-- questions and answers section --}}
+{{>>section.mustache ...page.attributes.faq.sectionOptions}}
+    {{>faq.mustache items=page.attributes.faq.items}}
+{{/section.mustache}}
+
+{{!-- getting started --}}
+{{>section.mustache ...page.attributes.gettingStarted.sectionOptions}}

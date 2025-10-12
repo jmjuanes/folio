@@ -1,21 +1,21 @@
 ---
 {
-    "title": "Not found"
+    "title": "Not found",
+    "layout": "default.mustache",
+    "permalink": "/404.html"
 }
 ---
-{{>>layout.html}}
-<section class="w-full max-w-4xl mx-auto px-6 py-32 min-h-screen flex flex-col justify-center items-center">
-    <div class="text-5xl text-white text-center mb-2">
+<section class="w-full max-w-4xl mx-auto px-6 py-16 min-h-screen flex flex-col justify-center items-center">
+    <div class="text-5xl text-center text-current mb-2">
         <strong class="font-black">Hmm, something is broken :(</strong>
     </div>
-    <div class="mb-6 text-center text-gray-500 max-w-xl">
+    <div class="mb-6 text-center text-current opacity-80 max-w-xl">
         <span>It looks like you have followed a broken link or entered a URL that does not exist. </span>
         <span>Please try again or contact us if the problem persists.</span>
     </div>
     <div class="flex select-none">
-        <a href="/" class="text-white hover:underline">
+        <a href="/" class="text-current hover:underline">
             <strong>Return to home</strong>
         </a>
     </div>
 </section>
-{{/layout.html}}
