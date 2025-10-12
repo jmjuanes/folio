@@ -73,6 +73,10 @@ press({
                     to: "icons.svg",
                 },
                 {
+                    from: "../../brand.css",
+                    to: "brand.css",
+                },
+                {
                     from: "public/og-image.png",
                     to: "og-image.png",
                 },
