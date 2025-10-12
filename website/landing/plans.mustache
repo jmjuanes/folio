@@ -64,7 +64,263 @@
     "notes": [
         "<b>*</b> Plugins will be available in <b>v0.28.0</b>.",
         "<b>**</b> Multiuser support and organize boards into folders will be available soon."
-    ]
+    ],
+    "comparison": {
+        "sectionOptions": {
+            "className": "hidden md:block",
+            "title": [
+                {
+                    "text": "How Folio Adapts to You."
+                }
+            ],
+            "description": "From Lite to Server, here is how Folio adapts to your flow."
+        },
+        "table": {
+            "header": [
+                {
+                    "title": "Folio Lite"
+                },
+                {
+                    "title": "Folio Studio"
+                },
+                {
+                    "title": "Folio Plus"
+                }
+            ],
+            "body": [
+                {
+                    "title": "Use Case",
+                    "rows": [
+                        {
+                            "title": "Ideal for",
+                            "columns": [
+                                {
+                                    "text": "Quick Sketches."
+                                },
+                                {
+                                    "text": "Local &amp; Teams."
+                                },
+                                {
+                                    "text": "Always-on access."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Core Features",
+                    "rows": [
+                        {
+                            "title": "Boards",
+                            "columns": [
+                                {
+                                    "text": "1 (local)"
+                                },
+                                {
+                                    "text": "Unlimited"
+                                },
+                                {
+                                    "text": "Unlimited"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Users",
+                            "columns": [
+                                {
+                                    "text": "1"
+                                },
+                                {
+                                    "text": "Unlimited"
+                                },
+                                {
+                                    "text": "1"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Teams",
+                            "columns": [
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "text": ""
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Storage",
+                            "columns": [
+                                {
+                                    "text": "Local (browser)"
+                                },
+                                {
+                                    "text": "Local (your computer) or Server"
+                                },
+                                {
+                                    "text": "Cloud"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Cloud Sync",
+                            "columns": [
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Editor Features",
+                    "rows": [
+                        {
+                            "title": "Shared Library",
+                            "columns": [
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Plugins",
+                            "columns": [
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Built-in Tools",
+                            "columns": [
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Pages",
+                            "columns": [
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Customization",
+                            "columns": [
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "minus"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Security",
+                    "rows": [
+                        {
+                            "title": "E2E Encryption",
+                            "columns": [
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Password Login",
+                            "columns": [
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Access Token Login",
+                            "columns": [
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "check"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "SSO Login",
+                            "columns": [
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "x"
+                                },
+                                {
+                                    "icon": "check"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
 }
 ---
 {{>>hero.mustache ...page.attributes.hero}}
@@ -102,4 +358,22 @@
     </div>
     {{/if}}
 {{/hero.mustache}}
-
+{{>>section.mustache ...page.attributes.comparison.sectionOptions}}
+<div class="flex flex-col gap-4">
+    <div class="grid grid-cols-4 gap-2 w-full">
+        <div class="col-span-2"></div>
+        {{#each page.attributes.comparison.table.header}}
+        <div class="w-full text-center text-xl">
+            <span class="font-bold">{{this.title}}</span>
+        </div>
+        {{/each}}
+    </div>
+    {{#each page.attributes.comparison.table.body}}
+    <div class="">
+        <div class="opacity-60">
+            <span class="font-bold text-lg">{{this.title}}</div>
+        </div>
+    </div>
+    {{/each}}
+</div>
+{{/section.mustache}}
