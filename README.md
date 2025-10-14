@@ -15,6 +15,10 @@ You might encounter occasional bugs or experience features that are still being 
 
 We encourage you to share your thoughts, suggestions, and any issues you encounter.
 
+## About this Repository
+
+This repository contains the core source code for [Folio](https://folio.josemi.xyz), a modular whiteboard built with React and TypeScript (mostly), designed for structured sketching and local-first workflows. It also includes the full codebase for [Folio Studio](https://folio.josemi.xyz/studio) - a full-stack and self-hosted application combining a Node.js backend (GraphQL + SQLite) with the frontend editor — as well as the [landing page](https://folio.josemi.xyz) and [documentation](https://folio.josemi.xyz/docs) for the project.
+
 ## Features
 
 - **Privacy First**: Your creative work is secure and private. Boards are saved directly in the user's browser, ensuring your data stays local and under your control.
