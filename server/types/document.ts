@@ -11,7 +11,7 @@ export type Document = {
     created_at: string,
     updated_at: string,
     name?: string,
-    thumbnail?: string,
+    attributes?: string,
     data?: string,
 };
 
@@ -20,7 +20,7 @@ export type Document = {
 export type DocumentPayload = {
     collection?: Collection; // collection is only required when creating a new document
     name?: string;
-    thumbnail?: string;
+    attributes?: string;
     data?: string;
 };
 

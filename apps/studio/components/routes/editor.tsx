@@ -48,15 +48,19 @@ export const EditorRoute = (props: any): React.JSX.Element => {
             };
             return exportToDataURL(page?.elements || [], exportOptions)
                 .then(thumbnailStr => {
+                    const originalAttributes = JSON.parse(initialData?.attributes || "{}");
                     return app.updateDocument(props.id, {
-                        thumbnail: thumbnailStr,
+                        attributes: JSON.stringify({
+                            ...originalAttributes,
+                            thumbnail: thumbnailStr,
+                        }),
                     });
                 })
                 .catch(error => {
                     console.error("Error updating thumbnail:", error);
                 });
         }
-    }, [ props.id, app ]);
+    }, [ props.id, app, initialData ]);
 
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {

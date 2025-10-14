@@ -39,7 +39,7 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             name TEXT,
-            thumbnail TEXT,
+            attributes TEXT,
             data TEXT,
             PRIMARY KEY (id)
         );
@@ -64,7 +64,7 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
 
             // construct the final query
             const whereSQL = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
-            const sql = `SELECT id,owner,collection,created_at,updated_at,name,thumbnail FROM ${DOCUMENTS_TABLE} ${whereSQL} ORDER BY updated_at DESC`;
+            const sql = `SELECT id,owner,collection,created_at,updated_at,name,attributes FROM ${DOCUMENTS_TABLE} ${whereSQL} ORDER BY updated_at DESC`;
             return await db.all(sql, params);
         },
 
@@ -81,8 +81,8 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
                 throw new Error(`Invalid collection '${collection}', must be one of: ${Object.values(Collection).join(", ")}`);
             }
             await db.run(
-                `INSERT INTO ${DOCUMENTS_TABLE} (owner, id, collection, name, thumbnail, data) VALUES (?, ?, ?, ?, ?, ?)`,
-                [ owner, id, collection, payload.name || "Untitled", payload.thumbnail || "", payload.data || "" ],
+                `INSERT INTO ${DOCUMENTS_TABLE} (owner, id, collection, name, attributes, data) VALUES (?, ?, ?, ?, ?, ?)`,
+                [ owner, id, collection, payload.name || "Untitled", payload.attributes || "", payload.data || "" ],
             );
         },
 
@@ -96,7 +96,7 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
             const setClauses = [ `updated_at = CURRENT_TIMESTAMP` ]; // always update the updated_at field
             const params: (string)[] = [];
 
-            [ "name", "thumbnail", "data" ].forEach((field) => {
+            [ "name", "attributes", "data" ].forEach((field) => {
                 if (typeof payload[field] === "string") {
                     setClauses.push(`${field} = ?`);
                     params.push(payload[field]);
