@@ -55,7 +55,6 @@ Used during active development to run Folio in watch mode, preview changes, or s
 | `yarn dev:lite`   | Start Folio Lite in development mode.            |
 | `yarn dev:studio` | Start Folio Studio in development mode. It uses a mock backend to simulate server interactions. |
 
-
 #### 🏗️ Build Commands  
 
 Compile Folio's components for production.
@@ -65,7 +64,6 @@ Compile Folio's components for production.
 | `yarn build:lite`    | Build Folio Lite (browser version).              |
 | `yarn build:studio`  | Build Folio Studio (frontend).                   |
 | `yarn build:server`  | Build the backend (GraphQL + SQLite).            |
-
 
 #### 🌐 Website Commands  
 
@@ -77,7 +75,6 @@ Build and serve the public-facing parts of Folio: Lite, landing page, and docume
 | `yarn build:landing` | Build the landing page.                           |
 | `yarn build:docs`    | Build the documentation site.                     |
 | `yarn copy:website`  | Copy all website builds to `www/` folder.         |
-
 
 #### 🧰 Other Commands  
 
@@ -93,10 +90,18 @@ Utility scripts for Docker, asset management, cleanup, and type checking.
 | `yarn typecheck:lite`| Type check Folio Lite.                           |
 | `yarn typecheck:studio` | Type check Folio Studio.                      |
 
+## 🤝 Contributing
 
-## Contributing
+Pull requests are welcome. If you are planning to add a new feature or make a significant change, please open a [discussion or issue](https://github.com/jmjuanes/folio/issues) first - it helps keep the project aligned and avoids duplicated work.
 
-Pull requests are always welcome. For new features or major changes, please open first a [new issue](https://github.com/jmjuanes/folio/issues) to discuss the new features or the changes you want to add to Folio.
+Before submitting a PR:
+
+- Make sure your code follows the existing style and structure.
+- Prefer TypeScript and modular design when possible.
+- Keep UI changes minimal unless they improve clarity or usability.
+- If your change affects multiple packages (Lite, Studio, Docs), mention it clearly.
+
+Bug fixes, documentation improvements, and small enhancements are always appreciated.
 
 ## License
 
