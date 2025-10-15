@@ -44,9 +44,9 @@ Navigate into the cloned repository and install all dependencies:
 $ yarn install
 ```
 
-### Development commands
+### Commands
 
-#### 🧪 Development Commands  
+#### Development Commands  
 
 Used during active development to run Folio in watch mode, preview changes, or serve local builds.
 
@@ -55,7 +55,7 @@ Used during active development to run Folio in watch mode, preview changes, or s
 | `yarn dev:lite`   | Start Folio Lite in development mode.            |
 | `yarn dev:studio` | Start Folio Studio in development mode. It uses a mock backend to simulate server interactions. |
 
-#### 🏗️ Build Commands  
+#### Build Commands  
 
 Compile Folio's components for production.
 
@@ -65,7 +65,7 @@ Compile Folio's components for production.
 | `yarn build:studio`  | Build Folio Studio (frontend).                   |
 | `yarn build:server`  | Build the backend (GraphQL + SQLite).            |
 
-#### 🌐 Website Commands  
+#### Website Commands  
 
 Build and serve the public-facing parts of Folio: Lite, landing page, and documentation.
 
@@ -76,7 +76,7 @@ Build and serve the public-facing parts of Folio: Lite, landing page, and docume
 | `yarn build:docs`    | Build the documentation site.                     |
 | `yarn copy:website`  | Copy all website builds to `www/` folder.         |
 
-#### 🧰 Other Commands  
+#### Other Commands  
 
 Utility scripts for Docker, asset management, cleanup, and type checking.
 
@@ -90,7 +90,7 @@ Utility scripts for Docker, asset management, cleanup, and type checking.
 | `yarn typecheck:lite`| Type check Folio Lite.                           |
 | `yarn typecheck:studio` | Type check Folio Studio.                      |
 
-## 🤝 Contributing
+## Contributing
 
 Pull requests are welcome. If you are planning to add a new feature or make a significant change, please open a [discussion or issue](https://github.com/jmjuanes/folio/issues) first - it helps keep the project aligned and avoids duplicated work.
 
