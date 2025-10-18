@@ -15,26 +15,22 @@ You might encounter occasional bugs or experience features that are still being 
 
 We encourage you to share your thoughts, suggestions, and any issues you encounter.
 
-## Features
+## About this Repository
 
-- **Privacy First**: Your creative work is secure and private. Boards are saved directly in the user's browser, ensuring your data stays local and under your control.
-
-- **Infinite Canvas**: Unleash your imagination on an infinite canvas. No limitations to size – create small sketches or massive masterpieces with equal ease.
-
-- **Export as Image**: Share your creations with the world. Export your entire drawing board as a high-resolution image to showcase your artistry.
-
-- **Selective Screenshot**: Capture your ideas precisely. Take a screenshot of a user-defined region, so you can focus on the details that matter most.
-
-- **Undo/Redo**: Perfect your artwork with ease. Effortlessly undo or redo actions, providing you with complete creative freedom.
-
-- **Regular Updates**: Expect continuous improvements. We're committed to refining the app based on user feedback and adding exciting new features.
+This repository contains the core source code for [Folio](https://folio.josemi.xyz), a modular whiteboard built with React and TypeScript (mostly), designed for structured sketching and local-first workflows. It also includes the full codebase for [Folio Studio](https://folio.josemi.xyz/studio) - a full-stack and self-hosted application combining a Node.js backend (GraphQL + SQLite) with the frontend editor — as well as the [landing page](https://folio.josemi.xyz) and [documentation](https://folio.josemi.xyz/docs) for the project.
 
 ## Development
 
+### Prerequisites
+
 Make sure you have the following software installed on your computer: 
 
-- [Node.js](https://nodejs.org) v16 or higher.
-- [Yarn](https://classic.yarnpkg.com/lang/en/) latest version.
+- [Node.js](https://nodejs.org) - preferably the latest version, or at least version 20.
+- [Yarn](https://classic.yarnpkg.com/lang/en/) - recommended package manager for consistency across environments.
+- [Git](https://git-scm.com) - to clone the repository.
+- [Docker](https://www.docker.com/get-started) (optional) - to build and run the Folio Studio server image.
+
+### Clone and Install Dependencies
 
 Clone the repository in your local machine:
 
@@ -48,17 +44,64 @@ Navigate into the cloned repository and install all dependencies:
 $ yarn install
 ```
 
-Run the development server:
+### Commands
 
-```bash
-$ yarn dev
-```
+#### Development Commands  
 
-Open a new browser window and navigate to `localhost:8080`.
+Used during active development to run Folio in watch mode, preview changes, or serve local builds.
+
+| Command           | Description                                      |
+|-------------------|--------------------------------------------------|
+| `yarn dev:lite`   | Start Folio Lite in development mode.            |
+| `yarn dev:studio` | Start Folio Studio in development mode. It uses a mock backend to simulate server interactions. |
+
+#### Build Commands  
+
+Compile Folio's components for production.
+
+| Command              | Description                                      |
+|----------------------|--------------------------------------------------|
+| `yarn build:lite`    | Build Folio Lite (browser version).              |
+| `yarn build:studio`  | Build Folio Studio (frontend).                   |
+| `yarn build:server`  | Build the backend (GraphQL + SQLite).            |
+
+#### Website Commands  
+
+Build and serve the public-facing parts of Folio: Lite, landing page, and documentation.
+
+| Command              | Description                                       |
+|----------------------|---------------------------------------------------|
+| `yarn build:website` | Build all website assets (Lite + landing + docs). |
+| `yarn build:landing` | Build the landing page.                           |
+| `yarn build:docs`    | Build the documentation site.                     |
+| `yarn copy:website`  | Copy all website builds to `www/` folder.         |
+
+#### Other Commands  
+
+Utility scripts for Docker, asset management, cleanup, and type checking.
+
+| Command              | Description                                      |
+|----------------------|--------------------------------------------------|
+| `yarn docker:studio` | Build Docker image for Folio Studio.             |
+| `yarn clean`         | Remove build output (`www/`).                    |
+| `yarn copy-assets`   | Copy static assets.                              |
+| `yarn test`          | Run tests with Jest.                             |
+| `yarn typecheck`     | Type check Folio Server.                         |
+| `yarn typecheck:lite`| Type check Folio Lite.                           |
+| `yarn typecheck:studio` | Type check Folio Studio.                      |
 
 ## Contributing
 
-Pull requests are always welcome. For new features or major changes, please open first a [new issue](https://github.com/jmjuanes/folio/issues) to discuss the new features or the changes you want to add to Folio.
+Pull requests are welcome. If you are planning to add a new feature or make a significant change, please open a [discussion or issue](https://github.com/jmjuanes/folio/issues) first - it helps keep the project aligned and avoids duplicated work.
+
+Before submitting a PR:
+
+- Make sure your code follows the existing style and structure.
+- Prefer TypeScript and modular design when possible.
+- Keep UI changes minimal unless they improve clarity or usability.
+- If your change affects multiple packages (Lite, Studio, Docs), mention it clearly.
+
+Bug fixes, documentation improvements, and small enhancements are always appreciated.
 
 ## License
 
