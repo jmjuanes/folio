@@ -150,7 +150,7 @@ export const elementsConfig = {
         },
         onCreateEnd: (element, event) => {
             // normalize coordinates after creating the element
-            normalizeElementCoordinates(element);
+            Object.assign(element, normalizeElementCoordinates(element));
             // prevent drawing 0-sized shapes
             if (!event.drag) {
                 element.x2 = element.x1 + SHAPE_MIN_WIDTH;
@@ -438,7 +438,7 @@ export const elementsConfig = {
             element.y2 = element.y1 + element.textHeight;
         },
         onCreateEnd: element => {
-            normalizeElementCoordinates(element);
+            Object.assign(element, normalizeElementCoordinates(element));
             // Fix text initial X position
             const deltax = Math.abs(element.x2 - element.x1);
             if (deltax < (EPSILON / 2)) {
