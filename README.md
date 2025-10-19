@@ -19,6 +19,32 @@ We encourage you to share your thoughts, suggestions, and any issues you encount
 
 This repository contains the core source code for [Folio](https://folio.josemi.xyz), a modular whiteboard built with React and TypeScript (mostly), designed for structured sketching and local-first workflows. It also includes the full codebase for [Folio Studio](https://folio.josemi.xyz/studio) - a full-stack and self-hosted application combining a Node.js backend (GraphQL + SQLite) with the frontend editor — as well as the [landing page](https://folio.josemi.xyz) and [documentation](https://folio.josemi.xyz/docs) for the project.
 
+## Repository Structure
+
+Folio is organized as a monorepo with modular packages grouped by purpose:
+
+### Core Packages
+
+Shared building blocks used across Folio's applications.
+
+- `folio-react`: core Folio whiteboard built with React.
+- `folio-client`: Vanilla JS port of `folio-react` (not yet available).
+
+### Applications Packages
+
+Standalone apps built on top of Folio's core.
+
+- `apps/studio`: frontend for Folio Studio (editor + UI).
+- `apps/lite`: codebase for Folio Lite (browser-only version).
+- `server`: backend for Folio Studio (Node.js + GraphQL + SQLite).
+
+### Website Packages
+
+Public-facing sites for Folio's landing page and documentation.
+
+- `website/landing`: landing page for Folio.
+- `website/docs`: documentation site for Folio.
+
 ## Development
 
 ### Prerequisites
