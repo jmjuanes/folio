@@ -50,46 +50,37 @@ $ yarn install
 
 Used during active development to run Folio in watch mode, preview changes, or serve local builds.
 
-| Command           | Description                                      |
-|-------------------|--------------------------------------------------|
-| `yarn dev:lite`   | Start Folio Lite in development mode.            |
-| `yarn dev:studio` | Start Folio Studio in development mode. It uses a mock backend to simulate server interactions. |
+- `yarn dev:lite`: start Folio Lite in development mode.
+- `yarn dev:studio`: start Folio Studio in development mode. It uses a mock backend to simulate server interactions.
 
 #### Build Commands  
 
 Compile Folio's components for production.
 
-| Command              | Description                                      |
-|----------------------|--------------------------------------------------|
-| `yarn build:lite`    | Build Folio Lite (browser version).              |
-| `yarn build:studio`  | Build Folio Studio (frontend).                   |
-| `yarn build:server`  | Build the backend (GraphQL + SQLite).            |
+- `yarn build:lite`: build Folio Lite (browser version).
+- `yarn build:studio`: build Folio Studio (frontend).
+- `yarn build:server`: build the backend (GraphQL + SQLite).
 
 #### Website Commands  
 
 Build and serve the public-facing parts of Folio: Lite, landing page, and documentation.
 
-| Command              | Description                                       |
-|----------------------|---------------------------------------------------|
-| `yarn build:website` | Build all website assets (Lite + landing + docs). |
-| `yarn build:landing` | Build the landing page.                           |
-| `yarn build:docs`    | Build the documentation site.                     |
-| `yarn copy:website`  | Copy all website builds to `www/` folder.         |
+- `yarn build:website`: build all website assets (Lite + landing + docs).
+- `yarn build:landing`: build the landing page.
+- `yarn build:docs`: build the documentation site.
+- `yarn copy:website`: copy all website builds to `www/` folder.
 
 #### Other Commands  
 
 Utility scripts for Docker, asset management, cleanup, and type checking.
 
-| Command              | Description                                      |
-|----------------------|--------------------------------------------------|
-| `yarn docker:studio` | Build Docker image for Folio Studio.             |
-| `yarn clean`         | Remove build output (`www/`).                    |
-| `yarn copy-assets`   | Copy static assets.                              |
-| `yarn test`          | Run tests with Jest.                             |
-| `yarn typecheck`     | Type check Folio Server.                         |
-| `yarn typecheck:lite`| Type check Folio Lite.                           |
-| `yarn typecheck:studio` | Type check Folio Studio.                      |
-
+- `yarn docker:studio`: build Docker image for Folio Studio.
+- `yarn clean`: remove build output (`www/`).
+- `yarn copy-assets`: copy static assets.
+- `yarn test`: run tests with Jest.
+- `yarn typecheck`: type check Folio Server.
+- `yarn typecheck:lite`: type check Folio Lite.
+- `yarn typecheck:studio`: type check Folio Studio.
 
 ### Building Folio Studio
 
