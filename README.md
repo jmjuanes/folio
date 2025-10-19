@@ -90,6 +90,49 @@ Utility scripts for Docker, asset management, cleanup, and type checking.
 | `yarn typecheck:lite`| Type check Folio Lite.                           |
 | `yarn typecheck:studio` | Type check Folio Studio.                      |
 
+
+### Building Folio Studio
+
+To run Folio Studio locally, you will need to build both the frontend and backend, set up the environment, and start the server.
+
+First, you will need to compile the frontend of Folio Studio by executing the following command:
+
+```sh
+$ yarn build:studio
+```
+
+This will generate the static assets of Folio Studio inside `apps/studio/www`. Then, you have to transpile the TypeScript server into runnable JavaScript:
+
+```sh
+$ yarn build:server
+```
+
+After that, create a `.env` file to define runtime configuration for the server. At minimum, include:
+
+```env
+FOLIO_PORT=8080
+FOLIO_WEBSITE_PATH=apps/studio/www
+``` 
+
+Finally, execute the following command to launche the backend and serves the frontend from the path defined in `FOLIO_WEBSITE_PATH`:
+
+```sh
+$ yarn start
+```
+
+Once running, Folio Studio will be available at `http://localhost:8080` or in the port defined in the `FOLIO_PORT` variable.
+
+#### Environment variables
+
+Folio Studio supports environment variables for configuration. You can define them in a `.env` file at the root of the project. Common options include:
+
+- `FOLIO_PORT` - Port where the server will run (default: `8080`).
+- `FOLIO_WEBSITE_PATH` - Path to static assets served by the backend.
+- `FOLIO_STORAGE_FILE` - Path to the local SQLite database file.
+- `FOLIO_TOKEN_SECRET` - JWT secret key (optional; auto-generated if not set).
+- `FOLIO_TOKEN_EXPIRATION` - Token lifetime (e.g. `7d`, parsed by [ms](https://www.npmjs.com/package/ms)).
+- `FOLIO_ACCESS_TOKEN` - Fixed access token (optional; insecure, use only for testing).
+
 ## Contributing
 
 Pull requests are welcome. If you are planning to add a new feature or make a significant change, please open a [discussion or issue](https://github.com/jmjuanes/folio/issues) first - it helps keep the project aligned and avoids duplicated work.
