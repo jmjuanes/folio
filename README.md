@@ -2,7 +2,7 @@
 
 > A minimalistic and infinite whiteboard. Sketch, Prototype, and Design with total freedom.
 
-[Website](https://folio.josemi.xyz) · [Try it](https://folio.josemi.xyz/app) · [Changelog](https://folio.josemi.xyz/changelog) · [Report a bug](https://github.com/jmjuanes/folio/issues)
+[Website](https://folio.josemi.xyz) · [Try it](https://folio.josemi.xyz/app) · [Documentation](https://folio.josemi.xyz/docs) · [Changelog](https://github.com/jmjuanes/folio/CHANGELOG.md) · [Report a bug](https://github.com/jmjuanes/folio/issues)
 
 ![](https://badgen.net/github/license/jmjuanes/folio?labelColor=1d2734&color=21bf81)
 ![](https://badgen.net/badge/PRs/welcome/codecake?labelColor=1d2734&color=21bf81)
