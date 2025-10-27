@@ -51,6 +51,12 @@
             ],
             "description": "<b>Folio Studio</b> runs locally, giving you full control over your boards, your flow, and your data."
         },
+        "groupOptions": {
+            "size": "3",
+            "iconClassName": "mx-auto p-6 rounded-full folio--secondary",
+            "titleClassName": "text-center",
+            "descriptionClassName": "text-center"
+        },
         "items": [
             {
                 "icon": "bolt",
@@ -184,7 +190,10 @@
 
 {{!-- first features section --}}
 {{>>section.mustache ...page.attributes.features.sectionOptions}}
-    {{>group.mustache size="3" items=page.attributes.features.items}}
+    {{>group.mustache
+        items=page.attributes.features.items
+        ...page.attributes.features.groupOptions
+    }}
 {{/section.mustache}}
 
 {{!-- usage features section --}}
