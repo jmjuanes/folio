@@ -3,8 +3,8 @@
 
 :root {
     /* branding variables */
-    --folio-brand--font-family: Poppins, serif;
-    --folio-brand--font-weight: 700;
+    --folio-brand-font-family: Poppins, serif;
+    --folio-brand-font-weight: 700;
 
     /* theme colors */
     --folio-color-primary: hsl(82, 85%, 67%);
