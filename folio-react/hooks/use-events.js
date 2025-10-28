@@ -31,7 +31,7 @@ import {
     getElementsSnappingEdges,
     getElementSnappingPoints,
     getElementsBoundingRectangle,
-    normalizeElementCoordinates,
+    getElementNormalizedPosition,
     getElementSize,
     getElementMinimumSize,
 } from "../lib/elements.js";
@@ -284,7 +284,7 @@ export const useEvents = () => {
                 const y = event.originalY + event.dy;
                 editor.getElements().forEach(element => {
                     if (!element.erased) {
-                        const b = element.type === ELEMENTS.ARROW ? normalizeElementCoordinates(element) : element;
+                        const b = element.type === ELEMENTS.ARROW ? getElementNormalizedPosition(element) : element;
                         if (b.x1 <= x && x <= b.x2 && b.y1 <= y && y <= b.y2) {
                             element.erased = true;
                         }
