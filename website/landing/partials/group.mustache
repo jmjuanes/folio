@@ -3,18 +3,18 @@
     <article class="mb-2">
         {{#if this.icon}}
         <div class="flex mb-6">
-            <div class="flex items-center {{@partial.opt.iconClassName}}">
+            <div class="flex items-center {{@partial.options.iconClassName}}">
                 {{=icon icon=this.icon className="w-16 h-16 opacity-80"}}
             </div>
         </div>
         {{/if}}
         {{#if this.title}}
-        <div class="font-extrabold text-2xl leading-tight mb-3 {{@partial.opt.titleClassName}}">
+        <div class="font-extrabold text-2xl leading-tight mb-3 {{@partial.options.titleClassName}}">
             <span>{{!this.title}}</span>
         </div>
         {{/if}}
         {{#if this.description}}
-        <div class="leading-relaxed opacity-80 text-lg {{@partial.opt.descriptionClassName}}">
+        <div class="leading-relaxed opacity-80 text-lg {{@partial.options.descriptionClassName}}">
             <span>{{!this.description}}</span>
         </div>
         {{/if}}
