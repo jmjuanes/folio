@@ -3,29 +3,48 @@
 
 :root {
     /* branding variables */
-    --folio-brand-font-family: Poppins, serif;
-    --folio-brand-font-weight: 700;
+    --folio-brand--font-family: Poppins, serif;
+    --folio-brand--font-weight: 700;
 
     /* theme colors */
-    --folio-color-primary: hsl(0, 0%, 5%);
-    --folio-color-primary-foreground: hsl(0, 0%, 100%);
-    --folio-color-secondary: hsl(82, 85%, 67%);
-    --folio-color-secondary-foreground: var(--folio-color-primary);
+    --folio-color-primary: hsl(82, 85%, 67%);
+    --folio-color-secondary: hsl(249, 85%, 67%); 
+    --folio-color-black: hsl(0, 0%, 5%);
+    --folio-color-white: hsl(0, 0%, 100%);
 }
 
 /* font used in the folio logo */
 /* https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap */
-.folio--brand {
+.folio\:brand {
     font-family: var(--folio-brand-font-family);
     font-weight: var(--folio-brand-font-weight) !important;
 }
 
-/* theme classes */
-.folio--primary {
+/* utility classes */
+.folio\:bg-primary {
     background-color: var(--folio-color-primary);
-    color: var(--folio-color-primary-foreground);
 }
-.folio--secondary {
+.folio\:bg-secondary {
     background-color: var(--folio-color-secondary);
-    color: var(--folio-color-secondary-foreground);
+}
+.folio\:bg-black {
+    background-color: var(--folio-color-black);
+}
+.folio\:bg-white {
+    background-color: var(--folio-color-white);
+}
+.folio\:text-primary {
+    color: var(--folio-color-primary);
+}
+.folio\:text-secondary {
+    color: var(--folio-color-secondary);
+}
+.folio\:text-black {
+    color: var(--folio-color-black);
+}
+.folio\:text-white {
+    color: var(--folio-color-white);
+}
+.folio\:border-white {
+    color: var(--folio-color-white);
 }

@@ -15,10 +15,10 @@
     <link rel="stylesheet" href="/brand.css">
     <title>{{page.attributes.title}} - folio</title>
 </head>
-<body class="m-0 p-0 font-sans leading-normal folio--primary">
+<body class="m-0 p-0 font-sans leading-normal folio:bg-black folio:text-white">
     <header class="flex items-center justify-between w-full px-6 pt-6 max-w-8xl mx-auto absolute top-0 left-0 right-0">
         <a href="/" class="flex items-center gap-2 cursor-pointer text-current">
-            <div class="text-3xl sm:text-4xl folio--brand">folio.</div>
+            <div class="text-3xl sm:text-4xl folio:brand">folio.</div>
         </a>
         <div class="flex gap-6 items-center">
             {{#each site.navigation}}
@@ -31,7 +31,7 @@
     {{!@content}}
     <div class="w-full h-px bg-current opacity-20"></div>
     <footer class="pt-32 pb-24 px-6 w-full flex flex-col items-center gap-8">
-        <div class="text-6xl sm:text-8xl md:text-9xl folio--brand leading-none flex items-center">
+        <div class="text-6xl sm:text-8xl md:text-9xl folio:brand leading-none flex items-center">
             <span>folio</span>
             <span class="opacity-70">labs</span>
             <span>.</span>
