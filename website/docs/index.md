@@ -4,6 +4,7 @@
     "description": "Quick overview of what Folio is and how to get started.",
     "permalink": "/docs/index.html",
     "nextPage": "/docs/installation.html",
+    "layout": "default.mustache",
     "quickstart": [
         {
             "icon": "globe",
@@ -20,7 +21,6 @@
     ]
 }
 ---
-{{>>layout.mustache}}
 
 {{>>alert.mustache}}
 ⚠️ **Folio Studio** is currently in an **experimental phase**. Breaking changes may occur between versions, potentially leading to data loss. **Please use with caution and make regular backups**.
@@ -49,5 +49,3 @@
 {{/each}}
 </div>
 <!--/html-->
-
-{{/layout.mustache}}

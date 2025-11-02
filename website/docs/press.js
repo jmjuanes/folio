@@ -40,6 +40,10 @@ press({
             folder: "partials",
             extensions: [ ".mustache" ],
         }),
+        press.LayoutsPlugin({
+            folder: "layouts",
+            extensions: [ ".mustache" ],
+        }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
             highlight: (code, language) => {
