@@ -2,11 +2,11 @@
 /* licensed under the MIT License */
 
 :root {
-    /* branding variables */
-    --folio-brand-font-family: Poppins, serif;
-    --folio-brand-font-weight: 700;
+    /* font variables */
+    --folio-font-family-brand: Poppins, serif;
+    --folio-font-weight-brand: 700;
 
-    /* theme colors */
+    /* color variables */
     --folio-color-primary: hsl(82, 85%, 67%);
     --folio-color-secondary: hsl(249, 85%, 67%); 
     --folio-color-black: hsl(0, 0%, 5%);
@@ -15,12 +15,11 @@
 
 /* font used in the folio logo */
 /* https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap */
-.folio\:brand {
-    font-family: var(--folio-brand-font-family);
-    font-weight: var(--folio-brand-font-weight) !important;
+.folio\:font-brand {
+    font-family: var(--folio-font-family-brand);
+    font-weight: var(--folio-font-weight-brand) !important;
 }
 
-/* utility classes */
 .folio\:bg-primary {
     background-color: var(--folio-color-primary);
 }
