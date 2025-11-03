@@ -67,7 +67,7 @@ press({
         })),
         press.ContentPagePlugin(),
         press.CopyAssetsPlugin({
-            basePath: "docs",
+            // basePath: "docs",
             patterns: [
                 {
                     from: path.resolve("../../node_modules/lowcss/low.css"),
@@ -75,11 +75,15 @@ press({
                 },
                 {
                     from: path.resolve("../../node_modules/highlight.js/styles/atom-one-dark.css"),
-                    to: "highlight.css",
+                    to: "docs/highlight.css",
                 },
                 {
                     from: path.resolve("../../node_modules/@josemi-icons/svg/sprite.svg"),
                     to: "icons.svg",
+                },
+                {
+                    from: "../../brand.css",
+                    to: "brand.css",
                 },
             ],
         }),

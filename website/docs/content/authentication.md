@@ -3,10 +3,10 @@
     "title": "Authentication",
     "description": "How authentication works in folio studio.",
     "permalink": "/docs/authentication.html",
+    "layout": "default.mustache",
     "prevPage": "/docs/persistence.html"
 }
 ---
-{{>>layout.mustache}}
 
 Folio Studio currently supports a single authentication method: **access token-based authentication**. This mechanism ensures that only authorized users can interact with the application.
 
@@ -30,4 +30,3 @@ You can also customize the access token by defining an environment variable call
 
 If both are provided, the environment variable takes precedence over the YAML configuration.
 
-{{/layout.mustache}}
