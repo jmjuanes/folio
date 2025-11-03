@@ -3,47 +3,53 @@
 
 :root {
     /* font variables */
-    --folio-font-family-brand: Poppins, serif;
-    --folio-font-weight-brand: 700;
+    --folio-brand-family: Poppins, serif;
 
     /* color variables */
-    --folio-color-primary: hsl(82, 85%, 67%);
-    --folio-color-secondary: hsl(249, 85%, 67%); 
-    --folio-color-black: hsl(0, 0%, 5%);
-    --folio-color-white: hsl(0, 0%, 100%);
+    --folio-brand-primary: hsl(82, 85%, 67%);
+    --folio-brand-secondary: hsl(249, 85%, 67%); 
+    --folio-dark-base: hsl(0, 0%, 8%);
+    --folio-dark-medium: hsl(0, 0%, 15%);
+    --folio-dark-high: hsl(0, 0%, 20%);
+    --folio-light-base: hsl(0, 0%, 60%);
+    --folio-light-medium: hsl(0, 0%, 75%);
+    --folio-light-high: hsl(0, 0%, 96%);
 }
 
 /* font used in the folio logo */
 /* https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap */
 .folio\:font-brand {
-    font-family: var(--folio-font-family-brand);
-    font-weight: var(--folio-font-weight-brand) !important;
+    font-family: var(--folio-brand-family);
+    font-weight: 700 !important;
 }
 
 .folio\:bg-primary {
-    background-color: var(--folio-color-primary);
+    background-color: var(--folio-brand-primary);
 }
 .folio\:bg-secondary {
-    background-color: var(--folio-color-secondary);
+    background-color: var(--folio-brand-secondary);
 }
-.folio\:bg-black {
-    background-color: var(--folio-color-black);
+.folio\:bg-dark-base {
+    background-color: var(--folio-dark-base);
 }
-.folio\:bg-white {
-    background-color: var(--folio-color-white);
+.folio\:bg-dark-medium {
+    background-color: var(--folio-dark-medium);
+}
+.folio\:bg-dark-high {
+    background-color: var(--folio-dark-high);
+}
+.folio\:bg-light-base {
+    background-color: var(--folio-light-base);
 }
 .folio\:text-primary {
-    color: var(--folio-color-primary);
+    color: var(--folio-brand-primary);
 }
 .folio\:text-secondary {
-    color: var(--folio-color-secondary);
+    color: var(--folio-brand-secondary);
 }
-.folio\:text-black {
-    color: var(--folio-color-black);
+.folio\:text-dark-base {
+    color: var(--folio-dark-base);
 }
-.folio\:text-white {
-    color: var(--folio-color-white);
-}
-.folio\:border-white {
-    color: var(--folio-color-white);
+.folio\:text-light-base {
+    color: var(--folio-light-base);
 }
