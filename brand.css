@@ -23,6 +23,7 @@
     font-weight: 700 !important;
 }
 
+/* background utilities */
 .folio\:bg-primary {
     background-color: var(--folio-brand-primary);
 }
@@ -41,6 +42,8 @@
 .folio\:bg-light-base {
     background-color: var(--folio-light-base);
 }
+
+/* text utilities */
 .folio\:text-primary {
     color: var(--folio-brand-primary);
 }
@@ -53,3 +56,15 @@
 .folio\:text-light-base {
     color: var(--folio-light-base);
 }
+
+/* border utilities */
+.folio\:border-dark-base {
+    border-color: var(--folio-dark-base);
+}
+.folio\:border-dark-medium {
+    border-color: var(--folio-dark-medium);
+}
+.folio\:border-dark-high {
+    border-color: var(--folio-dark-high);
+}
+
