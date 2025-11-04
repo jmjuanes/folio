@@ -52,7 +52,7 @@ press({
             classNames: {
                 link: "font-medium underline",
                 code: "rounded-md py-1 px-2 text-xs font-mono font-bold folio:bg-dark-medium",
-                pre: "w-full overflow-x-auto folio:bg-dark-medium text-white text-xs font-mono leading-relaxed p-4 mb-6 rounded-md",
+                pre: "w-full overflow-x-auto folio:bg-dark-medium text-white text-xs font-mono leading-relaxed p-6 mb-6 rounded-md",
                 heading: "font-bold mb-4 first:mt-0 mt-8",
                 heading2: "text-2xl",
                 heading3: "text-xl",
