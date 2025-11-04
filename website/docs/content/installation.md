@@ -3,11 +3,11 @@
     "title": "Installation",
     "description": "Learn how to install Folio Studio on your own computer",
     "permalink": "/docs/installation.html",
+    "layout": "default.mustache",
     "prevPage": "/docs/index.html",
     "nextPage": "/docs/configuration.html"
 }
 ---
-{{>>layout.mustache}}
 
 **Folio Studio** runs as a Docker container and can be installed on Linux, macOS, or Windows.
 
@@ -38,5 +38,3 @@ $ docker run -it --name folio-studio -p 8080:8080 jmjuanes/folio-studio
 {{/code.mustache}}
 
 Open a new browser window and type `localhost:8080` to start using **Folio**.
-
-{{/layout.mustache}}
