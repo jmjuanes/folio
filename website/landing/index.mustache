@@ -36,6 +36,12 @@
                 }
             ]
         },
+        "groupOptions": {
+            "size": 2,
+            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
+            "titleClassName": "text-center",
+            "descriptionClassName": "text-center"
+        },
         "items": [
             {
                 "icon": "shield",
@@ -43,7 +49,7 @@
                 "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
             },
             {
-                "icon": "drawing",
+                "icon": "square",
                 "title": "Boundless Canvas.",
                 "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
             },
@@ -51,6 +57,11 @@
                 "icon": "files",
                 "title": "Organize your ideas.",
                 "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
+            },
+            {
+                "icon": "album",
+                "title": "Save, Organize, and Reuse Elements.",
+                "description": "Use the Library to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
             }
         ]
     },
@@ -59,7 +70,7 @@
             "title": [
                 {
                     "text": "All Folio.",
-                    "className": "opacity-70"
+                    "className": "opacity-70 block"
                 },
                 {
                     "text": "Self-Hosted."
@@ -68,7 +79,7 @@
             "icon": "sidebar-left",
             "label": "Introducing <b>Folio Studio</b>.",
             "description": "A lightweight editor for sketching structures, interfaces, and ideas. <b>Folio Studio</b> runs entirely on your machine.",
-            "className": "folio--secondary",
+            "className": "folio:bg-primary folio:text-dark-base",
             "actions": [
                 {
                     "text": "About Studio",
@@ -97,7 +108,10 @@
 {{>separator.mustache}}
 
 {{>>section.mustache ...page.attributes.features.sectionOptions}}
-    {{>group.mustache size="3" items=page.attributes.features.items}}
+    {{>group.mustache
+        items=page.attributes.features.items
+        ...page.attributes.features.groupOptions
+    }}
 {{/section.mustache}}
 
 {{>section.mustache ...page.attributes.studio.sectionOptions}}

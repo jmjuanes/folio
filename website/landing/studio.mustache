@@ -51,6 +51,12 @@
             ],
             "description": "<b>Folio Studio</b> runs locally, giving you full control over your boards, your flow, and your data."
         },
+        "groupOptions": {
+            "size": "3",
+            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
+            "titleClassName": "text-center",
+            "descriptionClassName": "text-center"
+        },
         "items": [
             {
                 "icon": "bolt",
@@ -81,8 +87,7 @@
                 }
             ],
             "description": "<b>Folio Studio</b> provides a centralized dashboard to create and manage all your boards effortlessly.",
-            "className": "folio--secondary",
-            "icon": "template"
+            "className": "folio:bg-primary folio:text-dark-base"
         },
         "items": [
             {
@@ -118,7 +123,7 @@
                     "text": " Answers."
                 }
             ],
-            "className": "folio--primary"
+            "className": "folio:bg-dark-base text-white"
         },
         "items": [
             {
@@ -154,9 +159,8 @@
                     "text": "Folio Studio."
                 }
             ],
-            "icon": "rocket",
             "description": "Folio Studio runs on your machine — no cloud, no noise. Just your ideas, your flow, your space.",
-            "className": "folio--secondary",
+            "className": "bg-white folio:text-dark-base",
             "actions": [
                 {
                     "text": "Read the docs",
@@ -184,7 +188,10 @@
 
 {{!-- first features section --}}
 {{>>section.mustache ...page.attributes.features.sectionOptions}}
-    {{>group.mustache size="3" items=page.attributes.features.items}}
+    {{>group.mustache
+        items=page.attributes.features.items
+        ...page.attributes.features.groupOptions
+    }}
 {{/section.mustache}}
 
 {{!-- usage features section --}}

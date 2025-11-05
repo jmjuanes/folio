@@ -40,6 +40,10 @@ press({
             folder: "partials",
             extensions: [ ".mustache" ],
         }),
+        press.LayoutsPlugin({
+            folder: "layouts",
+            extensions: [ ".mustache" ],
+        }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
             highlight: (code, language) => {
@@ -47,14 +51,14 @@ press({
             },
             classNames: {
                 link: "font-medium underline",
-                code: "bg-gray-100 rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-900",
-                pre: "w-full overflow-x-auto bg-gray-900 text-white text-xs font-mono leading-relaxed p-4 mb-6 rounded-md border-1 border-gray-800",
+                code: "rounded-md py-1 px-2 text-xs font-mono font-bold folio:bg-dark-medium",
+                pre: "w-full overflow-x-auto folio:bg-dark-medium text-white text-xs font-mono leading-relaxed p-6 mb-6 rounded-md",
                 heading: "font-bold mb-4 first:mt-0 mt-8",
                 heading2: "text-2xl",
                 heading3: "text-xl",
                 heading4: "text-lg",
                 table: "w-full mb-6",
-                tableColumn: "p-3 border-b-1 border-gray-800",
+                tableColumn: "p-3 border-b-1 folio:border-dark-high",
                 tableHead: "font-bold",
                 list: "list-inside mb-6 pl-4",
                 listItem: "mb-3 pl-1",
@@ -63,7 +67,7 @@ press({
         })),
         press.ContentPagePlugin(),
         press.CopyAssetsPlugin({
-            basePath: "docs",
+            // basePath: "docs",
             patterns: [
                 {
                     from: path.resolve("../../node_modules/lowcss/low.css"),
@@ -71,11 +75,15 @@ press({
                 },
                 {
                     from: path.resolve("../../node_modules/highlight.js/styles/atom-one-dark.css"),
-                    to: "highlight.css",
+                    to: "docs/highlight.css",
                 },
                 {
                     from: path.resolve("../../node_modules/@josemi-icons/svg/sprite.svg"),
                     to: "icons.svg",
+                },
+                {
+                    from: "../../brand.css",
+                    to: "brand.css",
                 },
             ],
         }),

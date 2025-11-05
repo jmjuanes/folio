@@ -41,9 +41,6 @@ press({
         }),
         press.FrontmatterPlugin(),
         press.UsePlugin(markdown({
-            // highlight: (code, language) => {
-            //     return highlightCode(code, language);
-            // },
             classNames: {
                 link: "font-medium underline",
                 code: "bg-gray-100 rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-900",

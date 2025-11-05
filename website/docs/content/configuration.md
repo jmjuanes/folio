@@ -3,11 +3,11 @@
     "title": "Configuration",
     "description": "Setting up all necessary configuration to run folio studio.",
     "permalink": "/docs/configuration.html",
+    "layout": "default.mustache",
     "prevPage": "/docs/installation.html",
     "nextPage": "/docs/persistence.html"
 }
 ---
-{{>>layout.mustache}}
 
 Folio Studio supports two levels of configuration: environment variables and a YAML configuration file. Environment variables take precedence over the YAML file and are useful for quick overrides, although they only expose a limited subset of the full configuration options.
 
@@ -112,5 +112,3 @@ Folio Studio supports a small set of environment variables for quick configurati
 | `FOLIO_ACCESS_TOKEN` | Fixed access token (not recommended; for testing only). |
 
 Environment variables always take precedence over values defined in `config.yaml`, making them ideal for temporary overrides or container-based deployments.
-
-{{/layout.mustache}}
