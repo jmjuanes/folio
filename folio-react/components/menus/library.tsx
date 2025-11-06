@@ -22,8 +22,14 @@ const EmptyLibrary = () => (
     </div>
 );
 
+export type LibraryItemProps = {
+    thumbnail: string,
+    onInsert: () => void,
+    onDelete: () => void,
+};
+
 // @description library item
-const LibraryItem = ({thumbnail, onInsert, onDelete}) => {
+export const LibraryItem = ({ thumbnail, onInsert, onDelete }: LibraryItemProps): React.JSX.Element => {
     // this is a TEMPORARY solution to show the delete button on hover
     // this should be replaced with a proper context menu or something similar that works on touch devices
     const [isHovered, setIsHovered] = React.useState(false);
@@ -60,10 +66,10 @@ const LibraryItem = ({thumbnail, onInsert, onDelete}) => {
 };
 
 // @description library menu
-export const LibraryMenuContent = () => {
+export const LibraryMenuContent = (): React.JSX.Element => {
     const editor = useEditor();
     const dispatchAction = useActions();
-    const {showConfirm} = useConfirm();
+    const { showConfirm } = useConfirm();
 
     // handle loading a library from JSON
     const handleLibraryLoad = React.useCallback(() => {
@@ -101,7 +107,7 @@ export const LibraryMenuContent = () => {
     // @param {object} item library item to insert
     // @param {number} x the x position to insert the item
     // @param {number} y the y position to insert the item
-    const handleInsertItem = React.useCallback(item => {
+    const handleInsertItem = React.useCallback((item: any) => {
         editor.addLibraryElement(item);
         editor.dispatchChange();
         editor.update();
@@ -110,7 +116,7 @@ export const LibraryMenuContent = () => {
 
     // handle deleting an item from the library
     // @param {object} item library item to delete
-    const handleDeleteItem = React.useCallback(item => {
+    const handleDeleteItem = React.useCallback((item: any) => {
         showConfirm({
             title: "Delete library item",
             message: `Do you want to delete this item from the library? This action can not be undone.`,
@@ -143,7 +149,7 @@ export const LibraryMenuContent = () => {
             </Dropdown.Header>
             <div className="overflow-x-hidden overflow-y-auto scrollbar" style={{maxHeight:"50vh"}}>
                 <div className="grid gap-2 grid-cols-4 pt-2">
-                    {editor.getLibraryItems().map(item => (
+                    {editor.getLibraryItems().map((item: any) => (
                         <LibraryItem
                             key={item.id}
                             thumbnail={item.thumbnail}
@@ -161,12 +167,12 @@ export const LibraryMenuContent = () => {
 };
 
 // @description library menu
-export const LibraryMenu = props => {
+export const LibraryMenu = (props: any): React.JSX.Element => {
     // use the default content if no children are provided
     const content = props.children ?? <LibraryMenuContent />;
 
     return (
-        <div className="flex relative group" tabIndex="0">
+        <div className="flex relative group" tabIndex={0}>
             <Island.Button icon="album" />
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
                 {content}
