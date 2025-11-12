@@ -1,13 +1,12 @@
 import React from "react";
 import { AlbumIcon, PlusIcon, CloseIcon } from "@josemi-icons/react";
-import { ACTIONS } from "../../constants.js";
-import { Dropdown } from "../ui/dropdown.tsx";
-import { Island } from "../ui/island.jsx";
-import { useEditor } from "../../contexts/editor.jsx";
-import { useConfirm } from "../../contexts/confirm.jsx";
-import { useActions } from "../../hooks/use-actions.js";
-import { loadLibraryFromJson } from "../../lib/library.js";
-import { clearFocus } from "../../utils/dom.js";
+import { ACTIONS } from "../constants.js";
+import { Dropdown } from "./ui/dropdown.tsx";
+import { useEditor } from "../contexts/editor.jsx";
+import { useConfirm } from "../contexts/confirm.jsx";
+import { useActions } from "../hooks/use-actions.js";
+import { loadLibraryFromJson } from "../lib/library.ts";
+import { clearFocus } from "../utils/dom.js";
 
 // @description display an empty library message
 const EmptyLibrary = () => (
@@ -65,8 +64,11 @@ export const LibraryItem = ({ thumbnail, onInsert, onDelete }: LibraryItemProps)
     );
 };
 
-// @description library menu
-export const LibraryMenuContent = (): React.JSX.Element => {
+// @description library props
+export type LibraryProps = {};
+
+// @description library container
+export const Library = (props: LibraryProps): React.JSX.Element => {
     const editor = useEditor();
     const dispatchAction = useActions();
     const { showConfirm } = useConfirm();
@@ -163,20 +165,5 @@ export const LibraryMenuContent = (): React.JSX.Element => {
                 )}
             </div>
         </React.Fragment>
-    );
-};
-
-// @description library menu
-export const LibraryMenu = (props: any): React.JSX.Element => {
-    // use the default content if no children are provided
-    const content = props.children ?? <LibraryMenuContent />;
-
-    return (
-        <div className="flex relative group" tabIndex={0}>
-            <Island.Button icon="album" />
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
-                {content}
-            </Dropdown>
-        </div>
     );
 };
