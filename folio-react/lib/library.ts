@@ -1,5 +1,5 @@
-import {uid} from "uid/secure";
-import {fileOpen, fileSave} from "browser-fs-access";
+import { uid } from "uid/secure";
+import { fileOpen, fileSave } from "browser-fs-access";
 import {
     VERSION,
     FILE_EXTENSIONS,
@@ -8,14 +8,14 @@ import {
     LIBRARY_THUMBNAIL_HEIGHT,
     LIBRARY_THUMBNAIL_WIDTH,
 } from "../constants.js";
-import {exportToDataURL} from "./export.js";
-import {getElementsBoundingRectangle} from "./elements.js";
-import {migrateElements} from "./migrate.js";
-import {blobToText} from "../utils/blob.js";
+import { exportToDataURL } from "./export.js";
+import { getElementsBoundingRectangle } from "./elements.js";
+import { migrateElements } from "./migrate.js";
+import { blobToText } from "../utils/blob.js";
 
 // @description generate a random id for the library
 // @returns {string} libraryId an unique identifier for a library item
-export const generateLibraryId = () => "lib:" + uid(20);
+export const generateLibraryId = (): string => "lib:" + uid(20);
 
 // @description migrate a library
 export const migrateLibrary = library => {
