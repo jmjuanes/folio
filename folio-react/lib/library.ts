@@ -13,11 +13,26 @@ import { getElementsBoundingRectangle } from "./elements.js";
 import { migrateElements } from "./migrate.js";
 import { blobToText } from "../utils/blob.js";
 
+// @description internal enum for the source of a library item
+export enum LibraryItemSource {
+    PERSONAL = "personal",
+    REGISTRY = "registry",
+};
+
+// @description internal enum for the status of a library item
+export enum LibraryItemStatus {
+    PUBLISHED = "published",
+    UNPUBLISHED = "unpublished",
+};
+
 // @description internal library type
 export type LibraryItem = {
     id: string;
-    thumbnail: string;
-    createdAt: string | number;
+    name?: string;
+    source?: LibraryItemSource;
+    status?: LibraryItemStatus;
+    thumbnail?: string;
+    created?: string | number;
     elements: any[];
 };
 
