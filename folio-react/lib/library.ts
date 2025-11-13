@@ -13,6 +13,19 @@ import { getElementsBoundingRectangle } from "./elements.js";
 import { migrateElements } from "./migrate.js";
 import { blobToText } from "../utils/blob.js";
 
+// @description internal library type
+export type LibraryItem = {
+    id: string;
+    thumbnail: string;
+    createdAt: string | number;
+    elements: any[];
+};
+
+export type Library = {
+    version: string;
+    items: LibraryItem[];
+};
+
 // @description generate a random id for the library
 // @returns {string} libraryId an unique identifier for a library item
 export const generateLibraryId = (): string => "lib:" + uid(20);
