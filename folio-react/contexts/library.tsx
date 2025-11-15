@@ -25,7 +25,7 @@ export type LibraryContextValue = [
 export const LibraryContext = React.createContext<LibraryContextValue | null>(null);
 
 // @description use library hook
-export const useLibrary = (): LibraryContextValue => {
+export const useLibrary = (): LibraryContextValue | null => {
     return React.useContext(LibraryContext);
 };
 

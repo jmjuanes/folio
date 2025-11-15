@@ -16,6 +16,7 @@ export type LayoutProps = {
 // @param {React.ReactNode} props.children React children
 export const Layout = (props: LayoutProps): React.JSX.Element => {
     const hideUi = props.hideUi ?? false;
+    const [ sidebarVisible, setSidebarVisible ] = React.useState(false);
     const [ layersVisible, setLayersVisible ] = React.useState(false);
     const editor = useEditor();
     const dispatchAction = useActions();
@@ -23,7 +24,6 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
         MainMenu,
         PagesMenu,
         SettingsMenu,
-        LibraryMenu,
         Title,
         Toolbar,
         Layers,
@@ -31,17 +31,19 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
         HistoryPanel,
         Minimap,
         ZoomPanel,
+        Library,
     } = useEditorComponents();
 
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
+    const showSidebarButton = !!Library;
 
     return (
         <React.Fragment>
             {props.children}
             {!hideUi && (
                 <React.Fragment>
-                    <div className="absolute top-0 left-0 pt-4 pl-4 z-40 flex gap-2">
+                    <div className="absolute top-0 left-0 pt-4 pl-4 z-30 flex gap-2">
                         {!!MainMenu && (
                             <Island>
                                 <MainMenu />
@@ -55,7 +57,6 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                 </React.Fragment>
                             )}
                             {!!PagesMenu && <PagesMenu />}
-                            {!!LibraryMenu && <LibraryMenu />}
                             {!!SettingsMenu && <SettingsMenu />}
                             <Island.Button
                                 icon="trash"
@@ -66,8 +67,8 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             />
                         </Island>
                     </div>
-                    {(!!HistoryPanel || !!ZoomPanel || !!Layers) && (
-                        <div className="absolute top-0 right-0 pt-4 pr-4 z-40 flex gap-2">
+                    {(!!HistoryPanel || !!ZoomPanel || !!Layers || showSidebarButton) && (
+                        <div className="absolute top-0 right-0 pt-4 pr-4 z-30 flex gap-2">
                             {!!HistoryPanel && <HistoryPanel />}
                             {!!ZoomPanel && <ZoomPanel />}
                             {!!Layers && (
@@ -79,10 +80,19 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                     />
                                 </Island>
                             )}
+                            {showSidebarButton && (
+                                <Island>
+                                    <Island.Button
+                                        icon="sidebar-right"
+                                        onClick={() => setSidebarVisible(!sidebarVisible)}
+                                        active={sidebarVisible}
+                                    />
+                                </Island>
+                            )}
                         </div>
                     )}
                     {!!editor.page.readonly && (
-                        <div className="absolute top-0 left-half pt-4 z-30 flex gap-2 translate-x-half-n pointer-events-none">
+                        <div className="absolute top-0 left-half pt-4 z-40 flex gap-2 translate-x-half-n pointer-events-none">
                             <Alert variant="warning" icon="lock">
                                 This page is <b>Read-Only</b>.
                             </Alert>
@@ -113,6 +123,9 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                         <div className="absolute z-30 top-0 right-0 pt-1 mt-16 mr-4">
                             <Layers />
                         </div>
+                    )}
+                    {sidebarVisible && (
+                        <div className=""></div>
                     )}
                 </React.Fragment>
             )}
