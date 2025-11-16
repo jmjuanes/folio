@@ -1,7 +1,10 @@
 import React from "react";
 import { useMount } from "react-use";
 import { Loading } from "../components/loading.jsx";
-import { getLibraryStateFromInitialData } from "../lib/library.ts";
+import {
+    getLibraryStateFromInitialData,
+    createLibraryItem,
+} from "../lib/library.ts";
 import { promisifyValue } from "../utils/promises.js";
 import { VERSION } from "../constants.js";
 import type { Library, LibraryItem } from "../lib/library.ts";
@@ -16,16 +19,16 @@ export type LibraryProviderProps = {
     children: React.ReactNode,
 };
 
-export type LibraryContextValue = [
+export type LibraryApi = [
     library: LibraryItem[],
     update: LibraryUpdate,
 ];
 
 // @private Shared library context
-export const LibraryContext = React.createContext<LibraryContextValue | null>(null);
+export const LibraryContext = React.createContext<LibraryApi | null>(null);
 
 // @description use library hook
-export const useLibrary = (): LibraryContextValue | null => {
+export const useLibrary = (): LibraryApi | null => {
     return React.useContext(LibraryContext);
 };
 
@@ -33,21 +36,71 @@ export const useLibrary = (): LibraryContextValue | null => {
 // @param {object} store store instace for accessing and saving data
 // @param {React Children} children React children to render
 export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element => {
-    // const [ update, setUpdate ] = React.useState<Number>(0);
-    const [ currentLibrary, setCurrentLibrary ] = React.useState<LibraryItem[] | null>(null);
+    const [ update, forceUpdate ] = React.useState<Number>(0);
+    const library = React.useRef<LibraryItem[] | null>(null);
+    // const [ currentLibrary, setCurrentLibrary ] = React.useState<LibraryItem[] | null>(null);
 
     // handle updating the library data
-    const dispatchChange = React.useCallback((newLibrary: LibraryItem[]): void => {
-        // 1. call the setCurrentLibrary to update the internal library data
-        setCurrentLibrary(newLibrary);
-        // 2. call the onChange method with the new library data
+    const dispatchChange = React.useCallback((): void => {
         if (typeof props.onChange === "function") {
             props.onChange({
                 version: VERSION,
-                items: newLibrary,
+                items: library.current || [],
             });
         }
-    }, [ setCurrentLibrary, props.onChange ]);
+    }, [ props.onChange ]);
+
+    // create the api to manage the library data
+    const api = React.useMemo(() => {
+        return {
+            // @description load library data from a JSON object
+            // fromJSON: data => {
+            //     library.current = getLibraryStateFromInitialData(data || {});
+            // },
+            // @description import library items from another library
+            import: newLibrary => {
+                const currentItems = new Set((library?.current || []).map(item => item.id));
+                const itemsToInsert = newLibrary.items.filter(item => {
+                    return !currentItems.has(item.id);
+                });
+                // insert items into library
+                if (itemsToInsert.length > 0) {
+                    library.current = library.current.concat(itemsToInsert);
+                    forceUpdate(prev => prev + 1);
+                }
+            },
+
+            // @description clear library
+            clear: () => {
+                library.current = [];
+            },
+
+            // @description add a new item to the library
+            addItem: (elements, data) => {
+                return createLibraryItem(elements, data).then(libraryItem => {
+                    library.current.push(libraryItem);
+                });
+            },
+
+            // @description remove a library item
+            removeItem: id => {
+                const idsToRemove = new Set([id].flat());
+                editor.library.items = editor.library.items.filter(item => {
+                    return !idsToRemove.has(item.id);
+                });
+            },
+
+            // @description get a library item
+            getItem: id => {
+                return editor.library.items.find(item => item.id === id) || null;
+            },
+
+            // @description get all library items
+            getItems: () => {
+                return library?.current?.items || [];
+            },
+        };
+    }, [ dispatchChange ]);
 
     // On mount, import library data
     // TODO: we would need to handle errors when importing editor data

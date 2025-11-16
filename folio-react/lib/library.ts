@@ -124,7 +124,6 @@ export const createLibraryItem = (elements = [], data = {}) => {
         return {
             id: generateLibraryId(),
             name: data?.name || "Untitled",
-            description: data?.description || "",
             elements: elements.map(element => {
                 // 1. generate a clone of the element and fix positions
                 const newElement = Object.assign({}, element, {
@@ -142,7 +141,7 @@ export const createLibraryItem = (elements = [], data = {}) => {
                 return newElement;
             }),
             thumbnail: thumbnail,
-            createdAt: Date.now(),
+            created: Date.now(),
         };
     });
 };
