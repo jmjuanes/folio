@@ -130,10 +130,8 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                         <div className="absolute z-40 top-0 right-0 w-88 h-full">
                             <Panel className="h-full rounded-tr-none rounded-br-none">
                                 <div class="flex items-center">
-                                    <Panel.Tabs className="w-full">
-                                        <Panel.TabsItem active={true}>
-                                            <AlbumIcon />
-                                        </Panel.TabsItem>
+                                    <div class="w-full" />
+                                    <Panel.Tabs className="hidden w-full">
                                     </Panel.Tabs>
                                     <Panel.Button
                                         icon="x"
