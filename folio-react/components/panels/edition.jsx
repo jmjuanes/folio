@@ -64,7 +64,7 @@ import {
     ArrowheadSquareIcon,
     ArrowheadCircleIcon,
 } from "../icons.jsx";
-import {Panel} from "../ui/panel.jsx";
+import {Panel} from "../ui/panel.tsx";
 import {Form} from "../form/index.jsx";
 import {useEditor} from "../../contexts/editor.jsx";
 import {useActions} from "../../hooks/use-actions.js";
