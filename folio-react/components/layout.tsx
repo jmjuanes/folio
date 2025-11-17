@@ -1,6 +1,7 @@
 import React from "react";
 import { Alert } from "./ui/alert.tsx";
 import { Island } from "./ui/island.jsx";
+import { Panel } from "./ui/panel.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useActions } from "../hooks/use-actions.js";
@@ -36,7 +37,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
 
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
-    const showSidebarButton = !!Library;
+    const showSidebarButton = true; // !!Library;
 
     return (
         <React.Fragment>
@@ -125,7 +126,13 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                         </div>
                     )}
                     {sidebarVisible && (
-                        <div className=""></div>
+                        <div className="absolute z-40 top-0 right-0 w-96 h-full">
+                            <Panel className="h-full rounded-tr-none rounded-br-none">
+                                <Panel.Body className="">
+                                    Sidebar
+                                </Panel.Body>
+                            </Panel>
+                        </div>
                     )}
                 </React.Fragment>
             )}
