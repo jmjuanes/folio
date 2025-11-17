@@ -74,7 +74,7 @@ Panel.TabsItem = (props: PanelTabsItemProps): React.JSX.Element => {
 
 // @description panel button component
 Panel.Button = ({className, icon, ...otherProps}: PanelButtonProps): React.JSX.Element => (
-    <div className="my-2 mr-2 flex items-center">
+    <div className="my-2 mr-2 flex items-center shrink-0">
         <div className="rounded-lg flex items-center p-1 text-lg cursor-pointer hover:bg-gray-200" {...otherProps}>
             {renderIcon(icon)}
         </div>

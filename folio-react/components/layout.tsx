@@ -127,10 +127,10 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                         </div>
                     )}
                     {sidebarVisible && (
-                        <div className="absolute z-40 top-0 right-0 w-96 h-full">
+                        <div className="absolute z-40 top-0 right-0 w-88 h-full">
                             <Panel className="h-full rounded-tr-none rounded-br-none">
                                 <div class="flex items-center">
-                                    <Panel.Tabs>
+                                    <Panel.Tabs className="w-full">
                                         <Panel.TabsItem active={true}>
                                             <AlbumIcon />
                                         </Panel.TabsItem>
