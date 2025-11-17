@@ -33,7 +33,7 @@ import {
 import {
     getLibraryStateFromInitialData,
     createLibraryItem,
-} from "./library.js";
+} from "./library.ts";
 
 // @private clipboard key
 const CLIPBOARD_KEY = "folio:::";
