@@ -19,10 +19,7 @@ export type LibraryProviderProps = {
     children: React.ReactNode,
 };
 
-export type LibraryApi = [
-    library: LibraryItem[],
-    update: LibraryUpdate,
-];
+export type LibraryApi = {};
 
 // @private Shared library context
 export const LibraryContext = React.createContext<LibraryApi | null>(null);
@@ -115,22 +112,26 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
                 return getLibraryStateFromInitialData(data || {});
             })
             .then(libraryData => {
-                setCurrentLibrary(libraryData?.items || []);
+                setLibraryState({
+                    items: libraryData?.items || [],
+                });
             })
             .catch(error => {
                 console.error(error);
-                setCurrentLibrary([]);
+                setLibraryState({
+                    items: [],
+                });
             });
     });
 
     // If library data is not available (yet), do not render
-    if (!currentLibrary) {
+    if (!libraryState) {
         return <Loading />;
     }
 
     // Render library context provider
     return (
-        <LibraryContext.Provider value={[ currentLibrary, dispatchChange ]}>
+        <LibraryContext.Provider value={api}>
             {props.children}
         </LibraryContext.Provider>
     );
