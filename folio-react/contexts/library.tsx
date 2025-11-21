@@ -36,19 +36,7 @@ export const useLibrary = (): LibraryApi | null => {
 // @param {object} store store instace for accessing and saving data
 // @param {React Children} children React children to render
 export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element => {
-    const [ update, forceUpdate ] = React.useState<Number>(0);
-    const library = React.useRef<LibraryItem[] | null>(null);
-    // const [ currentLibrary, setCurrentLibrary ] = React.useState<LibraryItem[] | null>(null);
-
-    // handle updating the library data
-    const dispatchChange = React.useCallback((): void => {
-        if (typeof props.onChange === "function") {
-            props.onChange({
-                version: VERSION,
-                items: library.current || [],
-            });
-        }
-    }, [ props.onChange ]);
+    const [ libraryState, setLibraryState ] = React.useState<Library | null>(null);
 
     // create the api to manage the library data
     const api = React.useMemo(() => {
@@ -58,49 +46,66 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             //     library.current = getLibraryStateFromInitialData(data || {});
             // },
             // @description import library items from another library
-            import: newLibrary => {
-                const currentItems = new Set((library?.current || []).map(item => item.id));
+            import: (newLibrary: Library) => {
+                const currentItems = new Set(libraryState?.items.map(item => item.id));
                 const itemsToInsert = newLibrary.items.filter(item => {
                     return !currentItems.has(item.id);
                 });
                 // insert items into library
                 if (itemsToInsert.length > 0) {
-                    library.current = library.current.concat(itemsToInsert);
-                    forceUpdate(prev => prev + 1);
+                    setLibraryState({
+                        items: libraryState?.items.concat(itemsToInsert) || itemsToInsert,
+                    });
                 }
             },
 
             // @description clear library
             clear: () => {
-                library.current = [];
+                setLibraryState({
+                    items: [],
+                });
             },
 
             // @description add a new item to the library
-            addItem: (elements, data) => {
+            addItem: (elements: any, data: any) => {
                 return createLibraryItem(elements, data).then(libraryItem => {
-                    library.current.push(libraryItem);
+                    setLibraryState({
+                        items: (libraryState?.items || []).concat([libraryItem]),
+                    });
                 });
             },
 
             // @description remove a library item
-            removeItem: id => {
+            removeItem: (id: string | string[]) => {
                 const idsToRemove = new Set([id].flat());
-                editor.library.items = editor.library.items.filter(item => {
-                    return !idsToRemove.has(item.id);
+                setLibraryState({
+                    items: (libraryState?.items || []).filter(item => {
+                        return !idsToRemove.has(item.id);
+                    }),
                 });
             },
 
             // @description get a library item
-            getItem: id => {
-                return editor.library.items.find(item => item.id === id) || null;
+            getItem: (id: string): LibraryItem | null => {
+                return libraryState?.items.find(item => item.id === id) || null;
             },
 
             // @description get all library items
-            getItems: () => {
-                return library?.current?.items || [];
+            getItems: (): LibraryItem[] => {
+                return libraryState?.items || [];
             },
         };
-    }, [ dispatchChange ]);
+    }, [ libraryState, setLibraryState ]);
+
+    // dispatch a change every time the library state is updated
+    React.useEffect(() => {
+        if (typeof props.onChange === "function" && libraryState) {
+            props.onChange({
+                version: VERSION,
+                items: libraryState?.items || [],
+            });
+        }
+    }, [ libraryState ]);
 
     // On mount, import library data
     // TODO: we would need to handle errors when importing editor data

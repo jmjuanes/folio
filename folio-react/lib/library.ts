@@ -37,7 +37,7 @@ export type LibraryItem = {
 };
 
 export type Library = {
-    version: string;
+    version?: string;
     items: LibraryItem[];
 };
 
