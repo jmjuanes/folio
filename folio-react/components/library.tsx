@@ -1,9 +1,9 @@
 import React from "react";
 import { AlbumIcon, PlusIcon, CloseIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
-import { Dropdown } from "./ui/dropdown.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
+import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { loadLibraryFromJson } from "../lib/library.ts";
 import { clearFocus } from "../utils/dom.js";
@@ -64,12 +64,10 @@ export const LibraryItem = ({ thumbnail, onInsert, onDelete }: LibraryItemProps)
     );
 };
 
-// @description library props
-export type LibraryProps = {};
-
 // @description library container
-export const Library = (props: LibraryProps): React.JSX.Element => {
+export const Library = (): React.JSX.Element => {
     const editor = useEditor();
+    const library = useLibrary();
     const dispatchAction = useActions();
     const { showConfirm } = useConfirm();
 
