@@ -9,17 +9,19 @@ import { promisifyValue } from "../utils/promises.js";
 import { VERSION } from "../constants.js";
 import type { Library, LibraryItem } from "../lib/library.ts";
 
-// export type of the callback method used to update the internal
-// library data and dispatch an onChange
-export type LibraryUpdate = (newLibraryItems: LibraryItem[]) => void;
-
 export type LibraryProviderProps = {
     data: any;
     onChange: (library: Library) => void;
     children: React.ReactNode,
 };
 
-export type LibraryApi = {};
+export type LibraryApi = {
+    clear: () => void;
+    addItem: (elements: any, data: any) => void;
+    removeItem: (id: string) => void;
+    getItem: (id: string) => LibraryItem | null;
+    getItems: () => LibraryItem[];
+};
 
 // @private Shared library context
 export const LibraryContext = React.createContext<LibraryApi | null>(null);
@@ -43,18 +45,18 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             //     library.current = getLibraryStateFromInitialData(data || {});
             // },
             // @description import library items from another library
-            import: (newLibrary: Library) => {
-                const currentItems = new Set(libraryState?.items.map(item => item.id));
-                const itemsToInsert = newLibrary.items.filter(item => {
-                    return !currentItems.has(item.id);
-                });
-                // insert items into library
-                if (itemsToInsert.length > 0) {
-                    setLibraryState({
-                        items: libraryState?.items.concat(itemsToInsert) || itemsToInsert,
-                    });
-                }
-            },
+            // import: (newLibrary: Library) => {
+            //     const currentItems = new Set(libraryState?.items.map(item => item.id));
+            //     const itemsToInsert = newLibrary.items.filter(item => {
+            //         return !currentItems.has(item.id);
+            //     });
+            //     // insert items into library
+            //     if (itemsToInsert.length > 0) {
+            //         setLibraryState({
+            //             items: libraryState?.items.concat(itemsToInsert) || itemsToInsert,
+            //         });
+            //     }
+            // },
 
             // @description clear library
             clear: () => {
@@ -65,7 +67,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
 
             // @description add a new item to the library
             addItem: (elements: any, data: any) => {
-                return createLibraryItem(elements, data).then(libraryItem => {
+                createLibraryItem(elements, data).then(libraryItem => {
                     setLibraryState({
                         items: (libraryState?.items || []).concat([libraryItem]),
                     });
@@ -73,11 +75,10 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             },
 
             // @description remove a library item
-            removeItem: (id: string | string[]) => {
-                const idsToRemove = new Set([id].flat());
+            removeItem: (id: string) => {
                 setLibraryState({
                     items: (libraryState?.items || []).filter(item => {
-                        return !idsToRemove.has(item.id);
+                        return item.id !== id;
                     }),
                 });
             },
@@ -104,8 +105,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
         }
     }, [ libraryState ]);
 
-    // On mount, import library data
-    // TODO: we would need to handle errors when importing editor data
+    // on mount, import library data
     useMount(() => {
         promisifyValue(props.data)
             .then(data => {
@@ -124,12 +124,12 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             });
     });
 
-    // If library data is not available (yet), do not render
+    // if library data is not available (yet), do not render
     if (!libraryState) {
         return <Loading />;
     }
 
-    // Render library context provider
+    // render library context provider
     return (
         <LibraryContext.Provider value={api}>
             {props.children}
