@@ -38,7 +38,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
     const [ libraryState, setLibraryState ] = React.useState<Library | null>(null);
 
     // create the api to manage the library data
-    const api = React.useMemo(() => {
+    const libraryApi = React.useMemo(() => {
         return {
             // @description load library data from a JSON object
             // fromJSON: data => {
@@ -108,15 +108,15 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
     // on mount, import library data
     useMount(() => {
         promisifyValue(props.data)
-            .then(data => {
+            .then((data: any) => {
                 return getLibraryStateFromInitialData(data || {});
             })
-            .then(libraryData => {
+            .then((libraryData: Partial<Library>) => {
                 setLibraryState({
                     items: libraryData?.items || [],
                 });
             })
-            .catch(error => {
+            .catch((error: any) => {
                 console.error(error);
                 setLibraryState({
                     items: [],
@@ -131,7 +131,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
 
     // render library context provider
     return (
-        <LibraryContext.Provider value={api}>
+        <LibraryContext.Provider value={libraryApi}>
             {props.children}
         </LibraryContext.Provider>
     );

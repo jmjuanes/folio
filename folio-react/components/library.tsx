@@ -90,12 +90,10 @@ export const Library = (): React.JSX.Element => {
             title: "Delete library",
             message: `Do you want to delete your library? This action can not be undone.`,
             callback: () => {
-                editor.clearLibrary();
-                editor.dispatchLibraryChange();
-                editor.update();
+                library.clear();
             },
         });
-    }, [editor, showConfirm]);
+    }, [ library, showConfirm ]);
 
     // handle exporting the library
     const handleLibraryExport = React.useCallback(() => {

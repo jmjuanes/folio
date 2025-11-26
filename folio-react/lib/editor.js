@@ -627,7 +627,7 @@ export const createEditor = (options = {}) => {
         },
 
         // @description import elements into editor
-        importElements: (elements, dx = 0, dy = 0) => {
+        importElements: (elements, dx = 0, dy = 0, group = null) => {
             editor.clearSelection();
             // 1. Process new elements
             const changes = [];
@@ -652,7 +652,7 @@ export const createEditor = (options = {}) => {
                     y1: element.y1 + dy,
                     y2: element.y2 + dy,
                     selected: true,
-                    [FIELDS.GROUP]: editor.page?.activeGroup || groups.get(element.group) || null,
+                    [FIELDS.GROUP]: group || editor.page?.activeGroup || groups.get(element.group) || null,
                     [FIELDS.ORDER]: maxOrder + index + 1,
                     [FIELDS.NAME]: "Copy of " + (element[FIELDS.NAME] || ""),
                 };
@@ -942,8 +942,8 @@ export const createEditor = (options = {}) => {
         },
 
         // @description add a new library item element
+        // @DEPRECATED
         addLibraryElement: (libraryItem, tx = null, ty = null) => {
-            // editor.clearSelection();
             editor.setTool(TOOLS.SELECT);
             const bounds = getElementsBoundingRectangle(libraryItem.elements);
             const group = generateRandomId();
