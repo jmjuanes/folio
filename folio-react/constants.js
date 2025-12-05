@@ -505,6 +505,7 @@ export const ACTIONS = {
     SEND_TO_BACK: "send-to-back",
     LOCK_SELECTION: "lock-selection",
     UNLOCK_SELECTION: "unlock-selection",
+    ADD_SELECTION_TO_LIBRARY: "add-selection-to-library",
     ZOOM_IN: "zoom-in",
     ZOOM_OUT: "zoom-out",
     ZOOM_RESET: "zoom-reset",
@@ -521,7 +522,7 @@ export const ACTIONS = {
     TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
-    SHOW_LIBRARY_ADD_DIALOG: "show-library-add-dialog",
+    // SHOW_LIBRARY_ADD_DIALOG: "show-library-add-dialog",
     SHOW_LIBRARY_EXPORT_DIALOG: "show-library-export-dialog",
     SHOW_PAGE_EDIT_DIALOG: "show-page-edit-dialog",
 };

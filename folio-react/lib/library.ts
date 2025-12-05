@@ -38,6 +38,8 @@ export type LibraryItem = {
 
 export type Library = {
     version?: string;
+    name?: string;
+    description?: string;
     items: LibraryItem[];
 };
 
@@ -46,12 +48,12 @@ export type Library = {
 export const generateLibraryId = (): string => "lib:" + uid(20);
 
 // @description migrate a library
-export const migrateLibrary = library => {
+export const migrateLibrary = (library: any): Library => {
     return {
         // version: VERSION, // set the current version
         // name: library.name || "Untitled", // set a default name
         // description: library.description || "", // set a default description
-        items: (library.items || []).map(item => {
+        items: (library.items || []).map((item: LibraryItem) => {
             return Object.assign({}, item, {
                 elements: migrateElements(item.elements, library.version || VERSION),
             });
@@ -60,7 +62,7 @@ export const migrateLibrary = library => {
 };
 
 // @description allow to load a library from a local file
-export const loadLibraryFromJson = async () => {
+export const loadLibraryFromJson = async (): Promise<Library> => {
     const blob = await fileOpen({
         description: "Folio Library Import",
         extensions: [
@@ -78,13 +80,12 @@ export const loadLibraryFromJson = async () => {
 };
 
 // @description allow to save a library to a local file
-export const saveLibraryAsJson = library => {
-    const libraryName = library.name || "Untitled";
+export const saveLibraryAsJson = (library: Library): Promise<any> => {
+    const libraryName = library.name || "Personal Library";
     const exportData = {
         type: MIME_TYPES.FOLIO_LIB,
         version: VERSION,
         name: libraryName,
-        description: library.description || "",
         items: library.items || [],
     };
     const dataStr = JSON.stringify(exportData, null, "    ");
@@ -109,7 +110,7 @@ export const getLibraryItemThumbnail = (elements = [], scale = 1) => {
 };
 
 // @description generate libraries from initial libraries data
-export const getLibraryStateFromInitialData = initialData => {
+export const getLibraryStateFromInitialData = (initialData: any) => {
     return migrateLibrary(initialData);
 };
 
@@ -118,13 +119,13 @@ export const getLibraryStateFromInitialData = initialData => {
 // @param {object} data additional metadata for the library item
 // @param {string} data.name name for the library item
 // @param {string} data.description a description for the library item
-export const createLibraryItem = (elements = [], data = {}) => {
-    const bounds = getElementsBoundingRectangle(elements);
+export const createLibraryItem = (elements: any = [], data: any = {}): Promise<LibraryItem> => {
+    const bounds = getElementsBoundingRectangle(elements) as any;
     return getLibraryItemThumbnail(elements).then(thumbnail => {
         return {
             id: generateLibraryId(),
             name: data?.name || "Untitled",
-            elements: elements.map(element => {
+            elements: elements.map((element: any) => {
                 // 1. generate a clone of the element and fix positions
                 const newElement = Object.assign({}, element, {
                     x1: element.x1 - bounds.x1,

@@ -3,18 +3,19 @@ import { ACTIONS, ZOOM_STEP } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useDialog } from "../contexts/dialogs.jsx";
+import { useLibrary } from "../contexts/library.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 
 // @description hook to dispatch an action in the editor
 export const useActions = () => {
     const editor = useEditor();
+    const library = useLibrary();
     const { showConfirm } = useConfirm();
     const { showDialog } = useDialog();
     const {
         KeyboardShortcutsDialog,
         ExportDialog,
-        LibraryAddDialog,
         LibraryExportDialog,
         PageEditDialog,
     } = useEditorComponents();
@@ -174,6 +175,12 @@ export const useActions = () => {
                     editor.update();
                 }
             },
+            [ACTIONS.ADD_SELECTION_TO_LIBRARY]: () => {
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    library.addItem(selectedElements);
+                }
+            },
             [ACTIONS.CUT]: () => {
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {
@@ -274,12 +281,6 @@ export const useActions = () => {
                     dialogClassName: "w-full max-w-md",
                     component: ExportDialog,
                     props: exportOptions,
-                });
-            },
-            [ACTIONS.SHOW_LIBRARY_ADD_DIALOG]: () => {
-                showDialog({
-                    dialogClassName: "w-full max-w-md",
-                    component: LibraryAddDialog,
                 });
             },
             [ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG]: () => {

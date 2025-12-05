@@ -7,6 +7,7 @@ import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { loadLibraryFromJson } from "../lib/library.ts";
 import { clearFocus } from "../utils/dom.js";
+import { Dropdown } from "./ui/dropdown.tsx";
 
 // @description display an empty library message
 const EmptyLibrary = () => (
@@ -75,9 +76,9 @@ export const Library = (): React.JSX.Element => {
     const handleLibraryLoad = React.useCallback(() => {
         return loadLibraryFromJson()
             .then(importedLibrary => {
-                editor.importLibrary(importedLibrary);
-                editor.dispatchLibraryChange();
-                editor.update();
+                // editor.importLibrary(importedLibrary);
+                // editor.dispatchLibraryChange();
+                // editor.update();
             })
             .catch(error => {
                 console.error(error);
@@ -90,15 +91,16 @@ export const Library = (): React.JSX.Element => {
             title: "Delete library",
             message: `Do you want to delete your library? This action can not be undone.`,
             callback: () => {
-                library.clear();
+                library?.clear();
             },
         });
     }, [ library, showConfirm ]);
 
     // handle exporting the library
     const handleLibraryExport = React.useCallback(() => {
-        clearFocus();
-        dispatchAction(ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG, {});
+        // TODO
+        // clearFocus();
+        // dispatchAction(ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG, {});
     }, [dispatchAction]);
 
     // inject an item into the editor
@@ -106,10 +108,11 @@ export const Library = (): React.JSX.Element => {
     // @param {number} x the x position to insert the item
     // @param {number} y the y position to insert the item
     const handleInsertItem = React.useCallback((item: any) => {
-        editor.addLibraryElement(item);
-        editor.dispatchChange();
-        editor.update();
-        clearFocus();
+        // TODO
+        // editor.addLibraryElement(item);
+        // editor.dispatchChange();
+        // editor.update();
+        // clearFocus();
     }, [editor]);
 
     // handle deleting an item from the library

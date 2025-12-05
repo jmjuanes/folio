@@ -1,8 +1,7 @@
 import React from "react";
-import { AlbumIcon } from "@josemi-icons/react";
 import { Alert } from "./ui/alert.tsx";
+import { Dropdown } from "./ui/dropdown.tsx";
 import { Island } from "./ui/island.jsx";
-import { Panel } from "./ui/panel.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useActions } from "../hooks/use-actions.js";
@@ -18,7 +17,6 @@ export type LayoutProps = {
 // @param {React.ReactNode} props.children React children
 export const Layout = (props: LayoutProps): React.JSX.Element => {
     const hideUi = props.hideUi ?? false;
-    const [ sidebarVisible, setSidebarVisible ] = React.useState(false);
     const [ layersVisible, setLayersVisible ] = React.useState(false);
     const editor = useEditor();
     const dispatchAction = useActions();
@@ -38,7 +36,6 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
 
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
-    const showSidebarButton = true; // !!Library;
 
     return (
         <React.Fragment>
@@ -60,6 +57,21 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             )}
                             {!!PagesMenu && <PagesMenu />}
                             {!!SettingsMenu && <SettingsMenu />}
+                            {!!Library && (
+                                <Dropdown.Portal
+                                    id="library:dropdown"
+                                    toggleRender={active => (
+                                        <Island.Button icon="album" active={active} />
+                                    )}
+                                    contentClassName="fixed top-0 left-0 z-50 mt-2"
+                                    contentRender={close => (
+                                        <Dropdown className="w-64">
+                                            <Library />
+                                        </Dropdown>
+                                    )}
+                                />
+                            )}
+                            <Island.Separator />
                             <Island.Button
                                 icon="trash"
                                 onClick={() => {
@@ -69,7 +81,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             />
                         </Island>
                     </div>
-                    {(!!HistoryPanel || !!ZoomPanel || !!Layers || showSidebarButton) && (
+                    {(!!HistoryPanel || !!ZoomPanel || !!Layers) && (
                         <div className="absolute top-0 right-0 pt-4 pr-4 z-30 flex gap-2">
                             {!!HistoryPanel && <HistoryPanel />}
                             {!!ZoomPanel && <ZoomPanel />}
@@ -79,15 +91,6 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                         icon="stack"
                                         onClick={() => setLayersVisible(!layersVisible)}
                                         active={layersVisible}
-                                    />
-                                </Island>
-                            )}
-                            {showSidebarButton && (
-                                <Island>
-                                    <Island.Button
-                                        icon="sidebar-right"
-                                        onClick={() => setSidebarVisible(!sidebarVisible)}
-                                        active={sidebarVisible}
                                     />
                                 </Island>
                             )}
@@ -124,22 +127,6 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                     {!!Layers && layersVisible && (
                         <div className="absolute z-30 top-0 right-0 pt-1 mt-16 mr-4">
                             <Layers />
-                        </div>
-                    )}
-                    {sidebarVisible && (
-                        <div className="absolute z-40 top-0 right-0 w-88 h-full">
-                            <Panel className="h-full rounded-tr-none rounded-br-none">
-                                <div className="flex items-center">
-                                    <div className="w-full" />
-                                    <Panel.Button
-                                        icon="x"
-                                        onClick={() => setSidebarVisible(!sidebarVisible)}
-                                    />
-                                </div>
-                                <Panel.Body className="">
-                                    Sidebar
-                                </Panel.Body>
-                            </Panel>
                         </div>
                     )}
                 </React.Fragment>
