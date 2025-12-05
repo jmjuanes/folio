@@ -1,6 +1,7 @@
 import React from "react";
 import { Editor } from "folio-react/components/editor.jsx";
 import { Title } from "folio-react/components/title.tsx";
+import { Library } from "folio-react/components/library.tsx";
 import { Loading } from "../../../folio-react/components/loading.jsx";
 import { Welcome } from "./welcome.tsx";
 import type { Store } from "../types/store.ts";
@@ -20,6 +21,7 @@ export const App = (props: AppProps): React.JSX.Element => {
     const componentsOverrides = React.useMemo(() => {
         return {
             Title: Title,
+            Library: Library,
             OverTheCanvas: Welcome,
         };
     }, [ props.store ]);
