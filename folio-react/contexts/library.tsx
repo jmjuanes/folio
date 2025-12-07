@@ -16,6 +16,7 @@ export type LibraryProviderProps = {
 };
 
 export type LibraryApi = {
+    count: number;
     clear: () => void;
     addItem: (elements: any, data: any) => void;
     removeItem: (id: string) => void;
@@ -40,6 +41,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
     // create the api to manage the library data
     const libraryApi = React.useMemo(() => {
         return {
+            count: libraryState?.items?.length || 0,
             // @description load library data from a JSON object
             // fromJSON: data => {
             //     library.current = getLibraryStateFromInitialData(data || {});
@@ -131,7 +133,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
 
     // render library context provider
     return (
-        <LibraryContext.Provider value={libraryApi}>
+        <LibraryContext.Provider value={{...libraryApi}}>
             {props.children}
         </LibraryContext.Provider>
     );

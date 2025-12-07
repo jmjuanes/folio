@@ -179,7 +179,6 @@ export const useActions = () => {
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {
                     library.addItem(selectedElements);
-                    editor.update();
                 }
             },
             [ACTIONS.CUT]: () => {
