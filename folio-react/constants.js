@@ -506,6 +506,7 @@ export const ACTIONS = {
     LOCK_SELECTION: "lock-selection",
     UNLOCK_SELECTION: "unlock-selection",
     ADD_SELECTION_TO_LIBRARY: "add-selection-to-library",
+    ADD_LIBRARY_ITEM: "add-library-item",
     ZOOM_IN: "zoom-in",
     ZOOM_OUT: "zoom-out",
     ZOOM_RESET: "zoom-reset",

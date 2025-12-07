@@ -1,5 +1,6 @@
 import React from "react";
-import { ACTIONS, ZOOM_STEP } from "../constants.js";
+import { uid } from "uid/secure";
+import { ACTIONS, ZOOM_STEP, TOOLS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useDialog } from "../contexts/dialogs.jsx";
@@ -180,6 +181,12 @@ export const useActions = () => {
                 if (selectedElements.length > 0) {
                     library.addItem(selectedElements);
                 }
+            },
+            [ACTIONS.ADD_LIBRARY_ITEM]: (libraryItem) => {
+                editor.setTool(TOOLS.SELECT);
+                editor.importElements(libraryItem.elements, null, null, uid(20));
+                editor.dispatchChange();
+                editor.update();
             },
             [ACTIONS.CUT]: () => {
                 const selectedElements = editor.getSelection();

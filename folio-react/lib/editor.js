@@ -627,7 +627,7 @@ export const createEditor = (options = {}) => {
         },
 
         // @description import elements into editor
-        importElements: (elements, dx = 0, dy = 0, group = null) => {
+        importElements: (elements, dx = null, dy = null, group = null) => {
             editor.clearSelection();
             // 1. Process new elements
             const changes = [];
@@ -637,6 +637,9 @@ export const createEditor = (options = {}) => {
             const maxOrder = Math.max.apply(null, editor.page.elements.map(el => {
                 return (!editor.page?.activeGroup || editor.page.activeGroup === el[FIELDS.GROUP]) ? el[FIELDS.ORDER] : 0;
             }));
+            const bounds = getElementsBoundingRectangle(elements);
+            const x = (dx ?? ((-1) * editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
+            const y = (dy ?? ((-1) * editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
             const newElements = elements.map((element, index) => {
                 // 1.1. Check if this element is part of a group
                 if (elements.length > 1 && !editor.page?.activeGroup && !!element.group && !groups.has(element.group)) {
@@ -647,11 +650,11 @@ export const createEditor = (options = {}) => {
                     ...element,
                     [FIELDS.VERSION]: 0,
                     [FIELDS.ID]: generateRandomId(),
-                    x1: element.x1 + dx,
-                    x2: element.x2 + dx,
-                    y1: element.y1 + dy,
-                    y2: element.y2 + dy,
-                    selected: true,
+                    x1: element.x1 + x,
+                    x2: element.x2 + x,
+                    y1: element.y1 + y,
+                    y2: element.y2 + y,
+                    [FIELDS.SELECTED]: true,
                     [FIELDS.GROUP]: group || editor.page?.activeGroup || groups.get(element.group) || null,
                     [FIELDS.ORDER]: maxOrder + index + 1,
                     [FIELDS.NAME]: "Copy of " + (element[FIELDS.NAME] || ""),
@@ -659,7 +662,7 @@ export const createEditor = (options = {}) => {
                 // 1.3 Check if this element has an onDuplicate listener defined
                 const elementConfig = getElementConfig(element);
                 if (elementConfig?.onDuplicate) {
-                    elementConfig.onDuplicate(newElement, dx, dy);
+                    elementConfig.onDuplicate(newElement, x, y);
                 }
                 // 1.4 Return the new element data
                 return newElement;
