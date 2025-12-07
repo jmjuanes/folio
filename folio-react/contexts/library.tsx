@@ -25,11 +25,11 @@ export type LibraryApi = {
 };
 
 // @private Shared library context
-export const LibraryContext = React.createContext<LibraryApi | null>(null);
+export const LibraryContext = React.createContext(null);
 
 // @description use library hook
 export const useLibrary = (): LibraryApi | null => {
-    return React.useContext(LibraryContext);
+    return React.useContext(LibraryContext)[0];
 };
 
 // @description Library provider component
@@ -41,7 +41,6 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
     // create the api to manage the library data
     const libraryApi = React.useMemo(() => {
         return {
-            count: libraryState?.items?.length || 0,
             // @description load library data from a JSON object
             // fromJSON: data => {
             //     library.current = getLibraryStateFromInitialData(data || {});
@@ -87,7 +86,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
 
             // @description get a library item
             getItem: (id: string): LibraryItem | null => {
-                return libraryState?.items.find(item => item.id === id) || null;
+                return (libraryState?.items || []).find((item: LibraryItem) => item.id === id) || null;
             },
 
             // @description get all library items
@@ -133,7 +132,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
 
     // render library context provider
     return (
-        <LibraryContext.Provider value={{...libraryApi}}>
+        <LibraryContext.Provider value={[libraryApi, libraryState?.items?.length]}>
             {props.children}
         </LibraryContext.Provider>
     );
