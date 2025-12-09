@@ -180,13 +180,32 @@ export const useActions = () => {
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {
                     library.addItem(selectedElements);
+                    editor.update();
                 }
             },
-            [ACTIONS.ADD_LIBRARY_ITEM]: (libraryItem) => {
+            [ACTIONS.INSERT_LIBRARY_ITEM]: (libraryItem) => {
                 editor.setTool(TOOLS.SELECT);
                 editor.importElements(libraryItem.elements, null, null, uid(20));
                 editor.dispatchChange();
                 editor.update();
+            },
+            [ACTIONS.DELETE_LIBRARY_ITEM]: (libraryItem) => {
+                showConfirm({
+                    title: "Delete library item",
+                    message: `Do you want to delete this item from the library? This action can not be undone.`,
+                    callback: () => {
+                        library?.removeItem(libraryItem.id);
+                    },
+                });
+            },
+            [ACTIONS.CLEAR_LIBRARY]: () => {
+                showConfirm({
+                    title: "Delete library",
+                    message: `Do you want to delete your library? This action can not be undone.`,
+                    callback: () => {
+                        library?.clear();
+                    },
+                });
             },
             [ACTIONS.CUT]: () => {
                 const selectedElements = editor.getSelection();

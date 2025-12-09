@@ -25,11 +25,11 @@ export type LibraryApi = {
 };
 
 // @private Shared library context
-export const LibraryContext = React.createContext(null);
+export const LibraryContext = React.createContext<LibraryApi | null>(null);
 
 // @description use library hook
 export const useLibrary = (): LibraryApi | null => {
-    return React.useContext(LibraryContext)[0];
+    return React.useContext(LibraryContext);
 };
 
 // @description Library provider component
@@ -37,10 +37,13 @@ export const useLibrary = (): LibraryApi | null => {
 // @param {React Children} children React children to render
 export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element => {
     const [ libraryState, setLibraryState ] = React.useState<Library | null>(null);
+    console.log("LibraryProvider rendered");
 
     // create the api to manage the library data
     const libraryApi = React.useMemo(() => {
         return {
+            count: libraryState?.items.length || 0,
+
             // @description load library data from a JSON object
             // fromJSON: data => {
             //     library.current = getLibraryStateFromInitialData(data || {});
@@ -70,7 +73,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             addItem: (elements: any, data: any) => {
                 createLibraryItem(elements, data).then(libraryItem => {
                     setLibraryState({
-                        items: (libraryState?.items || []).concat([libraryItem]),
+                        items: [...(libraryState?.items || []), libraryItem],
                     });
                 });
             },
@@ -94,7 +97,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
                 return libraryState?.items || [];
             },
         };
-    }, [ libraryState, setLibraryState ]);
+    }, [ libraryState ]);
 
     // dispatch a change every time the library state is updated
     React.useEffect(() => {
@@ -132,7 +135,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
 
     // render library context provider
     return (
-        <LibraryContext.Provider value={[libraryApi, libraryState?.items?.length]}>
+        <LibraryContext.Provider value={libraryApi}>
             {props.children}
         </LibraryContext.Provider>
     );

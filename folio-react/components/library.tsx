@@ -2,11 +2,9 @@ import React from "react";
 import { AlbumIcon, PlusIcon, CloseIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
-import { useConfirm } from "../contexts/confirm.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { loadLibraryFromJson } from "../lib/library.ts";
-import { clearFocus } from "../utils/dom.js";
 import { Dropdown } from "./ui/dropdown.tsx";
 
 // @description display an empty library message
@@ -70,7 +68,6 @@ export const Library = (): React.JSX.Element => {
     const editor = useEditor();
     const library = useLibrary();
     const dispatchAction = useActions();
-    const { showConfirm } = useConfirm();
 
     // handle loading a library from JSON
     const handleLibraryLoad = React.useCallback(() => {
@@ -85,17 +82,6 @@ export const Library = (): React.JSX.Element => {
             });
     }, [editor]);
 
-    // handle clearing the library
-    const handleLibraryClear = React.useCallback(() => {
-        showConfirm({
-            title: "Delete library",
-            message: `Do you want to delete your library? This action can not be undone.`,
-            callback: () => {
-                library?.clear();
-            },
-        });
-    }, [ library, showConfirm ]);
-
     // handle exporting the library
     const handleLibraryExport = React.useCallback(() => {
         // TODO
@@ -103,63 +89,43 @@ export const Library = (): React.JSX.Element => {
         // dispatchAction(ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG, {});
     }, [dispatchAction]);
 
-    // inject an item into the editor
-    // @param {object} item library item to insert
-    // @param {number} x the x position to insert the item
-    // @param {number} y the y position to insert the item
-    const handleInsertItem = React.useCallback((item: any) => {
-        // TODO
-        // editor.addLibraryElement(item);
-        // editor.dispatchChange();
-        // editor.update();
-        // clearFocus();
-    }, [editor]);
-
-    // handle deleting an item from the library
-    // @param {object} item library item to delete
-    const handleDeleteItem = React.useCallback((item: any) => {
-        showConfirm({
-            title: "Delete library item",
-            message: `Do you want to delete this item from the library? This action can not be undone.`,
-            callback: () => {
-                editor.removeLibraryItem(item.id);
-                editor.dispatchLibraryChange();
-                editor.update();
-            },
-        });
-    }, [editor, showConfirm]);
+    const libraryItems = library?.getItems() || [];
 
     return (
         <React.Fragment>
             <Dropdown.Header>
                 <div className="text-sm font-bold mr-auto">Library</div>
+                {/*
                 <Dropdown.HeaderButton
                     icon="folder"
                     onClick={handleLibraryLoad}
                 />
                 <Dropdown.HeaderButton
                     icon="download"
-                    disabled={editor.library.items.length === 0}
+                    disabled={libraryItems.length === 0}
                     onClick={handleLibraryExport}
                 />
+                */}
                 <Dropdown.HeaderButton
                     icon="trash"
-                    disabled={editor.library.items.length === 0}
-                    onClick={handleLibraryClear}
+                    disabled={libraryItems.length === 0}
+                    onClick={() => {
+                        dispatchAction(ACTIONS.CLEAR_LIBRARY);
+                    }}
                 />
             </Dropdown.Header>
             <div className="overflow-x-hidden overflow-y-auto scrollbar" style={{maxHeight:"50vh"}}>
                 <div className="grid gap-2 grid-cols-4 pt-2">
-                    {editor.getLibraryItems().map((item: any) => (
+                    {libraryItems.map((item: any) => (
                         <LibraryItem
                             key={item.id}
                             thumbnail={item.thumbnail}
-                            onInsert={() => handleInsertItem(item)}
-                            onDelete={() => handleDeleteItem(item)}
+                            onInsert={() => dispatchAction(ACTIONS.INSERT_LIBRARY_ITEM, item)}
+                            onDelete={() => dispatchAction(ACTIONS.DELETE_LIBRARY_ITEM, item)}
                         />
                     ))}
                 </div>
-                {editor.library.items.length === 0 && (
+                {libraryItems.length === 0 && (
                     <EmptyLibrary />
                 )}
             </div>
