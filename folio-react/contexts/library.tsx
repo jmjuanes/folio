@@ -37,7 +37,6 @@ export const useLibrary = (): LibraryApi | null => {
 // @param {React Children} children React children to render
 export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element => {
     const [ libraryState, setLibraryState ] = React.useState<Library | null>(null);
-    console.log("LibraryProvider rendered");
 
     // create the api to manage the library data
     const libraryApi = React.useMemo(() => {
