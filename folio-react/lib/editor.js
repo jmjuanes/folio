@@ -638,8 +638,9 @@ export const createEditor = (options = {}) => {
                 return (!editor.page?.activeGroup || editor.page.activeGroup === el[FIELDS.GROUP]) ? el[FIELDS.ORDER] : 0;
             }));
             const bounds = getElementsBoundingRectangle(elements);
-            const x = (dx ?? ((-1) * editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
-            const y = (dy ?? ((-1) * editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
+            const x = typeof dx === "number" ? dx : ((-1) * editor.page.translateX + editor.width / 2) - (bounds[1][0] - bounds[0][0])/ 2;
+            const y = typeof dy === "number" ? dy : ((-1) * editor.page.translateY + editor.height / 2) - (bounds[1][1] - bounds[0][1]) / 2;
+            debugger;
             const newElements = elements.map((element, index) => {
                 // 1.1. Check if this element is part of a group
                 if (elements.length > 1 && !editor.page?.activeGroup && !!element.group && !groups.has(element.group)) {

@@ -120,23 +120,26 @@ export const getLibraryStateFromInitialData = (initialData: any) => {
 // @param {string} data.name name for the library item
 // @param {string} data.description a description for the library item
 export const createLibraryItem = (elements: any = [], data: any = {}): Promise<LibraryItem> => {
+    debugger;
     const bounds = getElementsBoundingRectangle(elements) as any;
     return getLibraryItemThumbnail(elements).then(thumbnail => {
+        debugger;
         return {
             id: generateLibraryId(),
             name: data?.name || "Untitled",
             elements: elements.map((element: any) => {
                 // 1. generate a clone of the element and fix positions
                 const newElement = Object.assign({}, element, {
-                    x1: element.x1 - bounds.x1,
-                    y1: element.y1 - bounds.y1,
-                    x2: element.x2 - bounds.x1,
-                    y2: element.y2 - bounds.y1,
+                    x1: element.x1 - bounds[0][0],
+                    y1: element.y1 - bounds[0][1],
+                    x2: element.x2 - bounds[0][0],
+                    y2: element.y2 - bounds[0][1],
                 });
+                debugger;
                 // 2. fix the xCenter and yCenter if exists
                 if (typeof element.xCenter === "number") {
-                    newElement.xCenter = element.xCenter - bounds.x1;
-                    newElement.yCenter = element.yCenter - bounds.y1;
+                    newElement.xCenter = element.xCenter - bounds[0][0];
+                    newElement.yCenter = element.yCenter - bounds[0][1];
                 }
                 // 3. return the new element
                 return newElement;

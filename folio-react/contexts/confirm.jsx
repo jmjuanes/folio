@@ -1,8 +1,9 @@
 import React from "react";
-import {Button} from "../components/ui/button.jsx";
-import {Overlay} from "../components/ui/overlay.jsx";
-import {Centered} from "../components/ui/centered.jsx";
-import {Dialog} from "../components/ui/dialog.jsx";
+import { createPortal } from "react-dom";
+import { Button } from "../components/ui/button.jsx";
+import { Overlay } from "../components/ui/overlay.jsx";
+import { Centered } from "../components/ui/centered.jsx";
+import { Dialog } from "../components/ui/dialog.jsx";
 
 const ConfirmContext = React.createContext();
 const SHOW_CONFIRM = "SHOW_CONFIRM";
@@ -79,8 +80,8 @@ export const ConfirmProvider = props => {
     return (
         <ConfirmContext.Provider value={{confirm, showConfirm, hideConfirm}}>
             {props.children}
-            {confirm?.visible && (
-                <React.Fragment>
+            {confirm?.visible && createPortal([
+                <React.Fragment key="dialog:confirm">
                     <Overlay className="z-50" />
                     <Centered className="fixed z-50 h-full">
                         <Dialog className="max-w-lg relative">
@@ -104,7 +105,7 @@ export const ConfirmProvider = props => {
                         </Dialog>
                     </Centered>
                 </React.Fragment>
-            )}
+            ], document.body)}
         </ConfirmContext.Provider>
     );
 };
