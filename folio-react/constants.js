@@ -527,7 +527,5 @@ export const ACTIONS = {
     TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
-    // SHOW_LIBRARY_ADD_DIALOG: "show-library-add-dialog",
-    SHOW_LIBRARY_EXPORT_DIALOG: "show-library-export-dialog",
     SHOW_PAGE_EDIT_DIALOG: "show-page-edit-dialog",
 };

@@ -1285,68 +1285,6 @@ export const createEditor = (options = {}) => {
 
         // @description get the current active tool
         getTool: () => editor.state.tool,
-
-        // 
-        // Library API
-        //
-
-        // @description export library to JSON
-        // @returns {object} library library exported data
-        // @returns {string} library.version verion of the exported library
-        // @returns {object} library.items list of items in the library
-        libraryToJSON: () => {
-            return {
-                version: VERSION,
-                items: editor.library?.items || [],
-            };
-        },
-
-        // @description load library data from a JSON object
-        libraryFromJSON: data => {
-            Object.assign(editor.library, getLibraryStateFromInitialData(data || {}));
-        },
-
-        // @description import library items from another library
-        importLibrary: newLibrary => {
-            const currentItems = new Set((editor.library?.items || []).map(item => item.id));
-            const itemsToInsert = newLibrary.items.filter(item => {
-                return !currentItems.has(item.id);
-            });
-            // insert items into library
-            if (itemsToInsert.length > 0) {
-                editor.library.items = editor.library.items.concat(itemsToInsert);
-            }
-        },
-
-        // @description clear library
-        clearLibrary: () => {
-            return editor.libraryFromJSON({});
-        },
-
-        // @description add a new item to the library
-        addLibraryItem: (elements, data) => {
-            return createLibraryItem(elements, data).then(libraryItem => {
-                editor.library.items.push(libraryItem);
-            });
-        },
-
-        // @description remove a library item
-        removeLibraryItem: id => {
-            const idsToRemove = new Set([id].flat());
-            editor.library.items = editor.library.items.filter(item => {
-                return !idsToRemove.has(item.id);
-            });
-        },
-
-        // @description get a library item
-        getLibraryItem: id => {
-            return editor.library.items.find(item => item.id === id) || null;
-        },
-
-        // @description get all library items
-        getLibraryItems: () => {
-            return editor.library.items || [];
-        },
     };
 
     return editor;

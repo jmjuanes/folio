@@ -18,7 +18,6 @@ export const useActions = () => {
     const {
         KeyboardShortcutsDialog,
         ExportDialog,
-        LibraryExportDialog,
         PageEditDialog,
     } = useEditorComponents();
 
@@ -321,12 +320,6 @@ export const useActions = () => {
                     dialogClassName: "w-full max-w-md",
                     component: ExportDialog,
                     props: exportOptions,
-                });
-            },
-            [ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG]: () => {
-                showDialog({
-                    dialogClassName: "w-full max-w-md",
-                    component: LibraryExportDialog,
                 });
             },
             [ACTIONS.SHOW_PAGE_EDIT_DIALOG]: pageOptions => {

@@ -59,7 +59,6 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Toolbar: Toolbar,
             Layers: Layers,
             Title: null,
-            // sidebar components
             Library: null,
             // canvas
             BehindTheCanvas: null,
