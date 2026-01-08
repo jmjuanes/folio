@@ -17,7 +17,8 @@ const confirmReducer = (state, action) => {
             message: action.payload.message,
             confirmText: action.payload.confirmText,
             cancelText: action.payload.cancelText,
-            callback: action.payload.callback,
+            onSubmit: action.payload.callback || action.payload.onSubmit,
+            onCancel: action.payload.onCancel,
         };
     }
     else if (action.type === HIDE_CONFIRM) {
@@ -49,20 +50,26 @@ export const ConfirmProvider = props => {
             type: SHOW_CONFIRM,
             payload: payload,
         });
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     // hide the confirm dialog
     const hideConfirm = React.useCallback(() => {
         return dispatch({
             type: HIDE_CONFIRM,
         });
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     // submit the confirm dialog
-    const submitConfirm = React.useCallback(() => {
-        confirm?.callback?.();
+    const handleSubmit = React.useCallback(() => {
+        confirm?.onSubmit?.();
         hideConfirm();
-    }, [confirm, hideConfirm]);
+    }, [ confirm, hideConfirm ]);
+
+    // handle cancel
+    const handleCancel = React.useCallback(() => {
+        confirm?.onCancel?.();
+        hideConfirm();
+    }, [ confirm, hideConfirm ]);
 
     // register an effect to listen for the escape key and hide the dialog
     React.useEffect(() => {
@@ -95,10 +102,10 @@ export const ConfirmProvider = props => {
                                 </Dialog.Description>
                             </Dialog.Body>
                             <Dialog.Footer>
-                                <Button variant="secondary" onClick={hideConfirm}>
+                                <Button variant="secondary" onClick={handleCancel}>
                                     {confirm?.cancelText || props.cancelText || "Cancel"}
                                 </Button>
-                                <Button variant="primary" onClick={submitConfirm}>
+                                <Button variant="primary" onClick={handleSubmit}>
                                     {confirm?.confirmText || props.confirmText || "Confirm"}
                                 </Button>
                             </Dialog.Footer>
