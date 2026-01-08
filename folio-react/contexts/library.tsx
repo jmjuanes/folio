@@ -17,6 +17,8 @@ export type LibraryProviderProps = {
 
 export type LibraryApi = {
     count: number;
+    load: (libraryData: Library) => void;
+    export: () => Library;
     clear: () => void;
     addItem: (elements: any, data: any) => void;
     removeItem: (id: string) => void;
@@ -44,22 +46,19 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             count: libraryState?.items.length || 0,
 
             // @description load library data from a JSON object
-            // fromJSON: data => {
-            //     library.current = getLibraryStateFromInitialData(data || {});
-            // },
-            // @description import library items from another library
-            // import: (newLibrary: Library) => {
-            //     const currentItems = new Set(libraryState?.items.map(item => item.id));
-            //     const itemsToInsert = newLibrary.items.filter(item => {
-            //         return !currentItems.has(item.id);
-            //     });
-            //     // insert items into library
-            //     if (itemsToInsert.length > 0) {
-            //         setLibraryState({
-            //             items: libraryState?.items.concat(itemsToInsert) || itemsToInsert,
-            //         });
-            //     }
-            // },
+            load: (libraryData: Library) => {
+                setLibraryState({
+                    items: libraryData?.items || [],
+                });
+            },
+
+            // @description export library
+            export: () => {
+                return {
+                    items: libraryState?.items || [],
+                    version: VERSION,
+                };
+            },
 
             // @description clear library
             clear: () => {

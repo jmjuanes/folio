@@ -1,10 +1,8 @@
 import React from "react";
 import { AlbumIcon, PlusIcon, CloseIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
-import { useEditor } from "../contexts/editor.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import { loadLibraryFromJson } from "../lib/library.ts";
 import { Dropdown } from "./ui/dropdown.tsx";
 
 // @description display an empty library message
@@ -65,47 +63,27 @@ export const LibraryItem = ({ thumbnail, onInsert, onDelete }: LibraryItemProps)
 
 // @description library container
 export const Library = (): React.JSX.Element => {
-    const editor = useEditor();
     const library = useLibrary();
     const dispatchAction = useActions();
-
-    // handle loading a library from JSON
-    const handleLibraryLoad = React.useCallback(() => {
-        return loadLibraryFromJson()
-            .then(importedLibrary => {
-                // editor.importLibrary(importedLibrary);
-                // editor.dispatchLibraryChange();
-                // editor.update();
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, [editor]);
-
-    // handle exporting the library
-    const handleLibraryExport = React.useCallback(() => {
-        // TODO
-        // clearFocus();
-        // dispatchAction(ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG, {});
-    }, [dispatchAction]);
-
     const libraryItems = library?.getItems() || [];
 
     return (
         <React.Fragment>
             <Dropdown.Header>
                 <div className="text-sm font-bold mr-auto">Library</div>
-                {/*
                 <Dropdown.HeaderButton
                     icon="folder"
-                    onClick={handleLibraryLoad}
+                    onClick={() => {
+                        dispatchAction(ACTIONS.LOAD_LIBRARY);
+                    }}
                 />
                 <Dropdown.HeaderButton
                     icon="download"
                     disabled={libraryItems.length === 0}
-                    onClick={handleLibraryExport}
+                    onClick={() => {
+                        dispatchAction(ACTIONS.EXPORT_LIBRARY);
+                    }}
                 />
-                */}
                 <Dropdown.HeaderButton
                     icon="trash"
                     disabled={libraryItems.length === 0}

@@ -509,6 +509,8 @@ export const ACTIONS = {
     INSERT_LIBRARY_ITEM: "insert-library-item",
     DELETE_LIBRARY_ITEM: "delete-library-item",
     CLEAR_LIBRARY: "clear-library",
+    EXPORT_LIBRARY: "export-library",
+    LOAD_LIBRARY: "load-library",
     ZOOM_IN: "zoom-in",
     ZOOM_OUT: "zoom-out",
     ZOOM_RESET: "zoom-reset",

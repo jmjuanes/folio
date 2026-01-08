@@ -7,6 +7,7 @@ import { useDialog } from "../contexts/dialogs.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
+import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
 
 // @description hook to dispatch an action in the editor
 export const useActions = () => {
@@ -205,6 +206,19 @@ export const useActions = () => {
                     callback: () => {
                         library?.clear();
                     },
+                });
+            },
+            [ACTIONS.EXPORT_LIBRARY]: () => {
+                const libraryData = library.export();
+                saveLibraryAsJson(libraryData).then(() => {
+                    console.log("library exported");
+                });
+            },
+            [ACTIONS.LOAD_LIBRARY]: () => {
+                loadLibraryFromJson().then(libraryData => {
+                    if (libraryData?.items?.length > 0) {
+                        library.load(libraryData);
+                    }
                 });
             },
             [ACTIONS.CUT]: () => {
