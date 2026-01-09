@@ -71,15 +71,19 @@ export const LibraryCollection = (props: LibraryCollectionProps): React.JSX.Elem
     return (
         <div className="border-2 border-gray-200 rounded-lg bg-white overflow-hidden" onClick={props.onClick}>
             <div className="grid grid-cols-2 w-full border-b-2 border-gray-200 bg-gray-100">
-                {props.items.slice(0, 4).map(item => {
-                    <div className="h-12 w-full">
+                {props.items.slice(0, 4).map(item => (
+                    <div key={item.id} className="h-12 w-full">
                         <img src={item.thumbnail} width="100%" height="100%" />
                     </div>
-                })}
+                ))}
             </div>
-            <div className="w-full py-2 flex flex-col gap-2">
-                <div className="font-bold">{props.name}</div>
-                <div className="text-xs opacity-60">{props.items.length} item(s)</div>
+            <div className="w-full p-2 flex flex-col gap-1">
+                <div className="font-bold w-content max-w-20 truncate">
+                    <span>{props.name}</span>
+                </div>
+                <div className="text-2xs opacity-60">
+                    <span>{props.items.length} item(s)</span>
+                </div>
             </div>
         </div>
     );
