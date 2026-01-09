@@ -71,14 +71,14 @@ export const LibraryCollection = (props: LibraryCollectionProps): React.JSX.Elem
     const visibleItems = props.items.slice(0, 4);
     return (
         <div className="border-2 border-gray-200 rounded-lg bg-white overflow-hidden" onClick={props.onClick}>
-            <div className="grid grid-cols-2 w-full border-b-2 border-gray-200 bg-gray-100 gap-1">
+            <div className="grid grid-cols-2 w-full border-b-2 border-gray-200 bg-gray-200 gap-1">
                 {props.items.slice(0, 4).map(item => (
-                    <div key={item.id} className="h-14 w-full overflow-hidden">
+                    <div key={item.id} className="h-14 w-full overflow-hidden bg-gray-100">
                         <img src={item.thumbnail} width="100%" height="100%" />
                     </div>
                 ))}
                 {Array.from({ length: 4 - visibleItems.length }, (_, index) => (
-                    <div key={"item-" + index} className="h-14 w-full" />
+                    <div key={"item-" + index} className="h-14 w-full bg-gray-100" />
                 ))}
             </div>
             <div className="w-full p-2 flex flex-col gap-0">
