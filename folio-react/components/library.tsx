@@ -155,7 +155,7 @@ export const Library = (): React.JSX.Element => {
                 </div>
             )}
             {libraryItems.length > 0 && activeCollection && (
-                <div className="grid gap-2 grid-cols-4 pt-2">
+                <div className="grid gap-2 grid-cols-4 pt-4">
                     {libraryItems.map((item: any) => (
                         <LibraryItem
                             key={item.id}
