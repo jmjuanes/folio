@@ -3,7 +3,7 @@ import { AlbumIcon, PlusIcon, CloseIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import { Dropdown } from "./ui/dropdown.tsx";
+import type { LibraryItem } from "../lib/library.ts";
 
 // @description display an empty library message
 const EmptyLibrary = () => (
@@ -61,38 +61,56 @@ export const LibraryItem = ({ thumbnail, onInsert, onDelete }: LibraryItemProps)
     );
 };
 
+export type LibraryCollectionProps = {
+    name: string;
+    items: LibraryItem[];
+    onClick: () => void;
+};
+
+export const LibraryCollection = (props: LibraryCollectionProps): React.JSX.Element => {
+    return (
+        <div className="border-2 border-gray-200 rounded-lg bg-white overflow-hidden" onClick={props.onClick}>
+            <div className="grid grid-cols-2 w-full border-b-2 border-gray-200 bg-gray-100">
+                {props.items.slice(0, 4).map(item => {
+                    <div className="h-12 w-full">
+                        <img src={item.thumbnail} width="100%" height="100%" />
+                    </div>
+                })}
+            </div>
+            <div className="w-full py-2 flex flex-col gap-2">
+                <div className="font-bold">{props.name}</div>
+                <div className="text-xs opacity-60">{props.items.length} item(s)</div>
+            </div>
+        </div>
+    );
+};
+
 // @description library container
 export const Library = (): React.JSX.Element => {
+    const [ activeCollection, setActiveCollection ] = React.useState("");
+    const [ activeItem, setActiveItem ] = React.useState("");
     const library = useLibrary();
     const dispatchAction = useActions();
     const libraryItems = library?.getItems() || [];
+    const collection = "Personal Library";
 
     return (
         <React.Fragment>
-            <Dropdown.Header>
-                <div className="text-sm font-bold mr-auto">Library</div>
-                <Dropdown.HeaderButton
-                    icon="folder"
-                    onClick={() => {
-                        dispatchAction(ACTIONS.LOAD_LIBRARY);
-                    }}
-                />
-                <Dropdown.HeaderButton
-                    icon="download"
-                    disabled={libraryItems.length === 0}
-                    onClick={() => {
-                        dispatchAction(ACTIONS.EXPORT_LIBRARY);
-                    }}
-                />
-                <Dropdown.HeaderButton
-                    icon="trash"
-                    disabled={libraryItems.length === 0}
-                    onClick={() => {
-                        dispatchAction(ACTIONS.CLEAR_LIBRARY);
-                    }}
-                />
-            </Dropdown.Header>
-            <div className="overflow-x-hidden overflow-y-auto scrollbar" style={{maxHeight:"50vh"}}>
+            <div className="sticky top-0 bg-white flex items-center gap-2">
+                <div className="font-bold">Library</div>
+            </div>
+            {libraryItems.length > 0 && !activeCollection && (
+                <div className="grid gap-2 grid-cols-2 pt-2 w-full">
+                    <LibraryCollection
+                        name={collection}
+                        items={libraryItems}
+                        onClick={() => {
+                            setActiveCollection(collection);
+                        }}
+                    />
+                </div>
+            )}
+            {libraryItems.length > 0 && activeCollection && (
                 <div className="grid gap-2 grid-cols-4 pt-2">
                     {libraryItems.map((item: any) => (
                         <LibraryItem
@@ -103,10 +121,10 @@ export const Library = (): React.JSX.Element => {
                         />
                     ))}
                 </div>
-                {libraryItems.length === 0 && (
-                    <EmptyLibrary />
-                )}
-            </div>
+            )}
+            {libraryItems.length === 0 && (
+                <EmptyLibrary />
+            )}
         </React.Fragment>
     );
 };

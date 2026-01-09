@@ -150,7 +150,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                         onClick={() => setSidebarVisible(!sidebarVisible)}
                                     />
                                 </div>
-                                <Panel.Body className="">
+                                <Panel.Body className="relative">
                                     <Library />
                                 </Panel.Body>
                             </Panel>
