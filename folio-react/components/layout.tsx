@@ -60,20 +60,6 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             )}
                             {!!PagesMenu && <PagesMenu />}
                             {!!SettingsMenu && <SettingsMenu />}
-                            {!!Library && (
-                                <Dropdown.Portal
-                                    id="library:dropdown"
-                                    toggleRender={active => (
-                                        <Island.Button icon="album" active={active} />
-                                    )}
-                                    contentClassName="fixed top-0 left-0 z-50 mt-2"
-                                    contentRender={close => (
-                                        <Dropdown className="w-64">
-                                            <Library />
-                                        </Dropdown>
-                                    )}
-                                />
-                            )}
                             <Island.Separator />
                             <Island.Button
                                 icon="trash"
