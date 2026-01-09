@@ -82,7 +82,7 @@ export const LibraryCollection = (props: LibraryCollectionProps): React.JSX.Elem
                 ))}
             </div>
             <div className="w-full p-2 flex flex-col gap-0">
-                <div className="font-bold w-content max-w-24 truncate">
+                <div className="font-bold w-content max-w-32 truncate">
                     <span>{props.name}</span>
                 </div>
                 <div className="text-2xs opacity-60">
