@@ -1,5 +1,5 @@
 import React from "react";
-import { AlbumIcon, PlusIcon, CloseIcon } from "@josemi-icons/react";
+import { AlbumIcon, PlusIcon, CloseIcon, ChevronLeftIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
@@ -93,6 +93,23 @@ export const LibraryCollection = (props: LibraryCollectionProps): React.JSX.Elem
     );
 };
 
+export type LibraryHeaderProps = {
+    title: string;
+    showBackButton: boolean;
+    onBackButtonClick?: () => void;
+};
+
+export const LibraryHeader = (props: LibraryHeaderProps): React.JSX.Element => (
+    <React.Fragment>
+        {props.showBackButton && (
+            <div className="flex items-center text-xl" onClick={props.onBackButtonClick}>
+                <ChevronLeftIcon />
+            </div>
+        )}
+        <div className="font-bold text-lg">{props.title}</div>
+    </React.Fragment>
+);
+
 // @description library container
 export const Library = (): React.JSX.Element => {
     const [ activeCollection, setActiveCollection ] = React.useState("");
@@ -105,7 +122,26 @@ export const Library = (): React.JSX.Element => {
     return (
         <React.Fragment>
             <div className="sticky top-0 bg-white flex items-center gap-2">
-                <div className="font-bold">Library</div>
+                {!activeCollection && (
+                    <LibraryHeader
+                        showBackButton={false}
+                        title="Libraries"
+                    />
+                )}
+                {activeCollection && !activeItem && (
+                    <LibraryHeader
+                        showBackButton={true}
+                        onBackButtonClick={() => setActiveCollection("")}
+                        title={collection}
+                    />
+                )}
+                {activeCollection && activeItem && (
+                    <LibraryHeader
+                        showBackButton={true}
+                        onBackButtonClick={() => setActiveItem("")}
+                        title="Library Item"
+                    />
+                )}
             </div>
             {libraryItems.length > 0 && !activeCollection && (
                 <div className="grid gap-2 grid-cols-2 pt-2 w-full">
