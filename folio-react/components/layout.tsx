@@ -1,6 +1,7 @@
 import React from "react";
 import { Alert } from "./ui/alert.tsx";
 import { Dropdown } from "./ui/dropdown.tsx";
+import { Panel } from "./ui/panel.tsx";
 import { Island } from "./ui/island.jsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.jsx";
@@ -18,6 +19,7 @@ export type LayoutProps = {
 export const Layout = (props: LayoutProps): React.JSX.Element => {
     const hideUi = props.hideUi ?? false;
     const [ layersVisible, setLayersVisible ] = React.useState(false);
+    const [ sidebarVisible, setSidebarVisible ] = React.useState(false);
     const editor = useEditor();
     const dispatchAction = useActions();
     const {
@@ -36,6 +38,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
 
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
+    const showSidebarButton = !!Library;
 
     return (
         <React.Fragment>
@@ -81,7 +84,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             />
                         </Island>
                     </div>
-                    {(!!HistoryPanel || !!ZoomPanel || !!Layers) && (
+                    {(!!HistoryPanel || !!ZoomPanel || !!Layers || showSidebarButton) && (
                         <div className="absolute top-0 right-0 pt-4 pr-4 z-30 flex gap-2">
                             {!!HistoryPanel && <HistoryPanel />}
                             {!!ZoomPanel && <ZoomPanel />}
@@ -91,6 +94,15 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                         icon="stack"
                                         onClick={() => setLayersVisible(!layersVisible)}
                                         active={layersVisible}
+                                    />
+                                </Island>
+                            )}
+                            {showSidebarButton && (
+                                <Island>
+                                    <Island.Button
+                                        icon="sidebar-right"
+                                        onClick={() => setSidebarVisible(!sidebarVisible)}
+                                        active={sidebarVisible}
                                     />
                                 </Island>
                             )}
@@ -118,7 +130,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             {(selectedElements.length > 1 || !selectedElements[0].editing) && (
                                 <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4">
                                     <EditionPanel
-                                        key={selectedElements.map(el => el.id).join("-")}
+                                        key={selectedElements.map((el: any) => el.id).join("-")}
                                     />
                                 </div>
                             )}
@@ -127,6 +139,22 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                     {!!Layers && layersVisible && (
                         <div className="absolute z-30 top-0 right-0 pt-1 mt-16 mr-4">
                             <Layers />
+                        </div>
+                    )}
+                    {sidebarVisible && (
+                        <div className="absolute z-40 top-0 right-0 w-88 h-full">
+                            <Panel className="h-full rounded-tr-none rounded-br-none">
+                                <div className="flex items-center">
+                                    <div className="w-full" />
+                                    <Panel.Button
+                                        icon="x"
+                                        onClick={() => setSidebarVisible(!sidebarVisible)}
+                                    />
+                                </div>
+                                <Panel.Body className="">
+                                    Sidebar
+                                </Panel.Body>
+                            </Panel>
                         </div>
                     )}
                 </React.Fragment>
