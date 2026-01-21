@@ -3,10 +3,10 @@ import { AlbumIcon, PlusIcon, CloseIcon, ChevronLeftIcon } from "@josemi-icons/r
 import { ACTIONS } from "../constants.js";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import type { LibraryItem } from "../lib/library.ts";
+import type { LibraryCollection, LibraryItem, LibraryItem, LibraryItem, LibraryItem } from "../lib/library.ts";
 
 // @description display an empty library message
-const EmptyLibrary = () => (
+const EmptyLibrary = (): React.JSX.Element => (
     <div className="flex flex-col items-center justify-center gap-1 py-12">
         <div className="flex items-center text-4xl">
             <AlbumIcon />
@@ -18,14 +18,14 @@ const EmptyLibrary = () => (
     </div>
 );
 
-export type LibraryItemProps = {
+export type LibraryItemIconProps = {
     thumbnail: string,
     onInsert: () => void,
     onDelete: () => void,
 };
 
 // @description library item
-export const LibraryItem = ({ thumbnail, onInsert, onDelete }: LibraryItemProps): React.JSX.Element => {
+export const LibraryItemIcon = ({ thumbnail, onInsert, onDelete }: LibraryItemIconProps): React.JSX.Element => {
     // this is a TEMPORARY solution to show the delete button on hover
     // this should be replaced with a proper context menu or something similar that works on touch devices
     const [isHovered, setIsHovered] = React.useState(false);
@@ -61,13 +61,13 @@ export const LibraryItem = ({ thumbnail, onInsert, onDelete }: LibraryItemProps)
     );
 };
 
-export type LibraryCollectionProps = {
+export type LibraryCollectionIconProps = {
     name: string;
     items: LibraryItem[];
     onClick: () => void;
 };
 
-export const LibraryCollection = (props: LibraryCollectionProps): React.JSX.Element => {
+export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): React.JSX.Element => {
     const visibleItems = props.items.slice(0, 4);
     return (
         <div className="border-2 border-gray-200 rounded-lg bg-white overflow-hidden" onClick={props.onClick}>
@@ -112,17 +112,32 @@ export const LibraryHeader = (props: LibraryHeaderProps): React.JSX.Element => (
 
 // @description library container
 export const Library = (): React.JSX.Element => {
-    const [ activeCollection, setActiveCollection ] = React.useState("");
-    const [ activeItem, setActiveItem ] = React.useState("");
+    const [ activeCollection, setActiveCollection ] = React.useState<LibraryCollection>(null);
+    const [ activeItem, setActiveItem ] = React.useState<LibraryIem>(null);
     const library = useLibrary();
     const dispatchAction = useActions();
-    const libraryItems = library?.getItems() || [];
-    const collection = "Personal Library";
+    const items = library?.getItems() || [];
+    const collections = library?.getCollections() || [];
+
+    // get visible items
+    const visibleItems = React.useMemo<libraryItems[]>(() => {
+        if (!activeItem && items.length > 0) {
+            // 1. a collection is active, we will display the items on this collection
+            if (activeCollection) {
+                return items.filter((item: LibraryItem) => {
+                    return item.collection === activeCollection?.id;
+                });
+            }
+            // 2. display only the items without a collection
+            return items.filter((item: LibraryItem) => !item.collection);
+        }
+        return [];
+    }, [ items.length, collections.length, activeCollection, activeItem ]);
 
     return (
         <React.Fragment>
             <div className="sticky top-0 bg-white flex items-center gap-2">
-                {!activeCollection && (
+                {!activeCollection && !activeItem && (
                     <LibraryHeader
                         showBackButton={false}
                         title="Libraries"
@@ -131,33 +146,36 @@ export const Library = (): React.JSX.Element => {
                 {activeCollection && !activeItem && (
                     <LibraryHeader
                         showBackButton={true}
-                        onBackButtonClick={() => setActiveCollection("")}
-                        title={collection}
+                        onBackButtonClick={() => setActiveCollection(null)}
+                        title={activeCollection?.name}
                     />
                 )}
-                {activeCollection && activeItem && (
+                {activeItem && (
                     <LibraryHeader
                         showBackButton={true}
-                        onBackButtonClick={() => setActiveItem("")}
+                        onBackButtonClick={() => setActiveItem(null)}
                         title="Library Item"
                     />
                 )}
             </div>
-            {libraryItems.length > 0 && !activeCollection && (
+            {collections.length > 0 && !activeCollection && (
                 <div className="grid gap-2 grid-cols-2 pt-2 w-full">
-                    <LibraryCollection
-                        name={collection}
-                        items={libraryItems}
-                        onClick={() => {
-                            setActiveCollection(collection);
-                        }}
-                    />
+                    {collections.map((collection: LibraryCollection) => (
+                        <LibraryCollectionIcon
+                            key={collection.id}
+                            name={collection.name}
+                            items={items.filter(item => item.collection === collection.id)}
+                            onClick={() => {
+                                setActiveCollection(collection);
+                            }}
+                        />
+                    ))}
                 </div>
             )}
-            {libraryItems.length > 0 && activeCollection && (
+            {visibleItems.length > 0 && (
                 <div className="grid gap-2 grid-cols-4 pt-4">
-                    {libraryItems.map((item: any) => (
-                        <LibraryItem
+                    {visibleItems.map((item: LibraryItem) => (
+                        <LibraryItemIcon
                             key={item.id}
                             thumbnail={item.thumbnail}
                             onInsert={() => dispatchAction(ACTIONS.INSERT_LIBRARY_ITEM, item)}
@@ -166,7 +184,7 @@ export const Library = (): React.JSX.Element => {
                     ))}
                 </div>
             )}
-            {libraryItems.length === 0 && (
+            {items.length === 0 && collections.length === 0 && (
                 <EmptyLibrary />
             )}
         </React.Fragment>

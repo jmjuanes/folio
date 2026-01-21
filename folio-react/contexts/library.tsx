@@ -4,10 +4,11 @@ import { Loading } from "../components/loading.jsx";
 import {
     getLibraryStateFromInitialData,
     createLibraryItem,
+    createLibraryCollection,
 } from "../lib/library.ts";
 import { promisifyValue } from "../utils/promises.js";
 import { VERSION } from "../constants.js";
-import type { Library, LibraryItem } from "../lib/library.ts";
+import type { Library, LibraryItem, LibraryCollection } from "../lib/library.ts";
 
 export type LibraryProviderProps = {
     data: any;
@@ -22,8 +23,13 @@ export type LibraryApi = {
     clear: () => void;
     addItem: (elements: any, data: any) => void;
     removeItem: (id: string) => void;
+    addCollection: (data: any) => void;
+    removeCollection: (id: string) => void;
     getItem: (id: string) => LibraryItem | null;
     getItems: () => LibraryItem[];
+    getCollections: () => LibraryCollection[];
+    getCollection: (collectionId: string) => LibraryCollection | null;
+    getCollectionItems: (collectionId: string) => LibraryItem[];
 };
 
 // @private Shared library context
@@ -41,7 +47,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
     const [ libraryState, setLibraryState ] = React.useState<Library | null>(null);
 
     // create the api to manage the library data
-    const libraryApi = React.useMemo(() => {
+    const libraryApi = React.useMemo<LibraryApi>(() => {
         return {
             count: libraryState?.items.length || 0,
 
@@ -49,6 +55,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             load: (libraryData: Library) => {
                 setLibraryState({
                     items: libraryData?.items || [],
+                    collection: libraryData?.collections || [],
                 });
             },
 
@@ -56,6 +63,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             export: () => {
                 return {
                     items: libraryState?.items || [],
+                    collections: libraryState?.collections || [],
                     version: VERSION,
                 };
             },
@@ -64,25 +72,62 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             clear: () => {
                 setLibraryState({
                     items: [],
+                    collections: [],
                 });
             },
 
             // @description add a new item to the library
             addItem: (elements: any, data: any) => {
                 createLibraryItem(elements, data).then(libraryItem => {
-                    setLibraryState({
-                        items: [...(libraryState?.items || []), libraryItem],
-                    });
+                    setLibraryState((prevState: Library) => ({
+                        items: [...(prevState?.items || []), libraryItem],
+                        collections: prevState?.collections || [],
+                    }));
                 });
             },
 
             // @description remove a library item
             removeItem: (id: string) => {
-                setLibraryState({
-                    items: (libraryState?.items || []).filter(item => {
-                        return item.id !== id;
-                    }),
+                setLibraryState((prevState: Library) => {
+                    const itemToRemove = (prevState?.items || []).find(item => item.id === id) as LibraryItem;
+                    return {
+                        items: (prevState?.items || []).filter(item => {
+                            return item.id !== id;
+                        }),
+                        collections: (prevState?.collections || []).filter((collection: LibraryCollection) => {
+                            const itemsInCollection = (prevState?.items || []).filter((item: LibraryItem) => {
+                                return item.collection === collection.id;
+                            });
+                            // 1. the collection has a single item, and is the item we are removing
+                            if (itemsInCollection.length === 1 && itemToRemove.collection === collection.id) {
+                                return false;
+                            }
+                            // 2. filter empty collections
+                            return itemsInCollection.length > 0;
+                        }),
+                    };
                 });
+            },
+
+            // @description add a new collection
+            addCollection: (data: any) => {
+                const collection: LibraryCollection = createLibraryCollection(data);
+                setLibraryState((prevState: Library) => ({
+                    items: prevState?.items || [],
+                    collections: [...(prevState?.collections || []), collection],
+                }));
+            },
+
+            // @description remove the specified collection
+            removeCollection: (id: string) => {
+                setLibraryState((prevState: Library) => ({
+                    items: (prevState?.items || []).filter((item: LibraryItem) => {
+                        return item.collection !== id;
+                    }),
+                    collections: (prevState?.collections || []).filter((collection: LibraryCollection) => {
+                        return collection.id !== id;
+                    }),
+                }));
             },
 
             // @description get a library item
@@ -94,7 +139,26 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             getItems: (): LibraryItem[] => {
                 return libraryState?.items || [];
             },
-        };
+
+            // @description get available collections
+            getCollections: (): LibraryCollection[] => {
+                return libraryState.collections || [];
+            },
+
+            // @description get collection information
+            getCollection: (collectionId: string): LibraryCollection | null => {
+                return (libraryState?.collections || []).find((collection: LibraryCollection) => {
+                    return collection.id === collectionId;
+                }) || null;
+            },
+
+            // @description get items in the provided collection
+            getCollectionItems: (collectionId: string): LibraryItem[] => {
+                return (libraryState?.items || []).filter((item: LibraryItem) => {
+                    return item.collection === collectionId;
+                });
+            },
+        } as LibraryApi;
     }, [ libraryState ]);
 
     // dispatch a change every time the library state is updated
@@ -103,6 +167,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             props.onChange({
                 version: VERSION,
                 items: libraryState?.items || [],
+                collections: libraryState?.collections || [],
             });
         }
     }, [ libraryState ]);
@@ -116,12 +181,14 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             .then((libraryData: Partial<Library>) => {
                 setLibraryState({
                     items: libraryData?.items || [],
+                    collections: libraryData?.collections || [],
                 });
             })
             .catch((error: any) => {
                 console.error(error);
                 setLibraryState({
                     items: [],
+                    collections: [],
                 });
             });
     });
