@@ -245,7 +245,7 @@ export const useActions = () => {
                     message: `Do you want to delete the collection ${collection.name}?`,
                     confirmText: "Yes, delete collection",
                     // cancelText: ""
-                    onSubmit: () => {
+                    callback: () => {
                         library.removeCollection(collection.id);
                     },
                 });
@@ -362,12 +362,12 @@ export const useActions = () => {
                 }
             },
         };
-    }, [editor, showConfirm, showDialog]);
+    }, [ editor, showConfirm, showDialog ]);
 
     // @description dispatch a single action
-    return React.useCallback((actionName, payload = {}) => {
-        if (actionsList[actionName]) {
+    return React.useCallback((actionName, payload) => {
+        if (typeof actionsList[actionName === "function"]) {
             actionsList[actionName](payload);
         }
-    }, [editor, actionsList]);
+    }, [ editor, actionsList ]);
 };
