@@ -1,5 +1,7 @@
 import React from "react";
 import { AlbumIcon, PlusIcon, CloseIcon, ChevronLeftIcon } from "@josemi-icons/react";
+import { renderIcon } from "@josemi-icons/react";
+import classNames from "classnames";
 import { ACTIONS } from "../constants.js";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
@@ -11,7 +13,9 @@ const EmptyLibrary = (): React.JSX.Element => (
         <div className="flex items-center text-4xl">
             <AlbumIcon />
         </div>
-        <div className="text-center font-bold text-sm">Your Library</div>
+        <div className="text-center font-bold text-sm">
+            <span>Your Library is empty.</span>
+        </div>
         <div className="text-center text-2xs font-medium px-4">
             <span>Library lets you to organize and share your elements across pages.</span>
         </div>
@@ -93,22 +97,39 @@ export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): React.
     );
 };
 
-export type LibraryHeaderProps = {
+export type LibraryHeaderTitleProps = {
     title: string;
     showBackButton: boolean;
     onBackButtonClick?: () => void;
 };
 
-export const LibraryHeader = (props: LibraryHeaderProps): React.JSX.Element => (
-    <React.Fragment>
+export const LibraryHeaderTitle = (props: LibraryHeaderTitleProps): React.JSX.Element => (
+    <div className="flex items-center gap-2 w-full">
         {props.showBackButton && (
             <div className="flex items-center text-xl" onClick={props.onBackButtonClick}>
                 <ChevronLeftIcon />
             </div>
         )}
         <div className="font-bold text-lg">{props.title}</div>
-    </React.Fragment>
+    </div>
 );
+
+export type LibraryHeaderButtonProps = {
+    icon: string;
+    disabled?: boolean;
+    onClick?: () => void;
+};
+
+export const LibraryHeaderButton = (props: LibraryHeaderButtonProps): React.JSX.Element => {
+    const className = classNames({
+        "flex items-center p-2 rounded-lg bg-gray-100 cursor-pointer": true,
+    });
+    return (
+        <div className={className} onClick={props.onClick}>
+            {renderIcon(props.icon)}
+        </div>
+    );
+};
 
 // @description library container
 export const Library = (): React.JSX.Element => {
@@ -136,22 +157,40 @@ export const Library = (): React.JSX.Element => {
 
     return (
         <React.Fragment>
-            <div className="sticky top-0 bg-white flex items-center gap-2">
+            <div className="sticky top-0 bg-white flex items-center justify-between">
                 {!activeCollection && !activeItem && (
-                    <LibraryHeader
-                        showBackButton={false}
-                        title="Libraries"
-                    />
+                    <React.Fragment>
+                        <LibraryHeaderTitle
+                            showBackButton={false}
+                            title="Your Library"
+                        />
+                        <div className="flex items-center gap-1">
+                            <LibraryHeaderButton
+                                icon="plus"
+                                disabled={false}
+                                onClick={() => {
+                                    library.addCollection({
+                                        name: "Test"
+                                    });
+                                }}
+                            />
+                            <LibraryHeaderButton
+                                icon="trash"
+                                disabled={false}
+                                onClick={() => dispatchAction(ACTIONS.CLEAR_LIBRARY)}
+                            />
+                        </div>
+                    </React.Fragment>
                 )}
                 {activeCollection && !activeItem && (
-                    <LibraryHeader
+                    <LibraryHeaderTitle
                         showBackButton={true}
                         onBackButtonClick={() => setActiveCollection(null)}
                         title={activeCollection?.name}
                     />
                 )}
                 {activeItem && (
-                    <LibraryHeader
+                    <LibraryHeaderTitle
                         showBackButton={true}
                         onBackButtonClick={() => setActiveItem(null)}
                         title="Library Item"
