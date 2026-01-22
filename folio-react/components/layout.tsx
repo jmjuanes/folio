@@ -44,7 +44,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
         <React.Fragment>
             {props.children}
             {!hideUi && (
-                <div className="flex items-stretch w-full h-full min-h-0 min-w-0 relative pointer-events-none">
+                <div className="absolute top-0 left-0 flex items-stretch w-full h-full min-h-0 min-w-0 pointer-events-none">
                     <div className="grow-1 w-full h-full relative">
                         <div className="absolute top-0 left-0 pt-4 pl-4 z-30 flex gap-2 pointer-events-auto">
                             {!!MainMenu && (
