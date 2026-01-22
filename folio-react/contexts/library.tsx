@@ -20,6 +20,7 @@ export type LibraryApi = {
     count: number;
     load: (libraryData: Library) => void;
     export: () => Library;
+    exportCollection: (collectionId: string) => Library;
     clear: () => void;
     addItem: (elements: any, data: any) => void;
     removeItem: (id: string) => void;
@@ -65,6 +66,19 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
                     items: libraryState?.items || [],
                     collections: libraryState?.collections || [],
                     version: VERSION,
+                };
+            },
+
+            // @description export a single collection
+            exportCollection: (collectionId: string): Library => {
+                return {
+                    version: VERSION,
+                    items: (libraryState?.items || []).filter((item: LibraryItem) => {
+                        return item.collection === collectionId;
+                    }),
+                    collections: (libraryState?.collections || []).filter((collection: LibraryCollection) => {
+                        return collection.id === collectionId;
+                    }),
                 };
             },
 
