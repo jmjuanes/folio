@@ -155,6 +155,23 @@ export const Library = (): React.JSX.Element => {
         return [];
     }, [ items.length, collections.length, activeCollection, activeItem ]);
 
+    // hook to check if we have to clear the active collection or the active item
+    React.useEffect(() => {
+        // if we have an active item, check if this item is still in the items array
+        if (activeItem) {
+            if (!items.find((item: LibraryItem) => item.id === activeItem?.id)) {
+                setActiveItem(null);
+            }
+        }
+        // if we have an active collection, check if this collection is still in the
+        // collections array
+        if (activeCollection) {
+            if (!collections.find((collection: LibraryCollection) => collection.id === activeCollection?.id)) {
+                setActiveCollection(null);
+            }
+        }
+    }, [ items.length, collections.length ]);
+
     return (
         <React.Fragment>
             <div className="sticky top-0 bg-white flex items-center justify-between">
