@@ -215,24 +215,25 @@ export const useActions = () => {
             },
             [ACTIONS.LOAD_LIBRARY]: () => {
                 loadLibraryFromJson().then(libraryData => {
-                    if (libraryData?.items?.length > 0) {
-                        showConfirm({
-                            title: "Replace library",
-                            message: "Do you want to replace your current library with the new loaded library or merge both?",
-                            confirmText: "Replace library",
-                            cancelText: "Merge both libraries",
-                            onSubmit: () => {
-                                library.load(libraryData);
-                            },
-                            onCancel: () => {
-                                const currentLibraryItems = library.getItems();
-                                library.load({
-                                    ...libraryData,
-                                    items: [ ...currentLibraryItems, ...libraryData?.items ],
-                                });
-                            },
-                        });
-                    }
+                    library.load(libraryData);
+                    // if (libraryData?.items?.length > 0) {
+                    //     showConfirm({
+                    //         title: "Replace library",
+                    //         message: "Do you want to replace your current library with the new loaded library or merge both?",
+                    //         confirmText: "Replace library",
+                    //         cancelText: "Merge both libraries",
+                    //         onSubmit: () => {
+                    //             library.load(libraryData);
+                    //         },
+                    //         onCancel: () => {
+                    //             const currentLibraryItems = library.getItems();
+                    //             library.load({
+                    //                 ...libraryData,
+                    //                 items: [ ...currentLibraryItems, ...libraryData?.items ],
+                    //             });
+                    //         },
+                    //     });
+                    // }
                 });
             },
             [ACTIONS.ADD_LIBRARY_COLLECTION]: () => {

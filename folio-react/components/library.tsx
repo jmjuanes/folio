@@ -175,6 +175,11 @@ export const Library = (): React.JSX.Element => {
                                 }}
                             />
                             <LibraryHeaderButton
+                                icon="folder-open"
+                                disabled={false}
+                                onClick={() => dispatchAction(ACTIONS.LOAD_LIBRARY)}
+                            />
+                            <LibraryHeaderButton
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => dispatchAction(ACTIONS.CLEAR_LIBRARY)}
