@@ -132,12 +132,6 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                     {sidebarVisible && (
                         <div className="shrink-0 w-88 h-full pointer-events-auto">
                             <Panel className="h-full rounded-tr-none rounded-br-none">
-                                <div className="flex items-center justify-end">
-                                    <Panel.Button
-                                        icon="x"
-                                        onClick={() => setSidebarVisible(!sidebarVisible)}
-                                    />
-                                </div>
                                 <Panel.Body className="relative">
                                     <Library />
                                 </Panel.Body>
