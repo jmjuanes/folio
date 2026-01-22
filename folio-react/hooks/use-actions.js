@@ -235,6 +235,20 @@ export const useActions = () => {
                     }
                 });
             },
+            [ACTIONS.ADD_LIBRARY_COLLECTION]: () => {
+                // TODO: show prompt to create a new collection
+            },
+            [ACTIONS.DELETE_LIBRARY_COLLECTION]: (collection) => {
+                showConfirm({
+                    title: "Delete collection",
+                    message: `Do you want to delete the collection ${collection.name}?`,
+                    confirmText: "Yes, delete collection",
+                    // cancelText: ""
+                    onSubmit: () => {
+                        library.removeCollection(collection.id);
+                    },
+                });
+            },
             [ACTIONS.CUT]: () => {
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {

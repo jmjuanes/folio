@@ -511,6 +511,8 @@ export const ACTIONS = {
     CLEAR_LIBRARY: "clear-library",
     EXPORT_LIBRARY: "export-library",
     LOAD_LIBRARY: "load-library",
+    ADD_LIBRARY_COLLECTION: "library:collection:add",
+    DELETE_LIBRARY_COLLECTION: "library:collection:delete",
     ZOOM_IN: "zoom-in",
     ZOOM_OUT: "zoom-out",
     ZOOM_RESET: "zoom-reset",

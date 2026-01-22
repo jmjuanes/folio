@@ -183,11 +183,22 @@ export const Library = (): React.JSX.Element => {
                     </React.Fragment>
                 )}
                 {activeCollection && !activeItem && (
-                    <LibraryHeaderTitle
-                        showBackButton={true}
-                        onBackButtonClick={() => setActiveCollection(null)}
-                        title={activeCollection?.name}
-                    />
+                    <React.Fragment>
+                        <LibraryHeaderTitle
+                            showBackButton={true}
+                            onBackButtonClick={() => setActiveCollection(null)}
+                            title={activeCollection?.name}
+                        />
+                        <div className="flex items-center gap-1">
+                            <LibraryHeaderButton
+                                icon="trash"
+                                disabled={false}
+                                onClick={() => {
+                                    dispatchAction(ACTIONS.DELETE_LIBARY_COLLECTION, activeCollection);
+                                }}
+                            />
+                        </div>
+                    </React.Fragment>
                 )}
                 {activeItem && (
                     <LibraryHeaderTitle
