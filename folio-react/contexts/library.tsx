@@ -18,7 +18,7 @@ export type LibraryProviderProps = {
 
 export type LibraryApi = {
     count: number;
-    load: (libraryData: Library) => void;
+    load: (data: Library) => void;
     export: () => Library;
     exportCollection: (collectionId: string) => Library;
     clear: () => void;
@@ -53,10 +53,32 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             count: libraryState?.items.length || 0,
 
             // @description load library data from a JSON object
-            load: (libraryData: Library) => {
-                setLibraryState({
-                    items: libraryData?.items || [],
-                    collection: libraryData?.collections || [],
+            load: (data: Library) => {
+                setLibraryState((prevLibrary: Library) => {
+                    // 1. clone items and collections
+                    const currentItems = (prevLibrary?.items || []).slice(0);
+                    const currentCorrections = (prevLibrary?.collections || []).slice(0);
+                    // 2. merge items into currentItems array
+                    const itemsIds = new Set(currentItems.map(item => item.id));
+                    (data?.items || []).forEach(item => {
+                        if (!itemsIds.has(item.id)) {
+                            currentItems.push(item);
+                            itemsIds.add(item.id);
+                        }
+                    });
+                    // 3. merge collections into currentCollections array
+                    const collectionsIds = new Set(currentCorrections.map(collection => collection.id));
+                    (data?.collections || []).forEach(collection => {
+                        if (!collectionsIds.has(collection.id)) {
+                            currentCorrections.push(collection);
+                            collectionsIds.add(collection.id);
+                        }
+                    });
+                    // 4. return new merged state
+                    return {
+                        items: currentItems,
+                        collections: currentCorrections,
+                    };
                 });
             },
 
