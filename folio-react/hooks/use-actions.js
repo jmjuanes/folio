@@ -1,11 +1,12 @@
 import React from "react";
 import { uid } from "uid/secure";
-import { ACTIONS, ZOOM_STEP, TOOLS } from "../constants.js";
+import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useDialog } from "../contexts/dialogs.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
+import { usePrompt } from "./use-prompt.tsx";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
 
@@ -13,6 +14,7 @@ import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
 export const useActions = () => {
     const editor = useEditor();
     const library = useLibrary();
+    const prompt = usePrompt();
     const { showConfirm } = useConfirm();
     const { showDialog } = useDialog();
     const {
@@ -179,8 +181,9 @@ export const useActions = () => {
             [ACTIONS.ADD_SELECTION_TO_LIBRARY]: () => {
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {
-                    library.addItem(selectedElements);
-                    editor.update();
+                    // library.addItem(selectedElements);
+                    // editor.update();
+                    // TODO: display a prompt to ask for library item information
                 }
             },
             [ACTIONS.INSERT_LIBRARY_ITEM]: (libraryItem) => {
