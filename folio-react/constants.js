@@ -465,8 +465,8 @@ export const SCREENSHOT_STROKE_COLOR = PRIMARY;
 export const SCREENSHOT_STROKE_WIDTH = 3;
 
 // library constants
-export const LIBRARY_THUMBNAIL_WIDTH = 50;
-export const LIBRARY_THUMBNAIL_HEIGHT = 50;
+export const LIBRARY_THUMBNAIL_WIDTH = 100;
+export const LIBRARY_THUMBNAIL_HEIGHT = 100;
 export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
 // export const LIBRARY_SOURCES = {
 //     IMPORTED_FROM_FILE: "imported:file",
