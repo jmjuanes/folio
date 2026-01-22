@@ -3,7 +3,7 @@ import { AlbumIcon, PlusIcon, CloseIcon, ChevronLeftIcon } from "@josemi-icons/r
 import { ACTIONS } from "../constants.js";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import type { LibraryCollection, LibraryItem, LibraryItem, LibraryItem, LibraryItem } from "../lib/library.ts";
+import type { LibraryCollection, LibraryItem, Library } from "../lib/library.ts";
 
 // @description display an empty library message
 const EmptyLibrary = (): React.JSX.Element => (
@@ -28,7 +28,7 @@ export type LibraryItemIconProps = {
 export const LibraryItemIcon = ({ thumbnail, onInsert, onDelete }: LibraryItemIconProps): React.JSX.Element => {
     // this is a TEMPORARY solution to show the delete button on hover
     // this should be replaced with a proper context menu or something similar that works on touch devices
-    const [isHovered, setIsHovered] = React.useState(false);
+    const [ isHovered, setIsHovered ] = React.useState(false);
 
     // when the user hovers over the library item, show the delete button
     const handleMouseEnter = React.useCallback(() => {
