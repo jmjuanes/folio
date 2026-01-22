@@ -44,91 +44,93 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
         <React.Fragment>
             {props.children}
             {!hideUi && (
-                <React.Fragment>
-                    <div className="absolute top-0 left-0 pt-4 pl-4 z-30 flex gap-2">
-                        {!!MainMenu && (
+                <div className="flex items-stretch w-full h-full min-h-0 min-w-0 relative pointer-events-none">
+                    <div className="grow-1 w-full h-full relative">
+                        <div className="absolute top-0 left-0 pt-4 pl-4 z-30 flex gap-2 pointer-events-auto">
+                            {!!MainMenu && (
+                                <Island>
+                                    <MainMenu />
+                                </Island>
+                            )}
                             <Island>
-                                <MainMenu />
+                                {!!Title && (
+                                    <React.Fragment>
+                                        <Title />
+                                        <Island.Separator />
+                                    </React.Fragment>
+                                )}
+                                {!!PagesMenu && <PagesMenu />}
+                                {!!SettingsMenu && <SettingsMenu />}
+                                <Island.Separator />
+                                <Island.Button
+                                    icon="trash"
+                                    onClick={() => {
+                                        dispatchAction(ACTIONS.CLEAR_PAGE);
+                                    }}
+                                    disabled={editor.page.readonly}
+                                />
                             </Island>
+                        </div>
+                        {(!!HistoryPanel || !!ZoomPanel || !!Layers || showSidebarButton) && (
+                            <div className="absolute top-0 right-0 pt-4 pr-4 z-30 flex gap-2 pointer-events-auto">
+                                {!!HistoryPanel && <HistoryPanel />}
+                                {!!ZoomPanel && <ZoomPanel />}
+                                {!!Layers && (
+                                    <Island>
+                                        <Island.Button
+                                            icon="stack"
+                                            onClick={() => setLayersVisible(!layersVisible)}
+                                            active={layersVisible}
+                                        />
+                                    </Island>
+                                )}
+                                {showSidebarButton && (
+                                    <Island>
+                                        <Island.Button
+                                            icon="sidebar-right"
+                                            onClick={() => setSidebarVisible(!sidebarVisible)}
+                                            active={sidebarVisible}
+                                        />
+                                    </Island>
+                                )}
+                            </div>
                         )}
-                        <Island>
-                            {!!Title && (
-                                <React.Fragment>
-                                    <Title />
-                                    <Island.Separator />
-                                </React.Fragment>
-                            )}
-                            {!!PagesMenu && <PagesMenu />}
-                            {!!SettingsMenu && <SettingsMenu />}
-                            <Island.Separator />
-                            <Island.Button
-                                icon="trash"
-                                onClick={() => {
-                                    dispatchAction(ACTIONS.CLEAR_PAGE);
-                                }}
-                                disabled={editor.page.readonly}
-                            />
-                        </Island>
+                        {!!editor.page.readonly && (
+                            <div className="absolute top-0 left-half pt-4 z-40 flex gap-2 translate-x-half-n pointer-events-none">
+                                <Alert variant="warning" icon="lock">
+                                    This page is <b>Read-Only</b>.
+                                </Alert>
+                            </div>
+                        )}
+                        {!!Toolbar && (
+                            <div className="absolute z-20 left-half bottom-0 mb-4 pointer-events-auto" style={{transform:"translateX(-50%)"}}>
+                                <Toolbar />
+                            </div>
+                        )}
+                        {!!Minimap && (
+                            <div className="absolute z-20 bottom-0 mb-4 left-0 ml-4 pointer-events-auto">
+                                <Minimap />
+                            </div>
+                        )}
+                        {!editor.page.readonly && selectedElements.length > 0 && (
+                            <React.Fragment>
+                                {(selectedElements.length > 1 || !selectedElements[0].editing) && (
+                                    <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4 pointer-events-auto">
+                                        <EditionPanel
+                                            key={selectedElements.map((el: any) => el.id).join("-")}
+                                        />
+                                    </div>
+                                )}
+                            </React.Fragment>
+                        )}
+                        {!!Layers && layersVisible && (
+                            <div className="absolute z-30 top-0 right-0 pt-1 mt-16 mr-4 pointer-events-auto">
+                                <Layers />
+                            </div>
+                        )}
                     </div>
-                    {(!!HistoryPanel || !!ZoomPanel || !!Layers || showSidebarButton) && (
-                        <div className="absolute top-0 right-0 pt-4 pr-4 z-30 flex gap-2">
-                            {!!HistoryPanel && <HistoryPanel />}
-                            {!!ZoomPanel && <ZoomPanel />}
-                            {!!Layers && (
-                                <Island>
-                                    <Island.Button
-                                        icon="stack"
-                                        onClick={() => setLayersVisible(!layersVisible)}
-                                        active={layersVisible}
-                                    />
-                                </Island>
-                            )}
-                            {showSidebarButton && (
-                                <Island>
-                                    <Island.Button
-                                        icon="sidebar-right"
-                                        onClick={() => setSidebarVisible(!sidebarVisible)}
-                                        active={sidebarVisible}
-                                    />
-                                </Island>
-                            )}
-                        </div>
-                    )}
-                    {!!editor.page.readonly && (
-                        <div className="absolute top-0 left-half pt-4 z-40 flex gap-2 translate-x-half-n pointer-events-none">
-                            <Alert variant="warning" icon="lock">
-                                This page is <b>Read-Only</b>.
-                            </Alert>
-                        </div>
-                    )}
-                    {!!Toolbar && (
-                        <div className="absolute z-20 left-half bottom-0 mb-4" style={{transform:"translateX(-50%)"}}>
-                            <Toolbar />
-                        </div>
-                    )}
-                    {!!Minimap && (
-                        <div className="absolute z-20 bottom-0 mb-4 left-0 ml-4">
-                            <Minimap />
-                        </div>
-                    )}
-                    {!editor.page.readonly && selectedElements.length > 0 && (
-                        <React.Fragment>
-                            {(selectedElements.length > 1 || !selectedElements[0].editing) && (
-                                <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4">
-                                    <EditionPanel
-                                        key={selectedElements.map((el: any) => el.id).join("-")}
-                                    />
-                                </div>
-                            )}
-                        </React.Fragment>
-                    )}
-                    {!!Layers && layersVisible && (
-                        <div className="absolute z-30 top-0 right-0 pt-1 mt-16 mr-4">
-                            <Layers />
-                        </div>
-                    )}
                     {sidebarVisible && (
-                        <div className="absolute z-40 top-0 right-0 w-88 h-full">
+                        <div className="shrink-0 w-88 h-full pointer-events-auto">
                             <Panel className="h-full rounded-tr-none rounded-br-none">
                                 <div className="flex items-center justify-end">
                                     <Panel.Button
@@ -142,7 +144,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             </Panel>
                         </div>
                     )}
-                </React.Fragment>
+                </div>
             )}
         </React.Fragment>
     );
