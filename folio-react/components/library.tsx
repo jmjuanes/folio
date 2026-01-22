@@ -199,7 +199,7 @@ export const Library = (): React.JSX.Element => {
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => {
-                                    dispatchAction(ACTIONS.DELETE_LIBARY_COLLECTION, activeCollection);
+                                    dispatchAction(ACTIONS.DELETE_LIBRARY_COLLECTION, activeCollection);
                                 }}
                             />
                         </div>
