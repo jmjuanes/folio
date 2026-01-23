@@ -150,7 +150,8 @@ export const Library = (): React.JSX.Element => {
                 });
             }
             // 2. display only the items without a collection
-            return items.filter((item: LibraryItem) => !item.collection);
+            // return items.filter((item: LibraryItem) => !item.collection);
+            return items;
         }
         return [];
     }, [ items.length, collections.length, activeCollection, activeItem ]);
@@ -173,7 +174,7 @@ export const Library = (): React.JSX.Element => {
     }, [ items.length, collections.length ]);
 
     return (
-        <React.Fragment>
+        <div className="relative flex flex-col gap-2">
             <div className="sticky top-0 bg-white flex items-center justify-between">
                 {!activeCollection && !activeItem && (
                     <React.Fragment>
@@ -231,34 +232,46 @@ export const Library = (): React.JSX.Element => {
                 )}
             </div>
             {collections.length > 0 && !activeCollection && (
-                <div className="grid gap-2 grid-cols-2 pt-2 w-full">
-                    {collections.map((collection: LibraryCollection) => (
-                        <LibraryCollectionIcon
-                            key={collection.id}
-                            name={collection.name}
-                            items={items.filter(item => item.collection === collection.id)}
-                            onClick={() => {
-                                setActiveCollection(collection);
-                            }}
-                        />
-                    ))}
-                </div>
+                <React.Fragment>
+                    <div className="font-bold text-base">
+                        <span>Your Collections</span>
+                    </div>
+                    <div className="grid gap-2 grid-cols-2 w-full">
+                        {collections.map((collection: LibraryCollection) => (
+                            <LibraryCollectionIcon
+                                key={collection.id}
+                                name={collection.name}
+                                items={items.filter(item => item.collection === collection.id)}
+                                onClick={() => {
+                                    setActiveCollection(collection);
+                                }}
+                            />
+                        ))}
+                    </div>
+                </React.Fragment>
             )}
             {visibleItems.length > 0 && (
-                <div className="grid gap-2 grid-cols-2 pt-4">
-                    {visibleItems.map((item: LibraryItem) => (
-                        <LibraryItemIcon
-                            key={item.id}
-                            thumbnail={item.thumbnail}
-                            onInsert={() => dispatchAction(ACTIONS.INSERT_LIBRARY_ITEM, item)}
-                            onDelete={() => dispatchAction(ACTIONS.DELETE_LIBRARY_ITEM, item)}
-                        />
-                    ))}
-                </div>
+                <React.Fragment>
+                    {!activeCollection && (
+                        <div className="font-bold text-base mb-2">
+                            <span>All library items</span>
+                        </div>
+                    )}
+                    <div className="grid gap-2 grid-cols-2">
+                        {visibleItems.map((item: LibraryItem) => (
+                            <LibraryItemIcon
+                                key={item.id}
+                                thumbnail={item.thumbnail}
+                                onInsert={() => dispatchAction(ACTIONS.INSERT_LIBRARY_ITEM, item)}
+                                onDelete={() => dispatchAction(ACTIONS.DELETE_LIBRARY_ITEM, item)}
+                            />
+                        ))}
+                    </div>
+                </React.Fragment>
             )}
             {items.length === 0 && collections.length === 0 && (
                 <EmptyLibrary />
             )}
-        </React.Fragment>
+        </div>
     );
 };
