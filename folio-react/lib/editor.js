@@ -30,10 +30,10 @@ import {
     getTranslateCoordinatesForNewZoom,
     getZoomToFitElements,
 } from "./zoom.js";
-import {
-    getLibraryStateFromInitialData,
-    createLibraryItem,
-} from "./library.ts";
+// import {
+//     getLibraryStateFromInitialData,
+//     createLibraryItem,
+// } from "./library.ts";
 
 // @private clipboard key
 const CLIPBOARD_KEY = "folio:::";
@@ -274,7 +274,7 @@ export const createEditor = (options = {}) => {
 
         // @description library state
         // @param {object} library.items list of items in the library
-        library: getLibraryStateFromInitialData(options?.library || {}),
+        // library: getLibraryStateFromInitialData(options?.library || {}),
 
         // @description internal editor state
         state: {

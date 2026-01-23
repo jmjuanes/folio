@@ -17,10 +17,10 @@ jest.unstable_mockModule("../export.js", () => ({
 jest.unstable_mockModule("../migrate.js", () => ({
     migrateElements: jest.fn(),
 }));
-jest.unstable_mockModule("../library.js", () => ({
-    getLibraryStateFromInitialData: jest.fn(),
-    createLibraryItem: jest.fn(),
-}));
+// jest.unstable_mockModule("../library.js", () => ({
+//     getLibraryStateFromInitialData: jest.fn(),
+//     createLibraryItem: jest.fn(),
+// }));
 
 jest.unstable_mockModule("browser-fs-access", () => ({
     fileOpen: jest.fn(),
