@@ -41,22 +41,25 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
             );
         }}
         contentRender={closeDropdown => (
-            <Dropdown className="rounded-md" style={{width:"21rem"}}>
+            <div className="border-1 border-gray-200 bg-white p-1 shadow-sm rounded-md" style={{width:"21rem"}}>
                 {(props.values || []).map((item: DropdownSelectValue) => {
+                    const active = props.value === item?.value || props.value === item;
                     const itemClassName = classNames({
-                        "bg-gray-200": props.value === item?.value || props.value === item,
+                        "rounded-sm text-sm px-2 py-1 select-none text-current": true,
+                        "bg-gray-200": active,
+                        "bg-white hover:bg-gray-100 cursor-pointer": !active,
                     });
                     const handleClick = () => {
                         closeDropdown();
                         props.onChange(item?.value ?? item);
                     };
                     return (
-                        <Dropdown.Item className={itemClassName} onClick={handleClick}>
+                        <div className={itemClassName} onClick={handleClick}>
                             <span>{item?.text || item?.value || item}</span>
-                        </Dropdown.Item>
+                        </div>
                     );
                 })}
-            </Dropdown>
+            </div>
         )}
     />
 );
