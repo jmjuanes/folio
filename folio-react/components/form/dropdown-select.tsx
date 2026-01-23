@@ -26,7 +26,7 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
         contentClassName="absolute z-50"
         toggleRender={() => {
             const value = (props.values || []).find(item => {
-                return item?.value === props.value || props.value === itemM
+                return item?.value === props.value || props.value === item;
             });
             return (
                 <span>{value || props.emptyValueText || "-"}</span>
