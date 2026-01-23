@@ -174,7 +174,7 @@ export const Library = (): React.JSX.Element => {
     }, [ items.length, collections.length ]);
 
     return (
-        <div className="relative flex flex-col gap-2">
+        <div className="relative flex flex-col gap-4">
             <div className="sticky top-0 bg-white flex items-center justify-between">
                 {!activeCollection && !activeItem && (
                     <React.Fragment>
@@ -232,7 +232,7 @@ export const Library = (): React.JSX.Element => {
                 )}
             </div>
             {collections.length > 0 && !activeCollection && (
-                <React.Fragment>
+                <div className="flex flex-col gap-2">
                     <div className="font-bold text-base">
                         <span>Your Collections</span>
                     </div>
@@ -248,12 +248,12 @@ export const Library = (): React.JSX.Element => {
                             />
                         ))}
                     </div>
-                </React.Fragment>
+                </div>
             )}
             {visibleItems.length > 0 && (
-                <React.Fragment>
+                <div className="flex flex-col gap-2">
                     {!activeCollection && (
-                        <div className="font-bold text-base mb-2">
+                        <div className="font-bold text-base">
                             <span>All library items</span>
                         </div>
                     )}
@@ -267,7 +267,7 @@ export const Library = (): React.JSX.Element => {
                             />
                         ))}
                     </div>
-                </React.Fragment>
+                </div>
             )}
             {items.length === 0 && collections.length === 0 && (
                 <EmptyLibrary />
