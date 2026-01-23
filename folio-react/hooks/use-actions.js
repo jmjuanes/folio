@@ -179,11 +179,9 @@ export const useActions = () => {
                 }
             },
             [ACTIONS.ADD_SELECTION_TO_LIBRARY]: () => {
+                const collections = library.getCollections();
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {
-                    const collections = library.getCollections();
-                    // library.addItem(selectedElements);
-                    // editor.update();
                     prompt({
                         title: "Add Library Item",
                         confirmText: "Add Item",
@@ -273,7 +271,27 @@ export const useActions = () => {
                 });
             },
             [ACTIONS.ADD_LIBRARY_COLLECTION]: () => {
-                // TODO: show prompt to create a new collection
+                prompt({
+                    title: "Create Collection",
+                    confirmText: "Save",
+                    cancelText: "Cancel",
+                    className: "max-w-sm w-full",
+                    initialData: {},
+                    items: {
+                        name: {
+                            type: FORM_OPTIONS.TEXT,
+                            title: "Collection Name",
+                            placeholder: "Add a name for the collection",
+                        },
+                        description: {
+                            type: FORM_OPTIONS.TEXTAREA,
+                            title: "Short description of the collection",
+                        },
+                    },
+                    callback: (data = {}) => {
+                        library.addCollection(data);
+                    },
+                });
             },
             [ACTIONS.DELETE_LIBRARY_COLLECTION]: (collection) => {
                 showConfirm({

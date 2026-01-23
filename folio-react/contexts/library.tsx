@@ -22,9 +22,11 @@ export type LibraryApi = {
     export: () => Library;
     exportCollection: (collectionId: string) => Library;
     clear: () => void;
-    addItem: (elements: any, data: any) => void;
+    addItem: (elements: any, data: Partial<LibraryItem>) => void;
+    editItem: (id: string, data: Partial<LibraryItem>) => void;
     removeItem: (id: string) => void;
-    addCollection: (data: any) => void;
+    addCollection: (data: Partial<LibraryCollection>) => void;
+    editCollection: (id: string, data: Partial<LibraryCollection>) => void;
     removeCollection: (id: string) => void;
     getItem: (id: string) => LibraryItem | null;
     getItems: () => LibraryItem[];
@@ -113,12 +115,24 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             },
 
             // @description add a new item to the library
-            addItem: (elements: any, data: any) => {
+            addItem: (elements: any, data: Partial<LibraryItem>) => {
                 createLibraryItem(elements, data).then(libraryItem => {
                     setLibraryState((prevState: Library) => ({
                         items: [...(prevState?.items || []), libraryItem],
                         collections: prevState?.collections || [],
                     }));
+                });
+            },
+
+            // @description edit a library item
+            editItem: (itemId: string, itemData: Partial<LibraryItem>) => {
+                setLibraryState((prevState: Library) => {
+                    const item = (prevState.items || []).find((item: LibraryItem) => item.id === itemId);
+                    if (item) {
+                        Object.assign(item, itemData || {});
+                    }
+                    // return a cloned state object
+                    return {...prevState};
                 });
             },
 
@@ -146,12 +160,25 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
             },
 
             // @description add a new collection
-            addCollection: (data: any) => {
+            addCollection: (data: Partial<LibraryCollection>) => {
                 const collection: LibraryCollection = createLibraryCollection(data);
                 setLibraryState((prevState: Library) => ({
                     items: prevState?.items || [],
                     collections: [...(prevState?.collections || []), collection],
                 }));
+            },
+
+            // @description edit the specified collection
+            editCollection: (collectionId: string, collectionData: Partial<LibraryCollection>) => {
+                setLibraryState((prevState: Library) => {
+                    const collection = prevState.collections.find((collection: LibraryCollection) => {
+                        return collection.id === collectionId;
+                    });
+                    if (collection) {
+                        Object.assign(collection, collectionData || {});
+                    }
+                    return {...prevState};
+                });
             },
 
             // @description remove the specified collection

@@ -18,6 +18,7 @@ export type LibraryCollection = {
     id: string;
     name: string;
     description?: string;
+    created?: string | number;
 };
 
 // @description internal library type
@@ -157,5 +158,6 @@ export const createLibraryCollection = (data: Partial<LibraryCollection> = {}):L
         id: generateCollectionId(),
         name: data?.name || "Untitled",
         description: data?.description || "",
+        created: Date.now(),
     };
 };

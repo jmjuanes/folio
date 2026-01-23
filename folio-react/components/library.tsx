@@ -122,7 +122,8 @@ export type LibraryHeaderButtonProps = {
 
 export const LibraryHeaderButton = (props: LibraryHeaderButtonProps): React.JSX.Element => {
     const className = classNames({
-        "flex items-center p-2 rounded-lg bg-gray-100 cursor-pointer": true,
+        "flex items-center p-2 rounded-lg": true,
+        "bg-gray-100 hover:bg-gray-200 cursor-pointer": true,
     });
     return (
         <div className={className} onClick={props.onClick}>
@@ -180,22 +181,23 @@ export const Library = (): React.JSX.Element => {
                     <React.Fragment>
                         <LibraryHeaderTitle
                             showBackButton={false}
-                            title="Your Library"
+                            title="Library"
                         />
                         <div className="flex items-center gap-1">
                             <LibraryHeaderButton
                                 icon="plus"
                                 disabled={false}
-                                onClick={() => {
-                                    library.addCollection({
-                                        name: "Test"
-                                    });
-                                }}
+                                onClick={() => dispatchAction(ACTIONS.ADD_LIBRARY_COLLECTION)}
                             />
                             <LibraryHeaderButton
                                 icon="folder-open"
                                 disabled={false}
                                 onClick={() => dispatchAction(ACTIONS.LOAD_LIBRARY)}
+                            />
+                            <LibraryHeaderButton
+                                icon="download"
+                                disabled={false}
+                                onClick={() => dispatchAction(ACTIONS.EXPORT_LIBRARY)}
                             />
                             <LibraryHeaderButton
                                 icon="trash"
@@ -214,6 +216,20 @@ export const Library = (): React.JSX.Element => {
                         />
                         <div className="flex items-center gap-1">
                             <LibraryHeaderButton
+                                icon="pencil"
+                                disabled={false}
+                                onClick={() => {
+                                    dispatchAction(ACTIONS.EDIT_LIBRARY_COLLECTION, activeCollection);
+                                }}
+                            />
+                            <LibraryHeaderButton
+                                icon="download"
+                                disabled={false}
+                                onClick={() => {
+                                    dispatchAction(ACTIONS.EXPORT_LIBRARY_COLLECTION, activeCollection);
+                                }}
+                            />
+                            <LibraryHeaderButton
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => {
@@ -224,17 +240,19 @@ export const Library = (): React.JSX.Element => {
                     </React.Fragment>
                 )}
                 {activeItem && (
-                    <LibraryHeaderTitle
-                        showBackButton={true}
-                        onBackButtonClick={() => setActiveItem(null)}
-                        title="Library Item"
-                    />
+                    <React.Fragment>
+                        <LibraryHeaderTitle
+                            showBackButton={true}
+                            onBackButtonClick={() => setActiveItem(null)}
+                            title="Library Item"
+                        />
+                    </React.Fragment>
                 )}
             </div>
             {collections.length > 0 && !activeCollection && (
                 <div className="flex flex-col gap-2">
                     <div className="font-bold text-base">
-                        <span>Your Collections</span>
+                        <span>Collections</span>
                     </div>
                     <div className="grid gap-2 grid-cols-2 w-full">
                         {collections.map((collection: LibraryCollection) => (
