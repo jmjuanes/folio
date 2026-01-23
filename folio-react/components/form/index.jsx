@@ -1,8 +1,9 @@
 import React from "react";
 import classNames from "classnames";
-import {FORM_OPTIONS} from "../../constants.js";
-import {ColorPicker} from "./color-picker.jsx";
-import {FontPicker} from "./font-picker.jsx";
+import { FORM_OPTIONS } from "../../constants.js";
+import { ColorPicker } from "./color-picker.jsx";
+import { FontPicker } from "./font-picker.jsx";
+import { DropdownSelect } from "./dropdown-select.tsx";
 
 // Tiny utility to check if a value is active
 export const checkIsActive = (value, currentValue, isActiveFn, data) => {
@@ -35,6 +36,9 @@ const optionTypes = {
     ),
     [FORM_OPTIONS.FONT]: props => (
         <FontPicker {...props} />
+    ),
+    [FORM_OPTIONS.DROPDOWN_SELECT]: props => (
+        <DropdownSelect {...props} />
     ),
     [FORM_OPTIONS.SELECT]: props => (
         <div className={props.className || "grid grid-cols-5 gap-1 w-full"}>

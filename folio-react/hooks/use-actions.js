@@ -181,9 +181,40 @@ export const useActions = () => {
             [ACTIONS.ADD_SELECTION_TO_LIBRARY]: () => {
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {
+                    const collections = library.getCollections();
                     // library.addItem(selectedElements);
                     // editor.update();
-                    // TODO: display a prompt to ask for library item information
+                    prompt({
+                        title: "Add Library Item",
+                        confirmText: "Add Item",
+                        cancelText: "Cancel",
+                        initialData: {
+                            collection: "",
+                        },
+                        items: {
+                            name: {
+                                type: FORM_OPTIONS.TEXT,
+                                title: "Library Item Name",
+                                placeholder: "Give your new item a name",
+                            },
+                            description: {
+                                type: FORM_OPTIONS.TEXTAREA,
+                                title: "Library Item Short Description",
+                            },
+                            collection: {
+                                type: FORM_OPTIONS.DROPDOWN_SELECT,
+                                title: "Collection",
+                                values: collections.map(collection => ({
+                                    value: collection.id,
+                                    text: collection.name,
+                                })),
+                            },
+                        },
+                        callback: (data = {}) => {
+                            library.addItem(selectedElements, data);
+                            editor.update();
+                        },
+                    });
                 }
             },
             [ACTIONS.INSERT_LIBRARY_ITEM]: (libraryItem) => {

@@ -73,6 +73,7 @@ export const FORM_OPTIONS = {
     SELECT: "select",
     LABELED_SELECT: "labeled-select",
     COLOR_SELECT: "color-select",
+    DROPDOWN_SELECT: "dropdown-select",
     FONT: "font",
     RANGE: "range",
     CHECKBOX: "checkbox",
