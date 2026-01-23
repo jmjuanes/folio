@@ -209,6 +209,7 @@ export const useActions = () => {
                                     value: collection.id,
                                     text: collection.name,
                                 })),
+                                emptyValueText: collections.length === 0 ? "No collections available" : "Select a collection",
                             },
                         },
                         callback: (data = {}) => {

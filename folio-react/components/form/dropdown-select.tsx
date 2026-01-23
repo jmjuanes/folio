@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import { ChevronDownIcon } from "@josemi-icons/react";
 import { Dropdown } from "../ui/dropdown.tsx";
 
 export type DropdownSelectValue = {
@@ -19,17 +20,25 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
         id="form:dropdown-select"
         toggleClassName={classNames({
             "relative w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
-            "flex items-center": true,
+            "flex items-center justify-between": true,
             "bg-white border-1 border-gray-200 text-current": true,
             "pointer-events-none opacity-80": props.values.length === 0,
         })}
         contentClassName="absolute z-50"
         toggleRender={() => {
-            const value = (props.values || []).find(item => {
+            const selectedItem = (props.values || []).find(item => {
                 return item?.value === props.value || props.value === item;
             });
+            const displayText = selectedItem?.value || selectedItem || "";
             return (
-                <span>{value || props.emptyValueText || "-"}</span>
+                <React.Fragment>
+                    <div className={!displayText ? "opacity-60" : "opacity-100"}>
+                        <span>{displayText || props.emptyValueText || "-"}</span>
+                    </div>
+                    <div className="flex items-center text-base">
+                        <ChevronDownIcon />
+                    </div>
+                </React.Fragment>
             );
         }}
         contentRender={closeDropdown => (
