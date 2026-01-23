@@ -69,7 +69,10 @@ export const usePrompt = () => {
                 initialData: options.initialData || {},
                 items: options.items,
                 onCancel: () => hideDialog(),
-                onConfirm: (data: any) => options.callback(data),
+                onConfirm: (data: any) => {
+                    hideDialog();
+                    options.callback(data);
+                },
             } as PromptProps,
         });
     }, [ showDialog, hideDialog ]);
