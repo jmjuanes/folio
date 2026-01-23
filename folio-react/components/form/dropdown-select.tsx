@@ -16,8 +16,10 @@ export type DropdownSelectProps = {
 
 export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element => (
     <Dropdown.Portal
+        id="form:dropdown-select"
         toggleClassName={classNames({
             "relative w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
+            "flex items-center": true,
             "bg-white border-1 border-gray-200 text-current": true,
         })}
         contentClassName="absolute"
