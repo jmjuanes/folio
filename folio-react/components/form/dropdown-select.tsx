@@ -22,18 +22,17 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
             "relative w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
             "flex items-center justify-between": true,
             "bg-white border-1 border-gray-200 text-current": true,
-            "pointer-events-none opacity-80": props.values.length === 0,
+            "pointer-events-none opacity-60": props.values.length === 0,
         })}
         contentClassName="absolute z-50"
         toggleRender={() => {
-            const selectedItem = (props.values || []).find(item => {
+            const selectedItem = (props.values || []).find((item: DropdownSelectValue) => {
                 return item?.value === props.value || props.value === item;
             });
-            const displayText = selectedItem?.value || selectedItem || "";
             return (
                 <React.Fragment>
-                    <div className={!displayText ? "opacity-60" : "opacity-100"}>
-                        <span>{displayText || props.emptyValueText || "-"}</span>
+                    <div className={!props.value ? "opacity-60" : "opacity-100"}>
+                        <span>{selectedItem?.text ?? selectedItem ?? props.emptyValueText ?? "-"}</span>
                     </div>
                     <div className="flex items-center text-base">
                         <ChevronDownIcon />
