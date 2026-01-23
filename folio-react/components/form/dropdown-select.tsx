@@ -21,11 +21,17 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
             "relative w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
             "flex items-center": true,
             "bg-white border-1 border-gray-200 text-current": true,
+            "pointer-events-none opacity-80": props.values.length === 0,
         })}
         contentClassName="absolute z-50"
-        toggleRender={() => (
-            <span>{props.value || props.emptyValueText || "-"}</span>
-        )}
+        toggleRender={() => {
+            const value = (props.values || []).find(item => {
+                return item?.value === props.value || props.value === itemM
+            });
+            return (
+                <span>{value || props.emptyValueText || "-"}</span>
+            );
+        }}
         contentRender={closeDropdown => (
             <Dropdown className="" style={{width:"21rem"}}>
                 {(props.values || []).map((item: DropdownSelectValue) => {
