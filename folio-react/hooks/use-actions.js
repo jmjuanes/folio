@@ -188,6 +188,7 @@ export const useActions = () => {
                         title: "Add Library Item",
                         confirmText: "Add Item",
                         cancelText: "Cancel",
+                        className: "max-w-sm w-full",
                         initialData: {
                             collection: "",
                         },

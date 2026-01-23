@@ -22,12 +22,12 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
             "flex items-center": true,
             "bg-white border-1 border-gray-200 text-current": true,
         })}
-        contentClassName="absolute"
+        contentClassName="absolute z-50"
         toggleRender={() => (
             <span>{props.value || props.emptyValueText || "-"}</span>
         )}
         contentRender={closeDropdown => (
-            <Dropdown className="w-80">
+            <Dropdown className="" style={{width:"21rem"}}>
                 {(props.values || []).map((item: DropdownSelectValue) => {
                     const itemClassName = classNames({
                         "bg-gray-200": props.value === item?.value || props.value === item,
