@@ -41,7 +41,7 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
             );
         }}
         contentRender={closeDropdown => (
-            <Dropdown className="" style={{width:"21rem"}}>
+            <Dropdown className="rounded-md" style={{width:"21rem"}}>
                 {(props.values || []).map((item: DropdownSelectValue) => {
                     const itemClassName = classNames({
                         "bg-gray-200": props.value === item?.value || props.value === item,
