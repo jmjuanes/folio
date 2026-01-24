@@ -9,17 +9,23 @@ import { useActions } from "../hooks/use-actions.js";
 import { formatDate } from "../utils/dates.ts";
 import type { LibraryCollection, LibraryComponent, Library } from "../lib/library.ts";
 
+type EmptyLibraryProps = {
+    icon: string;
+    title: string;
+    description: string;
+};
+
 // @description display an empty library message
-const EmptyLibrary = (): React.JSX.Element => (
-    <div className="flex flex-col items-center justify-center gap-1 py-12">
-        <div className="flex items-center text-4xl">
-            <AlbumIcon />
+const EmptyLibrary = (props: EmptyLibraryProps): React.JSX.Element => (
+    <div className="flex flex-col items-center justify-center gap-1 py-12 bg-gray-100 rounded-lg">
+        <div className="flex items-center text-5xl">
+            {renderIcon(props.icon)}
         </div>
-        <div className="text-center font-bold text-sm">
-            <span>Your Library is empty.</span>
+        <div className="text-center font-bold text-base">
+            <span>{props.title}</span>
         </div>
-        <div className="text-center text-2xs font-medium px-4">
-            <span>Library lets you to organize and share your elements across pages.</span>
+        <div className="text-center text-xs font-medium px-4">
+            <span>{props.description}</span>
         </div>
     </div>
 );
@@ -112,7 +118,7 @@ export type LibraryDetailProps = {
 
 export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
     <div className="flex items-center gap-2 opacity-60">
-        <div className="flex text-base pt-px">
+        <div className="flex text-base">
             {renderIcon(props.icon)}
         </div>
         <div className="text-sm">{props.text}</div>
@@ -280,7 +286,7 @@ export const Library = (): React.JSX.Element => {
                         )}
                         {activeComponent?.created && (
                             <LibraryDetail
-                                icon="calendar"
+                                icon="calendar-plus"
                                 text={"Created at " + formatDate(activeComponent.created)}
                             />
                         )}
@@ -289,7 +295,7 @@ export const Library = (): React.JSX.Element => {
                         <div className="flex items-center text-base">
                             <PlusIcon />
                         </div>
-                        <span>Insert</span>
+                        <span>Insert Component</span>
                     </Button>
                 </div>
             )}
@@ -330,11 +336,19 @@ export const Library = (): React.JSX.Element => {
                     </div>
                 </div>
             )}
-            {activeComponent && (
-                <div className=""></div>
+            {activeCollection && !activeComponent && visibleComponents.length === 0 && (
+                <EmptyLibrary
+                    icon="album"
+                    title="This collection is empty"
+                    description="Collections allows you to organize your components."
+                />
             )}
             {components.length === 0 && collections.length === 0 && (
-                <EmptyLibrary />
+                <EmptyLibrary
+                    icon="album"
+                    title="Your Library is empty"
+                    description="Library lets you to organize and share your elements across pages."
+                />
             )}
         </div>
     );

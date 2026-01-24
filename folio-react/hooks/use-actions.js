@@ -14,11 +14,11 @@ const getLibraryComponentFields = (collections) => {
     return {
         name: {
             type: FORM_OPTIONS.TEXT,
-            title: "Name",
+            title: "Component name",
         },
         description: {
             type: FORM_OPTIONS.TEXTAREA,
-            title: "Short Description",
+            title: "Short description of the component",
         },
         collection: {
             type: FORM_OPTIONS.DROPDOWN_SELECT,
@@ -206,8 +206,8 @@ export const useActions = () => {
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {
                     prompt({
-                        title: "Add Library Item",
-                        confirmText: "Add Item",
+                        title: "Add Component",
+                        confirmText: "Save",
                         cancelText: "Cancel",
                         className: "max-w-sm w-full",
                         initialData: {
@@ -230,8 +230,8 @@ export const useActions = () => {
             [ACTIONS.EDIT_LIBRARY_COMPONENT]: (component) => {
                 const collections = library.getCollections();
                 prompt({
-                    title: "Edit Library Item",
-                    confirmText: "Update",
+                    title: "Edit Component",
+                    confirmText: "Save",
                     cancelText: "Cancel",
                     className: "max-w-sm w-full",
                     initialData: {
@@ -286,7 +286,7 @@ export const useActions = () => {
                     items: {
                         name: {
                             type: FORM_OPTIONS.TEXT,
-                            title: "Collection Name",
+                            title: "Collection name",
                         },
                         description: {
                             type: FORM_OPTIONS.TEXTAREA,
@@ -311,7 +311,7 @@ export const useActions = () => {
                     items: {
                         name: {
                             type: FORM_OPTIONS.TEXT,
-                            title: "Collection Name",
+                            title: "Collection name",
                         },
                         description: {
                             type: FORM_OPTIONS.TEXTAREA,
