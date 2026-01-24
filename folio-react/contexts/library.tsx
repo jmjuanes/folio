@@ -52,7 +52,7 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
     // create the api to manage the library data
     const libraryApi = React.useMemo<LibraryApi>(() => {
         return {
-            count: libraryState?.items.length || 0,
+            count: (libraryState?.items.length || 0) + (libraryState?.collections.length || 0),
 
             // @description load library data from a JSON object
             load: (data: Library) => {
