@@ -110,7 +110,7 @@ export type LibraryDetailProps = {
     text: string;
 };
 
-export const LibraryDetail = (props: LibraryDetailProps) => (
+export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
     <div className="flex items-start gap-1 opacity-60">
         <div className="flex text-base">
             {renderIcon(props.icon)}
@@ -266,7 +266,10 @@ export const Library = (): React.JSX.Element => {
                         />
                     </div>
                     {activeItem?.description && (
-                        <LibraryDetail icon="info" text={activeItem.description} />
+                        <LibraryDetail
+                            icon="info-circle"
+                            text={activeItem.description}
+                        />
                     )}
                     {activeItem?.collection && (
                         <LibraryDetail
