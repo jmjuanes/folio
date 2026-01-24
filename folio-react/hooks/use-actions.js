@@ -250,6 +250,7 @@ export const useActions = () => {
                     message: `Do you want to delete this item from the library? This action can not be undone.`,
                     callback: () => {
                         library?.removeItem(libraryItem.id);
+                        editor.update();
                     },
                 });
             },
@@ -259,6 +260,7 @@ export const useActions = () => {
                     message: `Do you want to delete your library? This action can not be undone.`,
                     callback: () => {
                         library?.clear();
+                        editor.update();
                     },
                 });
             },
@@ -271,6 +273,7 @@ export const useActions = () => {
             [ACTIONS.LOAD_LIBRARY]: () => {
                 loadLibraryFromJson().then(libraryData => {
                     library.load(libraryData);
+                    editor.update();
                     // if (libraryData?.items?.length > 0) {
                     //     showConfirm({
                     //         title: "Replace library",
@@ -311,6 +314,7 @@ export const useActions = () => {
                     },
                     callback: (data = {}) => {
                         library.addCollection(data);
+                        editor.update();
                     },
                 });
             },
@@ -336,6 +340,7 @@ export const useActions = () => {
                     },
                     callback: (data = {}) => {
                         library.updateCollection(collection.id, data);
+                        editor.update();
                     },
                 });
             },
@@ -353,6 +358,7 @@ export const useActions = () => {
                     // cancelText: ""
                     callback: () => {
                         library.removeCollection(collection.id);
+                        editor.update();
                     },
                 });
             },
