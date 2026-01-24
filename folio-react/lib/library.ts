@@ -83,12 +83,15 @@ export const loadLibraryFromJson = async (): Promise<Library> => {
 
 // @description allow to save a library to a local file
 export const saveLibraryAsJson = (library: Library): Promise<any> => {
-    const libraryName = library.name || "Personal Library";
+    const libraryName = "library"; // library.name || "Personal Library";
+    const collectionsInItems = new Set(library.items.map(item => item.collection));
     const exportData = {
         type: MIME_TYPES.FOLIO_LIB,
         version: VERSION,
-        name: libraryName,
         items: library.items || [],
+        collections: (library.collections || []).filter((collection: LibraryCollection) => {
+            return collectionsInItems.has(collection.id);
+        }),
     };
     const dataStr = JSON.stringify(exportData, null, "    ");
     const blob = new Blob([dataStr], {type: MIME_TYPES.FOLIO_LIB});

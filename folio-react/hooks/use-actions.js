@@ -223,6 +223,9 @@ export const useActions = () => {
                 editor.dispatchChange();
                 editor.update();
             },
+            [ACTIONS.EDIT_LIBRARY_ITEM]: (libraryItem) => {
+                return null;
+            },
             [ACTIONS.DELETE_LIBRARY_ITEM]: (libraryItem) => {
                 showConfirm({
                     title: "Delete library item",
@@ -291,6 +294,15 @@ export const useActions = () => {
                     callback: (data = {}) => {
                         library.addCollection(data);
                     },
+                });
+            },
+            [ACTIONS.EDIT_LIBRARY_COLLECTION]: (collection) => {
+                return null;
+            },
+            [ACTIONS.EXPORT_LIBRARY_COLLECTION]: (collection) => {
+                const libraryData = library.exportCollection(collection.id);
+                saveLibraryAsJson(libraryData).then(() => {
+                    console.log("library exported");
                 });
             },
             [ACTIONS.DELETE_LIBRARY_COLLECTION]: (collection) => {

@@ -244,8 +244,24 @@ export const Library = (): React.JSX.Element => {
                         <LibraryHeaderTitle
                             showBackButton={true}
                             onBackButtonClick={() => setActiveItem(null)}
-                            title="Library Item"
+                            title={activeItem?.name || "Untitled"}
                         />
+                        <div className="flex items-center gap-1">
+                            <LibraryHeaderButton
+                                icon="pencil"
+                                disabled={false}
+                                onClick={() => {
+                                    dispatchAction(ACTIONS.EDIT_LIBRARY_ITEM, activeItem);
+                                }}
+                            />
+                            <LibraryHeaderButton
+                                icon="trash"
+                                disabled={false}
+                                onClick={() => {
+                                    dispatchAction(ACTIONS.DELETE_LIBRARY_ITEM, activeItem);
+                                }}
+                            />
+                        </div>
                     </React.Fragment>
                 )}
             </div>
