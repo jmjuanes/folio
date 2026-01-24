@@ -14,12 +14,11 @@ const getLibraryItemFields = (collections) => {
     return {
         name: {
             type: FORM_OPTIONS.TEXT,
-            title: "Library Item Name",
-            placeholder: "Give your new item a name",
+            title: "Name",
         },
         description: {
             type: FORM_OPTIONS.TEXTAREA,
-            title: "Library Item Short Description",
+            title: "Short Description",
         },
         collection: {
             type: FORM_OPTIONS.DROPDOWN_SELECT,
@@ -306,7 +305,6 @@ export const useActions = () => {
                         name: {
                             type: FORM_OPTIONS.TEXT,
                             title: "Collection Name",
-                            placeholder: "Add a name for the collection",
                         },
                         description: {
                             type: FORM_OPTIONS.TEXTAREA,
@@ -332,7 +330,6 @@ export const useActions = () => {
                         name: {
                             type: FORM_OPTIONS.TEXT,
                             title: "Collection Name",
-                            placeholder: "Add a name for the collection",
                         },
                         description: {
                             type: FORM_OPTIONS.TEXTAREA,
