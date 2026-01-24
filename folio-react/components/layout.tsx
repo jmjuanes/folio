@@ -132,9 +132,10 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                     {sidebarVisible && (
                         <div className="shrink-0 w-80 h-full pointer-events-auto">
                             <Panel className="relative h-full rounded-tr-none rounded-br-none">
-                                <div className="pt-2"></div>
-                                <Panel.Body className="h-full overflow-y-auto max-h-full">
-                                    <Library />
+                                <Panel.Body className="h-full">
+                                    <div className="h-full max-h-full overflow-y-scroll">
+                                        <Library />
+                                    </div>
                                 </Panel.Body>
                             </Panel>
                         </div>
