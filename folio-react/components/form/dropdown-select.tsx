@@ -42,23 +42,25 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
         }}
         contentRender={closeDropdown => (
             <div className="border-1 border-gray-200 bg-white p-1 shadow-sm rounded-md flex flex-col gap-1" style={{width:"21rem"}}>
-                {(props.values || []).map((item: DropdownSelectValue) => {
-                    const active = props.value === item?.value || props.value === item;
-                    const itemClassName = classNames({
-                        "rounded-sm text-xs px-2 py-1 select-none text-current": true,
-                        "bg-gray-200": active,
-                        "bg-white hover:bg-gray-100 cursor-pointer": !active,
-                    });
-                    const handleClick = () => {
-                        closeDropdown();
-                        props.onChange(item?.value ?? item);
-                    };
-                    return (
-                        <div className={itemClassName} onClick={handleClick}>
-                            <span>{item?.text || item?.value || item}</span>
-                        </div>
-                    );
-                })}
+                <div className="w-full h-full overflow-y-scroll max-h-60">
+                    {(props.values || []).map((item: DropdownSelectValue) => {
+                        const active = props.value === item?.value || props.value === item;
+                        const itemClassName = classNames({
+                            "rounded-sm text-xs px-2 py-1 select-none text-current": true,
+                            "bg-gray-200": active,
+                            "bg-white hover:bg-gray-100 cursor-pointer": !active,
+                        });
+                        const handleClick = () => {
+                            closeDropdown();
+                            props.onChange(item?.value ?? item);
+                        };
+                        return (
+                            <div className={itemClassName} onClick={handleClick}>
+                                <span>{item?.text || item?.value || item}</span>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         )}
     />
