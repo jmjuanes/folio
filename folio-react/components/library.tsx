@@ -1,8 +1,9 @@
 import React from "react";
-import { AlbumIcon, PlusIcon, CloseIcon, ChevronLeftIcon } from "@josemi-icons/react";
+import { AlbumIcon, PlusIcon, ChevronLeftIcon } from "@josemi-icons/react";
 import { renderIcon } from "@josemi-icons/react";
 import classNames from "classnames";
 import { ACTIONS } from "../constants.js";
+import { Button } from "../components/ui/button.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import type { LibraryCollection, LibraryItem, Library } from "../lib/library.ts";
@@ -234,7 +235,33 @@ export const Library = (): React.JSX.Element => {
                     </React.Fragment>
                 )}
             </div>
-            {collections.length > 0 && !activeCollection && (
+            {activeCollection?.description && !activeItem && (
+                <div className="opacity-60 text-sm">
+                    <span>{activeCollection.description}</span>
+                </div>
+            )}
+            {activeItem && (
+                <div className="flex flex-col gap-2">
+                    <div className="w-full">
+                        <LibraryItemIcon
+                            key={activeItem?.id}
+                            thumbnail={activeItem.thumbnail}
+                        />
+                    </div>
+                    {activeItem?.description && (
+                        <div className="opacity-60 text-sm">
+                            <span>{activeItem.description}</span>
+                        </div>
+                    )}
+                    <Button variant="primary" onClick={() => dispatchAction(ACTIONS.INSERT_LIBRARY_ITEM, activeItem)}>
+                        <div className="flex items-center text-base">
+                            <PlusIcon />
+                        </div>
+                        <span>Insert</span>
+                    </Button>
+                </div>
+            )}
+            {collections.length > 0 && !activeCollection && !activeItem && (
                 <div className="flex flex-col gap-2">
                     <div className="font-bold text-base">
                         <span>Collections</span>
