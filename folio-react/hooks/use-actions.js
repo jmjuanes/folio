@@ -474,7 +474,7 @@ export const useActions = () => {
                 }
             },
         };
-    }, [ editor, showConfirm, showDialog ]);
+    }, [ editor, showConfirm, showDialog, library ]);
 
     // @description dispatch a single action
     return React.useCallback((actionName, payload) => {
