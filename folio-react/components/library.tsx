@@ -111,7 +111,7 @@ export type LibraryDetailProps = {
 };
 
 export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
-    <div className="flex items-start gap-2 opacity-60">
+    <div className="flex items-center gap-2 opacity-60">
         <div className="flex text-base pt-px">
             {renderIcon(props.icon)}
         </div>
@@ -231,7 +231,7 @@ export const Library = (): React.JSX.Element => {
                         <LibraryHeaderTitle
                             showBackButton={true}
                             onBackButtonClick={() => setActiveItem(null)}
-                            title={activeItem?.name || "Untitled"}
+                            title="Details"
                         />
                         <div className="flex items-center gap-1">
                             <LibraryHeaderButton
@@ -265,23 +265,23 @@ export const Library = (): React.JSX.Element => {
                             thumbnail={activeItem.thumbnail}
                         />
                     </div>
-                    <div className="flex flex-col gap-0">
+                    <div className="flex flex-col gap-1">
+                        <div className="font-bold text-base">
+                            <span>{activeItem?.name || "Untitled"}</span>
+                        </div>
                         {activeItem?.description && (
-                            <LibraryDetail
-                                icon="info-circle"
-                                text={activeItem.description}
-                            />
+                            <div className="text-sm opacity-60">{activeItem.description}</div>
                         )}
                         {activeItem?.collection && (
                             <LibraryDetail
-                                icon="folder"
+                                icon="album"
                                 text={library?.getCollection(activeItem.collection)?.name || "Untitled"}
                             />
                         )}
                         {activeItem?.created && (
                             <LibraryDetail
                                 icon="calendar"
-                                text={formatDate(activeItem.created)}
+                                text={"Created at " + formatDate(activeItem.created)}
                             />
                         )}
                     </div>
