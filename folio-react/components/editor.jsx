@@ -16,6 +16,7 @@ import {
 } from "../contexts/editor-components.tsx";
 import { ConfirmProvider } from "../contexts/confirm.jsx";
 import { DialogsProvider } from "../contexts/dialogs.jsx";
+import { LibraryProvider } from "../contexts/library.tsx";
 
 // @private inner editor component
 const InnerEditor = () => {
@@ -115,15 +116,17 @@ const InnerEditor = () => {
 export const Editor = props => {
     return (
         <EditorComponentsProvider components={props.components}>
-            <EditorProvider {...props}>
-                <ConfirmProvider>
-                    <DialogsProvider>
-                        <ContextMenuProvider>
-                            <InnerEditor />
-                        </ContextMenuProvider>
-                    </DialogsProvider>
-                </ConfirmProvider>
-            </EditorProvider>
+            <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
+                <EditorProvider {...props}>
+                    <ConfirmProvider>
+                        <DialogsProvider>
+                            <ContextMenuProvider>
+                                <InnerEditor />
+                            </ContextMenuProvider>
+                        </DialogsProvider>
+                    </ConfirmProvider>
+                </EditorProvider>
+            </LibraryProvider>
         </EditorComponentsProvider>
     );
 };

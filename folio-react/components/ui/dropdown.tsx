@@ -1,6 +1,7 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import classNames from "classnames";
-import {CheckIcon, renderIcon} from "@josemi-icons/react";
+import { CheckIcon, renderIcon } from "@josemi-icons/react";
 
 export type DropdownProps = React.HTMLAttributes<HTMLDivElement> & {
     className?: string,
@@ -42,6 +43,7 @@ export type DropdownHeaderButtonProps = {
     className?: string,
     icon?: string,
     text?: string,
+    disabled?: boolean,
     onClick?: (event: React.PointerEvent<HTMLDivElement>) => void,
 };
 
@@ -174,3 +176,66 @@ Dropdown.CheckItem = ({ checked = false, children, ...props }: DropdownCheckItem
         {children}
     </Dropdown.Item>
 );
+
+export type DropdownPortalProps = {
+    id: string,
+    toggleClassName?: string,
+    toggleStyle?: React.CSSProperties,
+    toggleRender: (isVisible?: boolean) => React.JSX.Element,
+    contentClassName?: string,
+    contentStyle?: React.CSSProperties,
+    contentRender: (close?: () => void) => React.JSX.Element,
+};
+
+export type DropdownPortalPosition = [number, number];
+
+// @description dropdown portal
+Dropdown.Portal = (props: DropdownPortalProps): React.JSX.Element => {
+    const [ visible, setVisible ] = React.useState<boolean>(false);
+    const contentRef = React.useRef<HTMLDivElement>(null);
+    const position = React.useRef<DropdownPortalPosition>(null);
+
+    // when clicking on the action item
+    const handleToggleClick = React.useCallback((event: React.SyntheticEvent) => {
+        if (event.currentTarget) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            position.current = [rect.bottom + window.scrollY, rect.left + window.scrollX];
+            setVisible(true);
+        }
+    }, [ setVisible ]);
+
+    // internal method to hide the dropdown
+    const handleHideDropdown = React.useCallback(() => {
+        setVisible(false);
+    }, [ setVisible ]);
+
+    React.useEffect(() => {
+        if (visible) {
+            const handleClickOutside = (event: MouseEvent) => {
+                event.preventDefault();
+                const target = event.target as HTMLDivElement;
+                if (contentRef.current && !contentRef.current.contains(target)) {
+                    setVisible(false);
+                }
+            };
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }
+    }, [ visible ]);
+
+    return (
+        <React.Fragment>
+            <div className={props.toggleClassName || "flex items-center"} style={props.toggleStyle} onClick={handleToggleClick}>
+                {props.toggleRender(visible)}
+            </div>
+            {visible && position.current && createPortal([
+                <div key={props.id + ":portal:bg"} className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
+                <div key={props.id + ":portal:content"} ref={contentRef} className={props.contentClassName} style={{top: position.current[0], left: position.current[1]}}>
+                    {props.contentRender(handleHideDropdown)}
+                </div>,
+            ], document.body)}
+        </React.Fragment>
+    );
+};

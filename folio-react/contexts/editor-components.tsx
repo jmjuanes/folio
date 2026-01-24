@@ -16,7 +16,7 @@ import { Toolbar } from "../components/toolbar.tsx";
 import { Layers } from "../components/layers.tsx";
 
 // export type for the editor components
-export type EditorComponentsMap = Record<string, ((props: any) => React.JSX.Element) | null> | null;
+export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
 
 // @description editor components context
 export const EditorComponentsContext = React.createContext<EditorComponentsMap>(null);
@@ -45,12 +45,9 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             ContextMenu: ContextMenu,
             // dialogs components
             ExportDialog: ExportDialog,
-            LibraryAddDialog: null,
-            LibraryExportDialog: null,
             PageEditDialog: PageEditDialog,
             KeyboardShortcutsDialog: KeyboardShortcutsDialog,
             // menus
-            LibraryMenu: null,
             MainMenu: MainMenu,
             PagesMenu: PagesMenu,
             SettingsMenu: SettingsMenu,
@@ -62,6 +59,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Toolbar: Toolbar,
             Layers: Layers,
             Title: null,
+            Library: null,
             // canvas
             BehindTheCanvas: null,
             OverTheCanvas: null,

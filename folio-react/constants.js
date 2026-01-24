@@ -73,6 +73,7 @@ export const FORM_OPTIONS = {
     SELECT: "select",
     LABELED_SELECT: "labeled-select",
     COLOR_SELECT: "color-select",
+    DROPDOWN_SELECT: "dropdown-select",
     FONT: "font",
     RANGE: "range",
     CHECKBOX: "checkbox",
@@ -321,7 +322,6 @@ export const FIELDS = {
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
     STICKER: "sticker",
-    LIBRARY_ITEM_ID: "libraryItemId",
 };
 
 // Deprecated fields
@@ -465,8 +465,8 @@ export const SCREENSHOT_STROKE_COLOR = PRIMARY;
 export const SCREENSHOT_STROKE_WIDTH = 3;
 
 // library constants
-export const LIBRARY_THUMBNAIL_WIDTH = 50;
-export const LIBRARY_THUMBNAIL_HEIGHT = 50;
+export const LIBRARY_THUMBNAIL_WIDTH = 100;
+export const LIBRARY_THUMBNAIL_HEIGHT = 100;
 export const LIBRARY_THUMBNAIL_BACKGROUND = WHITE;
 // export const LIBRARY_SOURCES = {
 //     IMPORTED_FROM_FILE: "imported:file",
@@ -505,6 +505,17 @@ export const ACTIONS = {
     SEND_TO_BACK: "send-to-back",
     LOCK_SELECTION: "lock-selection",
     UNLOCK_SELECTION: "unlock-selection",
+    ADD_SELECTION_TO_LIBRARY: "add-selection-to-library",
+    INSERT_LIBRARY_COMPONENT: "library:component:insert",
+    EDIT_LIBRARY_COMPONENT: "library:component:edit",
+    DELETE_LIBRARY_COMPONENT: "library:component:delete",
+    CLEAR_LIBRARY: "clear-library",
+    EXPORT_LIBRARY: "export-library",
+    LOAD_LIBRARY: "load-library",
+    ADD_LIBRARY_COLLECTION: "library:collection:add",
+    EDIT_LIBRARY_COLLECTION: "library:collection:edit",
+    EXPORT_LIBRARY_COLLECTION: "library:collection:export",
+    DELETE_LIBRARY_COLLECTION: "library:collection:delete",
     ZOOM_IN: "zoom-in",
     ZOOM_OUT: "zoom-out",
     ZOOM_RESET: "zoom-reset",
@@ -521,7 +532,5 @@ export const ACTIONS = {
     TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
-    SHOW_LIBRARY_ADD_DIALOG: "show-library-add-dialog",
-    SHOW_LIBRARY_EXPORT_DIALOG: "show-library-export-dialog",
     SHOW_PAGE_EDIT_DIALOG: "show-page-edit-dialog",
 };

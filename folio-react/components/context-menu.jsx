@@ -34,7 +34,7 @@ const ContextMenuItem = props => (
 export const ContextMenu = props => {
     const editor = useEditor();
     const dispatchAction = useActions();
-    const { LibraryAddDialog, LibraryMenu } = useEditorComponents();
+    const { Library } = useEditorComponents();
     const { hideContextMenu } = useContextMenu();
     const selectedElements = editor.getSelection();
     const shortcutsEnabled = true;
@@ -47,7 +47,7 @@ export const ContextMenu = props => {
         };
     }, [props.top, props.left, editor.height]);
 
-    const addLibraryItem = React.useMemo(() => {
+    const addLibraryComponent = React.useMemo(() => {
         return selectedElements.every(element => {
             return !NOT_ALLOWED_ELEMENTS_IN_LIBRARY.includes(element.type);
         });
@@ -113,14 +113,14 @@ export const ContextMenu = props => {
                     <Menu.Separator />
                 </React.Fragment>
             )} 
-            {selectedElements.length > 0 && (!!LibraryAddDialog && !!LibraryMenu) && (
+            {selectedElements.length > 0 && !!Library && (
                 <React.Fragment>
                     <ContextMenuItem
                         icon="album"
                         text="Add to library..."
-                        disabled={!addLibraryItem}
+                        disabled={!addLibraryComponent}
                         onClick={() => {
-                            dispatchAction(ACTIONS.SHOW_LIBRARY_ADD_DIALOG);
+                            dispatchAction(ACTIONS.ADD_SELECTION_TO_LIBRARY);
                             hideContextMenu();
                         }}
                     />

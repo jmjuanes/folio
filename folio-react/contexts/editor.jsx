@@ -33,13 +33,6 @@ export const EditorProvider = props => {
         setDataToDispatch(editor.toJSON());
     }, [editor, setDataToDispatch]);
 
-    // dispatch a library change event
-    const dispatchLibraryChange = React.useCallback(() => {
-        if (typeof props.onLibraryChange === "function") {
-            props.onLibraryChange(editor.libraryToJSON());
-        }
-    }, [editor, props.onLibraryChange]);
-
     // dispatch an update event
     const dispatchUpdate = React.useCallback(() => {
         setUpdate((-1) * update);
@@ -47,24 +40,17 @@ export const EditorProvider = props => {
 
     // On mount, import data to create the editor
     // TODO: we would need to handle errors when importing editor data
-    useMount(async () => {
-        try {
-            let initialData = null, initialLibrary = null;
-            if (typeof props.data !== "undefined") {
-                initialData = await promisifyValue(props.data);
-            }
-            if (typeof props.library !== "undefined") {
-                initialLibrary = await promisifyValue(props.library);
-            }
-            // initialize editor
-            setEditor(createEditor({
-                data: initialData,
-                library: initialLibrary, 
-            }));
-        }
-        catch (error) {
-            console.error(error);
-        }
+    useMount(() => {
+        promisifyValue(props.data)
+            .then(initialData => {
+                setEditor(createEditor({
+                    data: initialData,
+                }));
+            })
+            .catch(error => {
+                console.error(error);
+                setEditor(createEditor({}));
+            });
     });
 
     // If editor is not available (yet), do not render
@@ -74,7 +60,6 @@ export const EditorProvider = props => {
 
     // assign additional editor methods
     editor.dispatchChange = dispatchDataChange;
-    editor.dispatchLibraryChange = dispatchLibraryChange;
     editor.update = dispatchUpdate;
 
     // Render editor context provider

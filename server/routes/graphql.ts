@@ -19,7 +19,7 @@ graphqlRouter.get("/", async (ctx: ExtendedContext) => {
 
 // POST - graphql route
 graphqlRouter.post("/", async (ctx: ExtendedContext) => {
-    const { query, variables } = ctx.request.body;
+    const { query, variables } = ctx.request.body as any;
     try {
         const response = await graphql({
             schema: schema,

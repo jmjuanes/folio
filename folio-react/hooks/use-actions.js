@@ -1,21 +1,48 @@
 import React from "react";
-import { ACTIONS, ZOOM_STEP } from "../constants.js";
+import { uid } from "uid/secure";
+import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useDialog } from "../contexts/dialogs.jsx";
+import { useLibrary } from "../contexts/library.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
+import { usePrompt } from "./use-prompt.tsx";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
+import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
+
+const getLibraryComponentFields = (collections) => {
+    return {
+        name: {
+            type: FORM_OPTIONS.TEXT,
+            title: "Component name",
+        },
+        description: {
+            type: FORM_OPTIONS.TEXTAREA,
+            title: "Short description of the component",
+        },
+        collection: {
+            type: FORM_OPTIONS.DROPDOWN_SELECT,
+            title: "Collection",
+            values: collections.map(collection => ({
+                value: collection.id,
+                text: collection.name,
+            })),
+            allowToRemove: true,
+            emptyValueText: collections.length === 0 ? "No collections available" : "Select a collection",
+        },
+    };
+};
 
 // @description hook to dispatch an action in the editor
 export const useActions = () => {
     const editor = useEditor();
+    const library = useLibrary();
+    const prompt = usePrompt();
     const { showConfirm } = useConfirm();
     const { showDialog } = useDialog();
     const {
         KeyboardShortcutsDialog,
         ExportDialog,
-        LibraryAddDialog,
-        LibraryExportDialog,
         PageEditDialog,
     } = useEditorComponents();
 
@@ -174,6 +201,147 @@ export const useActions = () => {
                     editor.update();
                 }
             },
+            [ACTIONS.ADD_SELECTION_TO_LIBRARY]: () => {
+                const collections = library.getCollections();
+                const selectedElements = editor.getSelection();
+                if (selectedElements.length > 0) {
+                    prompt({
+                        title: "Add Component",
+                        confirmText: "Save",
+                        cancelText: "Cancel",
+                        className: "max-w-sm w-full",
+                        initialData: {
+                            collection: "",
+                        },
+                        items: getLibraryComponentFields(collections),
+                        callback: (data = {}) => {
+                            library.addComponent(selectedElements, data);
+                            editor.update();
+                        },
+                    });
+                }
+            },
+            [ACTIONS.INSERT_LIBRARY_COMPONENT]: (component) => {
+                editor.setTool(TOOLS.SELECT);
+                editor.importElements(component.elements, null, null, uid(20));
+                editor.dispatchChange();
+                editor.update();
+            },
+            [ACTIONS.EDIT_LIBRARY_COMPONENT]: (component) => {
+                const collections = library.getCollections();
+                prompt({
+                    title: "Edit Component",
+                    confirmText: "Save",
+                    cancelText: "Cancel",
+                    className: "max-w-sm w-full",
+                    initialData: {
+                        ...component,
+                    },
+                    items: getLibraryComponentFields(collections),
+                    callback: (data = {}) => {
+                        library.updateComponent(component.id, data);
+                        editor.update();
+                    },
+                });
+            },
+            [ACTIONS.DELETE_LIBRARY_COMPONENT]: (component) => {
+                showConfirm({
+                    title: "Delete library item",
+                    message: `Do you want to delete this item from the library? This action can not be undone.`,
+                    callback: () => {
+                        library?.removeComponent(component.id);
+                        editor.update();
+                    },
+                });
+            },
+            [ACTIONS.CLEAR_LIBRARY]: () => {
+                showConfirm({
+                    title: "Delete library",
+                    message: `Do you want to delete your library? This action can not be undone.`,
+                    callback: () => {
+                        library?.clear();
+                        editor.update();
+                    },
+                });
+            },
+            [ACTIONS.EXPORT_LIBRARY]: () => {
+                const libraryData = library.export();
+                saveLibraryAsJson(libraryData).then(() => {
+                    console.log("library exported");
+                });
+            },
+            [ACTIONS.LOAD_LIBRARY]: () => {
+                loadLibraryFromJson().then(libraryData => {
+                    library.load(libraryData);
+                    editor.update();
+                });
+            },
+            [ACTIONS.ADD_LIBRARY_COLLECTION]: () => {
+                prompt({
+                    title: "Create Collection",
+                    confirmText: "Save",
+                    cancelText: "Cancel",
+                    className: "max-w-sm w-full",
+                    initialData: {},
+                    items: {
+                        name: {
+                            type: FORM_OPTIONS.TEXT,
+                            title: "Collection name",
+                        },
+                        description: {
+                            type: FORM_OPTIONS.TEXTAREA,
+                            title: "Short description of the collection",
+                        },
+                    },
+                    callback: (data = {}) => {
+                        library.addCollection(data);
+                        editor.update();
+                    },
+                });
+            },
+            [ACTIONS.EDIT_LIBRARY_COLLECTION]: (collection) => {
+                prompt({
+                    title: "Edit Collection",
+                    confirmText: "Save",
+                    cancelText: "Cancel",
+                    className: "max-w-sm w-full",
+                    initialData: {
+                        ...collection,
+                    },
+                    items: {
+                        name: {
+                            type: FORM_OPTIONS.TEXT,
+                            title: "Collection name",
+                        },
+                        description: {
+                            type: FORM_OPTIONS.TEXTAREA,
+                            title: "Short description of the collection",
+                        },
+                    },
+                    callback: (data = {}) => {
+                        library.updateCollection(collection.id, data);
+                        editor.update();
+                    },
+                });
+            },
+            [ACTIONS.EXPORT_LIBRARY_COLLECTION]: (collection) => {
+                const libraryData = library.exportCollection(collection.id);
+                saveLibraryAsJson(libraryData).then(() => {
+                    console.log("library exported");
+                });
+            },
+            [ACTIONS.DELETE_LIBRARY_COLLECTION]: (collection) => {
+                showConfirm({
+                    title: "Delete collection",
+                    message: `Do you want to delete the collection ${collection.name}?`,
+                    confirmText: "Yes, delete collection",
+                    // cancelText: ""
+                    callback: () => {
+                        library.removeCollection(collection.id);
+                        editor.update();
+                    },
+                });
+            },
             [ACTIONS.CUT]: () => {
                 const selectedElements = editor.getSelection();
                 if (selectedElements.length > 0) {
@@ -276,18 +444,6 @@ export const useActions = () => {
                     props: exportOptions,
                 });
             },
-            [ACTIONS.SHOW_LIBRARY_ADD_DIALOG]: () => {
-                showDialog({
-                    dialogClassName: "w-full max-w-md",
-                    component: LibraryAddDialog,
-                });
-            },
-            [ACTIONS.SHOW_LIBRARY_EXPORT_DIALOG]: () => {
-                showDialog({
-                    dialogClassName: "w-full max-w-md",
-                    component: LibraryExportDialog,
-                });
-            },
             [ACTIONS.SHOW_PAGE_EDIT_DIALOG]: pageOptions => {
                 if (pageOptions?.page?.id) {
                     showDialog({
@@ -298,12 +454,12 @@ export const useActions = () => {
                 }
             },
         };
-    }, [editor, showConfirm, showDialog]);
+    }, [ editor, showConfirm, showDialog, library ]);
 
     // @description dispatch a single action
-    return React.useCallback((actionName, payload = {}) => {
-        if (actionsList[actionName]) {
+    return React.useCallback((actionName, payload) => {
+        if (typeof actionsList[actionName === "function"]) {
             actionsList[actionName](payload);
         }
-    }, [editor, actionsList]);
+    }, [ editor, actionsList ]);
 };

@@ -1,8 +1,9 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import classNames from "classnames";
-import {Centered} from "../components/ui/centered.jsx";
-import {Dialog} from "../components/ui/dialog.jsx";
-import {Overlay} from "../components/ui/overlay.jsx";
+import { Centered } from "../components/ui/centered.jsx";
+import { Dialog } from "../components/ui/dialog.jsx";
+import { Overlay } from "../components/ui/overlay.jsx";
 
 // @description dialog context
 export const DialogsContext = React.createContext(null);
@@ -58,21 +59,19 @@ export const DialogsProvider = ({children}) => {
     return (
         <DialogsContext.Provider value={{showDialog, hideDialog}}>
             {children}
-            {DialogComponent && (
-                <React.Fragment>
-                    <Overlay className="z-50" />
-                    <Centered className="fixed z-50 h-full">
-                        <Dialog className={classNames("relative", activeDialog.dialogClassName)}>
-                            <Dialog.Close onClick={hideDialog} />
-                            <DialogComponent
-                                key={activeDialog.key || "dialog"}
-                                {...activeDialog.props}
-                                onClose={hideDialog}
-                            />
-                        </Dialog>
-                    </Centered>
-                </React.Fragment>
-            )}
+            {DialogComponent && createPortal([
+                <Overlay key="dialog:overlay" className="z-50" />,
+                <Centered key="dialog:content" className="fixed z-50 h-full">
+                    <Dialog className={classNames("relative", activeDialog.dialogClassName)}>
+                        <Dialog.Close onClick={hideDialog} />
+                        <DialogComponent
+                            key={activeDialog.key || "dialog"}
+                            {...activeDialog.props}
+                            onClose={hideDialog}
+                        />
+                    </Dialog>
+                </Centered>,
+            ], document.body)}
         </DialogsContext.Provider>
     );
 };

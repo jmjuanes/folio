@@ -30,10 +30,10 @@ import {
     getTranslateCoordinatesForNewZoom,
     getZoomToFitElements,
 } from "./zoom.js";
-import {
-    getLibraryStateFromInitialData,
-    createLibraryItem,
-} from "./library.js";
+// import {
+//     getLibraryStateFromInitialData,
+//     createLibraryComponent,
+// } from "./library.ts";
 
 // @private clipboard key
 const CLIPBOARD_KEY = "folio:::";
@@ -274,7 +274,7 @@ export const createEditor = (options = {}) => {
 
         // @description library state
         // @param {object} library.items list of items in the library
-        library: getLibraryStateFromInitialData(options?.library || {}),
+        // library: getLibraryStateFromInitialData(options?.library || {}),
 
         // @description internal editor state
         state: {
@@ -627,7 +627,7 @@ export const createEditor = (options = {}) => {
         },
 
         // @description import elements into editor
-        importElements: (elements, dx = 0, dy = 0) => {
+        importElements: (elements, dx = null, dy = null, group = null) => {
             editor.clearSelection();
             // 1. Process new elements
             const changes = [];
@@ -637,6 +637,10 @@ export const createEditor = (options = {}) => {
             const maxOrder = Math.max.apply(null, editor.page.elements.map(el => {
                 return (!editor.page?.activeGroup || editor.page.activeGroup === el[FIELDS.GROUP]) ? el[FIELDS.ORDER] : 0;
             }));
+            const bounds = getElementsBoundingRectangle(elements);
+            const x = typeof dx === "number" ? dx : ((-1) * editor.page.translateX + editor.width / 2) - (bounds[1][0] - bounds[0][0])/ 2;
+            const y = typeof dy === "number" ? dy : ((-1) * editor.page.translateY + editor.height / 2) - (bounds[1][1] - bounds[0][1]) / 2;
+            debugger;
             const newElements = elements.map((element, index) => {
                 // 1.1. Check if this element is part of a group
                 if (elements.length > 1 && !editor.page?.activeGroup && !!element.group && !groups.has(element.group)) {
@@ -647,19 +651,19 @@ export const createEditor = (options = {}) => {
                     ...element,
                     [FIELDS.VERSION]: 0,
                     [FIELDS.ID]: generateRandomId(),
-                    x1: element.x1 + dx,
-                    x2: element.x2 + dx,
-                    y1: element.y1 + dy,
-                    y2: element.y2 + dy,
-                    selected: true,
-                    [FIELDS.GROUP]: editor.page?.activeGroup || groups.get(element.group) || null,
+                    x1: element.x1 + x,
+                    x2: element.x2 + x,
+                    y1: element.y1 + y,
+                    y2: element.y2 + y,
+                    [FIELDS.SELECTED]: true,
+                    [FIELDS.GROUP]: group || editor.page?.activeGroup || groups.get(element.group) || null,
                     [FIELDS.ORDER]: maxOrder + index + 1,
                     [FIELDS.NAME]: "Copy of " + (element[FIELDS.NAME] || ""),
                 };
                 // 1.3 Check if this element has an onDuplicate listener defined
                 const elementConfig = getElementConfig(element);
                 if (elementConfig?.onDuplicate) {
-                    elementConfig.onDuplicate(newElement, dx, dy);
+                    elementConfig.onDuplicate(newElement, x, y);
                 }
                 // 1.4 Return the new element data
                 return newElement;
@@ -942,14 +946,14 @@ export const createEditor = (options = {}) => {
         },
 
         // @description add a new library item element
-        addLibraryElement: (libraryItem, tx = null, ty = null) => {
-            // editor.clearSelection();
+        // @DEPRECATED
+        addLibraryElement: (LibraryComponent, tx = null, ty = null) => {
             editor.setTool(TOOLS.SELECT);
-            const bounds = getElementsBoundingRectangle(libraryItem.elements);
+            const bounds = getElementsBoundingRectangle(LibraryComponent.elements);
             const group = generateRandomId();
             const x = (tx ?? ((-1) * editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
             const y = (ty ?? ((-1) * editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
-            const elements = libraryItem.elements.map(element => ({
+            const elements = LibraryComponent.elements.map(element => ({
                 ...element,
                 id: generateRandomId(),
                 [FIELDS.GROUP]: group,
@@ -1281,68 +1285,6 @@ export const createEditor = (options = {}) => {
 
         // @description get the current active tool
         getTool: () => editor.state.tool,
-
-        // 
-        // Library API
-        //
-
-        // @description export library to JSON
-        // @returns {object} library library exported data
-        // @returns {string} library.version verion of the exported library
-        // @returns {object} library.items list of items in the library
-        libraryToJSON: () => {
-            return {
-                version: VERSION,
-                items: editor.library?.items || [],
-            };
-        },
-
-        // @description load library data from a JSON object
-        libraryFromJSON: data => {
-            Object.assign(editor.library, getLibraryStateFromInitialData(data || {}));
-        },
-
-        // @description import library items from another library
-        importLibrary: newLibrary => {
-            const currentItems = new Set((editor.library?.items || []).map(item => item.id));
-            const itemsToInsert = newLibrary.items.filter(item => {
-                return !currentItems.has(item.id);
-            });
-            // insert items into library
-            if (itemsToInsert.length > 0) {
-                editor.library.items = editor.library.items.concat(itemsToInsert);
-            }
-        },
-
-        // @description clear library
-        clearLibrary: () => {
-            return editor.libraryFromJSON({});
-        },
-
-        // @description add a new item to the library
-        addLibraryItem: (elements, data) => {
-            return createLibraryItem(elements, data).then(libraryItem => {
-                editor.library.items.push(libraryItem);
-            });
-        },
-
-        // @description remove a library item
-        removeLibraryItem: id => {
-            const idsToRemove = new Set([id].flat());
-            editor.library.items = editor.library.items.filter(item => {
-                return !idsToRemove.has(item.id);
-            });
-        },
-
-        // @description get a library item
-        getLibraryItem: id => {
-            return editor.library.items.find(item => item.id === id) || null;
-        },
-
-        // @description get all library items
-        getLibraryItems: () => {
-            return editor.library.items || [];
-        },
     };
 
     return editor;
