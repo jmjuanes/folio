@@ -24,7 +24,7 @@ const EmptyLibrary = (props: EmptyLibraryProps): React.JSX.Element => (
         <div className="text-center font-bold text-base">
             <span>{props.title}</span>
         </div>
-        <div className="text-center text-xs font-medium px-4">
+        <div className="text-center text-xs font-medium px-4 opacity-60">
             <span>{props.description}</span>
         </div>
     </div>
@@ -258,11 +258,6 @@ export const Library = (): React.JSX.Element => {
                     </React.Fragment>
                 )}
             </div>
-            {activeCollection?.description && !activeComponent && (
-                <div className="opacity-60 text-sm">
-                    <span>{activeCollection.description}</span>
-                </div>
-            )}
             {activeComponent && (
                 <div className="flex flex-col gap-4">
                     <div className="w-full">
@@ -302,7 +297,7 @@ export const Library = (): React.JSX.Element => {
             {collections.length > 0 && !activeCollection && !activeComponent && (
                 <div className="flex flex-col gap-2">
                     <div className="font-bold text-base">
-                        <span>Collections</span>
+                        <span>Collections ({collections.length})</span>
                     </div>
                     <div className="grid gap-2 grid-cols-2 w-full">
                         {collections.map((collection: LibraryCollection) => (
@@ -322,7 +317,7 @@ export const Library = (): React.JSX.Element => {
                 <div className="flex flex-col gap-2">
                     {!activeCollection && (
                         <div className="font-bold text-base">
-                            <span>All components</span>
+                            <span>All components (visibleComponents.length)</span>
                         </div>
                     )}
                     <div className="grid gap-2 grid-cols-2">
