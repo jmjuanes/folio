@@ -1,12 +1,12 @@
 import React from "react";
-import { AlbumIcon, PlusIcon, ChevronLeftIcon, CalendarIcon, FolderIcon } from "@josemi-icons/react";
+import { AlbumIcon, PlusIcon, ChevronLeftIcon } from "@josemi-icons/react";
 import { renderIcon } from "@josemi-icons/react";
 import classNames from "classnames";
 import { ACTIONS } from "../constants.js";
 import { Button } from "../components/ui/button.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import { formatDate } from "../utils/date.js";
+import { formatDate } from "../utils/dates.ts";
 import type { LibraryCollection, LibraryItem, Library } from "../lib/library.ts";
 
 // @description display an empty library message

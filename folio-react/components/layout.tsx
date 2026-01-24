@@ -1,6 +1,5 @@
 import React from "react";
 import { Alert } from "./ui/alert.tsx";
-import { Dropdown } from "./ui/dropdown.tsx";
 import { Panel } from "./ui/panel.tsx";
 import { Island } from "./ui/island.jsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
