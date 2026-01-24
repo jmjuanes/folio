@@ -80,7 +80,9 @@ export const LibraryHeaderTitle = (props: LibraryHeaderTitleProps): React.JSX.El
                 <ChevronLeftIcon />
             </div>
         )}
-        <div className="font-bold text-lg">{props.title}</div>
+        <div className="font-bold text-lg w-32 truncate">
+            <span>{props.title}</span>
+        </div>
     </div>
 );
 
