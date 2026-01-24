@@ -163,7 +163,7 @@ export const Library = (): React.JSX.Element => {
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="sticky top-0 bg-white flex items-center justify-between pb-2">
+            <div className="sticky top-0 bg-white flex items-center justify-between pb-2 z-20">
                 {!activeCollection && !activeItem && (
                     <React.Fragment>
                         <LibraryHeaderTitle
