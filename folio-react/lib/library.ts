@@ -131,6 +131,7 @@ export const createLibraryItem = (elements: any = [], data: any = {}): Promise<L
         return {
             id: generateLibraryId(),
             name: data?.name || "Untitled",
+            description: data?.description || "",
             collection: data?.collection || null,
             elements: elements.map((element: any) => {
                 // 1. generate a clone of the element and fix positions

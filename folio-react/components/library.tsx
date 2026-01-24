@@ -162,7 +162,7 @@ export const Library = (): React.JSX.Element => {
     }, [ items.length, collections.length ]);
 
     return (
-        <div className="relative flex flex-col gap-4">
+        <div className="relative flex flex-col gap-4 h-full overflow-y-scroll">
             <div className="sticky top-0 bg-white flex items-center justify-between">
                 {!activeCollection && !activeItem && (
                     <React.Fragment>
