@@ -40,9 +40,9 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
                         <div className={!props.value ? "opacity-60" : "opacity-100"}>
                             <span>{selectedItem?.text ?? selectedItem ?? props.emptyValueText ?? "-"}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-base">
-                            {props.allowToRemove && (
-                                <div className="flex p-1 hover:opacity-60 cursor-pointer" onClick={handleRemove}>
+                        <div className="flex items-center gap-0 text-base">
+                            {props.allowToRemove && !!props.value && (
+                                <div className="flex p-1 hover:opacity-80 cursor-pointer" onClick={handleRemove}>
                                     <CloseIcon />
                                 </div>
                             )}
