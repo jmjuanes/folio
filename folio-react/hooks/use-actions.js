@@ -28,6 +28,7 @@ const getLibraryItemFields = (collections) => {
                 value: collection.id,
                 text: collection.name,
             })),
+            allowToRemove: true,
             emptyValueText: collections.length === 0 ? "No collections available" : "Select a collection",
         },
     };
