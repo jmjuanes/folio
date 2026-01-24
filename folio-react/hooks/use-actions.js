@@ -10,6 +10,29 @@ import { usePrompt } from "./use-prompt.tsx";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
 
+const getLibraryItemFields = (collections) => {
+    return {
+        name: {
+            type: FORM_OPTIONS.TEXT,
+            title: "Library Item Name",
+            placeholder: "Give your new item a name",
+        },
+        description: {
+            type: FORM_OPTIONS.TEXTAREA,
+            title: "Library Item Short Description",
+        },
+        collection: {
+            type: FORM_OPTIONS.DROPDOWN_SELECT,
+            title: "Collection",
+            values: collections.map(collection => ({
+                value: collection.id,
+                text: collection.name,
+            })),
+            emptyValueText: collections.length === 0 ? "No collections available" : "Select a collection",
+        },
+    };
+};
+
 // @description hook to dispatch an action in the editor
 export const useActions = () => {
     const editor = useEditor();
@@ -190,26 +213,7 @@ export const useActions = () => {
                         initialData: {
                             collection: "",
                         },
-                        items: {
-                            name: {
-                                type: FORM_OPTIONS.TEXT,
-                                title: "Library Item Name",
-                                placeholder: "Give your new item a name",
-                            },
-                            description: {
-                                type: FORM_OPTIONS.TEXTAREA,
-                                title: "Library Item Short Description",
-                            },
-                            collection: {
-                                type: FORM_OPTIONS.DROPDOWN_SELECT,
-                                title: "Collection",
-                                values: collections.map(collection => ({
-                                    value: collection.id,
-                                    text: collection.name,
-                                })),
-                                emptyValueText: collections.length === 0 ? "No collections available" : "Select a collection",
-                            },
-                        },
+                        items: getLibraryItemFields(collections),
                         callback: (data = {}) => {
                             library.addItem(selectedElements, data);
                             editor.update();
@@ -224,7 +228,21 @@ export const useActions = () => {
                 editor.update();
             },
             [ACTIONS.EDIT_LIBRARY_ITEM]: (libraryItem) => {
-                return null;
+                const collections = library.getCollections();
+                prompt({
+                    title: "Edit Library Item",
+                    confirmText: "Update",
+                    cancelText: "Cancel",
+                    className: "max-w-sm w-full",
+                    initialData: {
+                        ...libraryItem,
+                    },
+                    items: getLibraryItemFields(collections),
+                    callback: (data = {}) => {
+                        library.updateItem(libraryItem.id, data);
+                        editor.update();
+                    },
+                });
             },
             [ACTIONS.DELETE_LIBRARY_ITEM]: (libraryItem) => {
                 showConfirm({
@@ -297,7 +315,29 @@ export const useActions = () => {
                 });
             },
             [ACTIONS.EDIT_LIBRARY_COLLECTION]: (collection) => {
-                return null;
+                prompt({
+                    title: "Edit Collection",
+                    confirmText: "Save",
+                    cancelText: "Cancel",
+                    className: "max-w-sm w-full",
+                    initialData: {
+                        ...collection,
+                    },
+                    items: {
+                        name: {
+                            type: FORM_OPTIONS.TEXT,
+                            title: "Collection Name",
+                            placeholder: "Add a name for the collection",
+                        },
+                        description: {
+                            type: FORM_OPTIONS.TEXTAREA,
+                            title: "Short description of the collection",
+                        },
+                    },
+                    callback: (data = {}) => {
+                        library.updateCollection(collection.id, data);
+                    },
+                });
             },
             [ACTIONS.EXPORT_LIBRARY_COLLECTION]: (collection) => {
                 const libraryData = library.exportCollection(collection.id);

@@ -23,10 +23,10 @@ export type LibraryApi = {
     exportCollection: (collectionId: string) => Library;
     clear: () => void;
     addItem: (elements: any, data: Partial<LibraryItem>) => void;
-    editItem: (id: string, data: Partial<LibraryItem>) => void;
+    updateItem: (id: string, data: Partial<LibraryItem>) => void;
     removeItem: (id: string) => void;
     addCollection: (data: Partial<LibraryCollection>) => void;
-    editCollection: (id: string, data: Partial<LibraryCollection>) => void;
+    updateCollection: (id: string, data: Partial<LibraryCollection>) => void;
     removeCollection: (id: string) => void;
     getItem: (id: string) => LibraryItem | null;
     getItems: () => LibraryItem[];
@@ -124,16 +124,21 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
                 });
             },
 
-            // @description edit a library item
-            editItem: (itemId: string, itemData: Partial<LibraryItem>) => {
-                setLibraryState((prevState: Library) => {
-                    const item = (prevState.items || []).find((item: LibraryItem) => item.id === itemId);
-                    if (item) {
-                        Object.assign(item, itemData || {});
-                    }
-                    // return a cloned state object
-                    return {...prevState};
-                });
+            // @description update a library item
+            updateItem: (itemId: string, itemData: Partial<LibraryItem>) => {
+                setLibraryState((prevState: Library) => ({
+                    ...prevState,
+                    items: (prevState?.items || []).map((item: LibraryItem) => {
+                        if (item.id === itemId) {
+                            return Object.assign(item, {
+                                name: itemData?.name ?? item.name,
+                                description: itemData?.description ?? item.description ?? "",
+                                collection: itemData?.collection ?? item.collection ?? null,
+                            });
+                        }
+                        return item;
+                    }),
+                }));
             },
 
             // @description remove a library item
@@ -168,17 +173,20 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
                 }));
             },
 
-            // @description edit the specified collection
-            editCollection: (collectionId: string, collectionData: Partial<LibraryCollection>) => {
-                setLibraryState((prevState: Library) => {
-                    const collection = prevState.collections.find((collection: LibraryCollection) => {
-                        return collection.id === collectionId;
-                    });
-                    if (collection) {
-                        Object.assign(collection, collectionData || {});
-                    }
-                    return {...prevState};
-                });
+            // @description update the specified collection
+            updateCollection: (collectionId: string, collectionData: Partial<LibraryCollection>) => {
+                setLibraryState((prevState: Library) => ({
+                    ...prevState,
+                    collections: (prevState?.collections || []).map((collection: LibraryCollection) => {
+                        if (collection?.id === collectionId) {
+                            return Object.assign(collection, {
+                                name: collectionData?.name ?? collection?.name ?? "",
+                                description: collectionData?.description ?? collection?.description ?? "",
+                            });
+                        }
+                        return collection;
+                    }),
+                }));
             },
 
             // @description remove the specified collection

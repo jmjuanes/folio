@@ -23,47 +23,16 @@ const EmptyLibrary = (): React.JSX.Element => (
 );
 
 export type LibraryItemIconProps = {
-    thumbnail: string,
-    onInsert: () => void,
-    onDelete: () => void,
+    thumbnail: string;
+    onClick: () => void;
 };
 
 // @description library item
-export const LibraryItemIcon = ({ thumbnail, onInsert, onDelete }: LibraryItemIconProps): React.JSX.Element => {
-    // this is a TEMPORARY solution to show the delete button on hover
-    // this should be replaced with a proper context menu or something similar that works on touch devices
-    const [ isHovered, setIsHovered ] = React.useState(false);
-
-    // when the user hovers over the library item, show the delete button
-    const handleMouseEnter = React.useCallback(() => {
-        setIsHovered(true);
-    }, []);
-
-    // when the user stops hovering over the library item, hide the delete button
-    const handleMouseLeave = React.useCallback(() => {
-        setIsHovered(false);
-    }, []);
-
-    return (
-        <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden cursor-pointer" onClick={onInsert}> 
-                <img src={thumbnail} width="100%" height="100%" />
-                <div className="absolute top-0 bottom-0 left-0 right-0 bg-gray-900 opacity-0 hover:opacity-80 flex items-center justify-center z-10">
-                    <div className="text-white text-lg flex">
-                        <PlusIcon />
-                    </div>
-                </div>
-            </div>
-            {isHovered && (
-                <div className="absolute z-20" style={{top:"-0.3rem",right:"-0.3rem"}} onClick={onDelete}>
-                    <div className="flex p-1 rounded-full bg-white hover:bg-gray-100 border-1 border-gray-200 text-gray-950 cursor-pointer">
-                        <CloseIcon />
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
+export const LibraryItemIcon = ({ thumbnail, onClick }: LibraryItemIconProps): React.JSX.Element => (
+    <div className="border-2 border-gray-200 rounded-lg overflow-hidden cursor-pointer" onClick={onClick}> 
+        <img src={thumbnail} width="100%" height="100%" />
+    </div>
+);
 
 export type LibraryCollectionIconProps = {
     name: string;
@@ -275,10 +244,10 @@ export const Library = (): React.JSX.Element => {
                             <LibraryCollectionIcon
                                 key={collection.id}
                                 name={collection.name}
-                                items={items.filter(item => item.collection === collection.id)}
-                                onClick={() => {
-                                    setActiveCollection(collection);
-                                }}
+                                items={items.filter((item: LibraryItem) => {
+                                    return item.collection === collection.id;
+                                })}
+                                onClick={() => setActiveCollection(collection)}
                             />
                         ))}
                     </div>
@@ -296,12 +265,14 @@ export const Library = (): React.JSX.Element => {
                             <LibraryItemIcon
                                 key={item.id}
                                 thumbnail={item.thumbnail}
-                                onInsert={() => dispatchAction(ACTIONS.INSERT_LIBRARY_ITEM, item)}
-                                onDelete={() => dispatchAction(ACTIONS.DELETE_LIBRARY_ITEM, item)}
+                                onClick={() => setActiveItem(item)}
                             />
                         ))}
                     </div>
                 </div>
+            )}
+            {activeItem && (
+                <div className=""></div>
             )}
             {items.length === 0 && collections.length === 0 && (
                 <EmptyLibrary />
