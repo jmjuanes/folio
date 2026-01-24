@@ -41,8 +41,8 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
             );
         }}
         contentRender={closeDropdown => (
-            <div className="border-1 border-gray-200 bg-white p-1 shadow-sm rounded-md flex flex-col gap-1" style={{width:"21rem"}}>
-                <div className="w-full h-full overflow-y-scroll max-h-40">
+            <div className="border-1 border-gray-200 bg-white p-1 shadow-sm rounded-md" style={{width:"21rem"}}>
+                <div className="w-full h-full overflow-y-scroll max-h-20 flex flex-col gap-1">
                     {(props.values || []).map((item: DropdownSelectValue) => {
                         const active = props.value === item?.value || props.value === item;
                         const itemClassName = classNames({
