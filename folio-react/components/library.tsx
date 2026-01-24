@@ -317,7 +317,7 @@ export const Library = (): React.JSX.Element => {
                 <div className="flex flex-col gap-2">
                     {!activeCollection && (
                         <div className="font-bold text-base">
-                            <span>All components (visibleComponents.length)</span>
+                            <span>All components ({visibleComponents.length})</span>
                         </div>
                     )}
                     <div className="grid gap-2 grid-cols-2">
