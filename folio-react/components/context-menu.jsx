@@ -47,7 +47,7 @@ export const ContextMenu = props => {
         };
     }, [props.top, props.left, editor.height]);
 
-    const addLibraryItem = React.useMemo(() => {
+    const addLibraryComponent = React.useMemo(() => {
         return selectedElements.every(element => {
             return !NOT_ALLOWED_ELEMENTS_IN_LIBRARY.includes(element.type);
         });
@@ -118,7 +118,7 @@ export const ContextMenu = props => {
                     <ContextMenuItem
                         icon="album"
                         text="Add to library..."
-                        disabled={!addLibraryItem}
+                        disabled={!addLibraryComponent}
                         onClick={() => {
                             dispatchAction(ACTIONS.ADD_SELECTION_TO_LIBRARY);
                             hideContextMenu();

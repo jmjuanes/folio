@@ -22,7 +22,7 @@ export type LibraryCollection = {
 };
 
 // @description internal library type
-export type LibraryItem = {
+export type LibraryComponent = {
     id: string;
     name?: string;
     thumbnail?: string;
@@ -35,25 +35,26 @@ export type LibraryItem = {
 export type Library = {
     version?: string;
     collections: LibraryCollection[];
-    items: LibraryItem[];
+    components: LibraryComponent[];
+    items?: LibraryComponent[]; // DEPRECATED
 };
 
 // @description generate a random id for the library
 // @returns {string} libraryId an unique identifier for a library item
-export const generateLibraryId = (): string => {
-    return "lib:" + uid(20);
+export const generateComponentId = (): string => {
+    return "lib:component:" + uid(20);
 };
 
 // @description generate a random id for a library collection
 export const generateCollectionId = (): string => {
-    return "collection:" + uid(20);
+    return "lib:collection:" + uid(20);
 };
 
 // @description migrate a library
 export const migrateLibrary = (library: any): Library => {
     return {
         version: VERSION, // set the current version
-        items: (library.items || []).map((item: LibraryItem) => {
+        components: (library.components || library.items || []).map((item: LibraryComponent) => {
             return Object.assign({}, item, {
                 elements: migrateElements(item.elements, library.version || VERSION),
                 collection: item?.collection || null,
@@ -84,13 +85,15 @@ export const loadLibraryFromJson = async (): Promise<Library> => {
 // @description allow to save a library to a local file
 export const saveLibraryAsJson = (library: Library): Promise<any> => {
     const libraryName = "library"; // library.name || "Personal Library";
-    const collectionsInItems = new Set(library.items.map(item => item.collection));
+    const collections = new Set((library?.components || library?.items || []).map(item => {
+        return item.collection;
+    }));
     const exportData = {
         type: MIME_TYPES.FOLIO_LIB,
         version: VERSION,
-        items: library.items || [],
+        components: library.components || library.items || [],
         collections: (library.collections || []).filter((collection: LibraryCollection) => {
-            return collectionsInItems.has(collection.id);
+            return collections.has(collection.id);
         }),
     };
     const dataStr = JSON.stringify(exportData, null, "    ");
@@ -106,7 +109,7 @@ export const saveLibraryAsJson = (library: Library): Promise<any> => {
 };
 
 // @description generate a thumbnail for the library
-export const getLibraryItemThumbnail = (elements = [], scale = 1) => {
+export const getLibraryComponentThumbnail = (elements = [], scale = 1) => {
     return exportToDataURL(elements, {
         width: LIBRARY_THUMBNAIL_WIDTH * scale,
         height: LIBRARY_THUMBNAIL_HEIGHT * scale,
@@ -119,17 +122,17 @@ export const getLibraryStateFromInitialData = (initialData: any) => {
     return migrateLibrary(initialData);
 };
 
-// @description creates a new library item
+// @description creates a new library component
 // @param {array} elements list of elements that belongs to the new library item
 // @param {object} data additional metadata for the library item
 // @param {string} data.name name for the library item
 // @param {string} data.description a description for the library item
 // @param {string} data.collection - id of the collections where this item belongs
-export const createLibraryItem = (elements: any = [], data: any = {}): Promise<LibraryItem> => {
+export const createLibraryComponent = (elements: any = [], data: any = {}): Promise<LibraryComponent> => {
     const bounds = getElementsBoundingRectangle(elements) as any;
-    return getLibraryItemThumbnail(elements).then(thumbnail => {
+    return getLibraryComponentThumbnail(elements).then(thumbnail => {
         return {
-            id: generateLibraryId(),
+            id: generateComponentId(),
             name: data?.name || "Untitled",
             description: data?.description || "",
             collection: data?.collection || null,

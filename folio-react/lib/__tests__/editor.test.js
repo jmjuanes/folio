@@ -19,7 +19,7 @@ jest.unstable_mockModule("../migrate.js", () => ({
 }));
 // jest.unstable_mockModule("../library.js", () => ({
 //     getLibraryStateFromInitialData: jest.fn(),
-//     createLibraryItem: jest.fn(),
+//     createLibraryComponent: jest.fn(),
 // }));
 
 jest.unstable_mockModule("browser-fs-access", () => ({

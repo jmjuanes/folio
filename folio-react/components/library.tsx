@@ -7,7 +7,7 @@ import { Button } from "../components/ui/button.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { formatDate } from "../utils/dates.ts";
-import type { LibraryCollection, LibraryItem, Library } from "../lib/library.ts";
+import type { LibraryCollection, LibraryComponent, Library } from "../lib/library.ts";
 
 // @description display an empty library message
 const EmptyLibrary = (): React.JSX.Element => (
@@ -24,13 +24,13 @@ const EmptyLibrary = (): React.JSX.Element => (
     </div>
 );
 
-export type LibraryItemIconProps = {
+export type LibraryComponentIconProps = {
     thumbnail: string;
     onClick: () => void;
 };
 
 // @description library item
-export const LibraryItemIcon = ({ thumbnail, onClick }: LibraryItemIconProps): React.JSX.Element => (
+export const LibraryComponentIcon = ({ thumbnail, onClick }: LibraryComponentIconProps): React.JSX.Element => (
     <div className="border-2 border-gray-200 rounded-lg overflow-hidden cursor-pointer" onClick={onClick}> 
         <img src={thumbnail} width="100%" height="100%" />
     </div>
@@ -38,21 +38,21 @@ export const LibraryItemIcon = ({ thumbnail, onClick }: LibraryItemIconProps): R
 
 export type LibraryCollectionIconProps = {
     name: string;
-    items: LibraryItem[];
+    components: LibraryComponent[];
     onClick: () => void;
 };
 
 export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): React.JSX.Element => {
-    const visibleItems = props.items.slice(0, 4);
+    const visibleComponents = props.components.slice(0, 4);
     return (
         <div className="border-2 border-gray-200 rounded-lg bg-white overflow-hidden" onClick={props.onClick}>
             <div className="grid grid-cols-2 w-full border-b-2 border-gray-200 bg-gray-200 gap-1">
-                {props.items.slice(0, 4).map(item => (
+                {props.components.slice(0, 4).map(item => (
                     <div key={item.id} className="h-14 w-full overflow-hidden bg-gray-100">
                         <img src={item.thumbnail} width="100%" height="100%" />
                     </div>
                 ))}
-                {Array.from({ length: 4 - visibleItems.length }, (_, index) => (
+                {Array.from({ length: 4 - visibleComponents.length }, (_, index) => (
                     <div key={"item-" + index} className="h-14 w-full bg-gray-100" />
                 ))}
             </div>
@@ -61,7 +61,7 @@ export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): React.
                     <span>{props.name}</span>
                 </div>
                 <div className="text-2xs opacity-60">
-                    <span>{props.items.length} item(s)</span>
+                    <span>{props.components.length} component(s)</span>
                 </div>
             </div>
         </div>
@@ -122,34 +122,34 @@ export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
 // @description library container
 export const Library = (): React.JSX.Element => {
     const [ activeCollection, setActiveCollection ] = React.useState<LibraryCollection>(null);
-    const [ activeItem, setActiveItem ] = React.useState<LibraryIem>(null);
+    const [ activeComponent, setActiveComponent ] = React.useState<LibraryIem>(null);
     const library = useLibrary();
     const dispatchAction = useActions();
-    const items = library?.getItems() || [];
+    const components = library?.getComponents() || [];
     const collections = library?.getCollections() || [];
 
-    // get visible items
-    const visibleItems = React.useMemo<libraryItems[]>(() => {
-        if (!activeItem && items.length > 0) {
+    // get visible components
+    const visibleComponents = React.useMemo<LibraryComponent[]>(() => {
+        if (!activeComponent && components.length > 0) {
             // 1. a collection is active, we will display the items on this collection
             if (activeCollection) {
-                return items.filter((item: LibraryItem) => {
+                return components.filter((item: LibraryComponent) => {
                     return item.collection === activeCollection?.id;
                 });
             }
             // 2. display only the items without a collection
-            // return items.filter((item: LibraryItem) => !item.collection);
-            return items;
+            // return items.filter((item: LibraryComponent) => !item.collection);
+            return components;
         }
         return [];
-    }, [ items.length, collections.length, activeCollection, activeItem ]);
+    }, [ components.length, collections.length, activeCollection, activeComponent ]);
 
     // hook to check if we have to clear the active collection or the active item
     React.useEffect(() => {
         // if we have an active item, check if this item is still in the items array
-        if (activeItem) {
-            if (!items.find((item: LibraryItem) => item.id === activeItem?.id)) {
-                setActiveItem(null);
+        if (activeComponent) {
+            if (!components.find((item: LibraryComponent) => item.id === activeComponent?.id)) {
+                setActiveComponent(null);
             }
         }
         // if we have an active collection, check if this collection is still in the
@@ -159,12 +159,12 @@ export const Library = (): React.JSX.Element => {
                 setActiveCollection(null);
             }
         }
-    }, [ items.length, collections.length ]);
+    }, [ components.length, collections.length ]);
 
     return (
         <div className="flex flex-col gap-4">
             <div className="sticky top-0 bg-white flex items-center justify-between pb-2 z-20">
-                {!activeCollection && !activeItem && (
+                {!activeCollection && !activeComponent && (
                     <React.Fragment>
                         <LibraryHeaderTitle
                             showBackButton={false}
@@ -194,7 +194,7 @@ export const Library = (): React.JSX.Element => {
                         </div>
                     </React.Fragment>
                 )}
-                {activeCollection && !activeItem && (
+                {activeCollection && !activeComponent && (
                     <React.Fragment>
                         <LibraryHeaderTitle
                             showBackButton={true}
@@ -226,11 +226,11 @@ export const Library = (): React.JSX.Element => {
                         </div>
                     </React.Fragment>
                 )}
-                {activeItem && (
+                {activeComponent && (
                     <React.Fragment>
                         <LibraryHeaderTitle
                             showBackButton={true}
-                            onBackButtonClick={() => setActiveItem(null)}
+                            onBackButtonClick={() => setActiveComponent(null)}
                             title="Details"
                         />
                         <div className="flex items-center gap-1">
@@ -238,54 +238,54 @@ export const Library = (): React.JSX.Element => {
                                 icon="pencil"
                                 disabled={false}
                                 onClick={() => {
-                                    dispatchAction(ACTIONS.EDIT_LIBRARY_ITEM, activeItem);
+                                    dispatchAction(ACTIONS.EDIT_LIBRARY_COMPONENT, activeComponent);
                                 }}
                             />
                             <LibraryHeaderButton
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => {
-                                    dispatchAction(ACTIONS.DELETE_LIBRARY_ITEM, activeItem);
+                                    dispatchAction(ACTIONS.DELETE_LIBRARY_COMPONENT, activeComponent);
                                 }}
                             />
                         </div>
                     </React.Fragment>
                 )}
             </div>
-            {activeCollection?.description && !activeItem && (
+            {activeCollection?.description && !activeComponent && (
                 <div className="opacity-60 text-sm">
                     <span>{activeCollection.description}</span>
                 </div>
             )}
-            {activeItem && (
+            {activeComponent && (
                 <div className="flex flex-col gap-4">
                     <div className="w-full">
-                        <LibraryItemIcon
-                            key={activeItem?.id}
-                            thumbnail={activeItem.thumbnail}
+                        <LibraryComponentIcon
+                            key={activeComponent?.id}
+                            thumbnail={activeComponent.thumbnail}
                         />
                     </div>
                     <div className="flex flex-col gap-1">
                         <div className="font-bold text-base">
-                            <span>{activeItem?.name || "Untitled"}</span>
+                            <span>{activeComponent?.name || "Untitled"}</span>
                         </div>
-                        {activeItem?.description && (
-                            <div className="text-sm opacity-60">{activeItem.description}</div>
+                        {activeComponent?.description && (
+                            <div className="text-sm opacity-60">{activeComponent.description}</div>
                         )}
-                        {activeItem?.collection && (
+                        {activeComponent?.collection && (
                             <LibraryDetail
                                 icon="album"
-                                text={library?.getCollection(activeItem.collection)?.name || "Untitled"}
+                                text={library?.getCollection(activeComponent.collection)?.name || "Untitled"}
                             />
                         )}
-                        {activeItem?.created && (
+                        {activeComponent?.created && (
                             <LibraryDetail
                                 icon="calendar"
-                                text={"Created at " + formatDate(activeItem.created)}
+                                text={"Created at " + formatDate(activeComponent.created)}
                             />
                         )}
                     </div>
-                    <Button variant="primary" onClick={() => dispatchAction(ACTIONS.INSERT_LIBRARY_ITEM, activeItem)}>
+                    <Button variant="primary" onClick={() => dispatchAction(ACTIONS.INSERT_LIBRARY_COMPONENT, activeComponent)}>
                         <div className="flex items-center text-base">
                             <PlusIcon />
                         </div>
@@ -293,7 +293,7 @@ export const Library = (): React.JSX.Element => {
                     </Button>
                 </div>
             )}
-            {collections.length > 0 && !activeCollection && !activeItem && (
+            {collections.length > 0 && !activeCollection && !activeComponent && (
                 <div className="flex flex-col gap-2">
                     <div className="font-bold text-base">
                         <span>Collections</span>
@@ -303,7 +303,7 @@ export const Library = (): React.JSX.Element => {
                             <LibraryCollectionIcon
                                 key={collection.id}
                                 name={collection.name}
-                                items={items.filter((item: LibraryItem) => {
+                                components={components.filter((item: LibraryComponent) => {
                                     return item.collection === collection.id;
                                 })}
                                 onClick={() => setActiveCollection(collection)}
@@ -312,28 +312,28 @@ export const Library = (): React.JSX.Element => {
                     </div>
                 </div>
             )}
-            {visibleItems.length > 0 && (
+            {visibleComponents.length > 0 && (
                 <div className="flex flex-col gap-2">
                     {!activeCollection && (
                         <div className="font-bold text-base">
-                            <span>All library items</span>
+                            <span>All components</span>
                         </div>
                     )}
                     <div className="grid gap-2 grid-cols-2">
-                        {visibleItems.map((item: LibraryItem) => (
-                            <LibraryItemIcon
+                        {visibleComponents.map((item: LibraryComponent) => (
+                            <LibraryComponentIcon
                                 key={item.id}
                                 thumbnail={item.thumbnail}
-                                onClick={() => setActiveItem(item)}
+                                onClick={() => setActiveComponent(item)}
                             />
                         ))}
                     </div>
                 </div>
             )}
-            {activeItem && (
+            {activeComponent && (
                 <div className=""></div>
             )}
-            {items.length === 0 && collections.length === 0 && (
+            {components.length === 0 && collections.length === 0 && (
                 <EmptyLibrary />
             )}
         </div>

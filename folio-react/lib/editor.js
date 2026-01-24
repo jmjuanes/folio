@@ -32,7 +32,7 @@ import {
 } from "./zoom.js";
 // import {
 //     getLibraryStateFromInitialData,
-//     createLibraryItem,
+//     createLibraryComponent,
 // } from "./library.ts";
 
 // @private clipboard key
@@ -947,13 +947,13 @@ export const createEditor = (options = {}) => {
 
         // @description add a new library item element
         // @DEPRECATED
-        addLibraryElement: (libraryItem, tx = null, ty = null) => {
+        addLibraryElement: (LibraryComponent, tx = null, ty = null) => {
             editor.setTool(TOOLS.SELECT);
-            const bounds = getElementsBoundingRectangle(libraryItem.elements);
+            const bounds = getElementsBoundingRectangle(LibraryComponent.elements);
             const group = generateRandomId();
             const x = (tx ?? ((-1) * editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
             const y = (ty ?? ((-1) * editor.page.translateY + editor.height / 2)) - (bounds.y2 - bounds.y1) / 2;
-            const elements = libraryItem.elements.map(element => ({
+            const elements = LibraryComponent.elements.map(element => ({
                 ...element,
                 id: generateRandomId(),
                 [FIELDS.GROUP]: group,

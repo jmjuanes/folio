@@ -322,7 +322,6 @@ export const FIELDS = {
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
     STICKER: "sticker",
-    LIBRARY_ITEM_ID: "libraryItemId",
 };
 
 // Deprecated fields
@@ -507,9 +506,9 @@ export const ACTIONS = {
     LOCK_SELECTION: "lock-selection",
     UNLOCK_SELECTION: "unlock-selection",
     ADD_SELECTION_TO_LIBRARY: "add-selection-to-library",
-    INSERT_LIBRARY_ITEM: "insert-library-item",
-    EDIT_LIBRARY_ITEM: "library:item:edit",
-    DELETE_LIBRARY_ITEM: "delete-library-item",
+    INSERT_LIBRARY_COMPONENT: "library:component:insert",
+    EDIT_LIBRARY_COMPONENT: "library:component:edit",
+    DELETE_LIBRARY_COMPONENT: "library:component:delete",
     CLEAR_LIBRARY: "clear-library",
     EXPORT_LIBRARY: "export-library",
     LOAD_LIBRARY: "load-library",

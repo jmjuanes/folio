@@ -10,7 +10,7 @@ import { usePrompt } from "./use-prompt.tsx";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
 
-const getLibraryItemFields = (collections) => {
+const getLibraryComponentFields = (collections) => {
     return {
         name: {
             type: FORM_OPTIONS.TEXT,
@@ -213,21 +213,21 @@ export const useActions = () => {
                         initialData: {
                             collection: "",
                         },
-                        items: getLibraryItemFields(collections),
+                        items: getLibraryComponentFields(collections),
                         callback: (data = {}) => {
-                            library.addItem(selectedElements, data);
+                            library.addComponent(selectedElements, data);
                             editor.update();
                         },
                     });
                 }
             },
-            [ACTIONS.INSERT_LIBRARY_ITEM]: (libraryItem) => {
+            [ACTIONS.INSERT_LIBRARY_COMPONENT]: (component) => {
                 editor.setTool(TOOLS.SELECT);
-                editor.importElements(libraryItem.elements, null, null, uid(20));
+                editor.importElements(component.elements, null, null, uid(20));
                 editor.dispatchChange();
                 editor.update();
             },
-            [ACTIONS.EDIT_LIBRARY_ITEM]: (libraryItem) => {
+            [ACTIONS.EDIT_LIBRARY_COMPONENT]: (component) => {
                 const collections = library.getCollections();
                 prompt({
                     title: "Edit Library Item",
@@ -235,21 +235,21 @@ export const useActions = () => {
                     cancelText: "Cancel",
                     className: "max-w-sm w-full",
                     initialData: {
-                        ...libraryItem,
+                        ...component,
                     },
-                    items: getLibraryItemFields(collections),
+                    items: getLibraryComponentFields(collections),
                     callback: (data = {}) => {
-                        library.updateItem(libraryItem.id, data);
+                        library.updateComponent(component.id, data);
                         editor.update();
                     },
                 });
             },
-            [ACTIONS.DELETE_LIBRARY_ITEM]: (libraryItem) => {
+            [ACTIONS.DELETE_LIBRARY_COMPONENT]: (component) => {
                 showConfirm({
                     title: "Delete library item",
                     message: `Do you want to delete this item from the library? This action can not be undone.`,
                     callback: () => {
-                        library?.removeItem(libraryItem.id);
+                        library?.removeComponent(component.id);
                         editor.update();
                     },
                 });
@@ -274,24 +274,6 @@ export const useActions = () => {
                 loadLibraryFromJson().then(libraryData => {
                     library.load(libraryData);
                     editor.update();
-                    // if (libraryData?.items?.length > 0) {
-                    //     showConfirm({
-                    //         title: "Replace library",
-                    //         message: "Do you want to replace your current library with the new loaded library or merge both?",
-                    //         confirmText: "Replace library",
-                    //         cancelText: "Merge both libraries",
-                    //         onSubmit: () => {
-                    //             library.load(libraryData);
-                    //         },
-                    //         onCancel: () => {
-                    //             const currentLibraryItems = library.getItems();
-                    //             library.load({
-                    //                 ...libraryData,
-                    //                 items: [ ...currentLibraryItems, ...libraryData?.items ],
-                    //             });
-                    //         },
-                    //     });
-                    // }
                 });
             },
             [ACTIONS.ADD_LIBRARY_COLLECTION]: () => {
