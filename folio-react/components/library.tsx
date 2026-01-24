@@ -111,8 +111,8 @@ export type LibraryDetailProps = {
 };
 
 export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
-    <div className="flex items-start gap-1 opacity-60">
-        <div className="flex text-base">
+    <div className="flex items-start gap-2 opacity-60">
+        <div className="flex text-base pt-1">
             {renderIcon(props.icon)}
         </div>
         <div className="text-sm">{props.text}</div>
@@ -258,31 +258,33 @@ export const Library = (): React.JSX.Element => {
                 </div>
             )}
             {activeItem && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-4">
                     <div className="w-full">
                         <LibraryItemIcon
                             key={activeItem?.id}
                             thumbnail={activeItem.thumbnail}
                         />
                     </div>
-                    {activeItem?.description && (
-                        <LibraryDetail
-                            icon="info-circle"
-                            text={activeItem.description}
-                        />
-                    )}
-                    {activeItem?.collection && (
-                        <LibraryDetail
-                            icon="folder"
-                            text={library?.getCollection(activeItem.collection)?.name || "Untitled"}
-                        />
-                    )}
-                    {activeItem?.created && (
-                        <LibraryDetail
-                            icon="calendar"
-                            text={formatDate(activeItem.created)}
-                        />
-                    )}
+                    <div className="flex flex-col gap-1">
+                        {activeItem?.description && (
+                            <LibraryDetail
+                                icon="info-circle"
+                                text={activeItem.description}
+                            />
+                        )}
+                        {activeItem?.collection && (
+                            <LibraryDetail
+                                icon="folder"
+                                text={library?.getCollection(activeItem.collection)?.name || "Untitled"}
+                            />
+                        )}
+                        {activeItem?.created && (
+                            <LibraryDetail
+                                icon="calendar"
+                                text={formatDate(activeItem.created)}
+                            />
+                        )}
+                    </div>
                     <Button variant="primary" onClick={() => dispatchAction(ACTIONS.INSERT_LIBRARY_ITEM, activeItem)}>
                         <div className="flex items-center text-base">
                             <PlusIcon />
