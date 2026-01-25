@@ -534,3 +534,10 @@ export const ACTIONS = {
     SHOW_EXPORT_DIALOG: "show-export-dialog",
     SHOW_PAGE_EDIT_DIALOG: "show-page-edit-dialog",
 };
+
+export const PREFERENCES = {
+    THEME: "theme",
+    EDITOR_MINIMAP_ENABLED: "editor.minimap.enabled",
+    EDITOR_MINIMAP_POSITION: "editor.minimap.position",
+    EDITOR_MINIMAP_SCALE: "editor.minimap.scale",
+};
