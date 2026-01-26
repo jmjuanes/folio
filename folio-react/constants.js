@@ -537,7 +537,12 @@ export const ACTIONS = {
 
 export const PREFERENCES = {
     THEME: "theme",
+    // minimap
     EDITOR_MINIMAP_ENABLED: "editor.minimap.enabled",
     EDITOR_MINIMAP_POSITION: "editor.minimap.position",
     EDITOR_MINIMAP_SCALE: "editor.minimap.scale",
+    // library
+    EDITOR_LIBRARY_ENABLED: "editor.library.enabled",
+    EDITOR_LIBRARY_EXPORT_COLLECTIONS: "editor.library.exportCollections",
+    EDITOR_LIBRARY_EXPORT_COMPONENTS: "editor.library.exportComponents",
 };

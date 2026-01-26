@@ -10,13 +10,19 @@ export type Preferences = {
 
 export type PreferencesProviderProps = {
     preferences: Preferences | null;
+    children: React.ReactNode;
 };
 
 // @description default preferences
 export const DEFAULT_PREFERENCES = {
+    // minimap preferences
     [PREFERENCES.EDITOR_MINIMAP_ENABLED]: true,
     [PREFERENCES.EDITOR_MINIMAP_SCALE]: 1,
     [PREFERENCES.EDITOR_MINIMAP_POSITION]: MINIMAP_POSITION.BOTTOM_LEFT,
+    // library preferences
+    [PREFERENCES.EDITOR_LIBRARY_ENABLED]: true,
+    [PREFERENCES.EDITOR_LIBRARY_EXPORT_COLLECTIONS]: true,
+    [PREFERENCES.EDITOR_LIBRARY_EXPORT_COMPONENTS]: true,
 };
 
 // @private Shared preferences context
