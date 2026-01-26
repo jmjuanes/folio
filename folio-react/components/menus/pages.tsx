@@ -302,7 +302,7 @@ export const PagesMenu = (props: PagesMenuProps): React.JSX.Element => {
             <Island.Button
                 text={(<div className="w-32 truncate">{activePage.title}</div>)}
                 icon={activePage?.readonly ? "lock" : ""}
-                iconClassName="text-yellow-900"
+                iconClassName="text-yellow-600"
                 showChevron={true}
             />
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
