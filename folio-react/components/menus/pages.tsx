@@ -262,13 +262,13 @@ export const PagesMenuContent = (): React.JSX.Element => {
                                 editor.update();
                             }}
                             onDelete={() => {
-                                dispatchAction(ACTIONS.DELETE_PAGE, {page});
+                                dispatchAction(ACTIONS.DELETE_PAGE, page);
                             }}
                             onDuplicate={() => {
-                                dispatchAction(ACTIONS.DUPLICATE_PAGE, {page});
+                                dispatchAction(ACTIONS.DUPLICATE_PAGE, page);
                             }}
                             onEdit={() => {
-                                dispatchAction(ACTIONS.SHOW_PAGE_EDIT_DIALOG, {page});
+                                dispatchAction(ACTIONS.EDIT_PAGE, page);
                             }}
                             onMove={event => {
                                 handlePageMove(event, page);

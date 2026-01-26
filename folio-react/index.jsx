@@ -62,7 +62,6 @@ export { Toolbar } from "./components/toolbar.tsx";
 
 export {ExportDialog} from "./components/dialogs/export.jsx";
 export {KeyboardShortcutsDialog} from "./components/dialogs/keyboard-shortcuts.jsx";
-export {PageEditDialog} from "./components/dialogs/page-edit.jsx";
 export {
     MainMenu,
     MainMenuContent,
