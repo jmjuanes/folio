@@ -25,6 +25,7 @@ export type LibraryCollection = {
 export type LibraryComponent = {
     id: string;
     name?: string;
+    description?: string;
     thumbnail?: string;
     created?: string | number;
     collection?: string;
@@ -155,7 +156,7 @@ export const createLibraryComponent = (elements: any = [], data: any = {}): Prom
             }),
             thumbnail: thumbnail,
             created: Date.now(),
-        };
+        } as LibraryComponent;
     });
 };
 

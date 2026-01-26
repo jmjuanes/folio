@@ -1,5 +1,5 @@
 import React from "react";
-import { AlbumIcon, PlusIcon, ChevronLeftIcon } from "@josemi-icons/react";
+import { PlusIcon, ChevronLeftIcon } from "@josemi-icons/react";
 import { renderIcon } from "@josemi-icons/react";
 import classNames from "classnames";
 import { ACTIONS } from "../constants.js";
@@ -7,7 +7,7 @@ import { Button } from "../components/ui/button.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { formatDate } from "../utils/dates.ts";
-import type { LibraryCollection, LibraryComponent, Library } from "../lib/library.ts";
+import type { LibraryCollection, LibraryComponent } from "../lib/library.ts";
 
 type EmptyLibraryProps = {
     icon: string;
@@ -31,8 +31,8 @@ const EmptyLibrary = (props: EmptyLibraryProps): React.JSX.Element => (
 );
 
 export type LibraryComponentIconProps = {
-    thumbnail: string;
-    onClick: () => void;
+    thumbnail: string | undefined;
+    onClick?: () => void;
 };
 
 // @description library item
@@ -51,7 +51,7 @@ export type LibraryCollectionIconProps = {
 export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): React.JSX.Element => {
     const visibleComponents = props.components.slice(0, 4);
     return (
-        <div className="border-2 border-gray-200 rounded-lg bg-white overflow-hidden" onClick={props.onClick}>
+        <div className="border-2 border-gray-200 rounded-lg bg-white cursor-pointer overflow-hidden" onClick={props.onClick}>
             <div className="grid grid-cols-2 w-full border-b-2 border-gray-200 bg-gray-200 gap-1">
                 {props.components.slice(0, 4).map(item => (
                     <div key={item.id} className="h-14 w-full overflow-hidden bg-gray-100">
@@ -83,7 +83,7 @@ export type LibraryHeaderTitleProps = {
 export const LibraryHeaderTitle = (props: LibraryHeaderTitleProps): React.JSX.Element => (
     <div className="flex items-center gap-2 w-full">
         {props.showBackButton && (
-            <div className="flex items-center text-xl" onClick={props.onBackButtonClick}>
+            <div className="flex items-center text-xl cursor-pointer hover:opacity-80" onClick={props.onBackButtonClick}>
                 <ChevronLeftIcon />
             </div>
         )}
@@ -127,8 +127,8 @@ export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
 
 // @description library container
 export const Library = (): React.JSX.Element => {
-    const [ activeCollection, setActiveCollection ] = React.useState<LibraryCollection>(null);
-    const [ activeComponent, setActiveComponent ] = React.useState<LibraryIem>(null);
+    const [ activeCollection, setActiveCollection ] = React.useState<LibraryCollection | null>(null);
+    const [ activeComponent, setActiveComponent ] = React.useState<LibraryComponent | null>(null);
     const library = useLibrary();
     const dispatchAction = useActions();
     const components = library?.getComponents() || [];
@@ -263,7 +263,7 @@ export const Library = (): React.JSX.Element => {
                     <div className="w-full">
                         <LibraryComponentIcon
                             key={activeComponent?.id}
-                            thumbnail={activeComponent.thumbnail}
+                            thumbnail={activeComponent?.thumbnail}
                         />
                     </div>
                     <div className="flex flex-col gap-1">
