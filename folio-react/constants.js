@@ -534,3 +534,18 @@ export const ACTIONS = {
     SHOW_EXPORT_DIALOG: "show-export-dialog",
     SHOW_PAGE_EDIT_DIALOG: "show-page-edit-dialog",
 };
+
+export const PREFERENCES = {
+    // global preferences
+    THEME: "theme",
+    // keyboard shortcuts
+    KEYBOARD_SHORTCUTS_ENABLED: "keyboardShortcuts.enabled",
+    // minimap
+    MINIMAP_ENABLED: "minimap.enabled",
+    MINIMAP_POSITION: "minimap.position",
+    MINIMAP_SCALE: "minimap.scale",
+    // library
+    LIBRARY_ENABLED: "library.enabled",
+    LIBRARY_EXPORT_COLLECTIONS: "library.exportCollections",
+    LIBRARY_EXPORT_COMPONENTS: "library.exportComponents",
+};

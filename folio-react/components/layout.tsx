@@ -4,8 +4,9 @@ import { Panel } from "./ui/panel.tsx";
 import { Island } from "./ui/island.jsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.jsx";
+import { usePreferences } from "../contexts/preferences.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import { ACTIONS } from "../constants.js";
+import { ACTIONS, PREFERENCES } from "../constants.js";
 
 export type LayoutProps = {
     hideUi?: boolean,
@@ -20,6 +21,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
     const [ layersVisible, setLayersVisible ] = React.useState(false);
     const [ sidebarVisible, setSidebarVisible ] = React.useState(false);
     const editor = useEditor();
+    const preferences = usePreferences();
     const dispatchAction = useActions();
     const {
         MainMenu,
@@ -37,7 +39,8 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
 
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
-    const showSidebarButton = !!Library;
+    const isLibraryEnabled = !!preferences[PREFERENCES.LIBRARY_ENABLED] && !!Library;
+    const showSidebarButton = isLibraryEnabled;
 
     return (
         <React.Fragment>
@@ -106,14 +109,14 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                 <Toolbar />
                             </div>
                         )}
-                        {!!Minimap && (
+                        {!!Minimap && !!preferences[PREFERENCES.MINIMAP_ENABLED] && (
                             <div className="absolute z-20 bottom-0 mb-4 left-0 ml-4 pointer-events-auto">
                                 <Minimap />
                             </div>
                         )}
                         {!editor.page.readonly && selectedElements.length > 0 && (
                             <React.Fragment>
-                                {(selectedElements.length > 1 || !selectedElements[0].editing) && (
+                                {(selectedElements.length > 1 || !selectedElements[0].editing) && !!EditionPanel && (
                                     <div className="absolute z-20 top-0 mt-16 left-0 pt-1 pl-4 pointer-events-auto">
                                         <EditionPanel
                                             key={selectedElements.map((el: any) => el.id).join("-")}
@@ -133,7 +136,9 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             <Panel className="relative h-full rounded-tr-none rounded-br-none">
                                 <Panel.Body className="h-full">
                                     <div className="h-full max-h-full overflow-y-scroll">
-                                        <Library />
+                                        {isLibraryEnabled && (
+                                            <Library />
+                                        )}
                                     </div>
                                 </Panel.Body>
                             </Panel>

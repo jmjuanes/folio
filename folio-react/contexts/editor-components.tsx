@@ -16,10 +16,13 @@ import { Toolbar } from "../components/toolbar.tsx";
 import { Layers } from "../components/layers.tsx";
 
 // export type for the editor components
-export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
+// export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
+export type EditorComponentsMap = {
+    [key: string]: ((props?: any) => React.JSX.Element) | null;
+};
 
 // @description editor components context
-export const EditorComponentsContext = React.createContext<EditorComponentsMap>(null);
+export const EditorComponentsContext = React.createContext<EditorComponentsMap>({});
 
 // @description hook to access to editor components
 export const useEditorComponents = (): EditorComponentsMap => {

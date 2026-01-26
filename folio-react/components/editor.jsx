@@ -17,6 +17,7 @@ import {
 import { ConfirmProvider } from "../contexts/confirm.jsx";
 import { DialogsProvider } from "../contexts/dialogs.jsx";
 import { LibraryProvider } from "../contexts/library.tsx";
+import { PreferencesProvider } from "../contexts/preferences.tsx";
 
 // @private inner editor component
 const InnerEditor = () => {
@@ -111,22 +112,25 @@ const InnerEditor = () => {
 // @param {object} props.components Map of editor components to override
 // @param {object|promise|function} props.data Initial data of the editor
 // @param {object|promise|function} props.library Initial library data
+// @param {object} props.preferences - initial preferences data
 // @param {function} props.onChange executed each time data of the board is updated
 // @param {function} props.onLibraryChange executed each time the library is updated
 export const Editor = props => {
     return (
-        <EditorComponentsProvider components={props.components}>
-            <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
-                <EditorProvider {...props}>
-                    <ConfirmProvider>
-                        <DialogsProvider>
-                            <ContextMenuProvider>
-                                <InnerEditor />
-                            </ContextMenuProvider>
-                        </DialogsProvider>
-                    </ConfirmProvider>
-                </EditorProvider>
-            </LibraryProvider>
-        </EditorComponentsProvider>
+        <PreferencesProvider preferences={props.preferences}>
+            <EditorComponentsProvider components={props.components}>
+                <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
+                    <EditorProvider {...props}>
+                        <ConfirmProvider>
+                            <DialogsProvider>
+                                <ContextMenuProvider>
+                                    <InnerEditor />
+                                </ContextMenuProvider>
+                            </DialogsProvider>
+                        </ConfirmProvider>
+                    </EditorProvider>
+                </LibraryProvider>
+            </EditorComponentsProvider>
+        </PreferencesProvider>
     );
 };
