@@ -14,6 +14,7 @@ import {
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
     FIELDS,
+    PREFERENCES,
 } from "../constants.js";
 import {
     clampAngle,
@@ -36,6 +37,7 @@ import {
     getElementMinimumSize,
 } from "../lib/elements.js";
 import { useEditor } from "../contexts/editor.jsx";
+import { usePreferences } from "../contexts/preferences.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useActions } from "./use-actions.js";
 import { useTools, getToolByShortcut } from "./use-tools.js";
@@ -64,6 +66,7 @@ export const useEvents = () => {
     const editor = useEditor();
     const tools = useTools();
     const dispatchAction = useActions();
+    const preferences = usePreferences();
 
     return React.useMemo(() => {
         let snapshot = [];
@@ -726,7 +729,7 @@ export const useEvents = () => {
                 update();
             }
             // otherwhise check for the action by the key combination
-            else {
+            else if (!!preferences[PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED]) {
                 // 1. check if this combination is an action shortcut
                 const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
                 if (action) {

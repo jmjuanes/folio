@@ -39,7 +39,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
 
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
-    const isLibraryEnabled = !!preferences[PREFERENCES.EDITOR_LIBRARY_ENABLED] && !!Library;
+    const isLibraryEnabled = !!preferences[PREFERENCES.LIBRARY_ENABLED] && !!Library;
     const showSidebarButton = isLibraryEnabled;
 
     return (
@@ -109,7 +109,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                 <Toolbar />
                             </div>
                         )}
-                        {!!Minimap && !!preferences[PREFERENCES.EDITOR_MINIMAP_ENABLED] && (
+                        {!!Minimap && !!preferences[PREFERENCES.MINIMAP_ENABLED] && (
                             <div className="absolute z-20 bottom-0 mb-4 left-0 ml-4 pointer-events-auto">
                                 <Minimap />
                             </div>

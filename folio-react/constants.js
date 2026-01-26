@@ -536,13 +536,16 @@ export const ACTIONS = {
 };
 
 export const PREFERENCES = {
+    // global preferences
     THEME: "theme",
+    // keyboard shortcuts
+    KEYBOARD_SHORTCUTS_ENABLED: "keyboardShortcuts.enabled",
     // minimap
-    EDITOR_MINIMAP_ENABLED: "editor.minimap.enabled",
-    EDITOR_MINIMAP_POSITION: "editor.minimap.position",
-    EDITOR_MINIMAP_SCALE: "editor.minimap.scale",
+    MINIMAP_ENABLED: "minimap.enabled",
+    MINIMAP_POSITION: "minimap.position",
+    MINIMAP_SCALE: "minimap.scale",
     // library
-    EDITOR_LIBRARY_ENABLED: "editor.library.enabled",
-    EDITOR_LIBRARY_EXPORT_COLLECTIONS: "editor.library.exportCollections",
-    EDITOR_LIBRARY_EXPORT_COMPONENTS: "editor.library.exportComponents",
+    LIBRARY_ENABLED: "library.enabled",
+    LIBRARY_EXPORT_COLLECTIONS: "library.exportCollections",
+    LIBRARY_EXPORT_COMPONENTS: "library.exportComponents",
 };

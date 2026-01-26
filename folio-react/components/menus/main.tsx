@@ -1,9 +1,10 @@
 import React from "react";
 import classnames from "classnames";
-import { ACTIONS } from "../../constants.js";
+import { ACTIONS, PREFERENCES } from "../../constants.js";
 import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.jsx";
 import { useEditor } from "../../contexts/editor.jsx";
+import { usePreferences } from "../../contexts/preferences.tsx";
 import { useActions } from "../../hooks/use-actions.js";
 import { getShortcutByAction, printShortcut } from "../../lib/actions.js";
 
@@ -158,18 +159,23 @@ export const MainMenuShowShortcutsAction = (): React.JSX.Element => {
 };
 
 // @description default content of the main menu
-export const MainMenuContent = (): React.JSX.Element => (
-    <React.Fragment>
-        <MainMenuOpenAction />
-        <MainMenuSaveAction />
-        <MainMenuExportAction />
-        <MainMenuResetAction />
-        <MainMenuSeparator />
-        <MainMenuShowShortcutsAction />
-        <MainMenuSeparator />
-        <MainMenuLinks />
-    </React.Fragment>
-);
+export const MainMenuContent = (): React.JSX.Element => {
+    const preferences = usePreferences();
+    return (
+        <React.Fragment>
+            <MainMenuOpenAction />
+            <MainMenuSaveAction />
+            <MainMenuExportAction />
+            <MainMenuResetAction />
+            <MainMenuSeparator />
+            {!!preferences[PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED] && (
+                <MainMenuShowShortcutsAction />
+            )}
+            <MainMenuSeparator />
+            <MainMenuLinks />
+        </React.Fragment>
+    );
+};
 
 // props for the main menu component
 export type MainMenuProps = {
