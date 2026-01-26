@@ -48,7 +48,7 @@ Island.Button = props => {
                     </div>
                 )}
                 {props.text && (
-                    <div className="flex items-center text-sm font-medium leading-none">
+                    <div className="flex items-center text-sm font-medium leading-tight">
                         {props.text}
                     </div>
                 )}
