@@ -157,14 +157,17 @@ const Page = ({title, active, editable, style, onClick, ...props}) => {
 };
 
 // @private initialize sorted pages list
-const initializeSortedPages = pages => {
+const initializeSortedPages = (pages: any[]) => {
     return Object.fromEntries(pages.map((page, index) => {
-        return [page.id, {index: index, y: 0, selected: false}];
+        return [
+            page.id,
+            { index: index, y: 0, selected: false },
+        ];
     }));
 };
 
 // @description content of the pages menu component
-export const PagesMenuContent = () => {
+export const PagesMenuContent = (): React.JSX.Element => {
     const editor = useEditor();
     const dispatchAction = useActions();
     const [sortedPages, setSortedPages] = React.useState(() => {
@@ -278,14 +281,18 @@ export const PagesMenuContent = () => {
     );
 };
 
+export type PagesMenuProps = {
+    children?: React.ReactNode,
+};
+
 // @description pages menu wrapper
-export const PagesMenu = props => {
+export const PagesMenu = (props: PagesMenuProps): React.JSX.Element => {
     const editor = useEditor();
     const activePage = editor.getActivePage();
 
     // note: using the pages ids as a key instead of the number of pages
     // this fixes a bug when clearing the editor data with only one page
-    const pagesKey = (editor?.pages || []).map(page => page.id).join("-");
+    const pagesKey = (editor?.pages || []).map((page: any) => page.id).join("-");
 
     // get the content to display
     const content = props.children ?? <PagesMenuContent key={"pages:" + pagesKey} />;
@@ -294,6 +301,8 @@ export const PagesMenu = props => {
         <div className="flex relative group" tabIndex="0">
             <Island.Button
                 text={(<div className="w-32 truncate">{activePage.title}</div>)}
+                icon={activePage?.readonly ? "lock" : ""}
+                iconClassName="text-yellow-900"
                 showChevron={true}
             />
             <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
