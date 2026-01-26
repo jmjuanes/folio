@@ -79,7 +79,7 @@ export {
 export {
     PagesMenu,
     PagesMenuContent,
-} from "./components/menus/pages.jsx";
+} from "./components/menus/pages.tsx";
 export {
     SettingsMenu,
     SettingsMenuContent,
