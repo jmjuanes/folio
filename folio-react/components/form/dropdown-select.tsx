@@ -10,14 +10,14 @@ export type DropdownSelectValue = {
 
 export type DropdownSelectProps = {
     value: string;
-    values: SelectValue[] | string[];
+    values: DropdownSelectValue[];
     emptyValueText?: string;
     allowToRemove?: boolean;
-    onChange: (value: string) => void;
+    onChange: (value: string | null) => void;
 };
 
 export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element => {
-    const handleRemove = React.useCallback(event => {
+    const handleRemove = React.useCallback((event: React.MouseEvent<HTMLDivElement>) => {
         event.preventDefault();
         props.onChange(null);
     }, [ props.onChange ]);
@@ -33,12 +33,12 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
             contentClassName="absolute z-50"
             toggleRender={() => {
                 const selectedItem = (props.values || []).find((item: DropdownSelectValue) => {
-                    return item?.value === props.value || props.value === item;
+                    return item?.value === props.value;
                 });
                 return (
                     <React.Fragment>
                         <div className={!props.value ? "opacity-60" : "opacity-100"}>
-                            <span>{selectedItem?.text ?? selectedItem ?? props.emptyValueText ?? "-"}</span>
+                            <span>{selectedItem?.text ?? props.emptyValueText ?? "-"}</span>
                         </div>
                         <div className="flex items-center gap-0 text-base">
                             {props.allowToRemove && !!props.value && (
@@ -57,19 +57,19 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
                 <div className="border-1 border-gray-200 bg-white p-1 shadow-sm rounded-md" style={{width:"21rem"}}>
                     <div className="w-full h-full overflow-y-scroll max-h-20 flex flex-col gap-1">
                         {(props.values || []).map((item: DropdownSelectValue) => {
-                            const active = props.value === item?.value || props.value === item;
+                            const active = props.value === item?.value;
                             const itemClassName = classNames({
                                 "rounded-sm text-xs px-2 py-1 select-none text-current": true,
                                 "bg-gray-200": active,
                                 "bg-white hover:bg-gray-100 cursor-pointer": !active,
                             });
                             const handleClick = () => {
-                                closeDropdown();
+                                closeDropdown?.();
                                 props.onChange(item?.value ?? item);
                             };
                             return (
                                 <div className={itemClassName} onClick={handleClick}>
-                                    <span>{item?.text || item?.value || item}</span>
+                                    <span>{item?.text || item?.value || ""}</span>
                                 </div>
                             );
                         })}

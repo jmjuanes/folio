@@ -193,7 +193,7 @@ export type DropdownPortalPosition = [number, number];
 Dropdown.Portal = (props: DropdownPortalProps): React.JSX.Element => {
     const [ visible, setVisible ] = React.useState<boolean>(false);
     const contentRef = React.useRef<HTMLDivElement>(null);
-    const position = React.useRef<DropdownPortalPosition>(null);
+    const position = React.useRef<DropdownPortalPosition | null>(null);
 
     // when clicking on the action item
     const handleToggleClick = React.useCallback((event: React.SyntheticEvent) => {
@@ -230,12 +230,20 @@ Dropdown.Portal = (props: DropdownPortalProps): React.JSX.Element => {
             <div className={props.toggleClassName || "flex items-center"} style={props.toggleStyle} onClick={handleToggleClick}>
                 {props.toggleRender(visible)}
             </div>
-            {visible && position.current && createPortal([
-                <div key={props.id + ":portal:bg"} className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
-                <div key={props.id + ":portal:content"} ref={contentRef} className={props.contentClassName} style={{top: position.current[0], left: position.current[1]}}>
-                    {props.contentRender(handleHideDropdown)}
-                </div>,
-            ], document.body)}
+            {visible && position.current && (
+                <>
+                    {createPortal(
+                        <div className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
+                        document.body
+                    )}
+                    {createPortal(
+                        <div ref={contentRef} className={props.contentClassName} style={{top: position.current[0], left: position.current[1]}}>
+                            {props.contentRender(handleHideDropdown)}
+                        </div>,
+                        document.body
+                    )}
+                </>
+            )}
         </React.Fragment>
     );
 };
