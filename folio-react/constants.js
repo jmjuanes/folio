@@ -527,12 +527,12 @@ export const ACTIONS = {
     CLEAR_PAGE: "clear-page",
     NEXT_PAGE: "next-page",
     PREVIOUS_PAGE: "prev-page",
+    EDIT_PAGE: "page:edit",
     TOGGLE_GRID: "toggle-grid",
     TOGGLE_SNAP_TO_ELEMENTS: "toggle-snap-to-elements",
     TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
-    SHOW_PAGE_EDIT_DIALOG: "show-page-edit-dialog",
 };
 
 export const PREFERENCES = {

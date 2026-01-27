@@ -21,6 +21,7 @@ Island.Separator = () => (
 // @param {object} props React props
 // @param {React.ReactNode} props.children React children
 // @param {string} props.className additional class name
+// @param {string} props.iconClassName - additional classnames for the icon
 // @param {string} props.icon icon name
 // @param {string} props.text button text
 // @param {boolean} props.disabled is the button disabled
@@ -42,12 +43,12 @@ Island.Button = props => {
         <div className={classList} onClick={handleClick}>
             <div className="flex items-center gap-1">
                 {props.icon && (
-                    <div className="flex items-center text-xl">
+                    <div className={classNames("flex items-center text-xl", props.iconClassName || "")}>
                         {renderIcon(props.icon)}
                     </div>
                 )}
                 {props.text && (
-                    <div className="flex items-center text-sm font-medium">
+                    <div className="flex items-center text-sm font-medium leading-tight">
                         {props.text}
                     </div>
                 )}

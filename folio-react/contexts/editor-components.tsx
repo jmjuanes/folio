@@ -3,10 +3,9 @@ import { Layout } from "../components/layout.tsx";
 import { Loading } from "../components/loading.jsx";
 import { ContextMenu } from "../components/context-menu.jsx";
 import { ExportDialog } from "../components/dialogs/export.jsx";
-import { PageEditDialog } from "../components/dialogs/page-edit.jsx";
 import { KeyboardShortcutsDialog } from "../components/dialogs/keyboard-shortcuts.jsx";
 import { MainMenu } from "../components/menus/main.tsx";
-import { PagesMenu } from "../components/menus/pages.jsx";
+import { PagesMenu } from "../components/menus/pages.tsx";
 import { SettingsMenu } from "../components/menus/settings.jsx";
 import { EditionPanel } from "../components/panels/edition.jsx";
 import { HistoryPanel } from "../components/panels/history.jsx";
@@ -48,7 +47,6 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             ContextMenu: ContextMenu,
             // dialogs components
             ExportDialog: ExportDialog,
-            PageEditDialog: PageEditDialog,
             KeyboardShortcutsDialog: KeyboardShortcutsDialog,
             // menus
             MainMenu: MainMenu,

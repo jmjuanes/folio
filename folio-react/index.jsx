@@ -62,7 +62,6 @@ export { Toolbar } from "./components/toolbar.tsx";
 
 export {ExportDialog} from "./components/dialogs/export.jsx";
 export {KeyboardShortcutsDialog} from "./components/dialogs/keyboard-shortcuts.jsx";
-export {PageEditDialog} from "./components/dialogs/page-edit.jsx";
 export {
     MainMenu,
     MainMenuContent,
@@ -79,7 +78,7 @@ export {
 export {
     PagesMenu,
     PagesMenuContent,
-} from "./components/menus/pages.jsx";
+} from "./components/menus/pages.tsx";
 export {
     SettingsMenu,
     SettingsMenuContent,

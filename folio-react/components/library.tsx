@@ -6,6 +6,7 @@ import { ACTIONS } from "../constants.js";
 import { Button } from "../components/ui/button.jsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
+import { useEditor } from "../contexts/editor.jsx";
 import { formatDate } from "../utils/dates.ts";
 import type { LibraryCollection, LibraryComponent } from "../lib/library.ts";
 
@@ -36,11 +37,17 @@ export type LibraryComponentIconProps = {
 };
 
 // @description library item
-export const LibraryComponentIcon = ({ thumbnail, onClick }: LibraryComponentIconProps): React.JSX.Element => (
-    <div className="border-2 border-gray-200 rounded-lg overflow-hidden cursor-pointer" onClick={onClick}> 
-        <img src={thumbnail} width="100%" height="100%" />
-    </div>
-);
+export const LibraryComponentIcon = ({ thumbnail, onClick }: LibraryComponentIconProps): React.JSX.Element => {
+    const className = classNames({
+        "bg-gray-50 border-2 border-gray-200 rounded-lg overflow-hidden": true,
+        "hover:border-gray-300 cursor-pointer": typeof onClick === "function",
+    });
+    return (
+        <div className={className} onClick={onClick}> 
+            <img src={thumbnail} width="100%" height="100%" />
+        </div>
+    );
+};
 
 export type LibraryCollectionIconProps = {
     name: string;
@@ -51,15 +58,15 @@ export type LibraryCollectionIconProps = {
 export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): React.JSX.Element => {
     const visibleComponents = props.components.slice(0, 4);
     return (
-        <div className="border-2 border-gray-200 rounded-lg bg-white cursor-pointer overflow-hidden" onClick={props.onClick}>
+        <div className="border-2 border-gray-200 hover:border-gray-300 rounded-lg bg-white cursor-pointer overflow-hidden" onClick={props.onClick}>
             <div className="grid grid-cols-2 w-full border-b-2 border-gray-200 bg-gray-200 gap-1">
                 {props.components.slice(0, 4).map(item => (
-                    <div key={item.id} className="h-14 w-full overflow-hidden bg-gray-100">
+                    <div key={item.id} className="h-10 w-full overflow-hidden bg-gray-100">
                         <img src={item.thumbnail} width="100%" height="100%" />
                     </div>
                 ))}
                 {Array.from({ length: 4 - visibleComponents.length }, (_, index) => (
-                    <div key={"item-" + index} className="h-14 w-full bg-gray-100" />
+                    <div key={"item-" + index} className="h-10 w-full bg-gray-100" />
                 ))}
             </div>
             <div className="w-full p-2 flex flex-col gap-0">
@@ -83,7 +90,7 @@ export type LibraryHeaderTitleProps = {
 export const LibraryHeaderTitle = (props: LibraryHeaderTitleProps): React.JSX.Element => (
     <div className="flex items-center gap-2 w-full">
         {props.showBackButton && (
-            <div className="flex items-center text-xl cursor-pointer hover:opacity-80" onClick={props.onBackButtonClick}>
+            <div className="flex items-center text-xl cursor-pointer p-1 rounded-lg hover:bg-gray-100" onClick={props.onBackButtonClick}>
                 <ChevronLeftIcon />
             </div>
         )}
@@ -129,6 +136,7 @@ export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
 export const Library = (): React.JSX.Element => {
     const [ activeCollection, setActiveCollection ] = React.useState<LibraryCollection | null>(null);
     const [ activeComponent, setActiveComponent ] = React.useState<LibraryComponent | null>(null);
+    const editor = useEditor();
     const library = useLibrary();
     const dispatchAction = useActions();
     const components = library?.getComponents() || [];
@@ -168,7 +176,7 @@ export const Library = (): React.JSX.Element => {
     }, [ components.length, collections.length ]);
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
             <div className="sticky top-0 bg-white flex items-center justify-between pb-2 z-20">
                 {!activeCollection && !activeComponent && (
                     <React.Fragment>
@@ -258,93 +266,95 @@ export const Library = (): React.JSX.Element => {
                     </React.Fragment>
                 )}
             </div>
-            {activeComponent && (
-                <div className="flex flex-col gap-4">
-                    <div className="w-full">
-                        <LibraryComponentIcon
-                            key={activeComponent?.id}
-                            thumbnail={activeComponent?.thumbnail}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <div className="font-bold text-base">
-                            <span>{activeComponent?.name || "Untitled"}</span>
-                        </div>
-                        {activeComponent?.description && (
-                            <div className="text-sm opacity-60">{activeComponent.description}</div>
-                        )}
-                        {activeComponent?.collection && (
-                            <LibraryDetail
-                                icon="album"
-                                text={library?.getCollection(activeComponent.collection)?.name || "Untitled"}
-                            />
-                        )}
-                        {activeComponent?.created && (
-                            <LibraryDetail
-                                icon="calendar-plus"
-                                text={"Created at " + formatDate(activeComponent.created)}
-                            />
-                        )}
-                    </div>
-                    <Button variant="primary" onClick={() => dispatchAction(ACTIONS.INSERT_LIBRARY_COMPONENT, activeComponent)}>
-                        <div className="flex items-center text-base">
-                            <PlusIcon />
-                        </div>
-                        <span>Insert Component</span>
-                    </Button>
-                </div>
-            )}
-            {collections.length > 0 && !activeCollection && !activeComponent && (
-                <div className="flex flex-col gap-2">
-                    <div className="font-bold text-base">
-                        <span>Collections ({collections.length})</span>
-                    </div>
-                    <div className="grid gap-2 grid-cols-2 w-full">
-                        {collections.map((collection: LibraryCollection) => (
-                            <LibraryCollectionIcon
-                                key={collection.id}
-                                name={collection.name}
-                                components={components.filter((item: LibraryComponent) => {
-                                    return item.collection === collection.id;
-                                })}
-                                onClick={() => setActiveCollection(collection)}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
-            {visibleComponents.length > 0 && (
-                <div className="flex flex-col gap-2">
-                    {!activeCollection && (
-                        <div className="font-bold text-base">
-                            <span>All components ({visibleComponents.length})</span>
-                        </div>
-                    )}
-                    <div className="grid gap-2 grid-cols-2">
-                        {visibleComponents.map((item: LibraryComponent) => (
+            <div className="flex flex-col gap-6">
+                {activeComponent && (
+                    <div className="flex flex-col gap-4">
+                        <div className="w-full">
                             <LibraryComponentIcon
-                                key={item.id}
-                                thumbnail={item.thumbnail}
-                                onClick={() => setActiveComponent(item)}
+                                key={activeComponent?.id}
+                                thumbnail={activeComponent?.thumbnail}
                             />
-                        ))}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <div className="font-bold text-base">
+                                <span>{activeComponent?.name || "Untitled"}</span>
+                            </div>
+                            {activeComponent?.description && (
+                                <div className="text-sm opacity-60">{activeComponent.description}</div>
+                            )}
+                            {activeComponent?.collection && (
+                                <LibraryDetail
+                                    icon="album"
+                                    text={library?.getCollection(activeComponent.collection)?.name || "Untitled"}
+                                />
+                            )}
+                            {activeComponent?.created && (
+                                <LibraryDetail
+                                    icon="calendar-plus"
+                                    text={"Created at " + formatDate(activeComponent.created)}
+                                />
+                            )}
+                        </div>
+                        <Button variant="primary" disabled={!!editor.page.readonly} onClick={() => dispatchAction(ACTIONS.INSERT_LIBRARY_COMPONENT, activeComponent)}>
+                            <div className="flex items-center text-base">
+                                <PlusIcon />
+                            </div>
+                            <span>Insert Component</span>
+                        </Button>
                     </div>
-                </div>
-            )}
-            {activeCollection && !activeComponent && visibleComponents.length === 0 && (
-                <EmptyLibrary
-                    icon="album"
-                    title="This collection is empty"
-                    description="Collections allows you to organize your components."
-                />
-            )}
-            {components.length === 0 && collections.length === 0 && (
-                <EmptyLibrary
-                    icon="album"
-                    title="Your Library is empty"
-                    description="Library lets you to organize and share your elements across pages."
-                />
-            )}
+                )}
+                {collections.length > 0 && !activeCollection && !activeComponent && (
+                    <div className="flex flex-col gap-2">
+                        <div className="font-bold text-sm">
+                            <span>Collections</span>
+                        </div>
+                        <div className="grid gap-2 grid-cols-2 w-full">
+                            {collections.map((collection: LibraryCollection) => (
+                                <LibraryCollectionIcon
+                                    key={collection.id}
+                                    name={collection.name}
+                                    components={components.filter((item: LibraryComponent) => {
+                                        return item.collection === collection.id;
+                                    })}
+                                    onClick={() => setActiveCollection(collection)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {visibleComponents.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                        {!activeCollection && (
+                            <div className="font-bold text-sm">
+                                <span>All components</span>
+                            </div>
+                        )}
+                        <div className="grid gap-2 grid-cols-2">
+                            {visibleComponents.map((item: LibraryComponent) => (
+                                <LibraryComponentIcon
+                                    key={item.id}
+                                    thumbnail={item.thumbnail}
+                                    onClick={() => setActiveComponent(item)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {activeCollection && !activeComponent && visibleComponents.length === 0 && (
+                    <EmptyLibrary
+                        icon="album"
+                        title="This collection is empty"
+                        description="Collections allows you to organize your components."
+                    />
+                )}
+                {components.length === 0 && collections.length === 0 && (
+                    <EmptyLibrary
+                        icon="album"
+                        title="Your Library is empty"
+                        description="Library lets you to organize and share your elements across pages."
+                    />
+                )}
+            </div>
         </div>
     );
 };

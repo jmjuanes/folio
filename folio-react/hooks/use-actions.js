@@ -43,7 +43,6 @@ export const useActions = () => {
     const {
         KeyboardShortcutsDialog,
         ExportDialog,
-        PageEditDialog,
     } = useEditorComponents();
 
     // @description list with all the available actions
@@ -222,10 +221,13 @@ export const useActions = () => {
                 }
             },
             [ACTIONS.INSERT_LIBRARY_COMPONENT]: (component) => {
-                editor.setTool(TOOLS.SELECT);
-                editor.importElements(component.elements, null, null, uid(20));
-                editor.dispatchChange();
-                editor.update();
+                // Note: we avoid to inster the component if the page is in readonly mode
+                if (!editor.page.readonly) {
+                    editor.setTool(TOOLS.SELECT);
+                    editor.importElements(component.elements, null, null, uid(20));
+                    editor.dispatchChange();
+                    editor.update();
+                }
             },
             [ACTIONS.EDIT_LIBRARY_COMPONENT]: (component) => {
                 const collections = library.getCollections();
@@ -371,7 +373,45 @@ export const useActions = () => {
                 editor.dispatchChange();
                 editor.update();
             },
-            [ACTIONS.DELETE_PAGE]: ({page = null}) => {
+            [ACTIONS.EDIT_PAGE]: (page = null) => {
+                if (page?.id) {
+                    prompt({
+                        title: "Edit Page",
+                        confirmText: "Save Changes",
+                        cancelText: "Cancel",
+                        className: "max-w-sm w-full",
+                        initialData: {
+                            ...page,
+                        },
+                        items: {
+                            title: {
+                                type: FORM_OPTIONS.TEXT,
+                                title: "Name",
+                                placeholder: "Untitled Page",
+                                helper: "Give your page a name.",
+                            },
+                            description: {
+                                type: FORM_OPTIONS.TEXTAREA,
+                                title: "Description",
+                                helper: "Add a description to your page.",
+                            },
+                            readonly: {
+                                type: FORM_OPTIONS.CHECKBOX,
+                                title: "Read-Only",
+                                helper: "Prevent performing changes to the page.",
+                            },
+                        },
+                        callback: (data = {}) => {
+                            // currently the only way to update page properties is using 
+                            // object.assign to the page object
+                            Object.assign(page, data);
+                            editor.dispatchChange();
+                            editor.update();
+                        },
+                    });
+                }
+            },
+            [ACTIONS.DELETE_PAGE]: (page = null) => {
                 const pageToDelete = page || editor.page; // if no page is provided, use the current page
                 return showConfirm({
                     title: "Delete page",
@@ -383,13 +423,13 @@ export const useActions = () => {
                     },
                 });
             },
-            [ACTIONS.DUPLICATE_PAGE]: ({page = null}) => {
+            [ACTIONS.DUPLICATE_PAGE]: (page = null) => {
                 const pageToDuplicate = page || editor.page; // if no page is provided, use the current page
                 editor.duplicatePage(pageToDuplicate);
                 editor.dispatchChange();
                 editor.update();
             },
-            [ACTIONS.CLEAR_PAGE]: ({page = null}) => {
+            [ACTIONS.CLEAR_PAGE]: (page = null) => {
                 const pageToClear = page || editor.page; // if no page is provided, use the current page
                 return showConfirm({
                     title: "Clear Page",
@@ -443,15 +483,6 @@ export const useActions = () => {
                     component: ExportDialog,
                     props: exportOptions,
                 });
-            },
-            [ACTIONS.SHOW_PAGE_EDIT_DIALOG]: pageOptions => {
-                if (pageOptions?.page?.id) {
-                    showDialog({
-                        dialogClassName: "w-full max-w-md",
-                        component: PageEditDialog,
-                        props: pageOptions,
-                    });
-                }
             },
         };
     }, [ editor, showConfirm, showDialog, library ]);
