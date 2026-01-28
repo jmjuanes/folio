@@ -12,6 +12,7 @@ import {
 } from "folio-react/components/menus/main.tsx";
 import { Loading } from "folio-react/components/loading.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
+import { useConfiguration } from "../../contexts/configuration.tsx";
 import { NotFound } from "../not-found.tsx";
 import {
     THUMBNAIL_WIDTH,
@@ -27,9 +28,10 @@ export const EditorRoute = (props: any): React.JSX.Element => {
     const isFirstUpdate = React.useRef<boolean>(true);
     const lastUpdatedData = React.useRef<any>(null);
     const thumbnailUpdateTimer = React.useRef<any>(null);
-    const [ initialData, setInitialData ] = React.useState<any>(null);
-    const [ exists, setExists ] = React.useState<boolean>(null);
+    const [initialData, setInitialData] = React.useState<any>(null);
+    const [exists, setExists] = React.useState<boolean>(null);
     const { app } = useAppState();
+    const { preferences } = useConfiguration();
 
     // callback method to generate and save the thumbnail
     const handleThumbnailUpdate = React.useCallback(() => {
@@ -60,7 +62,7 @@ export const EditorRoute = (props: any): React.JSX.Element => {
                     console.error("Error updating thumbnail:", error);
                 });
         }
-    }, [ props.id, app, initialData ]);
+    }, [props.id, app, initialData]);
 
     // handle saving data or library
     const handleDataChange = React.useCallback(data => {
@@ -80,7 +82,7 @@ export const EditorRoute = (props: any): React.JSX.Element => {
         thumbnailUpdateTimer.current = window.setTimeout(() => {
             handleThumbnailUpdate();
         }, THUMBNAIL_DELAY);
-    }, [ props.id, app, handleThumbnailUpdate ]);
+    }, [props.id, app, handleThumbnailUpdate]);
 
     // on mount, check if the board exists
     // it includes a little protection against rapid board entering/exit
@@ -113,7 +115,7 @@ export const EditorRoute = (props: any): React.JSX.Element => {
             window.clearTimeout(timer);
             didEnter = false;
         };
-    }, [ props.id, app ]);
+    }, [props.id, app]);
 
     // when app is unmounted, clear any pending thumbnail update
     React.useEffect(() => {
@@ -165,6 +167,7 @@ export const EditorRoute = (props: any): React.JSX.Element => {
                 return JSON.parse(initialData?.data || "{}");
             }}
             components={customComponents}
+            preferences={preferences || {}}
             onChange={handleDataChange}
         />
     );

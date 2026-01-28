@@ -50,7 +50,7 @@ type DocumentButtonProps = {
 };
 
 const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
-    const [ actionsMenuOpen, setActionsMenuOpen ] = React.useState(false);
+    const [actionsMenuOpen, setActionsMenuOpen] = React.useState(false);
     const actionsMenuRef = React.useRef(null);
     const position = React.useRef({});
     const { showDialog } = useDialog();
@@ -73,7 +73,7 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             };
             setActionsMenuOpen(true);
         }
-    }, [ setActionsMenuOpen ]);
+    }, [setActionsMenuOpen]);
 
     // listener to handle renaming the document
     // it will close the actions menu and call the onRename callback if provided
@@ -86,7 +86,7 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             ),
             dialogClassName: "w-full max-w-sm",
         });
-    }, [ props.id, setActionsMenuOpen, showDialog ]);
+    }, [props.id, setActionsMenuOpen, showDialog]);
 
     // listener to save a local copy of the document
     // it will close the actions menu and execute the save as action
@@ -101,7 +101,7 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
                 console.error(error);
                 toaster.error(error?.message || "An error occurred while saving the document.");
             });
-    }, [ props.id, setActionsMenuOpen ]);
+    }, [props.id, setActionsMenuOpen]);
 
     // listener to handle duplicating the document
     const handleDuplicate = React.useCallback((event: React.SyntheticEvent) => {
@@ -116,7 +116,7 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
                 console.error(error);
                 toaster.error(error?.message || "An error occurred while duplicating the document.");
             });
-    }, [ props.id, setActionsMenuOpen ]);
+    }, [props.id, setActionsMenuOpen]);
 
     // listener to handle deletion of a document
     // it will close the actions menu and call the onDelete callback if provided
@@ -129,21 +129,21 @@ const DocumentButton = (props: DocumentButtonProps): React.JSX.Element => {
             confirmText: "Yes, Delete",
             callback: () => {
                 app.deleteDocument(props.id)
-                .then(() => {
-                    // if the deleted board is the current one, redirect to the home page
-                    if (active) {
-                        app.openHome();
-                    }
-                    app.refresh();
-                    toaster.success("Document deleted successfully.");
-                })
-                .catch(error => {
-                    console.error(error);
-                    toaster.error(error?.message || "An error occurred while deleting the document.");
-                });
+                    .then(() => {
+                        // if the deleted board is the current one, redirect to the home page
+                        if (active) {
+                            app.openHome();
+                        }
+                        app.refresh();
+                        toaster.success("Document deleted successfully.");
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        toaster.error(error?.message || "An error occurred while deleting the document.");
+                    });
             },
         });
-    }, [ props.id, setActionsMenuOpen, active, app ]);
+    }, [props.id, setActionsMenuOpen, active, app]);
 
     React.useEffect(() => {
         if (actionsMenuOpen) {
@@ -238,7 +238,7 @@ const Separator = (): React.JSX.Element => (
 // export the sidebar component
 export const Sidebar = (): React.JSX.Element => {
     const { app } = useAppState();
-    const [ collapsed, toggleCollapsed ] = useToggle(false);
+    const [collapsed, toggleCollapsed] = useToggle(false);
     const websiteConfig = useConfiguration();
     const sidebarClass = classNames({
         "h-full shrink-0 flex flex-col justify-between": true,
@@ -251,15 +251,15 @@ export const Sidebar = (): React.JSX.Element => {
         if (collapsed) {
             toggleCollapsed();
         }
-    }, [ collapsed, toggleCollapsed ]);
+    }, [collapsed, toggleCollapsed]);
 
     // group boards by the updated_at field
     const groups = React.useMemo(() => {
         return groupByDate(app.documents || [], "updated_at");
-    }, [ app.documents ]);
+    }, [app.documents]);
 
     return (
-        <div className={sidebarClass} style={{transition: "width 0.25s ease-in-out"}} onClick={handleToggleCollapsed}>
+        <div className={sidebarClass} style={{ transition: "width 0.25s ease-in-out" }} onClick={handleToggleCollapsed}>
             <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
                 <div className="sticky z-50 top-0 text-2xl leading-none select-none p-3 flex items-center justify-between flex-nowrap">
                     <div className="text-gray-950 font-brand select-none overflow-hidden">
@@ -329,7 +329,7 @@ export const Sidebar = (): React.JSX.Element => {
                         <Group
                             title="This Week"
                             items={groups.thisWeek}
-                        /> 
+                        />
                     )}
                     {!collapsed && groups.thisMonth.length > 0 && (
                         <Group

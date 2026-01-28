@@ -11,7 +11,10 @@ export enum WebsiteEnvironment {
 export type Configuration = {
     environment: WebsiteEnvironment;
     title: string;
+    logo?: string;
+    favicon?: string;
     hide_experimental_warning: boolean;
+    preferences?: any;
 };
 
 // main configuration context
@@ -24,7 +27,7 @@ export const useConfiguration = (): Configuration => {
 
 // @description configuration context provider
 export const ConfigurationProvider = ({ children }): React.JSX.Element => {
-    const [ websiteConfig, setWebsiteConfig ] = React.useState<Configuration>(null);
+    const [websiteConfig, setWebsiteConfig] = React.useState<Configuration>(null);
     const client = useClient();
 
     // on mount, fetch website configuration for the current environment
@@ -36,6 +39,22 @@ export const ConfigurationProvider = ({ children }): React.JSX.Element => {
                 console.error(error);
             });
     }, []);
+
+    // update document title and favicon when configuration changes
+    // React.useEffect(() => {
+    //     if (websiteConfig) {
+    //         document.title = websiteConfig.title || "folio.";
+    //         if (websiteConfig.favicon) {
+    //             let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+    //             if (!link) {
+    //                 link = document.createElement("link");
+    //                 link.rel = "icon";
+    //                 document.getElementsByTagName("head")[0].appendChild(link);
+    //             }
+    //             link.href = websiteConfig.favicon;
+    //         }
+    //     }
+    // }, [websiteConfig]);
 
     // if the website configuration is not yet loaded, we display a loading screen
     // to avoid rendering the children before the configuration is available
