@@ -5,6 +5,10 @@
 ## this value can be overrided using the FOLIO_PORT env variable
 port: 8080
 
+## profile to load application configuration and editor preferences
+## this value can be overrided using the FOLIO_PROFILE env variable
+profile: 'default'
+
 ## configure the authentication method
 ## allowed values: "access_token"
 authentication: 'access_token'
