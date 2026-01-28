@@ -3,8 +3,6 @@ import path from "node:path";
 import yaml from "yaml";
 import { environment } from "./env.js";
 
-export const WEB_TITLE = "folio.";
-
 export enum AuthenticationTypes {
     ACCESS_TOKEN = "access_token",
 };
@@ -55,12 +53,13 @@ export type WebsiteConfig = {
 export type BaseConfig = {
     extends?: string;
     port?: number;
+    profile?: string;
     storage: StorageTypes;
     authentication: AuthenticationTypes;
 };
 
 // configuration for folio server
-export type Config = 
+export type Config =
     BaseConfig &
     WebsiteConfig &
     SecurityConfig &
@@ -68,7 +67,7 @@ export type Config =
     AccessTokenAuthConfig;
 
 // convert a string value to a boolean
-const toBoolean = (value: string|boolean, defaultValue: boolean = false): boolean => {
+const toBoolean = (value: string | boolean, defaultValue: boolean = false): boolean => {
     if (typeof value === "boolean") {
         return value;
     }
@@ -116,6 +115,7 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "website_hide_experimental_warning": toBoolean(environment.FOLIO_HIDE_EXPERIMENTAL_WARNING, false),
         "jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
+        "profile": environment.FOLIO_PROFILE,
     };
 
     // iterate over the fields and set the values in the config object
