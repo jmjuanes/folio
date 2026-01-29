@@ -82,15 +82,11 @@ export const startServer = async (config: Config): Promise<any> => {
     app.use(bodyParser());
     app.use(logger());
 
-    // website configuration
-    if (!config?.website === false) {
-        const websiteDirectory = path.resolve(config.website_directory || "./app");
-        debug(`Website is enabled. Reading content from ${websiteDirectory}`);
-        app.use(staticContent({
-            directory: websiteDirectory,
-            index: config.website_index || "app.html",
-        }));
-    }
+    // website / frontend app configuration
+    app.use(staticContent({
+        directory: path.resolve(config.app_directory || "./app"),
+        index: config.app_index || "app.html",
+    }));
 
     // create app routes
     const router = new Router();
