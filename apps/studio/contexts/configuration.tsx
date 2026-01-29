@@ -2,16 +2,17 @@ import React from "react";
 import { Loading } from "folio-react/components/loading.jsx";
 import { useClient } from "./client.tsx";
 
-export enum WebsiteEnvironment {
-    DEVELOPMENT = "development",
-    DEMO = "demo",
-    PRODUCTION = "production",
+export type LoginMessage = {
+    title: string;
+    content: string;
 };
 
 export type Configuration = {
-    environment: WebsiteEnvironment;
-    title: string;
-    hide_experimental_warning: boolean;
+    title?: string;
+    favicon?: string;
+    login_title?: string;
+    login_messages?: LoginMessage[];
+    sidebar_title?: string;
 };
 
 // main configuration context
@@ -24,7 +25,7 @@ export const useConfiguration = (): Configuration => {
 
 // @description configuration context provider
 export const ConfigurationProvider = ({ children }): React.JSX.Element => {
-    const [ websiteConfig, setWebsiteConfig ] = React.useState<Configuration>(null);
+    const [websiteConfig, setWebsiteConfig] = React.useState<Configuration>(null);
     const client = useClient();
 
     // on mount, fetch website configuration for the current environment

@@ -42,9 +42,9 @@ storage_file: 'data/folio.db'
 # jwt_token_secret: "abcd"
 # jwt_token_expiration: "1y"
 
-## website configuration
-website: true
-website_title: "folio."
+## webapp configuration
+app_directory: 'app/'
+app_index: 'app.html'
 ```
 
 ### Configure Port
@@ -95,9 +95,14 @@ jwt_token_secret: 'abcde12345'
 jwt_token_expiration: '1y'
 ```
 
-### Website configuration
+### App configuration
 
-The `website` section allows you to enable or disable the built-in UI. You can also customize the browser title using `website_title`.
+You can configure the web application using the following fields:
+
+```yaml
+app_directory: 'app/' # folder where the web application is located. Default is /opt/folio/app
+app_index: 'app.html' # file to use as the entry file (aka index)
+```
 
 ## Environment Variables
 

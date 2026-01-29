@@ -3,8 +3,6 @@ import path from "node:path";
 import yaml from "yaml";
 import { environment } from "./env.js";
 
-export const WEB_TITLE = "folio.";
-
 export enum AuthenticationTypes {
     ACCESS_TOKEN = "access_token",
 };
@@ -12,14 +10,6 @@ export enum AuthenticationTypes {
 export enum StorageTypes {
     LOCAL = "local",
     MEMORY = "memory",
-};
-
-// supported environments for the website
-// demo means that the website is running in a demo mode, with limited features
-export enum WebsiteEnvironment {
-    DEVELOPMENT = "development",
-    DEMO = "demo",
-    PRODUCTION = "production",
 };
 
 export type AccessTokenAuthConfig = {
@@ -42,14 +32,9 @@ export type SecurityConfig = {
 };
 
 export type WebsiteConfig = {
-    website?: boolean;
-    website_directory?: string;
-    website_index?: string;
-    website_environment?: WebsiteEnvironment;
-    website_title?: string;
-    website_logo?: string;
-    website_favicon?: string;
-    website_hide_experimental_warning?: boolean;
+    app_directory?: string;
+    app_index?: string;
+    app_config?: any;
 };
 
 export type BaseConfig = {
@@ -60,23 +45,12 @@ export type BaseConfig = {
 };
 
 // configuration for folio server
-export type Config = 
+export type Config =
     BaseConfig &
     WebsiteConfig &
     SecurityConfig &
     LocalStorageConfig &
     AccessTokenAuthConfig;
-
-// convert a string value to a boolean
-const toBoolean = (value: string|boolean, defaultValue: boolean = false): boolean => {
-    if (typeof value === "boolean") {
-        return value;
-    }
-    if (typeof value === "string") {
-        return value.toLowerCase() === "true" || value === "1" || value.toLowerCase() === "yes";
-    }
-    return defaultValue;
-};
 
 // @description resolve configuration file path
 export const resolveConfigPath = (currentWorkingDir: string, defaultConfigPath: string): string => {
@@ -111,9 +85,7 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "port": environment.FOLIO_PORT,
         "access_token": environment.FOLIO_ACCESS_TOKEN,
         "storage_file": environment.FOLIO_STORAGE_FILE,
-        "website_directory": environment.FOLIO_WEBSITE_PATH,
-        "website_environment": environment.FOLIO_ENVIRONMENT,
-        "website_hide_experimental_warning": toBoolean(environment.FOLIO_HIDE_EXPERIMENTAL_WARNING, false),
+        "app_directory": environment.FOLIO_APP_PATH || environment.FOLIO_APP_DIRECTORY || environment.FOLIO_WEBSITE_PATH,
         "jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
     };

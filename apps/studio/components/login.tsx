@@ -1,37 +1,35 @@
 import React from "react";
+import { ExclamationCircleIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.jsx";
 import { Centered } from "folio-react/components/ui/centered.jsx";
-import { useConfiguration, WebsiteEnvironment } from "../contexts/configuration.tsx";
+import { useConfiguration } from "../contexts/configuration.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
 import { useClient } from "../contexts/client.tsx";
+import type { LoginMessage } from "../contexts/configuration.tsx";
+
+const LoginMessageAlert = ({ title, content }: LoginMessage): React.JSX.Element => {
+    return (
+        <div className="text-xs text-gray-700 mb-4 border-1 border-gray-200 p-3 rounded-md leading-relaxed">
+            <div className="flex items-center gap-1 mb-1">
+                <div className="flex items-center text-sm">
+                    <ExclamationCircleIcon />
+                </div>
+                <div className="font-bold">{title}</div>
+            </div>
+            <div className="">{content}</div>
+        </div>
+    );
+};
 
 // @description login component
 export const Login = (): React.JSX.Element => {
     const toaster = useToaster();
     const client = useClient();
     const websiteConfig = useConfiguration();
-    const [ loading, setLoading ] = React.useState<boolean>(false);
-    const [ experimentalWarningChecked, setExperimentalWarningChecked ] = React.useState<boolean>(false);
-    const [ demoWarningChecked, setDemoWarningChecked ] = React.useState<boolean>(false);
+    const [loading, setLoading] = React.useState<boolean>(false);
     const accessTokenRef = React.useRef<HTMLInputElement>(null);
 
-    const isLoginEnabled = React.useMemo(() => {
-        const checks = [true, true];
-        if (!websiteConfig.hide_experimental_warning) {
-            checks[0] = !!experimentalWarningChecked;
-        }
-        if (websiteConfig.environment === WebsiteEnvironment.DEMO) {
-            checks[1] = !!demoWarningChecked;
-        }
-        // to enable the login button, all checks must be true
-        return checks.every(check => check);
-    }, [ websiteConfig, experimentalWarningChecked, demoWarningChecked ]);
-
     const handleLogin = React.useCallback(() => {
-        if (!isLoginEnabled) {
-            return;
-        }
-
         const accessToken = (accessTokenRef.current?.value || "").trim();
         if (!accessToken) {
             return toaster.error("The access token is required to log in.");
@@ -44,13 +42,13 @@ export const Login = (): React.JSX.Element => {
                 toaster.error(error?.message || "An error occurred while logging in.");
             })
             .finally(() => setLoading(false));
-    }, [ client, isLoginEnabled ]);
+    }, [client]);
 
     return (
         <Centered className="h-screen">
             <div className="w-96 pb-20">
                 <div className="font-serif text-5xl mb-4 leading-none font-brand select-none">
-                    <span>{websiteConfig.title}</span>
+                    <span>{websiteConfig.login_title || websiteConfig.title || "folio."}</span>
                 </div>
                 <div className="text-sm text-gray-700 mb-4">
                     <span>You need to log in with your access token to continue.</span>
@@ -73,63 +71,16 @@ export const Login = (): React.JSX.Element => {
                         Your access token is printed in the terminal where you run the server. If you don't have it, please contact your administrator.
                     </div>
                 </div>
-                {!websiteConfig.hide_experimental_warning && (
-                    <div className="mb-5">
-                        <div className="text-xs text-gray-700 mb-4 border-1 border-gray-200 p-3 rounded-md leading-relaxed">
-                            <div className="mb-2">
-                                <b>Warning:</b> This application is in an <b>experimental state</b>.
-                            </div>
-                            <div className="">
-                                Some features may not work correctly or may contain bugs. 
-                                There may be changes between versions that could result in data loss. By using this tool, you are responsible for making regular backups of any stored information.
-                            </div>
-                        </div>
-                        <label className="flex items-center cursor-pointer">
-                            <input
-                                type="checkbox"
-                                className="rounded-md border-1 border-gray-200 text-gray-950"
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    setExperimentalWarningChecked(event.target.checked);
-                                }}
-                            />
-                            <span className="ml-2 text-sm text-gray-700 leading-none">
-                                I have read and understood the experimental warning.
-                            </span>
-                        </label>
-                    </div>
-                )}
-                {websiteConfig.environment === WebsiteEnvironment.DEMO && (
-                    <div className="mb-5">
-                        <div className="text-xs text-gray-700 mb-4 border-1 border-gray-200 p-3 rounded-md leading-relaxed">
-                            <div className="mb-2">
-                                <b>Warning:</b> This is a temporary demo environment.
-                            </div>
-                            <div>
-                                Any information you store here is not permanent and will be deleted when the server becomes inactive. Please do not use this environment for storing important data.
-                            </div>
-                            <div className="mt-2">
-                                <b>Note:</b> Information stored in this environment can be viewed by any other user.
-                            </div>
-                        </div>
-                        <label className="flex items-start cursor-pointer">
-                            <div className="shrink-0 flex mt-1">
-                                <input
-                                    type="checkbox"
-                                    className="rounded-md border-1 border-gray-200 text-gray-950 cursor-pointer"
-                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                        setDemoWarningChecked(event.target.checked);
-                                    }}
-                                />
-                            </div>
-                            <span className="ml-2 text-sm text-gray-700">
-                                I understand that this is a demo environment and that any information stored here is not permanent.
-                            </span>
-                        </label>
-                    </div>
-                )}
+                {(websiteConfig.login_messages || []).map((message: LoginMessage, index: number) => (
+                    <LoginMessageAlert
+                        key={index}
+                        title={message.title}
+                        content={message.content}
+                    />
+                ))}
                 <div className="w-full">
-                    <Button className="w-full" disabled={!isLoginEnabled || loading} onClick={handleLogin}>
-                        <span>Continue</span>
+                    <Button className="w-full" disabled={loading} onClick={handleLogin}>
+                        <span className="font-bold">Continue</span>
                     </Button>
                 </div>
             </div>

@@ -39,6 +39,9 @@ storage_file: 'data/folio.db'
 ## expiration: specify the expiration time. Times are parsed by https://www.npmjs.com/package/ms
 # jwt_token_expiration: "1y"
 
-## website configuration
-website: true
-# website_title: "folio."
+## configure the folder where the frontend app is located
+app_directory: 'app/'
+
+## branding configuration (title, favicon, etc.)
+## app_config:
+##  title: 'folio.'
