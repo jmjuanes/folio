@@ -49,8 +49,12 @@ const rules = [
             body: {
                 data: {
                     title: "folio.",
-                    environment: "development",
-                    hide_experimental_warning: false,
+                    login_messages: [
+                        {
+                            title: "Development environment",
+                            content: "You are using a development environment. Some features may not work correctly or may contain bugs.",
+                        },
+                    ],
                 },
             },
         },
