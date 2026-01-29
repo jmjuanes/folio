@@ -85,7 +85,7 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "port": environment.FOLIO_PORT,
         "access_token": environment.FOLIO_ACCESS_TOKEN,
         "storage_file": environment.FOLIO_STORAGE_FILE,
-        "app_directory": environment.FOLIO_APP_PATH || environment.FOLIO_WEBSITE_PATH,
+        "app_directory": environment.FOLIO_APP_PATH || environment.FOLIO_APP_DIRECTORY || environment.FOLIO_WEBSITE_PATH,
         "jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
     };

@@ -7,5 +7,5 @@ app_config:
   title: 'folio.'
   favicon: ''
   login_messages:
-      title: 'This is a temporary demo environment.'
-      content: 'Any information you store here is not permanent and will be deleted when the server becomes inactive. Please do not use this environment for storing important data.'
+      - title: 'This is a temporary demo environment.'
+        content: 'Any information you store here is not permanent and will be deleted when the server becomes inactive. Please do not use this environment for storing important data.'
