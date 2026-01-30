@@ -1,0 +1,28 @@
+---
+{
+    "layout": "default.mustache"
+}
+---
+{{!@content}}
+<div class="w-full h-px bg-current opacity-20"></div>
+<footer class="pt-32 pb-24 px-6 w-full flex flex-col items-center gap-8">
+    <div class="text-6xl sm:text-8xl md:text-9xl folio:font-brand leading-none flex items-center">
+        <span>folio</span>
+        <span class="opacity-70">labs</span>
+        <span>.</span>
+    </div>
+    <div class="flex flex-col justify-center">
+        <div class="flex gap-4 justify-center mb-4">
+            {{#each site.footer.links}}
+            <a href="{{url}}" class="hover:underline text-current font-bold">{{title}}</a>
+            {{/each}}
+        </div>
+        <div class="mb-1 text-sm opacity-60 text-center">
+            <div>Designed and built by <a href="https://josemi.xyz" class="hover:underline text-current font-bold">Josemi</a> in Valencia, Spain.</div>
+            <div>Source code is available on <a href="{{site.repository}}" class="hover:underline text-current font-bold">GitHub</a>.</div>
+        </div>
+        <div class="text-xs opacity-60 text-center">
+            <span>This site does not track you.</span>
+        </div>
+    </div>
+</footer>

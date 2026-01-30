@@ -1,0 +1,62 @@
+{
+    "title": "folio.",
+    "subtitle": "Minimal whiteboard for sketching and prototyping",
+    "description": "Folio is a minimalistic digital whiteboard for sketching and prototyping. It is designed to be simple and easy to use, with a focus on speed and efficiency.",
+    "url": "https://folio.josemi.xyz",
+    "navbar": {
+        "links": [
+            {
+                "label": "Studio",
+                "url": "/studio"
+            },
+            {
+                "label": "Plans",
+                "url": "/plans"
+            },
+            {
+                "label": "Docs",
+                "url": "/docs"
+            }
+        ],
+        "cta": {
+            "label": "Try it",
+            "icon": "arrow-right",
+            "url": "/app"
+        }
+    },
+    "sidebar": [
+        {
+            "group": "Overview",
+            "pages": [
+                "docs/index.md"
+            ]
+        },
+        {
+            "group": "Deployment",
+            "pages": [
+                "docs/installation.md",
+                "docs/configuration.md"
+            ]
+        },
+        {
+            "group": "Advanced Guides",
+            "pages": [
+                "docs/persistence.md",
+                "docs/authentication.md"
+            ]
+        }
+    ],
+    "footer": {
+        "text": "2026 &copy; Josemi Juanes.",
+        "links": [
+            {
+                "label": "Report a bug",
+                "url": "https://github.com/jmjuanes/folio/issues"
+            },
+            {
+                "label": "Changelog",
+                "url": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
+            }
+        ]
+    }
+}
