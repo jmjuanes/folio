@@ -4,7 +4,7 @@
     "description": "Quick overview of what Folio is and how to get started.",
     "permalink": "/docs/index.html",
     "nextPage": "/docs/installation.html",
-    "layout": "default.mustache",
+    "layout": "docs.mustache",
     "quickstart": [
         {
             "icon": "globe",

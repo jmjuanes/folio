@@ -3,7 +3,7 @@
     "title": "Installation",
     "description": "Learn how to install Folio Studio on your own computer",
     "permalink": "/docs/installation.html",
-    "layout": "default.mustache",
+    "layout": "docs.mustache",
     "prevPage": "/docs/index.html",
     "nextPage": "/docs/configuration.html"
 }
