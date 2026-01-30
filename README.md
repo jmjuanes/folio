@@ -91,9 +91,8 @@ Compile Folio's components for production.
 
 Build and serve the public-facing parts of Folio: Lite, landing page, and documentation.
 
-- `yarn build:website`: build all website assets (Lite + landing + docs).
-- `yarn build:landing`: build the landing page.
 - `yarn build:docs`: build the documentation site.
+- `yarn build:website`: build all website assets (Lite + docs).
 - `yarn copy:website`: copy all website builds to `www/` folder.
 
 #### Other Commands  
@@ -102,7 +101,6 @@ Utility scripts for Docker, asset management, cleanup, and type checking.
 
 - `yarn docker:studio`: build Docker image for Folio Studio.
 - `yarn clean`: remove build output (`www/`).
-- `yarn copy-assets`: copy static assets.
 - `yarn test`: run tests with Jest.
 - `yarn typecheck`: type check Folio Server.
 - `yarn typecheck:lite`: type check Folio Lite.
