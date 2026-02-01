@@ -39,10 +39,6 @@ press({
     repository: pkg.repository,
     plugins: [
         press.SourcePlugin({
-            folder: "pages",
-            extensions: [".mustache"],
-        }),
-        press.SourcePlugin({
             folder: "../../docs",
             extensions: [".md"],
         }),
@@ -68,7 +64,6 @@ press({
         // }),
         press.ContentPagePlugin(),
         press.CopyAssetsPlugin({
-            basePath: "vendor",
             patterns: [
                 {
                     from: path.resolve("../../node_modules/lowcss/low.css"),
@@ -84,12 +79,12 @@ press({
                 },
             ],
         }),
-        press.CopyAssetsPlugin({
-            basePath: ".",
-            patterns: press.utils.walkdir(path.resolve("./public")).map(file => ({
-                from: path.resolve(path.join("./public", file)),
-                to: file,
-            })),
-        }),
+        // press.CopyAssetsPlugin({
+        //     basePath: ".",
+        //     patterns: press.utils.walkdir(path.resolve("./public")).map(file => ({
+        //         from: path.resolve(path.join("./public", file)),
+        //         to: file,
+        //     })),
+        // }),
     ],
 });
