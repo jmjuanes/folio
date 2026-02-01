@@ -1,0 +1,339 @@
+---
+{
+    "title": "folio.",
+    "subtitle": "Minimal whiteboard for sketching and prototyping",
+    "description": "Folio is a minimalistic digital whiteboard for sketching and prototyping. It is designed to be simple and easy to use, with a focus on speed and efficiency.",
+    "url": "https://folio.josemi.xyz",
+    "navbar": {
+        "links": [
+            {
+                "label": "Studio",
+                "url": "#studio"
+            },
+            {
+                "label": "Plans",
+                "url": "#plans"
+            },
+            {
+                "label": "Docs",
+                "url": "/docs"
+            }
+        ],
+        "cta": {
+            "label": "Try it",
+            "icon": "arrow-right",
+            "url": "/app"
+        }
+    },
+    "hero": {
+        "label": "Sketch. Design. Prototype.",
+        "title": [
+            {
+                "text": "Your "
+            },
+            {
+                "text": "Instant ",
+                "className": "font-normal italic"
+            },
+            {
+                "text": "Sketching ",
+                "className": "font-black"
+            },
+            {
+                "text": "Suite.",
+                "className": "opacity-80"
+            }
+        ],
+        "subtitle": "<b>Folio</b> is an infinite canvas for your creative journey. Sketch, prototype, and bring your ideas to life with ease."
+        "actions": [
+            {
+                "url": "/app",
+                "text": "Try it"
+            }
+        ]
+    },
+    "sections": [
+        {
+            "name": "features",
+            "title": [
+                {
+                    "text": "Sketch and Design. ",
+                    "className": "block opacity-60"
+                },
+                {
+                    "text": "With freedom."
+                }
+            ],
+            "content": [
+                {
+                    "type": "group",
+                    "size": 2,
+                    "items": [
+                        {
+                            "icon": "shield",
+                            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
+                            "title": "Design with total Privacy.",
+                            "titleClassName": "text-center",
+                            "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>.",
+                            "descriptionClassName": "text-center"
+                        },
+                        {
+                            "icon": "square",
+                            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
+                            "title": "Boundless Canvas.",
+                            "titleClassName": "text-center",
+                            "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish.",
+                            "descriptionClassName": "text-center"
+                        },
+                        {
+                            "icon": "files",
+                            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
+                            "title": "Organize your ideas.",
+                            "titleClassName": "text-center",
+                            "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas.",
+                            "descriptionClassName": "text-center"
+                        },
+                        {
+                            "icon": "album",
+                            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
+                            "title": "Save, Organize, and Reuse Elements.",
+                            "titleClassName": "text-center",
+                            "description": "Use the Library to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access.",
+                            "descriptionClassName": "text-center"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "studio": {
+        "sectionOptions": {
+            "title": [
+                {
+                    "text": "All Folio.",
+                    "className": "opacity-70 block"
+                },
+                {
+                    "text": "Self-Hosted."
+                }
+            ],
+            "icon": "sidebar-left",
+            "label": "Introducing <b>Folio Studio</b>.",
+            "description": "A lightweight editor for sketching structures, interfaces, and ideas. <b>Folio Studio</b> runs entirely on your machine.",
+            "className": "folio:bg-primary folio:text-dark-base",
+            "actions": [
+                {
+                    "text": "About Studio",
+                    "url": "/studio"
+                },
+                {
+                    "text": "Documentation",
+                    "url": "/docs"
+                }
+            ]
+        }
+    }
+}
+---
+<!doctype html>
+<html lang="en" style="overscroll-behavior-x:none;" class="bg-gray-950 text-white">
+<head>
+    <meta charSet="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta name="title" content="{{this.title}}">
+    <meta name="description" content="{{this.description}}">
+    <meta name="og:type" content="website">
+    <meta name="og:site_name" content="{{this.title}}">
+    <meta name="og:description" content="{{description}}">
+    <meta name="og:image" content="/og-image.png">
+    <meta name="og:url" content="{{this.url}}">
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
+    <link rel="stylesheet" href="/low.css">
+    <link rel="stylesheet" href="/highlight.css">
+    <link rel="stylesheet" href="/brand.css">
+    <title>{{this.title}} - {{this.subtitle}}</title>
+</head>
+<body class="m-0 p-0 font-sans leading-normal text-white">
+    <header class="flex items-center justify-between w-full px-8 py-8 max-w-9xl mx-auto">
+        <a href="/" class="flex items-center gap-1 cursor-pointer leading-none">
+            <div class="text-4xl folio:font-brand text-current">folio.</div>
+        </a>
+        <div class="flex gap-6 items-center">
+            {{#each this.navbar.links}}
+            <a href="{{this.url}}" class="cursor-pointer font-medium hover:underline text-current text-lg">
+                <span>{{this.label || this.title}}</span>
+            </a>
+            {{/each}}
+            {{#if this.navbar.cta}}
+            <a href="{{this.navbar.cta.url}}" class="flex items-center gap-1 px-3 py-2 folio:bg-primary folio:text-dark-base rounded-xl hover:opacity-90">
+                <span class="font-bold text-lg">{{this.navbar.cta.label || this.navbar.cta.title}}</span>
+                {{#if this.navbar.cta.icon}}
+                <div class="flex items-center text-xl">
+                    {{=icon icon=this.navbar.cta.icon}}
+                </div>
+                {{/if}}
+            </a>
+            {{/if}}
+        </div>
+    </header>
+    {{#if this.hero}}
+    <section class="max-w-6xl mx-auto px-6 py-32 flex flex-col justify-center items-center gap-6">
+        {{#if this.hero.label}}
+        <div class="hidden items-center justify-center">
+            <div class="text-current px-4 py-1 rounded-full border-1 border-current text-base opacity-60">
+                <span class="font-medium">{{!this.hero.label}}</span>
+            </div>
+        </div>
+        {{/if}}
+        <div class="mb-0 text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-center leading-tight font-extrabold">
+        {{#each this.hero.title}}
+            <span class="{{this.className}}">{{!this.text}}</span>
+        {{/each}}
+        </div>
+        {{#if this.hero.subtitle}}
+        <div class="max-w-4xl mb-0 text-2xl md:text-3xl text-center">
+            <span class="opacity-80">{{!this.hero.subtitle}}</span>
+        </div>
+        {{/if}}
+        {{#if this.hero.actions}}
+        <div class="flex flex-col items-center gap-8">
+            <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
+                {{#each this.hero.actions}}
+                <a href="{{this.url}}" class="flex items-center cursor-pointer hover:underline text-current text-2xl md:text-3xl">
+                    <span class="font-bold">{{!this.text}} &rarr;</span>
+                </a>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+    </section>
+    {{/if}}
+    {{#each this.sections}}
+    <section class="w-full py-32 sm:py-40 md:py-48 {{this.className}}" style="{{this.style}}" data-role="section">
+        <div class="mx-auto max-w-6xl px-6">
+            <div class="flex flex-col gap-8 items-center" data-role="section:header">
+                {{#if this.icon}}
+                <div class="flex mb-0">
+                    <div class="flex items-center opacity-90">
+                        {{=icon icon=this.icon className="w-28 h-28"}}
+                    </div>
+                </div>
+                {{/if}}
+                <div class="max-w-4xl w-full mx-auto flex flex-col items-center">
+                    {{#if this.label}}
+                    <div class="mb-2 font-bold text-xl md:text-2xl text-center opacity-70">
+                        {{!this.label}}
+                    </div>
+                    {{/if}}
+                    <div class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-none font-extrabold text-center">
+                    {{#each this.title}}
+                        <span class="{{this.className}}">{{!this.text}}</span>
+                    {{/each}}
+                    </div>
+                </div>
+                {{#if this.description}}
+                <div class="max-w-2xl text-xl md:text-2xl text-center opacity-80">
+                    {{!this.description}}
+                </div>
+                {{/if}}
+                {{#if this.actions}}
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                    {{#each this.actions}}
+                    <a href="{{this.url || this.link}}" class="font-bold text-2xl hover:underline">
+                        <span>{{!this.text}} →</span>
+                    </a>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+            {{#each this.content}}
+            <div class="mt-24">
+                {{#eq this.type "group"}}
+                <div class="w-full grid grid-cols-1 md:grid-cols-{{this.size}} gap-12" data-role="group">
+                    {{#each this.items}}
+                    <article class="mb-2">
+                        {{#if this.icon}}
+                        <div class="flex mb-6">
+                            <div class="flex items-center {{this.iconClassName}}">
+                                {{=icon icon=this.icon className="w-16 h-16 opacity-80"}}
+                            </div>
+                        </div>
+                        {{/if}}
+                        {{#if this.title}}
+                        <div class="font-extrabold text-2xl leading-tight mb-3 {{this.titleClassName}}">
+                            <span>{{!this.title}}</span>
+                        </div>
+                        {{/if}}
+                        {{#if this.description}}
+                        <div class="leading-relaxed opacity-80 text-lg {{this.descriptionClassName}}">
+                            <span>{{!this.description}}</span>
+                        </div>
+                        {{/if}}
+                    </article>
+                    {{/each}}
+                </div>
+                {{/eq}}
+                {{#eq this.type "command"}}
+                <div class="flex justify-center py-8">
+                    <div class="w-full d-flex flex-col text-current text-xl sm:text-2xl md:text-3xl text-center font-mono font-bold">
+                        <div>{{this.command}}</div>
+                    </div>
+                </div>
+                {{/eq}}
+                {{#eq this.type "plans"}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+                    {{#each this.items}}
+                    <div class="border-1 border-current rounded-4xl p-8 {{this.className}}">
+                        <div class="text-center text-3xl sm:text-4xl md:text-4xl font-extrabold">{{this.title}}</div>
+                        <div class="text-center text-xl font-medium opacity-90 mb-4">{{this.subtitle}}</div>
+                        <div class="text-sm opacity-80 mb-8">{{this.description}}</div>
+                        <div class="flex flex-col gap-4">
+                        {{#each this.features}}
+                            <div class="flex flex-row items-start gap-4">
+                                <div class="shrink-0 text-current flex">
+                                    {{=icon icon="check" className="w-6 h-6"}}
+                                </div>
+                                <div class="w-full opacity-80">{{!this}}</div>
+                            </div>
+                        {{/each}}
+                        </div>
+                        {{#if this.link}}
+                        <div class="mt-8 flex justify-center">
+                            <a href="{{this.link}}" class="font-bold text-2xl hover:underline">
+                                <span>Get Started →</span>
+                            </a>
+                        </div>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+                {{#if this.notes}}
+                <div class="mt-12 flex flex-col items-center gap-0">
+                    {{#each this.notes}}
+                    <div class="text-xs opacity-50">{{!this}}</div>
+                    {{/each}}
+                </div>
+                {{/if}}
+                {{/eq}}
+            </div>
+            {{/each}}
+        </div>
+    </section>
+    {{/each}}
+    <div class="w-full h-px bg-white opacity-10"></div>
+    <footer class="py-8 px-8 max-w-9xl w-full mx-auto flex items-center gap-4 justify-between">
+        <div class="text-sm opacity-60">
+            <span>{{!site.footer.text}}</span>
+        </div>
+        <div class="flex gap-4">
+            {{#each site.footer.links}}
+            <a href="{{this.url}}" class="hover:underline text-current font-bold text-sm">
+                <span>{{this.label || this.title}}</span>
+            </a>
+            {{/each}}
+        </div>
+    </footer>
+</body>
+</html>
