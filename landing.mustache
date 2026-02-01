@@ -68,42 +68,59 @@
                 {
                     "type": "group",
                     "size": 2,
+                    "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
+                    "titleClassName": "text-center",
+                    "descriptionClassName": "text-center",
                     "items": [
                         {
                             "icon": "shield",
-                            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
                             "title": "Design with total Privacy.",
-                            "titleClassName": "text-center",
-                            "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>.",
-                            "descriptionClassName": "text-center"
+                            "description": "We are committed to keeping your work private and secure. For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>."
                         },
                         {
                             "icon": "square",
-                            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
                             "title": "Boundless Canvas.",
-                            "titleClassName": "text-center",
-                            "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish.",
-                            "descriptionClassName": "text-center"
+                            "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish."
                         },
                         {
                             "icon": "files",
-                            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
                             "title": "Organize your ideas.",
-                            "titleClassName": "text-center",
-                            "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas.",
-                            "descriptionClassName": "text-center"
+                            "description": "The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
                         },
                         {
                             "icon": "album",
-                            "iconClassName": "mx-auto p-6 rounded-full folio:bg-primary folio:text-dark-base",
                             "title": "Save, Organize, and Reuse Elements.",
-                            "titleClassName": "text-center",
-                            "description": "Use the Library to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access.",
-                            "descriptionClassName": "text-center"
+                            "description": "Use the Library to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
                         }
                     ]
                 }
             ]
+        },
+        {
+            "name": "studio",
+            "label": "Introducing <b>Folio Studio</b>.",
+            "title": [
+                {
+                    "text": "Where "
+                },
+                {
+                    "className": "underline font-bold",
+                    "text": "Ideas"
+                },
+                {
+                    "text": " take "
+                },
+                {
+                    "className": "italic font-normal",
+                    "text": "Shape."
+                },
+                {
+                    "className": "font-black",
+                    "text": " Locally."
+                }
+            ],
+            "subtitle": "A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.",
+            "content": []
         }
     ],
     "studio": {
@@ -256,18 +273,18 @@
                     <article class="mb-2">
                         {{#if this.icon}}
                         <div class="flex mb-6">
-                            <div class="flex items-center {{this.iconClassName}}">
+                            <div class="flex items-center {{@parent.iconClassName}}">
                                 {{=icon icon=this.icon className="w-16 h-16 opacity-80"}}
                             </div>
                         </div>
                         {{/if}}
                         {{#if this.title}}
-                        <div class="font-extrabold text-2xl leading-tight mb-3 {{this.titleClassName}}">
+                        <div class="font-extrabold text-2xl leading-tight mb-3 {{@parent.titleClassName}}">
                             <span>{{!this.title}}</span>
                         </div>
                         {{/if}}
                         {{#if this.description}}
-                        <div class="leading-relaxed opacity-80 text-lg {{this.descriptionClassName}}">
+                        <div class="leading-relaxed opacity-80 text-lg {{@parent.descriptionClassName}}">
                             <span>{{!this.description}}</span>
                         </div>
                         {{/if}}
