@@ -22,7 +22,7 @@ const template = mikel.create({
     functions: {
         icon: params => {
             const className = params.opt.className || "";
-            return `<svg class="${className}" width="1em" height="1em"><use xlink:href="/vendor/icons.svg#${params.opt.icon}"></use></svg>`;
+            return `<svg class="${className}" width="1em" height="1em"><use xlink:href="/icons.svg#${params.opt.icon}"></use></svg>`;
         },
         highlight: params => {
             return highlightCode(params?.opt?.code, params?.opt?.language);
