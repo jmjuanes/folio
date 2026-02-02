@@ -3,78 +3,74 @@
 <head>
     <meta charSet="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
-    <meta name="title" content="{{this.title}}">
-    <meta name="description" content="{{this.description}}">
+    <meta name="title" content="folio.">
+    <meta name="description" content="The minimalistic digital whiteboard for sketching and prototyping.">
+    <meta name="keywords" content="folio, whiteboard, sketching, prototyping, digital whiteboard, design tool, ux tool, ui tool">
+    <meta name="author" content="Josemi Juanes">
     <meta name="og:type" content="website">
-    <meta name="og:site_name" content="{{this.title}}">
-    <meta name="og:description" content="{{description}}">
+    <meta name="og:site_name" content="folio.">
+    <meta name="og:description" content="The minimalistic digital whiteboard for sketching and prototyping.">
     <meta name="og:image" content="/og-image.png">
-    <meta name="og:url" content="{{this.url}}">
+    <meta name="og:url" content="https://folio.josemi.xyz">
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
     <link rel="stylesheet" href="/low.css">
-    <link rel="stylesheet" href="/highlight.css">
     <link rel="stylesheet" href="/brand.css">
-    <title>{{this.title}} - {{this.subtitle}}</title>
+    <title>Sketch, design, prototype - folio.</title>
 </head>
 <body class="m-0 p-0 font-sans leading-normal text-white">
-    <header class="flex items-center justify-between w-full px-8 py-8 max-w-9xl mx-auto">
+    <header class="flex items-center justify-between w-full px-8 py-8 max-w-9xl mx-auto" data-role="navbar">
         <a href="/" class="flex items-center gap-1 cursor-pointer leading-none">
             <div class="text-4xl folio:font-brand text-current">folio.</div>
         </a>
         <div class="flex gap-6 items-center">
-            {{#each this.navbar.links}}
-            <a href="{{this.url}}" class="cursor-pointer font-medium hover:underline text-current text-lg">
-                <span>{{this.label || this.title}}</span>
+            <a href="#studio" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
+                <span>Studio</span>
             </a>
-            {{/each}}
-            {{#if this.navbar.cta}}
-            <a href="{{this.navbar.cta.url}}" class="flex items-center gap-1 px-3 py-2 folio:bg-primary folio:text-dark-base rounded-xl hover:opacity-90">
-                <span class="font-bold text-lg">{{this.navbar.cta.label || this.navbar.cta.title}}</span>
-                {{#if this.navbar.cta.icon}}
+            <a href="#plans" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
+                <span>Plans</span>
+            </a>
+            <a href="/docs" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
+                <span>Docs</span>
+            </a>
+            <a href="/app" class="flex items-center gap-1 px-3 py-2 folio:bg-primary folio:text-dark-base rounded-xl hover:opacity-90">
+                <span class="font-bold text-lg md:text-xl">Try it</span>
                 <div class="flex items-center text-xl">
-                    {{=icon icon=this.navbar.cta.icon}}
+                    <svg width="1em" height="1em"><use xlink:href="/icons.svg#arrow-right"></use></svg>
                 </div>
-                {{/if}}
             </a>
-            {{/if}}
         </div>
     </header>
-    {{#if this.hero}}
-    <section class="max-w-6xl mx-auto px-6 py-32 flex flex-col justify-center items-center gap-6">
-        {{#if this.hero.label}}
-        <div class="hidden items-center justify-center">
+    <section class="max-w-6xl mx-auto px-6 py-32 flex flex-col justify-center items-center gap-6" data-role="hero">
+        <div class="items-center justify-center">
             <div class="text-current px-4 py-1 rounded-full border-1 border-current text-base opacity-60">
-                <span class="font-medium">{{!this.hero.label}}</span>
+                <span class="font-medium">Sketch. Design. Prototype.</span>
             </div>
         </div>
-        {{/if}}
         <div class="mb-0 text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-center leading-tight font-extrabold">
-        {{#each this.hero.title}}
-            <span class="{{this.className}}">{{!this.text}}</span>
-        {{/each}}
+            <span class="">Your</span>
+            <span class="font-normal italic">Instant</span>
+            <span class="font-black">Sketching</span>
+            <span class="opacity-80">Suite.</span>
         </div>
-        {{#if this.hero.subtitle}}
-        <div class="max-w-4xl mb-0 text-2xl md:text-3xl text-center">
-            <span class="opacity-80">{{!this.hero.subtitle}}</span>
+        <div class="max-w-4xl mb-0 text-2xl md:text-3xl text-center opacity-80">
+            <span><b>Folio</b> is an infinite canvas for your creative journey.</span>
+            <span>Sketch, prototype, and bring your ideas to life with ease.</span>
         </div>
-        {{/if}}
-        {{#if this.hero.actions}}
-        <div class="flex flex-col items-center gap-8">
+        <div class="flex flex-col items-center gap-2">
             <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
-                {{#each this.hero.actions}}
-                <a href="{{this.url}}" class="flex items-center cursor-pointer hover:underline text-current text-2xl md:text-3xl">
-                    <span class="font-bold">{{!this.text}} &rarr;</span>
+                <a href="/app" class="flex items-center cursor-pointer hover:underline text-current text-3xl md:text-5xl">
+                    <span class="font-bold">Try folio &rarr;</span>
                 </a>
-                {{/each}}
+            </div>
+            <div class="text-sm select-none text-center opacity-40">
+                <span>No signup. Start in less than 5 seconds.</span>
             </div>
         </div>
-        {{/if}}
     </section>
-    {{/if}}
     {{#each this.sections}}
-    <section class="w-full py-32 sm:py-40 md:py-48 {{this.className}}" style="{{this.style}}" data-role="section">
+    <section class="w-full py-32 sm:py-40 md:py-48 {{this.className}}" data-role="section">
         <div class="mx-auto max-w-6xl px-6">
             <div class="flex flex-col gap-8 items-center" data-role="section:header">
                 {{#if this.icon}}
