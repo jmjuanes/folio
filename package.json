@@ -71,6 +71,8 @@
         "html-webpack-plugin": "^5.6.3",
         "jest": "^30.0.0",
         "jest-environment-jsdom": "^30.0.0",
+        "mikel": "^0.31.0",
+        "mikel-frontmatter": "^0.31.0",
         "picomatch": "^4.0.2",
         "purgecss": "^7.0.2",
         "react-test-renderer": "^18.2.0",
