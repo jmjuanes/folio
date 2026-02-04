@@ -1,8 +1,35 @@
-{{#frontmatter as="site"}}
-assets:
+{{#frontmatter}}
+navbar:
+  links:
+    - title: "Studio"
+      url: "#studio"
+    - title: "Plans"
+      url: "#plans"
+    - title: "Docs"
+      url: "/docs"
+  cta:
+    title: "Try it"
+    url: "/app"
+features:
+  - icon: "shield"
+    title: "Design with total Privacy."
+    description: "We are committed to keeping your work private and secure. For that reason, folio uses the local storage of your browser to ensure that your drawings are accessible only to you."
+  - icon: "square"
+    title: "Boundless Canvas."
+    description: "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, folio provides limitless space for your creativity to flourish."
+  - icon: "files"
+    title: "Organize your Ideas."
+    description: "The new Pages feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
+  - icon: "album"
+    title: "Save, Organize, and Reuse Elements."
+    description: "Use the Library to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
 {{/frontmatter}}
+{{>*icon}}
+<svg width="1em" height="1em" class="{{this.className}}"><use xlink:href="/icons.svg#{{this.icon}}"></use></svg>
+{{/icon}}
+{{#with @frontmatter}}
 <!doctype html>
-<html lang="en" style="overscroll-behavior-x:none;" class="bg-background text-foreground">
+<html lang="en" style="overscroll-behavior-x:none;" class="">
 <head>
     <meta charSet="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
@@ -22,27 +49,25 @@ assets:
     <link rel="stylesheet" href="/brand.css">
     <title>Sketch, design, prototype - folio.</title>
 </head>
-<body class="m-0 p-0 font-sans leading-normal">
+<body class="m-0 p-0 font-sans leading-normal bg-background text-foreground">
     <header class="flex items-center justify-between w-full px-8 py-8 max-w-9xl mx-auto" data-role="navbar">
         <a href="/" class="flex items-center gap-1 cursor-pointer leading-none">
             <div class="text-4xl font-brand text-current">folio.</div>
         </a>
         <div class="flex gap-6 items-center">
-            <a href="#studio" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
-                <span>Studio</span>
+            {{#each this.navbar.links}}
+            <a href="{{this.url}}" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
+                <span>{{this.title}}</span>
             </a>
-            <a href="#plans" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
-                <span>Plans</span>
-            </a>
-            <a href="/docs" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
-                <span>Docs</span>
-            </a>
-            <a href="/app" class="flex items-center gap-1 px-3 py-2 bg-primary text-primary-foreground rounded-xl hover:opacity-90">
-                <span class="font-bold text-lg md:text-xl">Try it</span>
+            {{/each}}
+            {{#if this.navbar.cta}}
+            <a href="{{this.navbar.cta.url}}" class="flex items-center gap-1 px-3 py-2 bg-primary text-primary-foreground rounded-xl hover:opacity-90">
+                <span class="font-bold text-lg md:text-xl">{{this.navbar.cta.title}}</span>
                 <div class="flex items-center text-xl">
-                    <svg width="1em" height="1em"><use xlink:href="/icons.svg#arrow-right"></use></svg>
+                    {{>icon icon="arrow-right" className=""}}
                 </div>
             </a>
+            {{/if}}
         </div>
     </header>
     <!-- hero section -->
@@ -88,62 +113,21 @@ assets:
             </div>
             <!-- features groups -->
             <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-12 mt-24">
-                <!-- feature item 1 -->
-                <!-- design with total privacy -->
+                {{#each this.features}}
                 <article class="mb-2" data-role="feature-item">
-                    <div class="mb-6 flex items-center mx-auto p-6 rounded-full bg-primary text-primary-foreground">
-                        <svg width="1em" height="1em" class=""><use xlink:href="/icons.svg#shield"></use></svg>
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="flex items-center p-6 rounded-full bg-primary text-primary-foreground">
+                            {{>icon icon=this.icon className="w-16 h-16 opacity-80"}}
+                        </div>
                     </div>
                     <div class="font-extrabold text-2xl leading-tight mb-3 text-center">
-                        <span>Design with total Privacy.</span>
+                        <span>{{!this.title}}</span>
                     </div>
-                    <div class="leading-relaxed opacity-80 text-lg {{@parent.descriptionClassName}}">
-                        <span>We are committed to keeping your work private and secure.</span>
-                        <span>For that reason, <b>folio</b> uses the local storage of your browser to ensure that <b>your drawings are accessible only to you</b>.</span>
-                    </div>
-                </article>
-                <!-- feature item 2 -->
-                <!-- boundless canvas to design -->
-                <article class="mb-2" data-role="feature-item">
-                    <div class="mb-6 flex items-center mx-auto p-6 rounded-full bg-primary text-primary-foreground">
-                        <svg width="1em" height="1em" class=""><use xlink:href="/icons.svg#square"></use></svg>
-                    </div>
-                    <div class="font-extrabold text-2xl leading-tight mb-3 text-center">
-                        <span>Boundless Canvas.</span>
-                    </div>
-                    <div class="leading-relaxed opacity-80 text-lg {{@parent.descriptionClassName}}">
-                        <span>Unleash your imagination on an infinite canvas.</span>
-                        <span>Whether you are sketching, prototyping, or creating, <b>folio</b> provides limitless space for your creativity to flourish.</span>
+                    <div class="leading-relaxed opacity-80 text-lg text-center">
+                        <span>{{!this.description}}</span>
                     </div>
                 </article>
-                <!-- feature item 3 -->
-                <!-- pages feature -->
-                <article class="mb-2" data-role="feature-item">
-                    <div class="mb-6 flex items-center mx-auto p-6 rounded-full bg-primary text-primary-foreground">
-                        <svg width="1em" height="1em" class=""><use xlink:href="/icons.svg#files"></use></svg>
-                    </div>
-                    <div class="font-extrabold text-2xl leading-tight mb-3 text-center">
-                        <span>Organize your Ideas.</span>
-                    </div>
-                    <div class="leading-relaxed opacity-80 text-lg {{@parent.descriptionClassName}}">
-                        <span>The new <b>Pages</b> feature allows you to organize your drawings into distinct pages, </span>
-                        <span>making it effortless to manage and present your ideas.</span>
-                    </div>
-                </article>
-                <!-- feature item 4 -->
-                <!-- library feature -->
-                <article class="mb-2" data-role="feature-item">
-                    <div class="mb-6 flex items-center mx-auto p-6 rounded-full bg-primary text-primary-foreground">
-                        <svg width="1em" height="1em" class=""><use xlink:href="/icons.svg#album"></use></svg>
-                    </div>
-                    <div class="font-extrabold text-2xl leading-tight mb-3 text-center">
-                        <span>Save, Organize, and Reuse Elements.</span>
-                    </div>
-                    <div class="leading-relaxed opacity-80 text-lg {{@parent.descriptionClassName}}">
-                        <span>Use the Library to create a personal repository of reusable components. </span>
-                        <span>Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access.</span>
-                    </div>
-                </article>
+                {{/each}}
             </div>
         </div>
     </section>
@@ -260,3 +244,4 @@ assets:
     </footer>
 </body>
 </html>
+{{/with}}
