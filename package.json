@@ -20,7 +20,7 @@
         "build:dist": "cross-env NODE_ENV=production webpack build",
         "build:docs": "yarn workspace docs build",
         "build:lite": "yarn workspace folio-lite build",
-        "build:landing": "mikel landing.mustache --plugin mikel-frontmatter --output .cache/landing/index.html",
+        "build:landing": "mikel landing.mustache --plugin mikel-frontmatter --output .cache/landing/index.html && node scripts/copy-assets.js --output .cache/landing",
         "build:server": "yarn workspace folio-server build",
         "build:studio": "yarn workspace folio-studio build",
         "build:website": "yarn build:lite && yarn build:docs",
