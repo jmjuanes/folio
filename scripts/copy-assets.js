@@ -17,7 +17,7 @@ const assets = [
         from: "node_modules/@josemi-icons/svg/sprite.svg",
         to: "icons.svg",
     },
-];
+].filter(Boolean);
 
 // helper method to copy from one source to another
 const copy = (src, dest) => {
