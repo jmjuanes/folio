@@ -23,6 +23,60 @@ features:
   - icon: "album"
     title: "Save, Organize, and Reuse Elements."
     description: "Use the Library to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
+studioActions:
+  - title: "Documentation"
+    url: "/docs"
+  - title: "GitHub"
+    url: "https://github.com/jmjuanes/folio/pkgs/container/folio-studio"
+studioFeatures:
+  - icon: "bolt"
+    title: "Same Power, but local."
+    description: "All the features of Folio, but running entirely on your own server or computer without any external dependencies."
+  - icon: "lock"
+    title: "Your data, your rules."
+    description: "No cloud, no tracking. Folio Studio stores everything on your server, ensuring that your data remains private and under your control."
+  - icon: "files"
+    title: "Unlimited Creativity."
+    description: "Organize ideas and prototypes in separate spaces. Folio Studio supports unlimited boards to keep your projects tidy and accessible."
+  - icon: "sidebar-left"
+    title: "One Sidebar to Rule Them All."
+    description: "Rename, duplicate, download, or delete your boards with a single click from your sidebar. Stay organized and in control of your workspace."
+  - icon: "image"
+    title: "Visual Previews of Your Boards."
+    description: "Get a quick glance at your recent boards with live thumbnails. Your Home screen will show your recent boards with clarity, so you know exactly where to jump back in."
+  - icon: "upload"
+    title: "Import and Export with Ease."
+    description: "Easily import existing Folio boards or export your current work. Folio Studio allows seamless transitions between local and web versions, ensuring your creativity flows uninterrupted."
+plans:
+  - className: ""
+    title: "Folio Lite"
+    subtitle: "Sketch instantly. No setup."
+    description: "Use Folio directly in your browser. No signup, no installation — perfect for capturing ideas on the fly."
+    features:
+      - "1 Single board."
+      - "Unlimited pages."
+      - "Unlimited library collections."
+      - "Data is stored in your browser."
+    link: "/app"
+  - className: ""
+    title: "Folio Studio"
+    subtitle: "Host it. Share it. Scale it."
+    description: "Deploy Folio Studio via Docker on your machine or server. Perfect for teams or personal infrastructure."
+    features:
+      - "Unlimited boards."
+      - "Unlimited pages."
+      - "Data is saved in your machine or your server."
+    link: "/docs"
+  - className: "opacity-40"
+    title: "Folio Plus"
+    subtitle: "Cloud-based. Still yours."
+    description: "A future cloud version of Folio Studio. Secure and always accessible — still just an idea, but maybe someday."
+    features:
+      - "Unlimited boards."
+      - "Unlimited pages."
+      - "All boards are end-to-end encrypted."
+      - "Always accesible."
+
 {{/frontmatter}}
 {{>*icon}}
 <svg width="1em" height="1em" class="{{this.className}}"><use xlink:href="/icons.svg#{{this.icon}}"></use></svg>
@@ -136,101 +190,96 @@ features:
     <section class="w-full py-32 sm:py-40 md:py-48 bg-primary text-primary-foreground" data-role="section">
         <div class="mx-auto max-w-6xl px-6">
             <div class="flex flex-col gap-8 items-center" data-role="section:header">
-                <div class="mb-2 font-bold text-xl md:text-2xl text-center opacity-70">
+                <div class="flex justify-center mb-0">
+                    <div class="flex items-center opacity-90">
+                        {{>icon icon="sidebar-left" className="w-28 h-28"}}
+                    </div>
+                </div>
+                <div class="font-bold text-xl md:text-2xl text-center opacity-70">
                     <span>Introducing Folio Studio</span>
                 </div>
                 <div class="max-w-5xl w-full mx-auto flex flex-col items-center">
                     <div class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-none font-extrabold text-center">
-                        <span class="block opacity-60">Your Sketching Kit.</span>
+                        <span class="block opacity-60">Your Sketching tool.</span>
                         <span class="">Self-Hosted.</span>
                     </div>
                 </div>
-                {{#if this.description}}
-                <div class="max-w-2xl text-xl md:text-2xl text-center opacity-80">
-                    {{!this.description}}
+                <div class="max-w-2xl text-xl md:text-2xl text-center opacity-80 font-medium">
+                    <span>A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.</span>
                 </div>
-                {{/if}}
-                {{#if this.actions}}
+                <div class="flex justify-center py-2">
+                    <div class="w-full text-current text-xl sm:text-2xl md:text-3xl text-center font-mono font-bold border-2 border-primary-foreground p-4 rounded-3xl">
+                        <div>$ docker pull ghcr.io/jmjuanes/folio-studio</div>
+                    </div>
+                </div>
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
-                    {{#each this.actions}}
-                    <a href="{{this.url || this.link}}" class="font-bold text-2xl hover:underline">
-                        <span>{{!this.text}} →</span>
+                    {{#each this.studioActions}}
+                    <a href="{{this.url}}" class="font-bold text-2xl md:text-4xl hover:underline">
+                        <span>{{!this.title}} →</span>
                     </a>
                     {{/each}}
                 </div>
-                {{/if}}
             </div>
-            {{#each this.content}}
-            <div class="mt-24">
-                {{#eq this.type "group"}}
-                <div class="w-full grid grid-cols-1 md:grid-cols-{{this.size}} gap-12" data-role="group">
-                    {{#each this.items}}
-                    <article class="mb-2">
-                        {{#if this.icon}}
-                        <div class="flex mb-6">
-                            <div class="flex items-center {{@parent.iconClassName}}">
-                                {{=icon icon=this.icon className="w-16 h-16 opacity-80"}}
-                            </div>
+            <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-12 mt-24" data-role="group">
+                {{#each this.studioFeatures}}
+                <article class="mb-2">
+                    <div class="flex justify-center mb-6">
+                        <div class="flex items-center p-6 rounded-full bg-primary-foreground text-primary">
+                            {{>icon icon=this.icon className="w-16 h-16 opacity-90"}}
                         </div>
-                        {{/if}}
-                        {{#if this.title}}
-                        <div class="font-extrabold text-2xl leading-tight mb-3 {{@parent.titleClassName}}">
-                            <span>{{!this.title}}</span>
-                        </div>
-                        {{/if}}
-                        {{#if this.description}}
-                        <div class="leading-relaxed opacity-80 text-lg {{@parent.descriptionClassName}}">
-                            <span>{{!this.description}}</span>
-                        </div>
-                        {{/if}}
-                    </article>
-                    {{/each}}
-                </div>
-                {{/eq}}
-                {{#eq this.type "command"}}
-                <div class="flex justify-center py-8">
-                    <div class="w-full d-flex flex-col text-current text-xl sm:text-2xl md:text-3xl text-center font-mono font-bold">
-                        <div>{{this.command}}</div>
+                    </div>
+                    <div class="font-extrabold text-2xl leading-tight mb-3 text-center">
+                        <span>{{!this.title}}</span>
+                    </div>
+                    <div class="leading-relaxed opacity-80 text-lg text-center">
+                        <span>{{!this.description}}</span>
+                    </div>
+                </article>
+                {{/each}}
+            </div>
+        </div>
+    </section>
+    <!-- folio plans section -->
+    <a name="plans"></a>
+    <section class="w-full py-32 sm:py-40 md:py-48 bg-background text-foreground" data-role="section">
+        <div class="mx-auto max-w-6xl px-6">
+            <div class="flex flex-col gap-8 items-center" data-role="section:header">
+                <div class="max-w-4xl w-full mx-auto flex flex-col items-center">
+                    <div class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-none font-extrabold text-center">
+                        <span class="">Plans</span>
+                        <span class="opacity-60 font-normal">&amp;</span>
+                        <span class="italic font-bold">Features</span>
                     </div>
                 </div>
-                {{/eq}}
-                {{#eq this.type "plans"}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
-                    {{#each this.items}}
-                    <div class="border-1 border-current rounded-4xl p-8 {{this.className}}">
-                        <div class="text-center text-3xl sm:text-4xl md:text-4xl font-extrabold">{{this.title}}</div>
-                        <div class="text-center text-xl font-medium opacity-90 mb-4">{{this.subtitle}}</div>
-                        <div class="text-sm opacity-80 mb-8">{{this.description}}</div>
-                        <div class="flex flex-col gap-4">
-                        {{#each this.features}}
-                            <div class="flex flex-row items-start gap-4">
-                                <div class="shrink-0 text-current flex">
-                                    {{=icon icon="check" className="w-6 h-6"}}
-                                </div>
-                                <div class="w-full opacity-80">{{!this}}</div>
-                            </div>
-                        {{/each}}
-                        </div>
-                        {{#if this.link}}
-                        <div class="mt-8 flex justify-center">
-                            <a href="{{this.link}}" class="font-bold text-2xl hover:underline">
-                                <span>Get Started →</span>
-                            </a>
-                        </div>
-                        {{/if}}
-                    </div>
-                    {{/each}}
+                <div class="max-w-2xl text-xl md:text-2xl text-center opacity-80">
                 </div>
-                {{#if this.notes}}
-                <div class="mt-12 flex flex-col items-center gap-0">
-                    {{#each this.notes}}
-                    <div class="text-xs opacity-50">{{!this}}</div>
-                    {{/each}}
-                </div>
-                {{/if}}
-                {{/eq}}
             </div>
+            <div class="py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+            {{#each this.plans}}
+                <div class="border-1 border-current rounded-4xl p-8 {{this.className}}">
+                    <div class="text-center text-3xl sm:text-4xl md:text-4xl font-extrabold">{{this.title}}</div>
+                    <div class="text-center text-xl font-medium opacity-90 mb-4">{{this.subtitle}}</div>
+                    <div class="text-sm opacity-80 mb-8">{{this.description}}</div>
+                    <div class="flex flex-col gap-4">
+                    {{#each this.features}}
+                        <div class="flex flex-row items-start gap-4">
+                            <div class="shrink-0 text-current flex">
+                                {{>icon icon="check" className="w-6 h-6"}}
+                            </div>
+                            <div class="w-full opacity-80">{{!this}}</div>
+                        </div>
+                    {{/each}}
+                    </div>
+                    {{#if this.link}}
+                    <div class="mt-8 flex justify-center">
+                        <a href="{{this.link}}" class="font-bold text-2xl hover:underline">
+                            <span>Get Started →</span>
+                        </a>
+                    </div>
+                    {{/if}}
+                </div>
             {{/each}}
+            </div>
         </div>
     </section>
 
