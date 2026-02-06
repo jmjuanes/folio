@@ -14,9 +14,9 @@
     },
     "devDependencies": {
         "highlight.js": "^11.11.1",
-        "mikel": "^0.30.2",
-        "mikel-markdown": "^0.30.2",
-        "mikel-press": "^0.30.2",
+        "mikel": "^0.32.0",
+        "mikel-markdown": "^0.32.0",
+        "mikel-press": "^0.32.0",
         "serve": "^14.2.4"
     },
     "license": "MIT"
