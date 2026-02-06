@@ -76,6 +76,16 @@ plans:
       - "Unlimited pages."
       - "All boards are end-to-end encrypted."
       - "Always accesible."
+openSourceActions:
+  - title: "GitHub"
+    url: "https://github.com/jmjuanes/folio"
+  - title: "Roadmap"
+    url: "https://github.com/users/jmjuanes/projects/4/views/1"
+footer:
+  - title: "Report a bug"
+    url: "https://github.com/jmjuanes/folio/issues"
+  - title: "Changelog"
+    url: "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
 
 {{/frontmatter}}
 {{>*icon}}
@@ -282,18 +292,49 @@ plans:
             </div>
         </div>
     </section>
-
-    <div class="w-full h-px bg-white opacity-10"></div>
-    <footer class="py-8 px-8 max-w-9xl w-full mx-auto flex items-center gap-4 justify-between">
-        <div class="text-sm opacity-60">
-            <span>{{!site.footer.text}}</span>
+    <!-- open source banner -->
+    <section class="w-full bg-foreground text-background" data-role="section">
+        <div class="mx-auto max-w-7xl px-6 py-28 flex flex-col items-center">
+            <div class="flex justify-center mb-2">
+                <div class="flex items-center opacity-70">
+                    {{>icon icon="code" className="w-28 h-28"}}
+                </div>
+            </div>
+            <div class="text-5xl md:text-6xl lg:text-7xl leading-none font-extrabold text-center mb-8">
+                <span class="font-bold opacity-60">Proudly</span>
+                <span class="font-black">Open Source.</span>
+            </div>
+            <div class="w-full max-w-3xl text-xl md:text-2xl text-center opacity-80 font-medium mb-4">
+                <span><b>Folio</b> is open source and powered by open source software. </span>
+                <span>The source code is available on <span class="font-bold">GitHub</span>.</span>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                {{#each this.openSourceActions}}
+                <a href="{{this.url}}" class="font-bold text-2xl md:text-4xl hover:underline">
+                    <span>{{!this.title}} →</span>
+                </a>
+                {{/each}}
+            </div>
         </div>
-        <div class="flex gap-4">
-            {{#each site.footer.links}}
-            <a href="{{this.url}}" class="hover:underline text-current font-bold text-sm">
-                <span>{{this.label || this.title}}</span>
-            </a>
-            {{/each}}
+    </section>
+    <!-- footer -->
+    <footer class="w-full bg-background text-foreground" data-role="footer">
+        <div class="mx-auto max-w-6xl px-6 pt-48 pb-24">
+            <img src="/labs-logo.svg" width="100%">
+        </div>
+        <div class="w-full h-px bg-white opacity-10"></div>
+        <div class="py-8 px-8 max-w-6xl w-full mx-auto flex items-center gap-4 justify-between">
+            <div class="text-sm">
+                <span class="opacity-60">Made by</span>
+                <span><a href="https://www.josemi.xyz" class="hover:underline">Josemi</a>.</span>
+            </div>
+            <div class="flex gap-4">
+                {{#each this.footer}}
+                <a href="{{this.url}}" class="hover:underline text-current font-bold text-sm">
+                    <span>{{this.label || this.title}}</span>
+                </a>
+                {{/each}}
+            </div>
         </div>
     </footer>
 </body>
