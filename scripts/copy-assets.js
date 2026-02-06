@@ -10,6 +10,10 @@ const assets = [
         to: "brand.css",
     },
     {
+        from: "resources/labs-logo.svg",
+        to: "labs-logo.svg",
+    },
+    {
         from: "node_modules/lowcss/low.css",
         to: "low.css",
     },
