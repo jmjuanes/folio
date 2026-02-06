@@ -17,6 +17,8 @@
     --color-foreground: var(--folio-light);
     --color-primary: var(--folio-primary);
     --color-primary-foreground: var(--folio-dark);
+    --color-secondary: var(--folio-secondary);
+    --color-secondary-foreground: var(--folio-light);
 }
 
 /* font used in the folio logo */
