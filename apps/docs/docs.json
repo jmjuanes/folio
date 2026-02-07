@@ -44,21 +44,22 @@
         {
             "group": "Overview",
             "pages": [
-                "docs/index.md"
+                "content/introduction.md"
             ]
         },
         {
-            "group": "Deployment",
+            "group": "Studio",
             "pages": [
-                "docs/installation.md",
-                "docs/configuration.md"
+                "content/installation.md",
+                "content/configuration.md",
+                "content/persistence.md",
+                "content/authentication.md"
             ]
         },
         {
-            "group": "Advanced Guides",
+            "group": "Community",
             "pages": [
-                "docs/persistence.md",
-                "docs/authentication.md"
+                "content/privacy.md"
             ]
         }
     ],
