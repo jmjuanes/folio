@@ -1,14 +1,11 @@
 ---
 {
     "title": "Privacy Policy",
-    "layout": "page.mustache",
+    "description": "Effective Date: September 10, 2023",
+    "layout": "docs.mustache",
     "permalink": "/privacy.html"
 }
 ---
-
-# Privacy Policy
-
-> Effective Date: September 10, 2023
 
 ## 1. Introduction
 

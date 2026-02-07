@@ -2,10 +2,10 @@
 {
     "title": "Persistence",
     "description": "Persist data across sessions.",
-    "permalink": "/docs/persistence.html",
+    "permalink": "/studio/persistence.html",
     "layout": "docs.mustache",
-    "prevPage": "/docs/configuration.html",
-    "nextPage": "/docs/authentication.html"
+    "prevPage": "/studio/configuration.html",
+    "nextPage": "/studio/authentication.html"
 }
 ---
 

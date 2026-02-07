@@ -39,7 +39,7 @@ press({
     repository: pkg.repository,
     plugins: [
         press.SourcePlugin({
-            folder: "../../docs",
+            folder: "content",
             extensions: [".md"],
         }),
         press.PartialsPlugin({
