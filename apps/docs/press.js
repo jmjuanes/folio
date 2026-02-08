@@ -66,6 +66,9 @@ press({
         press.CopyAssetsPlugin({
             patterns: [
                 {
+                    from: path.resolve("../../resources/brand.css"),
+                },
+                {
                     from: path.resolve("../../node_modules/lowcss/low.css"),
                     to: "low.css",
                 },
