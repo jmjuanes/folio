@@ -42,6 +42,7 @@
             </div>
             <div class="grid items-center grid-cols-2 gap-4 pt-10">
                 <div class="w-full flex justify-start">
+                {{#if page.attributes.prevPage}}
                     {{#withPage page.attributes.prevPage}}
                     <a href="{{url}}" class="flex flex-nowrap justify-start items-center gap-2 opacity-60 hover:opacity-100">
                         <div class="flex items-center text-xl">
@@ -50,8 +51,10 @@
                         <div class="font-medium">{{attributes.title}}</div>
                     </a>
                     {{/withPage}}
+                {{/if}}
                 </div>
                 <div class="w-full flex justify-end">
+                {{#if page.attributes.nextPage}}
                     {{#withPage page.attributes.nextPage}}
                     <a href="{{url}}" class="flex flex-nowrap justify-end items-center gap-2 opacity-60 hover:opacity-100">
                         <div class="font-medium">{{attributes.title}}</div>
@@ -60,6 +63,7 @@
                         </div>
                     </a>
                     {{/withPage}}
+                {{/if}}
                 </div>
             </div>
         </div>
