@@ -13,27 +13,27 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
-    <link rel="stylesheet" href="/vendor/low.css">
-    <link rel="stylesheet" href="/vendor/highlight.css">
+    <link rel="stylesheet" href="/low.css">
+    <link rel="stylesheet" href="/highlight.css">
     <link rel="stylesheet" href="/brand.css">
-    <title>{{page.attributes.title}} - folio</title>
+    <title>{{!page.attributes.title}} - {{!site.title}}</title>
 </head>
-<body class="m-0 p-0 font-sans leading-normal folio:bg-dark-base text-white">
+<body class="m-0 p-0 font-sans leading-normal bg-background text-foreground">
     <header class="flex items-center justify-between w-full px-8 py-8 max-w-9xl mx-auto">
         <a href="/" class="flex items-center gap-1 cursor-pointer leading-none">
-            <div class="text-4xl folio:font-brand text-current">folio.</div>
+            <div class="text-4xl font-brand text-current">folio.</div>
         </a>
         <div class="flex gap-6 items-center">
             {{#each site.navbar.links}}
             <a href="{{this.url}}" class="cursor-pointer font-medium hover:underline text-current text-lg">
-                <span>{{this.label || this.title}}</span>
+                <span>{{!this.label || !this.title}}</span>
             </a>
             {{/each}}
             {{#if site.navbar.cta}}
-            <a href="{{site.navbar.cta.url}}" class="flex items-center gap-1 px-3 py-2 folio:bg-primary folio:text-dark-base rounded-xl hover:opacity-90">
-                <span class="font-bold text-lg">{{site.navbar.cta.label || site.navbar.cta.title}}</span>
+            <a href="{{site.navbar.cta.url}}" class="flex items-center gap-1 text-base hover:opacity-90">
+                <span class="font-bold">{{site.navbar.cta.label || site.navbar.cta.title}}</span>
                 {{#if site.navbar.cta.icon}}
-                <div class="flex items-center text-xl">
+                <div class="flex items-center text-lg">
                     {{=icon icon=site.navbar.cta.icon}}
                 </div>
                 {{/if}}

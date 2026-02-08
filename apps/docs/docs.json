@@ -1,5 +1,5 @@
 {
-    "title": "folio.",
+    "title": "folio docs",
     "subtitle": "Minimal whiteboard for sketching and prototyping",
     "description": "Folio is a minimalistic digital whiteboard for sketching and prototyping. It is designed to be simple and easy to use, with a focus on speed and efficiency.",
     "url": "https://folio.josemi.xyz",
@@ -22,20 +22,12 @@
     "navbar": {
         "links": [
             {
-                "label": "Studio",
-                "url": "/studio"
-            },
-            {
-                "label": "Plans",
-                "url": "/plans"
-            },
-            {
-                "label": "Docs",
-                "url": "/docs"
+                "label": "About",
+                "url": "/"
             }
         ],
         "cta": {
-            "label": "Try it",
+            "label": "Get started",
             "icon": "arrow-right",
             "url": "/app"
         }

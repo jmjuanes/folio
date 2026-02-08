@@ -16,7 +16,7 @@
                     {{#each this.pages}}
                     {{#withPage this}}
                     <a href="{{this.url}}" class="block text-sm mb-1 font-medium text-current opacity-80 hover:underline py-1">
-                        <span>{{this.attributes.title}}</span>
+                        <span>{{!this.attributes.title}}</span>
                     </a>
                     {{/withPage}}
                     {{/each}}
@@ -27,11 +27,11 @@
         <div class="w-full max-w-4xl min-w-0 mx-auto py-4">
             <div class="mb-16">
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-0 mt-0 leading-none">
-                    <span>{{page.attributes.title}}</span>
+                    <span>{{!page.attributes.title}}</span>
                 </h1>
                 {{#if page.attributes.description}}
                 <div class="mt-3 text-xl sm:text-2xl opacity-70 leading-relaxed">
-                    <span>{{page.attributes.description}}</span>
+                    <span>{{!page.attributes.description}}</span>
                 </div>
                 {{/if}}
             </div>
