@@ -1,10 +1,10 @@
 ---
 {
-    "title": "Introduction",
+    "title": "Welcome & Overview",
     "description": "Quick overview of what Folio is and how to get started.",
-    "permalink": "/docs/index.html",
-    "nextPage": "/docs/installation.html",
-    "layout": "default.mustache",
+    "permalink": "/introduction.html",
+    "nextPage": "installation.md",
+    "layout": "base.mustache",
     "quickstart": [
         {
             "icon": "globe",
@@ -16,7 +16,7 @@
             "icon": "server",
             "title": "Self Hosted",
             "description": "Install Folio Studio in your local machine for full control.",
-            "url": "/docs/installation.html"
+            "url": "/studio/installation.html"
         }
     ]
 }

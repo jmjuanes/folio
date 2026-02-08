@@ -6,17 +6,17 @@
     "scripts": {
         "build": "node press.js",
         "clean": "rm -rf www",
-        "dev": "serve www -p 8082"
+        "dev": "serve www -p 8080"
     },
     "dependencies": {
         "@josemi-icons/svg": "^0.7.0",
-        "lowcss": "^0.32.0"
+        "lowcss": "^0.33.0"
     },
     "devDependencies": {
         "highlight.js": "^11.11.1",
-        "mikel": "^0.28.0",
-        "mikel-markdown": "^0.28.0",
-        "mikel-press": "^0.28.0",
+        "mikel": "^0.32.0",
+        "mikel-markdown": "^0.32.0",
+        "mikel-press": "^0.32.0",
         "serve": "^14.2.4"
     },
     "license": "MIT"

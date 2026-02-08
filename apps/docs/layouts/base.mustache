@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" style="overscroll-behavior-x:none;">
+<head>
+    <meta charSet="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta name="title" content="{{site.title}}">
+    <meta name="description" content="{{site.description}}">
+    <meta name="og:type" content="website">
+    <meta name="og:site_name" content="{{site.title}}">
+    <meta name="og:description" content="{{site.description}}">
+    <meta name="og:image" content="/og-image.png">
+    <meta name="og:url" content="{{site.url}}">
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
+    <link rel="stylesheet" href="/low.css">
+    <link rel="stylesheet" href="/highlight.css">
+    <link rel="stylesheet" href="/brand.css">
+    <title>{{page.attributes.title}} - {{site.title}}</title>
+</head>
+<body class="m-0 p-0 font-sans leading-normal bg-background text-foreground">
+    <header class="flex items-center justify-between w-full px-8 py-8 max-w-9xl mx-auto">
+        <a href="/" class="flex items-center gap-1 cursor-pointer leading-none">
+            <div class="text-4xl font-brand text-current">folio.</div>
+        </a>
+        <div class="flex gap-6 items-center">
+            {{#each site.navbar.links}}
+            <a href="{{this.url}}" class="cursor-pointer hover:underline text-current text-base">
+                <span>{{this.label || this.title}}</span>
+            </a>
+            {{/each}}
+            {{#if site.navbar.cta}}
+            <a href="{{site.navbar.cta.url}}" class="flex items-center gap-1 text-base hover:opacity-90">
+                <span class="font-bold">{{site.navbar.cta.label || site.navbar.cta.title}}</span>
+                {{#if site.navbar.cta.icon}}
+                <div class="flex items-center text-lg">
+                    {{=icon icon=site.navbar.cta.icon}}
+                </div>
+                {{/if}}
+            </a>
+            {{/if}}
+        </div>
+    </header>
+    <div class="w-full max-w-9xl mx-auto h-px bg-white opacity-10"></div>
+    <main class="max-w-9xl w-full mx-auto px-8 pt-8 pb-16">
+        <div class="w-full flex flex-row flex-nowrap md:gap-12">
+            <div class="hidden lg:block w-48 shrink-0">
+                <div class="sticky flex flex-col gap-8 top-0 h-screen overflow-y-auto overflow-x-hidden py-4">
+                    {{#each site.sidebar}}
+                    <div class="">
+                        <div class="mb-2 text-sm font-bold">
+                            <span>{{this.group}}</span>
+                        </div>
+                        {{#each this.pages}}
+                        {{#withPage this}}
+                        <a href="{{this.url}}" class="block text-sm mb-1 font-medium text-current opacity-80 hover:underline py-1">
+                            <span>{{this.attributes.title}}</span>
+                        </a>
+                        {{/withPage}}
+                        {{/each}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="w-full max-w-4xl min-w-0 mx-auto py-4">
+                <div class="mb-16">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-0 mt-0 leading-none">
+                        <span>{{page.attributes.title}}</span>
+                    </h1>
+                    {{#if page.attributes.description}}
+                    <div class="mt-3 text-xl sm:text-2xl opacity-70 leading-relaxed">
+                        <span>{{page.attributes.description}}</span>
+                    </div>
+                    {{/if}}
+                </div>
+                <div class="prose">
+                {{#markdown}}
+                    {{!@content}}
+                {{/markdown}}
+                </div>
+                <div class="grid items-center grid-cols-2 gap-4 pt-10">
+                    <div class="w-full flex justify-start">
+                    {{#if page.attributes.prevPage}}
+                        {{#withPage page.attributes.prevPage}}
+                        <a href="{{url}}" class="flex flex-nowrap justify-start items-center gap-2 opacity-60 hover:opacity-100">
+                            <div class="flex items-center text-xl">
+                                {{=icon icon="chevron-left"}}
+                            </div>
+                            <div class="font-medium">{{attributes.title}}</div>
+                        </a>
+                        {{/withPage}}
+                    {{/if}}
+                    </div>
+                    <div class="w-full flex justify-end">
+                    {{#if page.attributes.nextPage}}
+                        {{#withPage page.attributes.nextPage}}
+                        <a href="{{url}}" class="flex flex-nowrap justify-end items-center gap-2 opacity-60 hover:opacity-100">
+                            <div class="font-medium">{{attributes.title}}</div>
+                            <div class="flex items-center text-xl">
+                                {{=icon icon="chevron-right"}}
+                            </div>
+                        </a>
+                        {{/withPage}}
+                    {{/if}}
+                    </div>
+                </div>
+            </div>
+            <div class="hidden xl:block w-48 shrink-0">
+                <div class="sticky top-0 py-4 text-sm flex flex-col gap-2">
+                    <div class="flex items-center gap-2 opacity-80 mb-2">
+                        <div class="text-base flex items-center">
+                            {{=icon icon="text-left"}}
+                        </div>
+                        <div class="font-medium">On this page</div>
+                    </div>
+                    {{#each @toc}}
+                    <a href="#{{this.slug}}" class="block font-medium text-current hover:underline" style="margin-left: calc({{this.level}}rem - 2rem);">
+                        <span>{{this.text}}</span>
+                    </a>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="w-full h-px bg-white opacity-10"></div>
+    <footer class="py-8 px-8 max-w-9xl w-full mx-auto flex items-center gap-4 justify-between">
+        <div class="text-sm opacity-60">
+            <span>{{!site.footer.text}}</span>
+        </div>
+        <div class="flex gap-4">
+            {{#each site.footer.links}}
+            <a href="{{this.url}}" class="hover:underline text-current font-bold text-sm">
+                <span>{{this.label || this.title}}</span>
+            </a>
+            {{/each}}
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,81 @@
+{
+    "title": "folio.",
+    "subtitle": "Minimal whiteboard for sketching and prototyping",
+    "description": "Folio is a minimalistic digital whiteboard for sketching and prototyping. It is designed to be simple and easy to use, with a focus on speed and efficiency.",
+    "url": "https://folio.josemi.xyz",
+    "markdown": {
+        "link": "font-medium underline",
+        "code": "rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-900",
+        "pre": "w-full overflow-x-auto bg-gray-900 text-foreground text-xs font-mono leading-relaxed p-6 mb-6 rounded-md",
+        "heading": "font-bold mb-4 first:mt-0 mt-8",
+        "heading1": "text-4xl font-extrabold",
+        "heading2": "text-2xl",
+        "heading3": "text-xl",
+        "heading4": "text-lg",
+        "table": "w-full mb-6",
+        "tableColumn": "p-3 border-b-1 border-gray-800",
+        "tableHead": "font-bold",
+        "list": "list-inside mb-6 pl-4",
+        "listItem": "mb-3 pl-1",
+        "paragraph": "block leading-relaxed mb-6 opacity-80"
+    },
+    "redirections": [
+        {
+            "from": "index.html",
+            "to": "/introduction.html"
+        },
+        {
+            "from": "docs.html",
+            "to": "/introduction.html"
+        }
+    ],
+    "navbar": {
+        "links": [
+            {
+                "label": "About",
+                "url": "/"
+            }
+        ],
+        "cta": {
+            "label": "Get started",
+            "icon": "arrow-right",
+            "url": "/app"
+        }
+    },
+    "sidebar": [
+        {
+            "group": "Overview",
+            "pages": [
+                "content/introduction.md"
+            ]
+        },
+        {
+            "group": "Studio",
+            "pages": [
+                "content/installation.md",
+                "content/configuration.md",
+                "content/persistence.md",
+                "content/authentication.md"
+            ]
+        },
+        {
+            "group": "Community",
+            "pages": [
+                "content/privacy.md"
+            ]
+        }
+    ],
+    "footer": {
+        "text": "2026 &copy; Josemi Juanes.",
+        "links": [
+            {
+                "label": "Report a bug",
+                "url": "https://github.com/jmjuanes/folio/issues"
+            },
+            {
+                "label": "Changelog",
+                "url": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
+            }
+        ]
+    }
+}

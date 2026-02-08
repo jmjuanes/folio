@@ -23,8 +23,8 @@
         "@josemi-icons/react": "^0.7.0",
         "browser-fs-access": "^0.37.0",
         "classnames": "^2.5.1",
-        "lowcss": "^0.32.0",
-        "lowcss-helpers": "^0.32.0",
+        "lowcss": "^0.33.0",
+        "lowcss-helpers": "^0.33.0",
         "react-use": "^17.5.1",
         "uid": "^2.0.2"
     },

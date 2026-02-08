@@ -1,0 +1,31 @@
+/* folio branding - brand.css */
+/* licensed under the MIT License */
+
+:root {
+    /* font variables */
+    --folio-brand-font: Poppins, serif;
+    --folio-brand-weight: 700;
+
+    /* color variables */
+    --folio-primary: hsl(82, 85%, 67%);
+    --folio-secondary: hsl(249, 85%, 67%);
+    --folio-dark-1: var(--color-gray-950);
+    --folio-dark-2: var(--color-gray-900);
+    --folio-dark-3: var(--color-gray-800);
+    --folio-light: var(--color-gray-50);
+
+    /* theme colors */
+    --color-background: var(--folio-dark-1);
+    --color-foreground: var(--folio-light);
+    --color-primary: var(--folio-primary);
+    --color-primary-foreground: var(--folio-dark-1);
+    --color-secondary: var(--folio-secondary);
+    --color-secondary-foreground: var(--folio-light);
+}
+
+/* font used in the folio logo */
+/* https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap */
+.font-brand {
+    font-family: var(--folio-brand-font);
+    font-weight: var(--folio-brand-weight) !important;
+}

@@ -1,0 +1,16 @@
+<!--html-->
+<div class="rounded-lg overflow-hidden mb-6 bg-gray-900">
+{{#if label}}
+<div class="flex items-center gap-2 text-foreground text-xs font-mono px-3 py-3 select-none">
+    {{#if icon}}
+    <span class="flex items-center text-lg">{{=icon icon=icon}}</span>
+    {{/if}}
+    <span>{{label}}</span>
+</div>
+<div class="h-px bg-gray-800 w-full"></div>
+{{/if}}
+<pre class="w-full overflow-x-auto text-foreground text-xs font-mono leading-relaxed p-6">
+{{=highlight code=@content language=language}}
+</pre>
+</div>
+<!--/html-->
