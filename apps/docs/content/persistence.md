@@ -3,7 +3,7 @@
     "title": "Persistence",
     "description": "Persist data across sessions.",
     "permalink": "/studio/persistence.html",
-    "layout": "docs.mustache",
+    "layout": "base.mustache",
     "prevPage": "configuration.md",
     "nextPage": "authentication.md"
 }

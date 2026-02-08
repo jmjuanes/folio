@@ -3,7 +3,7 @@
     "title": "Configuration",
     "description": "Setting up all necessary configuration to run folio studio.",
     "permalink": "/studio/configuration.html",
-    "layout": "docs.mustache",
+    "layout": "base.mustache",
     "prevPage": "installation.md",
     "nextPage": "persistence.md"
 }

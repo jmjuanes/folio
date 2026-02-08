@@ -2,7 +2,7 @@
 {
     "title": "Privacy Policy",
     "description": "Effective Date: September 10, 2023",
-    "layout": "docs.mustache",
+    "layout": "base.mustache",
     "permalink": "/privacy.html"
 }
 ---

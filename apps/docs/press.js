@@ -42,6 +42,10 @@ press({
             folder: "content",
             extensions: [".md"],
         }),
+        // press.SourcePlugin({
+        //     folder: "pages",
+        //     extensions: [".mustache"],
+        // }),
         press.PartialsPlugin({
             folder: "partials",
             extensions: [".mustache"],
