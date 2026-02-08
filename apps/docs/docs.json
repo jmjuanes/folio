@@ -23,6 +23,10 @@
         {
             "from": "index.html",
             "to": "/introduction.html"
+        },
+        {
+            "from": "docs.html",
+            "to": "/introduction.html"
         }
     ],
     "navbar": {
