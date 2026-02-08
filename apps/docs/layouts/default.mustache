@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/low.css">
     <link rel="stylesheet" href="/highlight.css">
     <link rel="stylesheet" href="/brand.css">
-    <title>{{!page.attributes.title}} - {{!site.title}}</title>
+    <title>{{page.attributes.title}} - {{site.title}}</title>
 </head>
 <body class="m-0 p-0 font-sans leading-normal bg-background text-foreground">
     <header class="flex items-center justify-between w-full px-8 py-8 max-w-9xl mx-auto">
@@ -26,7 +26,7 @@
         <div class="flex gap-6 items-center">
             {{#each site.navbar.links}}
             <a href="{{this.url}}" class="cursor-pointer font-medium hover:underline text-current text-lg">
-                <span>{{!this.label || !this.title}}</span>
+                <span>{{this.label || this.title}}</span>
             </a>
             {{/each}}
             {{#if site.navbar.cta}}

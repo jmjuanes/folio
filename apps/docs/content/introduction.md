@@ -1,6 +1,6 @@
 ---
 {
-    "title": "Welcome &amp; Overview",
+    "title": "Welcome & Overview",
     "description": "Quick overview of what Folio is and how to get started.",
     "permalink": "/introduction.html",
     "nextPage": "/studio/installation.html",

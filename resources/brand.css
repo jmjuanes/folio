@@ -9,16 +9,20 @@
     /* color variables */
     --folio-primary: hsl(82, 85%, 67%);
     --folio-secondary: hsl(249, 85%, 67%);
-    --folio-dark: var(--color-gray-950);
+    --folio-dark-1: var(--color-gray-950);
+    --folio-dark-2: var(--color-gray-900);
+    --folio-dark-3: var(--color-gray-800);
     --folio-light: var(--color-gray-50);
 
     /* theme colors */
-    --color-background: var(--folio-dark);
+    --color-background: var(--folio-dark-1);
     --color-foreground: var(--folio-light);
     --color-primary: var(--folio-primary);
-    --color-primary-foreground: var(--folio-dark);
+    --color-primary-foreground: var(--folio-dark-1);
     --color-secondary: var(--folio-secondary);
     --color-secondary-foreground: var(--folio-light);
+    --color-accent: var(--folio-dark-2);
+    --color-accent-foreground: var(--folio-dark-3);
 }
 
 /* font used in the folio logo */
