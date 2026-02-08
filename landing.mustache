@@ -11,7 +11,7 @@ navbar:
     title: "Try it"
     url: "/app"
 announcement:
-  text: "Introducing <b>folio studio</b>."
+  text: "Introducing <b>folio studio</b>: your self-hosted whiteboard via Docker."
   url: "#studio"
 features:
   - icon: "shield"
@@ -141,12 +141,15 @@ footer:
     <div class="bg-primary text-primary-foreground w-full">
         <div class="flex items-center justify-between gap-1 w-full max-w-9xl mx-auto px-8 py-2">
             <div class="flex items-center gap-2">
-                <div class="bg-primary-foreground text-primary px-3 py-2 rounded-full text-sm font-bold">New</div>
+                <div class="bg-primary-foreground text-primary px-2 py-1 rounded-full text-xs font-bold">New</div>
                 <div class="text-sm">{{!this.announcement.text}}</div>
             </div>
             <div class="flex items-center">
                 <a href="{{this.announcement.url}}" class="font-bold underline flex items-center gap-1">
-                    <span>Learn more</span>
+                    <span class="text-sm">Learn more</span>
+                    <div class="flex items-center text-base">
+                        {{>icon icon="chevron-right" className=""}}
+                    </div>
                 </a>
             </div>
         </div>
