@@ -10,6 +10,9 @@ navbar:
   cta:
     title: "Try it"
     url: "/app"
+announcement:
+  text: "Introducing <b>folio studio</b>."
+  url: "#studio"
 features:
   - icon: "shield"
     title: "Design with total Privacy."
@@ -133,6 +136,22 @@ footer:
             {{/if}}
         </div>
     </header>
+    <!-- announcement -->
+    {{#if this.announcement}}
+    <div class="bg-primary text-primary-foreground w-full">
+        <div class="flex items-center justify-between gap-1 w-full max-w-9xl mx-auto px-8 py-2">
+            <div class="flex items-center gap-2">
+                <div class="bg-primary-foreground text-primary px-3 py-2 rounded-full text-sm font-bold">New</div>
+                <div class="text-sm">{{!this.announcement.text}}</div>
+            </div>
+            <div class="flex items-center">
+                <a href="{{this.announcement.url}}" class="font-bold underline flex items-center gap-1">
+                    <span>Learn more</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    {{/if}}
     <!-- hero section -->
     <section class="max-w-6xl mx-auto px-6 py-12 sm:py-20 md:py-32 flex flex-col justify-center items-center gap-6">
         <div class="items-center justify-center">
