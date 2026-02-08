@@ -89,5 +89,8 @@ press({
         //         to: file,
         //     })),
         // }),
+        press.RedirectsPlugin({
+            redirects: websiteConfig?.redirects || websiteConfig?.redirections || [],
+        }),
     ],
 });
