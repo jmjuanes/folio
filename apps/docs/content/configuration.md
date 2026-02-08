@@ -4,8 +4,8 @@
     "description": "Setting up all necessary configuration to run folio studio.",
     "permalink": "/studio/configuration.html",
     "layout": "docs.mustache",
-    "prevPage": "/studio/installation.html",
-    "nextPage": "/studio/persistence.html"
+    "prevPage": "installation.md",
+    "nextPage": "persistence.md"
 }
 ---
 

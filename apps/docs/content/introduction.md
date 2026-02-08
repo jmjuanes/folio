@@ -3,7 +3,7 @@
     "title": "Welcome & Overview",
     "description": "Quick overview of what Folio is and how to get started.",
     "permalink": "/introduction.html",
-    "nextPage": "/studio/installation.html",
+    "nextPage": "installation.md",
     "layout": "docs.mustache",
     "quickstart": [
         {

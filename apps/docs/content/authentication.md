@@ -4,7 +4,7 @@
     "description": "How authentication works in folio studio.",
     "permalink": "/studio/authentication.html",
     "layout": "docs.mustache",
-    "prevPage": "/studio/persistence.html"
+    "prevPage": "persistence.md"
 }
 ---
 

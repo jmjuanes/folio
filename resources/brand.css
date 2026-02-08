@@ -21,8 +21,6 @@
     --color-primary-foreground: var(--folio-dark-1);
     --color-secondary: var(--folio-secondary);
     --color-secondary-foreground: var(--folio-light);
-    --color-accent: var(--folio-dark-2);
-    --color-accent-foreground: var(--folio-dark-3);
 }
 
 /* font used in the folio logo */

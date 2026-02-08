@@ -4,8 +4,8 @@
     "description": "Persist data across sessions.",
     "permalink": "/studio/persistence.html",
     "layout": "docs.mustache",
-    "prevPage": "/studio/configuration.html",
-    "nextPage": "/studio/authentication.html"
+    "prevPage": "configuration.md",
+    "nextPage": "authentication.md"
 }
 ---
 
