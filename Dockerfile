@@ -8,7 +8,7 @@
 # =============================================================================
 
 # Use specific Node.js version with Alpine for minimal footprint and security
-FROM node:22.12.0-alpine3.20 AS base
+FROM node:24-alpine AS base
 
 # Set environment variables
 ENV FOLIO_APPDIR=/opt/folio \
