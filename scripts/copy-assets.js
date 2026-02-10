@@ -10,6 +10,14 @@ const assets = [
         to: "brand.css",
     },
     {
+        from: "resources/og.png",
+        to: "og.png",
+    },
+    {
+        from: "resources/favicon-32x32.png",
+        to: "favicon.png",
+    },
+    {
         from: "resources/labs-logo.svg",
         to: "labs-logo.svg",
     },
