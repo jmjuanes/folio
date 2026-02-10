@@ -10,6 +10,10 @@ const assets = [
         to: "brand.css",
     },
     {
+        from: "resources/folio-white.svg",
+        to: "logo.svg"
+    },
+    {
         from: "resources/og.png",
         to: "og.png",
     },
