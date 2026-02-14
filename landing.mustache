@@ -86,13 +86,15 @@ openSourceActions:
     url: "https://github.com/users/jmjuanes/projects/4/views/1"
 footer:
   sections:
-    - title: "About"
+    - title: "Project"
       links:
+        - title: "Docs"
+          url: "/docs.html"
         - title: "Roadmap"
           url: "https://github.com/users/jmjuanes/projects/4/views/1"
         - title: "Changelog"
           url: "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
-    - title: "GitHub"
+    - title: "Open Source"
       links:
         - title: "GitHub"
           url: "https://github.com/jmjuanes/folio"
@@ -363,11 +365,12 @@ footer:
         -->
         <div class="w-full max-w-6xl mx-auto px-8 bg-current opacity-10 h-px"></div>
         <div class="px-8 pt-16 pb-24 max-w-6xl w-full mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="col-span-1 sm:col-span-2">
+            <div class="col-span-1 sm:col-span-2 flex flex-col gap-4">
                 {{>logo}}
                 <div class="text-sm">
                     <span class="opacity-60">Made by</span>
-                    <span><a href="https://www.josemi.xyz" class="hover:underline">Josemi</a>.</span>
+                    <a href="https://www.josemi.xyz" class="font-bold hover:underline">Josemi</a>
+                    <span class="opacity-60">in Valencia, Spain.</span>
                 </div>
             </div>
             {{#each this.footer.sections}}
