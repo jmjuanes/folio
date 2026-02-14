@@ -73,6 +73,14 @@ press({
                     from: path.resolve("../../resources/brand.css"),
                 },
                 {
+                    from: path.resolve("../../resources/favico-32x32.png"),
+                    to: "favicon.png",
+                },
+                {
+                    from: path.resolve("../../resources/folio-white.svg"),
+                    to: "logo.svg",
+                },
+                {
                     from: path.resolve("../../node_modules/lowcss/low.css"),
                     to: "low.css",
                 },
