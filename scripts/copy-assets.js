@@ -21,10 +21,10 @@ const assets = [
         from: "resources/favicon-32x32.png",
         to: "favicon.png",
     },
-    {
-        from: "resources/labs-logo.svg",
-        to: "labs-logo.svg",
-    },
+    // {
+    //     from: "resources/labs-logo.svg",
+    //     to: "labs-logo.svg",
+    // },
     {
         from: "node_modules/lowcss/low.css",
         to: "low.css",
