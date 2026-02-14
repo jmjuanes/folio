@@ -85,14 +85,31 @@ openSourceActions:
   - title: "Roadmap"
     url: "https://github.com/users/jmjuanes/projects/4/views/1"
 footer:
-  - title: "Report a bug"
-    url: "https://github.com/jmjuanes/folio/issues"
-  - title: "Changelog"
-    url: "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
+  sections:
+    - title: "About"
+      links:
+        - title: "Roadmap"
+          url: "https://github.com/users/jmjuanes/projects/4/views/1"
+        - title: "Changelog"
+          url: "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
+    - title: "GitHub"
+      links:
+        - title: "GitHub"
+          url: "https://github.com/jmjuanes/folio"
+        - title: "Report a bug"
+          url: "https://github.com/jmjuanes/folio/issues"
 {{/frontmatter}}
 {{>*icon}}
 <svg width="1em" height="1em" class="{{this.className}}"><use xlink:href="/icons.svg#{{this.icon}}"></use></svg>
 {{/icon}}
+{{>*logo}}
+<a href="/" class="flex items-center gap-1 cursor-pointer leading-none">
+    <div class="flex items-center w-10 h-10">
+        <img src="/logo.svg" width="100%" height="100%">
+    </div>
+    <div class="text-4xl font-brand text-current">folio.</div>
+</a>
+{{/logo}}
 {{#with @frontmatter}}
 <!doctype html>
 <html lang="en" style="overscroll-behavior-x:none;" class="">
@@ -117,12 +134,7 @@ footer:
 </head>
 <body class="m-0 p-0 font-sans leading-normal bg-background text-foreground">
     <header class="flex items-center justify-between w-full px-8 py-8 max-w-9xl mx-auto" data-role="navbar">
-        <a href="/" class="flex items-center gap-1 cursor-pointer leading-none">
-            <div class="flex items-center w-10 h-10">
-                <img src="/logo.svg" width="100%" height="100%">
-            </div>
-            <div class="text-4xl font-brand text-current">folio.</div>
-        </a>
+        {{>logo}}
         <div class="flex gap-6 items-center">
             {{#each this.navbar.links}}
             <a href="{{this.url}}" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
@@ -318,7 +330,7 @@ footer:
         </div>
     </section>
     <!-- open source banner -->
-    <section class="w-full bg-foreground text-background" data-role="section">
+    <section class="hidden w-full bg-foreground text-background" data-role="section">
         <div class="mx-auto max-w-7xl px-6 py-28 flex flex-col items-center">
             <div class="flex justify-center mb-2">
                 <div class="flex items-center opacity-70">
@@ -344,22 +356,28 @@ footer:
     </section>
     <!-- footer -->
     <footer class="w-full bg-background text-foreground" data-role="footer">
+        <!--
         <div class="mx-auto max-w-6xl px-6 pt-24 md:pt-48 pb-24">
             <img src="/labs-logo.svg" width="100%">
         </div>
-        <div class="w-full h-px bg-white opacity-10"></div>
-        <div class="py-8 px-8 max-w-6xl w-full mx-auto flex items-center gap-4 justify-between">
-            <div class="text-sm">
-                <span class="opacity-60">Made by</span>
-                <span><a href="https://www.josemi.xyz" class="hover:underline">Josemi</a>.</span>
+        -->
+        <div class="px-8 py-20 max-w-6xl w-full mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="col-span-1 sm:col-span-2">
+                {{>logo}}
+                <div class="text-sm">
+                    <span class="opacity-60">Made by</span>
+                    <span><a href="https://www.josemi.xyz" class="hover:underline">Josemi</a>.</span>
+                </div>
             </div>
-            <div class="flex gap-4">
-                {{#each this.footer}}
-                <a href="{{this.url}}" class="hover:underline text-current font-bold text-sm">
+            {{#each this.footer.sections}}
+            <div class="col-span-1 flex flex-col gap-2">
+                {{#each this.links}}
+                <a href="{{this.url}}" class="hover:underline text-current font-medium text-base">
                     <span>{{this.label || this.title}}</span>
                 </a>
                 {{/each}}
             </div>
+            {{/each}}
         </div>
     </footer>
 </body>
