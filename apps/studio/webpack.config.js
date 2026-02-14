@@ -96,10 +96,14 @@ export default {
                     from: path.resolve("../../node_modules/lowcss-helpers/index.css"),
                     to: "low.helpers.css",
                 },
+                {
+                    from: path.resolve("../../resources/favicon-32x32.png"),
+                    to: "favicon.png",
+                },
             ],
         }),
         new HtmlWebpackPlugin({
-            template: path.resolve("../../index.html"),
+            template: path.resolve("app.html"),
             filename: "app.html",
             minify: true,
         }),
