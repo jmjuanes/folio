@@ -1,6 +1,6 @@
 {
     "name": "folio",
-    "version": "0.26.2",
+    "version": "0.27.0",
     "description": "A minimalistic digital whiteboard for sketching and prototyping",
     "private": true,
     "type": "module",
@@ -23,7 +23,7 @@
         "build:landing": "mikel landing.mustache --plugin mikel-frontmatter --output .cache/landing/index.html && node scripts/copy-assets.js --output .cache/landing",
         "build:server": "yarn workspace folio-server build",
         "build:studio": "yarn workspace folio-studio build",
-        "build:website": "yarn build:lite && yarn build:docs",
+        "build:website": "yarn build:lite && yarn build:docs && yarn build:landing",
         "prebuild:dist": "node scripts/obfuscate-css.js --input node_modules/lowcss/low.css --input node_modules/lowcss-helpers/index.css --output obfuscate.map.json",
         "postbuild:dist": "node scripts/purge-css.js --input folio-react/folio.js --output folio-react/folio.css --config obfuscate.map.json",
         "copy:app": "yarn copy:studio",

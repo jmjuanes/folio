@@ -42,8 +42,7 @@ Standalone apps built on top of Folio's core.
 
 Public-facing sites for Folio's landing page and documentation.
 
-- `website/landing`: landing page for Folio.
-- `website/docs`: documentation site for Folio.
+- `apps/docs`: documentation site for Folio.
 
 ## Development
 

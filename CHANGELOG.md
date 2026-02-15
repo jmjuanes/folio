@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.27.0 (February 15, 2026) - A Major Step Forward
+
+Version `v0.27.0` introduces some of the most significant improvements to Folio so far, expanding its capabilities both for individual creators and for teams who want to run Folio in their own environment.
+
+### Introducing Folio Studio: Self‑Hosted Folio
+
+Say hello to **Folio Studio**, the brand‑new self‑hosted edition of Folio. You can now install Folio on your computer or private network using Docker, thanks to a lightweight built‑in server that supports multiple boards in a single instance.
+
+This marks the beginning of a fully deployable and customizable Folio experience.
+
+### Rotate elements
+
+You can now rotate elements directly on the canvas, giving you more freedom and flexibility when composing your boards. A long‑requested feature that makes Folio feel even more natural to use.
+
+### Redesigned Library with Collections
+
+The Library Panel has been completely reimagined. You can now organize your components into collections, making it easier to manage, group, and reuse your assets across boards.
+
+### New Landing Page + Documentation
+
+We have refreshed Folio's landing page with a cleaner, more modern design. Alongside it, we are launching the official documentation, including a full guide on how to configure and run Folio Studio.
+
+
 ## v0.26.0 (March 28, 2025) - Improved Panels and Keyboard Shortcuts!  
 
 This release introduces several UI refinements, including a **redesigned layers panel**, the addition of **keyboard shortcuts**, and an improved **panel layout**. We have also refreshed our landing page with a brand-new look!  
