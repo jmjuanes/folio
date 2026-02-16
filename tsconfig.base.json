@@ -1,8 +1,13 @@
 {
     "compilerOptions": {
+        "resolveJsonModule": true,
         "paths": {
-            "folio-react/*": ["./folio-react/*"],
-            "folio-server/*": ["./server/*"]
+            "folio-react/*": [
+                "./folio-react/*"
+            ],
+            "folio-server/*": [
+                "./server/*"
+            ]
         }
     },
     "exclude": [
