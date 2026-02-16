@@ -1,0 +1,517 @@
+{
+    "oneOf": [
+        {
+            "type": "object",
+            "description": "A geometric shape element",
+            "properties": {
+                "type": {
+                    "const": "shape",
+                    "description": "The type of the element"
+                },
+                "shape": {
+                    "type": "string",
+                    "enum": [
+                        "rectangle",
+                        "ellipse",
+                        "diamond",
+                        "triangle"
+                    ],
+                    "description": "The geometric shape type"
+                },
+                "x1": {
+                    "type": "number",
+                    "description": "The x coordinate of the top-left corner of the shape bounds"
+                },
+                "y1": {
+                    "type": "number",
+                    "description": "The y coordinate of the top-left corner of the shape bounds"
+                },
+                "x2": {
+                    "type": "number",
+                    "description": "The x coordinate of the bottom-right corner of the shape bounds"
+                },
+                "y2": {
+                    "type": "number",
+                    "description": "The y coordinate of the bottom-right corner of the shape bounds"
+                },
+                "fillColor": {
+                    "type": "string",
+                    "description": "The fill color of the shape (e.g. #ff0000, transparent, etc.). Default is transparent",
+                    "default": "transparent"
+                },
+                "fillStyle": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "hatch",
+                        "transparent",
+                        "solid"
+                    ],
+                    "description": "The fill style pattern. Default is solid",
+                    "default": "solid"
+                },
+                "strokeColor": {
+                    "type": "string",
+                    "description": "The color of the shape's border (only hex colors and 'transparent' are supported). Default is #000000",
+                    "default": "#000000"
+                },
+                "strokeWidth": {
+                    "type": "number",
+                    "description": "The width of the shape's border in pixels. Default is 1",
+                    "default": 1
+                },
+                "strokeStyle": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "solid",
+                        "dashed",
+                        "dotted"
+                    ],
+                    "description": "The style of the shape's border. Default is solid",
+                    "default": "solid"
+                },
+                "opacity": {
+                    "type": "number",
+                    "description": "The opacity of the element (0.0 to 1.0). Default is 1.0",
+                    "default": 1.0
+                },
+                "rotation": {
+                    "type": "number",
+                    "description": "The rotation in degrees of the element. Default is 0",
+                    "default": 0
+                }
+            },
+            "required": [
+                "type",
+                "shape",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        },
+        {
+            "type": "object",
+            "description": "A text element",
+            "properties": {
+                "type": {
+                    "const": "text",
+                    "description": "The type of the element"
+                },
+                "text": {
+                    "type": "string",
+                    "description": "The text content"
+                },
+                "x1": {
+                    "type": "number",
+                    "description": "The x coordinate of the top-left corner of the text bounds"
+                },
+                "y1": {
+                    "type": "number",
+                    "description": "The y coordinate of the top-left corner of the text bounds"
+                },
+                "x2": {
+                    "type": "number",
+                    "description": "The x coordinate of the bottom-right corner of the text bounds"
+                },
+                "y2": {
+                    "type": "number",
+                    "description": "The y coordinate of the bottom-right corner of the text bounds"
+                },
+                "textColor": {
+                    "type": "string",
+                    "description": "The color of the text"
+                },
+                "textSize": {
+                    "type": "number",
+                    "description": "The size of the text font"
+                },
+                "textAlign": {
+                    "type": "string",
+                    "enum": [
+                        "left",
+                        "center",
+                        "right",
+                        "justify"
+                    ],
+                    "description": "The horizontal alignment of the text. Default is left",
+                    "default": "left"
+                },
+                "opacity": {
+                    "type": "number",
+                    "description": "The opacity of the element (0.0 to 1.0). Default is 1.0",
+                    "default": 1.0
+                },
+                "rotation": {
+                    "type": "number",
+                    "description": "The rotation in degrees of the element. Default is 0.0",
+                    "default": 0.0
+                }
+            },
+            "required": [
+                "type",
+                "text",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        },
+        {
+            "type": "object",
+            "description": "An arrow element connecting two points",
+            "properties": {
+                "type": {
+                    "const": "arrow",
+                    "description": "The type of the element"
+                },
+                "x1": {
+                    "type": "number",
+                    "description": "The x coordinate of the start point of the arrow"
+                },
+                "y1": {
+                    "type": "number",
+                    "description": "The y coordinate of the start point of the arrow"
+                },
+                "x2": {
+                    "type": "number",
+                    "description": "The x coordinate of the end point of the arrow"
+                },
+                "y2": {
+                    "type": "number",
+                    "description": "The y coordinate of the end point of the arrow"
+                },
+                "xCenter": {
+                    "type": "number",
+                    "description": "The x coordinate of the control point for curved arrows"
+                },
+                "yCenter": {
+                    "type": "number",
+                    "description": "The y coordinate of the control point for curved arrows"
+                },
+                "arrowShape": {
+                    "type": "string",
+                    "enum": [
+                        "line",
+                        "connector"
+                    ],
+                    "description": "The style of the arrow connection (straight or right-angled). Default is line",
+                    "default": "line"
+                },
+                "startArrowhead": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "arrow",
+                        "triangle",
+                        "square",
+                        "circle",
+                        "segment"
+                    ],
+                    "description": "The shape of the arrow head at the start point. Default is none",
+                    "default": "none"
+                },
+                "endArrowhead": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "arrow",
+                        "triangle",
+                        "square",
+                        "circle",
+                        "segment"
+                    ],
+                    "description": "The shape of the arrow head at the end point. Default is none",
+                    "default": "none"
+                },
+                "strokeColor": {
+                    "type": "string",
+                    "description": "The color of the arrow stroke. Default is #000000",
+                    "default": "#000000"
+                },
+                "strokeWidth": {
+                    "type": "number",
+                    "description": "The width of the arrow stroke. Default is 1",
+                    "default": 1
+                },
+                "strokeStyle": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "solid",
+                        "dashed",
+                        "dotted"
+                    ],
+                    "description": "The style of the arrow stroke. Default is solid",
+                    "default": "solid"
+                },
+                "opacity": {
+                    "type": "number",
+                    "description": "The opacity of the element (0.0 to 1.0). Default is 1.0",
+                    "default": 1.0
+                }
+            },
+            "required": [
+                "type",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        },
+        {
+            "type": "object",
+            "description": "A freehand drawing element",
+            "properties": {
+                "type": {
+                    "const": "draw",
+                    "description": "The type of the element"
+                },
+                "x1": {
+                    "type": "number",
+                    "description": "The minimum x coordinate of the drawing bounds"
+                },
+                "y1": {
+                    "type": "number",
+                    "description": "The minimum y coordinate of the drawing bounds"
+                },
+                "x2": {
+                    "type": "number",
+                    "description": "The maximum x coordinate of the drawing bounds"
+                },
+                "y2": {
+                    "type": "number",
+                    "description": "The maximum y coordinate of the drawing bounds"
+                },
+                "points": {
+                    "type": "array",
+                    "description": "The list of points making up the drawing stroke, relative to the top-left corner of the drawing bounds",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        },
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "description": "A single point [x, y]"
+                    }
+                },
+                "strokeColor": {
+                    "type": "string",
+                    "description": "The color of the drawing stroke. Default is #000000",
+                    "default": "#000000"
+                },
+                "strokeWidth": {
+                    "type": "number",
+                    "description": "The width of the drawing stroke. Default is 1",
+                    "default": 1
+                },
+                "strokeStyle": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "solid",
+                        "dashed",
+                        "dotted"
+                    ],
+                    "description": "The style of the drawing stroke. Default is solid",
+                    "default": "solid"
+                },
+                "opacity": {
+                    "type": "number",
+                    "description": "The opacity of the element (0.0 to 1.0). Default is 1.0",
+                    "default": 1.0
+                },
+                "rotation": {
+                    "type": "number",
+                    "description": "The rotation in degrees of the element. Default is 0.0",
+                    "default": 0.0
+                }
+            },
+            "required": [
+                "type",
+                "points",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        },
+        {
+            "type": "object",
+            "description": "A sticky note element",
+            "properties": {
+                "type": {
+                    "const": "note",
+                    "description": "The type of the element"
+                },
+                "x1": {
+                    "type": "number",
+                    "description": "The x coordinate of the top-left corner of the note"
+                },
+                "y1": {
+                    "type": "number",
+                    "description": "The y coordinate of the top-left corner of the note"
+                },
+                "x2": {
+                    "type": "number",
+                    "description": "The x coordinate of the bottom-right corner of the note"
+                },
+                "y2": {
+                    "type": "number",
+                    "description": "The y coordinate of the bottom-right corner of the note"
+                },
+                "noteColor": {
+                    "type": "string",
+                    "description": "The background color of the sticky note"
+                },
+                "noteText": {
+                    "type": "string",
+                    "description": "The content text of the sticky note"
+                }
+            },
+            "required": [
+                "type",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        },
+        {
+            "type": "object",
+            "description": "A sticker element (icon)",
+            "properties": {
+                "type": {
+                    "const": "sticker",
+                    "description": "The type of the element"
+                },
+                "x1": {
+                    "type": "number",
+                    "description": "The x coordinate of the top-left corner of the sticker"
+                },
+                "y1": {
+                    "type": "number",
+                    "description": "The y coordinate of the top-left corner of the sticker"
+                },
+                "x2": {
+                    "type": "number",
+                    "description": "The x coordinate of the bottom-right corner of the sticker"
+                },
+                "y2": {
+                    "type": "number",
+                    "description": "The y coordinate of the bottom-right corner of the sticker"
+                },
+                "sticker": {
+                    "type": "string",
+                    "description": "The emoji character representing the sticker"
+                },
+                "opacity": {
+                    "type": "number",
+                    "description": "The opacity of the element (0.0 to 1.0). Default is 1.0",
+                    "default": 1.0
+                }
+            },
+            "required": [
+                "type",
+                "sticker",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        },
+        {
+            "type": "object",
+            "description": "An image element using an asset ID",
+            "properties": {
+                "type": {
+                    "const": "image",
+                    "description": "The type of the element"
+                },
+                "x1": {
+                    "type": "number",
+                    "description": "The x coordinate of the top-left corner of the image"
+                },
+                "y1": {
+                    "type": "number",
+                    "description": "The y coordinate of the top-left corner of the image"
+                },
+                "x2": {
+                    "type": "number",
+                    "description": "The x coordinate of the bottom-right corner of the image"
+                },
+                "y2": {
+                    "type": "number",
+                    "description": "The y coordinate of the bottom-right corner of the image"
+                },
+                "assetId": {
+                    "type": "string",
+                    "description": "The unique identifier of the asset resource"
+                },
+                "opacity": {
+                    "type": "number",
+                    "description": "The opacity of the element (0.0 to 1.0). Default is 1.0",
+                    "default": 1.0
+                },
+                "rotation": {
+                    "type": "number",
+                    "description": "The rotation in degrees of the element. Default is 0.0",
+                    "default": 0.0
+                }
+            },
+            "required": [
+                "type",
+                "assetId",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        },
+        {
+            "type": "object",
+            "description": "A bookmark element using an asset ID",
+            "properties": {
+                "type": {
+                    "const": "bookmark",
+                    "description": "The type of the element"
+                },
+                "x1": {
+                    "type": "number",
+                    "description": "The x coordinate of the top-left corner of the bookmark"
+                },
+                "y1": {
+                    "type": "number",
+                    "description": "The y coordinate of the top-left corner of the bookmark"
+                },
+                "x2": {
+                    "type": "number",
+                    "description": "The x coordinate of the bottom-right corner of the bookmark"
+                },
+                "y2": {
+                    "type": "number",
+                    "description": "The y coordinate of the bottom-right corner of the bookmark"
+                },
+                "assetId": {
+                    "type": "string",
+                    "description": "The unique identifier of the asset resource"
+                },
+                "opacity": {
+                    "type": "number",
+                    "description": "The opacity of the bookmark (0.0 to 1.0). Default is 1.0",
+                    "default": 1.0
+                }
+            },
+            "required": [
+                "type",
+                "assetId",
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        }
+    ]
+}
