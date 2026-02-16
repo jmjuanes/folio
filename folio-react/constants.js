@@ -548,4 +548,6 @@ export const PREFERENCES = {
     LIBRARY_ENABLED: "library.enabled",
     LIBRARY_EXPORT_COLLECTIONS: "library.exportCollections",
     LIBRARY_EXPORT_COMPONENTS: "library.exportComponents",
+    // ai
+    AI_ENABLED: "ai.enabled",
 };
