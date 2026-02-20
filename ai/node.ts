@@ -1,47 +1,78 @@
 import Koa from "koa";
 import Router from "@koa/router";
 import bodyParser from "@koa/bodyparser";
-import dotenv from "dotenv";
-import { generateElements } from "./handler.js";
-import schema from "../schema/element.schema.json" with { type: "json" };
+import { ENDPOINTS } from "./constants.ts";
+import { generateElements } from "./handler.ts";
+// import schema from "../schema/element.schema.json" with { type: "json" };
+import { HTTP_CODES } from "../server/config.ts";
+import { environment } from "../server/env.ts";
+import { createLogger } from "../server/utils/logger.ts";
+import { sendData, sendError } from "../server/utils/send.ts";
 
-dotenv.config();
+const DEFAULT_PORT = 8081;
+// const DEFAULT_VERSION = "v1";
 
-const app = new Koa();
-const router = new Router();
+const { log, debug } = createLogger("folio:ai");
 
-router.post("/ai", async (ctx: any) => {
-    const { prompt } = ctx.request.body as { prompt: string };
-    const apiKey = process.env.FOLIO_AI_GEMINI_APIKEY || process.env.GEMINI_API_KEY;
-    const model = process.env.FOLIO_AI_GEMINI_MODEL || "gemini-2.0-flash";
+// run the server
+const startServer = () => {
+    // const version = environment.FOLIO_AI_VERSION || DEFAULT_VERSION;
+    const port = environment.FOLIO_AI_PORT || DEFAULT_PORT;
+    const app = new Koa();
 
-    if (!apiKey) {
-        ctx.status = 500;
-        ctx.body = { error: "GEMINI_API_KEY not configured" };
-        return;
-    }
+    debug(`Starting folio-ai server at port ${port}`);
 
-    if (!prompt) {
-        ctx.status = 400;
-        ctx.body = { error: "Prompt is required" };
-        return;
-    }
+    // global handler
+    app.use((context: Koa.Context, next: () => Promise<void>) => {
+        return next().catch(error => {
+            console.error(error);
+            sendError(context, error.status || HTTP_CODES.INTERNAL_SERVER_ERROR, error.message || "");
+        });
+    });
 
-    try {
-        const response = await generateElements(apiKey, prompt, schema, model);
-        ctx.body = response;
-    } catch (error) {
-        console.error(error);
-        ctx.status = 500;
-        ctx.body = { error: "Failed to generate elements" };
-    }
-});
+    // register endpoints
+    const router = new Router();
+    router.get(ENDPOINTS.STATUS, async (context: Koa.Context) => {
+        sendData(context, { message: "ok" });
+    });
+    router.post(ENDPOINTS.QUOTAS, async (context: Koa.Context) => {
+        sendData(context, { requestsLimit: -1 });
+    });
+    router.post(ENDPOINTS.CHAT, async (context: Koa.Context) => {
+        const { prompt } = ctx.request.body as { prompt: string };
+        const apiKey = process.env.FOLIO_AI_GEMINI_APIKEY || process.env.GEMINI_API_KEY;
+        const model = process.env.FOLIO_AI_GEMINI_MODEL || "gemini-2.0-flash";
 
-app.use(bodyParser());
-app.use(router.routes());
-app.use(router.allowedMethods());
+        if (!apiKey) {
+            ctx.status = 500;
+            ctx.body = { error: "GEMINI_API_KEY not configured" };
+            return;
+        }
 
-const PORT = process.env.FOLIO_AI_PORT || process.env.PORT || 8081;
-app.listen(PORT, () => {
-    console.log(`AI service running on http://localhost:${PORT}`);
-});
+        if (!prompt) {
+            ctx.status = 400;
+            ctx.body = { error: "Prompt is required" };
+            return;
+        }
+
+        try {
+            const response = await generateElements(apiKey, prompt, schema, model);
+            ctx.body = response;
+        } catch (error) {
+            console.error(error);
+            sendError(context, HTTP_CODES.INTERNAL_SERVER_ERROR, error.message || "Error performing request");
+        }
+    });
+
+    app.use(bodyParser());
+    app.use(router.routes());
+    app.use(router.allowedMethods());
+
+    // start app
+    app.listen(app, () => {
+        log(`Server running at 'http://127.0.0.1:${port}'`);
+        log(`Use Control-C to stop this server.`);
+    });
+};
+
+startServer();
