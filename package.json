@@ -10,6 +10,7 @@
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
         "folio-react",
+        "ai",
         "server",
         "apps/*"
     ],
