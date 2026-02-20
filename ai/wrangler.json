@@ -1,0 +1,9 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "folio-ai",
+    "main": "worker.ts",
+    "compatibility_date": "2025-02-14",
+    "observability": {
+        "enabled": true
+    }
+}

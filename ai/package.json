@@ -1,0 +1,26 @@
+{
+    "name": "folio-ai",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/ai/node.js",
+        "dev": "node --watch dist/ai/node.js",
+        "worker:dev": "wrangler dev worker.ts"
+    },
+    "dependencies": {
+        "@google/genai": "^0.11.0",
+        "koa": "^2.16.0",
+        "@koa/router": "^13.1.0",
+        "@koa/bodyparser": "^6.0.0",
+        "dotenv": "^16.5.0"
+    },
+    "devDependencies": {
+        "@types/koa": "^2.15.0",
+        "@types/koa__router": "^12.0.4",
+        "@types/node": "^22.13.4",
+        "typescript": "^5.8.3",
+        "wrangler": "^3.111.0"
+    }
+}
