@@ -1,9 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
+import elementSchema from "../schema/element.schema.json" with { type: "json" };
+import assetSchema from "../schema/asset.schema.json" with { type: "json" };
 
-export interface AIResponse {
+
+export type AIResponse = {
     elements: any[];
     text?: string;
-}
+};
 
 export const generateElements = async (apiKey: string, prompt: string, schema: any, model: string = "gemini-2.0-flash"): Promise<AIResponse> => {
     const ai = new GoogleGenAI({ apiKey });

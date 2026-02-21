@@ -3,3 +3,7 @@ export enum ENDPOINTS {
     QUOTAS = "/_quotas",
     CHAT = "/_chat",
 };
+
+export enum API_ERROR_MESSAGES {
+    ERROR_PERFORMING_REQUEST = "Error performing the request. Contact the administrator",
+};
