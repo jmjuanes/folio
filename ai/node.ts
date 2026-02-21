@@ -2,11 +2,11 @@ import Koa from "koa";
 import Router from "@koa/router";
 import bodyParser from "@koa/bodyparser";
 import { ENDPOINTS, API_ERROR_MESSAGES } from "./constants.ts";
-import { generateElements } from "./handler.ts";
 import { HTTP_CODES } from "../server/config.ts";
 import { environment } from "../server/env.ts";
 import { createLogger } from "../server/utils/logger.ts";
 import { sendData, sendError } from "../server/utils/send.ts";
+import { generateChatMessage } from "./handler.ts";
 
 const DEFAULT_PORT = 8081;
 const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
@@ -44,10 +44,11 @@ const startAiServer = () => {
     router.post(ENDPOINTS.QUOTAS, async (context: Koa.Context) => {
         sendData(context, { requestsLimit: -1 });
     });
-    router.post(ENDPOINTS.CHAT, async (context: Koa.Context) => {
-        const { prompt } = ctx.request.body as { prompt: string };
+    router.post(ENDPOINTS.CHAT_MESSAGE, async (context: Koa.Context) => {
+        const { prompt, history } = ctx.request.body as { prompt: string, history?: any };
         const apiKey = process.env.FOLIO_AI_GEMINI_APIKEY || process.env.GEMINI_API_KEY;
         const model = process.env.FOLIO_AI_GEMINI_MODEL || "gemini-2.0-flash";
+        // generate chat message
 
         if (!apiKey) {
             ctx.status = 500;

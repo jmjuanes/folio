@@ -1,7 +1,7 @@
 export enum ENDPOINTS {
     STATUS = "/_status",
     QUOTAS = "/_quotas",
-    CHAT = "/_chat",
+    CHAT_MESSAGE = "/_chat/message",
 };
 
 export enum API_ERROR_MESSAGES {
