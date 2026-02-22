@@ -1,4 +1,6 @@
 import { GoogleGenAI, createModelContent, createUserContent } from "@google/genai";
+import type { Content } from "@google/genai";
+
 import elementSchema from "../schema/element.schema.json" with { type: "json" };
 import assetSchema from "../schema/asset.schema.json" with { type: "json" };
 

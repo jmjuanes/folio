@@ -1,11 +1,23 @@
-import { generateElements } from "./handler.js";
-import schema from "../schema/element.schema.json" with { type: "json" };
+import { ENDPOINTS } from "./constants.ts";
+import { createAssistant } from "./ai.ts";
 
 export interface Env {
     FOLIO_AI_GEMINI_APIKEY?: string;
-    GEMINI_API_KEY?: string;
     FOLIO_AI_GEMINI_MODEL?: string;
-}
+};
+
+const sendResponse = (statusCode: number, responseData: any): Response => {
+    return new Response(JSON.stringify(responseData), {
+        status: statusCode,
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+};
+
+const sendData = (data: any): Response => {
+    return sendResponse(200, { data: data });
+};
 
 export default {
     async fetch(request: Request, env: Env): Promise<Response> {
