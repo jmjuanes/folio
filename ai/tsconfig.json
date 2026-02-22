@@ -1,19 +1,17 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "outDir": "./dist",
-        "strict": true,
+        "allowImportingTsExtensions": true,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
+        "outDir": "./dist",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "target": "es2022",
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
-        "allowJs": true
+        "rewriteRelativeImportExtensions": true
     },
-    "include": [
-        "**/*.ts"
-    ],
     "exclude": [
         "node_modules/**/*"
     ]

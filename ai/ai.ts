@@ -32,7 +32,7 @@ export type Assistant = {
 };
 
 // @description create a new assitant instance
-export const createAssistant = (assistantParams: AssistantParams = {}): Assistant => {
+export const createAssistant = (assistantParams: AssistantParams): Assistant => {
     const ai = new GoogleGenAI({
         apiKey: assistantParams.apiKey,
     });
