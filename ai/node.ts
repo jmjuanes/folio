@@ -6,7 +6,7 @@ import { HTTP_CODES } from "../server/config.ts";
 import { environment } from "../server/env.ts";
 import { createLogger } from "../server/utils/logger.ts";
 import { sendData, sendError } from "../server/utils/send.ts";
-import { generateChatMessage } from "./handler.ts";
+import { createAssistant } from "./ai.ts";
 
 const DEFAULT_PORT = 8081;
 const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
@@ -18,15 +18,19 @@ const { log, debug, error } = createLogger("folio:ai");
 const startAiServer = () => {
     // const version = environment.FOLIO_AI_VERSION || DEFAULT_VERSION;
     const port = environment.FOLIO_AI_PORT || DEFAULT_PORT;
-    const model = environment.FOLIO_AI_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
-    const apiKey = environment.FOLIO_AI_GEMINI_APIKEY;
     const app = new Koa();
 
     debug(`Starting folio-ai server at port ${port}`);
-    if (!apiKey) {
+    if (!environment.FOLIO_AI_GEMINI_APIKEY) {
         error(`Error starting folio-ai server. FOLIO_AI_GEMINI_APIKEY is not configured.`);
         return process.exit(1);
     }
+
+    // initialize the ai assistant
+    const assistant = createAssistant({
+        apiKey: environment.FOLIO_AI_GEMINI_APIKEY,
+        model: environment.FOLIO_AI_GEMINI_MODEL || DEFAULT_GEMINI_MODEL,
+    });
 
     // global handler
     app.use((context: Koa.Context, next: () => Promise<void>) => {
@@ -44,28 +48,22 @@ const startAiServer = () => {
     router.post(ENDPOINTS.QUOTAS, async (context: Koa.Context) => {
         sendData(context, { requestsLimit: -1 });
     });
-    router.post(ENDPOINTS.CHAT_MESSAGE, async (context: Koa.Context) => {
-        const { prompt, history } = ctx.request.body as { prompt: string, history?: any };
-        const apiKey = process.env.FOLIO_AI_GEMINI_APIKEY || process.env.GEMINI_API_KEY;
-        const model = process.env.FOLIO_AI_GEMINI_MODEL || "gemini-2.0-flash";
+    router.post(ENDPOINTS.GENERATE_ELEMENTS, async (context: Koa.Context) => {
+        // const { prompt, messages } = ctx.request.body as { prompt: string, messages?: any[] };
+        // const apiKey = process.env.FOLIO_AI_GEMINI_APIKEY || process.env.GEMINI_API_KEY;
+        // const model = process.env.FOLIO_AI_GEMINI_MODEL || "gemini-2.0-flash";
         // generate chat message
-
-        if (!apiKey) {
-            ctx.status = 500;
-            ctx.body = { error: "GEMINI_API_KEY not configured" };
-            return;
+        if (!context.request.body?.prompt) {
+            return sendError(context, HTTP_CODES.BAD_REQUEST, API_ERROR_MESSAGES.EMPTY_PROMPT);
         }
-
-        if (!prompt) {
-            ctx.status = 400;
-            ctx.body = { error: "Prompt is required" };
-            return;
-        }
-
         try {
-            const response = await generateElements(apiKey, prompt, schema, model);
-            ctx.body = response;
-        } catch (responseError) {
+            const response = await assistant.generateElements({
+                prompt: context.request.body?.prompt,
+                messages: context.request.body?.messages || [],
+            });
+            return sendData(context, response);
+        }
+        catch (responseError) {
             console.error(responseError);
             sendError(context, HTTP_CODES.INTERNAL_SERVER_ERROR, responseError.message || API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
         }
