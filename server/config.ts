@@ -37,6 +37,13 @@ export type WebsiteConfig = {
     app_config?: any;
 };
 
+export type AiConfig = {
+    ai_enabled?: boolean;
+    ai_port?: number;
+    ai_gemini_apikey?: string;
+    ai_gemini_model?: string;
+};
+
 export type BaseConfig = {
     extends?: string;
     port?: number;
@@ -47,6 +54,7 @@ export type BaseConfig = {
 // configuration for folio server
 export type Config =
     BaseConfig &
+    AiConfig &
     WebsiteConfig &
     SecurityConfig &
     LocalStorageConfig &
@@ -88,6 +96,9 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "app_directory": environment.FOLIO_APP_PATH || environment.FOLIO_APP_DIRECTORY || environment.FOLIO_WEBSITE_PATH,
         "jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
+        "ai_port": environment.FOLIO_AI_PORT,
+        "ai_gemini_apikey": environment.FOLIO_AI_GEMINI_APIKEY,
+        "ai_gemini_model": environment.FOLIO_AI_GEMINI_MODEL,
     };
 
     // iterate over the fields and set the values in the config object
