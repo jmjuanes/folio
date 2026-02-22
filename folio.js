@@ -85,7 +85,14 @@ const main = async (command = "", options = {}) => {
     // 1. start the folio server/ai services
     if (command === COMMANDS.START || command === COMMANDS.SERVER_START || command === COMMANDS.AI_START) {
         if (command === COMMANDS.START || command === COMMANDS.AI_START) {
-            startAiServer(config);
+            if (command === COMMANDS.AI_START && !config.ai_enabled) {
+                info(`AI service is disabled in configuration. Skipping initialization...`);
+            }
+            // only initialize the ai service if the user has manually initialized the ai service
+            // using the ai:start command
+            if (config.ai_enabled || command === COMMANDS.AI_START) {
+                startAiServer(config);
+            }
         }
         if (command === COMMANDS.START || command === COMMANDS.SERVER_START) {
             startServer(config);
