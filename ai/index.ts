@@ -2,34 +2,35 @@ import Koa from "koa";
 import Router from "@koa/router";
 import bodyParser from "@koa/bodyparser";
 import { ENDPOINTS, API_ERROR_MESSAGES } from "./constants.ts";
-import { HTTP_CODES } from "../server/config.ts";
-import { environment } from "../server/env.ts";
+import { HTTP_CODES } from "../server/constants.ts";
+// import { environment } from "../server/env.ts";
 import { createLogger } from "../server/utils/logger.ts";
 import { sendData, sendError } from "../server/utils/send.ts";
 import { createAssistant } from "./ai.ts";
+import type { Config } from "../server/config.ts";
 
 const DEFAULT_PORT = 8081;
 const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
-// const DEFAULT_VERSION = "v1";
 
 const { log, debug, error } = createLogger("folio:ai");
 
 // run the server
-const startAiServer = () => {
+export const startAiServer = async (config: Config): Promise<any> => {
     // const version = environment.FOLIO_AI_VERSION || DEFAULT_VERSION;
-    const port = environment.FOLIO_AI_PORT || DEFAULT_PORT;
+    const port = config.ai_port || DEFAULT_PORT;
     const app = new Koa();
 
     debug(`Starting folio-ai server at port ${port}`);
-    if (!environment.FOLIO_AI_GEMINI_APIKEY) {
+    // if (!environment.FOLIO_AI_GEMINI_APIKEY) {
+    if (!config.ai_gemini_apikey) {
         error(`Error starting folio-ai server. FOLIO_AI_GEMINI_APIKEY is not configured.`);
         return process.exit(1);
     }
 
     // initialize the ai assistant
     const assistant = createAssistant({
-        apiKey: environment.FOLIO_AI_GEMINI_APIKEY,
-        model: environment.FOLIO_AI_GEMINI_MODEL || DEFAULT_GEMINI_MODEL,
+        apiKey: config.ai_gemini_apikey, // environment.FOLIO_AI_GEMINI_APIKEY,
+        model: config.ai_gemini_model || DEFAULT_GEMINI_MODEL,
     });
 
     // global handler
@@ -78,6 +79,6 @@ const startAiServer = () => {
         log(`Server running at 'http://127.0.0.1:${port}'`);
         log(`Use Control-C to stop this server.`);
     });
-};
 
-startAiServer();
+    return app;
+};
