@@ -19,18 +19,14 @@ export type AssistantParams = {
     model: string;
 };
 
-export type AssistantResponse = {
-    elements?: any[] | null;
-    assets?: any[] | null;
-    text?: string | null;
-};
-
-export type Message = AssistantResponse & {
+export type Message = {
     role: Roles;
+    elements?: any[];
+    text?: string;
 };
 
 export type Assistant = {
-    generateElements: (params: GenerateElementsParams) => Promise<AssistantResponse>;
+    generateElements: (params: GenerateElementsParams) => Promise<any>;
 };
 
 // @description create a new assitant instance
@@ -38,18 +34,17 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
     const ai = new GoogleGenAI({
         apiKey: assistantParams.apiKey,
     });
-    const generateContent = (options: any): Promise<AssistantResponse> => {
+    const generateContent = (options: any): Promise<any> => {
         return ai.models.generateContent({ ...options, model: assistantParams.model }).then(result => {
-            return JSON.parse(result.text) as AssistantResponse;
+            return JSON.parse(result.text) as any;
         });
     };
     return {
-        generateElements: (params: GenerateElementsParams): Promise<AssistantResponse> => {
+        generateElements: (params: GenerateElementsParams): Promise<any> => {
             const systemInstructions = [
                 "You are an AI assistant for a digital whiteboard application called Folio.",
                 "Your goal is to help the user generate elements for their whiteboard based on their requests.",
                 "Only return valid JSON. Do not include any other text or markdown formatting.",
-                "Only use available elements and properties defined in the response schema.",
             ];
             // parse messages from history
             const contentItems: Content[] = (params?.messages || []).map((entry: Message) => {
@@ -63,27 +58,16 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                 return null;
             });
             // add prompt as a new history entry
-            contentItems.push(createUserContent(options.prompt));
+            contentItems.push(createUserContent(params.prompt));
             // generate content based on the chat history
             return generateContent({
                 contents: contentItems.filter(Boolean),
                 config: {
                     systemInstruction: systemInstructions.join(" "),
                     responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "object",
-                        description: "response object",
-                        properties: {
-                            text: {
-                                type: "string",
-                                description: "Brief description of the generated stuff",
-                            },
-                            elements: {
-                                type: "array",
-                                description: "list of elements generated",
-                                items: elementSchema,
-                            },
-                        },
+                    responseJsonSchema: {
+                        type: "array",
+                        items: elementSchema,
                     },
                 },
             });

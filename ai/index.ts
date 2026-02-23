@@ -10,7 +10,7 @@ import { createAssistant } from "./ai.ts";
 import type { Config } from "../server/config.ts";
 
 const DEFAULT_PORT = 8081;
-const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
+const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
 
 const { log, debug, error } = createLogger("folio:ai");
 
@@ -50,17 +50,18 @@ export const startAiServer = async (config: Config): Promise<any> => {
         sendData(context, { requestsLimit: -1 });
     });
     router.post(ENDPOINTS.GENERATE_ELEMENTS, async (context: Koa.Context) => {
+        const body = context.request?.body || {} as any;
         // const { prompt, messages } = ctx.request.body as { prompt: string, messages?: any[] };
         // const apiKey = process.env.FOLIO_AI_GEMINI_APIKEY || process.env.GEMINI_API_KEY;
         // const model = process.env.FOLIO_AI_GEMINI_MODEL || "gemini-2.0-flash";
         // generate chat message
-        if (!context.request.body?.prompt) {
+        if (!body?.prompt) {
             return sendError(context, HTTP_CODES.BAD_REQUEST, API_ERROR_MESSAGES.EMPTY_PROMPT);
         }
         try {
             const response = await assistant.generateElements({
-                prompt: context.request.body?.prompt,
-                messages: context.request.body?.messages || [],
+                prompt: body?.prompt,
+                messages: body?.messages || [],
             });
             return sendData(context, response);
         }
@@ -75,7 +76,7 @@ export const startAiServer = async (config: Config): Promise<any> => {
     app.use(router.allowedMethods());
 
     // start app
-    app.listen(app, () => {
+    app.listen(port, () => {
         log(`Server running at 'http://127.0.0.1:${port}'`);
         log(`Use Control-C to stop this server.`);
     });
