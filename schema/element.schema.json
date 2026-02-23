@@ -5,7 +5,9 @@
             "description": "A geometric shape element",
             "properties": {
                 "type": {
-                    "const": "shape",
+                    "enum": [
+                        "shape"
+                    ],
                     "description": "The type of the element"
                 },
                 "shape": {
@@ -96,7 +98,9 @@
             "description": "A text element",
             "properties": {
                 "type": {
-                    "const": "text",
+                    "enum": [
+                        "text"
+                    ],
                     "description": "The type of the element"
                 },
                 "text": {
@@ -163,7 +167,9 @@
             "description": "An arrow element connecting two points",
             "properties": {
                 "type": {
-                    "const": "arrow",
+                    "enum": [
+                        "arrow"
+                    ],
                     "description": "The type of the element"
                 },
                 "x1": {
@@ -265,7 +271,9 @@
             "description": "A freehand drawing element",
             "properties": {
                 "type": {
-                    "const": "draw",
+                    "enum": [
+                        "draw"
+                    ],
                     "description": "The type of the element"
                 },
                 "x1": {
@@ -343,7 +351,9 @@
             "description": "A sticky note element",
             "properties": {
                 "type": {
-                    "const": "note",
+                    "enum": [
+                        "note"
+                    ],
                     "description": "The type of the element"
                 },
                 "x1": {
@@ -384,7 +394,9 @@
             "description": "A sticker element (icon)",
             "properties": {
                 "type": {
-                    "const": "sticker",
+                    "enum": [
+                        "sticker"
+                    ],
                     "description": "The type of the element"
                 },
                 "x1": {
@@ -427,7 +439,9 @@
             "description": "An image element using an asset ID",
             "properties": {
                 "type": {
-                    "const": "image",
+                    "enum": [
+                        "image"
+                    ],
                     "description": "The type of the element"
                 },
                 "x1": {
@@ -475,7 +489,9 @@
             "description": "A bookmark element using an asset ID",
             "properties": {
                 "type": {
-                    "const": "bookmark",
+                    "enum": [
+                        "bookmark"
+                    ],
                     "description": "The type of the element"
                 },
                 "x1": {

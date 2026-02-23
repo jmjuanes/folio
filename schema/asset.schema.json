@@ -5,7 +5,9 @@
             "description": "An image asset",
             "properties": {
                 "type": {
-                    "const": "image",
+                    "enum": [
+                        "image"
+                    ],
                     "description": "The type of the asset"
                 },
                 "data": {
@@ -51,7 +53,9 @@
             "description": "A bookmark asset",
             "properties": {
                 "type": {
-                    "const": "bookmark",
+                    "enum": [
+                        "bookmark"
+                    ],
                     "description": "The type of the asset"
                 },
                 "data": {
