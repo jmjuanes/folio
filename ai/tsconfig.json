@@ -13,6 +13,8 @@
         "rewriteRelativeImportExtensions": true
     },
     "exclude": [
+        "dist/**/*",
+        "worker.ts",
         "node_modules/**/*"
     ]
 }
