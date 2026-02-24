@@ -3,7 +3,6 @@ import Router from "@koa/router";
 import bodyParser from "@koa/bodyparser";
 import { ENDPOINTS, API_ERROR_MESSAGES } from "./constants.ts";
 import { HTTP_CODES } from "../server/constants.ts";
-// import { environment } from "../server/env.ts";
 import { createLogger } from "../server/utils/logger.ts";
 import { sendData, sendError } from "../server/utils/send.ts";
 import { createAssistant } from "./ai.ts";
@@ -16,12 +15,10 @@ const { log, debug, error } = createLogger("folio:ai");
 
 // run the server
 export const startAiServer = async (config: Config): Promise<any> => {
-    // const version = environment.FOLIO_AI_VERSION || DEFAULT_VERSION;
     const port = config.ai_port || DEFAULT_PORT;
     const app = new Koa();
 
     debug(`Starting folio-ai server at port ${port}`);
-    // if (!environment.FOLIO_AI_APIKEY) {
     if (!config.ai_apikey) {
         error(`Error starting folio-ai server. FOLIO_AI_APIKEY is not configured.`);
         return process.exit(1);
@@ -30,7 +27,7 @@ export const startAiServer = async (config: Config): Promise<any> => {
     // initialize the ai assistant
     const assistant = createAssistant({
         baseUrl: config.ai_base_url,
-        apiKey: config.ai_apikey, // environment.FOLIO_AI_APIKEY,
+        apiKey: config.ai_apikey,
         model: config.ai_model || DEFAULT_MODEL,
     });
 
@@ -53,8 +50,6 @@ export const startAiServer = async (config: Config): Promise<any> => {
     router.post(ENDPOINTS.GENERATE_ELEMENTS, async (context: Koa.Context) => {
         const body = context.request?.body || {} as any;
         // const { prompt, messages } = ctx.request.body as { prompt: string, messages?: any[] };
-        // const apiKey = process.env.FOLIO_AI_GEMINI_APIKEY || process.env.GEMINI_API_KEY;
-        // const model = process.env.FOLIO_AI_GEMINI_MODEL || "gemini-2.0-flash";
         // generate chat message
         if (!body?.prompt) {
             return sendError(context, HTTP_CODES.BAD_REQUEST, API_ERROR_MESSAGES.EMPTY_PROMPT);
