@@ -40,8 +40,9 @@ export type WebsiteConfig = {
 export type AiConfig = {
     ai_enabled?: boolean;
     ai_port?: number;
-    ai_gemini_apikey?: string;
-    ai_gemini_model?: string;
+    ai_base_url?: string;
+    ai_apikey?: string;
+    ai_model?: string;
 };
 
 export type BaseConfig = {
@@ -97,8 +98,9 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
         "ai_port": environment.FOLIO_AI_PORT,
-        "ai_gemini_apikey": environment.FOLIO_AI_GEMINI_APIKEY,
-        "ai_gemini_model": environment.FOLIO_AI_GEMINI_MODEL,
+        "ai_base_url": environment.FOLIO_AI_BASE_URL,
+        "ai_apikey": environment.FOLIO_AI_APIKEY,
+        "ai_model": environment.FOLIO_AI_MODEL,
     };
 
     // iterate over the fields and set the values in the config object
