@@ -76,7 +76,23 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                 content: options.systemInstructions,
             });
         }
-        // 1.2. insert history messages
+        // 1.2. include additional instructions
+        messages.push({
+            role: AssistantRoles.DEVELOPER,
+            content: "Only return valid JSON. Do not include any other text or markdown formatting.",
+        });
+        messages.push({
+            role: AssistantRoles.DEVELOPER,
+            content: [
+                "Use 'shape' elements to create basic figures like a rectangle, circle, or triangle. Note that 'shape' elements can include also text inside.",
+                "Use 'arrow' elements to create simple lines, arrows, and connectors.",
+                "Use 'text' elements to create text when it is not included inside a 'shape' element (for example a title or a label).",
+                // "Use 'draw' elements to create freehand drawings. For example, if the user asks for a 'drawing of a cat', use a 'draw' element to create the drawing.",
+                "Use 'draw' elements to create more complex figures. Draw elements are composed of a list of points, which are connected by lines. Each 'draw' element is a single path.",
+                "Do not use a 'draw' element if the request can be satisfied using 'shape', 'arrow', or 'text' elements (for example, to draw a single line or an arrow use an 'arrow' element, not a 'draw' element).",
+            ].join(" "),
+        });
+        // 1.3. insert history messages
         if (options?.messages) {
             options.messages.forEach((message: Message) => {
                 if (message.role === MessageRoles.USER) {
@@ -93,7 +109,7 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                 }
             });
         }
-        // 1.3. insert user prompt
+        // 1.4. insert user prompt
         messages.push({
             role: AssistantRoles.USER,
             content: options.prompt,
@@ -132,7 +148,6 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
             const systemInstructions = [
                 "You are an AI assistant for a digital whiteboard application called Folio.",
                 "Your goal is to help the user generate elements for their whiteboard based on their requests.",
-                "Only return valid JSON. Do not include any other text or markdown formatting.",
             ];
             return generateContent({
                 systemInstructions: systemInstructions.join(" "),
