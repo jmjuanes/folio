@@ -136,7 +136,8 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
         });
         // check for error performing the request
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const error = await response.json();
+            return Promise.reject(error);
         }
         // parse the response
         const result = await response.json();

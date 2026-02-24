@@ -66,9 +66,9 @@ export const startAiServer = async (config: Config): Promise<any> => {
             });
             return sendData(context, response);
         }
-        catch (responseError) {
-            console.error(responseError);
-            sendError(context, HTTP_CODES.INTERNAL_SERVER_ERROR, responseError.message || API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
+        catch (response) {
+            error(response?.error?.message || response);
+            sendError(context, HTTP_CODES.INTERNAL_SERVER_ERROR, API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
         }
     });
 
