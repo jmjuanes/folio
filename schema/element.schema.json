@@ -90,8 +90,16 @@
                 "x1",
                 "y1",
                 "x2",
-                "y2"
-            ]
+                "y2",
+                "fillColor",
+                "fillStyle",
+                "strokeColor",
+                "strokeWidth",
+                "strokeStyle",
+                "opacity",
+                "rotation"
+            ],
+            "additionalProperties": false
         },
         {
             "type": "object",
@@ -159,8 +167,14 @@
                 "x1",
                 "y1",
                 "x2",
-                "y2"
-            ]
+                "y2",
+                "textColor",
+                "textSize",
+                "textAlign",
+                "opacity",
+                "rotation"
+            ],
+            "additionalProperties": false
         },
         {
             "type": "object",
@@ -190,11 +204,13 @@
                 },
                 "xCenter": {
                     "type": "number",
-                    "description": "The x coordinate of the control point for curved arrows"
+                    "description": "The x coordinate of the control point for curved arrows",
+                    "default": 0
                 },
                 "yCenter": {
                     "type": "number",
-                    "description": "The y coordinate of the control point for curved arrows"
+                    "description": "The y coordinate of the control point for curved arrows",
+                    "default": 0
                 },
                 "arrowShape": {
                     "type": "string",
@@ -263,8 +279,18 @@
                 "x1",
                 "y1",
                 "x2",
-                "y2"
-            ]
+                "y2",
+                "xCenter",
+                "yCenter",
+                "arrowShape",
+                "strokeColor",
+                "strokeWidth",
+                "strokeStyle",
+                "opacity",
+                "startArrowHead",
+                "endArrowHead"
+            ],
+            "additionalProperties": false
         },
         {
             "type": "object",
@@ -343,8 +369,14 @@
                 "x1",
                 "y1",
                 "x2",
-                "y2"
-            ]
+                "y2",
+                "strokeColor",
+                "strokeWidth",
+                "strokeStyle",
+                "opacity",
+                "rotation"
+            ],
+            "additionalProperties": false
         },
         {
             "type": "object",
@@ -386,8 +418,11 @@
                 "x1",
                 "y1",
                 "x2",
-                "y2"
-            ]
+                "y2",
+                "noteColor",
+                "noteText"
+            ],
+            "additionalProperties": false
         },
         {
             "type": "object",
@@ -431,8 +466,10 @@
                 "x1",
                 "y1",
                 "x2",
-                "y2"
-            ]
+                "y2",
+                "opacity"
+            ],
+            "additionalProperties": false
         },
         {
             "type": "object",
@@ -481,8 +518,11 @@
                 "x1",
                 "y1",
                 "x2",
-                "y2"
-            ]
+                "y2",
+                "opacity",
+                "rotation"
+            ],
+            "additionalProperties": false
         },
         {
             "type": "object",
@@ -526,8 +566,10 @@
                 "x1",
                 "y1",
                 "x2",
-                "y2"
-            ]
+                "y2",
+                "opacity"
+            ],
+            "additionalProperties": false
         }
     ]
 }
