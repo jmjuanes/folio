@@ -10,7 +10,7 @@ import { createAssistant } from "./ai.ts";
 import type { Config } from "../server/config.ts";
 
 const DEFAULT_PORT = 8081;
-const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
+const DEFAULT_MODEL = "openai/gpt-oss-120b";
 
 const { log, debug, error } = createLogger("folio:ai");
 
@@ -21,16 +21,17 @@ export const startAiServer = async (config: Config): Promise<any> => {
     const app = new Koa();
 
     debug(`Starting folio-ai server at port ${port}`);
-    // if (!environment.FOLIO_AI_GEMINI_APIKEY) {
-    if (!config.ai_gemini_apikey) {
-        error(`Error starting folio-ai server. FOLIO_AI_GEMINI_APIKEY is not configured.`);
+    // if (!environment.FOLIO_AI_APIKEY) {
+    if (!config.ai_apikey) {
+        error(`Error starting folio-ai server. FOLIO_AI_APIKEY is not configured.`);
         return process.exit(1);
     }
 
     // initialize the ai assistant
     const assistant = createAssistant({
-        apiKey: config.ai_gemini_apikey, // environment.FOLIO_AI_GEMINI_APIKEY,
-        model: config.ai_gemini_model || DEFAULT_GEMINI_MODEL,
+        baseUrl: config.ai_base_url,
+        apiKey: config.ai_apikey, // environment.FOLIO_AI_APIKEY,
+        model: config.ai_model || DEFAULT_MODEL,
     });
 
     // global handler
