@@ -10,7 +10,6 @@
         "worker:dev": "wrangler dev worker.ts"
     },
     "dependencies": {
-        "@google/genai": "^1.42.0",
         "@koa/bodyparser": "^6.1.0",
         "@koa/router": "^15.3.0",
         "dotenv": "^17.3.1",
