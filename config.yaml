@@ -39,6 +39,18 @@ storage_file: 'data/folio.db'
 ## expiration: specify the expiration time. Times are parsed by https://www.npmjs.com/package/ms
 # jwt_token_expiration: "1y"
 
+## ai configuration
+## enable or disable the ai service
+# ai_enabled: false
+## port where the ai service will listen. Can be overrided using the FOLIO_AI_PORT env variable
+# ai_port: 8081
+## base url to the AI provider (openai or groq)
+# ai_base_url: 'https://api.openai.com/v1'
+## api key to the AI provider
+# ai_apikey: 'your_api_key'
+## model to use
+# ai_model: 'gpt-3.5-turbo'
+
 ## configure the folder where the frontend app is located
 app_directory: 'app/'
 
