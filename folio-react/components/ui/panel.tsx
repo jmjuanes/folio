@@ -84,9 +84,9 @@ Panel.Tabs = (props: PanelTabsProps): React.JSX.Element => (
 // @param {function} props.onClick click listener
 Panel.TabsItem = (props: PanelTabsItemProps): React.JSX.Element => {
     const classList = classNames({
-        "rounded-lg flex justify-center items-center flex p-1 w-full text-lg": true,
-        "text-gray-600 hover:text-gray-900 cursor-pointer": !props.active,
-        "bg-white text-gray-950 shadow-sm border-1 border-gray-200": props.active,
+        "rounded-md flex justify-center items-center flex p-2 w-full text-lg": true,
+        "text-gray-900 hover:bg-white cursor-pointer": !props.active,
+        "text-white bg-gray-950": props.active,
     }, props.className);
 
     return (
