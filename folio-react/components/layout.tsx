@@ -145,7 +145,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                         )}
                     </div>
                     {sidebarVisible && (
-                        <div className="shrink-0 w-80 h-full pointer-events-auto">
+                        <div className="shrink-0 w-88 h-full pointer-events-auto">
                             <Panel className="relative h-full rounded-tr-none rounded-br-none overflow-hidden flex flex-col min-h-0">
                                 {isLibraryEnabled && isAiChatEnabled && (
                                     <Panel.Tabs>
