@@ -16,8 +16,9 @@ export type PanelTabsItemProps = {
     className?: string,
     style?: React.CSSProperties,
     active?: boolean,
+    title?: string,
     onClick?: () => void,
-    children: React.ReactNode,
+    children?: React.ReactNode,
 };
 
 export type PanelButtonProps = {
@@ -28,9 +29,32 @@ export type PanelButtonProps = {
     onClick?: () => void,
 };
 
+export type PanelContentProps = {
+    className?: string,
+    children: React.ReactNode,
+};
+
 export type PanelBodyProps = {
     className?: string,
     children: React.ReactNode,
+};
+
+export type PanelHeaderProps = {
+    className?: string,
+    children: React.ReactNode,
+};
+
+export type PanelHeaderTitleProps = {
+    className?: string,
+    title: string;
+    showBackButton: boolean;
+    onBackButtonClick?: () => void;
+};
+
+export type PanelHeaderButtonProps = {
+    icon: string;
+    disabled?: boolean;
+    onClick?: () => void;
 };
 
 // @description main panel component
@@ -64,16 +88,16 @@ Panel.TabsItem = (props: PanelTabsItemProps): React.JSX.Element => {
         "text-gray-600 hover:text-gray-900 cursor-pointer": !props.active,
         "bg-white text-gray-950 shadow-sm border-1 border-gray-200": props.active,
     }, props.className);
-    
+
     return (
         <div className={classList} style={props.style} onClick={props.onClick}>
-            {props.children}
+            {props.title || props.children}
         </div>
     );
 };
 
 // @description panel button component
-Panel.Button = ({className, icon, ...otherProps}: PanelButtonProps): React.JSX.Element => (
+Panel.Button = ({ className, icon, ...otherProps }: PanelButtonProps): React.JSX.Element => (
     <div className="my-2 mr-2 flex items-center shrink-0">
         <div className="rounded-lg flex items-center p-1 text-lg cursor-pointer hover:bg-gray-200" {...otherProps}>
             {renderIcon(icon)}
@@ -81,7 +105,44 @@ Panel.Button = ({className, icon, ...otherProps}: PanelButtonProps): React.JSX.E
     </div>
 );
 
+// @description panel content component
+Panel.Content = ({ className, ...otherProps }: PanelContentProps): React.JSX.Element => (
+    <div className={classNames("flex flex-col gap-2 h-full min-h-0", className)} {...otherProps} />
+);
+
 // @description panel body content
-Panel.Body = ({className, ...otherProps}: PanelBodyProps): React.JSX.Element => (
+Panel.Body = ({ className, ...otherProps }: PanelBodyProps): React.JSX.Element => (
     <div className={classNames("p-2", className)} {...otherProps} />
 );
+
+// @description panel header component
+Panel.Header = (props: PanelHeaderProps): React.JSX.Element => (
+    <div className={classNames("sticky top-0 bg-white flex items-center justify-between p-2 z-20", props.className)} {...props} />
+);
+
+// @description panel header title component
+Panel.HeaderTitle = (props: PanelHeaderTitleProps): React.JSX.Element => (
+    <div className={classNames("flex items-center gap-2 w-full", props.className)}>
+        {props.showBackButton && (
+            <div className="flex items-center text-xl cursor-pointer py-1 rounded-lg hover:bg-gray-100" onClick={props.onBackButtonClick}>
+                {renderIcon("chevron-left")}
+            </div>
+        )}
+        <div className="font-bold text-lg w-32 truncate">
+            <span>{props.title}</span>
+        </div>
+    </div>
+);
+
+// @description panel header button component
+Panel.HeaderButton = (props: PanelHeaderButtonProps): React.JSX.Element => {
+    const className = classNames({
+        "flex items-center p-2 rounded-lg": true,
+        "bg-gray-100 hover:bg-gray-200 cursor-pointer": true,
+    });
+    return (
+        <div className={className} onClick={props.onClick}>
+            {renderIcon(props.icon)}
+        </div>
+    );
+};
