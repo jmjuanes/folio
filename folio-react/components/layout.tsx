@@ -1,4 +1,5 @@
 import React from "react";
+import { renderIcon } from "@josemi-icons/react";
 import { Panel } from "./ui/panel.tsx";
 import { Island } from "./ui/island.jsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
@@ -15,7 +16,13 @@ export type LayoutProps = {
 export enum SidebarTab {
     LIBRARY = "library",
     AI = "ai",
-}
+};
+
+// list of sidebar tabs
+export const sidebarTabs = [
+    { value: SidebarTab.LIBRARY, label: "Library", icon: "album" },
+    { value: SidebarTab.AI, label: "AI", icon: "sparkles" },
+];
 
 // @description: default editor layout
 // @param {object} props React props
@@ -46,7 +53,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
     const isLibraryEnabled = !!preferences[PREFERENCES.LIBRARY_ENABLED] && !!Library;
-    const isAiChatEnabled = !!preferences[PREFERENCES.AI_ENABLED] && !!AiChat;
+    const isAiChatEnabled = !!AiChat; // !!preferences[PREFERENCES.AI_ENABLED] && !!AiChat;
     const showSidebarButton = isLibraryEnabled || isAiChatEnabled;
 
     return (
@@ -101,7 +108,8 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                                 // note: the default active tab when the sidebar is visible is one of the two available tabs
                                                 // we set it to the library tab if the library is enabled, otherwise we set it to the AI tab
                                                 setSidebarVisible(!sidebarVisible);
-                                                setSidebarTab(isLibraryEnabled ? SidebarTab.LIBRARY : SidebarTab.AI);
+                                                // setSidebarTab(isLibraryEnabled ? SidebarTab.LIBRARY : SidebarTab.AI);
+                                                setSidebarTab(SidebarTab.AI);
                                             }}
                                             active={sidebarVisible}
                                         />
@@ -138,17 +146,27 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                     </div>
                     {sidebarVisible && (
                         <div className="shrink-0 w-80 h-full pointer-events-auto">
-                            <Panel className="relative h-full rounded-tr-none rounded-br-none">
-                                <Panel.Body className="h-full">
-                                    <div className="h-full max-h-full overflow-y-scroll">
-                                        {sidebarTab === SidebarTab.LIBRARY && isLibraryEnabled && (
-                                            <Library />
-                                        )}
-                                        {sidebarTab === SidebarTab.AI && isAiChatEnabled && (
-                                            <AiChat />
-                                        )}
-                                    </div>
-                                </Panel.Body>
+                            <Panel className="relative h-full rounded-tr-none rounded-br-none overflow-hidden flex flex-col min-h-0">
+                                {isLibraryEnabled && isAiChatEnabled && (
+                                    <Panel.Tabs>
+                                        {sidebarTabs.map((tab: any) => (
+                                            <Panel.TabsItem key={tab.value} active={sidebarTab === tab.value} onClick={() => setSidebarTab(tab.value)}>
+                                                <div className="flex items-center gap-1">
+                                                    <div className="flex items-center">
+                                                        {renderIcon(tab.icon)}
+                                                    </div>
+                                                    <div className="text-sm font-bold">{tab.label}</div>
+                                                </div>
+                                            </Panel.TabsItem>
+                                        ))}
+                                    </Panel.Tabs>
+                                )}
+                                {sidebarTab === SidebarTab.LIBRARY && isLibraryEnabled && (
+                                    <Library />
+                                )}
+                                {sidebarTab === SidebarTab.AI && isAiChatEnabled && (
+                                    <AiChat />
+                                )}
                             </Panel>
                         </div>
                     )}
