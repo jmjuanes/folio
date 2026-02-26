@@ -1,47 +1,9 @@
 import React from "react";
-import { PlusIcon, ChevronLeftIcon } from "@josemi-icons/react";
-import { renderIcon } from "@josemi-icons/react";
 import classNames from "classnames";
+import { Panel } from "./ui/panel.tsx";
 import { useAi } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { ELEMENTS } from "../constants.js";
-
-export type AiChatHeaderTitleProps = {
-    title: string;
-    showBackButton: boolean;
-    onBackButtonClick?: () => void;
-};
-
-export const AiChatHeaderTitle = (props: AiChatHeaderTitleProps): React.JSX.Element => (
-    <div className="flex items-center gap-2 w-full">
-        {props.showBackButton && (
-            <div className="flex items-center text-xl cursor-pointer p-1 rounded-lg hover:bg-gray-100" onClick={props.onBackButtonClick}>
-                <ChevronLeftIcon />
-            </div>
-        )}
-        <div className="font-bold text-lg w-32 truncate">
-            <span>{props.title}</span>
-        </div>
-    </div>
-);
-
-export type AiChatHeaderButtonProps = {
-    icon: string;
-    disabled?: boolean;
-    onClick?: () => void;
-};
-
-export const AiChatHeaderButton = (props: AiChatHeaderButtonProps): React.JSX.Element => {
-    const className = classNames({
-        "flex items-center p-2 rounded-lg": true,
-        "bg-gray-100 hover:bg-gray-200 cursor-pointer": true,
-    });
-    return (
-        <div className={className} onClick={props.onClick}>
-            {renderIcon(props.icon)}
-        </div>
-    );
-};
 
 export const AiChat = () => {
     const [activeChatId, setActiveChatId] = React.useState<string>("");
@@ -66,21 +28,21 @@ export const AiChat = () => {
     }, [activeChatId]);
 
     return (
-        <div className="flex flex-col gap-2 h-full min-h-0 pb-2">
-            <div className="sticky top-0 bg-white flex items-center justify-between pb-2 z-20">
+        <Panel.Content>
+            <Panel.Header>
                 {!activeChatId && (
                     <React.Fragment>
-                        <AiChatHeaderTitle
+                        <Panel.HeaderTitle
                             showBackButton={false}
                             title="AI Assistant"
                         />
                         <div className="flex items-center gap-1">
-                            <AiChatHeaderButton
+                            <Panel.HeaderButton
                                 icon="plus"
                                 disabled={false}
                                 onClick={handleChatCreate}
                             />
-                            <AiChatHeaderButton
+                            <Panel.HeaderButton
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => ai?.chat.clearChats()}
@@ -90,13 +52,13 @@ export const AiChat = () => {
                 )}
                 {activeChatId && (
                     <React.Fragment>
-                        <AiChatHeaderTitle
+                        <Panel.HeaderTitle
                             showBackButton={true}
                             title={activeChat?.title || "Untitled Chat"}
                             onBackButtonClick={() => setActiveChatId("")}
                         />
                         <div className="flex items-center gap-1">
-                            <AiChatHeaderButton
+                            <Panel.HeaderButton
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => ai?.chat.removeChat(activeChatId)}
@@ -104,21 +66,21 @@ export const AiChat = () => {
                         </div>
                     </React.Fragment>
                 )}
-            </div>
+            </Panel.Header>
             {activeChatId && (
-                <div className="grow flex flex-col justify-between gap-4 h-full">
+                <Panel.Body className="grow flex flex-col justify-between gap-4 h-full">
                     <div className="h-full overflow-y-scroll">
                         <span>Messages</span>
                     </div>
-                    <div className="w-full shrink-0 pb-2">
+                    <div className="w-full shrink-0">
                         <textarea
                             placeholder="Type your message..."
-                            className="w-full border-0 bg-gray-100 rounded-lg text-sm outline-none"
+                            className="w-full border-0 bg-gray-100 rounded-lg text-sm outline-none min-h-24"
                             rows={4}
                         />
                     </div>
-                </div>
+                </Panel.Body>
             )}
-        </div>
+        </Panel.Content>
     );
 };
