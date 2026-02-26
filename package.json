@@ -1,6 +1,6 @@
 {
     "name": "folio",
-    "version": "0.27.0",
+    "version": "0.27.1",
     "description": "A minimalistic digital whiteboard for sketching and prototyping",
     "private": true,
     "type": "module",

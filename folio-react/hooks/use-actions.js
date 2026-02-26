@@ -362,7 +362,7 @@ export const useActions = () => {
                     });
                 }
             },
-            [ACTIONS.PASTE]: ({event = null, position = null}) => {
+            [ACTIONS.PASTE]: ({ event = null, position = null }) => {
                 editor.pasteElementsFromClipboard(event, position).then(() => {
                     editor.dispatchChange();
                     editor.update();
