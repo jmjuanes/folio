@@ -734,7 +734,7 @@ export const useEvents = () => {
                 const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
                 if (action) {
                     event.preventDefault();
-                    return dispatchAction(action);
+                    return dispatchAction(action, { event: event });
                 }
                 // 2. check if this combination is a tool shortcut
                 if (!isCtrlKey && !event.shiftKey) {
@@ -776,7 +776,7 @@ export const useEvents = () => {
         const onPaste = event => {
             if (!isInputTarget(event) && !editor.page.readonly) {
                 editor.page.activeGroup = null;
-                dispatchAction(ACTIONS.PASTE, {event: event});
+                dispatchAction(ACTIONS.PASTE, { event: event });
             }
         };
 
