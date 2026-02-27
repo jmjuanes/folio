@@ -1,9 +1,26 @@
 import React from "react";
 import classNames from "classnames";
-import { ArrowUpIcon } from "@josemi-icons/react";
+import { renderIcon } from "@josemi-icons/react";
 import { Panel } from "./ui/panel.tsx";
 import { useAi } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
+
+type AiChatButtonProps = {
+    icon: string;
+    onClick: () => void;
+};
+
+const AiChatButton = (props: AiChatButtonProps): React.JSX.Element => {
+    const buttonClassName = classNames({
+        "border-0 flex items-center rounded-full p-1 text-lg": true,
+        "bg-gray-950 hover:bg-gray-900 text-white cursor-pointer": true,
+    });
+    return (
+        <button className={buttonClassName} onClick={props.onClick}>
+            {renderIcon(props.icon)}
+        </button>
+    );
+};
 
 type AiChatInputProps = {
     placeholder?: string;
@@ -28,11 +45,7 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
                 className="text-sm bg-transparent outline-none border-0 w-full min-h-24"
             />
             <div className="flex items-center justify-end">
-                <button className="border-0 bg-gray-950 hover:bg-gray-900 cursor-pointer flex rounded-full p-1" onClick={handleSubmit}>
-                    <div className="flex text-white text-lg">
-                        <ArrowUpIcon />
-                    </div>
-                </button>
+                <AiChatButton icon="send" onClick={handleSubmit} />
             </div>
         </div>
     );
@@ -49,9 +62,7 @@ export const AiChat = (): React.JSX.Element => {
 
     const handleChatCreate = React.useCallback(() => {
         const chat = ai?.chat.addChat({});
-        if (chat) {
-            setActiveChatId(chat.id);
-        }
+        setActiveChatId(chat.id);
     }, [ai]);
 
     React.useEffect(() => {
