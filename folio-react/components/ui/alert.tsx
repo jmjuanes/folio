@@ -1,10 +1,15 @@
 import React from "react";
 import classNames from "classnames";
-import {renderIcon} from "@josemi-icons/react";
+import { renderIcon } from "@josemi-icons/react";
+
+export enum AlertVariant {
+    WARNING = "warning",
+    ERROR = "error",
+};
 
 export type AlertProps = {
+    variant?: AlertVariant,
     className?: string,
-    variant?: string,
     icon?: string,
     text?: string,
     children?: React.ReactNode,
@@ -20,7 +25,8 @@ export type AlertProps = {
 export const Alert = ({className, variant = "", icon = "", text = "", children, ...props}: AlertProps): React.JSX.Element => {
     const alertClassName = classNames({
         "rounded-xl shadow-sm border-1 p-3 flex gap-2 items-center": true,
-        "bg-yellow-100 text-yellow-900 border-yellow-200": variant === "warning",
+        "bg-yellow-100 text-yellow-900 border-yellow-200": variant === AlertVariant.WARNING,
+        "bg-red-100 text-red-900 border-red-200": variant === AlertVariant.ERROR,
     }, className);
 
     return (

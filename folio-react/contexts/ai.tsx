@@ -1,5 +1,6 @@
 import React from "react";
 import { uid } from "uid/secure";
+import { useApi } from "../hooks/use-api.ts";
 import { promisifyValue } from "../utils/promises.js";
 
 export enum AiChatMessageRole {
@@ -62,6 +63,7 @@ export const useAi = (): AiManager | null => {
 
 export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
     const [chatState, setChatState] = React.useState<AiChat[] | null>(null);
+    const api = useApi(props.baseUrl, {});
 
     // create the api manager
     const manager = React.useMemo<AiManager>(() => {
@@ -142,26 +144,18 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
             },
         } as AiChatManager;
         const elementsManager = {
-            generate: async (prompt: string, messages: AiChatMessage[]) => {
-                const validMessages = (messages || []).filter(message => !message.loading);
-                const response = await fetch(`${props.baseUrl}/_generateElements`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        prompt: prompt,
-                        messages: validMessages.map((message: AiChatMessage) => {
-                            return {
-                                role: message.role,
-                                text: message.text,
-                                elements: message.elements,
-                            };
-                        }),
+            generate: (prompt: string, messages: AiChatMessage[]) => {
+                // const validMessages = (messages || []).filter(message => !message.loading);
+                return api("POST", "/_generateElements", {
+                    prompt: prompt,
+                    messages: messages.map((message: AiChatMessage) => {
+                        return {
+                            role: message.role,
+                            text: message.text,
+                            elements: message.elements,
+                        };
                     }),
                 });
-                // convert response to JSON object
-                return await response.json();
             },
         } as AiElementsManager;
         return {

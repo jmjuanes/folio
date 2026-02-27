@@ -1,10 +1,11 @@
 import React from "react";
 import classNames from "classnames";
 import { renderIcon } from "@josemi-icons/react";
+import { Alert } from "./ui/alert.ts";
 import { Panel } from "./ui/panel.tsx";
-import { useAi } from "../contexts/ai.tsx";
+import { useAi, AiChatMessageRole } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
-import { AiChatMessageRole, AiChatMessage } from "../contexts/ai.tsx";
+import type { AiChatMessage } from "../contexts/ai.tsx";
 
 type AiChatButtonProps = {
     icon: string;
@@ -33,7 +34,9 @@ type AiChatInputProps = {
 const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
     const inputRef = React.useRef<HTMLTextAreaElement>(null);
     const handleSubmit = React.useCallback(() => {
-        props.onSubmit(inputRef.current?.value || "");
+        if (inputRef?.current?.value) {
+            props.onSubmit(inputRef.current.value.trim());
+        }
     }, [props.onSubmit]);
 
     return (
@@ -55,6 +58,8 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
 type AiChatMessageBlockProps = {
     role: AiChatMessageRole;
     text?: string;
+    elements?: any;
+    loading?: boolean;
 };
 
 const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element => {
@@ -64,14 +69,21 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
         "justify-end": props.role === AiChatMessageRole.USER,
     });
     const messageClassName = classNames({
-        "p-3 max-w-64 text-sm rounded-lg": true,
-        "bg-gray-100 text-gray-950": props.role === AiChatMessageRole.ASSISTANT,
+        "p-4 max-w-64 flex flex-col gap-1 rounded-lg": true,
+        "bg-gray-100 text-gray-950 rounded-tl-none": props.role === AiChatMessageRole.ASSISTANT,
         "bg-gray-950 text-white rounded-tr-none": props.role === AiChatMessageRole.USER,
     });
     return (
         <div className={containerClassName}>
             <div className={messageClassName}>
-                <span>{props.text || ""}</span>
+                {props.text && (
+                    <div className="text-sm">{props.text}</div>
+                )}
+                {props.loading && (
+                    <div className="flex text-xl animate-pulse text-gray-600">
+                        {renderIcon("dots")}
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -79,6 +91,8 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
 
 export const AiChat = (): React.JSX.Element => {
     const [activeChatId, setActiveChatId] = React.useState<string>("");
+    const [loading, setLoading] = React.useState<Boolean>(false);
+    const [error, setError] = React.useState<Error|null>(null);
     const scrollRef = React.useRef<HTMLDivElement>(null);
     const ai = useAi();
     const editor = useEditor();
@@ -91,6 +105,31 @@ export const AiChat = (): React.JSX.Element => {
         const chat = ai?.chat.addChat({});
         setActiveChatId(chat.id);
     }, [ai]);
+
+    // when the user types and sends a message, we have to register the message
+    // and call the completion
+    const handleMessageSubmit = React.useCallback((prompt: string) => {
+        setLoading(true);
+        setError(null);
+        ai.chat.addMessage(activeChatId, { text: prompt });
+        ai.elements.generate(prompt, messages)
+            .then((response: any) => {
+                if (response) {
+                    ai.chat.addMessage(activeChat, {
+                        role: AiChatMessageRole.ASSISTANT,
+                        text: response?.text,
+                        elements: response?.elements,
+                    });
+                }
+            })
+            .catch(responseError => {
+                console.error(responseError?.message);
+                setError(responseError);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [ai, activeChatId, messages]);
 
     React.useEffect(() => {
         if (scrollRef.current && activeChatId) {
@@ -148,15 +187,21 @@ export const AiChat = (): React.JSX.Element => {
                                 text={message.text}
                             />
                         ))}
+                        {loading && (
+                            <AiChatMessageBlock
+                                role={AiChatMessageRole.ASSISTANT}
+                                loading={true}
+                            />
+                        )}
                     </div>
-                    <div className="w-full shrink-0">
+                    <div className="w-full shrink-0 flex flex-gol gap-1">
+                        {error && (
+                            <Alert variant="error" text={error.message} />
+                        )}
                         <AiChatInput
                             key={messages.length}
                             placeholder="Ask anything..."
-                            onSubmit={(prompt: string) => {
-                                // console.log(prompt);
-                                ai.chat.addMessage(activeChatId, { text: prompt });
-                            }}
+                            onSubmit={(prompt: string) => handleMessageSubmit(prompt)}
                         />
                     </div>
                 </Panel.Body>
