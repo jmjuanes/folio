@@ -12,7 +12,7 @@ type AiChatButtonProps = {
 
 const AiChatButton = (props: AiChatButtonProps): React.JSX.Element => {
     const buttonClassName = classNames({
-        "border-0 flex items-center rounded-full p-1 text-lg": true,
+        "border-0 flex items-center rounded-full p-2 text-lg": true,
         "bg-gray-950 hover:bg-gray-900 text-white cursor-pointer": true,
     });
     return (
@@ -36,7 +36,7 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
     }, [props.onSubmit]);
 
     return (
-        <div className="bg-gray-100 rounded-lg border-0 p-1">
+        <div className="bg-gray-100 rounded-lg border-0 p-2">
             <textarea
                 ref={inputRef}
                 disabled={!!props.disabled}
