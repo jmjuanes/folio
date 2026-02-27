@@ -64,10 +64,9 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
         "justify-end": props.role === AiChatMessageRole.USER,
     });
     const messageClassName = classNames({
-        "p-3 max-w-64 text-sm": true,
-        "rounded-tl-lg rounded-bl-lg rounded-br-lg": props.role === AiChatMessageRole.ASSISTANT,
+        "p-3 max-w-64 text-sm rounded-lg": true,
         "bg-gray-100 text-gray-950": props.role === AiChatMessageRole.ASSISTANT,
-        "bg-gray-950 text-white": props.role === AiChatMessageRole.USER,
+        "bg-gray-950 text-white rounded-tr-none": props.role === AiChatMessageRole.USER,
     });
     return (
         <div className={containerClassName}>
