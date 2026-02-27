@@ -28,8 +28,10 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
                 className="text-sm bg-transparent outline-none border-0 w-full min-h-24"
             />
             <div className="flex items-center justify-end">
-                <button className="border-0 bg-gray-950 hover:bg-gray-900 cursor-pointer text-white flex rounded-full p-1" onClick={handleSubmit}>
-                    <ArrowUpIcon />
+                <button className="border-0 bg-gray-950 hover:bg-gray-900 cursor-pointer flex rounded-full p-1" onClick={handleSubmit}>
+                    <div className="flex text-white text-lg">
+                        <ArrowUpIcon />
+                    </div>
                 </button>
             </div>
         </div>
