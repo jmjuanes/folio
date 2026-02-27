@@ -4,6 +4,7 @@ import { renderIcon } from "@josemi-icons/react";
 import { Panel } from "./ui/panel.tsx";
 import { useAi } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
+import { AiChatMessageRole, AiChatMessage } from "../contexts/ai.js";
 
 type AiChatButtonProps = {
     icon: string;
@@ -42,10 +43,35 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
                 disabled={!!props.disabled}
                 placeholder={props.placeholder}
                 rows={props?.inputRows ?? 4}
-                className="text-sm bg-transparent outline-none border-0 w-full min-h-24"
+                className="text-sm bg-transparent outline-none border-0 w-full min-h-24 p-0"
             />
             <div className="flex items-center justify-end">
                 <AiChatButton icon="send" onClick={handleSubmit} />
+            </div>
+        </div>
+    );
+};
+
+type AiChatMessageBlockProps = {
+    role: AiChatMessageRole;
+    text?: string;
+};
+
+const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element => {
+    const containerClassName = classNames({
+        "flex w-full items-start": true,
+        "justify-start": props.role === AiChatMessageRole.ASSISTANT,
+        "justify-end": props.role === AiChatMessageRole.USER,
+    });
+    const messageClassName = classNames({
+        "p-2 max-w-64 text-sm": true,
+        "bg-gray-100 text-gray-950": props.role === AiChatMessageRole.ASSISTANT,
+        "bg-gray-950 text-white": props.role === AiChatMessageRole.USER,
+    });
+    return (
+        <div className={containerClassName}>
+            <div className={messageClassName}>
+                <span>{props.text || ""}</span>
             </div>
         </div>
     );
@@ -59,6 +85,7 @@ export const AiChat = (): React.JSX.Element => {
 
     // get active chat instance
     const activeChat = activeChatId ? ai?.chat.getChat(activeChatId) : null;
+    const messages = ai?.chat.getMessages(activeChatId) || [];
 
     const handleChatCreate = React.useCallback(() => {
         const chat = ai?.chat.addChat({});
@@ -113,14 +140,22 @@ export const AiChat = (): React.JSX.Element => {
             </Panel.Header>
             {activeChatId && (
                 <Panel.Body className="grow flex flex-col justify-between gap-4 h-full">
-                    <div className="h-full overflow-y-scroll">
-                        <span>Messages</span>
+                    <div className="flex flex-col gap-2 h-full overflow-y-scroll">
+                        {messages.map((message: AiChatMessage) => (
+                            <AiChatMessageBlock
+                                key={message.id}
+                                role={message.role}
+                                text={message.text}
+                            />
+                        ))}
                     </div>
                     <div className="w-full shrink-0">
                         <AiChatInput
+                            key={messages.length}
                             placeholder="Ask anything..."
                             onSubmit={(prompt: string) => {
-                                console.log(prompt);
+                                // console.log(prompt);
+                                ai.chat.addMessage(activeChatId, { text: prompt });
                             }}
                         />
                     </div>
