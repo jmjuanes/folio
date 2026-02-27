@@ -4,7 +4,7 @@ import { renderIcon } from "@josemi-icons/react";
 import { Panel } from "./ui/panel.tsx";
 import { useAi } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
-import { AiChatMessageRole, AiChatMessage } from "../contexts/ai.js";
+import { AiChatMessageRole, AiChatMessage } from "../contexts/ai.tsx";
 
 type AiChatButtonProps = {
     icon: string;
