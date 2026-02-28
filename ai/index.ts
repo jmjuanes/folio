@@ -4,7 +4,7 @@ import bodyParser from "@koa/bodyparser";
 import { ENDPOINTS, API_ERROR_MESSAGES } from "./constants.ts";
 import { HTTP_CODES } from "../server/constants.ts";
 import { createLogger } from "../server/utils/logger.ts";
-import { sendData, sendError } from "../server/utils/send.ts";
+import { sendResponse, sendDataResponse, sendErrorResponse } from "../server/utils/response.ts";
 import { createAssistant } from "./ai.ts";
 import type { Config } from "../server/config.ts";
 
@@ -35,35 +35,38 @@ export const startAiServer = async (config: Config): Promise<any> => {
     app.use((context: Koa.Context, next: () => Promise<void>) => {
         return next().catch(error => {
             console.error(error);
-            sendError(context, error.status || HTTP_CODES.INTERNAL_SERVER_ERROR, error.message || "");
+            sendErrorResponse(context, error.status || HTTP_CODES.INTERNAL_SERVER_ERROR, error.message || "");
         });
     });
 
     // register endpoints
     const router = new Router();
     router.get(ENDPOINTS.STATUS, async (context: Koa.Context) => {
-        sendData(context, { message: "ok" });
+        sendDataResponse(context, { message: "ok" });
     });
     router.post(ENDPOINTS.QUOTAS, async (context: Koa.Context) => {
-        sendData(context, { requestsLimit: -1 });
+        sendDataResponse(context, { requestsLimit: -1 });
     });
     router.post(ENDPOINTS.GENERATE_ELEMENTS, async (context: Koa.Context) => {
         const body = context.request?.body || {} as any;
         // const { prompt, messages } = ctx.request.body as { prompt: string, messages?: any[] };
         // generate chat message
         if (!body?.prompt) {
-            return sendError(context, HTTP_CODES.BAD_REQUEST, API_ERROR_MESSAGES.EMPTY_PROMPT);
+            return sendErrorResponse(context, HTTP_CODES.BAD_REQUEST, API_ERROR_MESSAGES.EMPTY_PROMPT);
         }
         try {
-            const response = await assistant.generateElements({
+            const result = await assistant.generateElements({
                 prompt: body?.prompt,
                 messages: body?.messages || [],
             });
-            return sendData(context, response);
+            return sendResponse(context, {
+                data: result.content || {},
+                warnings: result.warnings,
+            });
         }
         catch (response) {
             error(response?.error?.message || response);
-            sendError(context, HTTP_CODES.INTERNAL_SERVER_ERROR, API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
+            sendErrorResponse(context, HTTP_CODES.INTERNAL_SERVER_ERROR, API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
         }
     });
 
