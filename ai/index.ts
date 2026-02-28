@@ -29,6 +29,7 @@ export const startAiServer = async (config: Config): Promise<any> => {
         baseUrl: config.ai_base_url,
         apiKey: config.ai_apikey,
         model: config.ai_model || DEFAULT_MODEL,
+        maxMessagesInRequest: config.ai_max_messages_in_request,
     });
 
     // global handler

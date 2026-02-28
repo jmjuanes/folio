@@ -43,6 +43,7 @@ export type AiConfig = {
     ai_base_url?: string;
     ai_apikey?: string;
     ai_model?: string;
+    ai_max_messages_in_request?: number;
 };
 
 export type BaseConfig = {
