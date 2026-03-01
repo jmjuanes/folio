@@ -1,11 +1,19 @@
 import React from "react";
 import classNames from "classnames";
-import { renderIcon } from "@josemi-icons/react";
+import { renderIcon, BotIcon } from "@josemi-icons/react";
 import { Alert } from "./ui/alert.ts";
 import { Panel } from "./ui/panel.tsx";
-import { useAi, AiChatMessageRole } from "../contexts/ai.tsx";
+import { useAi, AiChatMessageRole, AiChatType } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import type { AiChatMessage } from "../contexts/ai.tsx";
+
+const chatTypes = {
+    [AiChatType.ELEMENTS]: {
+        title: "Drawing",
+        description: "Create a new drawing using folio native elements.",
+        icon: "draw",
+    },
+};
 
 type AiChatButtonProps = {
     icon: string;
@@ -89,6 +97,26 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
     );
 };
 
+type AiChatTypeProps = {
+    type: AiChatType;
+    onClick: () => void; 
+};
+
+const AiChatTypeBlock = (props: AiChatTypeProps): React.JSX.Element => {
+    const config = chatTypes[props.type];
+    return (
+        <div className="flex gap-2 p-2 border-1 border-gray-200 cursor-pointer rounded-xl hover:bg-gray-100" onClick={props.onClick}>
+            <div className="flex p-2 bg-gray-100 rounded-lg text-xl">
+                {renderIcon(config.icon)}
+            </div>
+            <div className="flex flex-col gap-1">
+                <div className="text-base font-bold">{config.title}</div>
+                <div className="text-sm opacity-60">{config.description}</div>
+            </div>
+        </div>
+    );
+};
+
 export const AiChat = (): React.JSX.Element => {
     const [activeChatId, setActiveChatId] = React.useState<string>("");
     const [loading, setLoading] = React.useState<Boolean>(false);
@@ -101,10 +129,15 @@ export const AiChat = (): React.JSX.Element => {
     const activeChat = activeChatId ? ai?.chat.getChat(activeChatId) : null;
     const messages = ai?.chat.getMessages(activeChatId) || [];
 
-    const handleChatCreate = React.useCallback(() => {
-        const chat = ai?.chat.addChat({});
+    const handleChatCreate = React.useCallback((chatType: AiChatType) => {
+        const chat = ai?.chat.addChat({ type: chatType });
         setActiveChatId(chat.id);
     }, [ai]);
+
+    // run the appropiate model based on the chat type
+    const callModel = React.useCallback((prompt: string) => {
+        return ai?.model.generateElements(prompt, messages);
+    }, [ai, activeChatId, messages?.length]);
 
     // when the user types and sends a message, we have to register the message
     // and call the completion
@@ -112,15 +145,13 @@ export const AiChat = (): React.JSX.Element => {
         setLoading(true);
         setError(null);
         ai.chat.addMessage(activeChatId, { text: prompt });
-        ai.elements.generate(prompt, messages)
+        callModel(prompt)
             .then((response: any) => {
-                if (response) {
-                    ai.chat.addMessage(activeChat, {
-                        role: AiChatMessageRole.ASSISTANT,
-                        text: response?.text,
-                        elements: response?.elements,
-                    });
-                }
+                ai.chat.addMessage(activeChat, {
+                    role: AiChatMessageRole.ASSISTANT,
+                    text: response?.text,
+                    elements: response?.elements,
+                });
             })
             .catch(responseError => {
                 console.error(responseError?.message);
@@ -129,7 +160,7 @@ export const AiChat = (): React.JSX.Element => {
             .finally(() => {
                 setLoading(false);
             });
-    }, [ai, activeChatId, messages]);
+    }, [ai, activeChatId, callModel]);
 
     React.useEffect(() => {
         if (scrollRef.current && activeChatId) {
@@ -147,11 +178,6 @@ export const AiChat = (): React.JSX.Element => {
                             title="AI Assistant"
                         />
                         <div className="flex items-center gap-1">
-                            <Panel.HeaderButton
-                                icon="plus"
-                                disabled={false}
-                                onClick={handleChatCreate}
-                            />
                             <Panel.HeaderButton
                                 icon="trash"
                                 disabled={false}
@@ -177,6 +203,23 @@ export const AiChat = (): React.JSX.Element => {
                     </React.Fragment>
                 )}
             </Panel.Header>
+            {!activeChatId && (
+                <Panel.Body className="grow flex flex-col gap-2 h-full">
+                    <div className="flex items-center justify-center gap-2 p-12">
+                        <div className="flex items-center text-3xl">
+                            <BotIcon />
+                        </div>
+                        <div className="text-lg font-bold text-ceter">How can I help you today?</div>
+                    </div>
+                    {Object.keys(chatMessageTypes).map((type: AiChatType) => (
+                        <AiChatTypeBlock
+                            key={type}
+                            type={type}
+                            onClick={() => handleChatCreate(type)}
+                        />
+                    ))}
+                </Panel.Body>
+            )}
             {activeChatId && (
                 <Panel.Body className="grow flex flex-col justify-between gap-4 h-full">
                     <div className="flex flex-col gap-2 h-full overflow-y-scroll">
