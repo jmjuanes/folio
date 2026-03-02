@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { renderIcon, BotIcon } from "@josemi-icons/react";
-import { Alert } from "./ui/alert.ts";
+import { Alert } from "./ui/alert.tsx";
 import { Panel } from "./ui/panel.tsx";
 import { useAi, AiChatMessageRole, AiChatType } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
@@ -11,7 +11,7 @@ const chatTypes = {
     [AiChatType.ELEMENTS]: {
         title: "Drawing",
         description: "Create a new drawing using folio native elements.",
-        icon: "draw",
+        icon: "drawing",
     },
 };
 
@@ -99,7 +99,7 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
 
 type AiChatTypeProps = {
     type: AiChatType;
-    onClick: () => void; 
+    onClick: () => void;
 };
 
 const AiChatTypeBlock = (props: AiChatTypeProps): React.JSX.Element => {
@@ -120,7 +120,7 @@ const AiChatTypeBlock = (props: AiChatTypeProps): React.JSX.Element => {
 export const AiChat = (): React.JSX.Element => {
     const [activeChatId, setActiveChatId] = React.useState<string>("");
     const [loading, setLoading] = React.useState<Boolean>(false);
-    const [error, setError] = React.useState<Error|null>(null);
+    const [error, setError] = React.useState<Error | null>(null);
     const scrollRef = React.useRef<HTMLDivElement>(null);
     const ai = useAi();
     const editor = useEditor();
@@ -211,7 +211,7 @@ export const AiChat = (): React.JSX.Element => {
                         </div>
                         <div className="text-lg font-bold text-ceter">How can I help you today?</div>
                     </div>
-                    {Object.keys(chatMessageTypes).map((type: AiChatType) => (
+                    {Object.keys(chatTypes).map((type: AiChatType) => (
                         <AiChatTypeBlock
                             key={type}
                             type={type}
