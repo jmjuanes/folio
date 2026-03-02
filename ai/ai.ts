@@ -129,9 +129,9 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
             return Promise.reject(error);
         }
         // parse the response and return as an assistant result object
-        const result = await response.json();
+        const result: any = await response.json();
         return {
-            content: JSON.parse(result.choices[0].message.content),
+            content: JSON.parse(result?.choices?.[0]?.message?.content || "{}"),
             warnings: warnings,
         } as AssistantResult;
     };
