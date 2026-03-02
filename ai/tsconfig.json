@@ -10,11 +10,13 @@
         "target": "es2022",
         "skipLibCheck": true,
         "resolveJsonModule": true,
-        "rewriteRelativeImportExtensions": true
+        "rewriteRelativeImportExtensions": true,
+        "types": [
+            "@cloudflare/workers-types"
+        ]
     },
     "exclude": [
         "dist/**/*",
-        "worker.ts",
         "node_modules/**/*"
     ]
 }

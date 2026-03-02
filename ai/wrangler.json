@@ -5,5 +5,14 @@
     "compatibility_date": "2025-02-14",
     "observability": {
         "enabled": true
+    },
+    "kv_namespaces": [
+        {
+            "binding": "QUOTAS",
+            "id": "<REPLACE_WITH_KV_NAMESPACE_ID>"
+        }
+    ],
+    "vars": {
+        "ALLOWED_ORIGIN": "https://folio.josemi.xyz"
     }
 }
