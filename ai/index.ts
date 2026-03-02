@@ -60,7 +60,7 @@ export const startAiServer = async (config: Config): Promise<any> => {
                 prompt: body?.prompt,
                 messages: body?.messages || [],
             });
-            return sendResponse(context, {
+            return sendResponse(context, HTTP_CODES.OK, {
                 data: result.content || {},
                 warnings: result.warnings,
             });
