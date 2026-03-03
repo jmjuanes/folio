@@ -22,9 +22,9 @@ export type AlertProps = {
 // @param {string} [props.icon] icon name (e.g. "lock")
 // @param {string} [props.text] alert text
 // @param {React.ReactNode} [props.children] alert children (overrides text)
-export const Alert = ({className, variant = "", icon = "", text = "", children, ...props}: AlertProps): React.JSX.Element => {
+export const Alert = ({ className, variant, icon = "", text = "", children, ...props }: AlertProps): React.JSX.Element => {
     const alertClassName = classNames({
-        "rounded-xl shadow-sm border-1 p-3 flex gap-2 items-center": true,
+        "rounded-xl border-1 p-3 flex gap-2 items-center": true,
         "bg-yellow-100 text-yellow-900 border-yellow-200": variant === AlertVariant.WARNING,
         "bg-red-100 text-red-900 border-red-200": variant === AlertVariant.ERROR,
     }, className);

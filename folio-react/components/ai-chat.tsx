@@ -1,19 +1,19 @@
 import React from "react";
 import classNames from "classnames";
-import { renderIcon, BotIcon } from "@josemi-icons/react";
-import { Alert } from "./ui/alert.tsx";
+import { renderIcon, SparklesIcon } from "@josemi-icons/react";
+import { Alert, AlertVariant } from "./ui/alert.tsx";
 import { Panel } from "./ui/panel.tsx";
-import { useAi, AiChatMessageRole, AiChatType } from "../contexts/ai.tsx";
+import { useAi, AiChatMessageRole, AiTool } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import type { AiChatMessage } from "../contexts/ai.tsx";
 
-const chatTypes = {
-    [AiChatType.ELEMENTS]: {
-        title: "Drawing",
+const tools = [
+    {
+        id: AiTool.GENERATE_ELEMENTS,
+        title: "Generate Folio Elements",
         description: "Create a new drawing using folio native elements.",
-        icon: "drawing",
     },
-};
+];
 
 type AiChatButtonProps = {
     icon: string;
@@ -48,7 +48,7 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
     }, [props.onSubmit]);
 
     return (
-        <div className="bg-gray-100 rounded-lg border-0 p-2">
+        <div className="bg-gray-100 rounded-xl border-0 p-4">
             <textarea
                 ref={inputRef}
                 disabled={!!props.disabled}
@@ -57,7 +57,7 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
                 className="text-sm bg-transparent outline-none border-0 w-full min-h-24 p-0"
             />
             <div className="flex items-center justify-end">
-                <AiChatButton icon="send" onClick={handleSubmit} />
+                <AiChatButton icon="arrow-up" onClick={handleSubmit} />
             </div>
         </div>
     );
@@ -97,26 +97,6 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
     );
 };
 
-type AiChatTypeProps = {
-    type: AiChatType;
-    onClick: () => void;
-};
-
-const AiChatTypeBlock = (props: AiChatTypeProps): React.JSX.Element => {
-    const config = chatTypes[props.type];
-    return (
-        <div className="flex gap-2 p-2 border-1 border-gray-200 cursor-pointer rounded-xl hover:bg-gray-100" onClick={props.onClick}>
-            <div className="flex p-2 bg-gray-100 rounded-lg text-xl">
-                {renderIcon(config.icon)}
-            </div>
-            <div className="flex flex-col gap-1">
-                <div className="text-base font-bold">{config.title}</div>
-                <div className="text-sm opacity-60">{config.description}</div>
-            </div>
-        </div>
-    );
-};
-
 export const AiChat = (): React.JSX.Element => {
     const [activeChatId, setActiveChatId] = React.useState<string>("");
     const [loading, setLoading] = React.useState<Boolean>(false);
@@ -131,12 +111,15 @@ export const AiChat = (): React.JSX.Element => {
 
     const handleChatCreate = React.useCallback((chatType: AiChatType) => {
         const chat = ai?.chat.addChat({ type: chatType });
-        setActiveChatId(chat.id);
+        setActiveChatId(chat?.id || "");
     }, [ai]);
 
     // run the appropiate model based on the chat type
-    const callModel = React.useCallback((prompt: string) => {
-        return ai?.model.generateElements(prompt, messages);
+    const callModel = React.useCallback((prompt: string): Promise<any> => {
+        if (ai) {
+            return ai?.model.generateElements(prompt, messages);
+        }
+        return Promise.reject(new Error("AI is not configured"));
     }, [ai, activeChatId, messages?.length]);
 
     // when the user types and sends a message, we have to register the message
@@ -144,10 +127,10 @@ export const AiChat = (): React.JSX.Element => {
     const handleMessageSubmit = React.useCallback((prompt: string) => {
         setLoading(true);
         setError(null);
-        ai.chat.addMessage(activeChatId, { text: prompt });
+        ai?.chat.addMessage(activeChatId, { text: prompt });
         callModel(prompt)
             .then((response: any) => {
-                ai.chat.addMessage(activeChat, {
+                ai?.chat.addMessage(activeChatId, {
                     role: AiChatMessageRole.ASSISTANT,
                     text: response?.text,
                     elements: response?.elements,
@@ -175,7 +158,7 @@ export const AiChat = (): React.JSX.Element => {
                     <React.Fragment>
                         <Panel.HeaderTitle
                             showBackButton={false}
-                            title="AI Assistant"
+                            title="Folio AI"
                         />
                         <div className="flex items-center gap-1">
                             <Panel.HeaderButton
@@ -203,25 +186,20 @@ export const AiChat = (): React.JSX.Element => {
                     </React.Fragment>
                 )}
             </Panel.Header>
-            {!activeChatId && (
-                <Panel.Body className="grow flex flex-col gap-2 h-full">
-                    <div className="flex items-center justify-center gap-2 p-12">
-                        <div className="flex items-center text-3xl">
-                            <BotIcon />
+            <Panel.Body className="grow flex flex-col justify-between gap-4 h-full">
+                {(!activeChatId || messages?.length === 0) && (
+                    <div className="flex flex-col items-center justify-center gap-4 h-full">
+                        <div className="flex flex-col items-center gap-4 px-10 py-0">
+                            <div className="flex items-center text-4xl p-3 rounded-full text-white" style={{ background: "linear-gradient(60deg, #4A74E6, #8D54E9)" }}>
+                                <SparklesIcon />
+                            </div>
+                            <div className="text-3xl font-bold text-center leading-tight">
+                                <span>How can I help you today?</span>
+                            </div>
                         </div>
-                        <div className="text-lg font-bold text-ceter">How can I help you today?</div>
                     </div>
-                    {Object.keys(chatTypes).map((type: AiChatType) => (
-                        <AiChatTypeBlock
-                            key={type}
-                            type={type}
-                            onClick={() => handleChatCreate(type)}
-                        />
-                    ))}
-                </Panel.Body>
-            )}
-            {activeChatId && (
-                <Panel.Body className="grow flex flex-col justify-between gap-4 h-full">
+                )}
+                {activeChatId && messages.length > 0 && (
                     <div className="flex flex-col gap-2 h-full overflow-y-scroll">
                         {messages.map((message: AiChatMessage) => (
                             <AiChatMessageBlock
@@ -237,18 +215,21 @@ export const AiChat = (): React.JSX.Element => {
                             />
                         )}
                     </div>
-                    <div className="w-full shrink-0 flex flex-gol gap-1">
-                        {error && (
-                            <Alert variant="error" text={error.message} />
-                        )}
-                        <AiChatInput
-                            key={messages.length}
-                            placeholder="Ask anything..."
-                            onSubmit={(prompt: string) => handleMessageSubmit(prompt)}
-                        />
+                )}
+                <div className="w-full shrink-0 flex flex-col gap-2">
+                    {error && (
+                        <Alert variant={AlertVariant.ERROR} text={error.message} />
+                    )}
+                    <AiChatInput
+                        key={messages.length}
+                        placeholder="Ask anything..."
+                        onSubmit={(prompt: string) => handleMessageSubmit(prompt)}
+                    />
+                    <div className="text-xs opacity-60 text-center">
+                        <span>Folio AI can make mistakes. Check important info.</span>
                     </div>
-                </Panel.Body>
-            )}
+                </div>
+            </Panel.Body>
         </Panel.Content>
     );
 };

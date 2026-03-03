@@ -8,8 +8,8 @@ export enum AiChatMessageRole {
     ASSISTANT = "assistant",
 };
 
-export enum AiChatType {
-    ELEMENTS = "elements",
+export enum AiTool {
+    GENERATE_ELEMENTS = "generateElements",
 };
 
 export type AiChatMessage = {
@@ -23,7 +23,7 @@ export type AiChatMessage = {
 
 export type AiChat = {
     id: string;
-    type: AiChatType;
+    tool: AiTool;
     messages: AiChatMessage[];
     title?: string;
     timestamp?: string;
@@ -42,13 +42,13 @@ export type AiChatManager = {
     removeMessage: (chatId: string, messageId: string) => void;
 };
 
-export type AiModelManager = {
+export type AiToolsManager = {
     generateElements: (prompt: string, messages: AiChatMessage[]) => Promise<any>;
 };
 
 export type AiManager = {
     chat: AiChatManager;
-    model: AiModelManager;
+    tools: AiToolsManager;
 };
 
 export type AiProviderProps = {
@@ -88,7 +88,7 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                     messages: [],
                     timestamp: new Date().toISOString(),
                     title: "Untitled Chat",
-                    type: AiChatType.ELEMENTS,
+                    tool: AiTool.GENERATE_ELEMENTS,
                     ...chatData,
                 } as AiChat;
                 setChatState((prevState: AiChat[] | null) => {
@@ -149,7 +149,7 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                 });
             },
         } as AiChatManager;
-        const modelManager = {
+        const toolsManager = {
             generateElements: (prompt: string, messages: AiChatMessage[]) => {
                 // const validMessages = (messages || []).filter(message => !message.loading);
                 return api("POST", "/_generateElements", {
@@ -163,10 +163,10 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                     }),
                 });
             },
-        } as AiModelManager;
+        } as AiToolsManager;
         return {
             chat: chatManager,
-            model: modelManager,
+            tools: toolsManager,
         } as AiManager;
     }, [chatState]);
 
