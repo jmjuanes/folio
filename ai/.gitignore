@@ -4,4 +4,6 @@ package-lock.json
 yarn.lock
 
 # output stuff
+.wrangler
 dist
+.env
