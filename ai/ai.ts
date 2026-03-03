@@ -117,7 +117,7 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                     type: "json_schema",
                     json_schema: {
                         name: "elements_schema",
-                        strict: true,
+                        strict: false,
                         schema: options.responseSchema,
                     },
                 },
