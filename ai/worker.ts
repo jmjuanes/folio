@@ -10,8 +10,8 @@ export interface Env {
     FOLIO_AI_MODEL?: string;
     FOLIO_AI_MAX_MESSAGES?: string;
     FOLIO_AI_REQUESTS_LIMIT?: string;
-    ALLOWED_ORIGIN?: string;
-    QUOTAS: KVNamespace;
+    FOLIO_AI_ALLOWED_ORIGIN?: string;
+    QUOTAS_KV: KVNamespace;
 }
 
 // get today's date as YYYY-MM-DD for KV key
@@ -32,7 +32,7 @@ const getRequestsLimit = (env: Env): number => {
 // get the number of requests used today from KV
 const getRequestsUsed = async (env: Env, requestIp: string): Promise<number> => {
     const key = getTodayKey(requestIp);
-    const value = await env.QUOTAS.get(key);
+    const value = await env.QUOTAS_KV.get(key);
     return value ? parseInt(value, 10) : 0;
 };
 
@@ -41,7 +41,7 @@ const incrementRequestsUsed = async (env: Env, requestIp: string): Promise<void>
     const key = getTodayKey(requestIp);
     const current = await getRequestsUsed(env, requestIp);
     // store with 24h TTL so keys auto-expire
-    await env.QUOTAS.put(key, String(current + 1), {
+    await env.QUOTAS_KV.put(key, String(current + 1), {
         expiration: Math.floor(new Date().setUTCHours(24, 0, 0, 0) / 1000),
     });
 };
@@ -49,7 +49,7 @@ const incrementRequestsUsed = async (env: Env, requestIp: string): Promise<void>
 // helper to send a JSON response
 const sendResponse = (env: Env, request: Request, statusCode: number, body: any, extraHeaders: Record<string, string> = {}): Response => {
     const origin = request.headers.get("Origin");
-    const allowedOrigin = env.ALLOWED_ORIGIN || "*";
+    const allowedOrigin = env.FOLIO_AI_ALLOWED_ORIGIN || "*";
     const responseOrigin = (allowedOrigin === "*" || allowedOrigin === origin) ? (origin || allowedOrigin) : allowedOrigin;
 
     return new Response(JSON.stringify(body), {
@@ -82,7 +82,7 @@ export default {
         // handle CORS preflight
         if (request.method === "OPTIONS") {
             const origin = request.headers.get("Origin");
-            const allowedOrigin = env.ALLOWED_ORIGIN || "*";
+            const allowedOrigin = env.FOLIO_AI_ALLOWED_ORIGIN || "*";
             const responseOrigin = (allowedOrigin === "*" || allowedOrigin === origin) ? (origin || allowedOrigin) : allowedOrigin;
 
             return new Response(null, {

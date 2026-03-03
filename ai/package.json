@@ -7,7 +7,8 @@
         "build": "yarn compile",
         "compile": "tsc",
         "typecheck": "tsc --noEmit",
-        "worker:dev": "wrangler dev worker.ts"
+        "worker:dev": "wrangler dev",
+        "worker:deploy": "wrangler deploy"
     },
     "dependencies": {
         "@koa/bodyparser": "^6.1.0",
