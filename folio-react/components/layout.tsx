@@ -1,7 +1,7 @@
 import React from "react";
 import { renderIcon } from "@josemi-icons/react";
 import { Panel } from "./ui/panel.tsx";
-import { Island } from "./ui/island.jsx";
+import { Island } from "./ui/island.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { usePreferences } from "../contexts/preferences.tsx";
@@ -78,6 +78,19 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                 {!!PagesMenu && <PagesMenu />}
                                 {!!SettingsMenu && <SettingsMenu />}
                                 <Island.Separator />
+                                {isAiChatEnabled && (
+                                    <Island.Button
+                                        icon="sparkles"
+                                        iconClassName="text-white"
+                                        onClick={() => {
+                                            setSidebarVisible(true);
+                                            setSidebarTab(SidebarTab.AI);
+                                        }}
+                                        style={{
+                                            background: "linear-gradient(60deg, #4A74E6, #8D54E9)",
+                                        }}
+                                    />
+                                )}
                                 <Island.Button
                                     icon="trash"
                                     onClick={() => {
