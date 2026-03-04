@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { renderIcon, SparklesIcon } from "@josemi-icons/react";
 import { Alert, AlertVariant } from "./ui/alert.tsx";
+import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { Panel } from "./ui/panel.tsx";
 import { useAi, AiChatMessageRole, AiTool } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.jsx";
@@ -56,7 +57,31 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
                 rows={props?.inputRows ?? 4}
                 className="text-sm bg-transparent outline-none border-0 w-full min-h-24 p-0"
             />
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                    <Dropdown.Portal
+                        id="ai-tools"
+                        position={DropdownPortalPosition.TOP}
+                        toggleClassName={classNames({
+                            "relative w-full px-1 py-1 outline-0": true,
+                            "flex items-center justify-center": true,
+                            "opacity-60 hover:opacity-100 cursor-pointer": true,
+                        })}
+                        contentClassName="absolute z-50"
+                        toggleRender={() => (
+                            <React.Fragment>
+                                <div className="flex items-center text-xl">
+                                    {renderIcon("sliders")}
+                                </div>
+                            </React.Fragment>
+                        )}
+                        contentRender={() => (
+                            <Dropdown className="w-56 p-1" style={{ position: "relative" }}>
+                                Tools
+                            </Dropdown>
+                        )}
+                    />
+                </div>
                 <AiChatButton icon="arrow-up" onClick={handleSubmit} />
             </div>
         </div>
@@ -189,12 +214,12 @@ export const AiChat = (): React.JSX.Element => {
             <Panel.Body className="grow flex flex-col justify-between gap-4 h-full">
                 {(!activeChatId || messages?.length === 0) && (
                     <div className="flex flex-col items-center justify-center gap-4 h-full">
-                        <div className="flex flex-col items-center gap-4 px-10 py-0">
+                        <div className="flex flex-col items-center gap-6 px-16 py-0">
                             <div className="flex items-center text-4xl p-3 rounded-full text-white" style={{ background: "linear-gradient(60deg, #4A74E6, #8D54E9)" }}>
                                 <SparklesIcon />
                             </div>
-                            <div className="text-3xl font-bold text-center leading-tight">
-                                <span>How can I help you today?</span>
+                            <div className="text-xl font-bold text-center leading-tight" style={{ color: "#4A74E6" }}>
+                                <span>Hey! How can I help you today?</span>
                             </div>
                         </div>
                     </div>
