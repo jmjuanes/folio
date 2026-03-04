@@ -177,8 +177,14 @@ Dropdown.CheckItem = ({ checked = false, children, ...props }: DropdownCheckItem
     </Dropdown.Item>
 );
 
+export enum DropdownPortalPosition {
+    TOP = "top",
+    BOTTOM = "bottom",
+};
+
 export type DropdownPortalProps = {
     id: string,
+    position?: DropdownPortalPosition,
     toggleClassName?: string,
     toggleStyle?: React.CSSProperties,
     toggleRender: (isVisible?: boolean) => React.JSX.Element,
@@ -187,27 +193,34 @@ export type DropdownPortalProps = {
     contentRender: (close?: () => void) => React.JSX.Element,
 };
 
-export type DropdownPortalPosition = [number, number];
+type DropdownPortalCoordinates = [number | string, number | string, number | string];
 
 // @description dropdown portal
 Dropdown.Portal = (props: DropdownPortalProps): React.JSX.Element => {
-    const [ visible, setVisible ] = React.useState<boolean>(false);
+    const position = props.position || DropdownPortalPosition.BOTTOM;
+    const [visible, setVisible] = React.useState<boolean>(false);
     const contentRef = React.useRef<HTMLDivElement>(null);
-    const position = React.useRef<DropdownPortalPosition | null>(null);
+    const coordinates = React.useRef<DropdownPortalCoordinates | null>(null);
 
     // when clicking on the action item
     const handleToggleClick = React.useCallback((event: React.SyntheticEvent) => {
         if (event.currentTarget) {
             const rect = event.currentTarget.getBoundingClientRect();
-            position.current = [rect.bottom + window.scrollY, rect.left + window.scrollX];
+            if (position === DropdownPortalPosition.BOTTOM) {
+                // dropdown is below the toggle
+                coordinates.current = [rect.bottom + window.scrollY, "", rect.left + window.scrollX];
+            } else {
+                // dropdown is above the toggle
+                coordinates.current = ["", window.innerHeight - rect.top + window.scrollY, rect.left + window.scrollX];
+            }
             setVisible(true);
         }
-    }, [ setVisible ]);
+    }, [setVisible]);
 
     // internal method to hide the dropdown
     const handleHideDropdown = React.useCallback(() => {
         setVisible(false);
-    }, [ setVisible ]);
+    }, [setVisible]);
 
     React.useEffect(() => {
         if (visible) {
@@ -223,21 +236,32 @@ Dropdown.Portal = (props: DropdownPortalProps): React.JSX.Element => {
                 document.removeEventListener("mousedown", handleClickOutside);
             };
         }
-    }, [ visible ]);
+    }, [visible]);
+
+    const coordinatesStyle = React.useMemo(() => {
+        if (coordinates.current) {
+            return {
+                top: coordinates.current[0],
+                bottom: coordinates.current[1],
+                left: coordinates.current[2],
+            };
+        }
+        return null;
+    }, [coordinates.current]);
 
     return (
         <React.Fragment>
             <div className={props.toggleClassName || "flex items-center"} style={props.toggleStyle} onClick={handleToggleClick}>
                 {props.toggleRender(visible)}
             </div>
-            {visible && position.current && (
+            {visible && coordinatesStyle && (
                 <>
                     {createPortal(
                         <div className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                         document.body
                     )}
                     {createPortal(
-                        <div ref={contentRef} className={props.contentClassName} style={{top: position.current[0], left: position.current[1]}}>
+                        <div ref={contentRef} className={props.contentClassName} style={coordinatesStyle}>
                             {props.contentRender(handleHideDropdown)}
                         </div>,
                         document.body
