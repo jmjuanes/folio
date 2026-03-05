@@ -550,4 +550,6 @@ export const PREFERENCES = {
     LIBRARY_EXPORT_COMPONENTS: "library.exportComponents",
     // ai
     AI_ENABLED: "ai.enabled",
+    AI_CHAT_MAX_CHATS: "ai.chat.maxChats",
+    AI_CHAT_MAX_MESSAGES: "ai.chat.maxMessages",
 };

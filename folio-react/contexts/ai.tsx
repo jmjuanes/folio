@@ -10,6 +10,8 @@ export enum AiChatMessageRole {
 
 export enum AiTool {
     GENERATE_ELEMENTS = "generateElements",
+    GENERATE_DIAGRAM = "generateDiagram",
+    GENERATE_SVG = "generateSvg",
 };
 
 export type AiChatMessage = {
