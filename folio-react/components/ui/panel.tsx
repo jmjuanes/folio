@@ -138,10 +138,11 @@ Panel.HeaderTitle = (props: PanelHeaderTitleProps): React.JSX.Element => (
 Panel.HeaderButton = (props: PanelHeaderButtonProps): React.JSX.Element => {
     const className = classNames({
         "flex items-center p-2 rounded-lg": true,
-        "bg-gray-100 hover:bg-gray-200 cursor-pointer": true,
+        "bg-gray-100 hover:bg-gray-200 cursor-pointer": !props.disabled,
+        "opacity-60 cursor-not-allowed": props.disabled,
     });
     return (
-        <div className={className} onClick={props.onClick}>
+        <div className={className} onClick={props.disabled ? undefined : props.onClick}>
             {renderIcon(props.icon)}
         </div>
     );
