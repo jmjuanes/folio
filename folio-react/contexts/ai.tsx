@@ -31,11 +31,17 @@ export type AiChat = {
     timestamp?: string;
 };
 
+export type AiQuotas = {
+    requestsLimit?: number;
+    requestsUsed?: number;
+};
+
 export type AiChatManager = {
     getChats: () => AiChat[];
     clearChats: () => void;
     getChat: (chatId: string) => AiChat | null;
     addChat: (chatData: Partial<AiChat>) => AiChat;
+    updateChat: (chatId: string, chatData: Partial<AiChat>) => void;
     removeChat: (chatId: string) => void;
     getMessages: (chatId: string) => AiChatMessage[];
     getMessage: (chatId: string, messageId: string) => AiChatMessage | null;
@@ -51,6 +57,7 @@ export type AiToolsManager = {
 export type AiManager = {
     chat: AiChatManager;
     tools: AiToolsManager;
+    quotas?: AiQuotas;
 };
 
 export type AiProviderProps = {
@@ -70,6 +77,7 @@ export const useAi = (): AiManager | null => {
 
 export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
     const [chatState, setChatState] = React.useState<AiChat[] | null>(null);
+    const quotas = React.useRef<AiQuotas>({});
     const api = useApi(props.baseUrl, {});
 
     // create the api manager
@@ -98,6 +106,13 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                 });
                 // return the new chat item
                 return newChatItem;
+            },
+            updateChat: (chatId: string, chatData: Partial<AiChat>) => {
+                setChatState((prevState: AiChat[] | null) => {
+                    return prevState?.map((chat: AiChat) => {
+                        return chat.id === chatId ? Object.assign(chat, chatData) : chat;
+                    }) || [];
+                });
             },
             removeChat: (chatId: string) => {
                 setChatState((prevState: AiChat[] | null) => {
@@ -152,9 +167,10 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
             },
         } as AiChatManager;
         const toolsManager = {
-            generateElements: (prompt: string, messages: AiChatMessage[]) => {
+            generateElements: async (prompt: string, messages: AiChatMessage[]) => {
                 // const validMessages = (messages || []).filter(message => !message.loading);
-                return api("POST", "/_generateElements", {
+                // 1. perform the request to the ai service
+                const data = await api("POST", "/_generateElements", {
                     prompt: prompt,
                     messages: messages.map((message: AiChatMessage) => {
                         return {
@@ -164,11 +180,19 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                         };
                     }),
                 });
+                // 2. update the requests performed to the server
+                if (data && typeof data?.quotas === "object") {
+                    quotas.current.requestsLimit = data.quotas.requestsLimit;
+                    quotas.current.requestsUsed = data.quotas.requestsUsed;
+                }
+                // 3. return the data object
+                return data;
             },
         } as AiToolsManager;
         return {
             chat: chatManager,
             tools: toolsManager,
+            quotas: quotas.current,
         } as AiManager;
     }, [chatState]);
 
