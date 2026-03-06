@@ -21,7 +21,7 @@ export const useApi = (baseUrl: string, additionalHeaders?: Record<string, strin
             },
         };
         // include additional headers
-        if (additionalHeaders) {
+        if (additionalHeaders && options.headers) {
             Object.assign(options.headers, additionalHeaders);
         }
         // include the body if method is POST or PATCH and data is provided
