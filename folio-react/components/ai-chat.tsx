@@ -8,7 +8,9 @@ import { Panel } from "./ui/panel.tsx";
 import { useAi, AiChatMessageRole, AiTool } from "../contexts/ai.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useEditor } from "../contexts/editor.jsx";
+import { useConfirm } from "../contexts/confirm.jsx";
 import { formatDate } from "../utils/dates.ts";
+import { copyTextToClipboard } from "../utils/clipboard.js";
 import type { AiChatMessage } from "../contexts/ai.tsx";
 
 const availableTools = [
@@ -135,6 +137,8 @@ type AiChatMessageBlockProps = {
     elements?: any;
     loading?: boolean;
     timestamp?: string;
+    onCopyMessage?: () => void;
+    onDeleteMessage?: () => void;
 };
 
 const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element => {
@@ -161,15 +165,21 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
                         <div className="text-sm">{props.text}</div>
                     )}
                     {props.loading && (
-                        <div className="flex text-xl animate-pulse text-gray-600">
+                        <div className="flex text-2xl animate-pulse text-gray-600">
                             {renderIcon("dots")}
                         </div>
                     )}
                 </div>
-                <div className={actionsClassName}>
-                    <AiChatMessageActionButton icon="copy" onClick={() => { }} />
-                    <AiChatMessageActionButton icon="trash" onClick={() => { }} />
-                </div>
+                {!props.loading && (
+                    <div className={actionsClassName}>
+                        {typeof props.onCopyMessage === "function" && (
+                            <AiChatMessageActionButton icon="copy" onClick={props.onCopyMessage} />
+                        )}
+                        {typeof props.onDeleteMessage === "function" && (
+                            <AiChatMessageActionButton icon="trash" onClick={props.onDeleteMessage} />
+                        )}
+                    </div>
+                )}
             </div>
             {props.role === AiChatMessageRole.USER && props.timestamp && (
                 <div className="flex items-center justify-end">
@@ -178,6 +188,29 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
             )}
         </div>
     );
+};
+
+type AiChatQuotasProps = {
+    requestsLimit: number;
+    requestsUsed: number;
+};
+
+const AiChatQuotas = (props: AiChatQuotasProps): React.JSX.Element | null => {
+    if (props.requestsUsed > 0) {
+        const completed = props.requestsUsed / props.requestsLimit;
+        return (
+            <div className="flex flex-col items-center gap-1">
+                <div className="flex h-2 rounded-full w-full bg-gray-100 overflow-hidden">
+                    <div className="bg-gray-950 h-2" style={{ width: `${100 * completed}%` }} />
+                </div>
+                <div className="text-xs opacity-80 text-center">
+                    <span className="font-bold">{props.requestsLimit - props.requestsUsed}</span>
+                    <span> requests left today.</span>
+                </div>
+            </div>
+        );
+    }
+    return null;
 };
 
 export const AiChat = (): React.JSX.Element => {
@@ -189,6 +222,7 @@ export const AiChat = (): React.JSX.Element => {
     const ai = useAi();
     const editor = useEditor();
     const preferences = usePreferences();
+    const { showConfirm } = useConfirm();
 
     // get active chat instance
     const chats = ai?.chat.getChats() || [];
@@ -235,18 +269,55 @@ export const AiChat = (): React.JSX.Element => {
             });
     }, [ai, activeChatId, callTool]);
 
+    // remove a message from the chat
+    const handleMessageRemove = React.useCallback((messageId: string) => {
+        if (activeChatId) {
+            ai?.chat.removeMessage(activeChatId, messageId);
+            // check if the last message was removed
+            if (messages?.length === 1 && messages[0].id === messageId) {
+                ai?.chat.removeChat(activeChatId);
+                setActiveChatId("");
+            }
+        }
+    }, [ai, activeChatId, messages?.length]);
+
+    // copy message to clipboard
+    const handleMessageCopy = React.useCallback((messageId: string) => {
+        if (activeChatId) {
+            const message = ai?.chat.getMessage(activeChatId, messageId);
+            if (message) {
+                copyTextToClipboard(message.text);
+            }
+        }
+    }, [ai, activeChatId]);
+
     // clear chats
     const handleClearChats = React.useCallback(() => {
-        // 1. if there is an active chat, the trash button will remove the current
+        showConfirm({
+            title: "Clear chat history",
+            message: "Are you sure you want to clear all chats? This will remove all conversations and cannot be undone.",
+            confirmText: "Clear all chats",
+            onSubmit: () => {
+                ai?.chat.clearChats();
+                setActiveChatId("");
+            },
+        });
+    }, [ai, activeChatId, showConfirm]);
+
+    // clear current chat
+    const handleClearCurrentChat = React.useCallback(() => {
         if (activeChatId) {
-            ai?.chat.removeChat(activeChatId);
+            showConfirm({
+                title: "Clear chat",
+                message: "Are you sure you want to clear this chat? This will remove all messages and cannot be undone.",
+                confirmText: "Clear chat",
+                onSubmit: () => {
+                    ai?.chat.removeChat(activeChatId);
+                    setActiveChatId("");
+                },
+            });
         }
-        // 2. if there is no active chat, the trash button will remove all chats
-        else {
-            ai?.chat.clearChats();
-        }
-        setActiveChatId("");
-    }, [ai, activeChatId]);
+    }, [ai, activeChatId, showConfirm]);
 
     // React.useEffect(() => {
     //     if (scrollRef.current && activeChatId) {
@@ -273,8 +344,13 @@ export const AiChat = (): React.JSX.Element => {
         // if (chats?.length >= (preferences[PREFERENCES.AI_CHAT_MAX_CHATS] as number)) {
         //     return true;
         // }
+        // 4. check if the quotas has been reached
+        if (typeof ai?.quotas?.requestsLimit === "number" && ai?.quotas?.requestsUsed) {
+            return !(ai.quotas.requestsUsed < ai.quotas.requestsLimit);
+        }
+        // input is not disabled
         return false;
-    }, [ai, loading, hasReachedMaxMessages]);
+    }, [ai, ai?.quotas?.requestsLimit, ai?.quotas?.requestsUsed, loading, hasReachedMaxMessages]);
 
     return (
         <Panel.Content>
@@ -285,16 +361,18 @@ export const AiChat = (): React.JSX.Element => {
                     onBackButtonClick={() => setActiveChatId("")}
                 />
                 <div className="flex items-center gap-1">
-                    <Panel.HeaderButton
-                        icon="plus"
-                        disabled={!activeChatId}
-                        onClick={() => setActiveChatId("")}
-                    />
-                    <Panel.HeaderButton
-                        icon="trash"
-                        disabled={!activeChatId || chats?.length === 0}
-                        onClick={() => handleClearChats()}
-                    />
+                    {activeChatId && (
+                        <Panel.HeaderButton
+                            icon="plus"
+                            onClick={() => setActiveChatId("")}
+                        />
+                    )}
+                    {activeChatId && (
+                        <Panel.HeaderButton
+                            icon="trash"
+                            onClick={() => handleClearCurrentChat()}
+                        />
+                    )}
                     <Dropdown.Portal
                         id="ai-chat-history"
                         position={DropdownPortalPosition.BOTTOM_RIGHT}
@@ -317,7 +395,7 @@ export const AiChat = (): React.JSX.Element => {
                                     ))}
                                 </div>
                                 <Dropdown.Separator />
-                                <Dropdown.Item onClick={() => ai?.chat.clearChats()}>
+                                <Dropdown.Item onClick={() => handleClearChats()}>
                                     <Dropdown.Icon icon="trash" />
                                     <span>Clear history</span>
                                 </Dropdown.Item>
@@ -347,6 +425,7 @@ export const AiChat = (): React.JSX.Element => {
                                 role={message.role}
                                 text={message.text}
                                 timestamp={message.timestamp}
+                                onDeleteMessage={() => handleMessageRemove(message.id)}
                             />
                         ))}
                         {loading && (
@@ -377,6 +456,12 @@ export const AiChat = (): React.JSX.Element => {
                     <div className="text-xs opacity-60 text-center">
                         <span>Folio AI can make mistakes. Check important info.</span>
                     </div>
+                    {!!ai && typeof ai?.quotas?.requestsLimit === "number" && typeof ai?.quotas?.requestsUsed === "number" && (
+                        <AiChatQuotas
+                            requestsLimit={ai.quotas.requestsLimit}
+                            requestsUsed={ai.quotas.requestsUsed}
+                        />
+                    )}
                 </div>
             </Panel.Body>
         </Panel.Content>
