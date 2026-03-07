@@ -34,6 +34,7 @@ export type AiChat = {
 export type AiQuotas = {
     requestsLimit?: number;
     requestsUsed?: number;
+    lastRequestDate?: Date;
 };
 
 export type AiChatManager = {
@@ -181,6 +182,7 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                     }),
                 });
                 // 2. update the requests performed to the server
+                quotas.current.lastRequestDate = new Date(); // update last request date
                 if (data && typeof data?.quotas === "object") {
                     quotas.current.requestsLimit = data.quotas.requestsLimit;
                     quotas.current.requestsUsed = data.quotas.requestsUsed;

@@ -9,7 +9,7 @@ import { useAi, AiChatMessageRole, AiTool } from "../contexts/ai.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
-import { formatDate } from "../utils/dates.ts";
+import { formatDate, isSameDay } from "../utils/dates.ts";
 import { copyTextToClipboard } from "../utils/clipboard.js";
 import type { AiChatMessage } from "../contexts/ai.tsx";
 
@@ -345,8 +345,12 @@ export const AiChat = (): React.JSX.Element => {
         //     return true;
         // }
         // 4. check if the quotas has been reached
+        // note that the requests comparison must be performed only if the lastRequestDate is in the same 
+        // day as today
         if (typeof ai?.quotas?.requestsLimit === "number" && ai?.quotas?.requestsUsed) {
-            return !(ai.quotas.requestsUsed < ai.quotas.requestsLimit);
+            if (isSameDay(ai.quotas?.lastRequestDate || new Date(), new Date())) {
+                return !(ai.quotas.requestsUsed < ai.quotas.requestsLimit);
+            }
         }
         // input is not disabled
         return false;
