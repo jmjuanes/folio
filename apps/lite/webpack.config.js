@@ -3,8 +3,10 @@ import path from "node:path";
 import webpack from "webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import { createServer } from "../../scripts/webpack-server.js";
 
 import pkg from "../../package.json" with { type: "json" };
+import aiRules from "./__stubs/ai-rules.json" with { type: "json" };
 
 export default {
     mode: process.env.NODE_ENV || "development",
@@ -41,6 +43,9 @@ export default {
                 {from: /^\/index.html$/, to: "app.html"},
             ],
         },
+        setupMiddlewares: createServer([
+            ...aiRules,
+        ]),
         devMiddleware: {
             writeToDisk: true,
         },

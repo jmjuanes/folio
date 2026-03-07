@@ -1,0 +1,31 @@
+[
+    {
+        "method": "GET",
+        "path": "/_ai/status",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "message": "ok"
+                }
+            }
+        }
+    },
+    {
+        "method": "POST",
+        "path": "/_ai/quotas",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "requestsLimit": 10,
+                    "requestsUsed": 5
+                }
+            }
+        }
+    }
+]
