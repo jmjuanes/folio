@@ -10,7 +10,6 @@
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "@google/genai": "^1.41.0",
         "@josemi-icons/react": "^0.7.0",
         "classnames": "^2.5.1",
         "idb-keyval": "^6.2.2",
