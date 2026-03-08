@@ -1,14 +1,18 @@
 import React from "react";
 import classNames from "classnames";
+import { uid } from "uid/secure";
 import { renderIcon, SparklesIcon } from "@josemi-icons/react";
 import { PREFERENCES } from "../constants.js";
 import { Alert, AlertVariant } from "./ui/alert.tsx";
+import { Button } from "./ui/button.jsx";
 import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { Panel } from "./ui/panel.tsx";
 import { useAi, AiChatMessageRole, AiTool } from "../contexts/ai.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
+import { useElementsPreview } from "../hooks/use-preview.ts";
+import { getElementConfig, createElement } from "../lib/elements.js";
 import { formatDate, isSameDay } from "../utils/dates.ts";
 import { copyTextToClipboard } from "../utils/clipboard.js";
 import type { AiChatMessage } from "../contexts/ai.tsx";
@@ -131,6 +135,58 @@ const AiChatMessageActionButton = (props: AiChatMessageActionButtonProps): React
     </button>
 );
 
+type AiChatMessagePreviewProps = {
+    elements: any[];
+};
+
+const AiChatMessagePreview = (props: AiChatMessagePreviewProps): React.JSX.Element => {
+    const editor = useEditor();
+    const elements = React.useMemo(() => {
+        const parsedElements = props.elements.map((incomingElement: any) => {
+            const config = getElementConfig(incomingElement);
+            if (incomingElement?.type && config) {
+                return {
+                    ...createElement(incomingElement.type),
+                    ...config.initialize(incomingElement),
+                    ...incomingElement,
+                };
+            }
+            // not valid element
+            return null;
+        });
+        return parsedElements.filter(Boolean);
+    }, [props.elements?.length]);
+    const previewImage: string | null = useElementsPreview({ elements, width: 200, height: 200 });
+
+    // when the insert button is pressed, import the generated elements into the editor board
+    // note that imported elements will be inside the same group
+    const handleInsertClick = React.useCallback(() => {
+        editor.importElements(elements, null, null, uid(20));
+        editor.update();
+    }, [elements, editor]);
+
+    return (
+        <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-center w-48 h-48 rounded-xl">
+                {!!previewImage && (
+                    <img src={previewImage} width="100%" height="100%" />
+                )}
+                {!previewImage && (
+                    <div className="flex text-4xl animate-pulse text-gray-600">
+                        {renderIcon("dots")}
+                    </div>
+                )}
+            </div>
+            {!!previewImage && (
+                <Button disabled={false} variant="primary" className="w-full gap-2" onClick={handleInsertClick}>
+                    <div className="">Insert</div>
+                    <div className="flex">{renderIcon("arrow-right")}</div>
+                </Button>
+            )}
+        </div>
+    );
+};
+
 type AiChatMessageBlockProps = {
     role: AiChatMessageRole;
     text?: string;
@@ -163,6 +219,9 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
                 <div className={messageClassName}>
                     {props.text && props.role === AiChatMessageRole.USER && (
                         <div className="text-sm">{props.text}</div>
+                    )}
+                    {props.elements && props.elements?.length > 0 && (
+                        <AiChatMessagePreview elements={props.elements} />
                     )}
                     {props.loading && (
                         <div className="flex text-2xl animate-pulse text-gray-600">
@@ -436,6 +495,7 @@ export const AiChat = (): React.JSX.Element => {
                                 key={message.id}
                                 role={message.role}
                                 text={message.text}
+                                elements={message.elements}
                                 timestamp={message.timestamp}
                                 onDeleteMessage={() => handleMessageRemove(message.id)}
                             />
