@@ -43,9 +43,7 @@ export default {
                 {from: /^\/index.html$/, to: "app.html"},
             ],
         },
-        setupMiddlewares: createServer([
-            ...aiRules,
-        ]),
+        setupMiddlewares: createServer([...aiRules]),
         devMiddleware: {
             writeToDisk: true,
         },

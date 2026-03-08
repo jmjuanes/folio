@@ -27,5 +27,30 @@
                 }
             }
         }
+    },
+    {
+        "method": "POST",
+        "path": "/_ai/generateElements",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "text": "Fake response",
+                    "elements": [
+                        {
+                            "type": "shape",
+                            "shape": "rectangle",
+                            "x1": 0,
+                            "y1": 0,
+                            "x2": 100,
+                            "y2": 100,
+                            "fillColor": "#000"
+                        }
+                    ]
+                }
+            }
+        }
     }
 ]
