@@ -161,7 +161,7 @@ const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element =
         <div className="flex flex-col gap-1 w-full">
             <div className={containerClassName}>
                 <div className={messageClassName}>
-                    {props.text && (
+                    {props.text && props.role === AiChatMessageRole.USER && (
                         <div className="text-sm">{props.text}</div>
                     )}
                     {props.loading && (
@@ -254,11 +254,19 @@ export const AiChat = (): React.JSX.Element => {
         // 3. call the tool
         callTool(prompt)
             .then((response: any) => {
+                // 3.1. add assistant message to the current chat
                 ai?.chat.addMessage(currentChatId, {
                     role: AiChatMessageRole.ASSISTANT,
                     text: response?.text,
                     elements: response?.elements,
                 });
+                // 3.2. if a text is sent in the response, update the chat title
+                // to set the first response as the title
+                if (response?.text) {
+                    ai?.chat.updateChat(currentChatId, {
+                        title: response?.text,
+                    });
+                }
             })
             .catch(responseError => {
                 console.error(responseError?.message);

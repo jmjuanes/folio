@@ -78,8 +78,8 @@ export const useAi = (): AiManager | null => {
 
 export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
     const [chatState, setChatState] = React.useState<AiChat[] | null>(null);
-    const quotas = React.useRef<AiQuotas>({});
-    const api = useApi(props.baseUrl, {});
+    const quotas = React.useRef<AiQuotas>({ requestsUsed: 0 });
+    const api = useApi(props.baseUrl);
 
     // create the api manager
     const manager = React.useMemo<AiManager>(() => {
@@ -168,10 +168,13 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
             },
         } as AiChatManager;
         const toolsManager = {
-            generateElements: async (prompt: string, messages: AiChatMessage[]) => {
+            generateElements: (prompt: string, messages: AiChatMessage[]) => {
                 // const validMessages = (messages || []).filter(message => !message.loading);
-                // 1. perform the request to the ai service
-                const data = await api("POST", "/_generateElements", {
+                // 1. update the requests performed to the server
+                quotas.current.lastRequestDate = new Date(); // update last request date
+                quotas.current.requestsUsed = quotas.current.requestsUsed + 1; // increment requests count
+                // 2. perform the request to the ai service
+                return api("POST", "/generateElements", {
                     prompt: prompt,
                     messages: messages.map((message: AiChatMessage) => {
                         return {
@@ -181,14 +184,8 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                         };
                     }),
                 });
-                // 2. update the requests performed to the server
-                quotas.current.lastRequestDate = new Date(); // update last request date
-                if (data && typeof data?.quotas === "object") {
-                    quotas.current.requestsLimit = data.quotas.requestsLimit;
-                    quotas.current.requestsUsed = data.quotas.requestsUsed;
-                }
                 // 3. return the data object
-                return data;
+                // return data;
             },
         } as AiToolsManager;
         return {
@@ -216,6 +213,19 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
             props.onChatChange(chatState);
         }
     }, [chatState]);
+
+    // when the baseurl changes, perform a request to status endpoint to update quotas
+    React.useEffect(() => {
+        if (props.baseUrl) {
+            quotas.current.lastRequestDate = new Date();
+            api("GET", "/status").then((response: any) => {
+                if (typeof response.requestsLimit === "number" && response.requestsLimit >= 0) {
+                    quotas.current.requestsLimit = response.requestsLimit;
+                    quotas.current.requestsUsed = response.requestsUsed ?? 0;
+                }
+            });
+        }
+    }, [props.baseUrl]);
 
     return (
         <AiContext.Provider value={manager}>
