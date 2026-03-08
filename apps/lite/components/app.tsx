@@ -69,7 +69,7 @@ export const App = (props: AppProps): React.JSX.Element => {
     }
 
     return (
-        <AiProvider baseUrl="" chats={[]}>
+        <AiProvider baseUrl={process.env.AI_BASE_URL} chats={[]}>
             <Editor
                 data={handleDataLoad}
                 library={props.store.getInitialLibrary}
