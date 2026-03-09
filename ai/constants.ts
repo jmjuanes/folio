@@ -1,8 +1,8 @@
 export enum ENDPOINTS {
-    STATUS = "/_status",
-    QUOTAS = "/_quotas",
-    GENERATE_ELEMENTS = "/_generateElements",
-    TRANSFORM_ELEMENTS = "/_transformElements",
+    STATUS = "/_ai/status",
+    QUOTAS = "/_ai/quotas",
+    GENERATE_ELEMENTS = "/_ai/generateElements",
+    TRANSFORM_ELEMENTS = "/_ai/transformElements",
 };
 
 export enum API_ERROR_MESSAGES {
