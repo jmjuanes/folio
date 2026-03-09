@@ -37,7 +37,8 @@
         "response": {
             "body": {
                 "data": {
-                    "text": "Fake response",
+                    "title": "Fake response",
+                    "message": "Here is a clean version of your diagram.",
                     "elements": [
                         {
                             "type": "shape",
