@@ -1,6 +1,7 @@
 import Koa from "koa";
 import Router from "@koa/router";
 import bodyParser from "@koa/bodyparser";
+import cors from "@koa/cors";
 import { ENDPOINTS, API_ERROR_MESSAGES } from "./constants.ts";
 import { HTTP_CODES } from "../server/constants.ts";
 import { createLogger } from "../server/utils/logger.ts";
@@ -39,6 +40,20 @@ export const startAiServer = async (config: Config): Promise<any> => {
             sendErrorResponse(context, error.status || HTTP_CODES.INTERNAL_SERVER_ERROR, error.message || "");
         });
     });
+
+    // logger handler
+    app.use(async (context: Koa.Context, next: () => Promise<void>) => {
+        const start = Date.now();
+        await next();
+        context.set("X-Response-Time", `${(Date.now() - start)}ms`);
+        log(`${context.method} ${context.url} - Returned ${context.status} in ${context.response.get("X-Response-Time")}`);
+    });
+
+    // enable cors
+    app.use(cors({
+        origin: "*",
+        allowMethods: "GET,POST,OPTIONS",
+    }));
 
     // register endpoints
     const router = new Router();
