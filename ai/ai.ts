@@ -26,7 +26,8 @@ export type AssistantWarning = {
 
 export type AssistantResult = {
     content: {
-        text?: string;
+        title?: string | null;
+        message?: string;
         elements?: any[];
     };
     warnings?: AssistantWarning[],
@@ -48,7 +49,7 @@ export type Assistant = {
 };
 
 type GenerateContentParams = {
-    systemInstructions?: string;
+    systemInstructions?: string[];
     prompt: string;
     responseSchema: any;
     messages?: Message[];
@@ -63,12 +64,12 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
         const warnings: AssistantWarning[] = [];
         const messages = [];
         // 1.1 insert system instructions
-        if (options?.systemInstructions) {
+        (options?.systemInstructions || []).forEach((instructionContent: string) => {
             messages.push({
                 role: AssistantRoles.DEVELOPER,
-                content: options.systemInstructions,
+                content: instructionContent,
             });
-        }
+        });
         // 1.2. include additional instructions
         messages.push({
             role: AssistantRoles.DEVELOPER,
@@ -138,25 +139,31 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
     return {
         generateElements: (params: GenerateElementsParams): Promise<AssistantResult> => {
             const systemInstructions = [
-                "You are an AI assistant for a digital whiteboard application called Folio.",
+                "You are a professional AI assistant for a digital whiteboard application called Folio.",
                 "Your goal is to help the user generate elements for their whiteboard based on their requests.",
                 "Use 'shape' elements to create basic figures like a rectangle, circle, or triangle. Note that 'shape' elements can include also text inside.",
                 "Use 'arrow' elements to create simple lines, arrows, and connectors.",
                 "Use 'text' elements to create text when it is not included inside a 'shape' element (for example a title or a label).",
-                // "Use 'draw' elements to create freehand drawings. For example, if the user asks for a 'drawing of a cat', use a 'draw' element to create the drawing.",
+                "Use 'draw' elements to create freehand drawings. For example, if the user asks for a 'drawing of a cat', use a 'draw' element to create the drawing.",
                 "Use 'draw' elements to create more complex figures. Draw elements are composed of a list of points, which are connected by lines. Each 'draw' element is a single path.",
                 "Do not use a 'draw' element if the request can be satisfied using 'shape', 'arrow', or 'text' elements (for example, to draw a single line or an arrow use an 'arrow' element, not a 'draw' element).",
+                "If this is the first user message, generate a 'title'. If not, set it to null.",
+                "The main 'message' field of the response should be warm, concise, and helpful. It should sound link a friendly assistant. Do not repeat the user's text verbatim.",
             ];
             return generateContent({
-                systemInstructions: systemInstructions.join(" "),
+                systemInstructions: systemInstructions,
                 prompt: params.prompt,
                 messages: params?.messages || [],
                 responseSchema: {
                     type: "object",
                     properties: {
-                        text: {
+                        title: {
+                            type: ["string", "null"],
+                            description: "a short summary of the user request (max 6 words)",
+                        },
+                        message: {
                             type: "string",
-                            description: "a brief description of the elements that were generated",
+                            description: "a friendly, conversational message to accompany the result",
                         },
                         elements: {
                             type: "array",
@@ -164,7 +171,7 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                             items: elementSchema,
                         },
                     },
-                    required: ["text", "elements"],
+                    required: ["title", "message", "elements"],
                     additionalProperties: false,
                 },
             });
