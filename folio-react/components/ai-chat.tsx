@@ -4,7 +4,6 @@ import { uid } from "uid/secure";
 import { renderIcon, SparklesIcon } from "@josemi-icons/react";
 import { PREFERENCES } from "../constants.js";
 import { Alert, AlertVariant } from "./ui/alert.tsx";
-import { Button } from "./ui/button.jsx";
 import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { Panel } from "./ui/panel.tsx";
 import { useAi, AiChatMessageRole, AiTool } from "../contexts/ai.tsx";
@@ -127,7 +126,7 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
 type AiChatMessageActionButtonProps = {
     icon: string;
     text?: string;
-    onClick: () => void;
+    onClick?: () => void;
 };
 
 const AiChatMessageActionButton = (props: AiChatMessageActionButtonProps): React.JSX.Element => (
@@ -142,6 +141,7 @@ const AiChatMessageActionButton = (props: AiChatMessageActionButtonProps): React
 );
 
 type AiChatAssistantMessageProps = {
+    text?: string;
     elements: any[];
     onDeleteMessage?: () => void;
 };
@@ -176,17 +176,22 @@ const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.E
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-center w-72 rounded-xl border-1 border-gray-200 p-1">
-                {!!previewImage && (
-                    <img src={previewImage} width="100%" height="100%" />
-                )}
-                {!previewImage && (
-                    <div className="flex text-4xl animate-pulse text-gray-600">
-                        {renderIcon("dots")}
-                    </div>
-                )}
-            </div>
-            {!!previewImage && (
+            {props.text && (
+                <div className="text-sm text-gray-950">{props.text}</div>
+            )}
+            {elements.length > 0 && (
+                <div className="flex items-center justify-center w-72 rounded-xl border-1 border-gray-200 p-1">
+                    {!!previewImage && (
+                        <img src={previewImage} width="100%" height="100%" />
+                    )}
+                    {!previewImage && (
+                        <div className="flex text-4xl animate-pulse text-gray-600">
+                            {renderIcon("dots")}
+                        </div>
+                    )}
+                </div>
+            )}
+            {elements.length > 0 && !!previewImage && (
                 <div className="flex items-center gap-1">
                     <AiChatMessageActionButton icon="arrow-up-left" text="Insert" onClick={handleInsertClick} />
                     <AiChatMessageActionButton icon="trash" onClick={props.onDeleteMessage} />
@@ -219,9 +224,11 @@ const AiChatUserMessage = (props: AiChatUserMessageProps): React.JSX.Element => 
                     <div className="text-sm">{props.text}</div>
                 </div>
             </div>
-            <div className="flex items-center justify-end">
-                <span className="text-3xs opacity-60">{formatDate(props.timestamp)}</span>
-            </div>
+            {props.timestamp && (
+                <div className="flex items-center justify-end">
+                    <span className="text-3xs opacity-60">{formatDate(props.timestamp)}</span>
+                </div>
+            )}
         </div>
     );
 };
@@ -299,14 +306,14 @@ export const AiChat = (): React.JSX.Element => {
                 // 3.1. add assistant message to the current chat
                 ai?.chat.addMessage(currentChatId, {
                     role: AiChatMessageRole.ASSISTANT,
-                    text: response?.text,
+                    text: response?.message,
                     elements: response?.elements,
                 });
                 // 3.2. if a text is sent in the response, update the chat title
                 // to set the first response as the title
-                if (response?.text) {
+                if (response?.title) {
                     ai?.chat.updateChat(currentChatId, {
-                        title: response?.text,
+                        title: response?.title,
                     });
                 }
             })
@@ -478,7 +485,7 @@ export const AiChat = (): React.JSX.Element => {
                                 return (
                                     <AiChatUserMessage
                                         key={message.id}
-                                        text={message.text}
+                                        text={message.text || ""}
                                         timestamp={message.timestamp}
                                         onDeleteMessage={() => handleMessageRemove(message.id)}
                                     />
@@ -487,7 +494,8 @@ export const AiChat = (): React.JSX.Element => {
                             return (
                                 <AiChatAssistantMessage
                                     key={message.id}
-                                    elements={message.elements}
+                                    text={message?.text || ""}
+                                    elements={message.elements || []}
                                     onDeleteMessage={() => handleMessageRemove(message.id)}
                                 />
                             );
