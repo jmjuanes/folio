@@ -640,7 +640,6 @@ export const createEditor = (options = {}) => {
             const bounds = getElementsBoundingRectangle(elements);
             const x = typeof dx === "number" ? dx : ((-1) * editor.page.translateX + editor.width / 2) - (bounds[1][0] - bounds[0][0])/ 2;
             const y = typeof dy === "number" ? dy : ((-1) * editor.page.translateY + editor.height / 2) - (bounds[1][1] - bounds[0][1]) / 2;
-            debugger;
             const newElements = elements.map((element, index) => {
                 // 1.1. Check if this element is part of a group
                 if (elements.length > 1 && !editor.page?.activeGroup && !!element.group && !groups.has(element.group)) {

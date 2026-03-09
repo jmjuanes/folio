@@ -28,7 +28,7 @@ export const DEFAULT_PREFERENCES = {
     // ai preferences
     [PREFERENCES.AI_ENABLED]: true,
     [PREFERENCES.AI_CHAT_MAX_CHATS]: 10,
-    [PREFERENCES.AI_CHAT_MAX_MESSAGES]: 5,
+    [PREFERENCES.AI_CHAT_MAX_MESSAGES]: 10,
 };
 
 // @private Shared preferences context

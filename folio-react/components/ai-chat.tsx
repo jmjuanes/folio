@@ -126,20 +126,27 @@ const AiChatInput = (props: AiChatInputProps): React.JSX.Element => {
 
 type AiChatMessageActionButtonProps = {
     icon: string;
+    text?: string;
     onClick: () => void;
 };
 
 const AiChatMessageActionButton = (props: AiChatMessageActionButtonProps): React.JSX.Element => (
-    <button className="bg-transparent border-0 flex items-center justify-center text-xl opacity-40 hover:opacity-80 cursor-pointer" onClick={props.onClick}>
-        {renderIcon(props.icon)}
-    </button>
+    <div className="flex items-center justify-center gap-1 hover:bg-gray-100 rounded-lg p-1 cursor-pointer" onClick={props.onClick}>
+        <div className="flex text-lg opacity-60">
+            {renderIcon(props.icon)}
+        </div>
+        {!!props.text && (
+            <div className="text-sm opacity-60">{props.text}</div>
+        )}
+    </div>
 );
 
-type AiChatMessagePreviewProps = {
+type AiChatAssistantMessageProps = {
     elements: any[];
+    onDeleteMessage?: () => void;
 };
 
-const AiChatMessagePreview = (props: AiChatMessagePreviewProps): React.JSX.Element => {
+const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.Element => {
     const editor = useEditor();
     const elements = React.useMemo(() => {
         const parsedElements = props.elements.map((incomingElement: any) => {
@@ -156,6 +163,8 @@ const AiChatMessagePreview = (props: AiChatMessagePreviewProps): React.JSX.Eleme
         });
         return parsedElements.filter(Boolean);
     }, [props.elements?.length]);
+
+    // generate the preview based on the processed elements
     const previewImage: string | null = useElementsPreview({ elements, width: 200, height: 200 });
 
     // when the insert button is pressed, import the generated elements into the editor board
@@ -166,8 +175,8 @@ const AiChatMessagePreview = (props: AiChatMessagePreviewProps): React.JSX.Eleme
     }, [elements, editor]);
 
     return (
-        <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-center w-48 h-48 rounded-xl">
+        <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-center w-72 rounded-xl border-1 border-gray-200 p-1">
                 {!!previewImage && (
                     <img src={previewImage} width="100%" height="100%" />
                 )}
@@ -178,76 +187,50 @@ const AiChatMessagePreview = (props: AiChatMessagePreviewProps): React.JSX.Eleme
                 )}
             </div>
             {!!previewImage && (
-                <Button disabled={false} variant="primary" className="w-full gap-2" onClick={handleInsertClick}>
-                    <div className="">Insert</div>
-                    <div className="flex">{renderIcon("arrow-right")}</div>
-                </Button>
+                <div className="flex items-center gap-1">
+                    <AiChatMessageActionButton icon="arrow-up-left" text="Insert" onClick={handleInsertClick} />
+                    <AiChatMessageActionButton icon="trash" onClick={props.onDeleteMessage} />
+                </div>
             )}
         </div>
     );
 };
 
-type AiChatMessageBlockProps = {
-    role: AiChatMessageRole;
-    text?: string;
-    elements?: any;
-    loading?: boolean;
+type AiChatUserMessageProps = {
+    text: string;
     timestamp?: string;
     onCopyMessage?: () => void;
     onDeleteMessage?: () => void;
 };
 
-const AiChatMessageBlock = (props: AiChatMessageBlockProps): React.JSX.Element => {
-    const containerClassName = classNames({
-        "group flex w-full gap-2 items-center": true,
-        "justify-start": props.role === AiChatMessageRole.ASSISTANT,
-        "justify-end": props.role === AiChatMessageRole.USER,
-    });
-    const actionsClassName = classNames({
-        "group-hover:opacity-100 opacity-0 flex items-center gap-1": true,
-        "order-first": props.role === AiChatMessageRole.USER,
-        "order-last": props.role === AiChatMessageRole.ASSISTANT,
-    });
-    const messageClassName = classNames({
-        "px-4 py-3 max-w-64 flex flex-col gap-1 rounded-2xl": true,
-        "bg-gray-100 text-gray-950 rounded-tl-none": props.role === AiChatMessageRole.ASSISTANT,
-        "bg-gray-200 text-gray-950 rounded-tr-none": props.role === AiChatMessageRole.USER,
-    });
+const AiChatUserMessage = (props: AiChatUserMessageProps): React.JSX.Element => {
     return (
-        <div className="flex flex-col gap-1 w-full">
-            <div className={containerClassName}>
-                <div className={messageClassName}>
-                    {props.text && props.role === AiChatMessageRole.USER && (
-                        <div className="text-sm">{props.text}</div>
+        <div className="group flex flex-col gap-1 w-full items-end">
+            <div className="flex items-center gap-2">
+                <div className="group-hover:opacity-100 opacity-0 flex items-center gap-1 order-first">
+                    {typeof props.onCopyMessage === "function" && (
+                        <AiChatMessageActionButton icon="copy" onClick={props.onCopyMessage} />
                     )}
-                    {props.elements && props.elements?.length > 0 && (
-                        <AiChatMessagePreview elements={props.elements} />
-                    )}
-                    {props.loading && (
-                        <div className="flex text-2xl animate-pulse text-gray-600">
-                            {renderIcon("dots")}
-                        </div>
+                    {typeof props.onDeleteMessage === "function" && (
+                        <AiChatMessageActionButton icon="trash" onClick={props.onDeleteMessage} />
                     )}
                 </div>
-                {!props.loading && (
-                    <div className={actionsClassName}>
-                        {typeof props.onCopyMessage === "function" && (
-                            <AiChatMessageActionButton icon="copy" onClick={props.onCopyMessage} />
-                        )}
-                        {typeof props.onDeleteMessage === "function" && (
-                            <AiChatMessageActionButton icon="trash" onClick={props.onDeleteMessage} />
-                        )}
-                    </div>
-                )}
+                <div className="px-4 py-3 max-w-64 flex flex-col gap-1 rounded-2xl bg-gray-100 text-gray-950 rounded-tr-none">
+                    <div className="text-sm">{props.text}</div>
+                </div>
             </div>
-            {props.role === AiChatMessageRole.USER && props.timestamp && (
-                <div className="flex items-center justify-end">
-                    <span className="text-3xs opacity-60">{formatDate(props.timestamp)}</span>
-                </div>
-            )}
+            <div className="flex items-center justify-end">
+                <span className="text-3xs opacity-60">{formatDate(props.timestamp)}</span>
+            </div>
         </div>
     );
 };
+
+const AiChatLoadingMessage = (): React.JSX.Element => (
+    <div className="flex text-2xl animate-pulse text-gray-600">
+        {renderIcon("dots")}
+    </div>
+);
 
 type AiChatQuotasProps = {
     requestsLimit: number;
@@ -489,22 +472,28 @@ export const AiChat = (): React.JSX.Element => {
                     </div>
                 )}
                 {activeChatId && messages.length > 0 && (
-                    <div className="flex flex-col gap-2 h-full min-h-0 overflow-y-scroll">
-                        {messages.map((message: AiChatMessage) => (
-                            <AiChatMessageBlock
-                                key={message.id}
-                                role={message.role}
-                                text={message.text}
-                                elements={message.elements}
-                                timestamp={message.timestamp}
-                                onDeleteMessage={() => handleMessageRemove(message.id)}
-                            />
-                        ))}
+                    <div className="flex flex-col gap-4 h-full min-h-0 overflow-y-scroll">
+                        {messages.map((message: AiChatMessage) => {
+                            if (message.role === AiChatMessageRole.USER) {
+                                return (
+                                    <AiChatUserMessage
+                                        key={message.id}
+                                        text={message.text}
+                                        timestamp={message.timestamp}
+                                        onDeleteMessage={() => handleMessageRemove(message.id)}
+                                    />
+                                );
+                            }
+                            return (
+                                <AiChatAssistantMessage
+                                    key={message.id}
+                                    elements={message.elements}
+                                    onDeleteMessage={() => handleMessageRemove(message.id)}
+                                />
+                            );
+                        })}
                         {loading && (
-                            <AiChatMessageBlock
-                                role={AiChatMessageRole.ASSISTANT}
-                                loading={true}
-                            />
+                            <AiChatLoadingMessage />
                         )}
                     </div>
                 )}

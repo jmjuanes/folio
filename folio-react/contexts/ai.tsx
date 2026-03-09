@@ -218,7 +218,7 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
     React.useEffect(() => {
         if (props.baseUrl) {
             quotas.current.lastRequestDate = new Date();
-            api("GET", "/status").then((response: any) => {
+            api("POST", "/quotas").then((response: any) => {
                 if (typeof response.requestsLimit === "number" && response.requestsLimit >= 0) {
                     quotas.current.requestsLimit = response.requestsLimit;
                     quotas.current.requestsUsed = response.requestsUsed ?? 0;
