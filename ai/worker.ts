@@ -151,10 +151,10 @@ export default {
                 return sendResponse(env, request, 200, {
                     data: result.content || {},
                     warnings: result.warnings,
-                    quotas: {
-                        requestsLimit: requestsLimit,
-                        requestsUsed: requestsUsed,
-                    },
+                    // quotas: {
+                    //     requestsLimit: requestsLimit,
+                    //     requestsUsed: requestsUsed,
+                    // },
                 });
             } catch (error: any) {
                 console.error(error?.error?.message || error);
