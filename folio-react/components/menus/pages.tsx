@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { BarsIcon, LockIcon, DotsIcon } from "@josemi-icons/react";
 import { ACTIONS, EXPORT_PADDING } from "../../constants.js";
 import { Dropdown } from "../ui/dropdown.tsx";
-import { Island } from "../ui/island.jsx";
+import { Island } from "../ui/island.tsx";
 import { useActions } from "../../hooks/use-actions.js";
 import { useEditor } from "../../contexts/editor.jsx";
 import { exportToDataURL } from "../../lib/export.js";
@@ -16,7 +16,7 @@ const PAGES_PREVIEW_HEIGHT = 80;
 // Tiny hook to generate the preview of the page
 const usePagePreview = (page: Page): string | null => {
     const editor = useEditor();
-    const [ previewImage, setPreviewImage ] = React.useState<string | null>(null);
+    const [previewImage, setPreviewImage] = React.useState<string | null>(null);
     React.useEffect(() => {
         const previewOptions = {
             assets: editor.assets,
@@ -28,7 +28,7 @@ const usePagePreview = (page: Page): string | null => {
         exportToDataURL(page.elements, previewOptions).then(image => {
             return setPreviewImage(image);
         });
-    }, [ page.id, page.id === editor.page.id ? editor.updatedAt : null ]);
+    }, [page.id, page.id === editor.page.id ? editor.updatedAt : null]);
     return previewImage;
 };
 
@@ -81,7 +81,7 @@ const PageItem = ({ title, active, style, onClick, ...props }: PageItemProps): R
             cursor: props.moving ? "grabbing" : "grab",
             touchAction: "none",
         };
-    }, [ props.moving ]);
+    }, [props.moving]);
 
     // page classname
     const pageClassName = classNames({
@@ -160,7 +160,7 @@ const initializeSortedPages = (pages: Page[]) => {
 export const PagesMenuContent = (): React.JSX.Element => {
     const editor = useEditor();
     const dispatchAction = useActions();
-    const [ sortedPages, setSortedPages ] = React.useState(() => {
+    const [sortedPages, setSortedPages] = React.useState(() => {
         return initializeSortedPages(editor.pages);
     });
     const activePage = editor.getActivePage();
@@ -170,14 +170,14 @@ export const PagesMenuContent = (): React.JSX.Element => {
         event.preventDefault();
         // Update the selected page
         sortedPages[page.id].selected = true;
-        setSortedPages({...sortedPages});
+        setSortedPages({ ...sortedPages });
         let currentIndex = sortedPages[page.id].index;
 
         // Handle pointer move
         const handlePointerMove = (e: PointerEvent) => {
             e.preventDefault();
             // pageMove.current.y = e.clientY - event.nativeEvent.clientY;
-            const nextSortedPages = {...sortedPages};
+            const nextSortedPages = { ...sortedPages };
             nextSortedPages[page.id].y = e.clientY - event.nativeEvent.clientY;
             // Fix position of all pages
             const currentY = (nextSortedPages[page.id].index * PAGES_ITEM_HEIGHT) + nextSortedPages[page.id].y;
@@ -201,7 +201,7 @@ export const PagesMenuContent = (): React.JSX.Element => {
             document.removeEventListener("pointerup", handlePointerUp);
             document.removeEventListener("pointerleave", handlePointerUp);
             // Reset sorted pages
-            const nextSortedPages = {...sortedPages};
+            const nextSortedPages = { ...sortedPages };
             nextSortedPages[page.id].y = 0;
             nextSortedPages[page.id].selected = false;
             // Check if we need to update indexes
@@ -232,8 +232,8 @@ export const PagesMenuContent = (): React.JSX.Element => {
                     }}
                 />
             </Dropdown.Header>
-            <div className="p-0 scrollbar w-full overflow-y-auto" style={{maxHeight: "240px"}}>
-                <div className="relative w-full" style={{height: editor.pages.length * PAGES_ITEM_HEIGHT}}>
+            <div className="p-0 scrollbar w-full overflow-y-auto" style={{ maxHeight: "240px" }}>
+                <div className="relative w-full" style={{ height: editor.pages.length * PAGES_ITEM_HEIGHT }}>
                     {editor.pages.map((page: Page) => (
                         <PageItem
                             key={`page:${page.id}`}

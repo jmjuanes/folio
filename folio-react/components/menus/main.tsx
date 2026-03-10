@@ -2,7 +2,7 @@ import React from "react";
 import classnames from "classnames";
 import { ACTIONS, PREFERENCES } from "../../constants.js";
 import { Dropdown } from "../ui/dropdown.tsx";
-import { Island } from "../ui/island.jsx";
+import { Island } from "../ui/island.tsx";
 import { useEditor } from "../../contexts/editor.jsx";
 import { usePreferences } from "../../contexts/preferences.tsx";
 import { useActions } from "../../hooks/use-actions.js";
@@ -118,7 +118,7 @@ export const MainMenuExportAction = (): React.JSX.Element => {
                 "pointer-events-none": elements.length === 0,
             })}
             onClick={() => {
-                dispatchAction(ACTIONS.SHOW_EXPORT_DIALOG, {elements});
+                dispatchAction(ACTIONS.SHOW_EXPORT_DIALOG, { elements });
             }}
         />
     );

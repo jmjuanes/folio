@@ -11,6 +11,7 @@ enum STORE_KEYS {
     VERSION = "folio:version",
     DATA = "folio:data",
     LIBRARY = "folio:library",
+    AI_CHAT = "folio:ai-chat",
 };
 
 // @description create a new local store instance
@@ -53,6 +54,10 @@ export const createLocalStore = (options: any = {}): Store => {
             if (!keys.includes(STORE_KEYS.LIBRARY)) {
                 await idb.set(STORE_KEYS.LIBRARY, {}, store);
             }
+            // check if the ai chat key is not initialized
+            if (!keys.includes(STORE_KEYS.AI_CHAT)) {
+                await idb.set(STORE_KEYS.AI_CHAT, [], store);
+            }
         },
 
         getInitialData: async () => {
@@ -61,14 +66,14 @@ export const createLocalStore = (options: any = {}): Store => {
             if (data?.version !== VERSION) {
                 // NOTE: we found that before v11 version was not saved in local storage
                 // In that case, we assume that version is 10
-                data = await migrate({...data}, data.version || "10");
+                data = await migrate({ ...data }, data.version || "10");
                 await idb.set(STORE_KEYS.DATA, data, store);
             }
             // Return migrated data
             return data;
         },
         updateData: (data: any = {}) => {
-            return idb.update(STORE_KEYS.DATA, prev => ({...prev, ...data}), store);
+            return idb.update(STORE_KEYS.DATA, prev => ({ ...prev, ...data }), store);
         },
 
         getInitialLibrary: () => {
@@ -76,6 +81,13 @@ export const createLocalStore = (options: any = {}): Store => {
         },
         updateLibrary: (library: any = {}) => {
             return idb.set(STORE_KEYS.LIBRARY, library, store);
+        },
+
+        getInitialAiChat: () => {
+            return idb.get(STORE_KEYS.AI_CHAT, store);
+        },
+        updateAiChat: (aiChatData: any = []) => {
+            return idb.set(STORE_KEYS.AI_CHAT, aiChatData, store);
         },
     } as Store;
 };

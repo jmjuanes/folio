@@ -1,0 +1,57 @@
+[
+    {
+        "method": "GET",
+        "path": "/_ai/status",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "message": "ok"
+                }
+            }
+        }
+    },
+    {
+        "method": "POST",
+        "path": "/_ai/quotas",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "requestsLimit": 10,
+                    "requestsUsed": 5
+                }
+            }
+        }
+    },
+    {
+        "method": "POST",
+        "path": "/_ai/generateElements",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "response": {
+            "body": {
+                "data": {
+                    "title": "Fake response",
+                    "message": "Here is a clean version of your diagram.",
+                    "elements": [
+                        {
+                            "type": "shape",
+                            "shape": "rectangle",
+                            "x1": 0,
+                            "y1": 0,
+                            "x2": 100,
+                            "y2": 100,
+                            "fillColor": "#000"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

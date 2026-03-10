@@ -1,25 +1,41 @@
 import React from "react";
 import classNames from "classnames";
-import {renderIcon, ChevronDownIcon} from "@josemi-icons/react";
+import { renderIcon, ChevronDownIcon } from "@josemi-icons/react";
+
+export type IslandProps = {
+    children: React.ReactNode,
+    className?: string,
+};
 
 // @description a container for grouping elements in the editor layout
 // @param {object} props React props
 // @param {React.ReactNode} props.children React children
 // @param {string} props.className additional class name
-export const Island = props => (
+export const Island = (props: IslandProps): React.JSX.Element => (
     <div className={classNames("flex gap-1 p-1 rounded-xl shadow-sm bg-white border-1 border-gray-200", props.className)}>
         {props.children}
     </div>
 );
 
 // @description a vertical separator for the Island component
-Island.Separator = () => (
+Island.Separator = (): React.JSX.Element => (
     <div className="w-px bg-gray-200" />
 );
 
+export type IslandButtonProps = {
+    className?: string,
+    style?: React.CSSProperties,
+    iconClassName?: string,
+    icon?: string,
+    text?: string,
+    disabled?: boolean,
+    active?: boolean,
+    showChevron?: boolean,
+    onClick?: () => void,
+};
+
 // @description a button for the Island component
 // @param {object} props React props
-// @param {React.ReactNode} props.children React children
 // @param {string} props.className additional class name
 // @param {string} props.iconClassName - additional classnames for the icon
 // @param {string} props.icon icon name
@@ -28,7 +44,7 @@ Island.Separator = () => (
 // @param {boolean} props.active is the button active
 // @param {boolean} props.showChevron should the button show a chevron
 // @param {function} props.onClick button click handler
-Island.Button = props => {
+Island.Button = (props: IslandButtonProps): React.JSX.Element => {
     const classList = classNames({
         "flex justify-between items-center gap-1 p-2 rounded-lg": true,
         "cursor-pointer": !props.disabled,
@@ -40,7 +56,7 @@ Island.Button = props => {
         return !props.disabled && props?.onClick?.();
     };
     return (
-        <div className={classList} onClick={handleClick}>
+        <div className={classList} onClick={handleClick} style={props.style}>
             <div className="flex items-center gap-1">
                 {props.icon && (
                     <div className={classNames("flex items-center text-xl", props.iconClassName || "")}>

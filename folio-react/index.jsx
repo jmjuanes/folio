@@ -107,7 +107,7 @@ export {Button} from "./components/ui/button.jsx";
 export {Centered} from "./components/ui/centered.jsx";
 export {Dialog} from "./components/ui/dialog.jsx";
 export {Dropdown} from "./components/ui/dropdown.tsx";
-export {Island} from "./components/ui/island.jsx";
+export {Island} from "./components/ui/island.tsx";
 export {Overlay} from "./components/ui/overlay.jsx";
 export {Panel} from "./components/ui/panel.jsx";
 

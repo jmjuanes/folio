@@ -99,6 +99,7 @@ export type DropdownItemProps = React.HTMLAttributes<HTMLDivElement> & {
     as?: string | React.JSXElementConstructor<any>,
     className?: string,
     disabled?: boolean,
+    active?: boolean,
 };
 
 // @description dropdown item
@@ -108,7 +109,7 @@ export type DropdownItemProps = React.HTMLAttributes<HTMLDivElement> & {
 // @param {string} props.className CSS class name
 // @param {boolean} props.disabled to display the item as disabled
 // @returns {React.ReactNode} React component
-Dropdown.Item = ({ as, className, disabled = false, ...props }: DropdownItemProps): React.JSX.Element => {
+Dropdown.Item = ({ as, className, active = false, disabled = false, ...props }: DropdownItemProps): React.JSX.Element => {
     const Component = as || "div";
     return (
         <Component
@@ -117,8 +118,9 @@ Dropdown.Item = ({ as, className, disabled = false, ...props }: DropdownItemProp
                 "relative flex items-center gap-2 select-none": true,
                 "rounded-lg text-sm no-underline px-2 py-1": true,
                 "pointer-events-none opacity-60 cursor-not-allowed": disabled,
-                "cursor-pointer": !disabled,
-                "hover:bg-gray-200": !disabled,
+                "cursor-pointer": !disabled && !active,
+                "hover:bg-gray-200": !disabled && !active,
+                "bg-gray-200": active && !disabled,
             }, className)}
             tabIndex={0}
             {...props}
@@ -177,8 +179,17 @@ Dropdown.CheckItem = ({ checked = false, children, ...props }: DropdownCheckItem
     </Dropdown.Item>
 );
 
+export enum DropdownPortalPosition {
+    TOP_LEFT = "top-left",
+    TOP_RIGHT = "top-right",
+    BOTTOM_LEFT = "bottom-left",
+    BOTTOM_RIGHT = "bottom-right",
+};
+
 export type DropdownPortalProps = {
     id: string,
+    position?: DropdownPortalPosition,
+    disabled?: boolean,
     toggleClassName?: string,
     toggleStyle?: React.CSSProperties,
     toggleRender: (isVisible?: boolean) => React.JSX.Element,
@@ -187,27 +198,44 @@ export type DropdownPortalProps = {
     contentRender: (close?: () => void) => React.JSX.Element,
 };
 
-export type DropdownPortalPosition = [number, number];
+type DropdownPortalCoordinates = [number | string, number | string, number | string, number | string];
 
 // @description dropdown portal
 Dropdown.Portal = (props: DropdownPortalProps): React.JSX.Element => {
-    const [ visible, setVisible ] = React.useState<boolean>(false);
+    const position = props.position || DropdownPortalPosition.BOTTOM_LEFT;
+    const [visible, setVisible] = React.useState<boolean>(false);
     const contentRef = React.useRef<HTMLDivElement>(null);
-    const position = React.useRef<DropdownPortalPosition | null>(null);
+    const coordinates = React.useRef<DropdownPortalCoordinates | null>(null);
 
     // when clicking on the action item
     const handleToggleClick = React.useCallback((event: React.SyntheticEvent) => {
-        if (event.currentTarget) {
+        if (!props.disabled && event.currentTarget) {
             const rect = event.currentTarget.getBoundingClientRect();
-            position.current = [rect.bottom + window.scrollY, rect.left + window.scrollX];
+            coordinates.current = ["", "", "", ""];
+            if (position === DropdownPortalPosition.BOTTOM_LEFT) {
+                coordinates.current[0] = rect.bottom + window.scrollY;
+                coordinates.current[2] = rect.left + window.scrollX;
+            }
+            if (position === DropdownPortalPosition.TOP_LEFT) {
+                coordinates.current[1] = window.innerHeight - rect.top + window.scrollY;
+                coordinates.current[2] = rect.left + window.scrollX;
+            }
+            if (position === DropdownPortalPosition.BOTTOM_RIGHT) {
+                coordinates.current[0] = rect.bottom + window.scrollY;
+                coordinates.current[3] = window.innerWidth - rect.right + window.scrollX;
+            }
+            if (position === DropdownPortalPosition.TOP_RIGHT) {
+                coordinates.current[1] = window.innerHeight - rect.top + window.scrollY;
+                coordinates.current[3] = window.innerWidth - rect.right + window.scrollX;
+            }
             setVisible(true);
         }
-    }, [ setVisible ]);
+    }, [setVisible, props.disabled]);
 
     // internal method to hide the dropdown
     const handleHideDropdown = React.useCallback(() => {
         setVisible(false);
-    }, [ setVisible ]);
+    }, [setVisible]);
 
     React.useEffect(() => {
         if (visible) {
@@ -223,21 +251,33 @@ Dropdown.Portal = (props: DropdownPortalProps): React.JSX.Element => {
                 document.removeEventListener("mousedown", handleClickOutside);
             };
         }
-    }, [ visible ]);
+    }, [visible]);
+
+    const coordinatesStyle = React.useMemo(() => {
+        if (coordinates.current) {
+            return {
+                top: coordinates.current[0],
+                bottom: coordinates.current[1],
+                left: coordinates.current[2],
+                right: coordinates.current[3],
+            };
+        }
+        return null;
+    }, [coordinates.current]);
 
     return (
         <React.Fragment>
             <div className={props.toggleClassName || "flex items-center"} style={props.toggleStyle} onClick={handleToggleClick}>
                 {props.toggleRender(visible)}
             </div>
-            {visible && position.current && (
+            {visible && coordinatesStyle && (
                 <>
                     {createPortal(
                         <div className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
                         document.body
                     )}
                     {createPortal(
-                        <div ref={contentRef} className={props.contentClassName} style={{top: position.current[0], left: position.current[1]}}>
+                        <div ref={contentRef} className={props.contentClassName} style={coordinatesStyle}>
                             {props.contentRender(handleHideDropdown)}
                         </div>,
                         document.body

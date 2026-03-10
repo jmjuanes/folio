@@ -1,8 +1,11 @@
 import React from "react";
+import { PREFERENCES } from "folio-react/constants.js";
 import { Editor } from "folio-react/components/editor.jsx";
 import { Title } from "folio-react/components/title.tsx";
 import { Library } from "folio-react/components/library.tsx";
-import { Loading } from "../../../folio-react/components/loading.jsx";
+import { AiChat } from "folio-react/components/ai-chat.tsx";
+import { AiProvider } from "folio-react/contexts/ai.tsx";
+import { Loading } from "folio-react/components/loading.jsx";
 import { Welcome } from "./welcome.tsx";
 import type { Store } from "../types/store.ts";
 
@@ -16,15 +19,23 @@ const setDocumentTitle = (title: string) => {
 };
 
 export const App = (props: AppProps): React.JSX.Element => {
-    const [ ready, setReady ] = React.useState<boolean>(false);
+    const [ready, setReady] = React.useState<boolean>(false);
     const currentTitle = React.useRef<string>("Untitled");
     const componentsOverrides = React.useMemo(() => {
         return {
             Title: Title,
             Library: Library,
             OverTheCanvas: Welcome,
+            AiChat: AiChat,
         };
-    }, [ props.store ]);
+    }, [props.store]);
+
+    // default preferences for folio-lite app
+    const defaultPreferences = React.useMemo(() => {
+        return {
+            [PREFERENCES.AI_ENABLED]: true,
+        };
+    }, [props.store]);
 
     // this is a wrapper around store.getInitialData to get and update the document title
     const handleDataLoad = React.useCallback(() => {
@@ -35,7 +46,7 @@ export const App = (props: AppProps): React.JSX.Element => {
             }
             return data;
         });
-    }, [ props.store ]);
+    }, [props.store]);
 
     // when the data in the editor changes, run store.updateData
     const handleDataChange = React.useCallback((data: any) => {
@@ -45,19 +56,19 @@ export const App = (props: AppProps): React.JSX.Element => {
             setDocumentTitle(data.title);
             currentTitle.current = data.title;
         }
-    }, [ props.store ]);
+    }, [props.store]);
 
     // when the library in the editor changes, run store.updateLibrary
     const handleLibraryChange = React.useCallback((library: any) => {
         props.store.updateLibrary(library);
-    }, [ props.store ]);
+    }, [props.store]);
 
     // on mount, initialize the store
     React.useEffect(() => {
         props.store.initialize().then(() => {
             setReady(true);
         });
-    }, [ props.store ]);
+    }, [props.store]);
 
     if (!ready) {
         return (
@@ -66,12 +77,15 @@ export const App = (props: AppProps): React.JSX.Element => {
     }
 
     return (
-        <Editor
-            data={handleDataLoad}
-            library={props.store.getInitialLibrary}
-            onChange={handleDataChange}
-            onLibraryChange={handleLibraryChange}
-            components={componentsOverrides}
-        />
+        <AiProvider host={process.env.AI_HOST} chats={props.store.getInitialAiChat} onChatChange={props.store.updateAiChat}>
+            <Editor
+                data={handleDataLoad}
+                library={props.store.getInitialLibrary}
+                onChange={handleDataChange}
+                onLibraryChange={handleLibraryChange}
+                components={componentsOverrides}
+                preferences={defaultPreferences}
+            />
+        </AiProvider>
     );
 };

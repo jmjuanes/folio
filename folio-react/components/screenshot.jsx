@@ -11,7 +11,7 @@ import {
 import {Handlers} from "./handlers.jsx";
 import {SvgContainer} from "./svg.tsx";
 import {ObjectDimensions} from "./object-dimensions.jsx";
-import {Island} from "./island.jsx";
+import {Island} from "./island.tsx";
 import {Dropdown} from "./ui/dropdown.tsx";
 import {clearFocus} from "../utils/dom.js";
 

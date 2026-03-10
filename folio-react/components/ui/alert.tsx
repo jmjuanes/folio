@@ -1,10 +1,15 @@
 import React from "react";
 import classNames from "classnames";
-import {renderIcon} from "@josemi-icons/react";
+import { renderIcon } from "@josemi-icons/react";
+
+export enum AlertVariant {
+    WARNING = "warning",
+    ERROR = "error",
+};
 
 export type AlertProps = {
+    variant?: AlertVariant,
     className?: string,
-    variant?: string,
     icon?: string,
     text?: string,
     children?: React.ReactNode,
@@ -17,10 +22,11 @@ export type AlertProps = {
 // @param {string} [props.icon] icon name (e.g. "lock")
 // @param {string} [props.text] alert text
 // @param {React.ReactNode} [props.children] alert children (overrides text)
-export const Alert = ({className, variant = "", icon = "", text = "", children, ...props}: AlertProps): React.JSX.Element => {
+export const Alert = ({ className, variant, icon = "", text = "", children, ...props }: AlertProps): React.JSX.Element => {
     const alertClassName = classNames({
-        "rounded-xl shadow-sm border-1 p-3 flex gap-2 items-center": true,
-        "bg-yellow-100 text-yellow-900 border-yellow-200": variant === "warning",
+        "rounded-xl border-1 p-3 flex gap-2 items-center": true,
+        "bg-yellow-100 text-yellow-900 border-yellow-200": variant === AlertVariant.WARNING,
+        "bg-red-100 text-red-900 border-red-200": variant === AlertVariant.ERROR,
     }, className);
 
     return (

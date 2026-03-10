@@ -25,6 +25,10 @@ export const DEFAULT_PREFERENCES = {
     [PREFERENCES.LIBRARY_ENABLED]: true,
     [PREFERENCES.LIBRARY_EXPORT_COLLECTIONS]: true,
     [PREFERENCES.LIBRARY_EXPORT_COMPONENTS]: true,
+    // ai preferences
+    [PREFERENCES.AI_ENABLED]: false,
+    [PREFERENCES.AI_CHAT_MAX_CHATS]: 50,
+    [PREFERENCES.AI_CHAT_MAX_MESSAGES]: 30,
 };
 
 // @private Shared preferences context

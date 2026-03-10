@@ -61,13 +61,15 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Layers: Layers,
             Title: null,
             Library: null,
+            // ai components
+            AiChat: null,
             // canvas
             BehindTheCanvas: null,
             OverTheCanvas: null,
             // overrides
             ...props.components,
         };
-    }, [ props.components ]);
+    }, [props.components]);
 
     return (
         <EditorComponentsContext.Provider value={editorComponents}>

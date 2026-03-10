@@ -1,9 +1,10 @@
 import React from "react";
-import { PlusIcon, ChevronLeftIcon } from "@josemi-icons/react";
+import { PlusIcon } from "@josemi-icons/react";
 import { renderIcon } from "@josemi-icons/react";
 import classNames from "classnames";
 import { ACTIONS } from "../constants.js";
 import { Button } from "../components/ui/button.jsx";
+import { Panel } from "./ui/panel.tsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { useEditor } from "../contexts/editor.jsx";
@@ -81,43 +82,6 @@ export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): React.
     );
 };
 
-export type LibraryHeaderTitleProps = {
-    title: string;
-    showBackButton: boolean;
-    onBackButtonClick?: () => void;
-};
-
-export const LibraryHeaderTitle = (props: LibraryHeaderTitleProps): React.JSX.Element => (
-    <div className="flex items-center gap-2 w-full">
-        {props.showBackButton && (
-            <div className="flex items-center text-xl cursor-pointer p-1 rounded-lg hover:bg-gray-100" onClick={props.onBackButtonClick}>
-                <ChevronLeftIcon />
-            </div>
-        )}
-        <div className="font-bold text-lg w-32 truncate">
-            <span>{props.title}</span>
-        </div>
-    </div>
-);
-
-export type LibraryHeaderButtonProps = {
-    icon: string;
-    disabled?: boolean;
-    onClick?: () => void;
-};
-
-export const LibraryHeaderButton = (props: LibraryHeaderButtonProps): React.JSX.Element => {
-    const className = classNames({
-        "flex items-center p-2 rounded-lg": true,
-        "bg-gray-100 hover:bg-gray-200 cursor-pointer": true,
-    });
-    return (
-        <div className={className} onClick={props.onClick}>
-            {renderIcon(props.icon)}
-        </div>
-    );
-};
-
 export type LibraryDetailProps = {
     icon: string;
     text: string;
@@ -176,31 +140,31 @@ export const Library = (): React.JSX.Element => {
     }, [ components.length, collections.length ]);
 
     return (
-        <div className="flex flex-col gap-2">
-            <div className="sticky top-0 bg-white flex items-center justify-between pb-2 z-20">
+        <Panel.Content>
+            <Panel.Header>
                 {!activeCollection && !activeComponent && (
                     <React.Fragment>
-                        <LibraryHeaderTitle
+                        <Panel.HeaderTitle
                             showBackButton={false}
                             title="Library"
                         />
                         <div className="flex items-center gap-1">
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="plus"
                                 disabled={false}
                                 onClick={() => dispatchAction(ACTIONS.ADD_LIBRARY_COLLECTION)}
                             />
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="folder-open"
                                 disabled={false}
                                 onClick={() => dispatchAction(ACTIONS.LOAD_LIBRARY)}
                             />
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="download"
                                 disabled={false}
                                 onClick={() => dispatchAction(ACTIONS.EXPORT_LIBRARY)}
                             />
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => dispatchAction(ACTIONS.CLEAR_LIBRARY)}
@@ -210,27 +174,27 @@ export const Library = (): React.JSX.Element => {
                 )}
                 {activeCollection && !activeComponent && (
                     <React.Fragment>
-                        <LibraryHeaderTitle
+                        <Panel.HeaderTitle
                             showBackButton={true}
                             onBackButtonClick={() => setActiveCollection(null)}
                             title={activeCollection?.name}
                         />
                         <div className="flex items-center gap-1">
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="pencil"
                                 disabled={false}
                                 onClick={() => {
                                     dispatchAction(ACTIONS.EDIT_LIBRARY_COLLECTION, activeCollection);
                                 }}
                             />
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="download"
                                 disabled={false}
                                 onClick={() => {
                                     dispatchAction(ACTIONS.EXPORT_LIBRARY_COLLECTION, activeCollection);
                                 }}
                             />
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => {
@@ -242,20 +206,20 @@ export const Library = (): React.JSX.Element => {
                 )}
                 {activeComponent && (
                     <React.Fragment>
-                        <LibraryHeaderTitle
+                        <Panel.HeaderTitle
                             showBackButton={true}
                             onBackButtonClick={() => setActiveComponent(null)}
                             title="Details"
                         />
                         <div className="flex items-center gap-1">
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="pencil"
                                 disabled={false}
                                 onClick={() => {
                                     dispatchAction(ACTIONS.EDIT_LIBRARY_COMPONENT, activeComponent);
                                 }}
                             />
-                            <LibraryHeaderButton
+                            <Panel.HeaderButton
                                 icon="trash"
                                 disabled={false}
                                 onClick={() => {
@@ -265,8 +229,8 @@ export const Library = (): React.JSX.Element => {
                         </div>
                     </React.Fragment>
                 )}
-            </div>
-            <div className="flex flex-col gap-6">
+            </Panel.Header>
+            <Panel.Body className="grow flex flex-col gap-6 min-h-0">
                 {activeComponent && (
                     <div className="flex flex-col gap-4">
                         <div className="w-full">
@@ -354,7 +318,7 @@ export const Library = (): React.JSX.Element => {
                         description="Library lets you to organize and share your elements across pages."
                     />
                 )}
-            </div>
-        </div>
+            </Panel.Body>
+        </Panel.Content>
     );
 };

@@ -5,6 +5,7 @@ import http from "node:http";
 import { parseArgs } from "node:util";
 import { getConfiguration, resolveConfigPath } from "./server/dist/config.js";
 import { startServer } from "./server/dist/index.js";
+import { startAiServer } from "./ai/dist/ai/index.js";
 import { createLogger } from "./server/dist/utils/logger.js";
 
 // this is the root path of the project
@@ -14,8 +15,10 @@ const ROOT_PATH = process.cwd();
 // available commands
 const COMMANDS = {
     START: "start",
-    PING: "ping",
     LOGIN: "login",
+    SERVER_START: "server:start",
+    SERVER_PING: "server:ping",
+    AI_START: "ai:start",
 };
 
 const { info, error } = createLogger("folio:cli");
@@ -79,12 +82,24 @@ const main = async (command = "", options = {}) => {
         },
     };
 
-    // 1. start the folio server
-    if (command === COMMANDS.START) {
-        return startServer(config);
+    // 1. start the folio server/ai services
+    if (command === COMMANDS.START || command === COMMANDS.SERVER_START || command === COMMANDS.AI_START) {
+        if (command === COMMANDS.START || command === COMMANDS.AI_START) {
+            if (command === COMMANDS.AI_START && !config.ai_enabled) {
+                info(`AI service is disabled in configuration. Skipping initialization...`);
+            }
+            // only initialize the ai service if the user has manually initialized the ai service
+            // using the ai:start command
+            if (config.ai_enabled || command === COMMANDS.AI_START) {
+                startAiServer(config);
+            }
+        }
+        if (command === COMMANDS.START || command === COMMANDS.SERVER_START) {
+            startServer(config);
+        }
     }
     // 2. health check
-    else if (command === COMMANDS.PING) {
+    else if (command === COMMANDS.SERVER_PING) {
         try {
             await fetch({
                 ...baseRequestOptions,

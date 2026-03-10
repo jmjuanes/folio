@@ -1,0 +1,102 @@
+{
+    "oneOf": [
+        {
+            "type": "object",
+            "description": "An image asset",
+            "properties": {
+                "type": {
+                    "enum": [
+                        "image"
+                    ],
+                    "description": "The type of the asset"
+                },
+                "data": {
+                    "type": "object",
+                    "description": "The data associated with the image asset",
+                    "properties": {
+                        "src": {
+                            "type": "string",
+                            "description": "The source URL of the image (usually a base64 data URL)"
+                        },
+                        "mimeType": {
+                            "type": "string",
+                            "description": "The MIME type of the image (e.g., 'image/png')"
+                        },
+                        "width": {
+                            "type": "number",
+                            "description": "The natural width of the image in pixels"
+                        },
+                        "height": {
+                            "type": "number",
+                            "description": "The natural height of the image in pixels"
+                        },
+                        "size": {
+                            "type": "number",
+                            "description": "The size of the image data in bytes"
+                        }
+                    },
+                    "required": [
+                        "src",
+                        "mimeType",
+                        "width",
+                        "height"
+                    ]
+                }
+            },
+            "required": [
+                "type",
+                "data"
+            ]
+        },
+        {
+            "type": "object",
+            "description": "A bookmark asset",
+            "properties": {
+                "type": {
+                    "enum": [
+                        "bookmark"
+                    ],
+                    "description": "The type of the asset"
+                },
+                "data": {
+                    "type": "object",
+                    "description": "The metadata associated with the bookmark",
+                    "properties": {
+                        "src": {
+                            "type": "string",
+                            "description": "The URL of the bookmarked page"
+                        },
+                        "title": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The title of the bookmarked page"
+                        },
+                        "description": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The description of the bookmarked page"
+                        },
+                        "image": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The preview image URL for the bookmark"
+                        }
+                    },
+                    "required": [
+                        "src"
+                    ]
+                }
+            },
+            "required": [
+                "type",
+                "data"
+            ]
+        }
+    ]
+}

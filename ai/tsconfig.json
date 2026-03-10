@@ -9,10 +9,14 @@
         "moduleResolution": "nodenext",
         "target": "es2022",
         "skipLibCheck": true,
-        "rewriteRelativeImportExtensions": true
+        "resolveJsonModule": true,
+        "rewriteRelativeImportExtensions": true,
+        "types": [
+            "@cloudflare/workers-types"
+        ]
     },
     "exclude": [
-        "node_modules/**/*",
-        "**/*.js"
+        "dist/**/*",
+        "node_modules/**/*"
     ]
 }

@@ -8,7 +8,7 @@ import {
     MINIMAL_ELEMENT_FILL,
     MINIMAP_ELEMENT_RADIUS,
 } from "../constants.js";
-import { Island } from "./ui/island.jsx";
+import { Island } from "./ui/island.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { getElementsBoundingRectangle, getElementSize } from "../lib/elements.js";
 import { convertRadiansToDegrees } from "../utils/math.ts";
@@ -69,7 +69,7 @@ export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: Mini
     return (
         <Island className="items-center justify-center">
             {!!minimap && (
-                <div className="flex items-center justify-center bg-white" style={{width: width, height: height}}>
+                <div className="flex items-center justify-center bg-white" style={{ width: width, height: height }}>
                     <svg width={minimap.width} height={minimap.height}>
                         <rect
                             x={minimap.visibleX}
