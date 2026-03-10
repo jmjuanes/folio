@@ -4,4 +4,6 @@ export type Store = {
     updateData: (data: any) => Promise<void>;
     getInitialLibrary: () => Promise<any>;
     updateLibrary: (library: any) => Promise<void>;
+    getInitialAiChat: () => Promise<any>;
+    updateAiChat: (aiChatData: any) => Promise<any>;
 };
