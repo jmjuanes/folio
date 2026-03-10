@@ -53,7 +53,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
     const isLibraryEnabled = !!preferences[PREFERENCES.LIBRARY_ENABLED] && !!Library;
-    const isAiChatEnabled = !!AiChat; // !!preferences[PREFERENCES.AI_ENABLED] && !!AiChat;
+    const isAiChatEnabled = !!preferences[PREFERENCES.AI_ENABLED] && !!AiChat;
     const showSidebarButton = isLibraryEnabled || isAiChatEnabled;
 
     return (

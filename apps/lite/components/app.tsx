@@ -1,4 +1,5 @@
 import React from "react";
+import { PREFERENCES } from "folio-react/constants.js";
 import { Editor } from "folio-react/components/editor.jsx";
 import { Title } from "folio-react/components/title.tsx";
 import { Library } from "folio-react/components/library.tsx";
@@ -26,6 +27,13 @@ export const App = (props: AppProps): React.JSX.Element => {
             Library: Library,
             OverTheCanvas: Welcome,
             AiChat: AiChat,
+        };
+    }, [props.store]);
+
+    // default preferences for folio-lite app
+    const defaultPreferences = React.useMemo(() => {
+        return {
+            [PREFERENCES.AI_ENABLED]: true,
         };
     }, [props.store]);
 
@@ -76,6 +84,7 @@ export const App = (props: AppProps): React.JSX.Element => {
                 onChange={handleDataChange}
                 onLibraryChange={handleLibraryChange}
                 components={componentsOverrides}
+                preferences={defaultPreferences}
             />
         </AiProvider>
     );
