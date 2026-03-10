@@ -63,7 +63,7 @@ export type AiManager = {
 
 export type AiProviderProps = {
     baseUrl: string;
-    chats?: AiChat[];
+    chats?: AiChat[] | Promise<AiChat[]> | (() => Promise<AiChat[]>) | (() => AiChat[]);
     onChatChange?: (chats: AiChat[]) => void;
     children: React.ReactNode,
 };

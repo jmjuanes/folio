@@ -11,7 +11,7 @@ import { usePreferences } from "../contexts/preferences.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useElementsPreview } from "../hooks/use-preview.ts";
-import { getElementConfig, createElement } from "../lib/elements.js";
+import { parseElementsFromAiResponse } from "../lib/ai.ts";
 import { formatDate, isSameDay } from "../utils/dates.ts";
 import { copyTextToClipboard } from "../utils/clipboard.js";
 import type { AiChatMessage } from "../contexts/ai.tsx";
@@ -149,19 +149,7 @@ type AiChatAssistantMessageProps = {
 const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.Element => {
     const editor = useEditor();
     const elements = React.useMemo(() => {
-        const parsedElements = props.elements.map((incomingElement: any) => {
-            const config = getElementConfig(incomingElement);
-            if (incomingElement?.type && config) {
-                return {
-                    ...createElement(incomingElement.type),
-                    ...config.initialize(incomingElement),
-                    ...incomingElement,
-                };
-            }
-            // not valid element
-            return null;
-        });
-        return parsedElements.filter(Boolean);
+        return parseElementsFromAiResponse(props.elements);
     }, [props.elements?.length]);
 
     // generate the preview based on the processed elements
@@ -172,6 +160,7 @@ const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.E
     const handleInsertClick = React.useCallback(() => {
         editor.importElements(elements, null, null, uid(20));
         editor.update();
+        editor.dispatchChange();
     }, [elements, editor]);
 
     return (

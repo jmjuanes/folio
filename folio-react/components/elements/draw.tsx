@@ -55,8 +55,8 @@ export const DrawElement = (props: DrawElementProps): React.JSX.Element => {
     const rotation = convertRadiansToDegrees(props.rotation || 0);
     // const width = Math.abs(props.x2 - props.x1) || 1;
     // const height = Math.abs(props.y2 - props.y1) || 1;
-    const [ width, height, x, y ] = getElementSize(props);
-    const [ cx, cy ] = getCenter([props.x1, props.y1], [props.x2, props.y2]);
+    const [width, height, x, y] = getElementSize(props);
+    const [cx, cy] = getCenter([props.x1, props.y1], [props.x2, props.y2]);
     const transform = props.creating ? `translate(${props.x1},${props.y1})` : `translate(${x},${y}) rotate(${rotation}, ${cx - x}, ${cy - y})`;
     const drawWidth = props.drawWidth || width;
     const drawHeight = props.drawHeight || height;
@@ -77,7 +77,7 @@ export const DrawElement = (props: DrawElementProps): React.JSX.Element => {
     );
     return (
         <g transform={transform} opacity={props.opacity}>
-            <g transform={`scale(${width/drawWidth} ${height/drawHeight})`}>
+            <g transform={`scale(${width / drawWidth} ${height / drawHeight})`}>
                 <rect
                     x={-GRID_SIZE / 2}
                     y={-GRID_SIZE / 2}
