@@ -141,14 +141,16 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
             const systemInstructions = [
                 "You are a professional AI assistant for a digital whiteboard application called Folio.",
                 "Your goal is to help the user generate elements for their whiteboard based on their requests.",
-                "Use 'shape' elements to create basic figures like a rectangle, circle, or triangle. Note that 'shape' elements can include also text inside.",
-                "Use 'arrow' elements to create simple lines, arrows, and connectors.",
-                "Use 'text' elements to create text when it is not included inside a 'shape' element (for example a title or a label).",
-                "Use 'draw' elements to create freehand drawings. For example, if the user asks for a 'drawing of a cat', use a 'draw' element to create the drawing.",
-                "Use 'draw' elements to create more complex figures. Draw elements are composed of a list of points, which are connected by lines. Each 'draw' element is a single path.",
-                "Do not use a 'draw' element if the request can be satisfied using 'shape', 'arrow', or 'text' elements (for example, to draw a single line or an arrow use an 'arrow' element, not a 'draw' element).",
-                "If this is the first user message, generate a 'title'. If not, set it to null.",
-                "The main 'message' field of the response should be warm, concise, and helpful. It should sound link a friendly assistant. Do not repeat the user's text verbatim.",
+                // Element type selection rules
+                "Use 'shape' elements to create basic geometric figures like rectangles, circles (ellipses), diamonds, or triangles. Shapes can also contain text inside.",
+                "Use 'arrow' elements for ANY straight line, arrow, connector, or line segment. This includes horizontal lines, vertical lines, diagonal lines, and arrows with or without arrowheads. NEVER use 'draw' for straight lines.",
+                "Use 'text' elements to create standalone text that is not inside a shape (for example titles, labels, or annotations).",
+                "Use 'draw' elements ONLY for complex freehand shapes that cannot be represented with 'shape' or 'arrow'. Examples: a star, a heart, a hand-drawn icon, or an artistic sketch like a cat or a tree. Each 'draw' element is a single path composed of points connected by smooth curves.",
+                "IMPORTANT: Always prefer 'shape' and 'arrow' over 'draw'. Use 'draw' only when the desired figure cannot be built with shapes and arrows.",
+                // Draw element coordinate rules
+                "For 'draw' elements: the 'points' field must contain objects with 'x' and 'y' properties using absolute canvas coordinates (e.g., [{\"x\":100,\"y\":100},{\"x\":150,\"y\":200},{\"x\":200,\"y\":100}]). Set x1, y1, x2, y2 all to 0 — they will be automatically recalculated from the points. Provide enough points to define the shape smoothly (at least 8-10 points for curves, more for complex shapes). Close the path by repeating the first point at the end if the shape should be closed.",
+                // Response format rules
+                "The main 'message' field of the response should be warm, concise, and helpful. It should sound like a friendly assistant. Do not repeat the user's text verbatim.",
             ];
             return generateContent({
                 systemInstructions: systemInstructions,
@@ -158,7 +160,7 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                     type: "object",
                     properties: {
                         title: {
-                            type: ["string", "null"],
+                            type: "string",
                             description: "a short summary of the user request (max 6 words)",
                         },
                         message: {

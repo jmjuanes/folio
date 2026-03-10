@@ -203,14 +203,20 @@
                     "description": "The y coordinate of the end point of the arrow"
                 },
                 "xCenter": {
-                    "type": "number",
-                    "description": "The x coordinate of the control point for curved arrows",
-                    "default": 0
+                    "type": [
+                        "number",
+                        "null"
+                    ],
+                    "description": "The x coordinate of the control point for curved arrows. Only used when arrowShape is 'line'. If not needed (for example in horizontal or vertical arrows), set to null.",
+                    "default": null
                 },
                 "yCenter": {
-                    "type": "number",
-                    "description": "The y coordinate of the control point for curved arrows",
-                    "default": 0
+                    "type": [
+                        "number",
+                        "null"
+                    ],
+                    "description": "The y coordinate of the control point for curved arrows. Only used when arrowShape is 'line'. If not needed (for example in horizontal or vertical arrows), set to null.",
+                    "default": null
                 },
                 "arrowShape": {
                     "type": "string",
@@ -287,14 +293,14 @@
                 "strokeWidth",
                 "strokeStyle",
                 "opacity",
-                "startArrowHead",
-                "endArrowHead"
+                "startArrowhead",
+                "endArrowhead"
             ],
             "additionalProperties": false
         },
         {
             "type": "object",
-            "description": "A freehand drawing element",
+            "description": "A freehand drawing element composed of a list of points connected by curved lines forming a single path. Use this element ONLY for complex freehand shapes like stars, hearts, icons, or artistic drawings. Do NOT use this element for straight lines, arrows, or simple geometric shapes.",
             "properties": {
                 "type": {
                     "enum": [
@@ -304,31 +310,40 @@
                 },
                 "x1": {
                     "type": "number",
-                    "description": "The minimum x coordinate of the drawing bounds"
+                    "description": "Set to 0. This value will be automatically recalculated from the points."
                 },
                 "y1": {
                     "type": "number",
-                    "description": "The minimum y coordinate of the drawing bounds"
+                    "description": "Set to 0. This value will be automatically recalculated from the points."
                 },
                 "x2": {
                     "type": "number",
-                    "description": "The maximum x coordinate of the drawing bounds"
+                    "description": "Set to 0. This value will be automatically recalculated from the points."
                 },
                 "y2": {
                     "type": "number",
-                    "description": "The maximum y coordinate of the drawing bounds"
+                    "description": "Set to 0. This value will be automatically recalculated from the points."
                 },
                 "points": {
                     "type": "array",
-                    "description": "The list of points making up the drawing stroke, relative to the top-left corner of the drawing bounds",
+                    "description": "The list of points making up the drawing path, using absolute canvas coordinates. Points are connected by smooth curves to form the drawing. Must contain at least 2 points. Example for a triangle at position (100,100): [{\"x\":100,\"y\":100},{\"x\":150,\"y\":200},{\"x\":200,\"y\":100},{\"x\":100,\"y\":100}]",
                     "items": {
-                        "type": "array",
-                        "items": {
-                            "type": "number"
+                        "type": "object",
+                        "properties": {
+                            "x": {
+                                "type": "number",
+                                "description": "The x coordinate of the point on the canvas"
+                            },
+                            "y": {
+                                "type": "number",
+                                "description": "The y coordinate of the point on the canvas"
+                            }
                         },
-                        "minItems": 2,
-                        "maxItems": 2,
-                        "description": "A single point [x, y]"
+                        "required": [
+                            "x",
+                            "y"
+                        ],
+                        "additionalProperties": false
                     }
                 },
                 "strokeColor": {
