@@ -41,15 +41,15 @@ storage_file: 'data/folio.db'
 
 ## ai configuration
 ## enable or disable the ai service
-# ai_enabled: false
-## port where the ai service will listen. Can be overrided using the FOLIO_AI_PORT env variable
-# ai_port: 8081
+# ai_service_enabled: false
+## port where the ai service will listen. Can be overrided using the FOLIO_AI_SERVICE_PORT env variable
+# ai_service_port: 8081
 ## base url to the AI provider (openai or groq)
-# ai_base_url: 'https://api.openai.com/v1'
+# ai_provider_base_url: 'https://api.openai.com/v1'
 ## api key to the AI provider
-# ai_apikey: 'your_api_key'
+# ai_provider_api_key: 'your_api_key'
 ## model to use
-# ai_model: 'gpt-3.5-turbo'
+# ai_provider_model: 'gpt-3.5-turbo'
 
 ## configure the folder where the frontend app is located
 app_directory: 'app/'

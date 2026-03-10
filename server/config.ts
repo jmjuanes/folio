@@ -38,11 +38,11 @@ export type WebsiteConfig = {
 };
 
 export type AiConfig = {
-    ai_enabled?: boolean;
-    ai_port?: number;
-    ai_base_url?: string;
-    ai_apikey?: string;
-    ai_model?: string;
+    ai_service_enabled?: boolean;
+    ai_service_port?: number;
+    ai_provider_base_url?: string;
+    ai_provider_api_key?: string;
+    ai_provider_model?: string;
     ai_max_messages_in_request?: number;
 };
 
@@ -98,10 +98,10 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "app_directory": environment.FOLIO_APP_PATH || environment.FOLIO_APP_DIRECTORY || environment.FOLIO_WEBSITE_PATH,
         "jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
-        "ai_port": environment.FOLIO_AI_PORT,
-        "ai_base_url": environment.FOLIO_AI_BASE_URL,
-        "ai_apikey": environment.FOLIO_AI_APIKEY,
-        "ai_model": environment.FOLIO_AI_MODEL,
+        "ai_service_port": environment.FOLIO_AI_SERVICE_PORT,
+        "ai_provider_base_url": environment.FOLIO_AI_PROVIDER_BASE_URL,
+        "ai_provider_api_key": environment.FOLIO_AI_PROVIDER_API_KEY,
+        "ai_provider_model": environment.FOLIO_AI_PROVIDER_MODEL,
     };
 
     // iterate over the fields and set the values in the config object

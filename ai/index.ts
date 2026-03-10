@@ -16,20 +16,20 @@ const { log, debug, error } = createLogger("folio:ai");
 
 // run the server
 export const startAiServer = async (config: Config): Promise<any> => {
-    const port = config.ai_port || DEFAULT_PORT;
+    const port = config.ai_service_port || DEFAULT_PORT;
     const app = new Koa();
 
     debug(`Starting folio-ai server at port ${port}`);
-    if (!config.ai_apikey) {
-        error(`Error starting folio-ai server. FOLIO_AI_APIKEY is not configured.`);
+    if (!config.ai_provider_api_key) {
+        error(`Error starting folio-ai server. FOLIO_AI_PROVIDER_API_KEY is not configured.`);
         return process.exit(1);
     }
 
     // initialize the ai assistant
     const assistant = createAssistant({
-        baseUrl: config.ai_base_url,
-        apiKey: config.ai_apikey,
-        model: config.ai_model || DEFAULT_MODEL,
+        baseUrl: config.ai_provider_base_url,
+        apiKey: config.ai_provider_api_key,
+        model: config.ai_provider_model || DEFAULT_MODEL,
         maxMessagesInRequest: config.ai_max_messages_in_request,
     });
 

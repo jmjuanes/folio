@@ -5,9 +5,9 @@ const DEFAULT_MODEL = "openai/gpt-oss-120b";
 const DEFAULT_REQUESTS_LIMIT = 10;
 
 export interface Env {
-    FOLIO_AI_APIKEY?: string;
-    FOLIO_AI_BASE_URL?: string;
-    FOLIO_AI_MODEL?: string;
+    FOLIO_AI_PROVIDER_API_KEY?: string;
+    FOLIO_AI_PROVIDER_BASE_URL?: string;
+    FOLIO_AI_PROVIDER_MODEL?: string;
     FOLIO_AI_MAX_MESSAGES?: string;
     FOLIO_AI_REQUESTS_LIMIT?: string;
     FOLIO_AI_ALLOWED_ORIGIN?: string;
@@ -117,8 +117,8 @@ export default {
         // --- POST /_generateElements ---
         if (url.pathname === ENDPOINTS.GENERATE_ELEMENTS && request.method === "POST") {
             // validate API key
-            if (!env.FOLIO_AI_APIKEY) {
-                return sendErrorResponse(env, request, 500, "FOLIO_AI_APIKEY is not configured");
+            if (!env.FOLIO_AI_PROVIDER_API_KEY) {
+                return sendErrorResponse(env, request, 500, "FOLIO_AI_PROVIDER_API_KEY is not configured");
             }
 
             try {
@@ -137,9 +137,9 @@ export default {
                 await incrementRequestsUsed(env, ip);
                 // create assistant and generate elements
                 const assistant = createAssistant({
-                    baseUrl: env.FOLIO_AI_BASE_URL,
-                    apiKey: env.FOLIO_AI_APIKEY,
-                    model: env.FOLIO_AI_MODEL || DEFAULT_MODEL,
+                    baseUrl: env.FOLIO_AI_PROVIDER_BASE_URL,
+                    apiKey: env.FOLIO_AI_PROVIDER_API_KEY,
+                    model: env.FOLIO_AI_PROVIDER_MODEL || DEFAULT_MODEL,
                     maxMessagesInRequest: env.FOLIO_AI_MAX_MESSAGES ? parseInt(env.FOLIO_AI_MAX_MESSAGES, 10) : undefined,
                 });
 
