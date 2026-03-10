@@ -77,7 +77,7 @@ export const App = (props: AppProps): React.JSX.Element => {
     }
 
     return (
-        <AiProvider baseUrl={process.env.AI_BASE_URL} chats={props.store.getInitialAiChat} onChatChange={props.store.updateAiChat}>
+        <AiProvider host={process.env.AI_HOST} chats={props.store.getInitialAiChat} onChatChange={props.store.updateAiChat}>
             <Editor
                 data={handleDataLoad}
                 library={props.store.getInitialLibrary}

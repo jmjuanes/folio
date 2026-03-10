@@ -29,7 +29,8 @@ export const useApi = (baseUrl: string, additionalHeaders?: Record<string, strin
             options.body = JSON.stringify(data);
         }
         // perform the request
-        return fetch([baseUrl, path].join(""), options)
+        const requestUrl = new URL(path, baseUrl).toString();
+        return fetch(requestUrl, options)
             .then(response => {
                 // if the response is not ok, we throw an error
                 if (!response.ok) {

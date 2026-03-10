@@ -62,7 +62,7 @@ export type AiManager = {
 };
 
 export type AiProviderProps = {
-    baseUrl: string;
+    host: string;
     chats?: AiChat[] | Promise<AiChat[]> | (() => Promise<AiChat[]>) | (() => AiChat[]);
     onChatChange?: (chats: AiChat[]) => void;
     children: React.ReactNode,
@@ -79,7 +79,7 @@ export const useAi = (): AiManager | null => {
 export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
     const [chatState, setChatState] = React.useState<AiChat[] | null>(null);
     const quotas = React.useRef<AiQuotas>({ requestsUsed: 0 });
-    const api = useApi(props.baseUrl);
+    const api = useApi(props.host);
 
     // create the api manager
     const manager = React.useMemo<AiManager>(() => {
@@ -174,7 +174,7 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                 quotas.current.lastRequestDate = new Date(); // update last request date
                 quotas.current.requestsUsed = quotas.current.requestsUsed + 1; // increment requests count
                 // 2. perform the request to the ai service
-                return api("POST", "/generateElements", {
+                return api("POST", "/_ai/generateElements", {
                     prompt: prompt,
                     messages: messages.map((message: AiChatMessage) => {
                         return {
@@ -216,16 +216,16 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
 
     // when the baseurl changes, perform a request to status endpoint to update quotas
     React.useEffect(() => {
-        if (props.baseUrl) {
+        if (props.host) {
             quotas.current.lastRequestDate = new Date();
-            api("POST", "/quotas").then((response: any) => {
+            api("POST", "/_ai/quotas").then((response: any) => {
                 if (typeof response.requestsLimit === "number" && response.requestsLimit >= 0) {
                     quotas.current.requestsLimit = response.requestsLimit;
                     quotas.current.requestsUsed = response.requestsUsed ?? 0;
                 }
             });
         }
-    }, [props.baseUrl]);
+    }, [props.host]);
 
     return (
         <AiContext.Provider value={manager}>

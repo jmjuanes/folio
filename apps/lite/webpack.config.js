@@ -82,7 +82,7 @@ export default {
             "process.env.URL_REPOSITORY": JSON.stringify(pkg.repository),
             "process.env.URL_ISSUES": JSON.stringify(pkg.bugs),
             "process.env.URL_HOMEPAGE": JSON.stringify(pkg.homepage),
-            "process.env.AI_BASE_URL": JSON.stringify(process.env.FOLIO_LITE_AI_BASE_URL || ""),
+            "process.env.AI_HOST": JSON.stringify(process.env.FOLIO_LITE_AI_HOST || ""),
         }),
         new CopyWebpackPlugin({
             patterns: [
