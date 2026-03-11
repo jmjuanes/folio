@@ -24,29 +24,31 @@ export type AssistantWarning = {
     message: string;
 };
 
-export enum PartType {
+export enum MessageType {
     TEXT = "text",
     ELEMENTS = "elements",
 };
 
-export type AssistantContentPart =
-    | { type: PartType.TEXT; content: string }
-    | { type: PartType.ELEMENTS; content: any[] };
-
-export type AssistantResult = {
-    title?: string | null;
-    parts: AssistantContentPart[];
-    warnings?: AssistantWarning[],
-};
-
 export enum MessageRoles {
-    ASSISTANT = "assistant",
-    USER = "user",
+    ASSISTANT = AssistantRoles.ASSISTANT,
+    USER = AssistantRoles.USER,
 };
 
 export type Message = {
     role: MessageRoles;
-    parts?: AssistantContentPart[];
+    type: MessageType;
+    content: any;
+};
+
+export type AssistantBlock = {
+    type: MessageType;
+    content: any;
+};
+
+export type AssistantResult = {
+    summary: string | null;
+    blocks: AssistantBlock[];
+    warnings?: AssistantWarning[],
 };
 
 export type Assistant = {
@@ -90,20 +92,18 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
             // }
             // include only the last n messages in the request
             options.messages.slice((-1) * maxMessagesInRequest).forEach((message: Message) => {
-                (message.parts || []).forEach((part) => {
-                    if (part.type === PartType.TEXT) {
-                        messages.push({
-                            role: message.role,
-                            content: part.content,
-                        });
-                    }
-                    if (part.type === PartType.ELEMENTS) {
-                        messages.push({
-                            role: message.role,
-                            content: JSON.stringify({ elements: part.content }),
-                        });
-                    }
-                });
+                if (message.type === MessageType.TEXT) {
+                    messages.push({
+                        role: message.role,
+                        content: message.content,
+                    });
+                }
+                if (message.type === MessageType.ELEMENTS) {
+                    messages.push({
+                        role: message.role,
+                        content: JSON.stringify({ elements: message.content }),
+                    });
+                }
             });
         }
         // 1.4. insert user prompt
@@ -134,17 +134,14 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
         // check for error performing the request
         if (!response.ok) {
             const error = await response.json();
+            console.error(error);
             return Promise.reject(error);
         }
         // parse the response and return as an assistant result object
         const result: any = await response.json();
-        const raw = JSON.parse(result?.choices?.[0]?.message?.content || "{}");
-
-        return {
-            title: raw.title,
-            parts: raw.parts || [],
-        } as AssistantResult;
+        return JSON.parse(result?.choices?.[0]?.message?.content || "{}") as AssistantResult;
     };
+
     return {
         generateElements: (params: GenerateElementsParams): Promise<AssistantResult> => {
             const systemInstructions = [
@@ -159,7 +156,7 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                 // Draw element coordinate rules
                 "For 'draw' elements: the 'points' field must contain objects with 'x' and 'y' properties using absolute canvas coordinates (e.g., [{\"x\":100,\"y\":100},{\"x\":150,\"y\":200},{\"x\":200,\"y\":100}]). Set x1, y1, x2, y2 all to 0 — they will be automatically recalculated from the points. Provide enough points to define the shape smoothly (at least 8-10 points for curves, more for complex shapes). Close the path by repeating the first point at the end if the shape should be closed.",
                 // Response format rules
-                "In the response, include a message part to explain the generated response like a professional assistant. This message must be friendly, concise, and helpful. Do not repeat the user's text verbatim.",
+                "In the response, include a text block (textBlock) to explain the generated response like a professional assistant. This message must be friendly, concise, and helpful. Do not repeat the user's text verbatim.",
                 "You can provide multiple text parts and multiple elements parts in the same response if needed.",
             ];
             return generateContent({
@@ -169,62 +166,56 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                 responseSchema: {
                     type: "object",
                     properties: {
-                        title: {
+                        summary: {
                             type: "string",
                             description: "a short summary of the user request (max 6 words)",
                         },
-                        parts: {
+                        blocks: {
                             type: "array",
-                            description: "an array of content parts that make up the response",
+                            description: "an array of content blocks that make up the response",
                             items: {
                                 anyOf: [
-                                    {
-                                        type: "object",
-                                        properties: {
-                                            type: {
-                                                type: "string",
-                                                enum: [
-                                                    "text"
-                                                ],
-                                            },
-                                            content: {
-                                                type: "string",
-                                                description: "a friendly, conversational message",
-                                            },
-                                        },
-                                        required: [
-                                            "type",
-                                            "content"
-                                        ],
-                                        additionalProperties: false,
-                                    },
-                                    {
-                                        type: "object",
-                                        properties: {
-                                            type: {
-                                                type: "string",
-                                                enum: [
-                                                    "elements"
-                                                ],
-                                            },
-                                            content: {
-                                                type: "array",
-                                                description: "an array of elements that were generated",
-                                                items: elementSchema,
-                                            },
-                                        },
-                                        required: [
-                                            "type",
-                                            "content"
-                                        ],
-                                        additionalProperties: false,
-                                    },
+                                    { "$ref": "#/$defs/textBlock" },
+                                    { "$ref": "#/$defs/elementsBlock" },
                                 ],
                             },
                         },
                     },
-                    required: ["title", "parts"],
+                    required: ["summary", "blocks"],
                     additionalProperties: false,
+                    $defs: {
+                        textBlock: {
+                            type: "object",
+                            properties: {
+                                type: {
+                                    type: "string",
+                                    enum: ["text"],
+                                },
+                                content: {
+                                    type: "string",
+                                    description: "a friendly, conversational message",
+                                },
+                            },
+                            required: ["type", "content"],
+                            additionalProperties: false,
+                        },
+                        elementsBlock: {
+                            type: "object",
+                            properties: {
+                                type: {
+                                    type: "string",
+                                    enum: ["elements"],
+                                },
+                                content: {
+                                    type: "array",
+                                    description: "an array of elements that were generated",
+                                    items: elementSchema,
+                                },
+                            },
+                            required: ["type", "content"],
+                            additionalProperties: false,
+                        },
+                    },
                 },
             });
         },
