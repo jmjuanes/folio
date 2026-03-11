@@ -15,6 +15,7 @@ import { useElementsPreview } from "../hooks/use-preview.ts";
 import { parseElementsFromAiResponse } from "../lib/ai.ts";
 import { formatDate, isSameDay } from "../utils/dates.ts";
 import { copyTextToClipboard } from "../utils/clipboard.js";
+
 const availableTools = [
     {
         id: AiTool.GENERATE_ELEMENTS,
