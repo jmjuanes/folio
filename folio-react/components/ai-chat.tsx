@@ -6,7 +6,8 @@ import { PREFERENCES } from "../constants.js";
 import { Alert, AlertVariant } from "./ui/alert.tsx";
 import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { Panel } from "./ui/panel.tsx";
-import { useAi, AiChatMessageRole, AiTool } from "../contexts/ai.tsx";
+import { useAi, AiChatMessageRole, AiTool, AiChatMessageType } from "../contexts/ai.tsx";
+import type { AiChatMessage } from "../contexts/ai.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
@@ -14,8 +15,6 @@ import { useElementsPreview } from "../hooks/use-preview.ts";
 import { parseElementsFromAiResponse } from "../lib/ai.ts";
 import { formatDate, isSameDay } from "../utils/dates.ts";
 import { copyTextToClipboard } from "../utils/clipboard.js";
-import type { AiChatMessage } from "../contexts/ai.tsx";
-
 const availableTools = [
     {
         id: AiTool.GENERATE_ELEMENTS,
@@ -141,22 +140,25 @@ const AiChatMessageActionButton = (props: AiChatMessageActionButtonProps): React
 );
 
 type AiChatAssistantMessageProps = {
-    text?: string;
-    elements: any[];
+    type: AiChatMessageType;
+    content: any;
     onDeleteMessage?: () => void;
 };
 
 const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.Element => {
     const editor = useEditor();
+    
     const elements = React.useMemo(() => {
-        return parseElementsFromAiResponse(props.elements);
-    }, [props.elements?.length]);
+        if (props.type === AiChatMessageType.ELEMENTS) {
+            return parseElementsFromAiResponse(props.content || []);
+        }
+        return [];
+    }, [props.type, props.content?.length]);
 
     // generate the preview based on the processed elements
     const previewImage: string | null = useElementsPreview({ elements, width: 200, height: 200 });
 
     // when the insert button is pressed, import the generated elements into the editor board
-    // note that imported elements will be inside the same group
     const handleInsertClick = React.useCallback(() => {
         editor.importElements(elements, null, null, uid(20));
         editor.update();
@@ -165,10 +167,10 @@ const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.E
 
     return (
         <div className="flex flex-col gap-2">
-            {props.text && (
-                <div className="text-sm text-gray-950">{props.text}</div>
+            {props.type === AiChatMessageType.TEXT && props.content && (
+                <div className="text-sm text-gray-950">{props.content}</div>
             )}
-            {elements.length > 0 && (
+            {props.type === AiChatMessageType.ELEMENTS && elements.length > 0 && (
                 <div className="flex items-center justify-center w-72 rounded-xl border-1 border-gray-200 p-1">
                     {!!previewImage && (
                         <img src={previewImage} width="100%" height="100%" />
@@ -180,7 +182,7 @@ const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.E
                     )}
                 </div>
             )}
-            {elements.length > 0 && !!previewImage && (
+            {props.type === AiChatMessageType.ELEMENTS && elements.length > 0 && !!previewImage && (
                 <div className="flex items-center gap-1">
                     <AiChatMessageActionButton icon="arrow-up-left" text="Insert" onClick={handleInsertClick} />
                     <AiChatMessageActionButton icon="trash" onClick={props.onDeleteMessage} />
@@ -288,15 +290,21 @@ export const AiChat = (): React.JSX.Element => {
             currentChatId = chat?.id || "";
         }
         // 2. add the user message to the chat
-        ai?.chat.addMessage(currentChatId, { text: prompt });
+        ai?.chat.addMessage(currentChatId, { 
+            role: AiChatMessageRole.USER,
+            type: AiChatMessageType.TEXT,
+            content: prompt,
+        });
         // 3. call the tool
         callTool(prompt)
             .then((response: any) => {
-                // 3.1. add assistant message to the current chat
-                ai?.chat.addMessage(currentChatId, {
-                    role: AiChatMessageRole.ASSISTANT,
-                    text: response?.message,
-                    elements: response?.elements,
+                // 3.1. add assistant messages to the current chat (one for each part)
+                (response?.parts || []).forEach((part: any) => {
+                    ai?.chat.addMessage(currentChatId, {
+                        role: AiChatMessageRole.ASSISTANT,
+                        type: part.type,
+                        content: part.content,
+                    });
                 });
                 // 3.2. if a text is sent in the response, update the chat title
                 // to set the first response as the title
@@ -331,8 +339,8 @@ export const AiChat = (): React.JSX.Element => {
     const handleMessageCopy = React.useCallback((messageId: string) => {
         if (activeChatId) {
             const message = ai?.chat.getMessage(activeChatId, messageId);
-            if (message) {
-                copyTextToClipboard(message.text);
+            if (message && message.type === AiChatMessageType.TEXT) {
+                copyTextToClipboard(message.content);
             }
         }
     }, [ai, activeChatId]);
@@ -474,7 +482,7 @@ export const AiChat = (): React.JSX.Element => {
                                 return (
                                     <AiChatUserMessage
                                         key={message.id}
-                                        text={message.text || ""}
+                                        text={message.type === AiChatMessageType.TEXT ? message.content : ""}
                                         timestamp={message.timestamp}
                                         onDeleteMessage={() => handleMessageRemove(message.id)}
                                     />
@@ -483,8 +491,8 @@ export const AiChat = (): React.JSX.Element => {
                             return (
                                 <AiChatAssistantMessage
                                     key={message.id}
-                                    text={message?.text || ""}
-                                    elements={message.elements || []}
+                                    type={message.type}
+                                    content={message.content}
                                     onDeleteMessage={() => handleMessageRemove(message.id)}
                                 />
                             );
