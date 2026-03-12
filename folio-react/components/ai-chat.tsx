@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { uid } from "uid/secure";
 import { renderIcon, SparklesIcon } from "@josemi-icons/react";
 import { PREFERENCES } from "../constants.js";
+import { Ai } from "./ui/ai.tsx";
 import { Alert, AlertVariant } from "./ui/alert.tsx";
 import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { Panel } from "./ui/panel.tsx";
@@ -148,7 +149,7 @@ type AiChatAssistantMessageProps = {
 
 const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.Element => {
     const editor = useEditor();
-    
+
     const elements = React.useMemo(() => {
         if (props.type === AiChatMessageType.ELEMENTS) {
             return parseElementsFromAiResponse(props.content || []);
@@ -255,6 +256,7 @@ const AiChatQuotas = (props: AiChatQuotasProps): React.JSX.Element | null => {
 };
 
 export const AiChat = (): React.JSX.Element => {
+    const [prompt, setPrompt] = React.useState<string>("");
     const [activeChatId, setActiveChatId] = React.useState<string>("");
     const [selectedTool, setSelectedTool] = React.useState<AiTool>(AiTool.GENERATE_ELEMENTS);
     const [loading, setLoading] = React.useState<Boolean>(false);
@@ -291,7 +293,7 @@ export const AiChat = (): React.JSX.Element => {
             currentChatId = chat?.id || "";
         }
         // 2. add the user message to the chat
-        ai?.chat.addMessage(currentChatId, { 
+        ai?.chat.addMessage(currentChatId, {
             role: AiChatMessageRole.USER,
             type: AiChatMessageType.TEXT,
             content: prompt,
@@ -512,6 +514,7 @@ export const AiChat = (): React.JSX.Element => {
                             <span>You have reached the maximum number of messages in this chat. Please start a new chat to continue.</span>
                         </div>
                     )}
+                    {/*
                     <AiChatInput
                         disabled={isInputDisabled}
                         key={messages.length}
@@ -520,6 +523,22 @@ export const AiChat = (): React.JSX.Element => {
                         onToolChange={(tool: AiTool) => setSelectedTool(tool)}
                         onSubmit={(prompt: string) => handleMessageSubmit(prompt)}
                     />
+                    */}
+                    <Ai.Prompt>
+                        <Ai.PromptInput
+                            key={messages.length}
+                            disabled={false}
+                            placeholder="Ask anything..."
+                            rows={4}
+                            onChange={value => setPrompt(value)}
+                        />
+                        <div className="w-full flex items-center justify-between">
+                            <div className="flex items-center gap-1">
+                                <Ai.PromptButton icon="image" text="Upload image" />
+                            </div>
+                            <Ai.PromptSubmit />
+                        </div>
+                    </Ai.Prompt>
                     <div className="text-xs opacity-60 text-center">
                         <span>Folio AI can make mistakes. Check important info.</span>
                     </div>
