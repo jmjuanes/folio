@@ -14,7 +14,7 @@ import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useElementsPreview } from "../hooks/use-preview.ts";
 import { parseElementsFromAiResponse } from "../lib/ai.ts";
-import { formatDate, isSameDay } from "../utils/dates.ts";
+import { isSameDay } from "../utils/dates.ts";
 import { copyTextToClipboard } from "../utils/clipboard.js";
 
 const availableTools = [
@@ -194,66 +194,34 @@ const AiChatAssistantMessage = (props: AiChatAssistantMessageProps): React.JSX.E
     );
 };
 
-type AiChatUserMessageProps = {
-    text: string;
-    timestamp?: string;
-    onCopyMessage?: () => void;
-    onDeleteMessage?: () => void;
+type AiChatConversationProps = {
+    messages: AiChatMessage[];
+    loading: boolean;
 };
 
-const AiChatUserMessage = (props: AiChatUserMessageProps): React.JSX.Element => {
-    return (
-        <div className="group flex flex-col gap-1 w-full items-end">
-            <div className="flex items-center gap-2">
-                <div className="group-hover:opacity-100 opacity-0 flex items-center gap-1 order-first">
-                    {typeof props.onCopyMessage === "function" && (
-                        <AiChatMessageActionButton icon="copy" onClick={props.onCopyMessage} />
+const AiChatConversation = (props: AiChatConversationProps): React.JSX.Element => (
+    <Ai.Conversation scrollToEnd={true}>
+        {props.messages.map((message: AiChatMessage) => {
+            const messageContentClassName = classNames({
+                "bg-gray-100 px-4 py-3 rounded-xl": message.role === AiChatMessageRole.USER,
+            });
+            return (
+                <Ai.Message key={message.id} role={message.role}>
+                    {message.type === AiChatMessageType.TEXT && (
+                        <Ai.MessageContent className={messageContentClassName}>
+                            <span>{message.content}</span>
+                        </Ai.MessageContent>
                     )}
-                    {typeof props.onDeleteMessage === "function" && (
-                        <AiChatMessageActionButton icon="trash" onClick={props.onDeleteMessage} />
-                    )}
-                </div>
-                <div className="px-4 py-3 max-w-64 flex flex-col gap-1 rounded-2xl bg-gray-100 text-gray-950 rounded-tr-none">
-                    <div className="text-sm">{props.text}</div>
-                </div>
+                </Ai.Message>
+            );
+        })}
+        {props.loading && (
+            <div className="flex text-2xl animate-pulse text-gray-600">
+                {renderIcon("dots")}
             </div>
-            {props.timestamp && (
-                <div className="flex items-center justify-end">
-                    <span className="text-3xs opacity-60">{formatDate(props.timestamp)}</span>
-                </div>
-            )}
-        </div>
-    );
-};
-
-const AiChatLoadingMessage = (): React.JSX.Element => (
-    <div className="flex text-2xl animate-pulse text-gray-600">
-        {renderIcon("dots")}
-    </div>
+        )}
+    </Ai.Conversation> 
 );
-
-type AiChatQuotasProps = {
-    requestsLimit: number;
-    requestsUsed: number;
-};
-
-const AiChatQuotas = (props: AiChatQuotasProps): React.JSX.Element | null => {
-    if (props.requestsUsed > 0) {
-        const completed = props.requestsUsed / props.requestsLimit;
-        return (
-            <div className="flex flex-col items-center gap-1">
-                <div className="flex h-2 rounded-full w-full bg-gray-100 overflow-hidden">
-                    <div className="bg-gray-950 h-2" style={{ width: `${100 * completed}%` }} />
-                </div>
-                <div className="text-xs opacity-80 text-center">
-                    <span className="font-bold">{props.requestsLimit - props.requestsUsed}</span>
-                    <span> requests left today.</span>
-                </div>
-            </div>
-        );
-    }
-    return null;
-};
 
 export const AiChat = (): React.JSX.Element => {
     const [prompt, setPrompt] = React.useState<string>("");
@@ -261,7 +229,6 @@ export const AiChat = (): React.JSX.Element => {
     const [selectedTool, setSelectedTool] = React.useState<AiTool>(AiTool.GENERATE_ELEMENTS);
     const [loading, setLoading] = React.useState<Boolean>(false);
     const [error, setError] = React.useState<Error | null>(null);
-    // const scrollRef = React.useRef<HTMLDivElement>(null);
     const ai = useAi();
     const editor = useEditor();
     const preferences = usePreferences();
@@ -376,12 +343,6 @@ export const AiChat = (): React.JSX.Element => {
         }
     }, [ai, activeChatId, showConfirm]);
 
-    // React.useEffect(() => {
-    //     if (scrollRef.current && activeChatId) {
-    //         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    //     }
-    // }, [activeChatId]);
-
     // reset the error message when the user changes the chat
     React.useEffect(() => setError(null), [activeChatId]);
 
@@ -479,31 +440,11 @@ export const AiChat = (): React.JSX.Element => {
                     </div>
                 )}
                 {activeChatId && messages.length > 0 && (
-                    <div className="flex flex-col gap-4 h-full min-h-0 overflow-y-scroll">
-                        {messages.map((message: AiChatMessage) => {
-                            if (message.role === AiChatMessageRole.USER) {
-                                return (
-                                    <AiChatUserMessage
-                                        key={message.id}
-                                        text={message.type === AiChatMessageType.TEXT ? message.content : ""}
-                                        timestamp={message.timestamp}
-                                        onDeleteMessage={() => handleMessageRemove(message.id)}
-                                    />
-                                );
-                            }
-                            return (
-                                <AiChatAssistantMessage
-                                    key={message.id}
-                                    type={message.type}
-                                    content={message.content}
-                                    onDeleteMessage={() => handleMessageRemove(message.id)}
-                                />
-                            );
-                        })}
-                        {loading && (
-                            <AiChatLoadingMessage />
-                        )}
-                    </div>
+                    <AiChatConversation
+                        key={`ai:conversation:${messages.length}`} 
+                        messages={messages}
+                        loading={!!loading}
+                    />
                 )}
                 <div className="w-full shrink-0 flex flex-col gap-2 sticky bottom-0 bg-white pt-2">
                     {error && (
@@ -514,38 +455,30 @@ export const AiChat = (): React.JSX.Element => {
                             <span>You have reached the maximum number of messages in this chat. Please start a new chat to continue.</span>
                         </div>
                     )}
-                    {/*
-                    <AiChatInput
-                        disabled={isInputDisabled}
-                        key={messages.length}
-                        placeholder="Ask anything..."
-                        tool={selectedTool}
-                        onToolChange={(tool: AiTool) => setSelectedTool(tool)}
-                        onSubmit={(prompt: string) => handleMessageSubmit(prompt)}
-                    />
-                    */}
                     <Ai.Prompt>
                         <Ai.PromptInput
                             key={messages.length}
-                            disabled={false}
+                            disabled={isInputDisabled}
                             placeholder="Ask anything..."
-                            rows={4}
+                            rows={3}
                             onChange={value => setPrompt(value)}
                         />
                         <div className="w-full flex items-center justify-between">
                             <div className="flex items-center gap-1">
                                 <Ai.PromptButton icon="image" text="Upload image" />
                             </div>
-                            <Ai.PromptSubmit />
+                            <Ai.PromptSubmit
+                                disabled={isInputDisabled}
+                            />
                         </div>
                     </Ai.Prompt>
                     <div className="text-xs opacity-60 text-center">
                         <span>Folio AI can make mistakes. Check important info.</span>
                     </div>
                     {!!ai && typeof ai?.quotas?.requestsLimit === "number" && typeof ai?.quotas?.requestsUsed === "number" && (
-                        <AiChatQuotas
-                            requestsLimit={ai.quotas.requestsLimit}
-                            requestsUsed={ai.quotas.requestsUsed}
+                        <Ai.Context
+                            maxRequests={ai.quotas.requestsLimit}
+                            usedRequests={ai.quotas.requestsUsed}
                         />
                     )}
                 </div>

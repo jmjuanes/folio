@@ -1,11 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { renderIcon, SparklesIcon } from "@josemi-icons/react";
-
-export enum AiMessageRole {
-    USER = "user",
-    ASSISTANT = "assistant",
-};
+import { renderIcon } from "@josemi-icons/react";
 
 export type AiPromptProps = {
     className?: string;
@@ -37,19 +32,32 @@ export type AiPromptButtonProps = {
 
 export type AiConversationProps = {
     className?: string;
-    scrollToTop?: boolean;
+    scrollToEnd?: boolean;
     children: React.ReactNode;
 };
 
 export type AiMessageProps = {
     className?: string;
-    role: AiMessageRole;
+    role: string;
     children: React.ReactNode;
 };
 
 export type AiMessageContentProps = {
     className?: string;
     children: React.ReactNode;
+};
+
+export type AiMessageActionsProps = {
+    className?: string;
+    children: React.ReactNode;
+};
+
+export type AiMessageActionProps = {
+    className?: string;
+    disabled?: boolean;
+    text?: string;
+    icon: string;
+    onClick?: () => void;
 };
 
 export type AiArtifactProps = {
@@ -76,8 +84,14 @@ export type AiArtifactActionsProps = {
 export type AiArtifactActionProps = {
     className?: string;
     disabled?: boolean;
+    text?: string;
     icon: string;
     onClick?: () => void;
+};
+
+export type AiContextProps = {
+    maxRequests: number;
+    usedRequests: number;
 };
 
 export type AiComponents = {
@@ -88,11 +102,14 @@ export type AiComponents = {
     Conversation: (props: AiConversationProps) => React.JSX.Element;
     Message: (props: AiMessageProps) => React.JSX.Element;
     MessageContent: (props: AiMessageContentProps) => React.JSX.Element;
+    MessageActions: (props: AiMessageActionsProps) => React.JSX.Element;
+    MessageAction: (props: AiMessageActionProps) => React.JSX.Element;
     Artifact: (props: AiArtifactProps) => React.JSX.Element;
     ArtifactHeader: (props: AiArtifactHeaderProps) => React.JSX.Element;
     ArtifactTitle: (props: AiArtifactTitleProps) => React.JSX.Element;
     ArtifactActions: (props: AiArtifactActionsProps) => React.JSX.Element;
     ArtifactAction: (props: AiArtifactActionProps) => React.JSX.Element;
+    Context: (props: AiContextProps) => React.JSX.Element;
 };
 
 export const Ai: AiComponents = {
@@ -145,10 +162,11 @@ export const Ai: AiComponents = {
     Conversation: (props: AiConversationProps): React.JSX.Element => {
         const scrollRef = React.useRef<HTMLDivElement>(null);
         React.useEffect(() => {
-            if (props.scrollToTop && scrollRef.current) {
-                scrollRef.current.scrollIntoView({ behavior: "smooth" });
+            if (props.scrollToEnd && scrollRef.current) {
+                // scrollRef.current.scrollIntoView({ behavior: "smooth" });
+                scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
             }
-        }, [props.scrollToTop]);
+        }, [props.scrollToEnd]);
         return (
             <div ref={scrollRef} className={classNames("flex flex-col gap-4 h-full min-h-0 overflow-y-scroll", props.className)}>
                 {props.children}
@@ -158,8 +176,8 @@ export const Ai: AiComponents = {
     Message: (props: AiMessageProps): React.JSX.Element => {
         const messageClassName = classNames({
             "flex flex-col w-full": true,
-            "items-end": props.role === AiMessageRole.USER,
-            "items-start": props.role === AiMessageRole.ASSISTANT,
+            "items-end": props.role === "user",
+            "items-start": props.role === "assistant",
         }, props.className);
         return (
             <div className={messageClassName} style={{ maxWidth: "95%" }}>
@@ -172,6 +190,28 @@ export const Ai: AiComponents = {
             {props.children}
         </div>
     ),
+    MessageActions: (props: AiMessageActionsProps): React.JSX.Element => (
+        <div className={classNames("flex items-center gap-1", props.className)}>
+            {props.children}
+        </div>
+    ),
+    MessageAction: (props: AiMessageActionProps): React.JSX.Element => {
+        const buttonClassName = classNames({
+            "flex flex-row items-center gap-1 p-1 rounded-lg bg-transparent border-0": true,
+            "hover:bg-gray-100 cursor-pointer": !props.disabled,
+            "opacity-60 cursor-not-allowed": !!props.disabled,
+        }, props.className);
+        return (
+            <button className={buttonClassName} onClick={props.onClick}>
+                <div className="flex text-lg opacity-60">
+                    {renderIcon(props.icon)}
+                </div>
+                {!!props.text && (
+                    <div className="text-sm opacity-60">{props.text}</div>
+                )}
+            </button>
+        );
+    },
     Artifact: (props: AiArtifactProps): React.JSX.Element => (
         <div className={classNames("flex flex-col overflow-hidden rounded-xl border-1 border-gray-200", props.className)}>
             {props.children}
@@ -194,7 +234,7 @@ export const Ai: AiComponents = {
     ),
     ArtifactAction: (props: AiArtifactActionProps): React.JSX.Element => {
         const buttonClassName = classNames({
-            "flex p-2 rounded-lg": true,
+            "flex flex-row gap-1 p-2 rounded-lg": true,
             "hover:bg-gray-100 cursor-pointer": !props.disabled,
             "opacity-60 cursor-not-allowed": !!props.disabled,
         }, props.className);
@@ -203,7 +243,24 @@ export const Ai: AiComponents = {
                 <div className="flex items-center text-lg opacity-80">
                     {renderIcon(props.icon)}
                 </div>
+                {props.text && (
+                    <div className="text-sm opacity-80">{props.text}</div>
+                )}
             </button>
+        );
+    },
+    Context: (props: AiContextProps): React.JSX.Element => {
+        const completed = props.usedRequests / props.maxRequests;
+        return (
+            <div className="flex flex-col items-center gap-1">
+                <div className="flex h-2 rounded-full w-full bg-gray-100 overflow-hidden">
+                    <div className="bg-gray-950 h-2" style={{ width: `${100 * completed}%` }} />
+                </div>
+                <div className="text-xs opacity-60 text-center">
+                    <span className="font-bold">{props.maxRequests - props.usedRequests}</span>
+                    <span> requests left today.</span>
+                </div>
+            </div>
         );
     },
 };
