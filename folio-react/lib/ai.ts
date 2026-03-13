@@ -21,20 +21,20 @@ export const parseElementsFromAiResponse = (responseElements: any[]): any[] => {
             if (element.type === ELEMENTS.DRAW) {
                 const config = getElementConfig(element);
                 if (config && element.points?.length > 0) {
-                    // Convert point objects {x, y} to tuples [x, y] if needed
+                    // Ensure points are objects {x, y} (handle both tuples and objects for flexibility)
                     element.points = element.points.map((point: any) => {
                         if (Array.isArray(point)) {
-                            return point;
+                            return { x: point[0], y: point[1] };
                         }
-                        return [point.x, point.y];
-                    }) as [number, number][];
+                        return point;
+                    });
                     // Save the origin from the first point before any mutation
-                    const originX = element.points[0][0];
-                    const originY = element.points[0][1];
+                    const originX = element.points[0].x;
+                    const originY = element.points[0].y;
                     // Convert all points from absolute to relative (offset from origin)
-                    element.points = element.points.map((point: [number, number]) => {
-                        return [point[0] - originX, point[1] - originY];
-                    }) as [number, number][];
+                    element.points = element.points.map((point: any) => {
+                        return { x: point.x - originX, y: point.y - originY };
+                    });
                     // Set initial position to the origin point
                     element.x1 = originX;
                     element.y1 = originY;
