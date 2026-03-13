@@ -540,36 +540,41 @@ export const elementsConfig = {
             return !(key === FIELDS.STROKE_STYLE && value === STROKES.NONE);
         },
         onCreateStart: (element, event) => {
-            element.points.push([event.originalX - element.x1, event.originalY - element.y1]);
+            element.points.push({
+                x: event.originalX - element.x1,
+                y: event.originalY - element.y1,
+            });
         },
         onCreateMove: (element, event) => {
             const lastPoint = element.points[element.points.length - 1];
-            const newPointX = element.points[0][0] + event.dx;
-            const newPointY = element.points[0][1] + event.dy;
-            if (Math.abs(lastPoint[0] - newPointX) > DRAWING_THRESHOLD || Math.abs(lastPoint[1] - newPointY) > DRAWING_THRESHOLD) {
-                element.points.push([newPointX, newPointY]);
+            const newPointX = element.points[0].x + event.dx;
+            const newPointY = element.points[0].y + event.dy;
+            if (Math.abs(lastPoint.x - newPointX) > DRAWING_THRESHOLD || Math.abs(lastPoint.y - newPointY) > DRAWING_THRESHOLD) {
+                element.points.push({
+                    x: newPointX,
+                    y: newPointY,
+                });
             }
         },
         onCreateEnd: element => {
             const initialX = element.x1;
             const initialY = element.y1;
             // Calculate the min and max points increment
-            const minX = Math.min.apply(null, element.points.map(point => point[0]));
-            const maxX = Math.max.apply(null, element.points.map(point => point[0]));
-            const minY = Math.min.apply(null, element.points.map(point => point[1]));
-            const maxY = Math.max.apply(null, element.points.map(point => point[1]));
+            const minX = Math.min.apply(null, element.points.map(point => point.x));
+            const maxX = Math.max.apply(null, element.points.map(point => point.x));
+            const minY = Math.min.apply(null, element.points.map(point => point.y));
+            const maxY = Math.max.apply(null, element.points.map(point => point.y));
             // Update element position
             element.x1 = Math.floor((initialX + minX - DRAWING_OFFSET)); //  / GRID_SIZE) * GRID_SIZE;
             element.y1 = Math.floor((initialY + minY - DRAWING_OFFSET)) // / GRID_SIZE) * GRID_SIZE;
             element.x2 = Math.ceil((initialX + maxX + DRAWING_OFFSET)); // / GRID_SIZE) * GRID_SIZE;
             element.y2 = Math.ceil((initialY + maxY + DRAWING_OFFSET)); // / GRID_SIZE) * GRID_SIZE;
-            // Simplify path and translate to (x1,y1)
-            // element.points = simplifyPath(element.points, 0.5).map(point => {
+            // Translate to (x1,y1)
             element.points = element.points.map(point => {
-                return [
-                    initialX - element.x1 + point[0],
-                    initialY - element.y1 + point[1],
-                ];
+                return {
+                    x: initialX - element.x1 + point.x,
+                    y: initialY - element.y1 + point.y,
+                };
             });
             // Save drawing width and height
             element.drawWidth = Math.abs(element.x2 - element.x1);
