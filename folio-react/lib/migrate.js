@@ -28,7 +28,9 @@ import { loadImage } from "../utils/image.js";
 const extractElementsFromPages = (pages, version) => {
     return (pages || []).flatMap(page => {
         return (page?.elements || []).map(element => {
-            return Object.assign({}, element, { page: page.id });
+            return Object.assign({}, element, {
+                [FIELDS.PAGE]: page.id,
+            });
         });
     });
 };
@@ -137,12 +139,9 @@ export const migrateElements = (elements, version) => {
                 }
             case "14":
                 // points in draw elements are now objects {x, y} instead of tuples [x, y]
-                if (element.type === ELEMENTS.DRAW && Array.isArray(element.points)) {
-                    element.points = element.points.map(point => {
-                        if (Array.isArray(point)) {
-                            return { x: point[0], y: point[1] };
-                        }
-                        return point;
+                if (element.type === ELEMENTS.DRAW) {
+                    element[FIELDS.POINTS] = (element[FIELDS.POINTS] || []).map(point => {
+                        return (Array.isArray(point)) ? { x: point[0], y: point[1] } : point;
                     });
                 }
         }
@@ -183,12 +182,10 @@ export const migratePages = (pages, version) => {
         pages.push({
             id: uid(20),
             title: "Page 1",
-            index: 0,
         });
     }
     // migrate pages
     return pages.map((page, index) => {
-        page.index = index; // reset page index
         if (parseInt(version) < 15) {
             delete page.elements;
         }
