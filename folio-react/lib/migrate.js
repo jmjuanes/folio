@@ -1,4 +1,4 @@
-import {uid} from "uid/secure";
+import { uid } from "uid/secure";
 import {
     ELEMENTS,
     VERSION,
@@ -20,9 +20,18 @@ import {
     MIME_TYPES,
     ARROW_SHAPES,
 } from "../constants.js";
-import {BACKGROUND_COLORS} from "../utils/colors.js";
-import {measureText} from "../utils/math.ts";
-import {loadImage} from "../utils/image.js";
+import { BACKGROUND_COLORS } from "../utils/colors.js";
+import { measureText } from "../utils/math.ts";
+import { loadImage } from "../utils/image.js";
+
+// utility method to extract elements from pages (prior to version v15)
+const extractElementsFromPages = (pages, version) => {
+    return (pages || []).flatMap(page => {
+        return (page?.elements || []).map(element => {
+            return Object.assign({}, element, { page: page.id });
+        });
+    });
+};
 
 export const migrateElements = (elements, version) => {
     return (elements || []).map((element, index) => {
@@ -168,21 +177,22 @@ export const migrateAssets = async (assets, version) => {
 };
 
 // @private migrate pages to new version
-export const migratePages = (data, version) => {
-    // Check if pages are not defined but we have old elements
-    if (!data?.pages && data?.elements) {
-        return [{
+export const migratePages = (pages, version) => {
+    // make sure that at least a page exists
+    if (pages.length === 0) {
+        pages.push({
             id: uid(20),
             title: "Page 1",
-            elements: migrateElements(data?.elements, version),
-        }];
+            index: 0,
+        });
     }
     // migrate pages
-    return (data?.pages || []).map(page => {
-        return {
-            ...page,
-            elements: migrateElements(page.elements, version),
-        };
+    return pages.map((page, index) => {
+        page.index = index; // reset page index
+        if (parseInt(version) < 15) {
+            delete page.elements;
+        }
+        return page;
     });
 };
 
@@ -193,16 +203,23 @@ export const migrateAppState = (appState, version) => {
 
 // @public migrate data to latest version
 export const migrate = async (data = {}, version = "2") => {
-    const assets = await migrateAssets(data?.assets , data?.version || version);
+    const currentVersion = data?.version || version;
+    const assets = await migrateAssets(data?.assets, currentVersion);
+
+    // note: we have to get elements to migrate, because prior to version v15 all elements
+    // were inside each page
+    const elements = data?.elements || extractElementsFromPages(data?.pages, currentVersion) || [];
+    
     return {
         version: VERSION,
         title: data?.title || "Untitled",
         createdAt: data?.createdAt ?? Date.now(),
         updatedAt: data?.updatedAt ?? Date.now(),
-        pages: migratePages(data, data?.version || version),
+        pages: migratePages(data?.pages || [], currentVersion),
+        elements: elements,
         assets: assets,
         background: data.background ?? BACKGROUND_COLORS.gray,
-        appState: migrateAppState(data?.appState, data?.version || version),
+        appState: migrateAppState(data?.appState, currentVersion),
         metadata: data?.metadata ?? {},
     };
 };
