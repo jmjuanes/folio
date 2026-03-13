@@ -126,6 +126,16 @@ export const migrateElements = (elements, version) => {
                 if ([ELEMENTS.SHAPE, ELEMENTS.TEXT, ELEMENTS.DRAW, ELEMENTS.IMAGE, ELEMENTS.NOTE].includes(element.type)) {
                     element[FIELDS.ROTATION] = element[FIELDS.ROTATION] ?? 0;
                 }
+            case "14":
+                // points in draw elements are now objects {x, y} instead of tuples [x, y]
+                if (element.type === ELEMENTS.DRAW && Array.isArray(element.points)) {
+                    element.points = element.points.map(point => {
+                        if (Array.isArray(point)) {
+                            return { x: point[0], y: point[1] };
+                        }
+                        return point;
+                    });
+                }
         }
         return element;
     });
