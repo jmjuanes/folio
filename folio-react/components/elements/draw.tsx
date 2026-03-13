@@ -18,18 +18,20 @@ import { getElementSize } from "../../lib/elements.js";
 
 import type { Point } from "../../utils/math.ts";
 
-const getPath = (points: Point[]): string => {
+export type DrawPoint = { x: number, y: number };
+
+const getPath = (points: DrawPoint[]): string => {
     let lastPoint = points[0];
     const commands = [
-        `M${lastPoint[0]},${lastPoint[1]}`,
+        `M${lastPoint.x},${lastPoint.y}`,
     ];
     for (let i = 1; i < points.length; i++) {
         const point = points[i];
-        const center = getCenter(lastPoint, point);
-        commands.push(`Q${lastPoint[0]},${lastPoint[1]} ${center[0]},${center[1]}`);
+        const center = getCenter([lastPoint.x, lastPoint.y], [point.x, point.y]);
+        commands.push(`Q${lastPoint.x},${lastPoint.y} ${center[0]},${center[1]}`);
         lastPoint = point;
     }
-    commands.push(`L${lastPoint[0]},${lastPoint[1]}`);
+    commands.push(`L${lastPoint.x},${lastPoint.y}`);
     return commands.join(" ");
 };
 
@@ -40,7 +42,7 @@ export type DrawElementProps = {
     x2: number;
     y2: number;
     rotation?: number;
-    points: Point[];
+    points: DrawPoint[];
     drawWidth?: number;
     drawHeight?: number;
     strokeColor?: string;
@@ -68,7 +70,7 @@ export const DrawElement = (props: DrawElementProps): React.JSX.Element => {
         () => {
             const strokeStyle = props.strokeStyle;
             if (strokeStyle === STROKES.DASHED || strokeStyle === STROKES.DOTTED) {
-                const length = getPointsDistance(...points);
+                const length = getPointsDistance(...points.map(p => [p.x, p.y] as Point));
                 return getBalancedDash(length, strokeWidth, strokeStyle);
             }
             return [NONE, NONE];
