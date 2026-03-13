@@ -323,6 +323,7 @@ export const FIELDS = {
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
     STICKER: "sticker",
+    POINTS: "points",
 };
 
 // Deprecated fields
