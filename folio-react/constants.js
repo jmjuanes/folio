@@ -287,6 +287,7 @@ export const FIELDS = {
     ID: "id",
     TYPE: "type",
     NAME: "name",
+    PAGE: "page",
     VERSION: "version",
     SELECTED: "selected",
     ERASED: "erased",
