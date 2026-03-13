@@ -15,6 +15,7 @@ jest.unstable_mockModule("../../contexts/editor.jsx", () => ({
 }));
 
 jest.unstable_mockModule("../../lib/export.js", () => ({
+    getElements: jest.fn(() => []),
     exportToDataURL: jest.fn().mockResolvedValue(BASE_64_DATA),
 }));
 
