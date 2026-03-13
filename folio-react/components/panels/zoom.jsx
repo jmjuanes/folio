@@ -48,7 +48,7 @@ export const ZoomPanel = () => {
                     <ZoomDropdownItem
                         icon="arrows-maximize"
                         text="Zoom to fit"
-                        disabled={editor.page.elements.length === 0}
+                        disabled={editor.getElements().length === 0}
                         onClick={() => {
                             dispatchAction(ACTIONS.ZOOM_FIT);
                         }}

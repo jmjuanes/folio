@@ -25,7 +25,7 @@ const usePagePreview = (page: Page): string | null => {
             background: editor.background,
             padding: EXPORT_PADDING * 4,
         };
-        exportToDataURL(page.elements, previewOptions).then(image => {
+        exportToDataURL(editor.getElements(page.id), previewOptions).then(image => {
             return setPreviewImage(image);
         });
     }, [page.id, page.id === editor.page.id ? editor.updatedAt : null]);
