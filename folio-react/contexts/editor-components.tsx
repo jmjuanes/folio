@@ -2,6 +2,7 @@ import React from "react";
 import { Layout } from "../components/layout.tsx";
 import { Loading } from "../components/loading.jsx";
 import { ContextMenu } from "../components/context-menu.jsx";
+import { ActionsPaletteDialog } from "../components/dialogs/actions-palette.tsx";
 import { ExportDialog } from "../components/dialogs/export.jsx";
 import { KeyboardShortcutsDialog } from "../components/dialogs/keyboard-shortcuts.jsx";
 import { MainMenu } from "../components/menus/main.tsx";
@@ -48,6 +49,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             // dialogs components
             ExportDialog: ExportDialog,
             KeyboardShortcutsDialog: KeyboardShortcutsDialog,
+            ActionsPaletteDialog: ActionsPaletteDialog,
             // menus
             MainMenu: MainMenu,
             PagesMenu: PagesMenu,
