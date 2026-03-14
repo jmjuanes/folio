@@ -43,6 +43,7 @@ export const useActions = () => {
     const {
         KeyboardShortcutsDialog,
         ExportDialog,
+        ActionsPaletteDialog,
     } = useEditorComponents();
 
     // @description list with all the available actions
@@ -485,12 +486,18 @@ export const useActions = () => {
                     props: exportOptions,
                 });
             },
+            [ACTIONS.SHOW_ACTIONS_PALETTE]: () => {
+                showDialog({
+                    dialogClassName: "w-full max-w-xl",
+                    component: ActionsPaletteDialog,
+                });
+            },
         };
     }, [ editor, showConfirm, showDialog, library ]);
 
     // @description dispatch a single action
     return React.useCallback((actionName, payload) => {
-        if (typeof actionsList[actionName === "function"]) {
+        if (typeof actionsList[actionName] === "function") {
             actionsList[actionName](payload);
         }
     }, [ editor, actionsList ]);
