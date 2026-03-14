@@ -43,95 +43,73 @@ const generateRandomId = () => uid(20);
 
 // @private helper method to change order of provided elements in editor
 const setElementsOrderInEditor = (editor, elements, sign, absolute) => {
-    let allElements = editor.page.elements;
+    const allPageElements = editor.getElements();
+    const prevElementsPosition = new Map(allPageElements.map(el => [el.id, el[FIELDS.ORDER]]));
+    
+    let scopeElements = allPageElements;
     if (editor.page.activeGroup && elements.every(el => el.group === editor.page.activeGroup)) {
-        allElements = editor.page.elements.filter(el => {
-            return el.group === editor.page.activeGroup;
+        scopeElements = allPageElements.filter(el => el.group === editor.page.activeGroup);
+    }
+    
+    const selectedIds = new Set(elements.map(el => el.id));
+    const minOrder = Math.min(...scopeElements.map(el => el[FIELDS.ORDER]));
+    const maxOrder = Math.max(...scopeElements.map(el => el[FIELDS.ORDER]));
+
+    if (absolute) {
+        const others = scopeElements.filter(el => !selectedIds.has(el.id));
+        const moving = scopeElements.filter(el => selectedIds.has(el.id));
+        const combined = sign > 0 ? [...others, ...moving] : [...moving, ...others];
+        combined.forEach((el, index) => {
+            el[FIELDS.ORDER] = minOrder + index;
+        });
+    } else {
+        const sortedSelection = (elements || [])
+            .sort((a, b) => sign * (b[FIELDS.ORDER] - a[FIELDS.ORDER]))
+            .filter((el, index) => {
+                return sign > 0 ? el[FIELDS.ORDER] < maxOrder - index : el[FIELDS.ORDER] > index + minOrder;
+            });
+
+        sortedSelection.forEach(element => {
+            const currentIndex = scopeElements.findIndex(el => el.id === element.id);
+            let nextIndex = currentIndex + sign;
+            if (nextIndex >= 0 && nextIndex < scopeElements.length) {
+                const target = scopeElements[nextIndex];
+                const targetGroup = target[FIELDS.GROUP];
+                if (!editor.page?.activeGroup && targetGroup) {
+                    while (nextIndex >= 0 && nextIndex < scopeElements.length && scopeElements[nextIndex]?.[FIELDS.GROUP] === targetGroup) {
+                        const current = scopeElements[nextIndex];
+                        current[FIELDS.ORDER] = currentIndex + (nextIndex - currentIndex - sign);
+                        nextIndex += sign;
+                    }
+                    element[FIELDS.ORDER] = nextIndex - sign;
+                } else {
+                    const tmp = element[FIELDS.ORDER];
+                    element[FIELDS.ORDER] = target[FIELDS.ORDER];
+                    target[FIELDS.ORDER] = tmp;
+                }
+                scopeElements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+            }
         });
     }
-    const changedElements = new Set();
-    const prevElementsPosition = new Map();
-    const nextElementsPosition = new Map();
-    const minOrder = Math.min(...allElements.map(el => el[FIELDS.ORDER]));
-    const maxOrder = Math.max(...allElements.map(el => el[FIELDS.ORDER]));
-    // 1. Save current elements position
-    editor.page.elements.forEach(element => {
-        prevElementsPosition.set(element.id, element[FIELDS.ORDER]);
+    
+    allPageElements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+    allPageElements.forEach((el, index) => {
+        el[FIELDS.ORDER] = index;
     });
-    // 2. Fix order position of elements using the sign
-    (elements || [])
-        .sort((a, b) => sign * (b[FIELDS.ORDER] - a[FIELDS.ORDER]))
-        .filter((el, index) => {
-            return absolute || (sign > 0 ? el[FIELDS.ORDER] < maxOrder - index : el[FIELDS.ORDER] > index);
-        })
-        .forEach((element, index) => {
-            // move all elements to front or back
-            if (absolute) {
-                const currentOrder = element[FIELDS.ORDER];
-                element[FIELDS.ORDER] = sign > 0 ? maxOrder - index : minOrder + index;
-                editor.page.elements.forEach(el => {
-                    const condition = sign > 0 ? el[FIELDS.ORDER] >= currentOrder : currentOrder >= el[FIELDS.ORDER];
-                    if (el.id !== element.id && condition) {
-                        el[FIELDS.ORDER] = el[FIELDS.ORDER] - sign;
-                        changedElements.add(el.id);
-                    }
-                });
-                // element[FIELDS.ORDER] = element[FIELDS.ORDER] + 10 * sign * length;
-                // changedElements.add(element.id);
-            }
-            // move only individual elements
-            else {
-                // 2.1. Get the new position of the element
-                let oldPosition = element[FIELDS.ORDER];
-                let newPosition = element[FIELDS.ORDER] + sign;
-                if (minOrder <= newPosition && newPosition <= maxOrder) {
-                    let nextElement = editor.page.elements[newPosition];
-                    const nextElementGroup = nextElement[FIELDS.GROUP];
-                    if (!editor.page?.activeGroup && nextElementGroup) {
-                        while((minOrder <= newPosition + sign) && (newPosition + sign <= maxOrder) && editor.page.elements[newPosition + sign]?.[FIELDS.GROUP] === nextElementGroup) {
-                            nextElement[FIELDS.ORDER] = oldPosition;
-                            changedElements.add(nextElement.id);
-                            oldPosition = oldPosition + sign;
-                            newPosition = newPosition + sign;
-                            nextElement = editor.page.elements[newPosition];
-                        }
-                    }
-                    // 2.2. Set the new position
-                    element[FIELDS.ORDER] = newPosition;
-                    nextElement[FIELDS.ORDER] = oldPosition;
-                    // 2.3. Sort elements by order
-                    editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
-                    // 2.4. Set both elements as changed
-                    changedElements.add(element.id);
-                    changedElements.add(nextElement.id);
-                }
-            }
+
+    const nextElementsPosition = new Map(allPageElements.map(el => [el.id, el[FIELDS.ORDER]]));
+    const changedElements = allPageElements.filter(el => nextElementsPosition.get(el.id) !== prevElementsPosition.get(el.id));
+
+    if (changedElements.length > 0) {
+        editor.addHistory({
+            type: CHANGES.UPDATE,
+            elements: changedElements.map(el => ({
+                id: el.id,
+                prevValues: { [FIELDS.ORDER]: prevElementsPosition.get(el.id) },
+                newValues: { [FIELDS.ORDER]: nextElementsPosition.get(el.id) },
+            })),
         });
-    // 3. Fix order in case of moving all elements to front or back
-    editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
-    editor.page.elements.forEach((element, index) => {
-        element[FIELDS.ORDER] = index;
-    });
-    // 4. Get new positions
-    editor.page.elements.forEach(element => {
-        nextElementsPosition.set(element.id, element[FIELDS.ORDER]);
-        if (element[FIELDS.ORDER] !== prevElementsPosition.get(element.id)) {
-            changedElements.add(element.id);
-        }
-    });
-    // 5. Register history change
-    editor.addHistory({
-        type: CHANGES.UPDATE,
-        elements: Array.from(changedElements).map(id => ({
-            id: id,
-            prevValues: {
-                [FIELDS.ORDER]: prevElementsPosition.get(id),
-            },
-            newValues: {
-                [FIELDS.ORDER]: nextElementsPosition.get(id),
-            },
-        })),
-    });
+    }
 };
 
 // @private parse text data to editor
@@ -200,14 +178,6 @@ const createPage = (page, index = 0) => {
         id: page?.id || generateRandomId(),
         title: page?.title || `Page ${index + 1}`,
         description: page?.description || "",
-        elements: (page?.elements || []).map(element => ({
-            ...element,
-            [FIELDS.SELECTED]: false,
-            [FIELDS.EDITING]: false,
-            [FIELDS.CREATING]: false,
-            [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
-            [FIELDS.NAME]: element[FIELDS.NAME] || getElementDisplayName(element),
-        })),
         history: page?.history || [],
         historyIndex: page?.historyIndex ?? 0,
         translateX: page?.translateX ?? 0,
@@ -254,6 +224,15 @@ export const getEditorStateFromInitialData = initialData => {
         title: initialData?.title || "Untitled",
         pages: pages,
         page: pages.find(page => page.index === 0) || pages[0],
+        elements: (initialData?.elements || []).map(element => ({
+            ...element,
+            [FIELDS.SELECTED]: false,
+            [FIELDS.EDITING]: false,
+            [FIELDS.CREATING]: false,
+            [FIELDS.VERSION]: element[FIELDS.VERSION] ?? 0,
+            [FIELDS.NAME]: element[FIELDS.NAME] || getElementDisplayName(element),
+            [FIELDS.PAGE]: element[FIELDS.PAGE] || pages[0].id,
+        })),
         assets: initialData?.assets || {},
         appState: {
             grid: !!initialData?.appState?.grid,
@@ -302,9 +281,9 @@ export const createEditor = (options = {}) => {
                     id: page.id,
                     title: page.title,
                     description: page.description || "",
-                    elements: page.elements,
                     readonly: !!page.readonly,
                 })),
+                elements: editor.elements,
                 assets: editor.assets,
                 background: editor.background,
                 appState: editor.appState,
@@ -347,13 +326,16 @@ export const createEditor = (options = {}) => {
 
         // @description remove the provided page
         removePage: id => {
+            const pageId = id?.id || id;
             // Removing pages is only supported if we have more than one page
             if (editor.pages.length > 1) {
                 editor.pages = editor.pages.filter(page => {
-                    return page.id !== id && page !== id;
+                    return page.id !== pageId;
                 });
+                // Remove all elements of the removed page
+                editor.elements = editor.elements.filter(el => el.page !== pageId);
                 // Check if the removed page is the current active page
-                if (editor.page === id || editor.page.id === id) {
+                if (editor.page === id || editor.page.id === pageId) {
                     editor.page = editor.pages[0];
                 }
             }
@@ -372,11 +354,22 @@ export const createEditor = (options = {}) => {
         // @description duplicate the provided page
         duplicatePage: (id, index = null, setAsActive = true) => {
             const page = editor.getPage(id);
+            const newPageId = generateRandomId();
             const newPageData = {
+                id: newPageId,
                 title: "Copy of " + (page?.title || "-"),
-                elements: page?.elements || [],
             };
+            // 1. Duplicate elements
+            const pageElements = editor.elements.filter(el => el.page === page.id);
+            const newElements = pageElements.map(el => ({
+                ...el,
+                id: generateRandomId(),
+                page: newPageId,
+            }));
+            // 2. Add page
             editor.addPage(newPageData, index, setAsActive);
+            // 3. Add elements
+            editor.elements.push(...newElements);
         },
 
         // @description clear the content of the provided page
@@ -394,14 +387,16 @@ export const createEditor = (options = {}) => {
 
         // @description set active page
         setActivePage: id => {
-            // 1. Reset state in all active pages
-            editor.page.elements.forEach(element => {
-                element[FIELDS.SELECTED] = false;
-                element[FIELDS.EDITING] = false;
+            const pageId = id?.id || id;
+            // 1. Reset state in all elements of that page (or all pages if we want to be thorough)
+            editor.elements.forEach(element => {
+                if (element.page === pageId) {
+                    element[FIELDS.SELECTED] = false;
+                    element[FIELDS.EDITING] = false;
+                }
             });
             // 2. Find and set active page
-            // Note: we support both providing the ID or the full page object
-            editor.page = editor.pages.find(page => page.id === id || page === id);
+            editor.page = editor.pages.find(page => page.id === pageId);
         },
 
         // 
@@ -437,17 +432,19 @@ export const createEditor = (options = {}) => {
 
         // @description Get an element by ID
         getElement: id => {
-            return editor.page.elements.find(el => el.id === id);
+            return editor.elements.find(el => el.id === id);
         },
 
-        // @description Get all elements in editor
+        // @description Get all elements in current page
         getElements: () => {
-            return editor.page.elements;
+            return editor.elements
+                .filter(el => el.page === editor.page.id)
+                .sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
         },
 
-        // @description Get only erased elements
+        // @description Get only erased elements in current page
         getErasedElements: () => {
-            return editor.page.elements.filter(element => element.erased);
+            return editor.getElements().filter(element => element.erased);
         },
 
         // @description Create a new element
@@ -456,21 +453,22 @@ export const createEditor = (options = {}) => {
             console.warn(`editor.createElement is deprecated. Please use createElement from 'elements.js' instead`);
             return {
                 ...createElement(type),
-                [FIELDS.ORDER]: editor.page.elements.length,
+                [FIELDS.ORDER]: editor.getElements().length,
             };
         },
 
-        // @description clear elements in editor
+        // @description clear elements in active page
         clearElements: () => {
-            editor.page.elements = [];
+            editor.elements = editor.elements.filter(el => el.page !== editor.page.id);
         },
 
         // @description Add new elements into editor
         addElements: elements => {
             if (elements && elements.length > 0) {
-                const numElements = editor.page.elements.length;
+                const numElements = editor.getElements().length;
                 // 1. Fix elements values
                 elements.forEach((element, index) => {
+                    element[FIELDS.PAGE] = element[FIELDS.PAGE] || editor.page.id;
                     element[FIELDS.NAME] = element[FIELDS.NAME] || getElementDisplayName(element);
                     element[FIELDS.ORDER] = numElements + index;
                 });
@@ -488,7 +486,7 @@ export const createEditor = (options = {}) => {
                 });
                 // 3. Add new elements
                 elements.forEach(element => {
-                    return editor.page.elements.push(element);
+                    return editor.elements.push(element);
                 });
             }
         },
@@ -499,7 +497,7 @@ export const createEditor = (options = {}) => {
             const selectedElements = new Set(elements.map(el => el.id));
             const hasElementsWithoutGroup = elements.some(el => !el.group);
             // 1. select the elements using the selection area
-            editor.page.elements.forEach(element => {
+            editor.getElements().forEach(element => {
                 element.selected = selectedElements.has(element.id);
             });
             // 2. Select the elements based on the groups set
@@ -512,7 +510,7 @@ export const createEditor = (options = {}) => {
                 else {
                     editor.page.activeGroup = null;
                     if (groups.size > 0) {
-                        editor.page.elements.forEach(element => {
+                        editor.getElements().forEach(element => {
                             if (element.group && groups.has(element.group)) {
                                 element.selected = true;
                             }
@@ -541,7 +539,7 @@ export const createEditor = (options = {}) => {
                 });
                 // 2. Remove the elements for this.elements
                 const elementsToRemove = new Set(elements.map(element => element.id));
-                editor.page.elements = editor.page.elements.filter(element => {
+                editor.elements = editor.elements.filter(element => {
                     return !elementsToRemove.has(element.id);
                 });
                 // 3. Check if we have removed elements from any group and we have groups with only one element
@@ -549,7 +547,7 @@ export const createEditor = (options = {}) => {
                 if (removedGroups.size > 0) {
                     Array.from(removedGroups).forEach(group => {
                         // 3.1. Get the elements that are still on this group
-                        const elementsInGroup = editor.page.elements.filter(el => el.group === group);
+                        const elementsInGroup = editor.getElements().filter(el => el.group === group);
                         if (elementsInGroup.length === 1) {
                             // 3.2.1. Register an update change
                             changes.push({
@@ -574,7 +572,7 @@ export const createEditor = (options = {}) => {
                     });
                 }
                 // 4. Reset elements order
-                editor.page.elements.forEach((element, index) => {
+                editor.getElements().forEach((element, index) => {
                     element[FIELDS.ORDER] = index;
                 });
                 // 5. Register history changes
@@ -632,11 +630,12 @@ export const createEditor = (options = {}) => {
             // 1. Process new elements
             const changes = [];
             const groups = new Map();
-            const originalElementsOrder = new Map(editor.page.elements.map(element => ([element.id, element[FIELDS.ORDER]])));
+            const allPageElements = editor.getElements();
+            const originalElementsOrder = new Map(allPageElements.map(element => ([element.id, element[FIELDS.ORDER]])));
             const changedElementsOrder = new Map();
-            const maxOrder = Math.max.apply(null, editor.page.elements.map(el => {
+            const maxOrder = Math.max.apply(null, [0].concat(allPageElements.map(el => {
                 return (!editor.page?.activeGroup || editor.page.activeGroup === el[FIELDS.GROUP]) ? el[FIELDS.ORDER] : 0;
-            }));
+            })));
             const bounds = getElementsBoundingRectangle(elements);
             const x = typeof dx === "number" ? dx : ((-1) * editor.page.translateX + editor.width / 2) - (bounds[1][0] - bounds[0][0])/ 2;
             const y = typeof dy === "number" ? dy : ((-1) * editor.page.translateY + editor.height / 2) - (bounds[1][1] - bounds[0][1]) / 2;
@@ -650,12 +649,13 @@ export const createEditor = (options = {}) => {
                     ...element,
                     [FIELDS.VERSION]: 0,
                     [FIELDS.ID]: generateRandomId(),
+                    [FIELDS.PAGE]: editor.page.id,
                     x1: element.x1 + x,
                     x2: element.x2 + x,
                     y1: element.y1 + y,
                     y2: element.y2 + y,
                     [FIELDS.SELECTED]: true,
-                    [FIELDS.GROUP]: group || editor.page?.activeGroup || groups.get(element.group) || null,
+                    [FIELDS.GROUP]: group || editor.page?.activeGroup || (elements.length > 1 ? groups.get(element.group) : element.group) || null,
                     [FIELDS.ORDER]: maxOrder + index + 1,
                     [FIELDS.NAME]: "Copy of " + (element[FIELDS.NAME] || ""),
                 };
@@ -669,14 +669,14 @@ export const createEditor = (options = {}) => {
             });
             // 2. Check if activeGroup is enabled
             if (editor.page?.activeGroup) {
-                for (let i = maxOrder + 1; i < editor.page.elements.length; i++) {
-                    editor.page.elements[i][FIELDS.ORDER] = i + newElements.length;
-                    changedElementsOrder.set(editor.page.elements[i].id, editor.page.elements[i][FIELDS.ORDER]);
+                for (let i = maxOrder + 1; i < allPageElements.length; i++) {
+                    allPageElements[i][FIELDS.ORDER] = i + newElements.length;
+                    changedElementsOrder.set(allPageElements[i].id, allPageElements[i][FIELDS.ORDER]);
                 }
             }
             // 3. insert new elements
             newElements.forEach(element => {
-                editor.page.elements.push(element);
+                editor.elements.push(element);
             });
             // 4.1 Register CREATE change
             changes.push({
@@ -708,7 +708,7 @@ export const createEditor = (options = {}) => {
             // 4.3 Register history change
             editor.addHistory(changes);
             // 5. Fix Elements order
-            editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+            editor.getElements().sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
         },
 
         // @description export elements as JSON
@@ -795,27 +795,27 @@ export const createEditor = (options = {}) => {
             return setElementsOrderInEditor(editor, elements, -1, true);
         },
 
-        // @description group elements in the current selection
         groupElements: elements => {
             const groupId = generateRandomId();
             const selectedElements = new Set(elements.map(element => element.id));
             const updatedElements = [...elements];
-            const prevElementsOrder = new Map(editor.page.elements.map(element => {
+            const allPageElements = editor.getElements();
+            const prevElementsOrder = new Map(allPageElements.map(element => {
                 return [element.id, element[FIELDS.ORDER]];
             }));
-            const prevElementsGroup = new Map(editor.page.elements.map(element => {
+            const prevElementsGroup = new Map(allPageElements.map(element => {
                 return [element.id, element[FIELDS.GROUP] || null];
             }));
             const minOrder = Math.min(...elements.map(element => element[FIELDS.ORDER]));
             const maxOrder = Math.max(...elements.map(element => element[FIELDS.ORDER]));
             // TODO: we should check if there is an element that belongs to a non selected group?
             // 1. Find the elements index with the minimum and maximum order
-            const maxOrderIndex = editor.page.elements.findIndex(element => element[FIELDS.ORDER] === maxOrder);
-            const minOrderIndex = editor.page.elements.findIndex(element => element[FIELDS.ORDER] === minOrder);
+            const maxOrderIndex = allPageElements.findIndex(element => element[FIELDS.ORDER] === maxOrder);
+            const minOrderIndex = allPageElements.findIndex(element => element[FIELDS.ORDER] === minOrder);
             // 2. Fix the order of all elements between [minOrderIndex, maxOrderIndex] that are not selected
             let index = 0;
             for (let i = minOrderIndex + 1; i < maxOrderIndex; i++) {
-                const element = editor.page.elements[i];
+                const element = allPageElements[i];
                 if (!selectedElements.has(element.id)) {
                     element[FIELDS.ORDER] = minOrder + index;
                     index = index + 1;
@@ -849,7 +849,7 @@ export const createEditor = (options = {}) => {
                 }),
             });
             // Sort elements
-            editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
+            allPageElements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
         },
 
         // @description ungroup elements
@@ -976,20 +976,21 @@ export const createEditor = (options = {}) => {
 
         // @description clear current selection
         clearSelection: () => {
-            editor.page.elements.forEach(element => element.selected = false);
+            editor.getElements().forEach(element => element.selected = false);
         },
 
-        // @description get selected elements
+        // @description get selected elements in current page
         getSelection: () => {
-            return editor.page.elements.filter(element => element.selected);
+            return editor.getElements().filter(element => element.selected);
         },
 
         // @description set selected elements by elements ids
         setSelection: elements => {
             const selectedElements = new Set([elements].flat().map(el => el.id || el));
             const groups = new Set();
+            const allPageElements = editor.getElements();
             // 1. set selected elements based on the provided ids
-            editor.page.elements.forEach(element => {
+            allPageElements.forEach(element => {
                 element.editing = false;
                 element.selected = selectedElements.has(element.id);
                 if (element.selected && !editor.page.activeGroup && element.group) {
@@ -998,7 +999,7 @@ export const createEditor = (options = {}) => {
             });
             // 2. Select the elements based on the groups set
             if (!editor.page.activeGroup && groups.size > 0) {
-                editor.page.elements.forEach(element => {
+                allPageElements.forEach(element => {
                     if (element.group && groups.has(element.group)) {
                         element.selected = true;
                     }
@@ -1009,8 +1010,9 @@ export const createEditor = (options = {}) => {
         // @description set selected elements using a selection area
         setSelectionArea: selection => {
             const groups = new Set();
+            const allPageElements = editor.getElements();
             // 1. select the elements using the selection area
-            editor.page.elements.forEach(element => {
+            allPageElements.forEach(element => {
                 element.editing = false;
                 element.selected = false;
                 if (!element.locked) {
@@ -1026,7 +1028,7 @@ export const createEditor = (options = {}) => {
             });
             // 2. Select the elements based on the groups set
             if (!editor.page.activeGroup && groups.size > 0) {
-                editor.page.elements.forEach(element => {
+                allPageElements.forEach(element => {
                     if (element.group && groups.has(element.group)) {
                         element.selected = true;
                     }
@@ -1098,18 +1100,19 @@ export const createEditor = (options = {}) => {
                 [editor.page.history[editor.page.historyIndex]].flat().forEach(entry => {
                     if (entry.type === CHANGES.CREATE) {
                         const removeElements = new Set(entry.elements.map(el => el.id));
-                        editor.page.elements = editor.page.elements.filter(el => {
+                        editor.elements = editor.elements.filter(el => {
                             return !removeElements.has(el.id);
                         });
                     } else if (entry.type === CHANGES.REMOVE) {
                         // We need to restore elements in the current order
+                        // Note: they should be restored to the global elements array
                         entry.elements.forEach(el => {
-                            editor.page.elements.splice(el.prevValues[FIELDS.ORDER], 0, {...el.prevValues});
+                            editor.elements.push({...el.prevValues});
                         });
                     } else if (entry.type === CHANGES.UPDATE) {
                         entry.elements.forEach(item => {
                             // 1. Update element values
-                            const element = editor.page.elements.find(el => el.id === item.id);
+                            const element = editor.elements.find(el => el.id === item.id);
                             Object.assign(element, item.prevValues);
                             // 2. Apply element update
                             const changedKeys = new Set(Object.keys(item.prevValues));
@@ -1117,9 +1120,8 @@ export const createEditor = (options = {}) => {
                         });
                     }
                 });
-                // Sort elements by order
-                editor.page.elements.sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER]);
-                editor.page.elements.forEach(el => {
+                // Reset selection
+                editor.getElements().forEach(el => {
                     el.selected = false;
                     el.editing = false;
                 });
@@ -1135,15 +1137,15 @@ export const createEditor = (options = {}) => {
                 [editor.page.history[editor.page.historyIndex]].flat().forEach(entry => {
                     if (entry.type === CHANGES.CREATE) {
                         entry.elements.forEach(el => {
-                            editor.page.elements.splice(el.newValues[FIELDS.ORDER], 0, {...el.newValues});
+                            editor.elements.push({...el.newValues});
                         });
                     } else if (entry.type === CHANGES.REMOVE) {
                         const removeElements = new Set(entry.elements.map(el => el.id));
-                        editor.page.elements = editor.page.elements.filter(el => !removeElements.has(el.id));
+                        editor.elements = editor.elements.filter(el => !removeElements.has(el.id));
                     } else if (entry.type === CHANGES.UPDATE) {
                         entry.elements.forEach(item => {
                             // 1. Update element values
-                            const element = editor.page.elements.find(el => el.id === item.id);
+                            const element = editor.elements.find(el => el.id === item.id);
                             Object.assign(element, item.newValues);
                             // 2. Apply element update
                             const changedKeys = new Set(Object.keys(item.newValues));
@@ -1152,7 +1154,7 @@ export const createEditor = (options = {}) => {
                     }
                 });
                 // sort elements by order
-                editor.page.elements
+                editor.getElements()
                     .sort((a, b) => a[FIELDS.ORDER] - b[FIELDS.ORDER])
                     .forEach(element => {
                         element.selected = false;
@@ -1202,7 +1204,7 @@ export const createEditor = (options = {}) => {
 
         // @description fit zoom to the provided selection
         fitZoomToSelection: (elements = []) => {
-            const selection = elements.length > 0 ? elements : editor.page.elements;
+            const selection = elements.length > 0 ? elements : editor.getElements();
             if (selection.length > 0) {
                 const {zoom, translateX, translateY} = getZoomToFitElements(selection, {
                     width: editor.width,

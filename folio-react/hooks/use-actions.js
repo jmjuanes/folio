@@ -59,7 +59,7 @@ export const useActions = () => {
                         .catch(error => console.error(error));
                 };
                 // Check if editor is empty
-                if (editor.pages.length === 1 && editor.page.elements.length === 0) {
+                if (editor.pages.length === 1 && editor.getElements().length === 0) {
                     return openFile();
                 }
                 // If is not empty, display confirmation
@@ -436,6 +436,7 @@ export const useActions = () => {
                     message: "This will remove all elements of this page. Do you want to continue?",
                     confirmText: "Yes, clear page",
                     callback: () => {
+                        debugger;
                         editor.clearPage(pageToClear.id);
                         editor.dispatchChange();
                         editor.update();

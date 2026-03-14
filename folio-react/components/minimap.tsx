@@ -36,7 +36,8 @@ export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: Mini
         if (!editor.width || !editor.height) {
             return null;
         }
-        const bounds = editor.page.elements.length > 0 ? getElementsBoundingRectangle(editor.page.elements) : [];
+        const elements = editor.getElements();
+        const bounds = elements.length > 0 ? getElementsBoundingRectangle(elements) : [];
         // calculate the start and end points for the minimap
         const x1 = Math.min(bounds[0]?.[0] ?? Infinity, (-1) * editor.page.translateX / editor.page.zoom);
         const y1 = Math.min(bounds[0]?.[1] ?? Infinity, (-1) * editor.page.translateY / editor.page.zoom);
@@ -48,7 +49,7 @@ export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: Mini
             width: Math.min(width, (x2 - x1) * ratio),
             height: Math.min(height, (y2 - y1) * ratio),
             // ratio: ratio,
-            elements: editor.page.elements.map((element: any) => {
+            elements: elements.map((element: any) => {
                 const [elementWidth, elementHeight, x, y] = getElementSize(element);
                 return {
                     id: element.id,

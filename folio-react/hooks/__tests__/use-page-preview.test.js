@@ -11,6 +11,7 @@ jest.unstable_mockModule("../../contexts/editor.jsx", () => ({
             id: "page1",
         },
         updatedAt: "12345",
+        getElements: jest.fn(() => []),
     })),
 }));
 

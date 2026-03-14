@@ -75,7 +75,7 @@ const InnerEditor = () => {
             )}
             <Canvas
                 id={editor.id}
-                elements={editor.page.elements}
+                elements={editor.getElements()}
                 assets={editor.assets}
                 backgroundColor={editor.background}
                 cursor={cursor}

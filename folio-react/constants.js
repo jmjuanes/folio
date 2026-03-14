@@ -287,6 +287,7 @@ export const FIELDS = {
     ID: "id",
     TYPE: "type",
     NAME: "name",
+    PAGE: "page",
     VERSION: "version",
     SELECTED: "selected",
     ERASED: "erased",
@@ -322,6 +323,7 @@ export const FIELDS = {
     NOTE_TEXT: "noteText",
     ASSET_ID: "assetId",
     STICKER: "sticker",
+    POINTS: "points",
 };
 
 // Deprecated fields

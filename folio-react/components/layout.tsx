@@ -94,7 +94,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                 <Island.Button
                                     icon="trash"
                                     onClick={() => {
-                                        dispatchAction(ACTIONS.CLEAR_PAGE);
+                                        dispatchAction(ACTIONS.CLEAR_PAGE, editor.page);
                                     }}
                                     disabled={editor.page.readonly}
                                 />

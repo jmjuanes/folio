@@ -70,7 +70,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     const activeGroup = editor.page.activeGroup || "";
 
     // generate a key to force the update of the groups map
-    const key = editor.page.elements.map(el => el.id + "." + (el.group || ".")).join("-");
+    const key = editor.getElements().map(el => el.id + "." + (el.group || ".")).join("-");
 
     // generate a map of groups in the board
     // each group contains the list of elements on it, the index of the group
@@ -78,7 +78,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     const groups = React.useMemo(() => {
         const groupsMap = new Map();
         let currentGroupIndex = 1;
-        editor.page.elements.forEach(element => {
+        editor.getElements().forEach(element => {
             if (element.group) {
                 if (!groupsMap.has(element.group)) {
                     groupsMap.set(element.group, {
@@ -99,10 +99,10 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     const visibleElements = React.useMemo(() => {
         // 1. activeGroup is not empty, return the elements on this group
         if (activeGroup) {
-            return editor.page.elements.filter(element => element.group === activeGroup);
+            return editor.getElements().filter(element => element.group === activeGroup);
         }
         // 2. activeGroup is empty, return all the elements
-        return editor.page.elements;
+        return editor.getElements();
     }, [ editor, key, activeGroup ]);
 
     // exit the current active group

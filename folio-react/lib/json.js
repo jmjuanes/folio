@@ -13,13 +13,10 @@ export const saveAsJson = data => {
         createdAt: data?.createdAt,
         updatedAt: data?.updatedAt,
         pages: pages,
-        assets: pages.reduce((assets, page) => {
-            // Copy only assets in the elements list
-            (page?.elements || []).forEach(element => {
-                if (element.assetId && data?.assets?.[element.assetId]) {
-                    assets[element.assetId] = data.assets[element.assetId];
-                }
-            });
+        assets: (data?.elements || []).reduce((assets, element) => {
+            if (element.assetId && data?.assets?.[element.assetId]) {
+                assets[element.assetId] = data.assets[element.assetId];
+            }
             return assets;
         }, {}),
         background: data?.background ?? BACKGROUND_COLORS.gray,

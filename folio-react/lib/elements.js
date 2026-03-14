@@ -214,7 +214,6 @@ export const elementsConfig = {
             }
         },
         onUpdate: (element, changedKeys) => {
-            console.log(changedKeys);
             if (element.text && (changedKeys.has("text") || changedKeys.has("textFont") || changedKeys.has("textSize"))) {
                 const [ width, height ] = getElementSize(element);
                 // 1. check if we have to update the text size
