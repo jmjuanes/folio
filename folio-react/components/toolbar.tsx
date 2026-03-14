@@ -6,7 +6,7 @@ import { Dropdown } from "./ui/dropdown.tsx";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
-import { useTools } from "../hooks/use-tools.js";
+import { useTools } from "../hooks/use-tools.ts";
 import { useActions } from "../hooks/use-actions.js";
 import { ACTIONS } from "../constants.js";
 

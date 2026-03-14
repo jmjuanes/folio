@@ -1,6 +1,6 @@
 import React from "react";
 import { ACTIONS } from "../../constants.js";
-import { useTools } from "../../hooks/use-tools.js";
+import { useTools } from "../../hooks/use-tools.ts";
 import { useActions } from "../../hooks/use-actions.js";
 import { useEditor } from "../../contexts/editor.jsx";
 import { useDialog } from "../../contexts/dialogs.jsx";

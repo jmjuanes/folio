@@ -21,7 +21,7 @@ export {
 } from "./lib/json.js";
 export {migrate} from "./lib/migrate.js";
 
-export {useTools} from "./hooks/use-tools.js";
+export {useTools} from "./hooks/use-tools.ts";
 export {usePagePreview} from "./hooks/use-page-preview.js";
 
 export {
