@@ -1,12 +1,14 @@
 import React from "react";
 import classNames from "classnames";
 import { useUpdate } from "react-use";
-import { LockIcon, UnlockIcon, DotsVerticalIcon, renderIcon } from "@josemi-icons/react";
+import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
 import { Dropdown } from "./ui/dropdown.tsx";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useTools } from "../hooks/use-tools.js";
+import { useActions } from "../hooks/use-actions.js";
+import { ACTIONS } from "../constants.js";
 
 const PickPanel = ({ values, items, onChange}): React.JSX.Element => (
     <div
@@ -68,7 +70,8 @@ export const Toolbar = (): React.JSX.Element => {
     const update = useUpdate();
     const editor = useEditor();
     const tools = useTools();
-    const {hideContextMenu} = useContextMenu();
+    const { hideContextMenu } = useContextMenu();
+    const dispatchAction = useActions();
     const prevSelectedTool = React.useRef(editor.state.tool);
     const [primaryTools, secondaryTools] = React.useMemo(() => {
         const keys = Object.keys(tools);
@@ -128,29 +131,13 @@ export const Toolbar = (): React.JSX.Element => {
                         )}
                     </div>
                 ))}
-                {secondaryTools.length > 0 && (
-                    <div className="flex self-stretch relative group" tabIndex={0}>
-                        <div className="flex items-center cursor-pointer rounded-xl px-1 hover:bg-gray-200 group-focus-within:bg-gray-200">
-                            <div className="flex items-center text-xl">
-                                <DotsVerticalIcon />
-                            </div>
-                        </div>
-                        <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
-                            {secondaryTools.map(key => (
-                                <ToolbarDropdownItem
-                                    key={key}
-                                    checked={editor.state.tool === key}
-                                    disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
-                                    onClick={() => {
-                                        tools[key].onSelect(editor);
-                                    }}
-                                    icon={tools[key].icon}
-                                    text={tools[key].name}
-                                />
-                            ))}
-                        </Dropdown>
-                    </div>
-                )}
+                <ToolbarButton
+                    text="Actions"
+                    icon="tools"
+                    onClick={() => {
+                        dispatchAction(ACTIONS.SHOW_ACTIONS_PALETTE);
+                    }}
+                />
             </div>
             <div className={lockButtonClass} onClick={handleLockClick}>
                 {editor.state.toolLocked ? <LockIcon /> : <UnlockIcon />}
