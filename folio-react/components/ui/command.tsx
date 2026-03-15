@@ -41,7 +41,7 @@ export type CommandShortcutProps = {
 
 export type CommandEmptyProps = {
     className?: string;
-    childrem: React.ReactNode;
+    children: React.ReactNode;
 };
 
 export type CommandComponents = {
@@ -76,6 +76,7 @@ export const Command: CommandComponents = {
                 <input
                     type="text"
                     ref={inputRef}
+                    defaultValue={props.value}
                     className="bg-transparent border-none focus:outline-none text-sm w-full p-0"
                     placeholder={props.placeholder || ""}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,10 +100,10 @@ export const Command: CommandComponents = {
     ),
     Item: (props: CommandItemProps): React.JSX.Element => {
         const itemClassName = classNames({
-            "relative p-2 rounded-lg w-full shrink-0 flex flex-row flex-nowrap gap-1": true,
+            "relative p-2 rounded-lg w-full shrink-0 flex flex-row flex-nowrap gap-1 text-sm": true,
             "bg-white hover:bg-gray-100 cursor-pointer": !props.active && !props.disabled,
             "bg-gray-100": props.active,
-            "opacity-80 cursor-not-allowed": props.disabled,
+            "opacity-60 cursor-not-allowed": props.disabled,
         }, props.className);
         return (
             <div className={itemClassName} onClick={props.onClick}>
@@ -117,7 +118,7 @@ export const Command: CommandComponents = {
     ),
     Empty: (props: CommandEmptyProps): React.JSX.Element => (
         <div className={classNames("p-6 text-center text-sm opacity-50", props.className)}>
-            {props.childrem}
+            {props.children}
         </div>
     ),
 };
