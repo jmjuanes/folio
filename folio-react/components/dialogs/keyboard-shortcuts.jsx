@@ -1,7 +1,7 @@
 import React from "react";
 import {ACTIONS} from "../../constants.js";
 import {useTools} from "../../hooks/use-tools.ts";
-import {Dialog} from "../ui/dialog.jsx";
+import {Dialog} from "../ui/dialog.tsx";
 import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 
 // @description keyboard shortcuts section

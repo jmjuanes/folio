@@ -15,7 +15,7 @@ import {
     useEditorComponents,
 } from "../contexts/editor-components.tsx";
 import { ConfirmProvider } from "../contexts/confirm.jsx";
-import { DialogsProvider } from "../contexts/dialogs.jsx";
+import { DialogsProvider } from "../contexts/dialogs.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 

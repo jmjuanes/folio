@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { ConfirmProvider } from "folio-react/contexts/confirm.jsx";
-import { DialogsProvider } from "folio-react/contexts/dialogs.jsx";
+import { DialogsProvider } from "folio-react/contexts/dialogs.tsx";
 import { ClientProvider } from "./contexts/client.tsx";
 import { ConfigurationProvider } from "./contexts/configuration.tsx";
 import { RouterProvider } from "./contexts/router.tsx";

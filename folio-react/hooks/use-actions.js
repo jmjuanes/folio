@@ -3,7 +3,7 @@ import { uid } from "uid/secure";
 import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 import { useConfirm } from "../contexts/confirm.jsx";
-import { useDialog } from "../contexts/dialogs.jsx";
+import { useDialog } from "../contexts/dialogs.tsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { usePrompt } from "./use-prompt.tsx";

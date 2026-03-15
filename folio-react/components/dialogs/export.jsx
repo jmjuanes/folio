@@ -12,10 +12,10 @@ import {
     exportToClipboard,
 } from "../../lib/export.js";
 import { Button } from "../ui/button.jsx";
-import { Dialog } from "../ui/dialog.jsx";
+import { Dialog } from "../ui/dialog.tsx";
 import { Form } from "../form/index.jsx";
 import { useEditor } from "../../contexts/editor.jsx";
-import { useDialog } from "../../contexts/dialogs.jsx";
+import { useDialog } from "../../contexts/dialogs.tsx";
 import transparentBg from "../../assets/transparent.svg";
 
 const previewStyle = {
