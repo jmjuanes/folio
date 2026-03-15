@@ -1,12 +1,12 @@
 import React from "react";
 import { renderIcon } from "@josemi-icons/react";
-import { ACTIONS } from "../../constants.js";
-import { useTools } from "../../hooks/use-tools.ts";
-import { useActions } from "../../hooks/use-actions.js";
-import { useEditor } from "../../contexts/editor.jsx";
-import { useDialog } from "../../contexts/dialogs.tsx";
-import { Command } from "../ui/command.tsx";
-import { getShortcutByAction } from "../../lib/actions.js";
+import { ACTIONS } from "../constants.js";
+import { useTools } from "../hooks/use-tools.ts";
+import { useActions } from "../hooks/use-actions.js";
+import { useEditor } from "../contexts/editor.jsx";
+import { useDialog } from "../contexts/dialogs.tsx";
+import { Command } from "./ui/command.tsx";
+import { getShortcutByAction } from "../lib/actions.js";
 
 const ACTIONS_LIST = [
     { id: ACTIONS.CUT, label: "Cut" },
