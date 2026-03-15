@@ -46,5 +46,5 @@ export const Dialog = {
     ),
     Footer: ({ className, ...props }: DialogProps): React.JSX.Element => (
         <div className={classNames("flex flex-col-reverse sm:flex-row sm:justify-end gap-2 px-6 pb-6", className)} {...props} />
-    )
+    ),
 };

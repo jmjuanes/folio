@@ -28,8 +28,12 @@ export const DialogsContext = React.createContext<DialogsManager | null>(null);
 // @returns {object} dialog object
 // @returns {function} dialog.showDialog function to show a dialog
 // @returns {function} dialog.hideDialog function to hide the dialog
-export const useDialog = (): DialogsManager | null => {
-    return React.useContext(DialogsContext);
+export const useDialog = (): DialogsManager => {
+    const dialogsManager = React.useContext(DialogsContext);
+    if (!dialogsManager) {
+        throw new Error("Cannot call 'useDialog' outside DialogsProvider");
+    }
+    return dialogsManager;
 };
 
 // @description dialog provider component
