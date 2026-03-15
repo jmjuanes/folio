@@ -534,8 +534,8 @@ export const ACTIONS = {
     TOGGLE_SNAP_TO_ELEMENTS: "toggle-snap-to-elements",
     TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
-    SHOW_ACTIONS_PALETTE: "show-actions-palette",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
+    SHOW_COMMANDS: "show-commands",
 };
 
 export const PREFERENCES = {

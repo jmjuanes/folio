@@ -20,9 +20,9 @@ import {
     WidthLargeIcon,
     WidthSmallIcon,
 } from "../components/icons.jsx";
-import {useEditor} from "../contexts/editor.jsx";
-import {getStickerImage} from "../lib/stickers.js";
-import {blobToDataUrl} from "../utils/blob.js";
+import { useEditor } from "../contexts/editor.jsx";
+import { getStickerImage } from "../lib/stickers.js";
+import { blobToDataUrl } from "../utils/blob.js";
 
 export type ToolPickValue = {
     value: any;

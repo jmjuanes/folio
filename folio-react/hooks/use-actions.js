@@ -43,7 +43,7 @@ export const useActions = () => {
     const {
         KeyboardShortcutsDialog,
         ExportDialog,
-        ActionsPaletteDialog,
+        Commands,
     } = useEditorComponents();
 
     // @description list with all the available actions
@@ -486,10 +486,10 @@ export const useActions = () => {
                     props: exportOptions,
                 });
             },
-            [ACTIONS.SHOW_ACTIONS_PALETTE]: () => {
+            [ACTIONS.SHOW_COMMANDS]: () => {
                 showDialog({
                     dialogClassName: "w-full max-w-xl",
-                    component: ActionsPaletteDialog,
+                    component: Commands,
                 });
             },
         };

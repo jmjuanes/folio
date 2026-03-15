@@ -2,12 +2,12 @@ import React from "react";
 import { Layout } from "../components/layout.tsx";
 import { Loading } from "../components/loading.jsx";
 import { ContextMenu } from "../components/context-menu.jsx";
-import { ActionsPaletteDialog } from "../components/dialogs/actions-palette.tsx";
 import { ExportDialog } from "../components/dialogs/export.jsx";
 import { KeyboardShortcutsDialog } from "../components/dialogs/keyboard-shortcuts.jsx";
 import { MainMenu } from "../components/menus/main.tsx";
 import { PagesMenu } from "../components/menus/pages.tsx";
 import { SettingsMenu } from "../components/menus/settings.jsx";
+import { Commands } from "../components/menus/commands.tsx";
 import { EditionPanel } from "../components/panels/edition.jsx";
 import { HistoryPanel } from "../components/panels/history.jsx";
 import { ZoomPanel } from "../components/panels/zoom.jsx";
@@ -49,7 +49,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             // dialogs components
             ExportDialog: ExportDialog,
             KeyboardShortcutsDialog: KeyboardShortcutsDialog,
-            ActionsPaletteDialog: ActionsPaletteDialog,
+            Commands: Commands,
             // menus
             MainMenu: MainMenu,
             PagesMenu: PagesMenu,

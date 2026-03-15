@@ -130,7 +130,7 @@ export const Toolbar = (): React.JSX.Element => {
                     text="Actions"
                     icon="tools"
                     onClick={() => {
-                        dispatchAction(ACTIONS.SHOW_ACTIONS_PALETTE);
+                        dispatchAction(ACTIONS.SHOW_COMMANDS);
                     }}
                 />
             </div>
