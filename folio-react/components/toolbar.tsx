@@ -2,7 +2,6 @@ import React from "react";
 import classNames from "classnames";
 import { useUpdate } from "react-use";
 import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
-import { Dropdown } from "./ui/dropdown.tsx";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
@@ -10,27 +9,31 @@ import { useTools } from "../hooks/use-tools.ts";
 import { useActions } from "../hooks/use-actions.js";
 import { ACTIONS } from "../constants.js";
 
-const PickPanel = ({ values, items, onChange}): React.JSX.Element => (
-    <div
-        className={classNames({
-            "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
-            "bg-white border-1 border-gray-200 shadow-sm": true,
-        })}
-        style={{
-            transform: "translateX(-50%)",
-        }}
-    >
-        <Form
-            className="flex flex-row gap-2"
-            data={values}
-            items={items}
-            separator={(
-                <div className="w-px h-6 bg-gray-200" />
-            )}
-            onChange={onChange}
-        />
-    </div>
-);
+type PickPanelProps = {
+    values: any;
+    items: { label: string; value: any }[];
+    onChange: (field: string, value: any) => void;
+};
+
+const PickPanel = (props: PickPanelProps): React.JSX.Element => {
+    const pickPanelClassName = classNames({
+        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
+        "bg-white border-1 border-gray-200 shadow-sm": true,
+    });
+    return (
+        <div className={pickPanelClassName} style={{ transform: "translateX(-50%)" }}>
+            <Form
+                className="flex flex-row gap-2"
+                data={props.values}
+                items={props.items}
+                separator={(
+                    <div className="w-px h-6 bg-gray-200" />
+                )}
+                onChange={props.onChange}
+            />
+        </div>
+    );
+};
 
 const ToolbarButton = (props: any): React.JSX.Element => {
     const classList = classNames({
@@ -56,14 +59,6 @@ const ToolbarButton = (props: any): React.JSX.Element => {
         </div>
     );
 };
-
-// @description toolbar panel dropdown item
-const ToolbarDropdownItem = ({ checked, disabled, onClick, icon, text }): React.JSX.Element => (
-    <Dropdown.CheckItem checked={checked} disabled={disabled} onClick={onClick}>
-        <Dropdown.Icon icon={icon} />
-        <span>{text}</span>
-    </Dropdown.CheckItem>
-);
 
 // @description Toolbar panel component
 export const Toolbar = (): React.JSX.Element => {
