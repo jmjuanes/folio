@@ -12,31 +12,25 @@ import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
 import { getShortcutByAction } from "../lib/actions.js";
 
 const ACTIONS_LIST = [
-    { id: ACTIONS.CUT, label: "Cut" },
-    { id: ACTIONS.COPY, label: "Copy" },
-    { id: ACTIONS.PASTE, label: "Paste" },
-    { id: ACTIONS.UNDO, label: "Undo" },
-    { id: ACTIONS.REDO, label: "Redo" },
-    { id: ACTIONS.SELECT_ALL, label: "Select All" },
-    { id: ACTIONS.DELETE_SELECTION, label: "Delete Selection" },
-    { id: ACTIONS.DUPLICATE_SELECTION, label: "Duplicate Selection" },
-    { id: ACTIONS.GROUP_SELECTION, label: "Group Selection" },
-    { id: ACTIONS.UNGROUP_SELECTION, label: "Ungroup Selection" },
-    { id: ACTIONS.ZOOM_IN, label: "Zoom In" },
-    { id: ACTIONS.ZOOM_OUT, label: "Zoom Out" },
-    { id: ACTIONS.TOGGLE_GRID, label: "Toggle Grid" },
-    { id: ACTIONS.TOGGLE_SNAP_TO_ELEMENTS, label: "Toggle Snap to Elements" },
-    { id: ACTIONS.TOGGLE_SHOW_DIMENSIONS, label: "Toggle Show Dimensions" },
-    { id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG, label: "Keyboard Shortcuts" },
+    { id: ACTIONS.CUT, label: "Cut", icon: "cut" },
+    { id: ACTIONS.COPY, label: "Copy", icon: "copy" },
+    { id: ACTIONS.PASTE, label: "Paste", icon: "clipboard" },
+    { id: ACTIONS.UNDO, label: "Undo", icon: "history-undo" },
+    { id: ACTIONS.REDO, label: "Redo", icon: "history-redo" },
+    { id: ACTIONS.SELECT_ALL, label: "Select All", icon: "box-selection" },
+    { id: ACTIONS.DELETE_SELECTION, label: "Delete Selection", icon: "trash" },
+    { id: ACTIONS.DUPLICATE_SELECTION, label: "Duplicate Selection", icon: "copy" },
+    { id: ACTIONS.GROUP_SELECTION, label: "Group Selection", icon: "object-group" },
+    { id: ACTIONS.UNGROUP_SELECTION, label: "Ungroup Selection", icon: "object-ungroup" },
+    { id: ACTIONS.ZOOM_IN, label: "Zoom In", icon: "zoom-in" },
+    { id: ACTIONS.ZOOM_OUT, label: "Zoom Out", icon: "zoom-out" },
+    { id: ACTIONS.TOGGLE_GRID, label: "Toggle Grid", icon: "grid" },
+    { id: ACTIONS.TOGGLE_SNAP_TO_ELEMENTS, label: "Toggle Snap to Elements", icon: "magnet" },
+    { id: ACTIONS.TOGGLE_SHOW_DIMENSIONS, label: "Toggle Show Dimensions", icon: "ruler" },
+    { id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG, label: "Keyboard Shortcuts", icom: "keyboard" },
 ];
 
-export enum CommandType {
-    TOOL = "tool",
-    ACTION = "action"
-};
-
 export type CommandItem = {
-    type: CommandType;
     id: string;
     label: string;
     shortcut?: string;
@@ -45,13 +39,20 @@ export type CommandItem = {
     execute: () => void;
 };
 
+export type CommandGroup = {
+    label: string;
+    items: CommandItem[];
+};
+
 // Command component
 const CommandItemWrapper = (props: any): React.JSX.Element => (
     <Command.Item active={props.active} disabled={props.disabled} onClick={props.onClick}>
-        <div className="text-lg flex">
+        <div className="text-lg flex w-4">
             {props.icon && renderIcon(props.icon)}
         </div>
-        <div className="">{props.label}</div>
+        <div className="leading-none">
+            <span>{props.label}</span>
+        </div>
         {props.shortcut && (
             <Command.Shortcut shortcut={props.shortcut} />
         )}
@@ -66,10 +67,10 @@ export const CommandsContent = (): React.JSX.Element => {
     const [query, setQuery] = React.useState<string>("");
     const [highlightIndex, setHighlightIndex] = React.useState<number>(0);
     const inputRef = React.useRef<HTMLInputElement>(null);
+    const commandToExecute = React.useRef<CommandItem | null>(null);
 
     const toolItems = React.useMemo<CommandItem[]>(() => {
         return Object.entries(tools).map(([toolId, toolData]) => ({
-            type: CommandType.TOOL,
             id: toolId,
             label: toolData.name || toolId,
             shortcut: toolData.keyboardShortcut ? toolData.keyboardShortcut.toUpperCase() : "",
@@ -85,30 +86,58 @@ export const CommandsContent = (): React.JSX.Element => {
 
     const actionItems = React.useMemo<CommandItem[]>(() => {
         return ACTIONS_LIST.map(item => ({
-            type: CommandType.ACTION,
             id: item.id,
             label: item.label,
+            icon: item.icon,
             shortcut: getShortcutByAction(item.id),
             execute: () => dispatchAction(item.id),
         } as CommandItem));
     }, [dispatchAction]);
 
     // join all available actions and tools into a single list and filter based on the query
-    const allItems = React.useMemo<CommandItem[]>(() => {
-        return [...actionItems, ...toolItems];
+    const groups = React.useMemo<CommandGroup[]>(() => {
+        return [
+            {
+                label: "Tools",
+                items: toolItems,
+            },
+            {
+                label: "Actions",
+                items: actionItems,
+            },
+        ];
     }, [actionItems, toolItems]);
 
     // get filtered items based on the query - match against label and shortcut
-    const filteredItems = React.useMemo<CommandItem[]>(() => {
+    const filteredGroups = React.useMemo<CommandGroup[]>(() => {
         const normalizedQuery = query.trim().toLowerCase();
         if (normalizedQuery) {
-            return allItems.filter(item => {
-                return `${item.label} ${item.shortcut || ""}`.toLowerCase().includes(normalizedQuery);
-            })
+            const groupsWithFilteredItems = groups.map(group => {
+                return Object.assign({}, group, {
+                    items: group.items.filter(item => {
+                        return `${item.label} ${item.shortcut || ""}`.toLowerCase().includes(normalizedQuery);
+                    }),
+                });
+            });
+            // return only the groups with at least one item that matches the current query
+            return groupsWithFilteredItems.filter(group => {
+                return group.items.length > 0;
+            });
         }
-        // no query to apply, return all available items
-        return allItems;
-    }, [query, allItems]);
+        // no query to apply, return all available groups
+        return groups;
+    }, [query, groups]);
+
+    // get the items flatten
+    const filteredItems = React.useMemo<CommandItem[]>(() => {
+        return filteredGroups.flatMap(group => group.items);
+    }, [filteredGroups]);
+
+    // callback listener to run the specified command
+    const executeCommand = React.useCallback((command: CommandItem) => {
+        commandToExecute.current = command; // set the provided command to execute
+        clearSurface();
+    }, [clearSurface]);
 
     // reset the highlight index when the filtered items change to avoid out of bounds issues
     React.useEffect(() => setHighlightIndex(0), [filteredItems.length]);
@@ -116,9 +145,6 @@ export const CommandsContent = (): React.JSX.Element => {
     // when the component is mounted, listen to keydown events for navigation and execution
     React.useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            // if (event.key === "Escape") {
-            //     return hideDialog();
-            // }
             if (event.key === "ArrowDown") {
                 event.preventDefault();
                 setHighlightIndex(i => Math.min(i + 1, filteredItems.length - 1));
@@ -131,18 +157,32 @@ export const CommandsContent = (): React.JSX.Element => {
             }
             if (event.key === "Enter") {
                 event.preventDefault();
-                filteredItems[highlightIndex]?.execute();
-                clearSurface();
+                executeCommand(filteredItems[highlightIndex]);
+                return;
             }
         };
         document.addEventListener("keydown", handleKeyDown);
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [filteredItems, highlightIndex, clearSurface]);
+    }, [filteredItems, highlightIndex, executeCommand]);
 
-    // when the component is mounted, focus the input field to allow immediate typing
-    React.useEffect(() => inputRef.current?.focus(), []);
+    React.useEffect(() => {
+        // when the component is mounted, focus the input field to allow immediate typing
+        if (inputRef.current) {
+            inputRef.current?.focus();
+        }
+        return () => {
+            // when the component is removed from DOM, run the execute method of the selected
+            // command (if any)
+            if (!!commandToExecute.current && typeof commandToExecute.current?.execute === "function") {
+                commandToExecute.current.execute();
+            }
+        };
+    }, []);
+
+    // get the id of the highlighted item
+    const highlightedItemId: string | null = filteredItems[highlightIndex]?.id || null;
 
     return (
         <Command.Content className="max-w-xl">
@@ -152,23 +192,25 @@ export const CommandsContent = (): React.JSX.Element => {
                 placeholder="Type a command or tool..."
                 onChange={value => setQuery(value)}
             />
-            <Command.List>
+            <Command.List className="gap-4">
                 {filteredItems.length === 0 && (
                     <Command.Empty>No results found.</Command.Empty>
                 )}
-                {filteredItems.map((commandItem: CommandItem, index: number) => (
-                    <CommandItemWrapper
-                        key={`${commandItem.id}-${index}`}
-                        active={index === highlightIndex}
-                        disabled={!!commandItem.disabled}
-                        icon={commandItem.icon}
-                        label={commandItem.label}
-                        shortcut={commandItem.shortcut}
-                        onClick={() => {
-                            commandItem.execute();
-                            clearSurface();
-                        }}
-                    />
+                {filteredGroups.map((group: CommandGroup) => (
+                    <div className="flex flex-col gap-0" key={group.label}>
+                        <Command.Group>{group.label}</Command.Group>
+                        {group.items.map((item: CommandItem, index: number) => (
+                            <CommandItemWrapper
+                                key={`${item.id}-${index}`}
+                                active={item.id === highlightedItemId}
+                                disabled={!!item.disabled}
+                                icon={item.icon}
+                                label={item.label}
+                                shortcut={item.shortcut}
+                                onClick={() => executeCommand(item)}
+                            />
+                        ))}
+                    </div>
                 ))}
             </Command.List>
         </Command.Content>
