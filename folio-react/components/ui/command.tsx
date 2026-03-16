@@ -77,7 +77,7 @@ export const Command: CommandComponents = {
                     type="text"
                     ref={inputRef}
                     defaultValue={props.value}
-                    className="bg-transparent border-none focus:outline-none text-sm w-full p-0"
+                    className="bg-transparent border-none outline-none text-sm w-full p-0"
                     placeholder={props.placeholder || ""}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         if (typeof props.onChange === "function") {
@@ -89,7 +89,7 @@ export const Command: CommandComponents = {
         );
     },
     List: (props: CommandListProps): React.JSX.Element => (
-        <div className={classNames("w-full max-h-72 overflow-hidden flex flex-col", props.className)}>
+        <div className={classNames("w-full max-h-72 overflow-y-auto flex flex-col gap-1", props.className)} style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
             {props.children}
         </div>
     ),

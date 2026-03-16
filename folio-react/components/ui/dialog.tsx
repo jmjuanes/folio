@@ -4,8 +4,7 @@ import { CloseIcon } from "@josemi-icons/react";
 
 export type DialogProps = HtmlHTMLAttributes<HTMLDivElement> & {
     className?: string;
-    children?: React.ReactNode;
-}; 
+};
 
 export type DialogComponents = {
     Content: (props: DialogProps) => React.JSX.Element;
