@@ -10,6 +10,7 @@ import { Canvas } from "./canvas.jsx";
 import { Pointer } from "./pointer.jsx";
 import { EditorProvider, useEditor } from "../contexts/editor.jsx";
 import { ContextMenuProvider, useContextMenu } from "../contexts/context-menu.jsx";
+import { SurfaceProvider } from "../contexts/surface.tsx";
 import {
     EditorComponentsProvider,
     useEditorComponents,
@@ -124,7 +125,9 @@ export const Editor = props => {
                         <ConfirmProvider>
                             <DialogsProvider>
                                 <ContextMenuProvider>
-                                    <InnerEditor />
+                                    <SurfaceProvider>
+                                        <InnerEditor />
+                                    </SurfaceProvider>
                                 </ContextMenuProvider>
                             </DialogsProvider>
                         </ConfirmProvider>

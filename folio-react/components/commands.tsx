@@ -1,11 +1,14 @@
 import React from "react";
 import { renderIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
-import { useTools } from "../hooks/use-tools.ts";
+import { useTools } from "../hooks/use-tools.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { useEditor } from "../contexts/editor.jsx";
-import { useDialog } from "../contexts/dialogs.tsx";
+import { useSurface } from "../contexts/surface.tsx";
 import { Command } from "./ui/command.tsx";
+import { Centered } from "./ui/centered.tsx";
+import { Dialog } from "./ui/dialog.tsx";
+import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
 import { getShortcutByAction } from "../lib/actions.js";
 
 const ACTIONS_LIST = [
@@ -55,11 +58,11 @@ const CommandItemWrapper = (props: any): React.JSX.Element => (
     </Command.Item>
 );
 
-export const Commands = (): React.JSX.Element => {
+export const CommandsContent = (): React.JSX.Element => {
     const editor = useEditor();
     const tools = useTools();
     const dispatchAction = useActions();
-    const { hideDialog } = useDialog();
+    const { clearSurface } = useSurface();
     const [query, setQuery] = React.useState<string>("");
     const [highlightIndex, setHighlightIndex] = React.useState<number>(0);
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -113,9 +116,9 @@ export const Commands = (): React.JSX.Element => {
     // when the component is mounted, listen to keydown events for navigation and execution
     React.useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                return hideDialog();
-            }
+            // if (event.key === "Escape") {
+            //     return hideDialog();
+            // }
             if (event.key === "ArrowDown") {
                 event.preventDefault();
                 setHighlightIndex(i => Math.min(i + 1, filteredItems.length - 1));
@@ -129,14 +132,14 @@ export const Commands = (): React.JSX.Element => {
             if (event.key === "Enter") {
                 event.preventDefault();
                 filteredItems[highlightIndex]?.execute();
-                hideDialog();
+                clearSurface();
             }
         };
         document.addEventListener("keydown", handleKeyDown);
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [filteredItems, highlightIndex, hideDialog]);
+    }, [filteredItems, highlightIndex, clearSurface]);
 
     // when the component is mounted, focus the input field to allow immediate typing
     React.useEffect(() => inputRef.current?.focus(), []);
@@ -163,7 +166,7 @@ export const Commands = (): React.JSX.Element => {
                         shortcut={commandItem.shortcut}
                         onClick={() => {
                             commandItem.execute();
-                            hideDialog();
+                            clearSurface();
                         }}
                     />
                 ))}
@@ -171,3 +174,25 @@ export const Commands = (): React.JSX.Element => {
         </Command.Content>
     );
 };
+
+export type CommandsProps = {
+    children?: React.ReactNode;
+};
+
+export const Commands = (props: CommandsProps): React.JSX.Element => {
+    const { clearSurface } = useSurface();
+    const content = props.children ?? <CommandsContent />;
+
+    return (
+        <React.Fragment>
+            <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={clearSurface} />
+            <Centered className="fixed z-50" style={{ top: "33%" }}>
+                <Dialog.Content className="w-full max-w-md">
+                    <div className="p-2">
+                        {content}
+                    </div>
+                </Dialog.Content>
+            </Centered>
+        </React.Fragment>
+    );
+};  

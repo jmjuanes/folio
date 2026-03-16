@@ -6,6 +6,7 @@ import { useConfirm } from "../contexts/confirm.jsx";
 import { useDialog } from "../contexts/dialogs.tsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
+import { useSurface } from "../contexts/surface.tsx";
 import { usePrompt } from "./use-prompt.tsx";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
@@ -40,6 +41,7 @@ export const useActions = () => {
     const prompt = usePrompt();
     const { showConfirm } = useConfirm();
     const { showDialog } = useDialog();
+    const { showSurface, clearSurface } = useSurface();
     const {
         KeyboardShortcutsDialog,
         ExportDialog,
@@ -437,7 +439,6 @@ export const useActions = () => {
                     message: "This will remove all elements of this page. Do you want to continue?",
                     confirmText: "Yes, clear page",
                     callback: () => {
-                        debugger;
                         editor.clearPage(pageToClear.id);
                         editor.dispatchChange();
                         editor.update();
@@ -487,13 +488,16 @@ export const useActions = () => {
                 });
             },
             [ACTIONS.SHOW_COMMANDS]: () => {
-                showDialog({
-                    dialogClassName: "w-full max-w-xl",
-                    component: Commands,
-                });
+                showSurface("commands", () => (
+                    <Commands />
+                ));
+                // showDialog({
+                //     dialogClassName: "w-full max-w-xl",
+                //     component: Commands,
+                // });
             },
         };
-    }, [ editor, showConfirm, showDialog, library ]);
+    }, [ editor, showConfirm, showDialog, showSurface, library ]);
 
     // @description dispatch a single action
     return React.useCallback((actionName, payload) => {
