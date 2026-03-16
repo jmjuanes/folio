@@ -1,5 +1,5 @@
 import React from "react";
-import { Centered } from "./ui/centered.jsx";
+import { Centered } from "./ui/centered.tsx";
 
 export const LoadingSpinner = () => (
     <div className="animate-spin h-6 w-6 relative">

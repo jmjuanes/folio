@@ -1,9 +1,9 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
-import { Centered } from "../components/ui/centered.jsx";
+import { Centered } from "../components/ui/centered.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";
-import { Overlay } from "../components/ui/overlay.jsx";
+import { Overlay } from "../components/ui/overlay.tsx";
 
 export type DialogsParams = {
     component: any;

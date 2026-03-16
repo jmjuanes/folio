@@ -1,5 +1,5 @@
 import React from "react";
-import { Centered } from "folio-react/components/ui/centered.jsx";
+import { Centered } from "folio-react/components/ui/centered.tsx";
 
 // @description not found component
 export const NotFound = (): React.JSX.Element => {
