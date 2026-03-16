@@ -27,7 +27,7 @@ const ACTIONS_LIST = [
     { id: ACTIONS.TOGGLE_GRID, label: "Toggle Grid", icon: "grid" },
     { id: ACTIONS.TOGGLE_SNAP_TO_ELEMENTS, label: "Toggle Snap to Elements", icon: "magnet" },
     { id: ACTIONS.TOGGLE_SHOW_DIMENSIONS, label: "Toggle Show Dimensions", icon: "ruler" },
-    { id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG, label: "Keyboard Shortcuts", icom: "keyboard" },
+    { id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG, label: "Keyboard Shortcuts", icon: "keyboard" },
 ];
 
 export type CommandItem = {
