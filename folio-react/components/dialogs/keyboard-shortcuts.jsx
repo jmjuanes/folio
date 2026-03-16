@@ -55,6 +55,7 @@ export const KeyboardShortcutsDialogContent = () => {
             <KeyboardShortcutsGroup title="Drawing">
                 <KeyboardShortcutsItem action={ACTIONS.OPEN} label="Open" />
                 <KeyboardShortcutsItem action={ACTIONS.SAVE} label="Save" />
+                <KeyboardShortcutsItem action={ACTIONS.SHOW_COMMANDS} label="Commands" />
                 {/*
                 <KeyboardShortcutsItem action={ACTIONS.SHOW_EXPORT_DIALOG} label="Export as Image" />
                 <KeyboardShortcutsItem action={ACTIONS.CLEAR} label="Clear all" />
