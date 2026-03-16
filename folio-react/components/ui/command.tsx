@@ -94,13 +94,13 @@ export const Command: CommandComponents = {
         </div>
     ),
     Group: (props: CommandGroupProps): React.JSX.Element => (
-        <div className={classNames("font-medium text-sm opacity-80 py-1 px-2", props.className)}>
+        <div className={classNames("font-bold text-2xs opacity-60 px-2", props.className)}>
             {props.children}
         </div>
     ),
     Item: (props: CommandItemProps): React.JSX.Element => {
         const itemClassName = classNames({
-            "relative p-2 rounded-lg w-full shrink-0 flex flex-row flex-nowrap gap-1 text-sm": true,
+            "relative p-2 rounded-lg w-full shrink-0 flex flex-row flex-nowrap gap-2 text-sm items-center": true,
             "bg-white hover:bg-gray-100 cursor-pointer": !props.active && !props.disabled,
             "bg-gray-100": props.active,
             "opacity-60 cursor-not-allowed": props.disabled,
@@ -112,7 +112,7 @@ export const Command: CommandComponents = {
         );
     },
     Shortcut: (props: CommandShortcutProps): React.JSX.Element => (
-        <div className={classNames("ml-auto text-sm opacity-60", props.className)}>
+        <div className={classNames("ml-auto text-xs opacity-60", props.className)}>
             <span>{printShortcut(props.shortcut)}</span>
         </div>
     ),
