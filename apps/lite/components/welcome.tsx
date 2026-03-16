@@ -4,11 +4,11 @@ import {
     DrawingIcon,
     FolderIcon,
 } from "@josemi-icons/react";
-import {Button} from "folio-react/components/ui/button.jsx";
-import {Centered} from "folio-react/components/ui/centered.jsx";
-import {Overlay} from "folio-react/components/ui/overlay.jsx";
-import {useEditor} from "folio-react/contexts/editor.jsx";
-import {loadFromJson} from "folio-react/lib/json.js";
+import { Button } from "folio-react/components/ui/button.jsx";
+import { Centered } from "folio-react/components/ui/centered.tsx";
+import { Overlay } from "folio-react/components/ui/overlay.tsx";
+import { useEditor } from "folio-react/contexts/editor.jsx";
+import { loadFromJson } from "folio-react/lib/json.js";
 
 const defaultWelcomeFeatures = [
     {
@@ -95,7 +95,7 @@ export const Welcome = (): React.JSX.Element => {
                         </Button>
                     </div>
                     <div className="text-center text-xs text-gray-600 select-none">
-                        <span><b>folio</b> v{process.env.VERSION}</span> 
+                        <span><b>folio</b> v{process.env.VERSION}</span>
                     </div>
                 </div>
             </Centered>

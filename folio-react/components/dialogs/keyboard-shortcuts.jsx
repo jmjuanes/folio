@@ -1,7 +1,7 @@
 import React from "react";
 import {ACTIONS} from "../../constants.js";
-import {useTools} from "../../hooks/use-tools.js";
-import {Dialog} from "../ui/dialog.jsx";
+import {useTools} from "../../hooks/use-tools.tsx";
+import {Dialog} from "../ui/dialog.tsx";
 import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 
 // @description keyboard shortcuts section
@@ -55,6 +55,7 @@ export const KeyboardShortcutsDialogContent = () => {
             <KeyboardShortcutsGroup title="Drawing">
                 <KeyboardShortcutsItem action={ACTIONS.OPEN} label="Open" />
                 <KeyboardShortcutsItem action={ACTIONS.SAVE} label="Save" />
+                <KeyboardShortcutsItem action={ACTIONS.SHOW_COMMANDS} label="Commands" />
                 {/*
                 <KeyboardShortcutsItem action={ACTIONS.SHOW_EXPORT_DIALOG} label="Export as Image" />
                 <KeyboardShortcutsItem action={ACTIONS.CLEAR} label="Clear all" />

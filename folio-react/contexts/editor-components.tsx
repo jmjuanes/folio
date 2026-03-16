@@ -7,6 +7,7 @@ import { KeyboardShortcutsDialog } from "../components/dialogs/keyboard-shortcut
 import { MainMenu } from "../components/menus/main.tsx";
 import { PagesMenu } from "../components/menus/pages.tsx";
 import { SettingsMenu } from "../components/menus/settings.jsx";
+import { Commands } from "../components/commands.tsx";
 import { EditionPanel } from "../components/panels/edition.jsx";
 import { HistoryPanel } from "../components/panels/history.jsx";
 import { ZoomPanel } from "../components/panels/zoom.jsx";
@@ -48,6 +49,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             // dialogs components
             ExportDialog: ExportDialog,
             KeyboardShortcutsDialog: KeyboardShortcutsDialog,
+            Commands: Commands,
             // menus
             MainMenu: MainMenu,
             PagesMenu: PagesMenu,

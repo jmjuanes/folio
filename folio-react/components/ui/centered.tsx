@@ -1,7 +1,11 @@
 import React from "react";
 import classNames from "classnames";
 
-export const Centered = ({className, ...props}) => (
+export type CenteredProps = React.HTMLAttributes<HTMLDivElement> & {
+    className?: string;
+};
+
+export const Centered = ({ className, ...props }: CenteredProps): React.JSX.Element => (
     <div
         data-testid="centered"
         className={classNames(

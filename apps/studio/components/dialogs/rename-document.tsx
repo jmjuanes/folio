@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "folio-react/components/ui/button.jsx";
-import { Dialog } from "folio-react/components/ui/dialog.jsx";
+import { Dialog } from "folio-react/components/ui/dialog.tsx";
 import { Form } from "folio-react/components/form/index.jsx";
 import { FORM_OPTIONS } from "folio-react/constants.js";
 import { useFormData } from "folio-react/hooks/use-form-data.js";

@@ -1,6 +1,6 @@
 import React from "react";
-import {fileOpen} from "browser-fs-access";
-import {SquareIcon, CircleIcon, TriangleIcon} from "@josemi-icons/react";
+import { fileOpen } from "browser-fs-access";
+import { SquareIcon, CircleIcon, TriangleIcon } from "@josemi-icons/react";
 import {
     ELEMENTS,
     TOOLS,
@@ -13,22 +13,50 @@ import {
     FORM_OPTIONS,
     FILE_EXTENSIONS,
 } from "../constants.js";
-import {STROKE_COLOR_PICK, TEXT_COLOR_PICK} from "../utils/colors.js";
+import { STROKE_COLOR_PICK, TEXT_COLOR_PICK } from "../utils/colors.js";
 import {
     ArrowIcon,
     ArrowConnectorIcon,
     WidthLargeIcon,
     WidthSmallIcon,
 } from "../components/icons.jsx";
-import {useEditor} from "../contexts/editor.jsx";
-import {getStickerImage} from "../lib/stickers.js";
-import {blobToDataUrl} from "../utils/blob.js";
+import { useEditor } from "../contexts/editor.jsx";
+import { getStickerImage } from "../lib/stickers.js";
+import { blobToDataUrl } from "../utils/blob.js";
+
+export type ToolPickValue = {
+    value: any;
+    icon?: React.JSX.Element | React.ReactNode;
+};
+
+export type ToolPick = {
+    type: string;
+    className?: string;
+    values: string[] | ToolPickValue[];
+};
+
+export type Tool = {
+    name?: string;
+    icon?: React.JSX.Element | React.ReactNode | string;
+    primary?: boolean;
+    toolEnabledOnReadOnly?: boolean;
+    keyboardShortcut?: string;
+    quickPicks?: {
+        [field: string]: ToolPick;
+    };
+    onSelect: (editor: ReturnType<typeof useEditor>) => void;
+    onQuickPickChange?: (defaults: Record<string, any>, field: string, value: any) => void;
+};
+
+export type ToolsMap = {
+    [toolId: string]: Tool;
+};
 
 // @description use tools list
-export const useTools = () => {
+export const useTools = (): ToolsMap => {
     const editor = useEditor();
 
-    return React.useMemo(() => ({
+    return React.useMemo<ToolsMap>(() => ({
         [TOOLS.DRAG]: {
             name: "Drag",
             icon: "hand-grab",
@@ -79,9 +107,9 @@ export const useTools = () => {
                     type: FORM_OPTIONS.SELECT,
                     className: "flex flex-nowrap w-32 gap-1",
                     values: [
-                        {value: SHAPES.RECTANGLE, icon: <SquareIcon />},
-                        {value: SHAPES.ELLIPSE, icon: <CircleIcon />},
-                        {value: SHAPES.TRIANGLE, icon: <TriangleIcon />},
+                        { value: SHAPES.RECTANGLE, icon: <SquareIcon /> },
+                        { value: SHAPES.ELLIPSE, icon: <CircleIcon /> },
+                        { value: SHAPES.TRIANGLE, icon: <TriangleIcon /> },
                     ],
                 },
                 [FIELDS.STROKE_COLOR]: {
@@ -119,16 +147,16 @@ export const useTools = () => {
                     //     return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
                     // },
                     values: [
-                        {value: ARROW_SHAPES.LINE, icon: <ArrowIcon />},
-                        {value: ARROW_SHAPES.CONNECTOR, icon: <ArrowConnectorIcon />},
+                        { value: ARROW_SHAPES.LINE, icon: <ArrowIcon /> },
+                        { value: ARROW_SHAPES.CONNECTOR, icon: <ArrowConnectorIcon /> },
                     ],
                 },
                 [FIELDS.STROKE_WIDTH]: {
                     type: FORM_OPTIONS.SELECT,
                     className: "flex flex-nowrap w-24 gap-1",
                     values: [
-                        {value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon />},
-                        {value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon />},
+                        { value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon /> },
+                        { value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon /> },
                     ],
                 },
                 [FIELDS.STROKE_COLOR]: {
@@ -183,8 +211,8 @@ export const useTools = () => {
                     type: FORM_OPTIONS.SELECT,
                     className: "flex flex-nowrap w-24 gap-1",
                     values: [
-                        {value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon />},
-                        {value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon />},
+                        { value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon /> },
+                        { value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon /> },
                     ],
                 },
                 [FIELDS.STROKE_COLOR]: {
@@ -262,9 +290,9 @@ export const useTools = () => {
 // @param {Array} tools - tools list
 // @param {string} shortcut - shortcut key
 // @returns {object} - tool configuration
-export const getToolByShortcut = (tools, shortcut = "") => {
+export const getToolByShortcut = (tools: ToolsMap, shortcut: string = ""): Tool | undefined => {
     const uppercaseShortcut = shortcut.toUpperCase();
-    return Object.values(tools).find(tool => {
+    return Object.values(tools).find((tool: Tool) => {
         return !!tool?.keyboardShortcut && tool.keyboardShortcut.toUpperCase() === uppercaseShortcut;
     });
 };

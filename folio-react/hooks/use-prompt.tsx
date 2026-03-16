@@ -1,8 +1,8 @@
 import React from "react";
 import { Button } from "../components/ui/button.jsx";
-import { Dialog } from "../components/ui/dialog.jsx";
+import { Dialog } from "../components/ui/dialog.tsx";
 import { Form } from "../components/form/index.jsx";
-import { useDialog } from "../contexts/dialogs.jsx";
+import { useDialog } from "../contexts/dialogs.tsx";
 import { useFormData } from "../hooks/use-form-data.js";
 
 export type PromptOptions = {

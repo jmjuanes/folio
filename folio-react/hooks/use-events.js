@@ -40,7 +40,7 @@ import { useEditor } from "../contexts/editor.jsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useActions } from "./use-actions.js";
-import { useTools, getToolByShortcut } from "./use-tools.js";
+import { useTools, getToolByShortcut } from "./use-tools.tsx";
 import { getActionByKeysCombination } from "../lib/actions.js";
 import {
     isCornerHandler,

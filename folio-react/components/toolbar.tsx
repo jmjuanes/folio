@@ -1,34 +1,39 @@
 import React from "react";
 import classNames from "classnames";
 import { useUpdate } from "react-use";
-import { LockIcon, UnlockIcon, DotsVerticalIcon, renderIcon } from "@josemi-icons/react";
-import { Dropdown } from "./ui/dropdown.tsx";
+import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
-import { useTools } from "../hooks/use-tools.js";
+import { useTools } from "../hooks/use-tools.tsx";
+import { useActions } from "../hooks/use-actions.js";
+import { ACTIONS } from "../constants.js";
 
-const PickPanel = ({ values, items, onChange}): React.JSX.Element => (
-    <div
-        className={classNames({
-            "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
-            "bg-white border-1 border-gray-200 shadow-sm": true,
-        })}
-        style={{
-            transform: "translateX(-50%)",
-        }}
-    >
-        <Form
-            className="flex flex-row gap-2"
-            data={values}
-            items={items}
-            separator={(
-                <div className="w-px h-6 bg-gray-200" />
-            )}
-            onChange={onChange}
-        />
-    </div>
-);
+type PickPanelProps = {
+    values: any;
+    items: { label: string; value: any }[];
+    onChange: (field: string, value: any) => void;
+};
+
+const PickPanel = (props: PickPanelProps): React.JSX.Element => {
+    const pickPanelClassName = classNames({
+        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
+        "bg-white border-1 border-gray-200 shadow-sm": true,
+    });
+    return (
+        <div className={pickPanelClassName} style={{ transform: "translateX(-50%)" }}>
+            <Form
+                className="flex flex-row gap-2"
+                data={props.values}
+                items={props.items}
+                separator={(
+                    <div className="w-px h-6 bg-gray-200" />
+                )}
+                onChange={props.onChange}
+            />
+        </div>
+    );
+};
 
 const ToolbarButton = (props: any): React.JSX.Element => {
     const classList = classNames({
@@ -55,26 +60,19 @@ const ToolbarButton = (props: any): React.JSX.Element => {
     );
 };
 
-// @description toolbar panel dropdown item
-const ToolbarDropdownItem = ({ checked, disabled, onClick, icon, text }): React.JSX.Element => (
-    <Dropdown.CheckItem checked={checked} disabled={disabled} onClick={onClick}>
-        <Dropdown.Icon icon={icon} />
-        <span>{text}</span>
-    </Dropdown.CheckItem>
-);
-
 // @description Toolbar panel component
 export const Toolbar = (): React.JSX.Element => {
     const update = useUpdate();
     const editor = useEditor();
     const tools = useTools();
-    const {hideContextMenu} = useContextMenu();
+    const { hideContextMenu } = useContextMenu();
+    const dispatchAction = useActions();
     const prevSelectedTool = React.useRef(editor.state.tool);
     const [primaryTools, secondaryTools] = React.useMemo(() => {
         const keys = Object.keys(tools);
         return [
             keys.filter(key => tools[key].primary),
-            keys.filter(key =>!tools[key].primary),
+            keys.filter(key => !tools[key].primary),
         ];
     }, [tools]);
 
@@ -128,29 +126,13 @@ export const Toolbar = (): React.JSX.Element => {
                         )}
                     </div>
                 ))}
-                {secondaryTools.length > 0 && (
-                    <div className="flex self-stretch relative group" tabIndex={0}>
-                        <div className="flex items-center cursor-pointer rounded-xl px-1 hover:bg-gray-200 group-focus-within:bg-gray-200">
-                            <div className="flex items-center text-xl">
-                                <DotsVerticalIcon />
-                            </div>
-                        </div>
-                        <Dropdown className="hidden group-focus-within:block bottom-full right-0 mb-2 w-48 z-20">
-                            {secondaryTools.map(key => (
-                                <ToolbarDropdownItem
-                                    key={key}
-                                    checked={editor.state.tool === key}
-                                    disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
-                                    onClick={() => {
-                                        tools[key].onSelect(editor);
-                                    }}
-                                    icon={tools[key].icon}
-                                    text={tools[key].name}
-                                />
-                            ))}
-                        </Dropdown>
-                    </div>
-                )}
+                <ToolbarButton
+                    text="Actions"
+                    icon="tools"
+                    onClick={() => {
+                        dispatchAction(ACTIONS.SHOW_COMMANDS);
+                    }}
+                />
             </div>
             <div className={lockButtonClass} onClick={handleLockClick}>
                 {editor.state.toolLocked ? <LockIcon /> : <UnlockIcon />}

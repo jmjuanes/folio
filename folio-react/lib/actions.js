@@ -55,6 +55,7 @@ export const shortcutsMap = {
     // [ACTIONS.TOGGLE_SHOW_DIMENSIONS]: getShortcutKey("Alt+D"),
 
     // [ACTIONS.SHOW_EXPORT_DIALOG]: getShortcutKey("CtrlOrCmd+Shift+E"),
+    [ACTIONS.SHOW_COMMANDS]: getShortcutKey("CtrlOrCmd+K"),
 };
 
 // @description get shortcut key for the provided action

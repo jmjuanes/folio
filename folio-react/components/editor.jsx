@@ -10,12 +10,13 @@ import { Canvas } from "./canvas.jsx";
 import { Pointer } from "./pointer.jsx";
 import { EditorProvider, useEditor } from "../contexts/editor.jsx";
 import { ContextMenuProvider, useContextMenu } from "../contexts/context-menu.jsx";
+import { SurfaceProvider } from "../contexts/surface.tsx";
 import {
     EditorComponentsProvider,
     useEditorComponents,
 } from "../contexts/editor-components.tsx";
 import { ConfirmProvider } from "../contexts/confirm.jsx";
-import { DialogsProvider } from "../contexts/dialogs.jsx";
+import { DialogsProvider } from "../contexts/dialogs.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 
@@ -123,9 +124,11 @@ export const Editor = props => {
                     <EditorProvider {...props}>
                         <ConfirmProvider>
                             <DialogsProvider>
-                                <ContextMenuProvider>
-                                    <InnerEditor />
-                                </ContextMenuProvider>
+                                <SurfaceProvider>
+                                    <ContextMenuProvider>
+                                        <InnerEditor />
+                                    </ContextMenuProvider>
+                                </SurfaceProvider>
                             </DialogsProvider>
                         </ConfirmProvider>
                     </EditorProvider>
