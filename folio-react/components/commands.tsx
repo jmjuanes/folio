@@ -11,23 +11,38 @@ import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
 import { getShortcutByAction } from "../lib/actions.js";
 
-const ACTIONS_LIST = [
-    { id: ACTIONS.CUT, label: "Cut", icon: "cut" },
-    { id: ACTIONS.COPY, label: "Copy", icon: "copy" },
-    { id: ACTIONS.PASTE, label: "Paste", icon: "clipboard" },
-    { id: ACTIONS.UNDO, label: "Undo", icon: "history-undo" },
-    { id: ACTIONS.REDO, label: "Redo", icon: "history-redo" },
-    { id: ACTIONS.SELECT_ALL, label: "Select All", icon: "box-selection" },
-    { id: ACTIONS.DELETE_SELECTION, label: "Delete Selection", icon: "trash" },
-    { id: ACTIONS.DUPLICATE_SELECTION, label: "Duplicate Selection", icon: "copy" },
-    { id: ACTIONS.GROUP_SELECTION, label: "Group Selection", icon: "object-group" },
-    { id: ACTIONS.UNGROUP_SELECTION, label: "Ungroup Selection", icon: "object-ungroup" },
-    { id: ACTIONS.ZOOM_IN, label: "Zoom In", icon: "zoom-in" },
-    { id: ACTIONS.ZOOM_OUT, label: "Zoom Out", icon: "zoom-out" },
-    { id: ACTIONS.TOGGLE_GRID, label: "Toggle Grid", icon: "grid" },
-    { id: ACTIONS.TOGGLE_SNAP_TO_ELEMENTS, label: "Toggle Snap to Elements", icon: "magnet" },
-    { id: ACTIONS.TOGGLE_SHOW_DIMENSIONS, label: "Toggle Show Dimensions", icon: "ruler" },
-    { id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG, label: "Keyboard Shortcuts", icon: "keyboard" },
+const COMMANDS_LIST = [
+    {
+        label: "Edition",
+        items: [
+            { id: ACTIONS.CUT, label: "Cut", icon: "cut" },
+            { id: ACTIONS.COPY, label: "Copy", icon: "copy" },
+            { id: ACTIONS.PASTE, label: "Paste", icon: "clipboard" },
+            { id: ACTIONS.SELECT_ALL, label: "Select All", icon: "box-selection" },
+            { id: ACTIONS.DELETE_SELECTION, label: "Delete Selection", icon: "trash" },
+            { id: ACTIONS.DUPLICATE_SELECTION, label: "Duplicate Selection", icon: "copy" },
+            { id: ACTIONS.GROUP_SELECTION, label: "Group Selection", icon: "object-group" },
+            { id: ACTIONS.UNGROUP_SELECTION, label: "Ungroup Selection", icon: "object-ungroup" },
+        ],
+    },
+    {
+        label: "Board Actions",
+        items: [
+            { id: ACTIONS.UNDO, label: "Undo", icon: "history-undo" },
+            { id: ACTIONS.REDO, label: "Redo", icon: "history-redo" },
+            { id: ACTIONS.ZOOM_IN, label: "Zoom In", icon: "zoom-in" },
+            { id: ACTIONS.ZOOM_OUT, label: "Zoom Out", icon: "zoom-out" },
+            { id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG, label: "Keyboard Shortcuts", icon: "keyboard" },
+        ],
+    },
+    {
+        label: "Settings",
+        items: [
+            { id: ACTIONS.TOGGLE_GRID, label: "Toggle Grid", icon: "grid" },
+            { id: ACTIONS.TOGGLE_SNAP_TO_ELEMENTS, label: "Toggle Snap to Elements", icon: "magnet" },
+            { id: ACTIONS.TOGGLE_SHOW_DIMENSIONS, label: "Toggle Show Dimensions", icon: "ruler" },
+        ],
+    },
 ];
 
 export type CommandItem = {
@@ -85,29 +100,26 @@ export const CommandsContent = (): React.JSX.Element => {
         } as CommandItem));
     }, [tools, editor]);
 
-    const actionItems = React.useMemo<CommandItem[]>(() => {
-        return ACTIONS_LIST.map(item => ({
-            id: item.id,
-            label: item.label,
-            icon: item.icon,
-            shortcut: getShortcutByAction(item.id),
-            execute: () => dispatchAction(item.id),
-        } as CommandItem));
-    }, [dispatchAction]);
-
     // join all available actions and tools into a single list and filter based on the query
     const groups = React.useMemo<CommandGroup[]>(() => {
+        const defaultCommands: CommandGroup[] = COMMANDS_LIST.map(group => ({
+            label: group.label,
+            items: group.items.map(groupItem => ({
+                id: groupItem.id,
+                label: groupItem.label,
+                icon: groupItem.icon,
+                shortcut: getShortcutByAction(groupItem.id),
+                execute: () => dispatchAction(groupItem.id),
+            })),
+        }));
         return [
             {
                 label: "Tools",
                 items: toolItems,
             },
-            {
-                label: "Actions",
-                items: actionItems,
-            },
+            ...defaultCommands,
         ];
-    }, [actionItems, toolItems]);
+    }, [toolItems]);
 
     // get filtered items based on the query - match against label and shortcut
     const filteredGroups = React.useMemo<CommandGroup[]>(() => {
@@ -116,7 +128,7 @@ export const CommandsContent = (): React.JSX.Element => {
             const groupsWithFilteredItems = groups.map(group => {
                 return Object.assign({}, group, {
                     items: group.items.filter(item => {
-                        return `${item.label} ${item.shortcut || ""}`.toLowerCase().includes(normalizedQuery);
+                        return [group.label, item.label, item.shortcut || ""].join(" ").toLowerCase().includes(normalizedQuery);
                     }),
                 });
             });
