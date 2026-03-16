@@ -21,7 +21,7 @@ export {
 } from "./lib/json.js";
 export {migrate} from "./lib/migrate.js";
 
-export {useTools} from "./hooks/use-tools.ts";
+export {useTools} from "./hooks/use-tools.tsx";
 export {usePagePreview} from "./hooks/use-page-preview.js";
 
 export {
@@ -48,6 +48,10 @@ export {
     EditorProvider,
     useEditor,
 } from "./contexts/editor.jsx";
+export {
+    SurfaceProvider,
+    useSurface,
+} from "./contexts/surface.tsx";
 
 export {Canvas} from "./components/canvas.jsx";
 export {Editor} from "./components/editor.jsx";
@@ -104,11 +108,11 @@ export {EditableText} from "./components/elements/editable-text.jsx";
 
 export {Alert} from "./components/ui/alert.tsx";
 export {Button} from "./components/ui/button.jsx";
-export {Centered} from "./components/ui/centered.jsx";
+export {Centered} from "./components/ui/centered.tsx";
 export {Dialog} from "./components/ui/dialog.tsx";
 export {Dropdown} from "./components/ui/dropdown.tsx";
 export {Island} from "./components/ui/island.tsx";
-export {Overlay} from "./components/ui/overlay.jsx";
+export {Overlay} from "./components/ui/overlay.tsx";
 export {Panel} from "./components/ui/panel.jsx";
 
 export {

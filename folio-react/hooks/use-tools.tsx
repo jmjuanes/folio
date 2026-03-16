@@ -1,5 +1,5 @@
 import React from "react";
-import {fileOpen} from "browser-fs-access";
+import { fileOpen } from "browser-fs-access";
 import { SquareIcon, CircleIcon, TriangleIcon } from "@josemi-icons/react";
 import {
     ELEMENTS,
@@ -147,16 +147,16 @@ export const useTools = (): ToolsMap => {
                     //     return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
                     // },
                     values: [
-                        {value: ARROW_SHAPES.LINE, icon: <ArrowIcon />},
-                        {value: ARROW_SHAPES.CONNECTOR, icon: <ArrowConnectorIcon />},
+                        { value: ARROW_SHAPES.LINE, icon: <ArrowIcon /> },
+                        { value: ARROW_SHAPES.CONNECTOR, icon: <ArrowConnectorIcon /> },
                     ],
                 },
                 [FIELDS.STROKE_WIDTH]: {
                     type: FORM_OPTIONS.SELECT,
                     className: "flex flex-nowrap w-24 gap-1",
                     values: [
-                        {value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon />},
-                        {value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon />},
+                        { value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon /> },
+                        { value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon /> },
                     ],
                 },
                 [FIELDS.STROKE_COLOR]: {
@@ -211,8 +211,8 @@ export const useTools = (): ToolsMap => {
                     type: FORM_OPTIONS.SELECT,
                     className: "flex flex-nowrap w-24 gap-1",
                     values: [
-                        {value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon />},
-                        {value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon />},
+                        { value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon /> },
+                        { value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon /> },
                     ],
                 },
                 [FIELDS.STROKE_COLOR]: {

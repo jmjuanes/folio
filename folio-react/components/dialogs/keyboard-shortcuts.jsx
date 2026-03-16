@@ -1,6 +1,6 @@
 import React from "react";
 import {ACTIONS} from "../../constants.js";
-import {useTools} from "../../hooks/use-tools.ts";
+import {useTools} from "../../hooks/use-tools.tsx";
 import {Dialog} from "../ui/dialog.tsx";
 import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 

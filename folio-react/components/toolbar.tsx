@@ -5,7 +5,7 @@ import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
-import { useTools } from "../hooks/use-tools.ts";
+import { useTools } from "../hooks/use-tools.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { ACTIONS } from "../constants.js";
 
@@ -72,7 +72,7 @@ export const Toolbar = (): React.JSX.Element => {
         const keys = Object.keys(tools);
         return [
             keys.filter(key => tools[key].primary),
-            keys.filter(key =>!tools[key].primary),
+            keys.filter(key => !tools[key].primary),
         ];
     }, [tools]);
 
