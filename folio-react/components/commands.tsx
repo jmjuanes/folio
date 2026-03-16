@@ -67,6 +67,7 @@ export const CommandsContent = (): React.JSX.Element => {
     const [query, setQuery] = React.useState<string>("");
     const [highlightIndex, setHighlightIndex] = React.useState<number>(0);
     const inputRef = React.useRef<HTMLInputElement>(null);
+    const listRef = React.useRef<HTMLDivElement>(null); // ref to the list container
     const commandToExecute = React.useRef<CommandItem | null>(null);
 
     const toolItems = React.useMemo<CommandItem[]>(() => {
@@ -184,6 +185,19 @@ export const CommandsContent = (): React.JSX.Element => {
     // get the id of the highlighted item
     const highlightedItemId: string | null = filteredItems[highlightIndex]?.id || null;
 
+    // when the highlighted index changes, scroll to display it in the commands list
+    React.useEffect(() => {
+        if (listRef.current && !!highlightedItemId) {
+            const itemElement = listRef.current.querySelector(`div[data-command="${highlightedItemId}"]`);
+            if (itemElement) {
+                itemElement.scrollIntoView({
+                    block: "nearest",
+                    behavior: "smooth",
+                });
+            }
+        }
+    }, [highlightIndex]);
+
     return (
         <Command.Content className="max-w-xl">
             <Command.Input
@@ -192,26 +206,29 @@ export const CommandsContent = (): React.JSX.Element => {
                 placeholder="Type a command or tool..."
                 onChange={value => setQuery(value)}
             />
-            <Command.List className="gap-4">
+            <Command.List className="">
                 {filteredItems.length === 0 && (
                     <Command.Empty>No results found.</Command.Empty>
                 )}
-                {filteredGroups.map((group: CommandGroup) => (
-                    <div className="flex flex-col gap-0" key={group.label}>
-                        <Command.Group>{group.label}</Command.Group>
-                        {group.items.map((item: CommandItem, index: number) => (
-                            <CommandItemWrapper
-                                key={`${item.id}-${index}`}
-                                active={item.id === highlightedItemId}
-                                disabled={!!item.disabled}
-                                icon={item.icon}
-                                label={item.label}
-                                shortcut={item.shortcut}
-                                onClick={() => executeCommand(item)}
-                            />
-                        ))}
-                    </div>
-                ))}
+                <div className="flex flex-col gap-4" ref={listRef}>
+                    {filteredGroups.map((group: CommandGroup) => (
+                        <div className="flex flex-col gap-0" key={group.label}>
+                            <Command.Group>{group.label}</Command.Group>
+                            {group.items.map((item: CommandItem, index: number) => (
+                                <div key={`${item.id}-${index}`} data-command={item.id}>
+                                    <CommandItemWrapper
+                                        active={item.id === highlightedItemId}
+                                        disabled={!!item.disabled}
+                                        icon={item.icon}
+                                        label={item.label}
+                                        shortcut={item.shortcut}
+                                        onClick={() => executeCommand(item)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
             </Command.List>
         </Command.Content>
     );
