@@ -124,11 +124,11 @@ export const Editor = props => {
                     <EditorProvider {...props}>
                         <ConfirmProvider>
                             <DialogsProvider>
-                                <ContextMenuProvider>
-                                    <SurfaceProvider>
+                                <SurfaceProvider>
+                                    <ContextMenuProvider>
                                         <InnerEditor />
-                                    </SurfaceProvider>
-                                </ContextMenuProvider>
+                                    </ContextMenuProvider>
+                                </SurfaceProvider>
                             </DialogsProvider>
                         </ConfirmProvider>
                     </EditorProvider>
