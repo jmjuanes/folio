@@ -10,58 +10,53 @@ export enum AssistantRoles {
 
 export type GenerateElementsParams = {
     prompt: string;
-    messages?: Message[];
 };
 
 export type AssistantParams = {
     baseUrl?: string;
     apiKey: string;
     model: string;
-    maxMessagesInRequest?: number;
 };
 
-export type AssistantWarning = {
-    message: string;
-};
-
-export type AssistantResult = {
-    content: {
-        title?: string | null;
-        message?: string;
-        elements?: any[];
-    };
-    warnings?: AssistantWarning[],
+export enum MessageType {
+    TEXT = "text",
+    ELEMENTS = "elements",
 };
 
 export enum MessageRoles {
-    ASSISTANT = "assistant",
-    USER = "user",
+    ASSISTANT = AssistantRoles.ASSISTANT,
+    USER = AssistantRoles.USER,
 };
 
 export type Message = {
     role: MessageRoles;
-    elements?: any[];
-    text?: string;
+    type: MessageType;
+    content: any;
+};
+
+export type AssistantBlock = {
+    type: MessageType;
+    content: any;
 };
 
 export type Assistant = {
-    generateElements: (params: GenerateElementsParams) => Promise<AssistantResult>;
+    generateElements: (params: GenerateElementsParams) => Promise<any>;
 };
 
 type GenerateContentParams = {
-    systemInstructions?: string[];
     prompt: string;
     responseSchema: any;
+    systemInstructions?: string[];
     messages?: Message[];
 };
 
 // @description create a new assitant instance
 export const createAssistant = (assistantParams: AssistantParams): Assistant => {
-    const baseUrl = assistantParams?.baseUrl || "https://api.groq.com/openai/v1";
-    const maxMessagesInRequest = assistantParams?.maxMessagesInRequest ?? 5;
-    const generateContent = async (options: GenerateContentParams): Promise<AssistantResult> => {
+    // const baseUrl = assistantParams?.baseUrl || "https://api.groq.com/openai/v1";
+    // const maxMessagesInRequest = assistantParams?.maxRequestMessages ?? 50;
+    const generateContent = async (options: GenerateContentParams): Promise<any> => {
         // 1. generate the list of messages to pass to the AI
-        const warnings: AssistantWarning[] = [];
+        // const warnings: AssistantWarning[] = [];
         const messages = [];
         // 1.1 insert system instructions
         (options?.systemInstructions || []).forEach((instructionContent: string) => {
@@ -76,25 +71,26 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
             content: "Only return valid JSON. Do not include any other text or markdown formatting.",
         });
         // 1.3. insert history messages
-        if (options?.messages) {
+        if (options?.messages && Array.isArray(options.messages)) {
             // check the number of assistant messages
-            if (options.messages.length > maxMessagesInRequest) {
-                warnings.push({
-                    message: `Only the last ${maxMessagesInRequest} messages has been used in the request.`,
-                });
-            }
-            // include only the last n messages ijn the request
-            options.messages.slice((-1) * maxMessagesInRequest).forEach((message: Message) => {
-                if (message.role === MessageRoles.USER) {
+            // if (options.messages.length > maxMessagesInRequest) {
+            //     warnings.push({
+            //         message: `Only the last ${maxMessagesInRequest} messages has been used in the request.`,
+            //     });
+            // }
+            // include only the last n messages in the request
+            // options.messages.slice((-1) * maxMessagesInRequest).forEach((message: Message) => {
+            options.messages.forEach((message: Message) => {
+                if (message.type === MessageType.TEXT) {
                     messages.push({
-                        role: AssistantRoles.USER,
-                        content: message.text,
+                        role: message.role,
+                        content: message.content,
                     });
                 }
-                if (message.role === MessageRoles.ASSISTANT) {
+                if (message.type === MessageType.ELEMENTS) {
                     messages.push({
-                        role: AssistantRoles.ASSISTANT,
-                        content: JSON.stringify({ text: message.text, elements: message.elements }),
+                        role: message.role,
+                        content: JSON.stringify({ elements: message.content }),
                     });
                 }
             });
@@ -105,7 +101,7 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
             content: options.prompt,
         });
         // 2. perform the request to the provider
-        const response = await fetch(`${baseUrl}/chat/completions`, {
+        const response = await fetch(`${assistantParams.baseUrl}/chat/completions`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -127,17 +123,16 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
         // check for error performing the request
         if (!response.ok) {
             const error = await response.json();
+            console.error(error);
             return Promise.reject(error);
         }
         // parse the response and return as an assistant result object
         const result: any = await response.json();
-        return {
-            content: JSON.parse(result?.choices?.[0]?.message?.content || "{}"),
-            warnings: warnings,
-        } as AssistantResult;
+        return JSON.parse(result?.choices?.[0]?.message?.content || "{}");
     };
+
     return {
-        generateElements: (params: GenerateElementsParams): Promise<AssistantResult> => {
+        generateElements: (params: GenerateElementsParams): Promise<any> => {
             const systemInstructions = [
                 "You are a professional AI assistant for a digital whiteboard application called Folio.",
                 "Your goal is to help the user generate elements for their whiteboard based on their requests.",
@@ -150,30 +145,26 @@ export const createAssistant = (assistantParams: AssistantParams): Assistant => 
                 // Draw element coordinate rules
                 "For 'draw' elements: the 'points' field must contain objects with 'x' and 'y' properties using absolute canvas coordinates (e.g., [{\"x\":100,\"y\":100},{\"x\":150,\"y\":200},{\"x\":200,\"y\":100}]). Set x1, y1, x2, y2 all to 0 — they will be automatically recalculated from the points. Provide enough points to define the shape smoothly (at least 8-10 points for curves, more for complex shapes). Close the path by repeating the first point at the end if the shape should be closed.",
                 // Response format rules
-                "The main 'message' field of the response should be warm, concise, and helpful. It should sound like a friendly assistant. Do not repeat the user's text verbatim.",
+                // "In the response, include a text block (textBlock) to explain the generated response like a professional assistant. This message must be friendly, concise, and helpful. Do not repeat the user's text verbatim.",
+                // "You can provide multiple text parts and multiple elements parts in the same response if needed.",
             ];
             return generateContent({
                 systemInstructions: systemInstructions,
                 prompt: params.prompt,
-                messages: params?.messages || [],
                 responseSchema: {
                     type: "object",
                     properties: {
-                        title: {
+                        summary: {
                             type: "string",
                             description: "a short summary of the user request (max 6 words)",
                         },
-                        message: {
-                            type: "string",
-                            description: "a friendly, conversational message to accompany the result",
-                        },
-                        elements: {
+                        content: {
                             type: "array",
                             description: "an array of elements that were generated",
                             items: elementSchema,
                         },
                     },
-                    required: ["title", "message", "elements"],
+                    required: ["summary", "content"],
                     additionalProperties: false,
                 },
             });

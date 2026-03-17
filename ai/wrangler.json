@@ -17,6 +17,6 @@
         "FOLIO_AI_BASE_URL": "https://api.groq.com/openai/v1",
         "FOLIO_AI_MODEL": "openai/gpt-oss-120b",
         "FOLIO_AI_REQUESTS_LIMIT": "10",
-        "FOLIO_AI_MAX_MESSAGES": "5"
+        "FOLIO_AI_MAX_REQUEST_MESSAGES": "5"
     }
 }

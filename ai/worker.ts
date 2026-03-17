@@ -8,8 +8,7 @@ export interface Env {
     FOLIO_AI_APIKEY?: string;
     FOLIO_AI_BASE_URL?: string;
     FOLIO_AI_MODEL?: string;
-    FOLIO_AI_MAX_MESSAGES?: string;
-    FOLIO_AI_REQUESTS_LIMIT?: string;
+    FOLIO_AI_MAX_REQUESTS?: string;
     FOLIO_AI_ALLOWED_ORIGIN?: string;
     QUOTAS_KV: KVNamespace;
 }
@@ -22,8 +21,8 @@ const getTodayKey = (requestIp: string): string => {
 
 // get the configured requests limit
 const getRequestsLimit = (env: Env): number => {
-    if (env.FOLIO_AI_REQUESTS_LIMIT) {
-        const parsed = parseInt(env.FOLIO_AI_REQUESTS_LIMIT, 10);
+    if (env.FOLIO_AI_MAX_REQUESTS) {
+        const parsed = parseInt(env.FOLIO_AI_MAX_REQUESTS, 10);
         return isNaN(parsed) ? DEFAULT_REQUESTS_LIMIT : parsed;
     }
     return DEFAULT_REQUESTS_LIMIT;
@@ -140,22 +139,13 @@ export default {
                     baseUrl: env.FOLIO_AI_BASE_URL,
                     apiKey: env.FOLIO_AI_APIKEY,
                     model: env.FOLIO_AI_MODEL || DEFAULT_MODEL,
-                    maxMessagesInRequest: env.FOLIO_AI_MAX_MESSAGES ? parseInt(env.FOLIO_AI_MAX_MESSAGES, 10) : undefined,
                 });
 
                 const result = await assistant.generateElements({
                     prompt: body.prompt,
-                    messages: body.messages || [],
                 });
 
-                return sendResponse(env, request, 200, {
-                    data: result.content || {},
-                    warnings: result.warnings,
-                    // quotas: {
-                    //     requestsLimit: requestsLimit,
-                    //     requestsUsed: requestsUsed,
-                    // },
-                });
+                return sendDataResponse(env, request, result);
             } catch (error: any) {
                 console.error(error?.error?.message || error);
                 return sendErrorResponse(env, request, 500, error?.error?.message || API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
