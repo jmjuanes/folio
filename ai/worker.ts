@@ -2,14 +2,14 @@ import { ENDPOINTS, API_ERROR_MESSAGES } from "./constants.ts";
 import { createAssistant } from "./ai.ts";
 
 const DEFAULT_MODEL = "openai/gpt-oss-120b";
-const DEFAULT_REQUESTS_LIMIT = 10;
+const DEFAULT_MAX_REQUESTS_PER_DAY = 10;
 
 export interface Env {
     FOLIO_AI_APIKEY?: string;
     FOLIO_AI_BASE_URL?: string;
     FOLIO_AI_MODEL?: string;
-    FOLIO_AI_MAX_REQUESTS?: string;
-    FOLIO_AI_ALLOWED_ORIGIN?: string;
+    FOLIO_AI_MAX_REQUESTS_PER_DAY?: string;
+    FOLIO_AI_ALLOWED_ORIGINS?: string;
     QUOTAS_KV: KVNamespace;
 }
 
@@ -21,11 +21,11 @@ const getTodayKey = (requestIp: string): string => {
 
 // get the configured requests limit
 const getRequestsLimit = (env: Env): number => {
-    if (env.FOLIO_AI_MAX_REQUESTS) {
-        const parsed = parseInt(env.FOLIO_AI_MAX_REQUESTS, 10);
-        return isNaN(parsed) ? DEFAULT_REQUESTS_LIMIT : parsed;
+    if (env.FOLIO_AI_MAX_REQUESTS_PER_DAY) {
+        const parsed = parseInt(env.FOLIO_AI_MAX_REQUESTS_PER_DAY, 10);
+        return isNaN(parsed) ? DEFAULT_MAX_REQUESTS_PER_DAY : parsed;
     }
-    return DEFAULT_REQUESTS_LIMIT;
+    return DEFAULT_MAX_REQUESTS_PER_DAY;
 };
 
 // get the number of requests used today from KV
@@ -48,18 +48,23 @@ const incrementRequestsUsed = async (env: Env, requestIp: string): Promise<void>
 // helper to send a JSON response
 const sendResponse = (env: Env, request: Request, statusCode: number, body: any, extraHeaders: Record<string, string> = {}): Response => {
     const origin = request.headers.get("Origin");
-    const allowedOrigin = env.FOLIO_AI_ALLOWED_ORIGIN || "*";
-    const responseOrigin = (allowedOrigin === "*" || allowedOrigin === origin) ? (origin || allowedOrigin) : allowedOrigin;
+    const allowedOrigins = env.FOLIO_AI_ALLOWED_ORIGINS || "*";
+    const responseOrigin = (allowedOrigins === "*" || allowedOrigins === origin) ? (origin || allowedOrigins) : allowedOrigins;
+    const responseHeaders: Record<string, string> = {
+        "Access-Control-Allow-Origin": responseOrigin,
+        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+    };
 
-    return new Response(JSON.stringify(body), {
+    // include content-type header if body is sent in the response
+    if (body) {
+        responseHeaders["Content-Type"] = "application/json";
+    }
+
+    // merge response headers with extra headers and send the response
+    return new Response(body ? JSON.stringify(body) : null, {
         status: statusCode,
-        headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": responseOrigin,
-            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type",
-            ...extraHeaders,
-        },
+        headers: Object.assign({}, responseHeaders, extraHeaders || {}),
     });
 };
 
@@ -80,18 +85,7 @@ export default {
 
         // handle CORS preflight
         if (request.method === "OPTIONS") {
-            const origin = request.headers.get("Origin");
-            const allowedOrigin = env.FOLIO_AI_ALLOWED_ORIGIN || "*";
-            const responseOrigin = (allowedOrigin === "*" || allowedOrigin === origin) ? (origin || allowedOrigin) : allowedOrigin;
-
-            return new Response(null, {
-                status: 204,
-                headers: {
-                    "Access-Control-Allow-Origin": responseOrigin,
-                    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-                    "Access-Control-Allow-Headers": "Content-Type",
-                },
-            });
+            return sendResponse(env, request, 204, null);
         }
 
         // --- GET /_status ---
