@@ -1,27 +1,28 @@
-import React from "react";
 import { TOOLS } from "../constants.js";
-import type { Tool } from "../types.ts";
+import { TOOL_TYPE } from "../contexts/tools.tsx";
+import type { Tool } from "../contexts/tools.tsx";
 
-export const HandTool = {
+let lastTranslateX = 0;
+let lastTranslateY = 0;
+
+export const HandTool: Tool = {
     id: TOOLS.DRAG,
-    state: {
-        lastTranslateX: 0,
-        lastTranslateY: 0,
+    type: TOOL_TYPE.CORE,
+    name: "Drag",
+    icon: "hand-grab",
+    primary: true,
+    enabledOnReadOnly: true,
+    keyboardShortcut: "h",
+    onPointerDown: (editor, self, event) => {
+        lastTranslateX = editor.page.translateX;
+        lastTranslateY = editor.page.translateY;
     },
-    onEnter: (editor: any, self: Tool) => {
-        // self.state.lastTranslateX = 0;
-        // self.state.lastTranslateY = 0;
+    onPointerMove: (editor, self, event) => {
+        editor.page.translateX = Math.floor(lastTranslateX + event.dx * editor.page.zoom);
+        editor.page.translateY = Math.floor(lastTranslateY + event.dy * editor.page.zoom);
     },
-    onPointerDown: (editor: any, self: Tool, event: any) => {
-        self.state.lastTranslateX = editor.page.translateX;
-        self.state.lastTranslateY = editor.page.translateY;
+    onPointerUp: (editor, self, event) => {
+        lastTranslateX = editor.page.translateX;
+        lastTranslateY = editor.page.translateY;
     },
-    onPointerMove: (editor: any, self: Tool, event: any) => {
-        editor.page.translateX = Math.floor(self.state.lastTranslateX + event.dx * editor.page.zoom);
-        editor.page.translateY = Math.floor(self.state.lastTranslateY + event.dy * editor.page.zoom);
-    },
-    onPointerUp: (editor: any, self: Tool, event: any) => {
-        self.state.lastTranslateX = editor.page.translateX;
-        self.state.lastTranslateY = editor.page.translateY;
-    },
-} as Tool;
+};

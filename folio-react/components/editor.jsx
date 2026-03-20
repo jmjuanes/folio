@@ -1,13 +1,10 @@
 import React from "react";
-// import classNames from "classnames";
-import { TOOLS } from "../constants.js";
+import { useUpdate } from "react-use";
+import { ACTIONS, IS_DARWIN, KEYS, PREFERENCES, STATUS, TOOLS } from "../constants.js";
 import { useHandlers } from "../hooks/use-handlers.ts";
-import { useBounds } from "../hooks/use-bounds.ts";
 import { useCursor } from "../hooks/use-cursor.js";
-import { useEvents } from "../hooks/use-events.js";
 import { useDimensions } from "../hooks/use-dimensions.ts";
 import { Canvas } from "./canvas.jsx";
-import { Pointer } from "./pointer.jsx";
 import { EditorProvider, useEditor } from "../contexts/editor.jsx";
 import { ContextMenuProvider, useContextMenu } from "../contexts/context-menu.jsx";
 import { SurfaceProvider } from "../contexts/surface.tsx";
@@ -18,32 +15,41 @@ import {
 import { ConfirmProvider } from "../contexts/confirm.jsx";
 import { DialogsProvider } from "../contexts/dialogs.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
-import { PreferencesProvider } from "../contexts/preferences.tsx";
+import { PreferencesProvider, usePreferences } from "../contexts/preferences.tsx";
+import { ToolsProvider, useTools } from "../contexts/tools.tsx";
+import { defaultTools } from "../tools/index.tsx";
+import { useActions } from "../hooks/use-actions.js";
+import { getActionByKeysCombination } from "../lib/actions.js";
+import { isInputTarget } from "../utils/events.js";
 
 // @private inner editor component
 const InnerEditor = () => {
+    const update = useUpdate();
     const editor = useEditor();
-    const events = useEvents();
+    const tools = useTools();
     const cursor = useCursor();
-    const bounds = useBounds();
     const handlers = useHandlers();
     const dimensions = useDimensions();
-    const {showContextMenu} = useContextMenu();
+    const { showContextMenu, hideContextMenu } = useContextMenu();
+    const dispatchAction = useActions();
+    const preferences = usePreferences();
     const {
         Layout,
         BehindTheCanvas,
         OverTheCanvas,
     } = useEditorComponents();
 
-    // used to track the current page id
-    const currentPageId = React.useRef(editor.page.id);
+    // Expose toolsManager on editor so tools can access it (e.g., for tool switching)
+    editor._toolsManager = tools;
+
+    const activeTool = tools.getActiveTool();
 
     // handle context menu in canvas
     const handleContextMenu = React.useCallback(event => {
-        if (editor.state.tool === TOOLS.SELECT) {
+        if (activeTool?.id === TOOLS.SELECT) {
             showContextMenu(event.y, event.x);
         }
-    }, [editor, editor.state.tool, showContextMenu]);
+    }, [activeTool, showContextMenu]);
 
     // handle editor resize
     const handleResize = React.useCallback(event => {
@@ -52,22 +58,94 @@ const InnerEditor = () => {
             editor.update();
         }
     }, [editor]);
-    
-    // reset the current tool when we change the current page or the readonly state
-    React.useEffect(() => {
-        // case 1: page is now in readonly mode and we have an edit tool selected
-        if (editor.page.readonly && !(editor.state.tool === TOOLS.DRAG || editor.state.tool === TOOLS.POINTER)) {
-            editor.state.tool = TOOLS.DRAG;
-            editor.update();
+
+    // --- Event routing to active tool ---
+
+    const onPointCanvas = React.useCallback(event => {
+        activeTool?.onPointCanvas?.(editor, activeTool, event);
+        hideContextMenu();
+        update();
+    }, [editor, activeTool, update, hideContextMenu]);
+
+    const onPointElement = React.useCallback(event => {
+        activeTool?.onPointElement?.(editor, activeTool, event);
+        update();
+    }, [editor, activeTool, update]);
+
+    const onPointerDown = React.useCallback(event => {
+        editor.state.status = STATUS.POINTING;
+        activeTool?.onPointerDown?.(editor, activeTool, event);
+        hideContextMenu();
+        update();
+    }, [editor, activeTool, update, hideContextMenu]);
+
+    const onPointerMove = React.useCallback(event => {
+        activeTool?.onPointerMove?.(editor, activeTool, event);
+        update();
+    }, [editor, activeTool, update]);
+
+    const onPointerUp = React.useCallback(event => {
+        activeTool?.onPointerUp?.(editor, activeTool, event);
+        update();
+    }, [editor, activeTool, update]);
+
+    const onDoubleClickElement = React.useCallback(event => {
+        activeTool?.onDoubleClickElement?.(editor, activeTool, event);
+        update();
+    }, [editor, activeTool, update]);
+
+    const onElementChange = React.useCallback(event => {
+        activeTool?.onElementChange?.(editor, activeTool, event);
+        update();
+    }, [editor, activeTool, update]);
+
+    const onElementBlur = React.useCallback(event => {
+        activeTool?.onElementBlur?.(editor, activeTool, event);
+        update();
+    }, [editor, activeTool, update]);
+
+    const onKeyDown = React.useCallback(event => {
+        if (editor.page.readonly) {
+            return null;
         }
-        // case 2: we have changed to a new page
-        if (!editor.page.readonly && currentPageId.current !== editor.page.id) {
-            editor.state.tool = TOOLS.SELECT;
-            editor.update();
+        const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
+
+        // 1. Let the active tool handle the key event first
+        const handled = activeTool?.onKeyDown?.(editor, activeTool, event);
+        if (handled) {
+            update();
+            return;
         }
-        // make sure that we update the current page id reference
-        currentPageId.current = editor.page.id;
-    }, [editor.page.id, editor.page.readonly]);
+
+        // 2. Check if we are in an input target (and active tool didn't handle it)
+        if (isInputTarget(event)) {
+            return;
+        }
+
+        // 3. Check for action shortcuts
+        if (!!preferences[PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED]) {
+            const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
+            if (action) {
+                event.preventDefault();
+                return dispatchAction(action, { event: event });
+            }
+            // 4. Check for tool shortcuts
+            if (!isCtrlKey && !event.shiftKey) {
+                const tool = tools.getToolByShortcut(event.key);
+                if (tool) {
+                    event.preventDefault();
+                    tools.setActiveTool(tool.id);
+                }
+            }
+        }
+    }, [editor, activeTool, update, tools, preferences, dispatchAction]);
+
+    const onPaste = React.useCallback(event => {
+        if (!isInputTarget(event) && !editor.page.readonly) {
+            editor.page.activeGroup = null;
+            dispatchAction(ACTIONS.PASTE, { event: event });
+        }
+    }, [editor, dispatchAction]);
 
     return (
         <Layout>
@@ -84,26 +162,29 @@ const InnerEditor = () => {
                 translateY={editor.page.translateY}
                 zoom={editor.page.zoom}
                 snaps={editor.state.snapEdges}
-                bounds={bounds}
-                showBounds={!!bounds}
                 handlers={handlers}
-                brush={editor.state.selection}
                 dimensions={dimensions}
-                showBrush={editor.state.tool === TOOLS.SELECT}
-                showPointer={editor.state.tool === TOOLS.ERASER}
                 showGrid={editor.appState.grid}
                 showSnaps={editor.appState.snapToElements}
                 showObjectDimensions={editor.appState.objectDimensions}
+                showPointer={activeTool?.id === TOOLS.ERASER}
                 onContextMenu={handleContextMenu}
                 onResize={handleResize}
-                {...events}
+                onPointCanvas={onPointCanvas}
+                onPointElement={onPointElement}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onDoubleClickElement={onDoubleClickElement}
+                onElementChange={onElementChange}
+                onElementBlur={onElementBlur}
+                onKeyDown={onKeyDown}
+                onPaste={onPaste}
             />
             {!!OverTheCanvas && (
                 <OverTheCanvas />
             )}
-            {editor.state.tool === TOOLS.POINTER && (
-                <Pointer />
-            )}
+            {activeTool?.renderCanvas?.(editor, activeTool)}
         </Layout>
     );
 };
@@ -114,6 +195,7 @@ const InnerEditor = () => {
 // @param {object|promise|function} props.data Initial data of the editor
 // @param {object|promise|function} props.library Initial library data
 // @param {object} props.preferences - initial preferences data
+// @param {Array} props.tools - array of tool definitions (defaults to defaultTools)
 // @param {function} props.onChange executed each time data of the board is updated
 // @param {function} props.onLibraryChange executed each time the library is updated
 export const Editor = props => {
@@ -122,15 +204,17 @@ export const Editor = props => {
             <EditorComponentsProvider components={props.components}>
                 <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
                     <EditorProvider {...props}>
-                        <ConfirmProvider>
-                            <DialogsProvider>
-                                <SurfaceProvider>
-                                    <ContextMenuProvider>
-                                        <InnerEditor />
-                                    </ContextMenuProvider>
-                                </SurfaceProvider>
-                            </DialogsProvider>
-                        </ConfirmProvider>
+                        <ToolsProvider tools={props.tools || defaultTools}>
+                            <ConfirmProvider>
+                                <DialogsProvider>
+                                    <SurfaceProvider>
+                                        <ContextMenuProvider>
+                                            <InnerEditor />
+                                        </ContextMenuProvider>
+                                    </SurfaceProvider>
+                                </DialogsProvider>
+                            </ConfirmProvider>
+                        </ToolsProvider>
                     </EditorProvider>
                 </LibraryProvider>
             </EditorComponentsProvider>

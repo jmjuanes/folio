@@ -1,6 +1,6 @@
 import React from "react";
 import {ACTIONS} from "../../constants.js";
-import {useTools} from "../../hooks/use-tools.tsx";
+import {useTools} from "../../contexts/tools.tsx";
 import {Dialog} from "../ui/dialog.tsx";
 import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
 
@@ -40,7 +40,7 @@ const KeyboardShortcutsItem = props => {
 export const KeyboardShortcutsDialogContent = () => {
     const tools = useTools();
     const toolsShortcuts = React.useMemo(() => {
-        return Object.values(tools)
+        return tools.getTools()
             .filter(tool => !!tool.keyboardShortcut)
             .map(tool => {
                 return {
