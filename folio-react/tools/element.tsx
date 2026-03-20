@@ -1,4 +1,6 @@
 import React from "react";
+import { SquareIcon, CircleIcon, TriangleIcon } from "@josemi-icons/react";
+import { fileOpen } from "browser-fs-access";
 import {
     ELEMENTS,
     TOOLS,
@@ -13,36 +15,24 @@ import {
     GRID_SIZE,
     CHANGES,
 } from "../constants.js";
+import { STROKE_COLOR_PICK, TEXT_COLOR_PICK } from "../utils/colors.js";
 import {
     getElementConfig,
     createElement,
 } from "../lib/elements.js";
-import { TOOL_TYPE } from "../contexts/tools.tsx";
 import { Form } from "../components/form/index.jsx";
+import {
+    ArrowIcon,
+    ArrowConnectorIcon,
+    WidthLargeIcon,
+    WidthSmallIcon,
+} from "../components/icons.jsx";
+import { getStickerImage } from "../lib/stickers.js";
+import { blobToDataUrl } from "../utils/blob.js";
 import type { Tool } from "../contexts/tools.tsx";
 
-// ---- Shared module-global state for all element creator tools ----
+// shared module-global state for all element creator tools
 let activeElement: any = null;
-
-// @private get grid-snapped position
-const getGridPosition = (editor: any, pos: number): number => {
-    if (editor?.appState?.grid) {
-        return Math.round(pos / GRID_SIZE) * GRID_SIZE;
-    }
-    return pos;
-};
-
-// @private remove a text element if it was just created and has no text
-const removeTextElement = (editor: any, element: any) => {
-    const history = editor.getHistory();
-    if (history[0]?.type === CHANGES.CREATE && history[0]?.elements?.[0]?.id === element.id) {
-        history.shift();
-    }
-    editor.removeElements([element]);
-    editor.dispatchChange();
-};
-
-// --- Quick picks rendering ---
 
 type ToolPickValue = {
     value: any;
@@ -66,6 +56,34 @@ type PickPanelProps = {
     onChange: (field: string, value: any) => void;
 };
 
+export type ElementToolOptions = {
+    icon?: string | React.ReactNode;
+    name?: string;
+    primary?: boolean;
+    shortcut?: string;
+    quickPicks?: ToolPicks;
+    onQuickPickChange?: (defaults: Record<string, any>, field: string, value: any) => void;
+    onSelect?: (editor: any) => void;
+};
+
+// @private get grid-snapped position
+const getGridPosition = (editor: any, pos: number): number => {
+    if (editor?.appState?.grid) {
+        return Math.round(pos / GRID_SIZE) * GRID_SIZE;
+    }
+    return pos;
+};
+
+// @private remove a text element if it was just created and has no text
+const removeTextElement = (editor: any, element: any) => {
+    const history = editor.getHistory();
+    if (history[0]?.type === CHANGES.CREATE && history[0]?.elements?.[0]?.id === element.id) {
+        history.shift();
+    }
+    editor.removeElements([element]);
+    editor.dispatchChange();
+};
+
 const PickPanel = (props: PickPanelProps): React.JSX.Element => {
     const pickPanelClassName = [
         "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3",
@@ -84,30 +102,15 @@ const PickPanel = (props: PickPanelProps): React.JSX.Element => {
     );
 };
 
-// --- Element tool options ---
-
-export type ElementToolOptions = {
-    icon?: string | React.ReactNode;
-    name?: string;
-    primary?: boolean;
-    keyboardShortcut?: string;
-    quickPicks?: ToolPicks;
-    onQuickPickChange?: (defaults: Record<string, any>, field: string, value: any) => void;
-    onSelect?: (editor: any) => void;
-};
-
-// --- Factory function ---
-
 export const createElementTool = (elementType: string, options: ElementToolOptions): Tool => {
     return {
         id: elementType,
-        type: TOOL_TYPE.PRIMITIVE,
         icon: options.icon,
         name: options.name,
         primary: options.primary,
-        keyboardShortcut: options.keyboardShortcut,
+        shortcut: options.shortcut,
 
-        onActivate: (editor, self) => {
+        onEnter: (editor) => {
             // Clear any active editing state
             if (activeElement?.editing) {
                 if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
@@ -118,7 +121,7 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
             }
         },
 
-        onPointerDown: (editor, self, event) => {
+        onPointerDown: (editor, event) => {
             // If there's a custom onSelect (e.g., Image tool opens file dialog), call it instead
             if (typeof options.onSelect === "function") {
                 options.onSelect(editor);
@@ -148,7 +151,7 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
             editor.addElements([element]);
         },
 
-        onPointerMove: (editor, self, event) => {
+        onPointerMove: (editor, event) => {
             if (!activeElement) return;
             const element = activeElement;
             element.x2 = getGridPosition(editor, event.currentX);
@@ -156,7 +159,7 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
             getElementConfig(element)?.onCreateMove?.(element, event, (pos: number) => getGridPosition(editor, pos));
         },
 
-        onPointerUp: (editor, self, event) => {
+        onPointerUp: (editor, event) => {
             if (!activeElement) return;
             const element = activeElement;
             element.creating = false;
@@ -193,7 +196,7 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
         },
 
         // Render the quick picks toolbar panel
-        renderToolbar: options.quickPicks ? (editor, self, update) => {
+        renderToolbar: options.quickPicks ? (editor, update) => {
             return (
                 <PickPanel
                     values={editor.defaults}
@@ -211,25 +214,11 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
     };
 };
 
-// --- Pre-built element tools ---
-
-import { SquareIcon, CircleIcon, TriangleIcon } from "@josemi-icons/react";
-import { STROKE_COLOR_PICK, TEXT_COLOR_PICK } from "../utils/colors.js";
-import {
-    ArrowIcon,
-    ArrowConnectorIcon,
-    WidthLargeIcon,
-    WidthSmallIcon,
-} from "../components/icons.jsx";
-import { getStickerImage } from "../lib/stickers.js";
-import { blobToDataUrl } from "../utils/blob.js";
-import { fileOpen } from "browser-fs-access";
-
 export const ShapeTool = createElementTool(ELEMENTS.SHAPE, {
     icon: "square",
     name: "Shape",
     primary: true,
-    keyboardShortcut: "s",
+    shortcut: "s",
     quickPicks: {
         [FIELDS.SHAPE]: {
             type: FORM_OPTIONS.SELECT,
@@ -252,7 +241,7 @@ export const ArrowTool = createElementTool(ELEMENTS.ARROW, {
     icon: "arrow-up-right",
     name: "Arrow",
     primary: true,
-    keyboardShortcut: "a",
+    shortcut: "a",
     quickPicks: {
         [FIELDS.ARROW_SHAPE]: {
             type: FORM_OPTIONS.SELECT,
@@ -287,7 +276,7 @@ export const TextTool = createElementTool(ELEMENTS.TEXT, {
     icon: "text",
     name: "Text",
     primary: true,
-    keyboardShortcut: "t",
+    shortcut: "t",
     quickPicks: {
         [FIELDS.TEXT_COLOR]: {
             type: FORM_OPTIONS.COLOR_SELECT,
@@ -301,7 +290,7 @@ export const DrawTool = createElementTool(ELEMENTS.DRAW, {
     icon: "pen",
     name: "Draw",
     primary: true,
-    keyboardShortcut: "d",
+    shortcut: "d",
     quickPicks: {
         [FIELDS.STROKE_WIDTH]: {
             type: FORM_OPTIONS.SELECT,
@@ -322,7 +311,7 @@ export const DrawTool = createElementTool(ELEMENTS.DRAW, {
 export const ImageTool = createElementTool(ELEMENTS.IMAGE, {
     icon: "image",
     name: "Image",
-    keyboardShortcut: "i",
+    shortcut: "i",
     onSelect: (editor: any) => {
         editor.getElements().forEach((element: any) => {
             element.selected = false;
@@ -351,7 +340,7 @@ export const StickerTool = createElementTool(ELEMENTS.STICKER, {
     icon: "sticker",
     name: "Sticker",
     primary: true,
-    keyboardShortcut: "k",
+    shortcut: "k",
     quickPicks: {
         [FIELDS.STICKER]: {
             type: FORM_OPTIONS.IMAGE_SELECT,
@@ -367,5 +356,5 @@ export const StickerTool = createElementTool(ELEMENTS.STICKER, {
 export const NoteTool = createElementTool(ELEMENTS.NOTE, {
     name: "Note",
     icon: "note",
-    keyboardShortcut: "n",
+    shortcut: "n",
 });

@@ -1,40 +1,32 @@
 import React from "react";
 import { TOOLS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
-export enum TOOL_TYPE {
-    CORE = "core_tool",
-    PRIMITIVE = "primitive_tool",
-    COMPOSITE = "composite_tool",
-    OVERLAY = "overlay_tool",
-};
 
 export type Tool = {
     id: string;
     name?: string;
     icon?: React.JSX.Element | React.ReactNode | string;
     primary?: boolean;
-    type: TOOL_TYPE;
     enabledOnReadOnly?: boolean;
-    keyboardShortcut?: string;
+    shortcut?: string;
 
     // lifecycle
-    onActivate?: (editor: any, tool: Tool) => void;
-    onDeactivate?: (editor: any, tool: Tool) => void;
+    onEnter?: (editor: any) => void;
+    onExit?: (editor: any) => void;
 
     // event handlers
-    onPointCanvas?: (editor: any, tool: Tool, event: any) => void;
-    onPointElement?: (editor: any, tool: Tool, event: any) => void;
-    onPointerDown?: (editor: any, tool: Tool, event: any) => void;
-    onPointerMove?: (editor: any, tool: Tool, event: any) => void;
-    onPointerUp?: (editor: any, tool: Tool, event: any) => void;
-    onDoubleClickElement?: (editor: any, tool: Tool, event: any) => void;
-    onKeyDown?: (editor: any, tool: Tool, event: any) => void;
-    onElementChange?: (editor: any, tool: Tool, event: any) => void;
-    onElementBlur?: (editor: any, tool: Tool, event: any) => void;
+    onPointCanvas?: (editor: any, event: any) => void;
+    onPointElement?: (editor: any, event: any) => void;
+    onPointerDown?: (editor: any, event: any) => void;
+    onPointerMove?: (editor: any, event: any) => void;
+    onPointerUp?: (editor: any, event: any) => void;
+    onDoubleClickElement?: (editor: any, event: any) => void;
+    onKeyDown?: (editor: any, event: any) => void;
+    onKeyUp?: (editor: any, event: any) => void;
 
     // UI rendering
-    renderToolbar?: (editor: any, tool: Tool, update: () => void) => React.ReactNode;
-    renderCanvas?: (editor: any, tool: Tool) => React.ReactNode;
+    renderToolbar?: (editor: any, update: () => void) => React.ReactNode;
+    renderCanvas?: (editor: any) => React.ReactNode;
 };
 
 export type ToolsManager = {
@@ -85,7 +77,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
     const getToolByShortcut = React.useCallback((shortcut: string = ""): Tool | null => {
         const uppercaseShortcut = shortcut.toUpperCase();
         return tools.find((tool: Tool) => {
-            return !!tool?.keyboardShortcut && tool.keyboardShortcut.toUpperCase() === uppercaseShortcut;
+            return !!tool?.shortcut && tool.shortcut.toUpperCase() === uppercaseShortcut;
         }) || null;
     }, [tools]);
 
@@ -98,15 +90,15 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
     const setActiveTool = React.useCallback((toolId: string) => {
         const newTool = getToolById(toolId);
         if (newTool) {
-            // call onDeactivate on the current tool
+            // call onExit on the current tool
             const currentTool = getActiveTool();
             if (currentTool && currentTool.id !== toolId) {
-                currentTool.onDeactivate?.(editor, currentTool);
+                currentTool.onExit?.(editor);
             }
             // update the active tool
             activeTool.current = toolId;
-            // call onActivate on the new tool
-            newTool.onActivate?.(editor, newTool);
+            // call onEnter on the new tool
+            newTool.onEnter?.(editor);
             // trigger re-render
             setUpdate(prevUpdate => (-1) * prevUpdate);
         }

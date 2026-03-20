@@ -1,20 +1,18 @@
 import { TOOLS, ELEMENTS } from "../constants.js";
-import { TOOL_TYPE } from "../contexts/tools.tsx";
 import { getElementNormalizedPosition } from "../lib/elements.js";
 import type { Tool } from "../contexts/tools.tsx";
 
 export const EraserTool: Tool = {
     id: TOOLS.ERASER,
-    type: TOOL_TYPE.CORE,
     name: "Erase",
     icon: "erase",
-    keyboardShortcut: "e",
-    onActivate: (editor, self) => {
+    shortcut: "e",
+    onEnter: (editor: any) => {
         editor.getElements().forEach((element: any) => {
             element.erased = false;
         });
     },
-    onPointerMove: (editor, self, event) => {
+    onPointerMove: (editor: any, event: any) => {
         const x = event.originalX + event.dx;
         const y = event.originalY + event.dy;
         editor.getElements().forEach((element: any) => {
@@ -26,7 +24,7 @@ export const EraserTool: Tool = {
             }
         });
     },
-    onPointerUp: (editor, self, event) => {
+    onPointerUp: (editor: any, event: any) => {
         const erasedElements = editor.getElements().filter((element: any) => {
             return element.erased;
         });

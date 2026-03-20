@@ -95,12 +95,18 @@ const InnerEditor = () => {
     }, [editor, activeTool, update]);
 
     const onElementChange = React.useCallback(event => {
-        activeTool?.onElementChange?.(editor, activeTool, event);
+        const element = editor.getElement(event.element);
+        if (!!element && element?.editing) {
+            editor.updateElements([element], event.keys, event.values, true);
+            editor.dispatchChange();
+        }
         update();
     }, [editor, activeTool, update]);
 
     const onElementBlur = React.useCallback(event => {
-        activeTool?.onElementBlur?.(editor, activeTool, event);
+        editor.getElements().forEach(element => {
+            element.editing = false;
+        });
         update();
     }, [editor, activeTool, update]);
 

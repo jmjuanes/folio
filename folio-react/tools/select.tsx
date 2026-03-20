@@ -12,7 +12,6 @@ import {
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
     FIELDS,
-    PREFERENCES,
     NONE,
     BOUNDS_STROKE_COLOR,
     BOUNDS_STROKE_WIDTH,
@@ -54,8 +53,8 @@ import {
 } from "../lib/handlers.ts";
 import { SvgContainer } from "../components/svg.tsx";
 import { Handlers } from "../components/handlers.tsx";
-import { TOOL_TYPE } from "../contexts/tools.tsx";
 import type { Tool } from "../contexts/tools.tsx";
+import type { Point } from "../utils/math.ts";
 
 // ---- Module-global state ----
 let snapshot: any[] = [];
@@ -215,13 +214,12 @@ const SelectBoundsCanvas = (props: { editor: any }) => {
 
 export const SelectTool: Tool = {
     id: TOOLS.SELECT,
-    type: TOOL_TYPE.CORE,
     name: "Select",
     icon: "pointer",
     primary: true,
-    keyboardShortcut: "v",
+    shortcut: "v",
 
-    onActivate: (editor, self) => {
+    onEnter: (editor) => {
         // Reset module state
         snapshot = [];
         snapshotBounds = null;
@@ -232,7 +230,7 @@ export const SelectTool: Tool = {
         isPrevSelected = false;
     },
 
-    onPointCanvas: (editor, self, event) => {
+    onPointCanvas: (editor, event) => {
         if (event.handler || event.element) {
             return;
         }
@@ -253,7 +251,7 @@ export const SelectTool: Tool = {
         editor.clearSelection();
     },
 
-    onPointElement: (editor, self, event) => {
+    onPointElement: (editor, event) => {
         const element = editor.getElement(event.element);
         isPrevSelected = element.selected;
         // Check to reset active group
@@ -277,7 +275,7 @@ export const SelectTool: Tool = {
         }
     },
 
-    onPointerDown: (editor, self, event) => {
+    onPointerDown: (editor, event) => {
         isDragged = false;
         isResized = false;
         snapshot = [];
@@ -326,7 +324,7 @@ export const SelectTool: Tool = {
         }
     },
 
-    onPointerMove: (editor, self, event) => {
+    onPointerMove: (editor, event) => {
         // Translate
         if (snapshot.length > 0 && !event.handler) {
             editor.state.snapEdges = [];
@@ -403,9 +401,9 @@ export const SelectTool: Tool = {
                         const [width, height] = getElementSize(snapshot[0]);
                         const diagLen = Math.hypot(width, height);
                         if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
-                            const axisDir = [(-1) * width / diagLen, (-1) * height / diagLen];
+                            const axisDir: Point = [(-1) * width / diagLen, (-1) * height / diagLen];
                             const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], snapshot[0].rotation, axisDir, event.shiftKey);
-                            const newCorner = [
+                            const newCorner: Point = [
                                 getPosition(editor, snapshot[0].x1 + gDx, null),
                                 getPosition(editor, snapshot[0].y1 + gDy, null),
                             ];
@@ -414,9 +412,9 @@ export const SelectTool: Tool = {
                             element.y1 = clampedCorner[1];
                         }
                         else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                            const axisDir = [width / diagLen, height / diagLen];
+                            const axisDir: Point = [width / diagLen, height / diagLen];
                             const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], snapshot[0].rotation, axisDir, event.shiftKey);
-                            const newCorner = [
+                            const newCorner: Point = [
                                 getPosition(editor, snapshot[0].x2 + gDx, null),
                                 getPosition(editor, snapshot[0].y2 + gDy, null),
                             ];
@@ -425,9 +423,9 @@ export const SelectTool: Tool = {
                             element.y2 = clampedCorner[1];
                         }
                         else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                            const axisDir = [(-1) * width / diagLen, height / diagLen];
+                            const axisDir: Point = [(-1) * width / diagLen, height / diagLen];
                             const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], snapshot[0].rotation, axisDir, event.shiftKey);
-                            const newCorner = [
+                            const newCorner: Point = [
                                 getPosition(editor, rect[1][0] + gDx, null),
                                 getPosition(editor, rect[1][1] + gDy, null),
                             ];
@@ -439,9 +437,9 @@ export const SelectTool: Tool = {
                             element.y2 = newRect[1][1];
                         }
                         else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                            const axisDir = [width / diagLen, (-1) * height / diagLen];
+                            const axisDir: Point = [width / diagLen, (-1) * height / diagLen];
                             const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], snapshot[0].rotation, axisDir, event.shiftKey);
-                            const newCorner = [
+                            const newCorner: Point = [
                                 getPosition(editor, rect[3][0] + gDx, null),
                                 getPosition(editor, rect[3][1] + gDy, null),
                             ];
@@ -456,7 +454,7 @@ export const SelectTool: Tool = {
                     else {
                         if (event.handler === HANDLERS.EDGE_TOP) {
                             const edgeTopPoint = getCenter(rect[0], rect[1]);
-                            const currentPoint = [
+                            const currentPoint: Point = [
                                 getPosition(editor, edgeTopPoint[0] + event.dx, null),
                                 getPosition(editor, edgeTopPoint[1] + event.dy, null),
                             ];
@@ -467,7 +465,7 @@ export const SelectTool: Tool = {
                         }
                         else if (event.handler === HANDLERS.EDGE_BOTTOM) {
                             const edgeBottomPoint = getCenter(rect[2], rect[3]);
-                            const currentPoint = [
+                            const currentPoint: Point = [
                                 getPosition(editor, edgeBottomPoint[0] + event.dx, null),
                                 getPosition(editor, edgeBottomPoint[1] + event.dy, null),
                             ];
@@ -478,7 +476,7 @@ export const SelectTool: Tool = {
                         }
                         else if (event.handler === HANDLERS.EDGE_LEFT) {
                             const edgeLeftPoint = getCenter(rect[0], rect[3]);
-                            const currentPoint = [
+                            const currentPoint: Point = [
                                 getPosition(editor, edgeLeftPoint[0] + event.dx, null),
                                 getPosition(editor, edgeLeftPoint[1] + event.dy, null),
                             ];
@@ -489,7 +487,7 @@ export const SelectTool: Tool = {
                         }
                         else if (event.handler === HANDLERS.EDGE_RIGHT) {
                             const edgeRightPoint = getCenter(rect[1], rect[2]);
-                            const currentPoint = [
+                            const currentPoint: Point = [
                                 getPosition(editor, edgeRightPoint[0] + event.dx, null),
                                 getPosition(editor, edgeRightPoint[1] + event.dy, null),
                             ];
@@ -521,7 +519,7 @@ export const SelectTool: Tool = {
         }
     },
 
-    onPointerUp: (editor, self, event) => {
+    onPointerUp: (editor, event) => {
         editor.state.snapEdges = [];
         editor.state.status = STATUS.IDLE;
 
@@ -588,7 +586,7 @@ export const SelectTool: Tool = {
         editor.state.selection = null;
     },
 
-    onDoubleClickElement: (editor, self, event) => {
+    onDoubleClickElement: (editor, event) => {
         if (!editor.page.readonly) {
             const element = editor.getElement(event.element);
             if (!editor.page.activeGroup && element.group) {
@@ -603,7 +601,7 @@ export const SelectTool: Tool = {
         }
     },
 
-    onKeyDown: (editor, self, event) => {
+    onKeyDown: (editor, event) => {
         if (editor.page.readonly) {
             return null;
         }
@@ -666,20 +664,7 @@ export const SelectTool: Tool = {
         return false; // event not handled by this tool
     },
 
-    onElementChange: (editor, self, event) => {
-        if (activeElement?.id === event.element && activeElement?.editing) {
-            editor.updateElements([activeElement], event.keys, event.values, true);
-            editor.dispatchChange();
-        }
-    },
-
-    onElementBlur: (editor, self, event) => {
-        editor.getElements().forEach((element: any) => {
-            element.editing = false;
-        });
-    },
-
-    renderCanvas: (editor, self) => {
+    renderCanvas: (editor) => {
         return <SelectBoundsCanvas editor={editor} />;
     },
 };

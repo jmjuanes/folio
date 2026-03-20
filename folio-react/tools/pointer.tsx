@@ -14,7 +14,6 @@ import {
 } from "../constants.js";
 import { hypotenuse } from "../utils/math.ts";
 import { SvgContainer } from "../components/svg.tsx";
-import { TOOL_TYPE } from "../contexts/tools.tsx";
 import type { Tool } from "../contexts/tools.tsx";
 
 // alias for setInterval
@@ -176,12 +175,11 @@ const PointerCanvas = () => {
 
 export const PointerTool: Tool = {
     id: TOOLS.POINTER,
-    type: TOOL_TYPE.OVERLAY,
     name: "Laser Pointer",
     icon: "laser-pointer",
     enabledOnReadOnly: true,
-    keyboardShortcut: "l",
-    renderCanvas: (editor, self) => {
+    shortcut: "l",
+    renderCanvas: () => {
         return <PointerCanvas />;
     },
 };
