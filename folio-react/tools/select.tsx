@@ -53,6 +53,7 @@ import {
     clampEdgeResizeToMinSize,
 } from "../lib/handlers.ts";
 import { SvgContainer } from "../components/svg.tsx";
+import { Handlers } from "../components/handlers.tsx";
 import { TOOL_TYPE } from "../contexts/tools.tsx";
 import type { Tool } from "../contexts/tools.tsx";
 
@@ -158,7 +159,16 @@ const SelectBoundsCanvas = (props: { editor: any }) => {
         }
     }
 
-    // Render bounds and brush
+    // 4. Compute handlers for the single selected element
+    let handlers: any[] = [];
+    if (selectedElements.length === 1 && !selectedElements[0].locked && !selectedElements[0].editing) {
+        const config = getElementConfig(selectedElements[0]);
+        if (typeof config.getHandlers === "function") {
+            handlers = config.getHandlers(selectedElements[0]) || [];
+        }
+    }
+
+    // Render bounds, brush, and handlers
     const selection = editor.state.selection;
     const zoom = editor.page.zoom;
 
@@ -193,6 +203,12 @@ const SelectBoundsCanvas = (props: { editor: any }) => {
                     />
                 </SvgContainer>
             )}
+            {handlers.length > 0 && (
+                <Handlers
+                    handlers={handlers}
+                    zoom={zoom}
+                />
+            )}
         </React.Fragment>
     );
 };
@@ -217,6 +233,9 @@ export const SelectTool: Tool = {
     },
 
     onPointCanvas: (editor, self, event) => {
+        if (event.handler || event.element) {
+            return;
+        }
         editor.state.snapEdges = [];
         if (activeElement) {
             if (activeElement?.editing) {
@@ -339,7 +358,7 @@ export const SelectTool: Tool = {
                 editor.state.snapEdges = activeSnapEdges.map((snapEdge: any) => ({
                     points: [
                         ...snapEdge.points,
-                        ...getElementSnappingPoints(boundElement, snapEdge),
+                        ...(getElementSnappingPoints(boundElement, snapEdge) || []),
                     ],
                 }));
             }
@@ -379,7 +398,7 @@ export const SelectTool: Tool = {
                 }
                 else if (isCornerHandler(event.handler) || isEdgeHandler(event.handler)) {
                     const rect = getRectangle([snapshot[0].x1, snapshot[0].y1], [snapshot[0].x2, snapshot[0].y2], snapshot[0].rotation);
-                    const [minWidth, minHeight] = getElementMinimumSize(element);
+                    const [minWidth, minHeight] = getElementMinimumSize(element) || [0, 0];
                     if (isCornerHandler(event.handler)) {
                         const [width, height] = getElementSize(snapshot[0]);
                         const diagLen = Math.hypot(width, height);
@@ -488,7 +507,7 @@ export const SelectTool: Tool = {
                     editor.state.snapEdges = activeSnapEdges.map((snapEdge: any) => ({
                         points: [
                             ...snapEdge.points,
-                            ...getElementSnappingPoints(element, snapEdge),
+                            ...(getElementSnappingPoints(element, snapEdge) || []),
                         ],
                     }));
                 }

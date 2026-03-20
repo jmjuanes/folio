@@ -71,8 +71,11 @@ export const Canvas = props => {
             detail: {},
         };
 
-        if (source && event.nativeEvent.target?.dataset?.[source]) {
-            eventInfo[source] = event.nativeEvent.target.dataset[source];
+        if (event.nativeEvent.target?.dataset?.element) {
+            eventInfo.element = event.nativeEvent.target.dataset.element;
+        }
+        if (event.nativeEvent.target?.dataset?.handler) {
+            eventInfo.handler = event.nativeEvent.target.dataset.handler;
         }
 
         // Call the listener provided as an argument
@@ -295,13 +298,7 @@ export const Canvas = props => {
                         />
                     </SvgContainer>
                 )}
-                {props.showHandlers && props.handlers && (
-                    <Handlers
-                        handlers={props.handlers || []}
-                        zoom={props.zoom}
-                        onPointerDown={e => handlePointerDown(e, "handler", props.onPointHandler)}
-                    />
-                )}
+                {props.children}
                 {props.showSnaps && props.snaps && (
                     <SvgContainer>
                         {props.snaps.map((item, index) => {
@@ -386,7 +383,6 @@ Canvas.defaultProps = {
     onResize: null,
     onWheel: null,
     showBounds: true,
-    showHandlers: true,
     showBrush: false,
     showGrid: true,
     showPointer: false,

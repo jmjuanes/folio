@@ -1,7 +1,7 @@
 import React from "react";
 import { useUpdate } from "react-use";
 import { ACTIONS, IS_DARWIN, KEYS, PREFERENCES, STATUS, TOOLS } from "../constants.js";
-import { useHandlers } from "../hooks/use-handlers.ts";
+// Handlers moved to SelectTool
 import { useCursor } from "../hooks/use-cursor.js";
 import { useDimensions } from "../hooks/use-dimensions.ts";
 import { Canvas } from "./canvas.jsx";
@@ -28,7 +28,7 @@ const InnerEditor = () => {
     const editor = useEditor();
     const tools = useTools();
     const cursor = useCursor();
-    const handlers = useHandlers();
+// Handlers computing moved to SelectTool
     const dimensions = useDimensions();
     const { showContextMenu, hideContextMenu } = useContextMenu();
     const dispatchAction = useActions();
@@ -162,7 +162,7 @@ const InnerEditor = () => {
                 translateY={editor.page.translateY}
                 zoom={editor.page.zoom}
                 snaps={editor.state.snapEdges}
-                handlers={handlers}
+                // Handlers computing moved to SelectTool
                 dimensions={dimensions}
                 showGrid={editor.appState.grid}
                 showSnaps={editor.appState.snapToElements}
@@ -180,11 +180,12 @@ const InnerEditor = () => {
                 onElementBlur={onElementBlur}
                 onKeyDown={onKeyDown}
                 onPaste={onPaste}
-            />
+            >
+                {activeTool?.renderCanvas?.(editor, activeTool)}
+            </Canvas>
             {!!OverTheCanvas && (
                 <OverTheCanvas />
             )}
-            {activeTool?.renderCanvas?.(editor, activeTool)}
         </Layout>
     );
 };
