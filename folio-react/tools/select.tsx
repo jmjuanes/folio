@@ -50,7 +50,7 @@ import {
     computeResizeDelta,
     clampCornerResizeToMinSize,
     clampEdgeResizeToMinSize,
-} from "./utils/resize.ts";
+} from "../lib/handlers.ts";
 import { SvgContainer } from "../components/svg.tsx";
 import { Handlers } from "./children/handlers.tsx";
 import { BaseTool } from "./base.tsx";
@@ -442,8 +442,8 @@ export class SelectTool extends BaseTool {
 
         const [gDx, gDy] = computeResizeDelta([(event.dx || 0), (event.dy || 0)], this.snapshot[0].rotation, axisDir, event.shiftKey);
         const basePoint = (handler === HANDLERS.CORNER_TOP_LEFT) ? [this.snapshot[0].x1, this.snapshot[0].y1] :
-                          (handler === HANDLERS.CORNER_BOTTOM_RIGHT) ? [this.snapshot[0].x2, this.snapshot[0].y2] :
-                          (handler === HANDLERS.CORNER_TOP_RIGHT) ? rect[1] : rect[3];
+            (handler === HANDLERS.CORNER_BOTTOM_RIGHT) ? [this.snapshot[0].x2, this.snapshot[0].y2] :
+                (handler === HANDLERS.CORNER_TOP_RIGHT) ? rect[1] : rect[3];
 
         const newCorner: Point = [
             this.getPosition(editor, basePoint[0] + gDx, null),

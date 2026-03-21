@@ -7,7 +7,7 @@ import {
     isRotationHandler,
     isVerticalEdgeHandler,
     isHorizontalEdgeHandler,
-} from "../utils/resize.ts";
+} from "../../lib/handlers.ts";
 import { SvgContainer } from "../../components/svg.tsx";
 import { convertRadiansToDegrees } from "../../utils/math.ts";
 
