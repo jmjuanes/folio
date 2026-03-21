@@ -20,12 +20,10 @@ import { useContextMenu } from "../contexts/context-menu.jsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { useCursor } from "../hooks/use-cursor.js";
-import { useDimensions } from "../hooks/use-dimensions.ts";
 import { getActionByKeysCombination } from "../lib/actions.js";
 import { renderElement } from "./elements/index.jsx";
 import { SvgContainer } from "./svg.tsx";
 import { Grid } from "./grid.jsx";
-import { ObjectDimensions } from "./object-dimensions.jsx";
 import { clearFocus } from "../utils/dom.js";
 import { preventDefault, isTouchOrPenEvent, isInputTarget } from "../utils/events.js";
 
@@ -53,7 +51,6 @@ export const Canvas: React.FC<CanvasProps> = props => {
     const editor = useEditor();
     const tools = useTools();
     const cursor = useCursor();
-    const dimensions = useDimensions();
     const { showContextMenu, hideContextMenu } = useContextMenu();
     const dispatchAction = useActions();
     const preferences = usePreferences();
@@ -246,7 +243,7 @@ export const Canvas: React.FC<CanvasProps> = props => {
             originalX: (event.nativeEvent.clientX - left - editor.page.translateX) / editor.page.zoom,
             originalY: (event.nativeEvent.clientY - top - editor.page.translateY) / editor.page.zoom,
             shiftKey: event.nativeEvent.shiftKey,
-            nativeEvent: event.nativeEvent,
+            originalEvent: event.nativeEvent,
         };
 
         // Get source item
@@ -355,40 +352,6 @@ export const Canvas: React.FC<CanvasProps> = props => {
                 </AssetsProvider>
 
                 {activeTool?.renderCanvas?.(editor)}
-
-                {editor.appState.snapToElements && editor.state.snapEdges && (
-                    <SvgContainer>
-                        {editor.state.snapEdges.map((item: any, index: number) => {
-                            const xItems = item.points.map((p: any) => p[0]);
-                            const yItems = item.points.map((p: any) => p[1]);
-                            const start = [Math.min(...xItems), Math.min(...yItems)];
-                            const end = [Math.max(...xItems), Math.max(...yItems)];
-                            return (
-                                <path
-                                    key={`snap:edge:${item.edge}.${index}`}
-                                    d={`M${start.join(",")}L${end.join(",")}`}
-                                    fill={NONE}
-                                    stroke={SNAPS_STROKE_COLOR}
-                                    strokeWidth={SNAPS_STROKE_WIDTH}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            );
-                        })}
-                    </SvgContainer>
-                )}
-                {editor.appState.objectDimensions && dimensions && (
-                    <React.Fragment>
-                        {(dimensions || []).map((item, index) => (
-                            <ObjectDimensions
-                                key={`prop:${index}`}
-                                value={item.value}
-                                x={item.x}
-                                y={item.y}
-                            />
-                        ))}
-                    </React.Fragment>
-                )}
             </div>
         </div>
     );

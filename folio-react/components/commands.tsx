@@ -89,7 +89,7 @@ export const CommandsContent = (): React.JSX.Element => {
         return tools.getTools().map(toolData => ({
             id: toolData.id,
             label: toolData.name || toolData.id,
-            shortcut: toolData.keyboardShortcut ? toolData.keyboardShortcut.toUpperCase() : "",
+            shortcut: toolData.shortcut ? toolData.shortcut.toUpperCase() : "",
             icon: toolData.icon,
             disabled: toolData.enabledOnReadOnly === false && editor.page.readonly,
             execute: () => {

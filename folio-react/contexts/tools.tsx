@@ -71,12 +71,12 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
             // call onExit on the current tool
             const currentTool = getActiveTool();
             if (currentTool && currentTool.id !== toolId) {
-                currentTool.onExit?.();
+                currentTool.onExit?.(editor);
             }
             // update the active tool
             activeTool.current = toolId;
             // call onEnter on the new tool
-            newTool.onEnter?.();
+            newTool.onEnter?.(editor);
             // trigger re-render
             setUpdate(prevUpdate => (-1) * prevUpdate);
         }

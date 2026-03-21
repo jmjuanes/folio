@@ -31,6 +31,8 @@ import { getStickerImage } from "../lib/stickers.js";
 import { blobToDataUrl } from "../utils/blob.js";
 import { BaseTool } from "./base.tsx";
 import { CanvasEvent } from "../components/canvas.tsx";
+import { SnapEdges } from "./children/snaps.tsx";
+import { DimensionsLayer } from "./children/dimensions.tsx";
 
 type ToolPickValue = {
     value: any;
@@ -196,7 +198,7 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
         }
 
         // Render the quick picks toolbar panel
-        renderToolbar(update: () => void) {
+        renderToolbar(editor: any, update: () => void) {
             if (!options.quickPicks) return null;
             return (
                 <PickPanel
@@ -210,6 +212,15 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
                         update();
                     }}
                 />
+            );
+        }
+
+        renderCanvas(editor: any) {
+            return (
+                <React.Fragment>
+                    {editor.appState.snapToElements && <SnapEdges edges={editor.state.snapEdges || []} />}
+                    {editor.appState.objectDimensions && <DimensionsLayer />}
+                </React.Fragment>
             );
         }
     };
