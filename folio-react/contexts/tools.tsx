@@ -21,7 +21,7 @@ export type Tool = {
     onPointerMove?: (editor: any, event: any) => void;
     onPointerUp?: (editor: any, event: any) => void;
     onDoubleClickElement?: (editor: any, event: any) => void;
-    onKeyDown?: (editor: any, event: any) => void;
+    onKeyDown?: (editor: any, event: any) => boolean | void;
     onKeyUp?: (editor: any, event: any) => void;
 
     // UI rendering

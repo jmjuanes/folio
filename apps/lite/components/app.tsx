@@ -1,6 +1,6 @@
 import React from "react";
 import { PREFERENCES } from "folio-react/constants.js";
-import { Editor } from "folio-react/components/editor.jsx";
+import { Editor } from "folio-react/components/editor.tsx";
 import { Title } from "folio-react/components/title.tsx";
 import { Library } from "folio-react/components/library.tsx";
 import { AiChat } from "folio-react/components/ai-chat.tsx";

@@ -60,8 +60,8 @@ export {
     useSurface,
 } from "./contexts/surface.tsx";
 
-export {Canvas} from "./components/canvas.jsx";
-export {Editor} from "./components/editor.jsx";
+export {Canvas} from "./components/canvas.tsx";
+export {Editor} from "./components/editor.tsx";
 
 export {ContextMenu} from "./components/context-menu.jsx";
 export { Layout } from "./components/layout.tsx";
