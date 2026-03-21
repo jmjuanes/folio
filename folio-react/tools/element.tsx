@@ -198,8 +198,10 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
         }
 
         // Render the quick picks toolbar panel
-        renderToolbar(editor: any, update: () => void) {
-            if (!options.quickPicks) return null;
+        renderToolbar(editor: any) {
+            if (!options.quickPicks) {
+                return null;
+            }
             return (
                 <PickPanel
                     values={editor.defaults}
@@ -209,7 +211,7 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
                         if (typeof options.onQuickPickChange === "function") {
                             options.onQuickPickChange(editor.defaults, field, value);
                         }
-                        update();
+                        editor.update();
                     }}
                 />
             );

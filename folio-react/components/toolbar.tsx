@@ -1,6 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-import { useUpdate } from "react-use";
 import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
@@ -44,7 +43,6 @@ const ToolbarButton = (props: ToolbarButtonProps): React.JSX.Element => {
 
 // @description Toolbar panel component
 export const Toolbar = (): React.JSX.Element => {
-    const update = useUpdate();
     const editor = useEditor();
     const tools = useTools();
     const contextMenu = useContextMenu() as any;
@@ -92,7 +90,7 @@ export const Toolbar = (): React.JSX.Element => {
                             }}
                         />
                         {activeTool?.id === tool.id && tool.renderToolbar && (
-                            tool.renderToolbar(editor, update)
+                            tool.renderToolbar(editor)
                         )}
                     </div>
                 ))}

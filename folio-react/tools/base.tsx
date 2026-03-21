@@ -2,8 +2,6 @@ import React from "react";
 import { CanvasEvent } from "../components/canvas.tsx";
 
 export abstract class BaseTool {
-    
-
     abstract id: string;
     name?: string;
     icon?: React.JSX.Element | React.ReactNode | string;
@@ -24,6 +22,6 @@ export abstract class BaseTool {
     onKeyUp?(editor: any, event: any): void;
 
     // UI rendering
-    renderToolbar?(editor: any, update: () => void): React.ReactNode;
+    renderToolbar?(editor: any): React.ReactNode;
     renderCanvas?(editor: any): React.ReactNode;
 }
