@@ -1,41 +1,22 @@
 import React from "react";
 import classNames from "classnames";
-import { useUpdate } from "react-use";
 import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
-import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.jsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
-import { useTools } from "../hooks/use-tools.tsx";
+import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { ACTIONS } from "../constants.js";
 
-type PickPanelProps = {
-    values: any;
-    items: { label: string; value: any }[];
-    onChange: (field: string, value: any) => void;
+type ToolbarButtonProps = {
+    active?: boolean;
+    disabled?: boolean;
+    onClick?: () => void;
+    icon?: any;
+    text?: string;
+    className?: string;
 };
 
-const PickPanel = (props: PickPanelProps): React.JSX.Element => {
-    const pickPanelClassName = classNames({
-        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
-        "bg-white border-1 border-gray-200 shadow-sm": true,
-    });
-    return (
-        <div className={pickPanelClassName} style={{ transform: "translateX(-50%)" }}>
-            <Form
-                className="flex flex-row gap-2"
-                data={props.values}
-                items={props.items}
-                separator={(
-                    <div className="w-px h-6 bg-gray-200" />
-                )}
-                onChange={props.onChange}
-            />
-        </div>
-    );
-};
-
-const ToolbarButton = (props: any): React.JSX.Element => {
+const ToolbarButton = (props: ToolbarButtonProps): React.JSX.Element => {
     const classList = classNames({
         "flex flex-col justify-center items-center px-4 py-2 gap-1 rounded-xl": true,
         "cursor-pointer": !props.active,
@@ -62,67 +43,54 @@ const ToolbarButton = (props: any): React.JSX.Element => {
 
 // @description Toolbar panel component
 export const Toolbar = (): React.JSX.Element => {
-    const update = useUpdate();
     const editor = useEditor();
     const tools = useTools();
-    const { hideContextMenu } = useContextMenu();
+    const contextMenu = useContextMenu() as any;
     const dispatchAction = useActions();
-    const prevSelectedTool = React.useRef(editor.state.tool);
-    const [primaryTools, secondaryTools] = React.useMemo(() => {
-        const keys = Object.keys(tools);
-        return [
-            keys.filter(key => tools[key].primary),
-            keys.filter(key => !tools[key].primary),
-        ];
-    }, [tools]);
+    const prevSelectedTool = React.useRef(tools.getActiveTool()?.id);
+
+    const allTools = tools.getTools();
+    const activeTool = tools.getActiveTool();
+
+    const primaryTools = React.useMemo(() => {
+        return allTools.filter(tool => tool.primary);
+    }, [allTools]);
 
     // when a tool is selected, make sure to hide the context menu
     React.useEffect(() => {
-        if (prevSelectedTool.current !== editor.state.tool) {
-            prevSelectedTool.current = editor.state.tool;
-            hideContextMenu();
+        if (prevSelectedTool.current !== activeTool?.id) {
+            prevSelectedTool.current = activeTool?.id;
+            contextMenu?.hideContextMenu?.();
         }
-    }, [editor.state.tool]);
+    }, [activeTool?.id, contextMenu]);
 
     const handleLockClick = React.useCallback(() => {
-        editor.state.toolLocked = !editor.state.toolLocked;
-        update();
-    }, []);
+        tools.setLocked(!tools.getLocked());
+    }, [tools]);
 
     const lockButtonClass = classNames({
         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-        "bg-gray-950 text-white": editor.state.toolLocked,
-        "opacity-50 hover:opacity-100": !editor.state.toolLocked,
+        "bg-gray-950 text-white": tools.getLocked(),
+        "opacity-50 hover:opacity-100": !tools.getLocked(),
         "pointer-events-none opacity-40 cursor-not-allowed": editor.page.readonly,
     });
 
     return (
         <div className="flex items-center relative select-none">
             <div className="rounded-2xl items-center flex gap-2 p-1 border-1 border-gray-200 bg-white shadow-sm text-gray-900">
-                {primaryTools.map(key => (
-                    <div key={key} className="flex relative">
+                {primaryTools.map(tool => (
+                    <div key={tool.id} className="flex relative">
                         <ToolbarButton
-                            text={tools[key].name || tools[key].text}
-                            icon={tools[key].icon}
-                            active={editor.state.tool === key}
-                            disabled={editor.page.readonly && !tools[key].toolEnabledOnReadOnly}
+                            text={tool.name}
+                            icon={tool.icon}
+                            active={activeTool?.id === tool.id}
+                            disabled={editor.page.readonly && !tool.enabledOnReadOnly}
                             onClick={() => {
-                                tools[key].onSelect(editor);
+                                tools.setActiveTool(tool.id);
                             }}
                         />
-                        {tools[key].quickPicks && key === editor.state.tool && (
-                            <PickPanel
-                                values={editor.defaults}
-                                items={tools[key].quickPicks}
-                                onChange={(field, value) => {
-                                    editor.defaults[field] = value;
-                                    if (typeof tools[key].onQuickPickChange === "function") {
-                                        tools[key].onQuickPickChange(editor.defaults, field, value);
-                                    }
-                                    // Force and update of the component
-                                    update();
-                                }}
-                            />
+                        {activeTool?.id === tool.id && tool.renderToolbar && (
+                            tool.renderToolbar(editor)
                         )}
                     </div>
                 ))}
@@ -135,7 +103,7 @@ export const Toolbar = (): React.JSX.Element => {
                 />
             </div>
             <div className={lockButtonClass} onClick={handleLockClick}>
-                {editor.state.toolLocked ? <LockIcon /> : <UnlockIcon />}
+                {tools.getLocked() ? <LockIcon /> : <UnlockIcon />}
             </div>
         </div>
     );

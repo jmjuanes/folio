@@ -1,5 +1,5 @@
 import React from "react";
-import { CURSORS, HANDLERS, HANDLERS_FILL_COLOR, HANDLERS_STROKE_COLOR } from "../constants.js";
+import { CURSORS, HANDLERS, HANDLERS_FILL_COLOR, HANDLERS_STROKE_COLOR } from "../../constants.js";
 import {
     isCornerHandler,
     isEdgeHandler,
@@ -7,10 +7,19 @@ import {
     isRotationHandler,
     isVerticalEdgeHandler,
     isHorizontalEdgeHandler,
-} from "../lib/handlers.ts";
-import { SvgContainer } from "./svg.tsx";
-import { convertRadiansToDegrees } from "../utils/math.ts";
-import type { HandlerPosition } from "../hooks/use-handlers.ts";
+} from "../../lib/handlers.ts";
+import { SvgContainer } from "../../components/svg.tsx";
+import { convertRadiansToDegrees } from "../../utils/math.ts";
+
+export type HandlerPosition = {
+    id?: string;
+    type: string;
+    x: number;
+    y: number;
+    rotation?: number;
+    offsetX?: number;
+    offsetY?: number;
+};
 
 const cursorsByHandlerType = {
     [HANDLERS.EDGE_TOP]: CURSORS.RESIZE_NS,

@@ -1,7 +1,8 @@
-import { ELEMENTS, FIELDS, TOOLS } from "../constants.js";
-import { useEditor } from "../contexts/editor.jsx";
-import { getElementSize, getElementsBoundingRectangle } from "../lib/elements.js";
-import { getRectangle } from "../utils/math.ts";
+import React from "react";
+import { ELEMENTS, FIELDS, TOOLS, OBJECT_DIMENSIONS_FILL_COLOR, OBJECT_DIMENSIONS_TEXT_COLOR, OBJECT_DIMENSIONS_TEXT_SIZE } from "../../constants.js";
+import { useEditor } from "../../contexts/editor.jsx";
+import { getElementSize, getElementsBoundingRectangle } from "../../lib/elements.js";
+import { getRectangle } from "../../utils/math.ts";
 
 export type DimensionLabel = {
     value: string; // label to be displayed in the dimension badge
@@ -9,12 +10,6 @@ export type DimensionLabel = {
     y: number;     // y position of the dimension badge
 };
 
-// @description generate a dimension label for the provided elements
-// @param {array} elements list of elements to calculate the dimension
-// @returns {object} dimension label
-// @returns {string} dimension label.value label to be displayed in the dimension badge
-// @returns {number} dimension label.x x position of the dimension badge
-// @returns {number} dimension label.y y position of the dimension badge
 const generateDimensionLabel = (elements: any[] = []): DimensionLabel => {
     const rectangle = getElementsBoundingRectangle(elements);
     return {
@@ -33,21 +28,12 @@ const getBottomRightPoint = (points: number[][]): number[] => {
     }, points[0]);
 };
 
-// @description returns the dimensions of the selected elements
-// @returns {object} dimensions
-// @returns {string} dimensions.value label to be displayed in the dimension badge
-// @returns {number} dimensions.x x position of the dimension badge
-// @returns {number} dimensions.y y position of the dimension badge
 export const useDimensions = () => {
     const editor = useEditor();
     const dimensions: DimensionLabel[] = [];
     if (editor?.appState?.objectDimensions) {
-        // Case 1. No tool or action or we are translating or resizing the element
-        // if ((!tool && !action) || action === ACTIONS.TRANSLATE || action === ACTIONS.RESIZE) {
         if (editor.state.tool === TOOLS.SELECT) {
             const selectedElements = editor.getSelection();
-            // Case 1.1. Just one single element to calculate the size
-            // In this case, we only want to display the dimension for shapes, drawings, text or images
             if (selectedElements.length === 1) {
                 const el = selectedElements[0];
                 if (el.type === ELEMENTS.SHAPE || el.type === ELEMENTS.DRAW || el.type === ELEMENTS.TEXT || el.type === ELEMENTS.IMAGE) {
@@ -60,17 +46,10 @@ export const useDimensions = () => {
                         y: bottomRightPoint[1],
                     });
                 }
-            }
-            // Case 1.2. We have more than one element selected
-            // In this case, calculate the dimension of the selection
-            else if (selectedElements.length > 1) {
+            } else if (selectedElements.length > 1) {
                 dimensions.push(generateDimensionLabel(selectedElements));
             }
-        }
-        // Case 2. We are creating an element
-        // In this case, only for shapes or text will be displayed
-        // else if (action === ACTIONS.CREATE && (tool === ELEMENTS.SHAPE || tool === ELEMENTS.TEXT)) {
-        else if (editor.state.tool === ELEMENTS.SHAPE || editor.state.tool === ELEMENTS.TEXT) {
+        } else if (editor.state.tool === ELEMENTS.SHAPE || editor.state.tool === ELEMENTS.TEXT) {
             const el = editor.getElements().find((element: any) => element[FIELDS.CREATING]);
             if (el) {
                 dimensions.push(generateDimensionLabel([ el ]));
@@ -78,4 +57,51 @@ export const useDimensions = () => {
         }
     }
     return dimensions;
+};
+
+export const ObjectDimensions = (props: any) => {
+    const style: React.CSSProperties = {
+        color: OBJECT_DIMENSIONS_TEXT_COLOR,
+        fontSize: OBJECT_DIMENSIONS_TEXT_SIZE,
+        backgroundColor: OBJECT_DIMENSIONS_FILL_COLOR,
+        borderRadius: "0.25rem",
+        display: "inline-flex",
+        lineHeight: "1",
+        padding: "0.25rem",
+        pointerEvents: "none",
+        position: "absolute",
+        top: props.y + "px",
+        left: props.x + "px",
+        textWrap: "nowrap",
+        transform: `translate(${props.translateX || "-100%"},${props.translateY || "0.5rem"})`,
+        whiteSpace: "nowrap",
+        userSelect: "none",
+        width: "max-content",
+    };
+    return (
+        <div className={props.className} style={style}>
+            <div>{props.value || "-"}</div>
+        </div>
+    );
+};
+
+export const DimensionsLayer = () => {
+    const dimensions = useDimensions();
+    
+    if (dimensions.length === 0) {
+        return null;
+    }
+
+    return (
+        <React.Fragment>
+            {dimensions.map((item, index) => (
+                <ObjectDimensions
+                    key={`prop:${index}`}
+                    value={item.value}
+                    x={item.x}
+                    y={item.y}
+                />
+            ))}
+        </React.Fragment>
+    );
 };

@@ -18,11 +18,11 @@ import { Layers } from "../components/layers.tsx";
 // export type for the editor components
 // export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
 export type EditorComponentsMap = {
-    [key: string]: ((props?: any) => React.JSX.Element) | null;
+    [key: string]: React.ElementType | any;
 };
 
 // @description editor components context
-export const EditorComponentsContext = React.createContext<EditorComponentsMap>({});
+export const EditorComponentsContext = React.createContext<EditorComponentsMap>({} as EditorComponentsMap);
 
 // @description hook to access to editor components
 export const useEditorComponents = (): EditorComponentsMap => {

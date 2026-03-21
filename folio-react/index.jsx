@@ -21,7 +21,14 @@ export {
 } from "./lib/json.js";
 export {migrate} from "./lib/migrate.js";
 
-export {useTools} from "./hooks/use-tools.tsx";
+export {
+    ToolsProvider,
+    useTools,
+} from "./contexts/tools.tsx";
+export {
+    defaultTools,
+    createElementTool,
+} from "./tools/index.tsx";
 export {usePagePreview} from "./hooks/use-page-preview.js";
 
 export {
@@ -53,9 +60,8 @@ export {
     useSurface,
 } from "./contexts/surface.tsx";
 
-export {Canvas} from "./components/canvas.jsx";
-export {Editor} from "./components/editor.jsx";
-export {Pointer} from "./components/pointer.jsx";
+export {Canvas} from "./components/canvas.tsx";
+export {Editor} from "./components/editor.tsx";
 
 export {ContextMenu} from "./components/context-menu.jsx";
 export { Layout } from "./components/layout.tsx";
