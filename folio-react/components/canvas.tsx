@@ -9,9 +9,6 @@ import {
     CURSORS,
     EVENTS,
     FONT_SOURCES,
-    NONE,
-    SNAPS_STROKE_COLOR,
-    SNAPS_STROKE_WIDTH,
 } from "../constants.js";
 import { AssetsProvider } from "../contexts/assets.jsx";
 import { useEditor } from "../contexts/editor.jsx";
