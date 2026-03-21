@@ -52,7 +52,6 @@ export const Canvas: React.FC<CanvasProps> = props => {
     const dispatchAction = useActions();
     const preferences = usePreferences();
 
-    editor._toolsManager = tools;
     const activeTool = tools.getActiveTool();
 
     const canvasRef = React.useRef<HTMLDivElement>(null);
@@ -279,34 +278,38 @@ export const Canvas: React.FC<CanvasProps> = props => {
         };
     }, [onKeyDown, onPaste, handleResize]);
 
-    // Generate transform attribute
+    // generate canvas style
+    const canvasStyle = React.useMemo(() => ({
+        display: "block",
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+        backgroundColor: editor.background,
+        touchAction: "none",
+        userSelect: "none",
+        WebkitTouchCallout: "none",
+        cursor: cursor as any,
+    }), [editor.background]);
+
+    // generate transform attribute
     const transform = [
         `translate(${editor.page.translateX}px,${editor.page.translateY}px)`,
         `scale(${editor.page.zoom})`,
     ];
+    const fonts = props.fonts || Object.values(FONT_SOURCES) || [] as string[];
     return (
         <div
             ref={canvasRef}
             data-id={editor.id}
-            style={{
-                display: "block",
-                position: "relative",
-                width: "100%",
-                height: "100%",
-                overflow: "hidden",
-                backgroundColor: editor.background,
-                touchAction: "none",
-                userSelect: "none",
-                WebkitTouchCallout: "none",
-                cursor: cursor as any,
-            }}
+            style={canvasStyle}
             onPointerDown={e => handlePointerDown(e, null, null)}
             onDoubleClick={e => handleDoubleClick(e, null, null)}
             onContextMenu={e => handleContextMenu(e)}
         >
             <div className="absolute" style={{ transform: transform.join(" ") }}>
                 <style type="text/css">
-                    {(props.fonts || Object.values(FONT_SOURCES)).map(font => `@import url('${font}');`).join("")}
+                    {fonts.map(font => `@import url('${font}');`).join("")}
                 </style>
                 {editor.appState.grid && (
                     <Grid

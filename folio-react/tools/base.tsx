@@ -1,5 +1,6 @@
 import React from "react";
-import { CanvasEvent } from "../components/canvas.tsx";
+import type { CanvasEvent } from "../components/canvas.tsx";
+import type { ToolsManager } from "../contexts/tools.tsx";
 
 export abstract class BaseTool {
     abstract id: string;
@@ -10,8 +11,8 @@ export abstract class BaseTool {
     shortcut?: string;
 
     // lifecycle
-    onEnter?(editor: any): void;
-    onExit?(editor: any): void;
+    onEnter?(editor: any, tools: ToolsManager): void;
+    onExit?(editor: any, tools: ToolsManager): void;
 
     // event handlers
     onPointerDown?(editor: any, event: CanvasEvent): void;
