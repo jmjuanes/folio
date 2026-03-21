@@ -53,21 +53,17 @@ import {
 } from "../lib/handlers.ts";
 import { SvgContainer } from "../components/svg.tsx";
 import { Handlers } from "../components/handlers.tsx";
-import type { Tool } from "../contexts/tools.tsx";
+import { BaseTool } from "./base.tsx";
+import { CanvasEvent } from "../components/canvas.tsx";
 import type { Point } from "../utils/math.ts";
 
 // ---- Module-global state ----
 let snapshot: any[] = [];
-let snapshotBounds: any = null;
 let snapEdges: any[] = [];
 let activeSnapEdges: any[] = [];
-let activeElement: any = null;
-let isDragged = false;
-let isResized = false;
-let isPrevSelected = false;
 
 // @private get position based on the grid/snap state
-const getPosition = (editor: any, pos: number, edge: string | null = null, size: number = 0, includeCenter: boolean = false): number => {
+const getPosition = (editor: any, pos: number, snapEdges: any[] = [], activeSnapEdges: any[] = [], edge: string | null = null, size: number = 0, includeCenter: boolean = false): number => {
     // 1. Check if grid mode is enabled
     if (editor?.appState?.grid) {
         return Math.round(pos / GRID_SIZE) * GRID_SIZE;
@@ -75,12 +71,12 @@ const getPosition = (editor: any, pos: number, edge: string | null = null, size:
     // 2. check if snap mode is enabled
     if (edge && editor?.appState?.snapToElements) {
         const edges = size > 0 ? (includeCenter ? [0, size / 2, size] : [0, size]) : [0];
-        for (let i = 0; i < snapEdges.length; i++) {
-            const item = snapEdges[i];
+        for (let i = 0; i < this.snapEdges.length; i++) {
+            const item = this.snapEdges[i];
             if (item.edge === edge && typeof item[edge] !== "undefined") {
                 for (let j = 0; j < edges.length; j++) {
                     if (Math.abs(item[edge] - pos - edges[j]) < SNAP_THRESHOLD) {
-                        activeSnapEdges.push(item);
+                        this.activeSnapEdges.push(item);
                         return item[edge] - edges[j];
                     }
                 }
@@ -212,48 +208,64 @@ const SelectBoundsCanvas = (props: { editor: any }) => {
     );
 };
 
-export const SelectTool: Tool = {
-    id: TOOLS.SELECT,
-    name: "Select",
-    icon: "pointer",
-    primary: true,
-    shortcut: "v",
+export class SelectTool extends BaseTool {
+    private snapshot: any[] = [];
+    private snapshotBounds: any = null;
+    private snapEdges: any[] = [];
+    private activeSnapEdges: any[] = [];
+    private activeElement: any = null;
+    private isDragged = false;
+    private isResized = false;
+    private isPrevSelected = false;
+    id = TOOLS.SELECT;
+    name = "Select";
+    icon = "pointer";
+    primary = true;
+    shortcut = "v";
 
-    onEnter: (editor) => {
+    onEnter(editor: any) {
         // Reset module state
-        snapshot = [];
-        snapshotBounds = null;
-        snapEdges = [];
-        activeSnapEdges = [];
-        isDragged = false;
-        isResized = false;
-        isPrevSelected = false;
-    },
+        this.snapshot = [];
+        this.snapshotBounds = null;
+        this.snapEdges = [];
+        this.activeSnapEdges = [];
+        this.isDragged = false;
+        this.isResized = false;
+        this.isPrevSelected = false;
+    }
 
-    onPointCanvas: (editor, event) => {
-        if (event.handler || event.element) {
+    private handlePointCanvas(editor: any, event: CanvasEvent) {
+        const target = event.originalEvent?.target as HTMLElement | undefined;
+        const handler = target?.dataset?.handler;
+        const elementId = target?.dataset?.element;
+
+        if (handler || elementId) {
             return;
         }
         editor.state.snapEdges = [];
-        if (activeElement) {
-            if (activeElement?.editing) {
-                if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
-                    removeTextElement(editor, activeElement);
+        if (this.activeElement) {
+            if (this.activeElement?.editing) {
+                if (this.activeElement.type === ELEMENTS.TEXT && !this.activeElement.text) {
+                    removeTextElement(editor, this.activeElement);
                 }
             }
-            activeElement.editing = false;
-            activeElement = null;
+            this.activeElement.editing = false;
+            this.activeElement = null;
         }
         // Check if we have an active group
         if (editor.page.activeGroup) {
             editor.page.activeGroup = null;
         }
         editor.clearSelection();
-    },
+    }
 
-    onPointElement: (editor, event) => {
-        const element = editor.getElement(event.element);
-        isPrevSelected = element.selected;
+    private handlePointElement(editor: any, event: CanvasEvent) {
+        const target = event.originalEvent?.target as HTMLElement | undefined;
+        const handler = target?.dataset?.handler;
+        const elementId = target?.dataset?.element;
+
+        const element = editor.getElement(elementId);
+        this.isPrevSelected = element.selected;
         // Check to reset active group
         if (editor.page.activeGroup && element.group !== editor.page.activeGroup) {
             editor.getElements().forEach((el: any) => {
@@ -273,33 +285,38 @@ export const SelectTool: Tool = {
                 el.selected = el.selected || (el.group && el.group === element.group);
             });
         }
-    },
+    }
 
-    onPointerDown: (editor, event) => {
-        isDragged = false;
-        isResized = false;
-        snapshot = [];
+    onPointerDown(editor: any, event: CanvasEvent) {
+        const target = event.originalEvent?.target as HTMLElement | undefined;
+        const handler = target?.dataset?.handler;
+        const elementId = target?.dataset?.element;
+
+        if (!handler && !elementId) { this.handlePointCanvas(editor, event); } else if (!handler && elementId) { this.handlePointElement(editor, event); }
+        this.isDragged = false;
+        this.isResized = false;
+        this.snapshot = [];
         const selectedElements = editor.getSelection();
 
         // First check if we are in an edit action
-        if (activeElement?.editing) {
-            if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
-                removeTextElement(editor, activeElement);
+        if (this.activeElement?.editing) {
+            if (this.activeElement.type === ELEMENTS.TEXT && !this.activeElement.text) {
+                removeTextElement(editor, this.activeElement);
             }
-            activeElement = null;
+            this.activeElement = null;
         }
 
         // Check if we have selected elements
         if (selectedElements.length > 0) {
             if (!selectedElements.some((el: any) => el.locked)) {
-                snapshot = editor.getSelection().map((el: any) => ({ ...el }));
-                snapshotBounds = getElementsBoundingRectangle(snapshot);
+                this.snapshot = editor.getSelection().map((el: any) => ({ ...el }));
+                this.snapshotBounds = getElementsBoundingRectangle(this.snapshot);
                 // Check for calling the onResizeStart listener
-                if (event.handler && snapshot.length === 1) {
-                    const element = editor.getElement(snapshot[0].id);
+                if (handler && this.snapshot.length === 1) {
+                    const element = editor.getElement(this.snapshot[0].id);
                     const elementConfig = getElementConfig(element);
                     if (typeof elementConfig.onResizeStart === "function") {
-                        elementConfig.onResizeStart(element, snapshot[0], event);
+                        elementConfig.onResizeStart(element, this.snapshot[0], event);
                     }
                 }
             }
@@ -315,34 +332,38 @@ export const SelectTool: Tool = {
         }
 
         editor.state.snapEdges = [];
-        snapEdges = [];
-        activeSnapEdges = [];
+        this.snapEdges = [];
+        this.activeSnapEdges = [];
         if (selectedElements.length > 0) {
             if (editor?.appState?.snapToElements) {
-                snapEdges = getElementsSnappingEdges(editor.getElements());
+                this.snapEdges = getElementsSnappingEdges(editor.getElements());
             }
         }
-    },
+    }
 
-    onPointerMove: (editor, event) => {
+    onPointerMove(editor: any, event: CanvasEvent) {
+        const target = event.originalEvent?.target as HTMLElement | undefined;
+        const handler = target?.dataset?.handler;
+        const elementId = target?.dataset?.element;
+
         // Translate
-        if (snapshot.length > 0 && !event.handler) {
+        if (this.snapshot.length > 0 && !handler) {
             editor.state.snapEdges = [];
-            activeSnapEdges = [];
+            this.activeSnapEdges = [];
             editor.state.status = STATUS.TRANSLATING;
-            isDragged = true;
+            this.isDragged = true;
             const elements = editor.getSelection();
             const includeCenter = elements.length > 1 || elements[0].type !== ELEMENTS.ARROW;
-            const dx = getPosition(editor, snapshotBounds[0][0] + event.dx, SNAP_EDGE_X, snapshotBounds[1][0] - snapshotBounds[0][0], includeCenter) - snapshotBounds[0][0];
-            const dy = getPosition(editor, snapshotBounds[0][1] + event.dy, SNAP_EDGE_Y, snapshotBounds[1][1] - snapshotBounds[0][1], includeCenter) - snapshotBounds[0][1];
+            const dx = getPosition(editor, this.snapshotBounds[0][0] + ((event.dx || 0) || 0), this.snapEdges, this.activeSnapEdges, SNAP_EDGE_X, this.snapshotBounds[1][0] - this.snapshotBounds[0][0], includeCenter) - this.snapshotBounds[0][0];
+            const dy = getPosition(editor, this.snapshotBounds[0][1] + ((event.dy || 0) || 0), this.snapEdges, this.activeSnapEdges, SNAP_EDGE_Y, this.snapshotBounds[1][1] - this.snapshotBounds[0][1], includeCenter) - this.snapshotBounds[0][1];
             elements.forEach((element: any, index: number) => {
-                element.x1 = snapshot[index].x1 + dx;
-                element.x2 = snapshot[index].x2 + dx;
-                element.y1 = snapshot[index].y1 + dy;
-                element.y2 = snapshot[index].y2 + dy;
-                getElementConfig(element)?.onDrag?.(element, snapshot[index], event);
+                element.x1 = this.snapshot[index].x1 + dx;
+                element.x2 = this.snapshot[index].x2 + dx;
+                element.y1 = this.snapshot[index].y1 + dy;
+                element.y2 = this.snapshot[index].y2 + dy;
+                getElementConfig(element)?.onDrag?.(element, this.snapshot[index], event);
             });
-            if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
+            if (editor?.appState?.snapToElements && this.activeSnapEdges.length > 0) {
                 let boundElement = elements[0];
                 if (elements.length > 1) {
                     const bounds = getElementsBoundingRectangle(elements);
@@ -353,7 +374,7 @@ export const SelectTool: Tool = {
                         y2: bounds[1][1],
                     };
                 }
-                editor.state.snapEdges = activeSnapEdges.map((snapEdge: any) => ({
+                editor.state.snapEdges = this.activeSnapEdges.map((snapEdge: any) => ({
                     points: [
                         ...snapEdge.points,
                         ...(getElementSnappingPoints(boundElement, snapEdge) || []),
@@ -362,89 +383,89 @@ export const SelectTool: Tool = {
             }
         }
         // Resize
-        else if (event.handler) {
+        else if (handler) {
             editor.state.snapEdges = [];
             editor.state.status = STATUS.RESIZING;
-            activeSnapEdges = [];
-            isResized = true;
-            const element = editor.getElement(snapshot[0].id);
+            this.activeSnapEdges = [];
+            this.isResized = true;
+            const element = editor.getElement(this.snapshot[0].id);
             const elementConfig = getElementConfig(element);
-            if (event.handler === HANDLERS.ROTATION) {
-                const cx = (snapshot[0].x1 + snapshot[0].x2) / 2;
-                const cy = (snapshot[0].y1 + snapshot[0].y2) / 2;
+            if (handler === HANDLERS.ROTATION) {
+                const cx = (this.snapshot[0].x1 + this.snapshot[0].x2) / 2;
+                const cy = (this.snapshot[0].y1 + this.snapshot[0].y2) / 2;
                 const prevAngle = Math.atan2(event.originalY - cy, event.originalX - cx) + Math.PI / 2;
                 const currentAngle = Math.atan2(event.currentY - cy, event.currentX - cx) + Math.PI / 2;
                 const deltaAngle = clampAngle(event.shiftKey ? snapAngle(currentAngle - prevAngle) : currentAngle - prevAngle);
-                const angle = clampAngle((snapshot[0].rotation || 0) + deltaAngle);
+                const angle = clampAngle((this.snapshot[0].rotation || 0) + deltaAngle);
                 element.rotation = angle;
-                const newPoints = rotatePoints([[snapshot[0].x1, snapshot[0].y1], [snapshot[0].x2, snapshot[0].y2]], [cx, cy], deltaAngle);
+                const newPoints = rotatePoints([[this.snapshot[0].x1, this.snapshot[0].y1], [this.snapshot[0].x2, this.snapshot[0].y2]], [cx, cy], deltaAngle);
                 element.x1 = newPoints[0][0];
                 element.y1 = newPoints[0][1];
                 element.x2 = newPoints[1][0];
                 element.y2 = newPoints[1][1];
             }
             else {
-                if (isNodeHandler(event.handler)) {
-                    if (event.handler === HANDLERS.NODE_START) {
-                        element.x1 = getPosition(editor, snapshot[0].x1 + event.dx, SNAP_EDGE_X);
-                        element.y1 = getPosition(editor, snapshot[0].y1 + event.dy, SNAP_EDGE_Y);
+                if (isNodeHandler(handler)) {
+                    if (handler === HANDLERS.NODE_START) {
+                        element.x1 = getPosition(editor, this.snapshot[0].x1 + ((event.dx || 0) || 0), this.snapEdges, this.activeSnapEdges, SNAP_EDGE_X);
+                        element.y1 = getPosition(editor, this.snapshot[0].y1 + ((event.dy || 0) || 0), this.snapEdges, this.activeSnapEdges, SNAP_EDGE_Y);
                     }
-                    else if (event.handler === HANDLERS.NODE_END) {
-                        element.x2 = getPosition(editor, snapshot[0].x2 + event.dx, SNAP_EDGE_X);
-                        element.y2 = getPosition(editor, snapshot[0].y2 + event.dy, SNAP_EDGE_Y);
+                    else if (handler === HANDLERS.NODE_END) {
+                        element.x2 = getPosition(editor, this.snapshot[0].x2 + ((event.dx || 0) || 0), this.snapEdges, this.activeSnapEdges, SNAP_EDGE_X);
+                        element.y2 = getPosition(editor, this.snapshot[0].y2 + ((event.dy || 0) || 0), this.snapEdges, this.activeSnapEdges, SNAP_EDGE_Y);
                     }
                 }
-                else if (isCornerHandler(event.handler) || isEdgeHandler(event.handler)) {
-                    const rect = getRectangle([snapshot[0].x1, snapshot[0].y1], [snapshot[0].x2, snapshot[0].y2], snapshot[0].rotation);
+                else if (isCornerHandler(handler) || isEdgeHandler(handler)) {
+                    const rect = getRectangle([this.snapshot[0].x1, this.snapshot[0].y1], [this.snapshot[0].x2, this.snapshot[0].y2], this.snapshot[0].rotation);
                     const [minWidth, minHeight] = getElementMinimumSize(element) || [0, 0];
-                    if (isCornerHandler(event.handler)) {
-                        const [width, height] = getElementSize(snapshot[0]);
+                    if (isCornerHandler(handler)) {
+                        const [width, height] = getElementSize(this.snapshot[0]);
                         const diagLen = Math.hypot(width, height);
-                        if (event.handler === HANDLERS.CORNER_TOP_LEFT) {
+                        if (handler === HANDLERS.CORNER_TOP_LEFT) {
                             const axisDir: Point = [(-1) * width / diagLen, (-1) * height / diagLen];
-                            const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], snapshot[0].rotation, axisDir, event.shiftKey);
+                            const [gDx, gDy] = computeResizeDelta([(event.dx || 0), (event.dy || 0)], this.snapshot[0].rotation, axisDir, event.shiftKey);
                             const newCorner: Point = [
-                                getPosition(editor, snapshot[0].x1 + gDx, null),
-                                getPosition(editor, snapshot[0].y1 + gDy, null),
+                                getPosition(editor, this.snapshot[0].x1 + gDx, this.snapEdges, this.activeSnapEdges, null),
+                                getPosition(editor, this.snapshot[0].y1 + gDy, this.snapEdges, this.activeSnapEdges, null),
                             ];
-                            const clampedCorner = clampCornerResizeToMinSize(rect[2], newCorner, snapshot[0].rotation, minWidth, minHeight, "top-left");
+                            const clampedCorner = clampCornerResizeToMinSize(rect[2], newCorner, this.snapshot[0].rotation, minWidth, minHeight, "top-left");
                             element.x1 = clampedCorner[0];
                             element.y1 = clampedCorner[1];
                         }
-                        else if (event.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
+                        else if (handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
                             const axisDir: Point = [width / diagLen, height / diagLen];
-                            const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], snapshot[0].rotation, axisDir, event.shiftKey);
+                            const [gDx, gDy] = computeResizeDelta([(event.dx || 0), (event.dy || 0)], this.snapshot[0].rotation, axisDir, event.shiftKey);
                             const newCorner: Point = [
-                                getPosition(editor, snapshot[0].x2 + gDx, null),
-                                getPosition(editor, snapshot[0].y2 + gDy, null),
+                                getPosition(editor, this.snapshot[0].x2 + gDx, this.snapEdges, this.activeSnapEdges, null),
+                                getPosition(editor, this.snapshot[0].y2 + gDy, this.snapEdges, this.activeSnapEdges, null),
                             ];
-                            const clampedCorner = clampCornerResizeToMinSize(rect[0], newCorner, snapshot[0].rotation, minWidth, minHeight, "bottom-right");
+                            const clampedCorner = clampCornerResizeToMinSize(rect[0], newCorner, this.snapshot[0].rotation, minWidth, minHeight, "bottom-right");
                             element.x2 = clampedCorner[0];
                             element.y2 = clampedCorner[1];
                         }
-                        else if (event.handler === HANDLERS.CORNER_TOP_RIGHT) {
+                        else if (handler === HANDLERS.CORNER_TOP_RIGHT) {
                             const axisDir: Point = [(-1) * width / diagLen, height / diagLen];
-                            const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], snapshot[0].rotation, axisDir, event.shiftKey);
+                            const [gDx, gDy] = computeResizeDelta([(event.dx || 0), (event.dy || 0)], this.snapshot[0].rotation, axisDir, event.shiftKey);
                             const newCorner: Point = [
-                                getPosition(editor, rect[1][0] + gDx, null),
-                                getPosition(editor, rect[1][1] + gDy, null),
+                                getPosition(editor, rect[1][0] + gDx, this.snapEdges, this.activeSnapEdges, null),
+                                getPosition(editor, rect[1][1] + gDy, this.snapEdges, this.activeSnapEdges, null),
                             ];
-                            const clampedCorner = clampCornerResizeToMinSize(rect[3], newCorner, snapshot[0].rotation, minWidth, minHeight, "top-right");
-                            const newRect = getRectangle(rect[3], clampedCorner, snapshot[0].rotation);
+                            const clampedCorner = clampCornerResizeToMinSize(rect[3], newCorner, this.snapshot[0].rotation, minWidth, minHeight, "top-right");
+                            const newRect = getRectangle(rect[3], clampedCorner, this.snapshot[0].rotation);
                             element.x1 = newRect[3][0];
                             element.y1 = newRect[3][1];
                             element.x2 = newRect[1][0];
                             element.y2 = newRect[1][1];
                         }
-                        else if (event.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
+                        else if (handler === HANDLERS.CORNER_BOTTOM_LEFT) {
                             const axisDir: Point = [width / diagLen, (-1) * height / diagLen];
-                            const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], snapshot[0].rotation, axisDir, event.shiftKey);
+                            const [gDx, gDy] = computeResizeDelta([(event.dx || 0), (event.dy || 0)], this.snapshot[0].rotation, axisDir, event.shiftKey);
                             const newCorner: Point = [
-                                getPosition(editor, rect[3][0] + gDx, null),
-                                getPosition(editor, rect[3][1] + gDy, null),
+                                getPosition(editor, rect[3][0] + gDx, this.snapEdges, this.activeSnapEdges, null),
+                                getPosition(editor, rect[3][1] + gDy, this.snapEdges, this.activeSnapEdges, null),
                             ];
-                            const clampedCorner = clampCornerResizeToMinSize(rect[1], newCorner, snapshot[0].rotation, minWidth, minHeight, "bottom-left");
-                            const newRect = getRectangle(clampedCorner, rect[1], snapshot[0].rotation);
+                            const clampedCorner = clampCornerResizeToMinSize(rect[1], newCorner, this.snapshot[0].rotation, minWidth, minHeight, "bottom-left");
+                            const newRect = getRectangle(clampedCorner, rect[1], this.snapshot[0].rotation);
                             element.x1 = newRect[3][0];
                             element.y1 = newRect[3][1];
                             element.x2 = newRect[1][0];
@@ -452,46 +473,46 @@ export const SelectTool: Tool = {
                         }
                     }
                     else {
-                        if (event.handler === HANDLERS.EDGE_TOP) {
+                        if (handler === HANDLERS.EDGE_TOP) {
                             const edgeTopPoint = getCenter(rect[0], rect[1]);
                             const currentPoint: Point = [
-                                getPosition(editor, edgeTopPoint[0] + event.dx, null),
-                                getPosition(editor, edgeTopPoint[1] + event.dy, null),
+                                getPosition(editor, edgeTopPoint[0] + (event.dx || 0), this.snapEdges, this.activeSnapEdges, null),
+                                getPosition(editor, edgeTopPoint[1] + (event.dy || 0), this.snapEdges, this.activeSnapEdges, null),
                             ];
-                            const clampedPoint = clampEdgeResizeToMinSize(rect[3], currentPoint, snapshot[0].rotation, minHeight, "top");
+                            const clampedPoint = clampEdgeResizeToMinSize(rect[3], currentPoint, this.snapshot[0].rotation, minHeight, "top");
                             const newPoint = getPointProjectionToLine(clampedPoint, [rect[0], rect[3]]);
                             element.x1 = newPoint[0];
                             element.y1 = newPoint[1];
                         }
-                        else if (event.handler === HANDLERS.EDGE_BOTTOM) {
+                        else if (handler === HANDLERS.EDGE_BOTTOM) {
                             const edgeBottomPoint = getCenter(rect[2], rect[3]);
                             const currentPoint: Point = [
-                                getPosition(editor, edgeBottomPoint[0] + event.dx, null),
-                                getPosition(editor, edgeBottomPoint[1] + event.dy, null),
+                                getPosition(editor, edgeBottomPoint[0] + (event.dx || 0), this.snapEdges, this.activeSnapEdges, null),
+                                getPosition(editor, edgeBottomPoint[1] + (event.dy || 0), this.snapEdges, this.activeSnapEdges, null),
                             ];
-                            const clampedPoint = clampEdgeResizeToMinSize(rect[1], currentPoint, snapshot[0].rotation, minHeight, "bottom");
+                            const clampedPoint = clampEdgeResizeToMinSize(rect[1], currentPoint, this.snapshot[0].rotation, minHeight, "bottom");
                             const newPoint = getPointProjectionToLine(clampedPoint, [rect[1], rect[2]]);
                             element.x2 = newPoint[0];
                             element.y2 = newPoint[1];
                         }
-                        else if (event.handler === HANDLERS.EDGE_LEFT) {
+                        else if (handler === HANDLERS.EDGE_LEFT) {
                             const edgeLeftPoint = getCenter(rect[0], rect[3]);
                             const currentPoint: Point = [
-                                getPosition(editor, edgeLeftPoint[0] + event.dx, null),
-                                getPosition(editor, edgeLeftPoint[1] + event.dy, null),
+                                getPosition(editor, edgeLeftPoint[0] + (event.dx || 0), this.snapEdges, this.activeSnapEdges, null),
+                                getPosition(editor, edgeLeftPoint[1] + (event.dy || 0), this.snapEdges, this.activeSnapEdges, null),
                             ];
-                            const clampedPoint = clampEdgeResizeToMinSize(rect[2], currentPoint, snapshot[0].rotation, minWidth, "left");
+                            const clampedPoint = clampEdgeResizeToMinSize(rect[2], currentPoint, this.snapshot[0].rotation, minWidth, "left");
                             const newPoint = getPointProjectionToLine(clampedPoint, [rect[0], rect[1]]);
                             element.x1 = newPoint[0];
                             element.y1 = newPoint[1];
                         }
-                        else if (event.handler === HANDLERS.EDGE_RIGHT) {
+                        else if (handler === HANDLERS.EDGE_RIGHT) {
                             const edgeRightPoint = getCenter(rect[1], rect[2]);
                             const currentPoint: Point = [
-                                getPosition(editor, edgeRightPoint[0] + event.dx, null),
-                                getPosition(editor, edgeRightPoint[1] + event.dy, null),
+                                getPosition(editor, edgeRightPoint[0] + (event.dx || 0), this.snapEdges, this.activeSnapEdges, null),
+                                getPosition(editor, edgeRightPoint[1] + (event.dy || 0), this.snapEdges, this.activeSnapEdges, null),
                             ];
-                            const clampedPoint = clampEdgeResizeToMinSize(rect[0], currentPoint, snapshot[0].rotation, minHeight, "right");
+                            const clampedPoint = clampEdgeResizeToMinSize(rect[0], currentPoint, this.snapshot[0].rotation, minHeight, "right");
                             const newPoint = getPointProjectionToLine(clampedPoint, [rect[2], rect[3]]);
                             element.x2 = newPoint[0];
                             element.y2 = newPoint[1];
@@ -499,10 +520,10 @@ export const SelectTool: Tool = {
                     }
                 }
                 // Execute onResize handler
-                elementConfig?.onResize?.(element, snapshot[0], event, (pos: number) => getPosition(editor, pos));
+                elementConfig?.onResize?.(element, this.snapshot[0], event, (pos: number) => getPosition(editor, pos));
                 // Set visible snap edges
-                if (editor?.appState?.snapToElements && activeSnapEdges.length > 0) {
-                    editor.state.snapEdges = activeSnapEdges.map((snapEdge: any) => ({
+                if (editor?.appState?.snapToElements && this.activeSnapEdges.length > 0) {
+                    editor.state.snapEdges = this.activeSnapEdges.map((snapEdge: any) => ({
                         points: [
                             ...snapEdge.points,
                             ...(getElementSnappingPoints(element, snapEdge) || []),
@@ -517,20 +538,24 @@ export const SelectTool: Tool = {
             editor.state.selection.x2 = event.currentX;
             editor.state.selection.y2 = event.currentY;
         }
-    },
+    }
 
-    onPointerUp: (editor, event) => {
+    onPointerUp(editor: any, event: CanvasEvent) {
+        const target = event.originalEvent?.target as HTMLElement | undefined;
+        const handler = target?.dataset?.handler;
+        const elementId = target?.dataset?.element;
+
         editor.state.snapEdges = [];
         editor.state.status = STATUS.IDLE;
 
         // Handle translate/resize completion
-        if (snapshot.length > 0) {
-            if (isDragged || isResized) {
-                if (event.handler && snapshot.length === 1) {
-                    const element = editor.getElement(snapshot[0].id);
+        if (this.snapshot.length > 0) {
+            if (this.isDragged || this.isResized) {
+                if (handler && this.snapshot.length === 1) {
+                    const element = editor.getElement(this.snapshot[0].id);
                     const elementConfig = getElementConfig(element);
                     if (typeof elementConfig.onResizeEnd === "function") {
-                        elementConfig.onResizeEnd(element, snapshot[0], event);
+                        elementConfig.onResizeEnd(element, this.snapshot[0], event);
                     }
                 }
                 const selectedElements = editor.getSelection();
@@ -541,28 +566,28 @@ export const SelectTool: Tool = {
                         const updatedFields = new Set(["x1", "x2", "y1", "y2", "rotation", "version"]);
                         const elementConfig = getElementConfig(element);
                         if (typeof elementConfig.getUpdatedFields === "function") {
-                            (elementConfig.getUpdatedFields(element, snapshot[index]) || []).forEach((key: string) => {
+                            (elementConfig.getUpdatedFields(element, this.snapshot[index]) || []).forEach((key: string) => {
                                 updatedFields.add(key);
                             });
                         }
                         const keys = Array.from(updatedFields);
                         return {
                             id: element.id,
-                            prevValues: Object.fromEntries(keys.map(key => [key, snapshot[index][key]])),
+                            prevValues: Object.fromEntries(keys.map(key => [key, this.snapshot[index][key]])),
                             newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
                         };
                     }),
                 });
                 editor.dispatchChange();
             }
-            else if (event.element) {
-                const element = editor.getElement(event.element);
+            else if (elementId) {
+                const element = editor.getElement(elementId);
                 if (!event.shiftKey) {
                     editor.clearSelection();
                     element.selected = true;
                 }
                 else {
-                    element.selected = !isPrevSelected;
+                    element.selected = !this.isPrevSelected;
                 }
                 if (element.group && !editor.page.activeGroup) {
                     editor.getElements().forEach((el: any) => {
@@ -570,8 +595,8 @@ export const SelectTool: Tool = {
                     });
                 }
             }
-            isDragged = false;
-            isResized = false;
+            this.isDragged = false;
+            this.isResized = false;
         }
         // Finalize brush selection
         else if (editor.state.selection) {
@@ -584,37 +609,41 @@ export const SelectTool: Tool = {
             });
         }
         editor.state.selection = null;
-    },
+    }
 
-    onDoubleClickElement: (editor, event) => {
+    onDoubleClickElement(editor: any, event: CanvasEvent) {
+        const target = event.originalEvent?.target as HTMLElement | undefined;
+        const handler = target?.dataset?.handler;
+        const elementId = target?.dataset?.element;
+
         if (!editor.page.readonly) {
-            const element = editor.getElement(event.element);
+            const element = editor.getElement(elementId);
             if (!editor.page.activeGroup && element.group) {
                 editor.page.activeGroup = element.group;
                 editor.clearSelection();
                 element.selected = true;
             }
             else if (element && !element.locked) {
-                activeElement = element;
-                activeElement.editing = true;
+                this.activeElement = element;
+                this.activeElement.editing = true;
             }
         }
-    },
+    }
 
-    onKeyDown: (editor, event) => {
+    onKeyDown(editor: any, event: any): boolean | void {
         if (editor.page.readonly) {
-            return null;
+            return;
         }
         const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
         // Check if we are in an input target and input element is active
         if (isInputTarget(event)) {
-            if (activeElement?.editing && event.key === KEYS.ESCAPE) {
+            if (this.activeElement?.editing && event.key === KEYS.ESCAPE) {
                 event.preventDefault();
-                activeElement.editing = false;
-                if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
-                    removeTextElement(editor, activeElement);
+                this.activeElement.editing = false;
+                if (this.activeElement.type === ELEMENTS.TEXT && !this.activeElement.text) {
+                    removeTextElement(editor, this.activeElement);
                 }
-                activeElement = null;
+                this.activeElement = null;
                 return true; // signal that event was handled
             }
         }
@@ -662,9 +691,9 @@ export const SelectTool: Tool = {
             return true;
         }
         return false; // event not handled by this tool
-    },
+    }
 
-    renderCanvas: (editor) => {
+    renderCanvas(editor: any) {
         return <SelectBoundsCanvas editor={editor} />;
-    },
-};
+    }
+}

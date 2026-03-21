@@ -92,7 +92,7 @@ export const Toolbar = (): React.JSX.Element => {
                             }}
                         />
                         {activeTool?.id === tool.id && tool.renderToolbar && (
-                            tool.renderToolbar(editor, tool, update)
+                            tool.renderToolbar(update)
                         )}
                     </div>
                 ))}

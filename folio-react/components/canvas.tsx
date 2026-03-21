@@ -1,10 +1,8 @@
 import React from "react";
 import { useUpdate } from "react-use";
-
 import {
     ACTIONS,
     IS_DARWIN,
-    KEYS,
     PREFERENCES,
     STATUS,
     TOOLS,
@@ -23,9 +21,7 @@ import { usePreferences } from "../contexts/preferences.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { useCursor } from "../hooks/use-cursor.js";
 import { useDimensions } from "../hooks/use-dimensions.ts";
-
 import { getActionByKeysCombination } from "../lib/actions.js";
-
 import { renderElement } from "./elements/index.jsx";
 import { SvgContainer } from "./svg.tsx";
 import { Grid } from "./grid.jsx";
@@ -34,6 +30,18 @@ import { clearFocus } from "../utils/dom.js";
 import { preventDefault, isTouchOrPenEvent, isInputTarget } from "../utils/events.js";
 
 const delay = (timeout: number, cb: () => void) => window.setTimeout(cb, timeout);
+
+export type CanvasEvent = {
+    originalX: number;
+    originalY: number;
+    currentX?: number; // on move
+    currentY?: number; // on move
+    dx?: number;       // on move
+    dy?: number;       // on move
+    shiftKey: boolean;
+    originalEvent?: PointerEvent;
+    drag?: boolean;    // true on move
+};
 
 export type CanvasProps = {
     fonts?: string[];
@@ -61,7 +69,7 @@ export const Canvas: React.FC<CanvasProps> = props => {
     const handleContextMenu = React.useCallback((event: any) => {
         event.preventDefault();
         if (activeTool?.id === TOOLS.SELECT && canvasRef.current) {
-            const {top, left} = canvasRef.current.getBoundingClientRect();
+            const { top, left } = canvasRef.current.getBoundingClientRect();
             showContextMenu(
                 event.nativeEvent.clientY - top,
                 event.nativeEvent.clientX - left
@@ -79,52 +87,42 @@ export const Canvas: React.FC<CanvasProps> = props => {
         }
     }, [editor]);
 
-    const onPointCanvas = React.useCallback((event: any) => {
-        activeTool?.onPointCanvas?.(editor, event);
-        hideContextMenu();
-        update();
-    }, [editor, activeTool, update, hideContextMenu]);
-
-    const onPointElement = React.useCallback((event: any) => {
-        activeTool?.onPointElement?.(editor, event);
-        update();
-    }, [editor, activeTool, update]);
-
-    const onPointerDownRoute = React.useCallback((event: any) => {
+    const onPointerDownRoute = React.useCallback((event: CanvasEvent) => {
         editor.state.status = STATUS.POINTING;
         activeTool?.onPointerDown?.(editor, event);
         hideContextMenu();
         update();
     }, [editor, activeTool, update, hideContextMenu]);
 
-    const onPointerMoveRoute = React.useCallback((event: any) => {
+    const onPointerMoveRoute = React.useCallback((event: CanvasEvent) => {
         activeTool?.onPointerMove?.(editor, event);
         update();
     }, [editor, activeTool, update]);
 
-    const onPointerUpRoute = React.useCallback((event: any) => {
+    const onPointerUpRoute = React.useCallback((event: CanvasEvent) => {
         activeTool?.onPointerUp?.(editor, event);
         update();
     }, [editor, activeTool, update]);
 
-    const onDoubleClickElement = React.useCallback((event: any) => {
+    const onDoubleClickElement = React.useCallback((event: CanvasEvent) => {
         activeTool?.onDoubleClickElement?.(editor, event);
         update();
     }, [editor, activeTool, update]);
 
-    const onElementChange = React.useCallback((event: any) => {
-        const element = editor.getElement(event.element) as any;
+    const handleElementChange = React.useCallback((elementId: string, keys: string[], values: any[]) => {
+        const element = editor.getElement(elementId) as any;
         if (element && element.editing) {
-            editor.updateElements([element], event.keys, event.values, true);
+            editor.updateElements([element], keys, values, true);
             editor.dispatchChange();
         }
         update();
     }, [editor, update]);
 
-    const onElementBlur = React.useCallback((event: any) => {
-        editor.getElements().forEach((element: any) => {
+    const handleElementBlur = React.useCallback((elementId: string) => {
+        const element = editor.getElement(elementId) as any;
+        if (element) {
             element.editing = false;
-        });
+        }
         update();
     }, [editor, update]);
 
@@ -189,27 +187,14 @@ export const Canvas: React.FC<CanvasProps> = props => {
                 return handleContextMenu(event);
             });
         }
-        const {top, left} = canvasRef.current!.getBoundingClientRect();
-        const eventInfo: any = {
+        const { top, left } = canvasRef.current!.getBoundingClientRect();
+        const eventInfo: CanvasEvent = {
             drag: false,
             originalX: (event.nativeEvent.clientX - left - editor.page.translateX) / editor.page.zoom,
             originalY: (event.nativeEvent.clientY - top - editor.page.translateY) / editor.page.zoom,
             shiftKey: event.nativeEvent.shiftKey,
             originalEvent: event.nativeEvent,
-            detail: {},
         };
-
-        if (event.nativeEvent.target?.dataset?.element) {
-            eventInfo.element = event.nativeEvent.target.dataset.element;
-        }
-        if (event.nativeEvent.target?.dataset?.handler) {
-            eventInfo.handler = event.nativeEvent.target.dataset.handler;
-        }
-
-        // Call the listener provided as an argument
-        if (typeof pointListener === "function") {
-            pointListener(eventInfo);
-        }
 
         // Emit pointer down event
         onPointerDownRoute(eventInfo);
@@ -256,8 +241,8 @@ export const Canvas: React.FC<CanvasProps> = props => {
             return;
         }
 
-        const {top, left} = canvasRef.current!.getBoundingClientRect();
-        const eventInfo: any = {
+        const { top, left } = canvasRef.current!.getBoundingClientRect();
+        const eventInfo: CanvasEvent = {
             originalX: (event.nativeEvent.clientX - left - editor.page.translateX) / editor.page.zoom,
             originalY: (event.nativeEvent.clientY - top - editor.page.translateY) / editor.page.zoom,
             shiftKey: event.nativeEvent.shiftKey,
@@ -321,11 +306,11 @@ export const Canvas: React.FC<CanvasProps> = props => {
                 WebkitTouchCallout: "none",
                 cursor: cursor as any,
             }}
-            onPointerDown={e => handlePointerDown(e, null, onPointCanvas)}
+            onPointerDown={e => handlePointerDown(e, null, null)}
             onDoubleClick={e => handleDoubleClick(e, null, null)}
             onContextMenu={e => handleContextMenu(e)}
         >
-            <div className="absolute" style={{transform:transform.join(" ")}}>
+            <div className="absolute" style={{ transform: transform.join(" ") }}>
                 <style type="text/css">
                     {(props.fonts || Object.values(FONT_SOURCES)).map(font => `@import url('${font}');`).join("")}
                 </style>
@@ -343,11 +328,13 @@ export const Canvas: React.FC<CanvasProps> = props => {
                         const content = renderElement(element, {
                             ...element,
                             onChange: (keys: any, values: any) => {
-                                return onElementChange({element: element.id, keys, values});
+                                return handleElementChange(element.id, keys, values);
                             },
-                            onBlur: () => onElementBlur({element: element.id}),
+                            onBlur: () => {
+                                return handleElementBlur(element.id);
+                            },
                             onPointerDown: (e: any) => {
-                                return handlePointerDown(e, "element", onPointElement);
+                                return handlePointerDown(e, "element", null);
                             },
                             onDoubleClick: (e: any) => {
                                 return handleDoubleClick(e, "element", onDoubleClickElement);
@@ -366,7 +353,7 @@ export const Canvas: React.FC<CanvasProps> = props => {
                         );
                     })}
                 </AssetsProvider>
-                
+
                 {activeTool?.renderCanvas?.(editor)}
 
                 {editor.appState.snapToElements && editor.state.snapEdges && (

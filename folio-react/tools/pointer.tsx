@@ -14,7 +14,8 @@ import {
 } from "../constants.js";
 import { hypotenuse } from "../utils/math.ts";
 import { SvgContainer } from "../components/svg.tsx";
-import type { Tool } from "../contexts/tools.tsx";
+import { BaseTool } from "./base.tsx";
+import { CanvasEvent } from "../components/canvas.tsx";
 
 // alias for setInterval
 const createInterval = (ms: number, listener: () => void) => setInterval(listener, ms);
@@ -173,13 +174,14 @@ const PointerCanvas = () => {
     );
 };
 
-export const PointerTool: Tool = {
-    id: TOOLS.POINTER,
-    name: "Laser Pointer",
-    icon: "laser-pointer",
-    enabledOnReadOnly: true,
-    shortcut: "l",
-    renderCanvas: () => {
+export class PointerTool extends BaseTool {
+    id = TOOLS.POINTER;
+    name = "Laser Pointer";
+    icon = "laser-pointer";
+    enabledOnReadOnly = true;
+    shortcut = "l";
+
+    renderCanvas(editor: any) {
         return <PointerCanvas />;
-    },
-};
+    }
+}

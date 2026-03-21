@@ -2,45 +2,20 @@ import React from "react";
 import { TOOLS } from "../constants.js";
 import { useEditor } from "../contexts/editor.jsx";
 
-export type Tool = {
-    id: string;
-    name?: string;
-    icon?: React.JSX.Element | React.ReactNode | string;
-    primary?: boolean;
-    enabledOnReadOnly?: boolean;
-    shortcut?: string;
-
-    // lifecycle
-    onEnter?: (editor: any) => void;
-    onExit?: (editor: any) => void;
-
-    // event handlers
-    onPointCanvas?: (editor: any, event: any) => void;
-    onPointElement?: (editor: any, event: any) => void;
-    onPointerDown?: (editor: any, event: any) => void;
-    onPointerMove?: (editor: any, event: any) => void;
-    onPointerUp?: (editor: any, event: any) => void;
-    onDoubleClickElement?: (editor: any, event: any) => void;
-    onKeyDown?: (editor: any, event: any) => boolean | void;
-    onKeyUp?: (editor: any, event: any) => void;
-
-    // UI rendering
-    renderToolbar?: (editor: any, update: () => void) => React.ReactNode;
-    renderCanvas?: (editor: any) => React.ReactNode;
-};
+import { BaseTool } from "../tools/base.tsx";
 
 export type ToolsManager = {
-    getTools: () => Tool[];
-    getToolById: (toolId: string) => Tool | null;
-    getToolByShortcut: (shortcut: string) => Tool | null;
-    getActiveTool: () => Tool;
+    getTools: () => BaseTool[];
+    getToolById: (toolId: string) => BaseTool | null;
+    getToolByShortcut: (shortcut: string) => BaseTool | null;
+    getActiveTool: () => BaseTool;
     setActiveTool: (toolId: string) => void;
     getLocked: () => boolean;
     setLocked: (toolLocked: boolean) => void;
 };
 
 export type ToolsProviderProps = {
-    tools: Tool[];
+    tools: any[];
     children: React.ReactNode;
 };
 
@@ -63,26 +38,29 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
     const activeTool = React.useRef<string>(TOOLS.SELECT);
     const locked = React.useRef<boolean>(false);
 
-    const tools = props.tools;
+    // Instantiate tools on mount and when tools prop changes
+    const tools = React.useMemo(() => {
+        return props.tools.map((ToolClass: any) => new ToolClass()) as BaseTool[];
+    }, [props.tools, editor]);
 
     // @description get list of tools
-    const getTools = React.useCallback((): Tool[] => tools, [tools]);
+    const getTools = React.useCallback((): BaseTool[] => tools, [tools]);
 
     // @description get a tool by id
-    const getToolById = React.useCallback((toolId: string): Tool | null => {
+    const getToolById = React.useCallback((toolId: string): BaseTool | null => {
         return tools.find(tool => tool.id === toolId) || null;
     }, [tools]);
 
     // @description get tool by the provided shortcut
-    const getToolByShortcut = React.useCallback((shortcut: string = ""): Tool | null => {
+    const getToolByShortcut = React.useCallback((shortcut: string = ""): BaseTool | null => {
         const uppercaseShortcut = shortcut.toUpperCase();
-        return tools.find((tool: Tool) => {
+        return tools.find((tool: BaseTool) => {
             return !!tool?.shortcut && tool.shortcut.toUpperCase() === uppercaseShortcut;
         }) || null;
     }, [tools]);
 
     // @description get the active tool
-    const getActiveTool = React.useCallback((): Tool => {
+    const getActiveTool = React.useCallback((): BaseTool => {
         return tools.find(tool => tool.id === activeTool.current) || tools[0];
     }, [tools]);
 
@@ -93,12 +71,12 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
             // call onExit on the current tool
             const currentTool = getActiveTool();
             if (currentTool && currentTool.id !== toolId) {
-                currentTool.onExit?.(editor);
+                currentTool.onExit?.();
             }
             // update the active tool
             activeTool.current = toolId;
             // call onEnter on the new tool
-            newTool.onEnter?.(editor);
+            newTool.onEnter?.();
             // trigger re-render
             setUpdate(prevUpdate => (-1) * prevUpdate);
         }

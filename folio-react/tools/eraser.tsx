@@ -1,20 +1,23 @@
 import { TOOLS, ELEMENTS } from "../constants.js";
 import { getElementNormalizedPosition } from "../lib/elements.js";
-import type { Tool } from "../contexts/tools.tsx";
+import { BaseTool } from "./base.tsx";
+import { CanvasEvent } from "../components/canvas.tsx";
 
-export const EraserTool: Tool = {
-    id: TOOLS.ERASER,
-    name: "Erase",
-    icon: "erase",
-    shortcut: "e",
-    onEnter: (editor: any) => {
+export class EraserTool extends BaseTool {
+    id = TOOLS.ERASER;
+    name = "Erase";
+    icon = "erase";
+    shortcut = "e";
+
+    onEnter(editor: any) {
         editor.getElements().forEach((element: any) => {
             element.erased = false;
         });
-    },
-    onPointerMove: (editor: any, event: any) => {
-        const x = event.originalX + event.dx;
-        const y = event.originalY + event.dy;
+    }
+
+    onPointerMove(editor: any, event: CanvasEvent) {
+        const x = event.originalX + (event.dx || 0);
+        const y = event.originalY + (event.dy || 0);
         editor.getElements().forEach((element: any) => {
             if (!element.erased) {
                 const b = element.type === ELEMENTS.ARROW ? getElementNormalizedPosition(element) : element;
@@ -23,8 +26,9 @@ export const EraserTool: Tool = {
                 }
             }
         });
-    },
-    onPointerUp: (editor: any, event: any) => {
+    }
+
+    onPointerUp(editor: any, event: CanvasEvent) {
         const erasedElements = editor.getElements().filter((element: any) => {
             return element.erased;
         });
@@ -32,5 +36,5 @@ export const EraserTool: Tool = {
             editor.removeElements(erasedElements);
             editor.dispatchChange();
         }
-    },
-};
+    }
+}

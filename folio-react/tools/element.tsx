@@ -29,10 +29,8 @@ import {
 } from "../components/icons.jsx";
 import { getStickerImage } from "../lib/stickers.js";
 import { blobToDataUrl } from "../utils/blob.js";
-import type { Tool } from "../contexts/tools.tsx";
-
-// shared module-global state for all element creator tools
-let activeElement: any = null;
+import { BaseTool } from "./base.tsx";
+import { CanvasEvent } from "../components/canvas.tsx";
 
 type ToolPickValue = {
     value: any;
@@ -102,37 +100,39 @@ const PickPanel = (props: PickPanelProps): React.JSX.Element => {
     );
 };
 
-export const createElementTool = (elementType: string, options: ElementToolOptions): Tool => {
-    return {
-        id: elementType,
-        icon: options.icon,
-        name: options.name,
-        primary: options.primary,
-        shortcut: options.shortcut,
+export const createElementTool = (elementType: string, options: ElementToolOptions) => {
+    return class ElementTool extends BaseTool {
+        id = elementType;
+        icon = options.icon;
+        name = options.name;
+        primary = options.primary;
+        shortcut = options.shortcut;
 
-        onEnter: (editor) => {
+        private activeElement: any = null;
+
+        onEnter(editor: any) {
             // Clear any active editing state
-            if (activeElement?.editing) {
-                if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
-                    removeTextElement(editor, activeElement);
+            if (this.activeElement?.editing) {
+                if (this.activeElement.type === ELEMENTS.TEXT && !this.activeElement.text) {
+                    removeTextElement(editor, this.activeElement);
                 }
-                activeElement.editing = false;
-                activeElement = null;
+                this.activeElement.editing = false;
+                this.activeElement = null;
             }
-        },
+        }
 
-        onPointerDown: (editor, event) => {
+        onPointerDown(editor: any, event: CanvasEvent) {
             // If there's a custom onSelect (e.g., Image tool opens file dialog), call it instead
             if (typeof options.onSelect === "function") {
                 options.onSelect(editor);
                 return;
             }
             // Clean up any active editing element
-            if (activeElement?.editing) {
-                if (activeElement.type === ELEMENTS.TEXT && !activeElement.text) {
-                    removeTextElement(editor, activeElement);
+            if (this.activeElement?.editing) {
+                if (this.activeElement.type === ELEMENTS.TEXT && !this.activeElement.text) {
+                    removeTextElement(editor, this.activeElement);
                 }
-                activeElement = null;
+                this.activeElement = null;
             }
             // Create the new element
             const element = createElement(elementType);
@@ -146,22 +146,22 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
                 creating: true,
             });
             elementConfig.onCreateStart?.(element, event);
-            activeElement = element;
+            this.activeElement = element;
             editor.clearSelection();
             editor.addElements([element]);
-        },
+        }
 
-        onPointerMove: (editor, event) => {
-            if (!activeElement) return;
-            const element = activeElement;
-            element.x2 = getGridPosition(editor, event.currentX);
-            element.y2 = getGridPosition(editor, event.currentY);
+        onPointerMove(editor: any, event: CanvasEvent) {
+            if (!this.activeElement) return;
+            const element = this.activeElement;
+            element.x2 = getGridPosition(editor, event.currentX || event.originalX);
+            element.y2 = getGridPosition(editor, event.currentY || event.originalY);
             getElementConfig(element)?.onCreateMove?.(element, event, (pos: number) => getGridPosition(editor, pos));
-        },
+        }
 
-        onPointerUp: (editor, event) => {
-            if (!activeElement) return;
-            const element = activeElement;
+        onPointerUp(editor: any, event: CanvasEvent) {
+            if (!this.activeElement) return;
+            const element = this.activeElement;
             element.creating = false;
             element.selected = true;
             element[FIELDS.VERSION] = 1;
@@ -177,7 +177,7 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
             }
 
             editor.dispatchChange();
-            activeElement = null;
+            this.activeElement = null;
 
             // Switch back to select (unless tool is locked or it's a draw tool)
             const toolsManager = editor._toolsManager;
@@ -191,12 +191,13 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
             // Special handling for text elements: enter edit mode
             if (element.type === ELEMENTS.TEXT) {
                 element.editing = true;
-                activeElement = element;
+                this.activeElement = element;
             }
-        },
+        }
 
         // Render the quick picks toolbar panel
-        renderToolbar: options.quickPicks ? (editor, update) => {
+        renderToolbar(update: () => void) {
+            if (!options.quickPicks) return null;
             return (
                 <PickPanel
                     values={editor.defaults}
@@ -210,7 +211,7 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
                     }}
                 />
             );
-        } : undefined,
+        }
     };
 };
 
@@ -326,7 +327,7 @@ export const ImageTool = createElementTool(ELEMENTS.IMAGE, {
             multiple: false,
         };
         fileOpen(options)
-            .then((blob: Blob) => blobToDataUrl(blob))
+            .then((blob: any) => blobToDataUrl(blob))
             .then((data: string) => editor.addImageElement(data))
             .then(() => {
                 editor.dispatchChange();
