@@ -37,7 +37,6 @@ import {
     getElementsSnappingEdges,
     getElementSnappingPoints,
     getElementsBoundingRectangle,
-    getElementNormalizedPosition,
     getElementBounds,
     getElementSize,
     getElementMinimumSize,
@@ -57,6 +56,7 @@ import { BaseTool } from "./base.tsx";
 import { CanvasEvent } from "../components/canvas.tsx";
 import { SnapEdges } from "./children/snaps.tsx";
 import { DimensionsLayer } from "./children/dimensions.tsx";
+import { useEditor } from "../contexts/editor.jsx";
 import type { Point } from "../utils/math.ts";
 
 // @private remove the current text element
@@ -75,8 +75,8 @@ const getRectanglePathFromPoints = (p1: number[], p2: number[]): string => {
 };
 
 // @private Bounds rendering component
-const SelectBoundsCanvas = (props: { editor: any }) => {
-    const editor = props.editor;
+const SelectBoundsCanvas = (): React.JSX.Element => {
+    const editor = useEditor();
     const bounds: any[] = [];
     let hasCustomBounds = false;
     const selectedElements = editor.getSelection();
@@ -710,7 +710,7 @@ export class SelectTool extends BaseTool {
         return false; // event not handled by this tool
     }
 
-    renderCanvas(editor: any) {
-        return <SelectBoundsCanvas editor={editor} />;
+    renderCanvas(): React.JSX.Element {
+        return <SelectBoundsCanvas />;
     }
 }
