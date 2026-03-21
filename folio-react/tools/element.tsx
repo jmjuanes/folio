@@ -20,7 +20,6 @@ import {
     getElementConfig,
     createElement,
 } from "../lib/elements.js";
-import { Form } from "../components/form/index.jsx";
 import {
     ArrowIcon,
     ArrowConnectorIcon,
@@ -33,6 +32,7 @@ import { BaseTool } from "./base.tsx";
 import { CanvasEvent } from "../components/canvas.tsx";
 import { SnapEdges } from "./children/snaps.tsx";
 import { DimensionsLayer } from "./children/dimensions.tsx";
+import { PickPanel } from "./children/pick.tsx";
 
 type ToolPickValue = {
     value: any;
@@ -48,12 +48,6 @@ type ToolPick = {
 
 type ToolPicks = {
     [pickField: string]: ToolPick;
-};
-
-type PickPanelProps = {
-    values: any;
-    items: any;
-    onChange: (field: string, value: any) => void;
 };
 
 export type ElementToolOptions = {
@@ -82,24 +76,6 @@ const removeTextElement = (editor: any, element: any) => {
     }
     editor.removeElements([element]);
     editor.dispatchChange();
-};
-
-const PickPanel = (props: PickPanelProps): React.JSX.Element => {
-    const pickPanelClassName = [
-        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3",
-        "bg-white border-1 border-gray-200 shadow-sm",
-    ].join(" ");
-    return (
-        <div className={pickPanelClassName} style={{ transform: "translateX(-50%)" }}>
-            <Form
-                className="flex flex-row gap-2"
-                data={props.values}
-                items={props.items}
-                separator={<div className="w-px h-6 bg-gray-200" />}
-                onChange={props.onChange}
-            />
-        </div>
-    );
 };
 
 export const createElementTool = (elementType: string, options: ElementToolOptions) => {
@@ -220,8 +196,12 @@ export const createElementTool = (elementType: string, options: ElementToolOptio
         renderCanvas(editor: any) {
             return (
                 <React.Fragment>
-                    {editor.appState.snapToElements && <SnapEdges edges={editor.state.snapEdges || []} />}
-                    {editor.appState.objectDimensions && <DimensionsLayer />}
+                    {editor.appState.snapToElements && (
+                        <SnapEdges edges={editor.state.snapEdges || []} />
+                    )}
+                    {editor.appState.objectDimensions && (
+                        <DimensionsLayer />
+                    )}
                 </React.Fragment>
             );
         }
