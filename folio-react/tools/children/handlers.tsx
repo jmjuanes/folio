@@ -8,7 +8,9 @@ import {
     isVerticalEdgeHandler,
     isHorizontalEdgeHandler,
 } from "../../lib/handlers.ts";
+import { useEditor } from "../../contexts/editor.jsx";
 import { SvgContainer } from "../../components/svg.tsx";
+import { getElementConfig } from "../../lib/elements.js";
 import { convertRadiansToDegrees } from "../../utils/math.ts";
 
 export type HandlerPosition = {
@@ -34,8 +36,6 @@ const cursorsByHandlerType = {
 };
 
 export type HandlersProps = {
-    handlers: HandlerPosition[];
-    zoom?: number;
     fillColor?: string;
     strokeColor?: string;
     onPointerDown?: (event: React.PointerEvent<SVGElement>) => void;
@@ -109,43 +109,57 @@ export const ResizeHandler = (props: ResizeHandlerProps): React.JSX.Element => (
     </g>
 );
 
-export const Handlers = (props: HandlersProps): React.JSX.Element => (
-    <SvgContainer>
-        {(props.handlers || []).map(handler => (
-            <React.Fragment key={handler.id ?? handler.type}>
-                {(isCornerHandler(handler.type) || isEdgeHandler(handler.type)) && (
-                    <ResizeHandler
-                        type={handler.type}
-                        x={handler.x}
-                        y={handler.y}
-                        width={isVerticalEdgeHandler(handler.type) ? 24 : 12}
-                        height={isHorizontalEdgeHandler(handler.type) ? 24 : 12}
-                        fillColor={props.fillColor}
-                        strokeColor={props.strokeColor}
-                        strokeWidth={4}
-                        radius={isEdgeHandler(handler.type) ? 6 : 4}
-                        zoom={props.zoom ?? 1}
-                        rotation={handler.rotation ?? 0}
-                        onPointerDown={props.onPointerDown}
-                    />
-                )}
-                {(isNodeHandler(handler.type) || isRotationHandler(handler.type)) && (
-                    <NodeHandler
-                        type={handler.type}
-                        x={handler.x}
-                        y={handler.y}
-                        radius={6}
-                        fillColor={props.fillColor}
-                        strokeColor={props.strokeColor}
-                        strokeWidth={4}
-                        zoom={props.zoom ?? 1}
-                        rotation={handler.rotation ?? 0}
-                        offsetX={handler.offsetX}
-                        offsetY={handler.offsetY}
-                        onPointerDown={props.onPointerDown}
-                    />
-                )}
-            </React.Fragment>
-        ))}
-    </SvgContainer>
-);
+export const Handlers = (props: HandlersProps): React.JSX.Element => {
+    const editor = useEditor();
+    const selectedElements = editor.getSelection();
+    const handlers: any[] = [];
+    if (selectedElements.length === 1 && !selectedElements[0].locked && !selectedElements[0].editing) {
+        const config = getElementConfig(selectedElements[0]);
+        if (typeof config.getHandlers === "function") {
+            (config.getHandlers(selectedElements[0]) || []).forEach((handler: any) => {
+                handlers.push(handler);
+            });
+        }
+    }
+
+    return (
+        <SvgContainer>
+            {handlers.map(handler => (
+                <React.Fragment key={handler.id ?? handler.type}>
+                    {(isCornerHandler(handler.type) || isEdgeHandler(handler.type)) && (
+                        <ResizeHandler
+                            type={handler.type}
+                            x={handler.x}
+                            y={handler.y}
+                            width={isVerticalEdgeHandler(handler.type) ? 24 : 12}
+                            height={isHorizontalEdgeHandler(handler.type) ? 24 : 12}
+                            fillColor={props.fillColor}
+                            strokeColor={props.strokeColor}
+                            strokeWidth={4}
+                            radius={isEdgeHandler(handler.type) ? 6 : 4}
+                            zoom={editor.page.zoom ?? 1}
+                            rotation={handler.rotation ?? 0}
+                            onPointerDown={props.onPointerDown}
+                        />
+                    )}
+                    {(isNodeHandler(handler.type) || isRotationHandler(handler.type)) && (
+                        <NodeHandler
+                            type={handler.type}
+                            x={handler.x}
+                            y={handler.y}
+                            radius={6}
+                            fillColor={props.fillColor}
+                            strokeColor={props.strokeColor}
+                            strokeWidth={4}
+                            zoom={editor.page.zoom ?? 1}
+                            rotation={handler.rotation ?? 0}
+                            offsetX={handler.offsetX}
+                            offsetY={handler.offsetY}
+                            onPointerDown={props.onPointerDown}
+                        />
+                    )}
+                </React.Fragment>
+            ))}
+        </SvgContainer>
+    );
+};

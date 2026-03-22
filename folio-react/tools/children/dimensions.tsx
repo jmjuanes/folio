@@ -1,7 +1,17 @@
 import React from "react";
-import { ELEMENTS, FIELDS, TOOLS, OBJECT_DIMENSIONS_FILL_COLOR, OBJECT_DIMENSIONS_TEXT_COLOR, OBJECT_DIMENSIONS_TEXT_SIZE } from "../../constants.js";
+import {
+    ELEMENTS,
+    FIELDS,
+    TOOLS,
+    OBJECT_DIMENSIONS_FILL_COLOR,
+    OBJECT_DIMENSIONS_TEXT_COLOR,
+    OBJECT_DIMENSIONS_TEXT_SIZE,
+} from "../../constants.js";
 import { useEditor } from "../../contexts/editor.jsx";
-import { getElementSize, getElementsBoundingRectangle } from "../../lib/elements.js";
+import {
+    getElementSize,
+    getElementsBoundingRectangle,
+} from "../../lib/elements.js";
 import { getRectangle } from "../../utils/math.ts";
 
 export type DimensionLabel = {
@@ -59,7 +69,16 @@ export const useDimensions = () => {
     return dimensions;
 };
 
-export const ObjectDimensions = (props: any) => {
+type ObjectDimensionsProps = {
+    value: string;
+    x: number;
+    y: number;
+    className?: string;
+    translateX?: string | number;
+    translateY?: string | number;
+};
+
+export const ObjectDimensions = (props: ObjectDimensionsProps): React.JSX.Element => {
     const style: React.CSSProperties = {
         color: OBJECT_DIMENSIONS_TEXT_COLOR,
         fontSize: OBJECT_DIMENSIONS_TEXT_SIZE,
@@ -85,13 +104,8 @@ export const ObjectDimensions = (props: any) => {
     );
 };
 
-export const DimensionsLayer = () => {
+export const Dimensions = (): React.JSX.Element => {
     const dimensions = useDimensions();
-    
-    if (dimensions.length === 0) {
-        return null;
-    }
-
     return (
         <React.Fragment>
             {dimensions.map((item, index) => (
