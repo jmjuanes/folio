@@ -29,7 +29,7 @@ import {
 import { getStickerImage } from "../lib/stickers.js";
 import { blobToDataUrl } from "../utils/blob.js";
 import { BaseTool } from "./base.tsx";
-import { DimensionsLayer } from "./children/dimensions.tsx";
+import { Dimensions } from "./children/dimensions.tsx";
 import { PickPanel } from "./children/pick-panel.tsx";
 import type { Picks } from "./children/pick-panel.tsx";
 import type { ToolEventParams, ToolLifecycleParams, ToolRenderingParams } from "./base.tsx";
@@ -158,7 +158,7 @@ export abstract class ElementTool extends BaseTool {
         return (
             <React.Fragment>
                 {editor.appState.objectDimensions && (
-                    <DimensionsLayer />
+                    <Dimensions />
                 )}
             </React.Fragment>
         );
