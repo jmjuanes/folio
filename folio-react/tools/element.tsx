@@ -3,7 +3,6 @@ import { SquareIcon, CircleIcon, TriangleIcon } from "@josemi-icons/react";
 import { fileOpen } from "browser-fs-access";
 import {
     ELEMENTS,
-    TOOLS,
     FIELDS,
     SHAPES,
     ARROW_SHAPES,
@@ -33,8 +32,6 @@ import { Dimensions } from "./children/dimensions.tsx";
 import { PickPanel } from "./children/pick-panel.tsx";
 import type { Picks } from "./children/pick-panel.tsx";
 import type { ToolEventParams, ToolLifecycleParams, ToolRenderingParams } from "./base.tsx";
-// import type { CanvasEvent } from "../components/canvas.tsx";
-// import type { ToolsManager } from "../contexts/tools.tsx";
 
 export type ElementDefaults = Record<string, any>;
 
@@ -124,9 +121,10 @@ export abstract class ElementTool extends BaseTool {
             editor.dispatchChange();
             // this.activeElement = null;
 
-            // switch back to select (unless tool is locked)
+            // switch back to default tool (unless tool is locked)
             if (!tools.getLocked()) {
-                tools.setActiveTool(TOOLS.SELECT);
+                tools.setDefaultToolActive();
+                // tools.setActiveTool(TOOLS.SELECT);
             }
             else {
                 element.selected = false;
@@ -330,11 +328,11 @@ export class ImageTool extends ElementTool {
             .then(() => {
                 params.editor.dispatchChange();
                 params.editor.update();
-                params.tools.setActiveTool(TOOLS.SELECT);
+                params.tools.setDefaultToolActive();
             })
             .catch((error: Error) => {
                 console.error(error);
-                params.tools.setActiveTool(TOOLS.SELECT);
+                params.tools.setDefaultToolActive();
             });
     }
 };

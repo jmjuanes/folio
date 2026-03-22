@@ -1,5 +1,5 @@
 import React from "react";
-import { EditorProvider, useEditor } from "../contexts/editor.jsx";
+import { EditorProvider } from "../contexts/editor.jsx";
 import { ContextMenuProvider } from "../contexts/context-menu.jsx";
 import { SurfaceProvider } from "../contexts/surface.tsx";
 import {
@@ -11,7 +11,6 @@ import { DialogsProvider } from "../contexts/dialogs.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 import { ToolsProvider } from "../contexts/tools.tsx";
-import { defaultTools } from "../tools/index.tsx";
 import { Canvas } from "./canvas.tsx";
 
 // @private inner editor component
@@ -52,7 +51,7 @@ export const Editor: React.FC<EditorProps> = props => {
             <EditorComponentsProvider components={props.components}>
                 <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
                     <EditorProvider {...props}>
-                        <ToolsProvider tools={props.tools || defaultTools}>
+                        <ToolsProvider tools={props.tools}>
                             <ConfirmProvider>
                                 <DialogsProvider>
                                     <SurfaceProvider>

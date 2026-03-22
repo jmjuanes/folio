@@ -73,6 +73,7 @@ export class SelectTool extends BaseTool {
     id = TOOLS.SELECT;
     name = "Select";
     icon = "pointer";
+    default = true;
     primary = true;
     shortcut = "v";
 

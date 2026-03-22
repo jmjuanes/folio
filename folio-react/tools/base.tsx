@@ -21,9 +21,9 @@ export abstract class BaseTool {
     abstract id: string;
     name?: string;
     icon?: React.JSX.Element | React.ReactNode | string;
-    primary?: boolean;
-    enabledOnReadOnly?: boolean;
     shortcut?: string;
+    enabledOnReadOnly?: boolean;
+
 
     // lifecycle
     onEnter?(params: ToolLifecycleParams): void;
