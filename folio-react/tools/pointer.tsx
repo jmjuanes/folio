@@ -15,7 +15,6 @@ import {
 import { hypotenuse } from "../utils/math.ts";
 import { SvgContainer } from "../components/svg.tsx";
 import { BaseTool } from "./base.tsx";
-import { CanvasEvent } from "../components/canvas.tsx";
 
 // alias for setInterval
 const createInterval = (ms: number, listener: () => void) => setInterval(listener, ms);
@@ -181,7 +180,7 @@ export class PointerTool extends BaseTool {
     enabledOnReadOnly = true;
     shortcut = "l";
 
-    renderCanvas(editor: any) {
+    renderCanvas() {
         return <PointerCanvas />;
     }
 }

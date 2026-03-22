@@ -12,15 +12,6 @@ import {
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
     FIELDS,
-    NONE,
-    BOUNDS_STROKE_COLOR,
-    BOUNDS_STROKE_WIDTH,
-    BOUNDS_STROKE_DASH,
-    BRUSH_FILL_COLOR,
-    BRUSH_FILL_OPACITY,
-    BRUSH_STROKE_COLOR,
-    BRUSH_STROKE_WIDTH,
-    BRUSH_STROKE_DASH,
 } from "../constants.js";
 import {
     clampAngle,
@@ -37,11 +28,9 @@ import {
     getElementsSnappingEdges,
     getElementSnappingPoints,
     getElementsBoundingRectangle,
-    getElementBounds,
     getElementSize,
     getElementMinimumSize,
 } from "../lib/elements.js";
-import { getRectanglePath } from "../utils/paths.js";
 import {
     isCornerHandler,
     isEdgeHandler,
@@ -50,14 +39,15 @@ import {
     clampCornerResizeToMinSize,
     clampEdgeResizeToMinSize,
 } from "../lib/handlers.ts";
-import { SvgContainer } from "../components/svg.tsx";
 import { Handlers } from "./children/handlers.tsx";
 import { BaseTool } from "./base.tsx";
-import { CanvasEvent } from "../components/canvas.tsx";
 import { SnapEdges } from "./children/snaps.tsx";
-import { DimensionsLayer } from "./children/dimensions.tsx";
-import { useEditor } from "../contexts/editor.jsx";
+import { Dimensions } from "./children/dimensions.tsx";
+import { Bounds } from "./children/bounds.tsx";
+import { Brush } from "./children/brush.tsx";
 import type { Point } from "../utils/math.ts";
+import type { ToolEventParams, ToolRenderingParams } from "./base.tsx";
+import type { CanvasEvent } from "../components/canvas.tsx";
 
 // @private remove the current text element
 const removeTextElement = (editor: any, element: any) => {
@@ -69,120 +59,8 @@ const removeTextElement = (editor: any, element: any) => {
     editor.dispatchChange();
 };
 
-// alias to generate the rectangle path from two points
-const getRectanglePathFromPoints = (p1: number[], p2: number[]): string => {
-    return getRectanglePath([[p1[0], p1[1]], [p2[0], p1[1]], [p2[0], p2[1]], [p1[0], p2[1]]]);
-};
-
-// @private Bounds rendering component
-const SelectBoundsCanvas = (): React.JSX.Element => {
-    const editor = useEditor();
-    const bounds: any[] = [];
-    let hasCustomBounds = false;
-    const selectedElements = editor.getSelection();
-
-    // 1. Check for active group
-    if (editor.page.activeGroup) {
-        const elementsInGroup = editor.getElements().filter((el: any) => el.group === editor.page.activeGroup);
-        if (elementsInGroup.length > 0) {
-            const p = getElementsBoundingRectangle(elementsInGroup);
-            bounds.push({
-                path: getRectanglePathFromPoints(p[0], p[1]),
-                strokeWidth: 2,
-                strokeDasharray: 5,
-            });
-        }
-    }
-
-    // 2. Check if there is only one element in the selection
-    if (selectedElements.length === 1) {
-        (getElementBounds(selectedElements[0]) || []).forEach((elementBound: any) => {
-            bounds.push(elementBound);
-            hasCustomBounds = true;
-        });
-    }
-
-    // 3. Generate default bounds for selected elements
-    if (selectedElements.length > 0) {
-        const hasGroupInSelection = selectedElements.some((el: any) => el.group && el.group !== editor.page.activeGroup);
-        if (hasGroupInSelection) {
-            const groups = new Set(selectedElements.map((el: any) => el.group).filter((g: any) => !!g));
-            Array.from(groups).forEach((group: any) => {
-                const elements = selectedElements.filter((el: any) => el.group === group);
-                const p = getElementsBoundingRectangle(elements);
-                bounds.push({
-                    path: getRectanglePathFromPoints(p[0], p[1]),
-                    strokeWidth: 2,
-                    strokeDasharray: 5,
-                });
-            });
-        }
-        if (!hasCustomBounds) {
-            const p = getElementsBoundingRectangle(selectedElements);
-            bounds.push({
-                path: getRectanglePathFromPoints(p[0], p[1]),
-                strokeWidth: 4,
-            });
-        }
-    }
-
-    // 4. Compute handlers for the single selected element
-    let handlers: any[] = [];
-    if (selectedElements.length === 1 && !selectedElements[0].locked && !selectedElements[0].editing) {
-        const config = getElementConfig(selectedElements[0]);
-        if (typeof config.getHandlers === "function") {
-            handlers = config.getHandlers(selectedElements[0]) || [];
-        }
-    }
-
-    // Render bounds, brush, and handlers
-    const selection = editor.state.selection;
-    const zoom = editor.page.zoom;
-
-    return (
-        <React.Fragment>
-            {bounds.length > 0 && (
-                <SvgContainer>
-                    {bounds.map((bound: any, index: number) => (
-                        <path
-                            key={index}
-                            d={bound.path ?? ""}
-                            fill={NONE}
-                            stroke={bound.strokeColor ?? BOUNDS_STROKE_COLOR}
-                            strokeWidth={(bound.strokeWidth ?? BOUNDS_STROKE_WIDTH) / zoom}
-                            strokeDasharray={(bound.strokeDasharray ?? BOUNDS_STROKE_DASH) ?? null}
-                        />
-                    ))}
-                </SvgContainer>
-            )}
-            {selection && (
-                <SvgContainer>
-                    <rect
-                        x={Math.min(selection.x1, selection.x2)}
-                        y={Math.min(selection.y1, selection.y2)}
-                        width={Math.abs(selection.x2 - selection.x1)}
-                        height={Math.abs(selection.y2 - selection.y1)}
-                        fill={BRUSH_FILL_COLOR}
-                        fillOpacity={BRUSH_FILL_OPACITY}
-                        stroke={BRUSH_STROKE_COLOR}
-                        strokeWidth={BRUSH_STROKE_WIDTH / zoom}
-                        strokeDasharray={BRUSH_STROKE_DASH / zoom}
-                    />
-                </SvgContainer>
-            )}
-            {handlers.length > 0 && (
-                <Handlers
-                    handlers={handlers}
-                    zoom={zoom}
-                />
-            )}
-            {editor.appState.snapToElements && <SnapEdges edges={editor.state.snapEdges || []} />}
-            {editor.appState.objectDimensions && <DimensionsLayer />}
-        </React.Fragment>
-    );
-};
-
 export class SelectTool extends BaseTool {
+    private selection: any[] | null = [];
     private snapshot: any[] = [];
     private snapshotBounds: any = null;
     private snapEdges: any[] = [];
@@ -191,14 +69,15 @@ export class SelectTool extends BaseTool {
     private isDragged = false;
     private isResized = false;
     private isPrevSelected = false;
+
     id = TOOLS.SELECT;
     name = "Select";
     icon = "pointer";
     primary = true;
     shortcut = "v";
 
-    onEnter(editor: any) {
-        // Reset module state
+    onEnter() {
+        this.selection = null;
         this.snapshot = [];
         this.snapshotBounds = null;
         this.snapEdges = [];
@@ -261,12 +140,18 @@ export class SelectTool extends BaseTool {
         }
     }
 
-    onPointerDown(editor: any, event: CanvasEvent) {
+    onPointerDown({ editor, event }: ToolEventParams) {
         const target = event.originalEvent?.target as HTMLElement | undefined;
         const handler = target?.dataset?.handler;
         const elementId = target?.dataset?.element;
 
-        if (!handler && !elementId) { this.handlePointCanvas(editor, event); } else if (!handler && elementId) { this.handlePointElement(editor, event); }
+        if (!handler && !elementId) {
+            this.handlePointCanvas(editor, event);
+        }
+        else if (!handler && elementId) {
+            this.handlePointElement(editor, event);
+        }
+
         this.isDragged = false;
         this.isResized = false;
         this.snapshot = [];
@@ -379,7 +264,7 @@ export class SelectTool extends BaseTool {
         const cx = (this.snapshot[0].x1 + this.snapshot[0].x2) / 2;
         const cy = (this.snapshot[0].y1 + this.snapshot[0].y2) / 2;
         const prevAngle = Math.atan2(event.originalY - cy, event.originalX - cx) + Math.PI / 2;
-        const currentAngle = Math.atan2(event.currentY - cy, event.currentX - cx) + Math.PI / 2;
+        const currentAngle = Math.atan2((event.currentY ?? cy) - cy, (event.currentX ?? cx) - cx) + Math.PI / 2;
         const deltaAngle = clampAngle(event.shiftKey ? snapAngle(currentAngle - prevAngle) : currentAngle - prevAngle);
         const angle = clampAngle((this.snapshot[0].rotation || 0) + deltaAngle);
         element.rotation = angle;
@@ -418,8 +303,8 @@ export class SelectTool extends BaseTool {
         const diagLen = Math.hypot(width, height);
         let axisDir: Point = [0, 0];
         let fixedIndex = 0;
-        let movingField: "x1" | "y1" | "x2" | "y2" = "x1"; // dummy
-        let altField: "x1" | "y1" | "x2" | "y2" = "x2"; // dummy
+        // let movingField: "x1" | "y1" | "x2" | "y2" = "x1"; // dummy
+        // let altField: "x1" | "y1" | "x2" | "y2" = "x2"; // dummy
         let cornerType: any = "";
 
         if (handler === HANDLERS.CORNER_TOP_LEFT) {
@@ -513,18 +398,18 @@ export class SelectTool extends BaseTool {
         }
     }
 
-    onPointerMove(editor: any, event: CanvasEvent) {
+    onPointerMove({ editor, event }: ToolEventParams) {
         const target = event.originalEvent?.target as HTMLElement | undefined;
         const handler = target?.dataset?.handler;
 
-        // Translate
+        // translate
         if (this.snapshot.length > 0 && !handler) {
             this.handleTranslateMove(editor, event);
         }
-        // Resize
+
+        // resize
         else if (handler) {
             editor.state.snapEdges = [];
-            editor.state.status = STATUS.RESIZING;
             this.activeSnapEdges = [];
             this.isResized = true;
             const element = editor.getElement(this.snapshot[0].id);
@@ -551,19 +436,17 @@ export class SelectTool extends BaseTool {
         }
         // Brush selection
         else if (editor.state.selection) {
-            editor.state.status = STATUS.BRUSHING;
             editor.state.selection.x2 = event.currentX;
             editor.state.selection.y2 = event.currentY;
         }
     }
 
-    onPointerUp(editor: any, event: CanvasEvent) {
+    onPointerUp({ editor, event }: ToolEventParams) {
         const target = event.originalEvent?.target as HTMLElement | undefined;
         const handler = target?.dataset?.handler;
         const elementId = target?.dataset?.element;
 
         editor.state.snapEdges = [];
-        editor.state.status = STATUS.IDLE;
 
         // Handle translate/resize completion
         if (this.snapshot.length > 0) {
@@ -628,12 +511,11 @@ export class SelectTool extends BaseTool {
         editor.state.selection = null;
     }
 
-    onDoubleClickElement(editor: any, event: CanvasEvent) {
+    onDoubleClick({ editor, event }: ToolEventParams) {
         const target = event.originalEvent?.target as HTMLElement | undefined;
-        const handler = target?.dataset?.handler;
         const elementId = target?.dataset?.element;
 
-        if (!editor.page.readonly) {
+        if (elementId && !editor.page.readonly) {
             const element = editor.getElement(elementId);
             if (!editor.page.activeGroup && element.group) {
                 editor.page.activeGroup = element.group;
@@ -647,7 +529,7 @@ export class SelectTool extends BaseTool {
         }
     }
 
-    onKeyDown(editor: any, event: any): boolean | void {
+    onKeyDown({ editor, event }: ToolEventParams): boolean | void {
         if (editor.page.readonly) {
             return;
         }
@@ -710,7 +592,22 @@ export class SelectTool extends BaseTool {
         return false; // event not handled by this tool
     }
 
-    renderCanvas(): React.JSX.Element {
-        return <SelectBoundsCanvas />;
+    renderCanvas({ editor }: ToolRenderingParams): React.JSX.Element {
+        const selection = editor.state.selection;
+        return (
+            <React.Fragment>
+                <Bounds />
+                <Handlers />
+                {selection && (
+                    <Brush {...selection} /> 
+                )}
+                {editor.appState.snapToElements && (
+                    <SnapEdges edges={editor.state.snapEdges || []} />
+                )}
+                {editor.appState.objectDimensions && (
+                    <Dimensions />
+                )}
+            </React.Fragment>
+        );
     }
-}
+};

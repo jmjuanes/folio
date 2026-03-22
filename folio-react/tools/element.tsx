@@ -29,37 +29,14 @@ import {
 import { getStickerImage } from "../lib/stickers.js";
 import { blobToDataUrl } from "../utils/blob.js";
 import { BaseTool } from "./base.tsx";
-import { SnapEdges } from "./children/snaps.tsx";
 import { DimensionsLayer } from "./children/dimensions.tsx";
-import { PickPanel } from "./children/pick.tsx";
-import type { CanvasEvent } from "../components/canvas.tsx";
-import type { ToolsManager } from "../contexts/tools.tsx";
+import { PickPanel } from "./children/pick-panel.tsx";
+import type { Picks } from "./children/pick-panel.tsx";
+import type { ToolEventParams, ToolLifecycleParams, ToolRenderingParams } from "./base.tsx";
+// import type { CanvasEvent } from "../components/canvas.tsx";
+// import type { ToolsManager } from "../contexts/tools.tsx";
 
-type ToolPickValue = {
-    value: any;
-    icon?: React.JSX.Element | React.ReactNode;
-    image?: string;
-};
-
-type ToolPick = {
-    type: string;
-    className?: string;
-    values: (string | ToolPickValue)[];
-};
-
-type ToolPicks = {
-    [pickField: string]: ToolPick;
-};
-
-export type ElementToolOptions = {
-    icon?: string | React.ReactNode;
-    name?: string;
-    primary?: boolean;
-    shortcut?: string;
-    quickPicks?: ToolPicks;
-    onQuickPickChange?: (defaults: Record<string, any>, field: string, value: any) => void;
-    onSelect?: (editor: any) => void;
-};
+export type ElementDefaults = Record<string, any>;
 
 // @private get grid-snapped position
 const getGridPosition = (editor: any, pos: number): number => {
@@ -79,26 +56,28 @@ const removeTextElement = (editor: any, element: any) => {
     editor.dispatchChange();
 };
 
-export class ElementTool extends BaseTool {
-    abstract quickPicks: ToolPicks;
-    private activeElement: any = null;
+export abstract class ElementTool extends BaseTool {
+    abstract elementType: string;
+    abstract elementPicks: Picks | null;
+    public activeElement: any | null = null;
     
     // private listener to change quick picks
-    private onQuickPickChange: (defaults: Record<string, any>, field: string, value: any) => void;
+    onPickChange?(defaults: ElementDefaults, field: string, value: any): void;
 
-    onEnter(editor: any) {
+    onEnter(params: ToolLifecycleParams) {
         this.activeElement = null;
     }
 
-    onExit(editor: any, tools: ToolsManager) {
+    onExit(params: ToolLifecycleParams) {
         // 1. if tool is locked, we have to reset selected elements
         // 2. if tool is not locked, change active tool to SELECT tool
         // !!tools.getLocked() ? editor.clearSelection() : tools.setActiveTool(TOOLS.SELECT);
+        this.activeElement = null;
     }
 
-    onPointerDown(editor: any, event: CanvasEvent) {
+    onPointerDown({ editor, event }: ToolEventParams) {
         // Create the new element
-        const element = createElement(elementType);
+        const element = createElement(this.elementType);
         const elementConfig = getElementConfig(element);
         Object.assign(element, {
             ...(elementConfig.initialize?.(editor.defaults) || {}),
@@ -114,62 +93,60 @@ export class ElementTool extends BaseTool {
         editor.addElements([element]);
     }
 
-    onPointerMove(editor: any, event: CanvasEvent) {
-        if (!this.activeElement) return;
-        const element = this.activeElement;
-        element.x2 = getGridPosition(editor, event.currentX || event.originalX);
-        element.y2 = getGridPosition(editor, event.currentY || event.originalY);
-        getElementConfig(element)?.onCreateMove?.(element, event, (pos: number) => getGridPosition(editor, pos));
+    onPointerMove({ editor, event }: ToolEventParams) {
+        if (this.activeElement) {
+            const element = this.activeElement;
+            const elementConfig = getElementConfig(element);
+            element.x2 = getGridPosition(editor, event.currentX || event.originalX);
+            element.y2 = getGridPosition(editor, event.currentY || event.originalY);
+            elementConfig?.onCreateMove?.(element, event, (pos: number) => getGridPosition(editor, pos));
+        }
     }
 
-    onPointerUp(editor: any, event: CanvasEvent) {
-        if (!this.activeElement) return;
-        const element = this.activeElement;
-        element.creating = false;
-        element.selected = true;
-        element[FIELDS.VERSION] = 1;
-        getElementConfig(element)?.onCreateEnd?.(element, event);
+    onPointerUp({ editor, event, tools }: ToolEventParams) {
+        if (this.activeElement) {
+            const element = this.activeElement;
+            element.creating = false;
+            element.selected = true;
+            element[FIELDS.VERSION] = 1;
+            getElementConfig(element)?.onCreateEnd?.(element, event);
 
-        // Patch the history to save the new element values
-        const last = editor.page.history[0] || {};
-        if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
-            last.elements[0].newValues = {
-                ...element,
-                selected: false,
-            };
-        }
+            // patch the history to save the new element values
+            const last = editor.page.history[0] || {};
+            if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
+                last.elements[0].newValues = {
+                    ...element,
+                    selected: false,
+                };
+            }
 
-        editor.dispatchChange();
-        this.activeElement = null;
+            // dispatch an editor change event
+            editor.dispatchChange();
+            // this.activeElement = null;
 
-        // Switch back to select (unless tool is locked or it's a draw tool)
-        if (toolsManager && !toolsManager.getLocked() && elementType !== ELEMENTS.DRAW) {
-            toolsManager.setActiveTool(TOOLS.SELECT);
-        }
-        else if (toolsManager?.getLocked()) {
-            element.selected = false;
-        }
-
-        // Special handling for text elements: enter edit mode
-        if (element.type === ELEMENTS.TEXT) {
-            element.editing = true;
-            this.activeElement = element;
+            // switch back to select (unless tool is locked)
+            if (!tools.getLocked()) {
+                tools.setActiveTool(TOOLS.SELECT);
+            }
+            else {
+                element.selected = false;
+            }
         }
     }
 
     // Render the quick picks toolbar panel
-    renderToolbar(editor: any) {
-        if (!this.quickPicks) {
+    renderToolbar({ editor }: ToolRenderingParams) {
+        if (!this.elementPicks) {
             return null;
         }
         return (
             <PickPanel
                 values={editor.defaults}
-                items={this.quickPicks}
+                items={this.elementPicks}
                 onChange={(field: string, value: any) => {
                     editor.defaults[field] = value;
-                    if (typeof this.onQuickPickChange === "function") {
-                        this.onQuickPickChange(editor.defaults, field, value);
+                    if (typeof this.onPickChange === "function") {
+                        this.onPickChange(editor.defaults, field, value);
                     }
                     editor.update();
                 }}
@@ -177,12 +154,9 @@ export class ElementTool extends BaseTool {
         );
     }
 
-    renderCanvas(editor: any) {
+    renderCanvas({ editor }: ToolRenderingParams) {
         return (
             <React.Fragment>
-                {editor.appState.snapToElements && (
-                    <SnapEdges edges={editor.state.snapEdges || []} />
-                )}
                 {editor.appState.objectDimensions && (
                     <DimensionsLayer />
                 )}
@@ -197,7 +171,8 @@ export class ShapeTool extends ElementTool {
     name = "Shape";
     primary = true;
     shortcut = "s";
-    quickPicks = {
+    elementType = ELEMENTS.SHAPE;
+    elementPicks = {
         [FIELDS.SHAPE]: {
             type: FORM_OPTIONS.SELECT,
             className: "flex flex-nowrap w-32 gap-1",
@@ -221,7 +196,8 @@ export class ArrowTool extends ElementTool {
     name = "Arrow";
     primary = true;
     shortcut = "a";
-    quickPicks = {
+    elementType = ELEMENTS.ARROW;
+    elementPicks = {
         [FIELDS.ARROW_SHAPE]: {
             type: FORM_OPTIONS.SELECT,
             className: "flex flex-nowrap w-24 gap-1",
@@ -245,20 +221,21 @@ export class ArrowTool extends ElementTool {
         },
     };
 
-    onQuickPickChange(defaults, field, value) {
+    onPickChange(defaults: ElementDefaults, field: string) {
         if (field === FIELDS.END_ARROWHEAD) {
             defaults[FIELDS.START_ARROWHEAD] = ARROWHEADS.NONE;
         }
     }
 };
 
-export class TextTool extends ElementToo {
+export class TextTool extends ElementTool {
     id = ELEMENTS.TEXT;
     icon = "text";
     name = "Text";
     primary = true;
     shortcut = "t";
-    quickPicks = {
+    elementType = ELEMENTS.TEXT;
+    elementPicks = {
         [FIELDS.TEXT_COLOR]: {
             type: FORM_OPTIONS.COLOR_SELECT,
             className: "flex flex-nowrap w-48 gap-1",
@@ -266,18 +243,26 @@ export class TextTool extends ElementToo {
         },
     };
 
-    onEnter(editor: any) {
+    onEnter(params: ToolLifecycleParams) {
+        super.onEnter(params);
         // check if we have an active element and it is begin edited
-        editor.getElements().forEach(element => {
+        params.editor.getElements().forEach((element: any) => {
             if (element.type === ELEMENTS.TEXT && element?.editing) {
                 if (!element.text) {
-                    removeTextElement(editor, element);
+                    removeTextElement(params.editor, element);
                 }
                 element.editing = false;
             }
         });
-        // reset active element when entering in the text tool
-        this.activeElement = null;
+    }
+
+    onPointerUp(params: ToolEventParams) {
+        super.onPointerUp(params);
+
+        // special handling for text elements: enter edit mode
+        if (this.activeElement && this.activeElement.type === ELEMENTS.TEXT) {
+            this.activeElement.editing = true;
+        }
     }
 };
 
@@ -287,7 +272,8 @@ export class DrawTool extends ElementTool {
     name = "Draw";
     primary = true;
     shortcut = "d";
-    quickPicks = {
+    elementType = ELEMENTS.DRAW;
+    elementPicks = {
         [FIELDS.STROKE_WIDTH]: {
             type: FORM_OPTIONS.SELECT,
             className: "flex flex-nowrap w-24 gap-1",
@@ -302,16 +288,31 @@ export class DrawTool extends ElementTool {
             values: STROKE_COLOR_PICK,
         },
     };
+
+    onPointerUp(params: ToolEventParams) {
+        super.onPointerUp(params);
+
+        // switch back to drawing tool to allow users continue drawing
+        params.tools.setActiveTool(ELEMENTS.DRAW);
+
+        // prevent selecting the element
+        if (this.activeElement) {
+            this.activeElement.selected = false;
+        }
+    }
 };
 
 export class ImageTool extends ElementTool {
     id = ELEMENTS.IMAGE;
     icon = "image";
     name = "Image";
-    shortcut: "i";
+    shortcut = "i";
+    elementType = ELEMENTS.IMAGE;
+    elementPicks = null;
 
-    onEnter(editor: any, tools: ToolsManager) {
-        editor.getElements().forEach((element: any) => {
+    onEnter(params: ToolLifecycleParams) {
+        super.onEnter(params);
+        params.editor.getElements().forEach((element: any) => {
             element.selected = false;
             element.editing = false;
         });
@@ -325,15 +326,15 @@ export class ImageTool extends ElementTool {
         };
         fileOpen(options)
             .then((blob: any) => blobToDataUrl(blob))
-            .then((data: string) => editor.addImageElement(data))
+            .then((data: string) => params.editor.addImageElement(data))
             .then(() => {
-                editor.dispatchChange();
-                editor.update();
-                tools.setActiveTool(TOOLS.SELECT);
+                params.editor.dispatchChange();
+                params.editor.update();
+                params.tools.setActiveTool(TOOLS.SELECT);
             })
             .catch((error: Error) => {
                 console.error(error);
-                tools.setActiveTool(TOOLS.SELECT);
+                params.tools.setActiveTool(TOOLS.SELECT);
             });
     }
 };
@@ -343,7 +344,8 @@ export class StickerTool extends ElementTool {
     icon = "sticker";
     name = "Sticker";
     shortcut = "k";
-    quickPicks = {
+    elementType = ELEMENTS.STICKER;
+    elementPicks = {
         [FIELDS.STICKER]: {
             type: FORM_OPTIONS.IMAGE_SELECT,
             className: "w-72 grid grid-cols-8 gap-1",
@@ -360,4 +362,6 @@ export class NoteTool extends ElementTool {
     name = "Note";
     icon = "note";
     shortcut = "n";
+    elementType = ELEMENTS.NOTE;
+    elementPicks = null;
 };

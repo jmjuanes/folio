@@ -2,6 +2,21 @@ import React from "react";
 import type { CanvasEvent } from "../components/canvas.tsx";
 import type { ToolsManager } from "../contexts/tools.tsx";
 
+export type ToolLifecycleParams = {
+    editor: any;
+    tools: ToolsManager;
+};
+
+export type ToolEventParams = {
+    editor: any;
+    tools: ToolsManager;
+    event: CanvasEvent | any;
+};
+
+export type ToolRenderingParams = {
+    editor: any;
+};
+
 export abstract class BaseTool {
     abstract id: string;
     name?: string;
@@ -11,18 +26,18 @@ export abstract class BaseTool {
     shortcut?: string;
 
     // lifecycle
-    onEnter?(editor: any, tools: ToolsManager): void;
-    onExit?(editor: any, tools: ToolsManager): void;
+    onEnter?(params: ToolLifecycleParams): void;
+    onExit?(params: ToolLifecycleParams): void;
 
     // event handlers
-    onPointerDown?(editor: any, event: CanvasEvent): void;
-    onPointerMove?(editor: any, event: CanvasEvent): void;
-    onPointerUp?(editor: any, event: CanvasEvent): void;
-    onDoubleClickElement?(editor: any, event: CanvasEvent): void;
-    onKeyDown?(editor: any, event: any): boolean | void;
-    onKeyUp?(editor: any, event: any): void;
+    onPointerDown?(params: ToolEventParams): void;
+    onPointerMove?(params: ToolEventParams): void;
+    onPointerUp?(params: ToolEventParams): void;
+    onDoubleClick?(params: ToolEventParams): void;
+    onKeyDown?(params: ToolEventParams): boolean | void;
+    onKeyUp?(params: ToolEventParams): void;
 
     // UI rendering
-    renderToolbar?(editor: any): React.ReactNode;
-    renderCanvas?(editor: any): React.ReactNode;
+    renderToolbar?(params: ToolRenderingParams): React.ReactNode;
+    renderCanvas?(params: ToolRenderingParams): React.ReactNode;
 }

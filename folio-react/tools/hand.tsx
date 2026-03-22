@@ -1,6 +1,6 @@
 import { TOOLS } from "../constants.js";
 import { BaseTool } from "./base.tsx";
-import { CanvasEvent } from "../components/canvas.tsx";
+import type { ToolEventParams } from "./base.tsx";
 
 export class HandTool extends BaseTool {
     id = TOOLS.DRAG;
@@ -13,17 +13,17 @@ export class HandTool extends BaseTool {
     private lastTranslateX = 0;
     private lastTranslateY = 0;
 
-    onPointerDown(editor: any, event: CanvasEvent) {
+    onPointerDown({ editor }: ToolEventParams) {
         this.lastTranslateX = editor.page.translateX;
         this.lastTranslateY = editor.page.translateY;
     }
 
-    onPointerMove(editor: any, event: CanvasEvent) {
+    onPointerMove({ editor, event }: ToolEventParams) {
         editor.page.translateX = Math.floor(this.lastTranslateX + (event.dx || 0) * editor.page.zoom);
         editor.page.translateY = Math.floor(this.lastTranslateY + (event.dy || 0) * editor.page.zoom);
     }
 
-    onPointerUp(editor: any, event: CanvasEvent) {
+    onPointerUp({ editor }: ToolEventParams) {
         this.lastTranslateX = editor.page.translateX;
         this.lastTranslateY = editor.page.translateY;
     }
