@@ -1,6 +1,22 @@
 import React from "react";
 import { Form } from "../../components/form/index.jsx";
 
+export type PickValue = {
+    value: any;
+    icon?: React.JSX.Element | React.ReactNode;
+    image?: string;
+};
+
+export type PickField = {
+    type: string;
+    className?: string;
+    values: (string | PickValue)[];
+};
+
+export type Picks = {
+    [pickField: string]: PickField;
+};
+
 export type PickPanelProps = {
     values: any;
     items: any;
