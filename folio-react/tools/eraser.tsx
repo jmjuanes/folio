@@ -1,22 +1,20 @@
 import { TOOLS, ELEMENTS } from "../constants.js";
 import { getElementNormalizedPosition } from "../lib/elements.js";
-import { BaseTool } from "./base.tsx";
-import type { CanvasEvent } from "../components/canvas.tsx";
+import { ToolNode } from "../lib/tool.js";
+import type { EditorPointEvent } from "../lib/events.ts";
 
-export class EraserTool extends BaseTool {
-    static id = TOOLS.ERASER;
+export class EraserTool extends ToolNode {
     id = TOOLS.ERASER;
-    name = "Erase";
-    icon = "erase";
-    shortcut = "e";
 
     onEnter() {
+        // when entering in the eraser tool, reset the erased key in all elements
+        // of the current page
         this.editor.getElements().forEach((element: any) => {
             element.erased = false;
         });
     }
 
-    onPointerMove(event: CanvasEvent) {
+    onPointerMove(event: EditorPointEvent) {
         const x = event.originalX + (event.dx || 0);
         const y = event.originalY + (event.dy || 0);
         this.editor.getElements().forEach((element: any) => {
@@ -29,7 +27,7 @@ export class EraserTool extends BaseTool {
         });
     }
 
-    onPointerUp(event: CanvasEvent) {
+    onPointerUp(event: EditorPointEvent) {
         const erasedElements = this.editor.getElements().filter((element: any) => {
             return element.erased;
         });
@@ -38,4 +36,4 @@ export class EraserTool extends BaseTool {
             this.editor.dispatchChange();
         }
     }
-}
+};
