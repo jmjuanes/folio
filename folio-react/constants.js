@@ -389,6 +389,7 @@ export const STATUS = {
     TRANSLATING: "translating",
     BRUSHING: "brushing",
     ERASING: "erasing",
+    ROTATING: "rotating",
 };
 
 // Paste constants

@@ -263,6 +263,11 @@ export const createEditor = (options = {}) => {
             snapEdges: null,
         },
 
+        // @description tools registry
+        tools: {},
+        activeTool: null,
+        ui: null,
+
         // @description editor size
         width: 0,
         height: 0,
@@ -1226,6 +1231,64 @@ export const createEditor = (options = {}) => {
             editor.height = +newHeight;
         },
 
+        // @description register tools in the editor
+        registerTools: toolClasses => {
+            (toolClasses || []).forEach(Tool => {
+                const instance = new Tool(editor);
+                editor.tools[Tool.id] = instance;
+            });
+            // Set initial tool
+            editor.setCurrentTool(TOOLS.SELECT);
+        },
+
+        // @description change the active tool or sub-state
+        setCurrentTool: (id, info = {}) => {
+            const [toolId, ...path] = id.split(".");
+            const tool = editor.tools[toolId];
+            if (!tool) {
+                return console.warn(`Tool ${toolId} not found`);
+            }
+
+            // 1. Handle tool change
+            if (editor.activeTool !== tool) {
+                editor.activeTool?.onExit?.();
+                editor.state.tool = toolId;
+                editor.activeTool = tool;
+                editor.activeTool?.onEnter?.(info);
+            }
+
+            // 2. Handle sub-state transition if path is provided
+            if (path.length > 0) {
+                editor.activeTool?.transition?.(path.join("."), info);
+            }
+
+            editor.update();
+        },
+
+        // @description set the tool locked state
+        setToolLocked: locked => {
+            editor.state.toolLocked = !!locked;
+            editor.update();
+        },
+
+        // @description dispatch an event to the active tool
+        dispatch: (event, info) => {
+            if (editor.activeTool) {
+                const handlerName = "on" + event.charAt(0).toUpperCase() + event.slice(1);
+                const handled = editor.activeTool.handleEvent?.(event, info) || editor.activeTool[handlerName]?.(editor, info);
+                if (handled) {
+                    editor.update();
+                }
+                return handled;
+            }
+        },
+
+        // @description set tool UI state
+        setUI: ui => {
+            editor.ui = ui;
+            editor.update();
+        },
+
         //
         // Clipboard api
         //
@@ -1268,19 +1331,6 @@ export const createEditor = (options = {}) => {
                             });
                     }
                 }
-            });
-        },
-
-        //
-        // Tool API
-        //
-
-        // @description change the active tool
-        setTool: newTool => {
-            editor.state.tool = newTool;
-            editor.getElements().forEach(element => {
-                element.selected = false;
-                element.editing = false;
             });
         },
 

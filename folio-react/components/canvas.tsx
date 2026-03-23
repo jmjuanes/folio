@@ -23,6 +23,8 @@ import { SvgContainer } from "./svg.tsx";
 import { Grid } from "./grid.jsx";
 import { clearFocus } from "../utils/dom.js";
 import { preventDefault, isTouchOrPenEvent, isInputTarget } from "../utils/events.js";
+import { ToolUIHost } from "./tool-ui-host.tsx";
+import { ToolUIRegistry } from "../tools/ui-registry.tsx";
 
 const delay = (timeout: number, cb: () => void) => window.setTimeout(cb, timeout);
 
@@ -48,11 +50,12 @@ export const Canvas: React.FC<CanvasProps> = props => {
     const editor = useEditor();
     const tools = useTools();
     const cursor = useCursor();
-    const { showContextMenu, hideContextMenu } = useContextMenu();
+    const contextMenu = useContextMenu() as any;
+    const { showContextMenu, hideContextMenu } = contextMenu || {};
     const dispatchAction = useActions();
     const preferences = usePreferences();
 
-    const activeTool = tools.getActiveTool();
+    const activeTool = editor.activeTool;
 
     const canvasRef = React.useRef<HTMLDivElement>(null);
     const longPressTimerRef = React.useRef<number>(0);
@@ -82,25 +85,25 @@ export const Canvas: React.FC<CanvasProps> = props => {
 
     const onPointerDownRoute = React.useCallback((event: CanvasEvent) => {
         editor.state.status = STATUS.POINTING;
-        activeTool?.onPointerDown?.(editor, event);
+        editor.dispatch("pointerDown", event);
         hideContextMenu();
         update();
-    }, [editor, activeTool, update, hideContextMenu]);
+    }, [editor, hideContextMenu]);
 
     const onPointerMoveRoute = React.useCallback((event: CanvasEvent) => {
-        activeTool?.onPointerMove?.(editor, event);
+        editor.dispatch("pointerMove", event);
         update();
-    }, [editor, activeTool, update]);
+    }, [editor]);
 
     const onPointerUpRoute = React.useCallback((event: CanvasEvent) => {
-        activeTool?.onPointerUp?.(editor, event);
+        editor.dispatch("pointerUp", event);
         update();
-    }, [editor, activeTool, update]);
+    }, [editor]);
 
     const onDoubleClickElement = React.useCallback((event: CanvasEvent) => {
-        activeTool?.onDoubleClickElement?.(editor, event);
+        editor.dispatch("doubleClick", event);
         update();
-    }, [editor, activeTool, update]);
+    }, [editor]);
 
     const handleElementChange = React.useCallback((elementId: string, keys: string[], values: any[]) => {
         const element = editor.getElement(elementId) as any;
@@ -126,7 +129,7 @@ export const Canvas: React.FC<CanvasProps> = props => {
         const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
 
         // 1. Let the active tool handle the key event first
-        const handled = activeTool?.onKeyDown?.(editor, event);
+        const handled = editor.dispatch("keyDown", event);
         if (handled) {
             update();
             return;
@@ -149,11 +152,16 @@ export const Canvas: React.FC<CanvasProps> = props => {
                 const tool = tools.getToolByShortcut(event.key);
                 if (tool) {
                     event.preventDefault();
-                    tools.setActiveTool(tool.id);
+                    editor.setCurrentTool(tool.id);
                 }
             }
         }
     }, [editor, activeTool, update, tools, preferences, dispatchAction]);
+
+    const onKeyUp = React.useCallback((event: any) => {
+        editor.dispatch("keyUp", event);
+        update();
+    }, [editor]);
 
     const onPaste = React.useCallback((event: any) => {
         if (!isInputTarget(event) && !editor.page.readonly) {
@@ -201,8 +209,8 @@ export const Canvas: React.FC<CanvasProps> = props => {
                 currentEvent: event,
                 currentX: (event.clientX - left - editor.page.translateX) / editor.page.zoom,
                 currentY: (event.clientY - top - editor.page.translateY) / editor.page.zoom,
-                dx: (event.clientX - eventInfo.originalEvent.clientX) / editor.page.zoom,
-                dy: (event.clientY - eventInfo.originalEvent.clientY) / editor.page.zoom,
+                dx: eventInfo.originalEvent ? (event.clientX - eventInfo.originalEvent.clientX) / editor.page.zoom : 0,
+                dy: eventInfo.originalEvent ? (event.clientY - eventInfo.originalEvent.clientY) / editor.page.zoom : 0,
             }));
         };
 
@@ -243,8 +251,8 @@ export const Canvas: React.FC<CanvasProps> = props => {
         };
 
         // Get source item
-        if (source && event.nativeEvent.target?.dataset?.[source]) {
-            eventInfo[source] = event.nativeEvent.target.dataset[source];
+        if (source && (event.nativeEvent.target as HTMLElement)?.dataset?.[source]) {
+            (eventInfo as any)[source] = (event.nativeEvent.target as HTMLElement).dataset[source];
         }
 
         // Call the provider listener and the global listener
@@ -261,6 +269,7 @@ export const Canvas: React.FC<CanvasProps> = props => {
             target.addEventListener(EVENTS.GESTURE_END, preventDefault);
         }
         document.addEventListener(EVENTS.KEY_DOWN, onKeyDown);
+        document.addEventListener(EVENTS.KEY_UP, onKeyUp);
         document.addEventListener(EVENTS.PASTE, onPaste);
         window.addEventListener(EVENTS.RESIZE, handleResize);
 
@@ -289,8 +298,8 @@ export const Canvas: React.FC<CanvasProps> = props => {
         touchAction: "none",
         userSelect: "none",
         WebkitTouchCallout: "none",
-        cursor: cursor as any,
-    }), [editor.background]);
+        cursor: cursor as string,
+    } as React.CSSProperties), [editor.background, cursor]);
 
     // generate transform attribute
     const transform = [
@@ -351,8 +360,12 @@ export const Canvas: React.FC<CanvasProps> = props => {
                     })}
                 </AssetsProvider>
 
-                {activeTool?.renderCanvas?.(editor)}
+                {(() => {
+                    const UI = ToolUIRegistry[activeTool?.id || ""]?.CanvasOverlay;
+                    return UI ? <UI /> : null;
+                })()}
             </div>
+            <ToolUIHost />
         </div>
     );
 };

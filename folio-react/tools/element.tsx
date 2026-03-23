@@ -1,169 +1,74 @@
-import React from "react";
-import { SquareIcon, CircleIcon, TriangleIcon } from "@josemi-icons/react";
-import { fileOpen } from "browser-fs-access";
-import {
-    ELEMENTS,
-    FIELDS,
-    SHAPES,
-    ARROW_SHAPES,
-    STICKERS,
-    ARROWHEADS,
-    STROKE_WIDTHS,
-    FORM_OPTIONS,
-    FILE_EXTENSIONS,
-    GRID_SIZE,
-    CHANGES,
-} from "../constants.js";
-import { STROKE_COLOR_PICK, TEXT_COLOR_PICK } from "../utils/colors.js";
-import {
-    getElementConfig,
-    createElement,
-} from "../lib/elements.js";
-import {
-    ArrowIcon,
-    ArrowConnectorIcon,
-    WidthLargeIcon,
-    WidthSmallIcon,
-} from "../components/icons.jsx";
-import { getStickerImage } from "../lib/stickers.js";
-import { blobToDataUrl } from "../utils/blob.js";
+import { ELEMENTS, CHANGES, TOOLS, KEYS, STATUS } from "../constants.js";
 import { BaseTool } from "./base.tsx";
-import { Dimensions } from "./children/dimensions.tsx";
-import { PickPanel } from "./children/pick-panel.tsx";
-import type { Picks } from "./children/pick-panel.tsx";
-import type { ToolEventParams, ToolLifecycleParams, ToolRenderingParams } from "./base.tsx";
-
-export type ElementDefaults = Record<string, any>;
-
-// @private get grid-snapped position
-const getGridPosition = (editor: any, pos: number): number => {
-    if (editor?.appState?.grid) {
-        return Math.round(pos / GRID_SIZE) * GRID_SIZE;
-    }
-    return pos;
-};
-
-// @private remove a text element if it was just created and has no text
-const removeTextElement = (editor: any, element: any) => {
-    const history = editor.getHistory();
-    if (history[0]?.type === CHANGES.CREATE && history[0]?.elements?.[0]?.id === element.id) {
-        history.shift();
-    }
-    editor.removeElements([element]);
-    editor.dispatchChange();
-};
+import type { CanvasEvent } from "../components/canvas.tsx";
 
 export abstract class ElementTool extends BaseTool {
-    abstract elementType: string;
-    abstract elementPicks: Picks | null;
-    public activeElement: any | null = null;
-    
-    // private listener to change quick picks
-    onPickChange?(defaults: ElementDefaults, field: string, value: any): void;
+    abstract id: string;
+    elementType = "";
+    elementPicks: any = null;
+    onPickChange: any = null;
 
-    onEnter(params: ToolLifecycleParams) {
-        this.activeElement = null;
+    onPointerDown(event: CanvasEvent) {
+        const element = this.editor.createElement(this.elementType);
+        const config = this.editor.getElementConfig(element);
+        
+        element.x1 = event.originalX;
+        element.y1 = event.originalY;
+        element.x2 = event.originalX;
+        element.y2 = event.originalY;
+        element.creating = true;
+
+        if (typeof config.onCreateStart === "function") {
+            config.onCreateStart(element, event);
+        }
+
+        this.editor.clearSelection();
+        this.editor.addElements([element]);
+        this.editor.setSelection([element.id]);
+        this.editor.activeElement = element;
     }
 
-    onExit(params: ToolLifecycleParams) {
-        // 1. if tool is locked, we have to reset selected elements
-        // 2. if tool is not locked, change active tool to SELECT tool
-        // !!tools.getLocked() ? editor.clearSelection() : tools.setActiveTool(TOOLS.SELECT);
-        this.activeElement = null;
-    }
+    onPointerMove(event: CanvasEvent) {
+        if (this.editor.activeElement?.creating) {
+            const element = this.editor.activeElement;
+            const config = this.editor.getElementConfig(element);
 
-    onPointerDown({ editor, event }: ToolEventParams) {
-        // Create the new element
-        const element = createElement(this.elementType);
-        const elementConfig = getElementConfig(element);
-        Object.assign(element, {
-            ...(elementConfig.initialize?.(editor.defaults) || {}),
-            x1: getGridPosition(editor, event.originalX),
-            y1: getGridPosition(editor, event.originalY),
-            x2: getGridPosition(editor, event.originalX),
-            y2: getGridPosition(editor, event.originalY),
-            creating: true,
-        });
-        elementConfig.onCreateStart?.(element, event);
-        this.activeElement = element;
-        editor.clearSelection();
-        editor.addElements([element]);
-    }
+            element.x2 = event.currentX;
+            element.y2 = event.currentY;
 
-    onPointerMove({ editor, event }: ToolEventParams) {
-        if (this.activeElement) {
-            const element = this.activeElement;
-            const elementConfig = getElementConfig(element);
-            element.x2 = getGridPosition(editor, event.currentX || event.originalX);
-            element.y2 = getGridPosition(editor, event.currentY || event.originalY);
-            elementConfig?.onCreateMove?.(element, event, (pos: number) => getGridPosition(editor, pos));
+            if (typeof config.onCreateMove === "function") {
+                config.onCreateMove(element, event, (pos: number) => pos);
+            }
         }
     }
 
-    onPointerUp({ editor, event, tools }: ToolEventParams) {
-        if (this.activeElement) {
-            const element = this.activeElement;
+    onPointerUp(event: CanvasEvent) {
+        if (this.editor.activeElement?.creating) {
+            const element = this.editor.activeElement;
+            const config = this.editor.getElementConfig(element);
+
             element.creating = false;
-            element.selected = true;
-            element[FIELDS.VERSION] = 1;
-            getElementConfig(element)?.onCreateEnd?.(element, event);
-
-            // patch the history to save the new element values
-            const last = editor.page.history[0] || {};
-            if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === element.id) {
-                last.elements[0].newValues = {
-                    ...element,
-                    selected: false,
-                };
+            if (typeof config.onCreateEnd === "function") {
+                config.onCreateEnd(element, event);
             }
 
-            // dispatch an editor change event
-            editor.dispatchChange();
-            // this.activeElement = null;
+            this.editor.addHistory({
+                type: CHANGES.CREATE,
+                elements: [element],
+            });
 
-            // switch back to default tool (unless tool is locked)
-            if (!tools.getLocked()) {
-                tools.setDefaultToolActive();
-                // tools.setActiveTool(TOOLS.SELECT);
-            }
-            else {
-                element.selected = false;
+            this.editor.activeElement = null;
+            this.editor.dispatchChange();
+
+            if (!this.editor.toolLocked) {
+                this.editor.setCurrentTool(TOOLS.SELECT);
             }
         }
     }
-
-    // Render the quick picks toolbar panel
-    renderToolbar({ editor }: ToolRenderingParams) {
-        if (!this.elementPicks) {
-            return null;
-        }
-        return (
-            <PickPanel
-                values={editor.defaults}
-                items={this.elementPicks}
-                onChange={(field: string, value: any) => {
-                    editor.defaults[field] = value;
-                    if (typeof this.onPickChange === "function") {
-                        this.onPickChange(editor.defaults, field, value);
-                    }
-                    editor.update();
-                }}
-            />
-        );
-    }
-
-    renderCanvas({ editor }: ToolRenderingParams) {
-        return (
-            <React.Fragment>
-                {editor.appState.objectDimensions && (
-                    <Dimensions />
-                )}
-            </React.Fragment>
-        );
-    }
-};
+}
 
 export class ShapeTool extends ElementTool {
+    static id = ELEMENTS.SHAPE;
     id = ELEMENTS.SHAPE;
     icon = "square";
     name = "Shape";
@@ -171,195 +76,64 @@ export class ShapeTool extends ElementTool {
     shortcut = "s";
     elementType = ELEMENTS.SHAPE;
     elementPicks = {
-        [FIELDS.SHAPE]: {
-            type: FORM_OPTIONS.SELECT,
-            className: "flex flex-nowrap w-32 gap-1",
-            values: [
-                { value: SHAPES.RECTANGLE, icon: <SquareIcon /> },
-                { value: SHAPES.ELLIPSE, icon: <CircleIcon /> },
-                { value: SHAPES.TRIANGLE, icon: <TriangleIcon /> },
-            ],
-        },
-        [FIELDS.STROKE_COLOR]: {
-            type: FORM_OPTIONS.COLOR_SELECT,
-            className: "flex flex-nowrap w-48 gap-1",
-            values: STROKE_COLOR_PICK,
-        },
+        shape: { icon: "square" },
+        fillColor: { icon: "palette" },
+        strokeColor: { icon: "brush" },
     };
-};
+}
 
 export class ArrowTool extends ElementTool {
+    static id = ELEMENTS.ARROW;
     id = ELEMENTS.ARROW;
     icon = "arrow-up-right";
     name = "Arrow";
     primary = true;
     shortcut = "a";
     elementType = ELEMENTS.ARROW;
-    elementPicks = {
-        [FIELDS.ARROW_SHAPE]: {
-            type: FORM_OPTIONS.SELECT,
-            className: "flex flex-nowrap w-24 gap-1",
-            values: [
-                { value: ARROW_SHAPES.LINE, icon: <ArrowIcon /> },
-                { value: ARROW_SHAPES.CONNECTOR, icon: <ArrowConnectorIcon /> },
-            ],
-        },
-        [FIELDS.STROKE_WIDTH]: {
-            type: FORM_OPTIONS.SELECT,
-            className: "flex flex-nowrap w-24 gap-1",
-            values: [
-                { value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon /> },
-                { value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon /> },
-            ],
-        },
-        [FIELDS.STROKE_COLOR]: {
-            type: FORM_OPTIONS.COLOR_SELECT,
-            className: "flex flex-nowrap w-48 gap-1",
-            values: STROKE_COLOR_PICK,
-        },
-    };
-
-    onPickChange(defaults: ElementDefaults, field: string) {
-        if (field === FIELDS.END_ARROWHEAD) {
-            defaults[FIELDS.START_ARROWHEAD] = ARROWHEADS.NONE;
-        }
-    }
-};
+}
 
 export class TextTool extends ElementTool {
+    static id = ELEMENTS.TEXT;
     id = ELEMENTS.TEXT;
-    icon = "text";
+    icon = "type";
     name = "Text";
     primary = true;
     shortcut = "t";
     elementType = ELEMENTS.TEXT;
-    elementPicks = {
-        [FIELDS.TEXT_COLOR]: {
-            type: FORM_OPTIONS.COLOR_SELECT,
-            className: "flex flex-nowrap w-48 gap-1",
-            values: TEXT_COLOR_PICK,
-        },
-    };
-
-    onEnter(params: ToolLifecycleParams) {
-        super.onEnter(params);
-        // check if we have an active element and it is begin edited
-        params.editor.getElements().forEach((element: any) => {
-            if (element.type === ELEMENTS.TEXT && element?.editing) {
-                if (!element.text) {
-                    removeTextElement(params.editor, element);
-                }
-                element.editing = false;
-            }
-        });
-    }
-
-    onPointerUp(params: ToolEventParams) {
-        super.onPointerUp(params);
-
-        // special handling for text elements: enter edit mode
-        if (this.activeElement && this.activeElement.type === ELEMENTS.TEXT) {
-            this.activeElement.editing = true;
-        }
-    }
-};
+}
 
 export class DrawTool extends ElementTool {
+    static id = ELEMENTS.DRAW;
     id = ELEMENTS.DRAW;
-    icon = "pen";
+    icon = "draw";
     name = "Draw";
     primary = true;
     shortcut = "d";
     elementType = ELEMENTS.DRAW;
-    elementPicks = {
-        [FIELDS.STROKE_WIDTH]: {
-            type: FORM_OPTIONS.SELECT,
-            className: "flex flex-nowrap w-24 gap-1",
-            values: [
-                { value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon /> },
-                { value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon /> },
-            ],
-        },
-        [FIELDS.STROKE_COLOR]: {
-            type: FORM_OPTIONS.COLOR_SELECT,
-            className: "flex flex-nowrap w-48 gap-1",
-            values: STROKE_COLOR_PICK,
-        },
-    };
-
-    onPointerUp(params: ToolEventParams) {
-        super.onPointerUp(params);
-
-        // switch back to drawing tool to allow users continue drawing
-        params.tools.setActiveTool(ELEMENTS.DRAW);
-
-        // prevent selecting the element
-        if (this.activeElement) {
-            this.activeElement.selected = false;
-        }
-    }
-};
+}
 
 export class ImageTool extends ElementTool {
+    static id = ELEMENTS.IMAGE;
     id = ELEMENTS.IMAGE;
     icon = "image";
     name = "Image";
-    shortcut = "i";
     elementType = ELEMENTS.IMAGE;
-    elementPicks = null;
-
-    onEnter(params: ToolLifecycleParams) {
-        super.onEnter(params);
-        params.editor.getElements().forEach((element: any) => {
-            element.selected = false;
-            element.editing = false;
-        });
-        const options = {
-            description: "Folio Board",
-            extensions: [
-                FILE_EXTENSIONS.PNG,
-                FILE_EXTENSIONS.JPG,
-            ],
-            multiple: false,
-        };
-        fileOpen(options)
-            .then((blob: any) => blobToDataUrl(blob))
-            .then((data: string) => params.editor.addImageElement(data))
-            .then(() => {
-                params.editor.dispatchChange();
-                params.editor.update();
-                params.tools.setDefaultToolActive();
-            })
-            .catch((error: Error) => {
-                console.error(error);
-                params.tools.setDefaultToolActive();
-            });
-    }
-};
+}
 
 export class StickerTool extends ElementTool {
+    static id = ELEMENTS.STICKER;
     id = ELEMENTS.STICKER;
-    icon = "sticker";
+    icon = "smile";
     name = "Sticker";
-    shortcut = "k";
     elementType = ELEMENTS.STICKER;
-    elementPicks = {
-        [FIELDS.STICKER]: {
-            type: FORM_OPTIONS.IMAGE_SELECT,
-            className: "w-72 grid grid-cols-8 gap-1",
-            values: Object.values(STICKERS).map(stickerName => ({
-                value: stickerName,
-                image: getStickerImage(stickerName),
-            })),
-        },
-    };
-};
+}
 
 export class NoteTool extends ElementTool {
+    static id = ELEMENTS.NOTE;
     id = ELEMENTS.NOTE;
+    icon = "sticky-note";
     name = "Note";
-    icon = "note";
+    primary = true;
     shortcut = "n";
     elementType = ELEMENTS.NOTE;
-    elementPicks = null;
-};
+}
