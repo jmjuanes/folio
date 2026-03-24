@@ -46,10 +46,10 @@ export class ToolState {
     }
 
     // handle calling the specified event
-    handleEvent(name: string, info: any): void {
+    dispatch(name: string, info: any): void {
         // 1. handle event in children states
         if (this.activeStateId && this.states[this.activeStateId]) {
-            return this.states[this.activeStateId].handleEvent(name, info);
+            return this.states[this.activeStateId].dispatch(name, info);
         }
 
         // 2. handle event in this state
@@ -57,6 +57,11 @@ export class ToolState {
         if (typeof (this as any)[handlerName] === "function") {
             return (this as any)[handlerName](info);
         }
+    }
+
+    // alias to dispatch (TO_REMOVE)
+    handleEvent(name: string, info: any): void {
+        return this.dispatch(name, info);
     }
 
     // event handlers (to be overridden)

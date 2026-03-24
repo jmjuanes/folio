@@ -264,9 +264,9 @@ export const createEditor = (options = {}) => {
         },
 
         // @description tools registry
-        tools: {},
+        tools: [],
         activeTool: null,
-        ui: null,
+        toolLocked: false,
 
         // @description editor size
         width: 0,
@@ -1231,62 +1231,62 @@ export const createEditor = (options = {}) => {
             editor.height = +newHeight;
         },
 
+        // 
+        // Tools api
+        //
+
         // @description register tools in the editor
-        registerTools: toolClasses => {
+        registerTools: (toolClasses = []) => {
             (toolClasses || []).forEach(Tool => {
-                const instance = new Tool(editor);
-                editor.tools[Tool.id] = instance;
+                editor.tools.push(new Tool(editor));
             });
             // Set initial tool
             editor.setCurrentTool(TOOLS.SELECT);
         },
 
+        // @description get the current tool
+        getCurrentTool: () => {
+            return editor.activeTool;
+        },
+
         // @description change the active tool or sub-state
         setCurrentTool: (id, info = {}) => {
             const [toolId, ...path] = id.split(".");
-            const tool = editor.tools[toolId];
+            // 1. find the tool in the list of tools
+            const tool = editor.tools.find(tool => tool.id === toolId);
             if (!tool) {
-                return console.warn(`Tool ${toolId} not found`);
+                return console.error(`Tool ${toolId} not found`);
             }
-
-            // 1. Handle tool change
-            if (editor.activeTool !== tool) {
+            // 2. Handle tool change
+            if (!editor.activeTool || editor.activeTool?.id !== tool.id) {
                 editor.activeTool?.onExit?.();
-                editor.state.tool = toolId;
                 editor.activeTool = tool;
                 editor.activeTool?.onEnter?.(info);
             }
-
-            // 2. Handle sub-state transition if path is provided
+            // 3. Handle sub-state transition if path is provided
             if (path.length > 0) {
                 editor.activeTool?.transition?.(path.join("."), info);
             }
-
             editor.update();
         },
 
+        // @description return true/false if tool is locked
+        getToolLocked: () => {
+            return !!editor.toolLocked;
+        },
+
         // @description set the tool locked state
-        setToolLocked: locked => {
-            editor.state.toolLocked = !!locked;
+        setToolLocked: (locked = false) => {
+            editor.toolLocked = !!locked;
             editor.update();
         },
 
         // @description dispatch an event to the active tool
-        dispatch: (event, info) => {
+        dispatchToolEvent: (eventName, eventData) => {
             if (editor.activeTool) {
-                const handlerName = "on" + event.charAt(0).toUpperCase() + event.slice(1);
-                const handled = editor.activeTool.handleEvent?.(event, info) || editor.activeTool[handlerName]?.(editor, info);
-                if (handled) {
-                    editor.update();
-                }
-                return handled;
+                editor.activeTool.dispatch?.(eventName, eventData);
+                editor.update();
             }
-        },
-
-        // @description set tool UI state
-        setUI: ui => {
-            editor.ui = ui;
-            editor.update();
         },
 
         //
