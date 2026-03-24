@@ -1,9 +1,9 @@
 import { FIELDS, CHANGES } from "../../constants.js";
-import { ToolNode } from "../../lib/tool.ts";
+import { ToolState } from "../../lib/tool.ts";
 import { clampAngle, snapAngle, rotatePoints } from "../../utils/math.ts";
 import type { EditorPointEvent } from "../../lib/events.ts";
 
-export class SelectRotatingTool extends ToolNode {
+export class SelectRotatingState extends ToolState {
     onPointerMove(event: EditorPointEvent) {
         const parent = this.parent as any;
         const element = this.editor.getElement(parent.snapshot[0].id);

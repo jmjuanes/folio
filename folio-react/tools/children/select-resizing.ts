@@ -1,9 +1,9 @@
 import { FIELDS, CHANGES } from "../../constants.js";
-import { ToolNode } from "../../lib/tool.ts";
+import { ToolState } from "../../lib/tool.ts";
 import { getElementConfig } from "../../lib/elements.js";
 import type { EditorPointEvent } from "../../lib/events.ts";
 
-export class SelectResizingTool extends ToolNode {
+export class SelectResizingState extends ToolState {
     private handler: string = "";
 
     onEnter(event: any) {

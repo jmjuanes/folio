@@ -2,7 +2,6 @@ import {
     ELEMENTS,
     TOOLS,
     GRID_SIZE,
-    IS_DARWIN,
     CHANGES,
     KEYS,
     SNAP_THRESHOLD,
@@ -10,17 +9,19 @@ import {
 import { isArrowKey } from "../utils/keys.js";
 import { isInputTarget } from "../utils/events.js";
 import { getElementConfig } from "../lib/elements.js";
-import { ToolNode } from "../lib/tool.ts";
-import { SelectDraggingTool } from "./children/select-dragging.ts";
-import { SelectBrushingTool } from "./children/select-brushing.ts";
-import { SelectIdleTool } from "./children/select-idle.ts";
-import { SelectPointingTool } from "./children/select-pointing.ts";
-import { SelectResizingTool } from "./children/select-resizing.ts";
-import { SelectRotatingTool } from "./children/select-rotating.ts";
+import { ToolState } from "../lib/tool.ts";
 import { removeTextElement } from "./utils/element.ts";
+
+import { SelectDraggingState } from "./children/select-dragging.ts";
+import { SelectBrushingState } from "./children/select-brushing.ts";
+import { SelectIdleState } from "./children/select-idle.ts";
+import { SelectPointingState } from "./children/select-pointing.ts";
+import { SelectResizingState } from "./children/select-resizing.ts";
+import { SelectRotatingState } from "./children/select-rotating.ts";
+
 import type { EditorKeyboardEvent } from "../lib/events.ts";
 
-export class SelectTool extends ToolNode {
+export class SelectTool extends ToolState {
     id = TOOLS.SELECT;
 
     // shared state for sub-states
@@ -32,12 +33,12 @@ export class SelectTool extends ToolNode {
     public isPrevSelected = false;
 
     children = {
-        "idle": SelectIdleTool,
-        "pointing": SelectPointingTool,
-        "dragging": SelectDraggingTool,
-        "resizing": SelectResizingTool,
-        "rotating": SelectRotatingTool,
-        "brushing": SelectBrushingTool,
+        "idle": SelectIdleState,
+        "pointing": SelectPointingState,
+        "dragging": SelectDraggingState,
+        "resizing": SelectResizingState,
+        "rotating": SelectRotatingState,
+        "brushing": SelectBrushingState,
     };
 
     onEnter() {
@@ -75,9 +76,9 @@ export class SelectTool extends ToolNode {
         if (this.editor.page.readonly) {
             return;
         }
-        
+
         // TODO: move this logic to canvas
-        const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
+        // const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
         if (isInputTarget(event)) {
             if (this.activeElement?.editing && event.key === KEYS.ESCAPE) {
                 event.nativeEvent.preventDefault();
@@ -97,13 +98,13 @@ export class SelectTool extends ToolNode {
             this.editor.clearSelection();
             return true;
         }
-        else if (!isCtrlKey && isArrowKey(event.key)) {
+        else if (!event.ctrlKey && isArrowKey(event.key)) {
             event.nativeEvent.preventDefault();
             const dir = (event.key === KEYS.ARROW_UP || event.key === KEYS.ARROW_DOWN) ? "y" : "x";
             const sign = (event.key === KEYS.ARROW_DOWN || event.key === KEYS.ARROW_RIGHT) ? +1 : -1;
             const selectedElements = this.editor.getSelection();
             if (selectedElements.length === 0) return;
-            
+
             this.editor.addHistory({
                 type: CHANGES.UPDATE,
                 elements: selectedElements.map((el: any) => {

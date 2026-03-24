@@ -14,17 +14,12 @@ import {
 } from "../constants.js";
 import { hypotenuse } from "../utils/math.ts";
 import { SvgContainer } from "../components/svg.tsx";
-import { BaseTool } from "./base.tsx";
+import { ToolState } from "../lib/tool.ts";
 
 // alias for setInterval
 const createInterval = (ms: number, listener: () => void) => setInterval(listener, ms);
 
 // @private method to group points by id
-export class PointerTool extends BaseTool {
-    static id = TOOLS.POINTER;
+export class PointerTool extends ToolState {
     id = TOOLS.POINTER;
-    name = "Laser Pointer";
-    icon = "laser-pointer";
-    enabledOnReadOnly = true;
-    shortcut = "l";
-}
+};

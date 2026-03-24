@@ -1,8 +1,8 @@
 import { TOOLS } from "../constants.js";
-import { ToolNode } from "../lib/tool.ts";
+import { ToolState } from "../lib/tool.ts";
 import type { EditorPointEvent } from "../lib/events.ts";
 
-export class HandTool extends ToolNode {
+export class HandTool extends ToolState {
     id = TOOLS.DRAG;
 
     // private variables to track the last translation coordinate

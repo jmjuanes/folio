@@ -1,32 +1,32 @@
 import type { EditorPointEvent, EditorKeyboardEvent } from "./events.ts";
 
-export interface ToolNodeConstructor {
-    new (editor: any, parent?: ToolNode | null): ToolNode;
+export interface ToolStateConstructor {
+    new(editor: any, parent?: ToolState | null): ToolState;
     id?: string;
     initial?: string;
 }
 
-export class ToolNode {
+export class ToolState {
     id: string = "";
     editor: any;
-    parent: ToolNode | null;
-    children: Record<string, ToolNodeConstructor> = {};
-    states: Record<string, ToolNode> = {};
+    parent: ToolState | null;
+    children: Record<string, ToolStateConstructor> = {};
+    states: Record<string, ToolState> = {};
     activeStateId: string | null = null;
 
-    constructor(editor: any, parent: ToolNode | null = null) {
+    constructor(editor: any, parent: ToolState | null = null) {
         this.editor = editor;
         this.parent = parent;
     }
 
     // lifecycle methods
-    onEnter(params?: any): void {}
-    onExit(): void {}
+    onEnter(params?: any): void { }
+    onExit(): void { }
 
     // manage transition between one state to another
     transition(id: string, params?: any): void {
         const [nextId, ...path] = id.split(".");
-        
+
         // check if we have to change the active state id
         if (this.activeStateId !== nextId) {
             if (this.activeStateId) {
@@ -51,7 +51,7 @@ export class ToolNode {
         if (this.activeStateId && this.states[this.activeStateId]) {
             return this.states[this.activeStateId].handleEvent(name, info);
         }
-        
+
         // 2. handle event in this state
         const handlerName = "on" + name.charAt(0).toUpperCase() + name.slice(1);
         if (typeof (this as any)[handlerName] === "function") {

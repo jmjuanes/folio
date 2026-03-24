@@ -1,11 +1,11 @@
-import { ToolNode } from "../../lib/tool.ts";
+import { ToolState } from "../../lib/tool.ts";
 import {
     getElementsSnappingEdges,
     getElementsBoundingRectangle,
 } from "../../lib/elements.js";
 import type { EditorPointEvent } from "../../lib/events.ts";
 
-export class SelectPointingTool extends ToolNode {
+export class SelectPointingState extends ToolState {
     onEnter(event: EditorPointEvent) {
         const parent = this.parent as any;
         const target = event.originalEvent?.target as HTMLElement | undefined;
@@ -23,7 +23,7 @@ export class SelectPointingTool extends ToolNode {
             parent.snapEdges = getElementsSnappingEdges(notSelectedElements);
             return this.parent?.transition("resizing", { handler });
         }
-        
+
         // 2. check if an element has been pointed
         if (elementId) {
             const element = this.editor.getElement(elementId);

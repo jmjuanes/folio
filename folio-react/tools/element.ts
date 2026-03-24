@@ -1,17 +1,17 @@
-import { ELEMENTS, CHANGES, TOOLS, KEYS, STATUS } from "../constants.js";
-import { BaseTool } from "./base.tsx";
-import type { CanvasEvent } from "../components/canvas.tsx";
+import { ELEMENTS, CHANGES, TOOLS } from "../constants.js";
+import { ToolState } from "../lib/tool.ts";
+import type { EditorPointEvent } from "../lib/events.ts";
 
-export abstract class ElementTool extends BaseTool {
+export abstract class ElementTool extends ToolState {
     abstract id: string;
     elementType = "";
     elementPicks: any = null;
     onPickChange: any = null;
 
-    onPointerDown(event: CanvasEvent) {
+    onPointerDown(event: EditorPointEvent) {
         const element = this.editor.createElement(this.elementType);
         const config = this.editor.getElementConfig(element);
-        
+
         element.x1 = event.originalX;
         element.y1 = event.originalY;
         element.x2 = event.originalX;
@@ -28,7 +28,7 @@ export abstract class ElementTool extends BaseTool {
         this.editor.activeElement = element;
     }
 
-    onPointerMove(event: CanvasEvent) {
+    onPointerMove(event: EditorPointEvent) {
         if (this.editor.activeElement?.creating) {
             const element = this.editor.activeElement;
             const config = this.editor.getElementConfig(element);
@@ -42,7 +42,7 @@ export abstract class ElementTool extends BaseTool {
         }
     }
 
-    onPointerUp(event: CanvasEvent) {
+    onPointerUp(event: EditorPointEvent) {
         if (this.editor.activeElement?.creating) {
             const element = this.editor.activeElement;
             const config = this.editor.getElementConfig(element);
@@ -65,7 +65,7 @@ export abstract class ElementTool extends BaseTool {
             }
         }
     }
-}
+};
 
 export class ShapeTool extends ElementTool {
     static id = ELEMENTS.SHAPE;
@@ -80,7 +80,7 @@ export class ShapeTool extends ElementTool {
         fillColor: { icon: "palette" },
         strokeColor: { icon: "brush" },
     };
-}
+};
 
 export class ArrowTool extends ElementTool {
     static id = ELEMENTS.ARROW;
@@ -90,7 +90,7 @@ export class ArrowTool extends ElementTool {
     primary = true;
     shortcut = "a";
     elementType = ELEMENTS.ARROW;
-}
+};
 
 export class TextTool extends ElementTool {
     static id = ELEMENTS.TEXT;
@@ -100,7 +100,7 @@ export class TextTool extends ElementTool {
     primary = true;
     shortcut = "t";
     elementType = ELEMENTS.TEXT;
-}
+};
 
 export class DrawTool extends ElementTool {
     static id = ELEMENTS.DRAW;
@@ -110,7 +110,7 @@ export class DrawTool extends ElementTool {
     primary = true;
     shortcut = "d";
     elementType = ELEMENTS.DRAW;
-}
+};
 
 export class ImageTool extends ElementTool {
     static id = ELEMENTS.IMAGE;
@@ -118,7 +118,7 @@ export class ImageTool extends ElementTool {
     icon = "image";
     name = "Image";
     elementType = ELEMENTS.IMAGE;
-}
+};
 
 export class StickerTool extends ElementTool {
     static id = ELEMENTS.STICKER;
@@ -126,7 +126,7 @@ export class StickerTool extends ElementTool {
     icon = "smile";
     name = "Sticker";
     elementType = ELEMENTS.STICKER;
-}
+};
 
 export class NoteTool extends ElementTool {
     static id = ELEMENTS.NOTE;
@@ -136,4 +136,4 @@ export class NoteTool extends ElementTool {
     primary = true;
     shortcut = "n";
     elementType = ELEMENTS.NOTE;
-}
+};

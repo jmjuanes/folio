@@ -1,7 +1,7 @@
-import { ToolNode } from "../../lib/tool.ts";
+import { ToolState } from "../../lib/tool.ts";
 import type { EditorPointEvent } from "../../lib/events.ts";
 
-export class SelectBrushingTool extends ToolNode {
+export class SelectBrushingState extends ToolState {
     onEnter(event: EditorPointEvent) {
         this.editor.state.selection = {
             x1: event.originalX,

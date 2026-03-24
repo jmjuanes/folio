@@ -1,12 +1,12 @@
 import { FIELDS, CHANGES } from "../../constants.js";
-import { ToolNode } from "../../lib/tool.ts";
+import { ToolState } from "../../lib/tool.ts";
 import {
     getElementConfig,
     getElementsSnappingEdges,
 } from "../../lib/elements.js";
 import type { EditorPointEvent } from "../../lib/events.ts";
 
-export class SelectDraggingTool extends ToolNode {
+export class SelectDraggingState extends ToolState {
     onEnter() {
         const parent = this.parent as any;
         const notSelectedElements = this.editor.getElements().filter((element: any) => {
@@ -39,7 +39,7 @@ export class SelectDraggingTool extends ToolNode {
     onPointerUp(event: EditorPointEvent) {
         const parent = this.parent as any;
         const selectedElements = this.editor.getSelection();
-        
+
         if (!event.drag && parent.isPrevSelected && event.shiftKey) {
             const target = event.originalEvent?.target as HTMLElement | undefined;
             const elementId = target?.dataset?.element;

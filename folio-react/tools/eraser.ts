@@ -1,9 +1,9 @@
 import { TOOLS, ELEMENTS } from "../constants.js";
 import { getElementNormalizedPosition } from "../lib/elements.js";
-import { ToolNode } from "../lib/tool.js";
+import { ToolState } from "../lib/tool.ts";
 import type { EditorPointEvent } from "../lib/events.ts";
 
-export class EraserTool extends ToolNode {
+export class EraserTool extends ToolState {
     id = TOOLS.ERASER;
 
     onEnter() {
