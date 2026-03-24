@@ -148,14 +148,7 @@ export default {
                     messages: body.messages || [],
                 });
 
-                return sendResponse(env, request, 200, {
-                    data: result.content || {},
-                    warnings: result.warnings,
-                    // quotas: {
-                    //     requestsLimit: requestsLimit,
-                    //     requestsUsed: requestsUsed,
-                    // },
-                });
+                return sendDataResponse(env, request, result);
             } catch (error: any) {
                 console.error(error?.error?.message || error);
                 return sendErrorResponse(env, request, 500, error?.error?.message || API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
