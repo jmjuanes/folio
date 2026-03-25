@@ -12,6 +12,7 @@ import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 import { ToolsProvider } from "../contexts/tools.tsx";
 import { Canvas } from "./canvas.tsx";
+import type { ToolsOverrides } from "../contexts/tools.tsx";
 
 // @private inner editor component
 const InnerEditor = () => {
@@ -19,6 +20,7 @@ const InnerEditor = () => {
         Layout,
         BehindTheCanvas,
         OverTheCanvas,
+        Overlays,
     } = useEditorComponents();
 
     return (
@@ -27,11 +29,18 @@ const InnerEditor = () => {
                 <BehindTheCanvas />
             )}
             <Canvas />
+            {!!Overlays && (
+                <Overlays />
+            )}
             {!!OverTheCanvas && (
                 <OverTheCanvas />
             )}
         </Layout>
     );
+};
+
+export type EditorOverrides = {
+    tools?: ToolsOverrides;
 };
 
 export type EditorProps = {
@@ -40,6 +49,7 @@ export type EditorProps = {
     library?: any;
     preferences?: any;
     tools?: any[];
+    overrides?: EditorOverrides | null,
     onChange?: (data: any) => void;
     onLibraryChange?: (library: any) => void;
 };
@@ -51,7 +61,7 @@ export const Editor: React.FC<EditorProps> = props => {
             <EditorComponentsProvider components={props.components}>
                 <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
                     <EditorProvider {...props}>
-                        <ToolsProvider tools={props.tools}>
+                        <ToolsProvider overrides={props.overrides?.tools}>
                             <ConfirmProvider>
                                 <DialogsProvider>
                                     <SurfaceProvider>

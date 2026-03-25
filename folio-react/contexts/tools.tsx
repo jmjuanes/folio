@@ -49,8 +49,10 @@ export type ToolItem = {
     onPickChange?: (defaults: Record<string, any>, field: string, value: any) => void;
 };
 
+export type ToolsOverrides = ToolItem[] | ((editor: any, defaultTools: ToolItem[]) => ToolItem[]);
+
 export type ToolsProviderProps = {
-    overrides?: ToolItem[] | ((editor: any, defaultTools: ToolItem[]) => ToolItem[]);
+    overrides?: ToolsOverrides;
     children: React.ReactNode;
 };
 
@@ -307,7 +309,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
             return props.overrides(editor, defaultTools);
         }
         // 2. check if the props.overrides is an array
-        if (Array.isArray(props.overrides)) {
+        if (!!props.overrides && Array.isArray(props.overrides)) {
             return props.overrides;
         }
         // 3. return the default tools
