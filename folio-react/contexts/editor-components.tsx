@@ -14,6 +14,11 @@ import { ZoomPanel } from "../components/panels/zoom.jsx";
 import { Minimap } from "../components/minimap.tsx";
 import { Toolbar } from "../components/toolbar.tsx";
 import { Layers } from "../components/layers.tsx";
+import { Overlays } from "../components/overlays.tsx";
+import { Brush } from "../components/brush.tsx";
+import { Bounds } from "../components/bounds.tsx";
+import { Handlers } from "../components/handlers.tsx";
+import { Dimensions } from "../components/dimensions.tsx";
 
 // export type for the editor components
 // export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
@@ -42,6 +47,12 @@ export type EditorComponentsProviderProps = {
 export const EditorComponentsProvider = (props: EditorComponentsProviderProps): React.JSX.Element => {
     const editorComponents = React.useMemo<EditorComponentsMap>(() => {
         return {
+            // canvas components
+            Overlays: Overlays,
+            Brush: Brush,
+            Bounds: Bounds,
+            Handlers: Handlers,
+            Dimensions: Dimensions,
             // general components
             Loading: Loading,
             Layout: Layout,

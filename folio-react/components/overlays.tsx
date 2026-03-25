@@ -19,11 +19,11 @@ export const Overlays = (): React.JSX.Element => {
             {!!Bounds && tool?.id === TOOLS.SELECT && (
                 <Bounds />
             )}
-            {!!Brush && tool?.id === TOOLS.SELECT && tool?.activeStateId === "brushing" && (
-                <Brush />
-            )}
             {!!Handlers && tool?.id === TOOLS.SELECT && (
                 <Handlers />
+            )}
+            {!!Brush && tool?.id === TOOLS.SELECT && tool?.activeStateId === "brushing" && (
+                <Brush />
             )}
             {!!Dimensions && editor?.appState?.objectDimensions && (
                 <Dimensions />
