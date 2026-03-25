@@ -12,9 +12,10 @@ import {
 import { useEditor } from "../contexts/editor.tsx";
 import { SvgContainer } from "./svg.tsx";
 import { getRectanglePath } from "../utils/paths.js";
+import type { Point } from "../utils/math.ts";
 
 // alias to generate the rectangle path from two points
-const getRectanglePathFromPoints = (p1: number[], p2: number[]): string => {
+const getRectanglePathFromPoints = (p1: Point, p2: Point): string => {
     return getRectanglePath([[p1[0], p1[1]], [p2[0], p1[1]], [p2[0], p2[1]], [p1[0], p2[1]]]);
 };
 
