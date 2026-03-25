@@ -56,11 +56,17 @@ export type ToolsProviderProps = {
     children: React.ReactNode;
 };
 
+export type ToolsManager = {
+    getTools: () => ToolItem[],
+    getToolById: (toolId: string) => ToolItem | null;
+    getToolByShortcut: (shortcut: string) => ToolItem | null;
+};
+
 // context to manage tools
-export const ToolsContext = React.createContext<ToolItem[] | null>(null);
+export const ToolsContext = React.createContext<ToolsManager | null>(null);
 
 // @description hook to access to all tools
-export const useTools = (): ToolItem[] => {
+export const useTools = (): ToolsManager => {
     const tools = React.useContext(ToolsContext);
     if (!tools) {
         throw new Error("Cannot call 'useTools' outside <ToolsProvider>.");
@@ -316,8 +322,30 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
         return defaultTools;
     }, [editor, props.overrides]);
 
+    // @description get a list of tools
+    const getTools = React.useCallback(() => tools, [tools]);
+
+    // @description get tool by id
+    const getToolById = React.useCallback((toolId: string) => {
+        return tools.find((tool: ToolItem) => tool?.id === toolId) || null;
+    }, [tools]);
+
+    // @description get tool by the provided shortcut
+    const getToolByShortcut = React.useCallback((shortcut: string = ""): ToolItem | null => {
+        const uppercaseShortcut = shortcut.toUpperCase();
+        return tools.find((tool: ToolItem) => {
+            return (tool?.shortcut || "").toUpperCase() === uppercaseShortcut;
+        }) || null;
+    }, [tools]);
+
+    const toolsManager = React.useMemo<ToolsManager>(() => ({
+        getTools: getTools,
+        getToolById: getToolById,
+        getToolByShortcut: getToolByShortcut,
+    }), [tools]);
+
     return (
-        <ToolsContext.Provider value={tools}>
+        <ToolsContext.Provider value={toolsManager}>
             {props.children}
         </ToolsContext.Provider>
     );
