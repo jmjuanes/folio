@@ -4,14 +4,14 @@ import {
     BOUNDS_STROKE_WIDTH,
     BOUNDS_STROKE_DASH,
     BOUNDS_STROKE_COLOR,
-} from "../../constants.js";
+} from "../constants.js";
 import {
     getElementsBoundingRectangle,
     getElementBounds,
-} from "../../lib/elements.js";
-import { useEditor } from "../../contexts/editor.jsx";
-import { SvgContainer } from "../../components/svg.tsx";
-import { getRectanglePath } from "../../utils/paths.js";
+} from "../lib/elements.js";
+import { useEditor } from "../contexts/editor.tsx";
+import { SvgContainer } from "./svg.tsx";
+import { getRectanglePath } from "../utils/paths.js";
 
 // alias to generate the rectangle path from two points
 const getRectanglePathFromPoints = (p1: number[], p2: number[]): string => {

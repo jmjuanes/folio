@@ -3,7 +3,7 @@ import { renderIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { useSurface } from "../contexts/surface.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";

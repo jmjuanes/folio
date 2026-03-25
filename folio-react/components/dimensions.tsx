@@ -6,13 +6,13 @@ import {
     OBJECT_DIMENSIONS_FILL_COLOR,
     OBJECT_DIMENSIONS_TEXT_COLOR,
     OBJECT_DIMENSIONS_TEXT_SIZE,
-} from "../../constants.js";
-import { useEditor } from "../../contexts/editor.jsx";
+} from "../constants.js";
 import {
     getElementSize,
     getElementsBoundingRectangle,
-} from "../../lib/elements.js";
-import { getRectangle } from "../../utils/math.ts";
+} from "../lib/elements.js";
+import { useEditor } from "../contexts/editor.tsx";
+import { getRectangle } from "../utils/math.ts";
 
 export type DimensionLabel = {
     value: string; // label to be displayed in the dimension badge
@@ -38,17 +38,18 @@ const getBottomRightPoint = (points: number[][]): number[] => {
     }, points[0]);
 };
 
-export const useDimensions = () => {
+export const useDimensions = (): DimensionLabel[] => {
     const editor = useEditor();
     const dimensions: DimensionLabel[] = [];
     if (editor?.appState?.objectDimensions) {
-        if (editor.state.tool === TOOLS.SELECT) {
+        const activeTool = editor.getCurrentTool();
+        if (activeTool?.id === TOOLS.SELECT) {
             const selectedElements = editor.getSelection();
             if (selectedElements.length === 1) {
-                const el = selectedElements[0];
-                if (el.type === ELEMENTS.SHAPE || el.type === ELEMENTS.DRAW || el.type === ELEMENTS.TEXT || el.type === ELEMENTS.IMAGE) {
-                    const sizes = getElementSize(el);
-                    const rectangle = getRectangle([ el.x1, el.y1 ], [ el.x2, el.y2 ], el.rotation || 0);
+                const element = selectedElements[0];
+                if (element.type === ELEMENTS.SHAPE || element.type === ELEMENTS.DRAW || element.type === ELEMENTS.TEXT || element.type === ELEMENTS.IMAGE) {
+                    const sizes = getElementSize(element);
+                    const rectangle = getRectangle([element.x1, element.y1], [element.x2, element.y2], element.rotation || 0);
                     const bottomRightPoint = getBottomRightPoint(rectangle);
                     dimensions.push({
                         value: `${Math.floor(sizes[0])} x ${Math.floor(sizes[1])}`,
@@ -59,10 +60,10 @@ export const useDimensions = () => {
             } else if (selectedElements.length > 1) {
                 dimensions.push(generateDimensionLabel(selectedElements));
             }
-        } else if (editor.state.tool === ELEMENTS.SHAPE || editor.state.tool === ELEMENTS.TEXT) {
-            const el = editor.getElements().find((element: any) => element[FIELDS.CREATING]);
-            if (el) {
-                dimensions.push(generateDimensionLabel([ el ]));
+        } else if (activeTool?.id === ELEMENTS.SHAPE || activeTool?.id === ELEMENTS.TEXT) {
+            const element = editor.getElements().find((element: any) => element[FIELDS.CREATING]);
+            if (element) {
+                dimensions.push(generateDimensionLabel([element]));
             }
         }
     }
@@ -105,12 +106,12 @@ export const ObjectDimensions = (props: ObjectDimensionsProps): React.JSX.Elemen
 };
 
 export const Dimensions = (): React.JSX.Element => {
-    const dimensions = useDimensions();
+    const dimensions: DimensionLabel[] = useDimensions();
     return (
         <React.Fragment>
-            {dimensions.map((item, index) => (
+            {dimensions.map((item: DimensionLabel, index: number) => (
                 <ObjectDimensions
-                    key={`prop:${index}`}
+                    key={`dimension:${index}`}
                     value={item.value}
                     x={item.x}
                     y={item.y}

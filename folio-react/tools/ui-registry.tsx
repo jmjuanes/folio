@@ -3,7 +3,7 @@ import { TOOLS, ELEMENTS } from "../constants.js";
 
 // Import UI components (to be created)
 import { SelectCanvasOverlay } from "./ui/SelectUI";
-import { PointerCanvasOverlay } from "./ui/PointerUI";
+import { PointerCanvasOverlay } from "../components/pointer.js";
 import { ElementToolbar, ElementCanvasOverlay } from "./ui/ElementUI";
 
 export interface ToolUI {

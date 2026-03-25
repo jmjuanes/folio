@@ -1,5 +1,5 @@
 import React from "react";
-import { EditorProvider } from "../contexts/editor.jsx";
+import { EditorProvider } from "../contexts/editor.tsx";
 import { ContextMenuProvider } from "../contexts/context-menu.jsx";
 import { SurfaceProvider } from "../contexts/surface.tsx";
 import {

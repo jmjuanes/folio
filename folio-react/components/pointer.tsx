@@ -10,9 +10,9 @@ import {
     TRANSPARENT,
     POINTER_TENSION,
     POINTER_SIZE,
-} from "../../constants.js";
-import { hypotenuse } from "../../utils/math.ts";
-import { SvgContainer } from "../../components/svg.tsx";
+} from "../constants.js";
+import { hypotenuse } from "../utils/math.ts";
+import { SvgContainer } from "./svg.tsx";
 
 const createInterval = (ms: number, listener: () => void) => setInterval(listener, ms);
 

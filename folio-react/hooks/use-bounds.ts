@@ -1,7 +1,7 @@
 import { TOOLS } from "../constants.js";
 import { getRectanglePath } from "../utils/paths.js";
 import { getElementBounds, getElementsBoundingRectangle } from "../lib/elements.js";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 
 export type BoundSegment = {
     path: string;

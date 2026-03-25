@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../hooks/use-actions.js";

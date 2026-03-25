@@ -23,6 +23,14 @@ export class ToolState {
     onEnter(params?: any): void { }
     onExit(): void { }
 
+    // get the active state
+    getActiveState(): ToolState | null {
+        if (this.activeStateId) {
+            return this.states[this.activeStateId];
+        }
+        return null;
+    }
+
     // manage transition between one state to another
     transition(id: string, params?: any): void {
         const [nextId, ...path] = id.split(".");

@@ -1,9 +1,19 @@
 import { ToolState } from "../../lib/tool.ts";
 import type { EditorPointEvent } from "../../lib/events.ts";
 
+export type SelectionArea = {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+};
+
 export class SelectBrushingState extends ToolState {
+    id: string = "brushing";
+    selection: SelectionArea | null = null;
+
     onEnter(event: EditorPointEvent) {
-        this.editor.state.selection = {
+        this.selection = {
             x1: event.originalX,
             y1: event.originalY,
             x2: event.originalX,
@@ -12,19 +22,23 @@ export class SelectBrushingState extends ToolState {
     }
 
     onPointerMove(event: EditorPointEvent) {
-        this.editor.state.selection.x2 = event.currentX;
-        this.editor.state.selection.y2 = event.currentY;
+        if (this.selection && typeof event.currentX !== "undefined" && typeof event.currentY !== "undefined") {
+            this.selection.x2 = event.currentX;
+            this.selection.y2 = event.currentY;
+        }
     }
 
-    onPointerUp(event: EditorPointEvent) {
-        const selection = this.editor.state.selection;
-        this.editor.setSelectionArea({
-            x1: Math.min(selection.x1, selection.x2),
-            x2: Math.max(selection.x1, selection.x2),
-            y1: Math.min(selection.y1, selection.y2),
-            y2: Math.max(selection.y1, selection.y2),
-        });
-        this.editor.state.selection = null;
+    onPointerUp() {
+        if (this.selection) {
+            this.editor.setSelectionArea({
+                x1: Math.min(this.selection.x1, this.selection.x2),
+                x2: Math.max(this.selection.x1, this.selection.x2),
+                y1: Math.min(this.selection.y1, this.selection.y2),
+                y2: Math.max(this.selection.y1, this.selection.y2),
+            });
+            this.editor.update();
+        }
+        this.selection = null;
         this.parent?.transition("idle");
     }
 };

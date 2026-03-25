@@ -1,5 +1,5 @@
 import React from "react";
-import { useEditor } from "../../contexts/editor.jsx";
+import { useEditor } from "../../contexts/editor.tsx";
 import { Handlers } from "../children/handlers.tsx";
 import { SnapEdges } from "../children/snaps.tsx";
 import { Dimensions } from "../children/dimensions.tsx";

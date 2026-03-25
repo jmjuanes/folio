@@ -66,7 +66,7 @@ import {
 } from "../icons.jsx";
 import {Panel} from "../ui/panel.tsx";
 import {Form} from "../form/index.jsx";
-import {useEditor} from "../../contexts/editor.jsx";
+import {useEditor} from "../../contexts/editor.tsx";
 import {useActions} from "../../hooks/use-actions.js";
 
 // Available sections

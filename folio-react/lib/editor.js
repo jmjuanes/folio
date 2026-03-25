@@ -264,7 +264,9 @@ export const createEditor = (options = {}) => {
         },
 
         // @description tools registry
-        tools: [],
+        tools: (options?.tools || []).map(Tool => {
+            return new Tool(editor);
+        }),
         activeTool: null,
         toolLocked: false,
 
@@ -299,6 +301,30 @@ export const createEditor = (options = {}) => {
         // @description reset editor
         reset: () => {
             editor.fromJSON({});
+        },
+
+        //
+        // Defaults api
+        //
+
+        // @description get defaults
+        getDefaults: () => {
+            return editor.defaults;
+        },
+
+        // @description update defaults
+        setDefaults: (newDefaults) => {
+            Object.assign(editor.defaults, newDefaults);
+        },
+
+        // @description get a single default field
+        getDefaultValue: (key, defaultValue) => {
+            return editor.defaults[key] ?? defaultValue;
+        },
+
+        // @description get a single default field
+        setDefaultValue: (key, value) => {
+            editor.defaults[key] = value;
         },
 
         //
@@ -1234,15 +1260,6 @@ export const createEditor = (options = {}) => {
         // 
         // Tools api
         //
-
-        // @description register tools in the editor
-        registerTools: (toolClasses = []) => {
-            (toolClasses || []).forEach(Tool => {
-                editor.tools.push(new Tool(editor));
-            });
-            // Set initial tool
-            editor.setCurrentTool(TOOLS.SELECT);
-        },
 
         // @description get the current tool
         getCurrentTool: () => {

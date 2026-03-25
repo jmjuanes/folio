@@ -54,7 +54,7 @@ export {
 export {
     EditorProvider,
     useEditor,
-} from "./contexts/editor.jsx";
+} from "./contexts/editor.tsx";
 export {
     SurfaceProvider,
     useSurface,

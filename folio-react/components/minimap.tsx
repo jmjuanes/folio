@@ -9,7 +9,7 @@ import {
     MINIMAP_ELEMENT_RADIUS,
 } from "../constants.js";
 import { Island } from "./ui/island.tsx";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { getElementsBoundingRectangle, getElementSize } from "../lib/elements.js";
 import { convertRadiansToDegrees } from "../utils/math.ts";
 

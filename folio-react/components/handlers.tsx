@@ -1,5 +1,5 @@
 import React from "react";
-import { CURSORS, HANDLERS, HANDLERS_FILL_COLOR, HANDLERS_STROKE_COLOR } from "../../constants.js";
+import { CURSORS, HANDLERS, HANDLERS_FILL_COLOR, HANDLERS_STROKE_COLOR } from "../constants.js";
 import {
     isCornerHandler,
     isEdgeHandler,
@@ -7,11 +7,11 @@ import {
     isRotationHandler,
     isVerticalEdgeHandler,
     isHorizontalEdgeHandler,
-} from "../../lib/handlers.ts";
-import { useEditor } from "../../contexts/editor.jsx";
-import { SvgContainer } from "../../components/svg.tsx";
-import { getElementConfig } from "../../lib/elements.js";
-import { convertRadiansToDegrees } from "../../utils/math.ts";
+} from "../lib/handlers.ts";
+import { useEditor } from "../contexts/editor.tsx";
+import { SvgContainer } from "./svg.tsx";
+import { getElementConfig } from "../lib/elements.js";
+import { convertRadiansToDegrees } from "../utils/math.ts";
 
 export type HandlerPosition = {
     id?: string;

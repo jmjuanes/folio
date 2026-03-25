@@ -1,8 +1,8 @@
 import React from "react";
-import { SvgContainer } from "../../components/svg.tsx";
-import { NONE, SNAPS_STROKE_COLOR, SNAPS_STROKE_WIDTH } from "../../constants.js";
+import { SvgContainer } from "./svg.tsx";
+import { NONE, SNAPS_STROKE_COLOR, SNAPS_STROKE_WIDTH } from "../constants.js";
 
-export const SnapEdges = (props: { edges: any[] }) => {
+export const SnapEdges = (props: { edges: any[] }): React.JSX.Element => {
     return (
         <SvgContainer>
             {props.edges.map((item: any, index: number) => {

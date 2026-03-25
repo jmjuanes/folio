@@ -1,29 +1,64 @@
 import React from "react";
-import { TOOLS } from "../constants.js";
-import { useEditor } from "../contexts/editor.jsx";
-import { BaseTool } from "../tools/base.tsx";
-import { defaultTools } from "../tools/index.tsx";
+import { fileOpen } from "browser-fs-access";
+import { SquareIcon, CircleIcon, TriangleIcon } from "@josemi-icons/react";
+import {
+    ELEMENTS,
+    TOOLS,
+    FIELDS,
+    SHAPES,
+    ARROW_SHAPES,
+    STICKERS,
+    ARROWHEADS,
+    STROKE_WIDTHS,
+    FORM_OPTIONS,
+    FILE_EXTENSIONS,
+} from "../constants.js";
+import { STROKE_COLOR_PICK, TEXT_COLOR_PICK } from "../utils/colors.js";
+import {
+    ArrowIcon,
+    ArrowConnectorIcon,
+    WidthLargeIcon,
+    WidthSmallIcon,
+} from "../components/icons.jsx";
+import { useEditor } from "../contexts/editor.tsx";
+import { getStickerImage } from "../lib/stickers.js";
+import { blobToDataUrl } from "../utils/blob.js";
 
-export type ToolsManager = {
-    getTools: () => BaseTool[];
-    getToolById: (toolId: string) => BaseTool | null;
-    getToolByShortcut: (shortcut: string) => BaseTool | null;
-    getActiveTool: () => BaseTool;
-    setActiveTool: (toolId: string) => void;
-    getLocked: () => boolean;
-    setLocked: (toolLocked: boolean) => void;
+export type PickValue = {
+    value: any;
+    icon?: React.JSX.Element | React.ReactNode;
+    image?: string;
+};
+
+export type PickField = {
+    type: string;
+    className?: string;
+    values: (string | PickValue)[];
+};
+
+export type ToolItem = {
+    id: string;
+    name?: string;
+    icon?: React.JSX.Element | React.ReactNode | string;
+    toolEnabledOnReadOnly?: boolean;
+    shortcut?: string;
+    picks?: {
+        [field: string]: PickField;
+    };
+    onSelect: () => void;
+    onPickChange?: (defaults: Record<string, any>, field: string, value: any) => void;
 };
 
 export type ToolsProviderProps = {
-    tools?: any[];
+    overrides?: ToolItem[] | ((editor: any, defaultTools: ToolItem[]) => ToolItem[]);
     children: React.ReactNode;
 };
 
 // context to manage tools
-export const ToolsContext = React.createContext<ToolsManager | null>(null);
+export const ToolsContext = React.createContext<ToolItem[] | null>(null);
 
 // @description hook to access to all tools
-export const useTools = (): ToolsManager => {
+export const useTools = (): ToolItem[] => {
     const tools = React.useContext(ToolsContext);
     if (!tools) {
         throw new Error("Cannot call 'useTools' outside <ToolsProvider>.");
@@ -34,69 +69,253 @@ export const useTools = (): ToolsManager => {
 // tools provider
 export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
     const editor = useEditor();
-    
-    // Register tools in the editor on mount or when tools prop changes
-    React.useLayoutEffect(() => {
-        editor.registerTools(props.tools || defaultTools);
-    }, [props.tools, editor]);
-
-    // build the tools manager api
-    const toolsManager = React.useMemo<ToolsManager>(() => ({
-        // @description get list of tools
-        getTools: () => Object.values(editor.tools) as BaseTool[],
-        
-        // @description get a tool by id
-        getToolById: (toolId: string) => (editor.tools[toolId] as BaseTool) || null,
-        
-        // @description get tool by the provided shortcut
-        getToolByShortcut: (shortcut: string) => {
-            const uppercaseShortcut = (shortcut || "").toUpperCase();
-            return (Object.values(editor.tools) as BaseTool[]).find(tool => {
-                return !!tool?.shortcut && tool.shortcut.toUpperCase() === uppercaseShortcut;
-            }) || null;
-        },
-        
-        // @description get the active tool
-        getActiveTool: () => editor.activeTool as BaseTool,
-        
-        // @description set the active tool by id
-        setActiveTool: (toolId: string) => editor.setCurrentTool(toolId),
-        
-        // @description get if the tool is locked
-        getLocked: () => !!editor.state.toolLocked,
-        
-        // @description set if the tools are locked
-        setLocked: (isLocked: boolean) => editor.setToolLocked(isLocked),
-    }), [editor]);
-
-    // used to track the current page id
-    const currentPageId = React.useRef(editor.page.id);
-
-    // reset the current tool when we change the current page or the readonly state
-    React.useEffect(() => {
-        const availableTools = toolsManager.getTools();
-        
-        // case 1: page is now in readonly mode
-        if (editor.page.readonly) {
-            const readonlyTools = availableTools.filter(tool => !!tool.enabledOnReadOnly);
-            // check if the current active tool is a readonly tool
-            if (!readonlyTools.some(tool => tool.id === editor.state.tool && readonlyTools.length > 0)) {
-                editor.setCurrentTool(readonlyTools[0]?.id || TOOLS.SELECT);
-            }
+    const tools = React.useMemo<ToolItem[]>(() => {
+        const defaultTools = Object.values({
+            [TOOLS.DRAG]: {
+                id: TOOLS.DRAG,
+                name: "Drag",
+                icon: "hand-grab",
+                shortcut: "h",
+                toolEnabledOnReadOnly: true,
+                onSelect: () => {
+                    editor.setCurrentTool(TOOLS.DRAG);
+                    editor.update();
+                },
+            },
+            [TOOLS.SELECT]: {
+                id: TOOLS.SELECT,
+                name: "Select",
+                icon: "pointer",
+                shortcut: "v",
+                onSelect: () => {
+                    editor.setCurrentTool(TOOLS.SELECT);
+                    editor.update();
+                },
+            },
+            [TOOLS.POINTER]: {
+                id: TOOLS.POINTER,
+                icon: "laser-pointer",
+                name: "Laser Pointer",
+                toolEnabledOnReadOnly: true,
+                shortcut: "l",
+                onSelect: () => {
+                    editor.setCurrentTool(TOOLS.POINTER);
+                    editor.update();
+                },
+            },
+            [TOOLS.ERASER]: {
+                id: TOOLS.ERASER,
+                icon: "erase",
+                name: "Erase",
+                shortcut: "e",
+                onSelect: () => {
+                    editor.setCurrentTool(TOOLS.ERASER);
+                    editor.update();
+                },
+            },
+            [ELEMENTS.SHAPE]: {
+                id: ELEMENTS.SHAPE,
+                icon: "square",
+                name: "Shape",
+                shortcut: "s",
+                picks: {
+                    [FIELDS.SHAPE]: {
+                        type: FORM_OPTIONS.SELECT,
+                        className: "flex flex-nowrap w-32 gap-1",
+                        values: [
+                            { value: SHAPES.RECTANGLE, icon: <SquareIcon /> },
+                            { value: SHAPES.ELLIPSE, icon: <CircleIcon /> },
+                            { value: SHAPES.TRIANGLE, icon: <TriangleIcon /> },
+                        ],
+                    },
+                    [FIELDS.STROKE_COLOR]: {
+                        type: FORM_OPTIONS.COLOR_SELECT,
+                        className: "flex flex-nowrap w-48 gap-1",
+                        values: STROKE_COLOR_PICK,
+                    },
+                },
+                onSelect: () => {
+                    editor.setCurrentTool(ELEMENTS.SHAPE);
+                    editor.update();
+                },
+            },
+            [ELEMENTS.ARROW]: {
+                id: ELEMENTS.ARROW,
+                icon: "arrow-up-right",
+                name: "Arrow",
+                shortcut: "a",
+                picks: {
+                    // [FIELDS.END_ARROWHEAD]: {
+                    //     type: FORM_OPTIONS.SELECT,
+                    //     className: "flex flex-nowrap w-24 gap-1",
+                    //     isActive: (value, currentValue, data) => {
+                    //         return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
+                    //     },
+                    //     values: [
+                    //         {value: ARROWHEADS.NONE, icon: <LineIcon />},
+                    //         {value: ARROWHEADS.ARROW, icon: <ArrowIcon />},
+                    //     ],
+                    // },
+                    [FIELDS.ARROW_SHAPE]: {
+                        type: FORM_OPTIONS.SELECT,
+                        className: "flex flex-nowrap w-24 gap-1",
+                        // isActive: (value, currentValue, data) => {
+                        //     return data[FIELDS.START_ARROWHEAD] === ARROWHEADS.NONE && value === currentValue;
+                        // },
+                        values: [
+                            { value: ARROW_SHAPES.LINE, icon: <ArrowIcon /> },
+                            { value: ARROW_SHAPES.CONNECTOR, icon: <ArrowConnectorIcon /> },
+                        ],
+                    },
+                    [FIELDS.STROKE_WIDTH]: {
+                        type: FORM_OPTIONS.SELECT,
+                        className: "flex flex-nowrap w-24 gap-1",
+                        values: [
+                            { value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon /> },
+                            { value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon /> },
+                        ],
+                    },
+                    [FIELDS.STROKE_COLOR]: {
+                        type: FORM_OPTIONS.COLOR_SELECT,
+                        className: "flex flex-nowrap w-48 gap-1",
+                        values: STROKE_COLOR_PICK,
+                    },
+                },
+                onPickChange: (defaults: any, field: string) => {
+                    // Make sure that we remove the start arrowhead value
+                    if (field === FIELDS.END_ARROWHEAD) {
+                        defaults[FIELDS.START_ARROWHEAD] = ARROWHEADS.NONE;
+                    }
+                },
+                onSelect: () => {
+                    editor.setCurrentTool(ELEMENTS.ARROW);
+                    editor.update();
+                },
+            },
+            [ELEMENTS.TEXT]: {
+                id: ELEMENTS.TEXT,
+                icon: "text",
+                name: "Text",
+                shortcut: "t",
+                picks: {
+                    // [FIELDS.TEXT_SIZE]: {
+                    //     type: FORM_OPTIONS.SELECT,
+                    //     className: "flex flex-nowrap w-24 gap-1",
+                    //     values: [
+                    //         {value: TEXT_SIZES.MEDIUM, icon: <WidthSmallIcon />},
+                    //         {value: TEXT_SIZES.XLARGE, icon: <WidthLargeIcon />},
+                    //     ],
+                    // },
+                    [FIELDS.TEXT_COLOR]: {
+                        type: FORM_OPTIONS.COLOR_SELECT,
+                        className: "flex flex-nowrap w-48 gap-1",
+                        values: TEXT_COLOR_PICK,
+                    },
+                },
+                onSelect: () => {
+                    editor.setCurrentTool(ELEMENTS.TEXT);
+                    editor.update();
+                },
+            },
+            [ELEMENTS.DRAW]: {
+                id: ELEMENTS.DRAW,
+                icon: "pen",
+                name: "Draw",
+                shortcut: "d",
+                picks: {
+                    [FIELDS.STROKE_WIDTH]: {
+                        type: FORM_OPTIONS.SELECT,
+                        className: "flex flex-nowrap w-24 gap-1",
+                        values: [
+                            { value: STROKE_WIDTHS.MEDIUM, icon: <WidthSmallIcon /> },
+                            { value: STROKE_WIDTHS.XLARGE, icon: <WidthLargeIcon /> },
+                        ],
+                    },
+                    [FIELDS.STROKE_COLOR]: {
+                        type: FORM_OPTIONS.COLOR_SELECT,
+                        className: "flex flex-nowrap w-48 gap-1",
+                        values: STROKE_COLOR_PICK,
+                    },
+                },
+                onSelect: () => {
+                    editor.setCurrentTool(ELEMENTS.DRAW);
+                    editor.update();
+                },
+            },
+            [ELEMENTS.IMAGE]: {
+                id: ELEMENTS.IMAGE,
+                icon: "image",
+                name: "Image",
+                shortcut: "i",
+                onSelect: () => {
+                    // first we have to make sure that no elements have been selected
+                    editor.getElements().forEach((element: any) => {
+                        element.selected = false;
+                        element.editing = false;
+                    });
+                    const options = {
+                        description: "Folio Board",
+                        extensions: [
+                            FILE_EXTENSIONS.PNG,
+                            FILE_EXTENSIONS.JPG,
+                        ],
+                        multiple: false,
+                    };
+                    fileOpen(options)
+                        .then(blob => blobToDataUrl(blob))
+                        .then(data => editor.addImageElement(data))
+                        .then(() => {
+                            editor.dispatchChange();
+                            editor.update();
+                        })
+                        .catch(error => console.error(error));
+                },
+            },
+            [ELEMENTS.STICKER]: {
+                id: ELEMENTS.STICKER,
+                icon: "sticker",
+                name: "Sticker",
+                shortcut: "k",
+                picks: {
+                    [FIELDS.STICKER]: {
+                        type: FORM_OPTIONS.IMAGE_SELECT,
+                        className: "w-72 grid grid-cols-8 gap-1",
+                        values: Object.values(STICKERS).map(stickerName => ({
+                            value: stickerName,
+                            image: getStickerImage(stickerName),
+                        })),
+                    },
+                },
+                onSelect: () => {
+                    editor.setCurrentTool(ELEMENTS.STICKER);
+                    editor.update();
+                },
+            },
+            [ELEMENTS.NOTE]: {
+                id: ELEMENTS.NOTE,
+                name: "Note",
+                icon: "note",
+                shortcut: "n",
+                onSelect: () => {
+                    editor.setCurrentTool(ELEMENTS.NOTE);
+                    editor.update();
+                },
+            },
+        });
+        // 1. check if the props.overrides is a function
+        if (typeof props.overrides === "function") {
+            return props.overrides(editor, defaultTools);
         }
-        // case 2: we have changed to a new page
-        else if (currentPageId.current !== editor.page.id) {
-            const defaultTool = availableTools.find(tool => (tool as any).default) || availableTools[0];
-            if (defaultTool) {
-                editor.setCurrentTool(defaultTool.id);
-            }
+        // 2. check if the props.overrides is an array
+        if (Array.isArray(props.overrides)) {
+            return props.overrides;
         }
-        // make sure that we update the current page id reference
-        currentPageId.current = editor.page.id;
-    }, [editor.page.id, editor.page.readonly, editor.state.tool, toolsManager]);
+        // 3. return the default tools
+        return defaultTools;
+    }, [editor, props.overrides]);
 
     return (
-        <ToolsContext.Provider value={toolsManager}>
+        <ToolsContext.Provider value={tools}>
             {props.children}
         </ToolsContext.Provider>
     );

@@ -14,7 +14,7 @@ import {
 import { Button } from "../ui/button.jsx";
 import { Dialog } from "../ui/dialog.tsx";
 import { Form } from "../form/index.jsx";
-import { useEditor } from "../../contexts/editor.jsx";
+import { useEditor } from "../../contexts/editor.tsx";
 import { useDialog } from "../../contexts/dialogs.tsx";
 import transparentBg from "../../assets/transparent.svg";
 

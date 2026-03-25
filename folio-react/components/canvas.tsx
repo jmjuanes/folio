@@ -11,7 +11,7 @@ import {
     FONT_SOURCES,
 } from "../constants.js";
 import { AssetsProvider } from "../contexts/assets.jsx";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { usePreferences } from "../contexts/preferences.tsx";
