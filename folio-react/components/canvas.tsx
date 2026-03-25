@@ -4,7 +4,6 @@ import {
     ACTIONS,
     IS_DARWIN,
     PREFERENCES,
-    STATUS,
     TOOLS,
     CURSORS,
     EVENTS,
@@ -23,32 +22,20 @@ import { SvgContainer } from "./svg.tsx";
 import { Grid } from "./grid.jsx";
 import { clearFocus } from "../utils/dom.js";
 import { preventDefault, isTouchOrPenEvent, isInputTarget } from "../utils/events.js";
-import { ToolUIHost } from "./tool-ui-host.tsx";
-import { ToolUIRegistry } from "../tools/ui-registry.tsx";
+import type { EditorPointEvent, EditorKeyboardEvent } from "../lib/events.ts";
 
 const delay = (timeout: number, cb: () => void) => window.setTimeout(cb, timeout);
-
-export type CanvasEvent = {
-    originalX: number;
-    originalY: number;
-    currentX?: number; // on move
-    currentY?: number; // on move
-    dx?: number;       // on move
-    dy?: number;       // on move
-    shiftKey: boolean;
-    originalEvent?: PointerEvent;
-    drag?: boolean;    // true on move
-};
 
 export type CanvasProps = {
     fonts?: string[];
     longPressDelay?: number;
+    children?: React.ReactNode;
 };
 
-export const Canvas: React.FC<CanvasProps> = props => {
+export const Canvas = (props: CanvasProps): React.JSX.Element => {
     const update = useUpdate();
     const editor = useEditor();
-    const tools = useTools();
+    const { getToolByShortcut } = useTools();
     const cursor = useCursor();
     const contextMenu = useContextMenu() as any;
     const { showContextMenu, hideContextMenu } = contextMenu || {};
@@ -74,36 +61,14 @@ export const Canvas: React.FC<CanvasProps> = props => {
         return false;
     }, [activeTool, showContextMenu]);
 
-    const handleResize = React.useCallback((event: any) => {
+    const handleResize = React.useCallback(() => {
         if (canvasRef.current) {
             const size = canvasRef.current.getBoundingClientRect();
             setCanvasSize([size.width, size.height]);
             editor.setSize(size.width, size.height);
             editor.update();
         }
-    }, [editor]);
-
-    const onPointerDownRoute = React.useCallback((event: CanvasEvent) => {
-        editor.state.status = STATUS.POINTING;
-        editor.dispatch("pointerDown", event);
-        hideContextMenu();
-        update();
-    }, [editor, hideContextMenu]);
-
-    const onPointerMoveRoute = React.useCallback((event: CanvasEvent) => {
-        editor.dispatch("pointerMove", event);
-        update();
-    }, [editor]);
-
-    const onPointerUpRoute = React.useCallback((event: CanvasEvent) => {
-        editor.dispatch("pointerUp", event);
-        update();
-    }, [editor]);
-
-    const onDoubleClickElement = React.useCallback((event: CanvasEvent) => {
-        editor.dispatch("doubleClick", event);
-        update();
-    }, [editor]);
+    }, [editor, setCanvasSize]);
 
     const handleElementChange = React.useCallback((elementId: string, keys: string[], values: any[]) => {
         const element = editor.getElement(elementId) as any;
@@ -122,14 +87,20 @@ export const Canvas: React.FC<CanvasProps> = props => {
         update();
     }, [editor, update]);
 
-    const onKeyDown = React.useCallback((event: any) => {
+    const handleKeyDown = React.useCallback((event: any) => {
         if (editor.page.readonly) {
             return null;
         }
         const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
 
         // 1. Let the active tool handle the key event first
-        const handled = editor.dispatch("keyDown", event);
+        const handled = editor.dispatchToolEvent("keyDown", {
+            key: event.key,
+            shiftKey: !!event.shiftKey,
+            ctrlKey: IS_DARWIN ? event.metaKey : event.ctrlKey,
+            nativeEvent: event,
+        } as EditorKeyboardEvent);
+
         if (handled) {
             update();
             return;
@@ -149,28 +120,34 @@ export const Canvas: React.FC<CanvasProps> = props => {
             }
             // 4. Check for tool shortcuts
             if (!isCtrlKey && !event.shiftKey) {
-                const tool = tools.getToolByShortcut(event.key);
-                if (tool) {
+                const tool = getToolByShortcut(event.key);
+                if (tool && typeof tool?.onSelect === "function") {
                     event.preventDefault();
-                    editor.setCurrentTool(tool.id);
+                    tool.onSelect();
+                    // editor.setCurrentTool(tool.id);
                 }
             }
         }
-    }, [editor, activeTool, update, tools, preferences, dispatchAction]);
+    }, [editor, activeTool, update, getToolByShortcut, preferences, dispatchAction]);
 
-    const onKeyUp = React.useCallback((event: any) => {
-        editor.dispatch("keyUp", event);
+    const handleKeyUp = React.useCallback((event: any) => {
+        editor.dispatchToolEvent("keyUp", {
+            key: event.key,
+            shiftKey: !!event.shiftKey,
+            ctrlKey: IS_DARWIN ? event.metaKey : event.ctrlKey,
+            nativeEvent: event,
+        } as EditorKeyboardEvent);
         update();
-    }, [editor]);
+    }, [editor, update]);
 
-    const onPaste = React.useCallback((event: any) => {
+    const handlePaste = React.useCallback((event: any) => {
         if (!isInputTarget(event) && !editor.page.readonly) {
             editor.page.activeGroup = null;
             dispatchAction(ACTIONS.PASTE, { event: event });
         }
     }, [editor, dispatchAction]);
 
-    const handlePointerDown = (event: any, source: any, pointListener: any) => {
+    const handlePointerDown = React.useCallback((event: any, source: any, pointListener: any) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -189,36 +166,43 @@ export const Canvas: React.FC<CanvasProps> = props => {
             });
         }
         const { top, left } = canvasRef.current!.getBoundingClientRect();
-        const eventInfo: CanvasEvent = {
+        const eventInfo: EditorPointEvent = {
             drag: false,
             originalX: (event.nativeEvent.clientX - left - editor.page.translateX) / editor.page.zoom,
             originalY: (event.nativeEvent.clientY - top - editor.page.translateY) / editor.page.zoom,
             shiftKey: event.nativeEvent.shiftKey,
-            originalEvent: event.nativeEvent,
+            nativeEvent: event.nativeEvent,
         };
 
         // Emit pointer down event
-        onPointerDownRoute(eventInfo);
+        editor.dispatchToolEvent("pointerDown", eventInfo);
+        hideContextMenu();
+        update();
 
         // Handle pointer move
         const handlePointerMove = (event: any) => {
             clearLongPressTimer();
             event.preventDefault();
-            onPointerMoveRoute(Object.assign(eventInfo, {
+            editor.dispatchToolEvent("pointerMove", Object.assign({}, eventInfo, {
                 drag: true,
-                currentEvent: event,
+                nativeEvent: event,
                 currentX: (event.clientX - left - editor.page.translateX) / editor.page.zoom,
                 currentY: (event.clientY - top - editor.page.translateY) / editor.page.zoom,
-                dx: eventInfo.originalEvent ? (event.clientX - eventInfo.originalEvent.clientX) / editor.page.zoom : 0,
-                dy: eventInfo.originalEvent ? (event.clientY - eventInfo.originalEvent.clientY) / editor.page.zoom : 0,
+                dx: eventInfo.nativeEvent ? (event.clientX - eventInfo.nativeEvent.clientX) / editor.page.zoom : 0,
+                dy: eventInfo.nativeEvent ? (event.clientY - eventInfo.nativeEvent.clientY) / editor.page.zoom : 0,
             }));
+            update();
         };
 
         // Handle pointer up
         const handlePointerUp = (event: any) => {
             clearLongPressTimer();
             event.preventDefault();
-            onPointerUpRoute(eventInfo);
+            editor.dispatchToolEvent("pointerUp", Object.assign({}, eventInfo, {
+                drag: false,
+                nativeEvent: event,
+            }));
+            update();
 
             // Remove events listeners
             document.removeEventListener("pointermove", handlePointerMove);
@@ -230,10 +214,10 @@ export const Canvas: React.FC<CanvasProps> = props => {
         document.addEventListener("pointerup", handlePointerUp);
         document.addEventListener("pointerleave", handlePointerUp);
         clearFocus();
-    };
+    }, [editor, update, handleContextMenu, hideContextMenu]);
 
     // Handle double click
-    const handleDoubleClick = (event: any, source: any, listener: any) => {
+    const handleDoubleClick = React.useCallback((event: any, source: any, listener: any) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -243,21 +227,23 @@ export const Canvas: React.FC<CanvasProps> = props => {
         }
 
         const { top, left } = canvasRef.current!.getBoundingClientRect();
-        const eventInfo: CanvasEvent = {
+        const eventInfo: EditorPointEvent = {
             originalX: (event.nativeEvent.clientX - left - editor.page.translateX) / editor.page.zoom,
             originalY: (event.nativeEvent.clientY - top - editor.page.translateY) / editor.page.zoom,
             shiftKey: event.nativeEvent.shiftKey,
-            originalEvent: event.nativeEvent,
+            nativeEvent: event.nativeEvent,
         };
 
         // Get source item
-        if (source && (event.nativeEvent.target as HTMLElement)?.dataset?.[source]) {
-            (eventInfo as any)[source] = (event.nativeEvent.target as HTMLElement).dataset[source];
-        }
+        // if (source && (event.nativeEvent.target as HTMLElement)?.dataset?.[source]) {
+        //     (eventInfo as any)[source] = (event.nativeEvent.target as HTMLElement).dataset[source];
+        // }
 
         // Call the provider listener and the global listener
-        listener?.(eventInfo);
-    };
+        // listener?.(eventInfo);
+        editor.dispatchToolEvent("doubleClick", eventInfo);
+        update();
+    }, [editor, update]);
 
     // Register additional events
     React.useEffect(() => {
@@ -268,24 +254,25 @@ export const Canvas: React.FC<CanvasProps> = props => {
             target.addEventListener(EVENTS.GESTURE_CHANGE, preventDefault);
             target.addEventListener(EVENTS.GESTURE_END, preventDefault);
         }
-        document.addEventListener(EVENTS.KEY_DOWN, onKeyDown);
-        document.addEventListener(EVENTS.KEY_UP, onKeyUp);
-        document.addEventListener(EVENTS.PASTE, onPaste);
+        document.addEventListener(EVENTS.KEY_DOWN, handleKeyDown);
+        document.addEventListener(EVENTS.KEY_UP, handleKeyUp);
+        document.addEventListener(EVENTS.PASTE, handlePaste);
         window.addEventListener(EVENTS.RESIZE, handleResize);
 
         // We need to call the resize for the first time
-        handleResize(null);
+        handleResize();
         return () => {
             if (target) {
                 target.removeEventListener(EVENTS.GESTURE_START, preventDefault);
                 target.removeEventListener(EVENTS.GESTURE_CHANGE, preventDefault);
                 target.removeEventListener(EVENTS.GESTURE_END, preventDefault);
             }
-            document.removeEventListener(EVENTS.KEY_DOWN, onKeyDown);
-            document.removeEventListener(EVENTS.PASTE, onPaste);
+            document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown);
+            document.removeEventListener(EVENTS.KEY_UP, handleKeyUp);
+            document.removeEventListener(EVENTS.PASTE, handlePaste);
             window.removeEventListener(EVENTS.RESIZE, handleResize);
         };
-    }, [onKeyDown, onPaste, handleResize]);
+    }, [handleKeyDown, handleKeyUp, handlePaste, handleResize]);
 
     // generate canvas style
     const canvasStyle = React.useMemo(() => ({
@@ -343,7 +330,7 @@ export const Canvas: React.FC<CanvasProps> = props => {
                                 return handlePointerDown(e, "element", null);
                             },
                             onDoubleClick: (e: any) => {
-                                return handleDoubleClick(e, "element", onDoubleClickElement);
+                                return handleDoubleClick(e, "element", null);
                             },
                         });
                         const style = {
@@ -359,13 +346,8 @@ export const Canvas: React.FC<CanvasProps> = props => {
                         );
                     })}
                 </AssetsProvider>
-
-                {(() => {
-                    const UI = ToolUIRegistry[activeTool?.id || ""]?.CanvasOverlay;
-                    return UI ? <UI /> : null;
-                })()}
             </div>
-            <ToolUIHost />
+            {props.children}
         </div>
     );
 };

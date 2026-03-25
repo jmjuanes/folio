@@ -28,10 +28,9 @@ const InnerEditor = () => {
             {!!BehindTheCanvas && (
                 <BehindTheCanvas />
             )}
-            <Canvas />
-            {!!Overlays && (
+            <Canvas>
                 <Overlays />
-            )}
+            </Canvas>
             {!!OverTheCanvas && (
                 <OverTheCanvas />
             )}

@@ -7,7 +7,7 @@ export type EditorPointEvent = {
     dx?: number;       // on move
     dy?: number;       // on move
     shiftKey: boolean;
-    originalEvent?: PointerEvent;
+    nativeEvent?: PointerEvent;
     drag?: boolean;    // true on move
 };
 
