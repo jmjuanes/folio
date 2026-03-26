@@ -25,6 +25,7 @@ export class SelectBrushingState extends ToolState {
         if (this.selection && typeof event.currentX !== "undefined" && typeof event.currentY !== "undefined") {
             this.selection.x2 = event.currentX;
             this.selection.y2 = event.currentY;
+            this.editor.update();
         }
     }
 

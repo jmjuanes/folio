@@ -43,8 +43,8 @@ export class ToolState {
             if (!this.states[nextId] && this.children[nextId]) {
                 this.states[nextId] = new this.children[nextId](this.editor, this);
             }
+            this.activeStateId = nextId; // Update state ID before entering
             this.states[nextId]?.onEnter(params);
-            this.activeStateId = nextId;
         }
 
         // check if we have to enter into a substate

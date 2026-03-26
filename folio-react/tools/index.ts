@@ -1,7 +1,7 @@
-import { SelectTool } from "./select.tsx";
-import { HandTool } from "./hand.tsx";
-import { EraserTool } from "./eraser.tsx";
-import { PointerTool } from "./pointer.tsx";
+import { SelectTool } from "./select.ts";
+import { HandTool } from "./hand.ts";
+import { EraserTool } from "./eraser.ts";
+import { PointerTool } from "./pointer.ts";
 import {
     ShapeTool,
     ArrowTool,
@@ -10,7 +10,7 @@ import {
     ImageTool,
     StickerTool,
     NoteTool,
-} from "./element.tsx";
+} from "./element.ts";
 
 export const defaultTools = [
     SelectTool,

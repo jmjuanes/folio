@@ -2,10 +2,14 @@ import React from "react";
 import classNames from "classnames";
 import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
 import { useEditor } from "../contexts/editor.tsx";
+import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { ACTIONS } from "../constants.js";
+
+import { ToolState } from "../lib/tool.ts";
+import type { ToolItem } from "../contexts/tools.tsx";
 
 type ToolbarButtonProps = {
     active?: boolean;
@@ -42,36 +46,38 @@ const ToolbarButton = (props: ToolbarButtonProps): React.JSX.Element => {
 };
 
 // @description Toolbar panel component
-export const Toolbar = (): React.JSX.Element => {
+export const ToolbarContent = (): React.JSX.Element => {
     const editor = useEditor();
-    const tools = useTools();
+    const { getTools } = useTools();
     const contextMenu = useContextMenu() as any;
     const dispatchAction = useActions();
-    const prevSelectedTool = React.useRef(tools.getActiveTool()?.id);
 
-    const allTools = tools.getTools();
-    const activeTool = tools.getActiveTool();
+    const allTools: ToolItem[] = getTools();
+    const activeTool: ToolState | null = editor.getCurrentTool();
+    const locked = editor.getToolLocked();
 
-    const primaryTools = React.useMemo(() => {
-        return allTools.filter(tool => tool.primary);
+    const prevSelectedTool = React.useRef<string | null>(activeTool?.id || null);
+
+    const primaryTools = React.useMemo<ToolItem[]>(() => {
+        return allTools;
     }, [allTools]);
 
     // when a tool is selected, make sure to hide the context menu
     React.useEffect(() => {
         if (prevSelectedTool.current !== activeTool?.id) {
-            prevSelectedTool.current = activeTool?.id;
+            prevSelectedTool.current = activeTool?.id || null;
             contextMenu?.hideContextMenu?.();
         }
     }, [activeTool?.id, contextMenu]);
 
     const handleLockClick = React.useCallback(() => {
-        tools.setLocked(!tools.getLocked());
-    }, [tools]);
+        editor.setToolLocked(!locked);
+    }, [editor, locked]);
 
     const lockButtonClass = classNames({
         "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
-        "bg-gray-950 text-white": tools.getLocked(),
-        "opacity-50 hover:opacity-100": !tools.getLocked(),
+        "bg-gray-950 text-white": locked,
+        "opacity-50 hover:opacity-100": !locked,
         "pointer-events-none opacity-40 cursor-not-allowed": editor.page.readonly,
     });
 
@@ -86,12 +92,9 @@ export const Toolbar = (): React.JSX.Element => {
                             active={activeTool?.id === tool.id}
                             disabled={editor.page.readonly && !tool.enabledOnReadOnly}
                             onClick={() => {
-                                tools.setActiveTool(tool.id);
+                                tool.onSelect();
                             }}
                         />
-                        {activeTool?.id === tool.id && tool.renderToolbar && (
-                            tool.renderToolbar(editor)
-                        )}
                     </div>
                 ))}
                 <ToolbarButton
@@ -103,8 +106,20 @@ export const Toolbar = (): React.JSX.Element => {
                 />
             </div>
             <div className={lockButtonClass} onClick={handleLockClick}>
-                {tools.getLocked() ? <LockIcon /> : <UnlockIcon />}
+                {locked ? <LockIcon /> : <UnlockIcon />}
             </div>
         </div>
     );
 };
+
+export const Toolbar = (props: { children: React.ReactNode }): React.JSX.Element => {
+    const { Picks } = useEditorComponents();
+    const content = props.children ?? <ToolbarContent />;
+
+    return (
+        <div className="flex flex-col justify-center items-center select-none">
+            <Picks />
+            {content}
+        </div>
+    );
+};  

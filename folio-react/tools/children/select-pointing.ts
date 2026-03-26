@@ -1,40 +1,49 @@
 import { ToolState } from "../../lib/tool.ts";
-import {
-    getElementsSnappingEdges,
-    getElementsBoundingRectangle,
-} from "../../lib/elements.js";
 import type { EditorPointEvent } from "../../lib/events.ts";
 
 export class SelectPointingState extends ToolState {
     onEnter(event: EditorPointEvent) {
-        const parent = this.parent as any;
-        const target = event.originalEvent?.target as HTMLElement | undefined;
+        const target = event.nativeEvent?.target as HTMLElement | undefined;
         const handler = target?.dataset?.handler;
         const elementId = target?.dataset?.element;
 
-        // 1. check if a handler has been pointed
+        // 1. check if a handler or element has been pointed
         if (handler) {
-            const selectedElements = this.editor.getSelection();
-            const notSelectedElements = this.editor.getElements().filter((element: any) => {
-                return !element.selected;
+            return this.parent?.transition("resizing", {
+                event: event,
+                handler: handler,
             });
-            parent.snapshot = selectedElements.map((element: any) => Object.assign({}, element));
-            parent.snapshotBounds = getElementsBoundingRectangle(selectedElements);
-            parent.snapEdges = getElementsSnappingEdges(notSelectedElements);
-            return this.parent?.transition("resizing", { handler });
         }
 
         // 2. check if an element has been pointed
         if (elementId) {
             const element = this.editor.getElement(elementId);
-            if (element && !element.selected) {
-                if (!event.shiftKey) {
-                    this.editor.clearSelection();
-                }
-                this.editor.selectElements([element]);
+            const elementPrevSelected = !!element?.selected;
+            // check to reset active group
+            if (this.editor.page.activeGroup && element.group !== this.editor.page.activeGroup) {
+                this.editor.getElements().forEach((el: any) => {
+                    el.selected = el.group === this.editor.page.activeGroup || el.selected;
+                });
+                this.editor.page.activeGroup = null;
             }
-            parent.isPrevSelected = !!element?.selected;
-            return this.parent?.transition("dragging", event);
+            const inCurrentSelection = this.editor.getSelection().some((el: any) => {
+                return el.id === element.id;
+            });
+            if (!inCurrentSelection && !event.shiftKey) {
+                this.editor.clearSelection();
+            }
+            element.selected = true;
+            if (!this.editor.page.activeGroup && element.group) {
+                this.editor.getElements().forEach((el: any) => {
+                    el.selected = el.selected || (el.group && el.group === element.group);
+                });
+            }
+            this.editor.update();
+            return this.parent?.transition("dragging", {
+                event: event,
+                elementId: elementId,
+                elementPrevSelected: elementPrevSelected,
+            });
         }
 
         // 3. in other case, clear selecting if the shift key is not pressed and start

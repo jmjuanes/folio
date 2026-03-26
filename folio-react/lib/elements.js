@@ -347,7 +347,8 @@ export const elementsConfig = {
             }
         },
         onResizeStart: (element, snapshot, event) => {
-            if (event.handler === HANDLERS.NODE_MIDDLE) {
+            const handler = event.nativeEvent?.target?.dataset?.handler || "";
+            if (handler === HANDLERS.NODE_MIDDLE) {
                 if (typeof snapshot.xCenter !== "number") {
                     snapshot.xCenter = (snapshot.x1 + snapshot.x2) / 2;
                     snapshot.yCenter = (snapshot.y1 + snapshot.y2) / 2;
@@ -355,7 +356,8 @@ export const elementsConfig = {
             }
         },
         onResize: (element, snapshot, event, getPosition) => {
-            if (event.handler === HANDLERS.NODE_MIDDLE) {
+            const handler = event.nativeEvent?.target?.dataset?.handler || "";
+            if (handler === HANDLERS.NODE_MIDDLE) {
                 const x = getPosition(snapshot.xCenter + event.dx);
                 const y = getPosition(snapshot.yCenter + event.dy);
                 // Check to reset the position of the center
@@ -375,7 +377,7 @@ export const elementsConfig = {
                 const dy = element.y2 - element.y1;
                 const angle = Math.round(Math.atan2(dy, dx) / a) * a;
                 const d = hypotenuse(dx, dy);
-                if (event.handler === HANDLERS.NODE_END) {
+                if (handler === HANDLERS.NODE_END) {
                     element.x2 = getPosition(element.x1 + Math.cos(angle) * d);
                     element.y2 = getPosition(element.y1 + Math.sin(angle) * d);
                 }   
@@ -386,7 +388,8 @@ export const elementsConfig = {
             }   
         },
         onResizeEnd: (element, snapshot, event) => {
-            if (event.handler === HANDLERS.NODE_MIDDLE) {
+            const handler = event.nativeEvent?.target?.dataset?.handler || "";
+            if (handler === HANDLERS.NODE_MIDDLE) {
                 const center = [element.xCenter, element.yCenter];
                 if (getPointDistanceToLine(center, [[element.x1, element.y1], [element.x2, element.y2]]) < GRID_SIZE) {
                     element.xCenter = null;

@@ -1,4 +1,5 @@
 import { ELEMENTS, CHANGES, TOOLS } from "../constants.js";
+import { getElementConfig } from "../lib/elements.js";
 import { ToolState } from "../lib/tool.ts";
 import type { EditorPointEvent } from "../lib/events.ts";
 
@@ -10,7 +11,7 @@ export abstract class ElementTool extends ToolState {
 
     onPointerDown(event: EditorPointEvent) {
         const element = this.editor.createElement(this.elementType);
-        const config = this.editor.getElementConfig(element);
+        const config = getElementConfig(element);
 
         element.x1 = event.originalX;
         element.y1 = event.originalY;
@@ -31,7 +32,7 @@ export abstract class ElementTool extends ToolState {
     onPointerMove(event: EditorPointEvent) {
         if (this.editor.activeElement?.creating) {
             const element = this.editor.activeElement;
-            const config = this.editor.getElementConfig(element);
+            const config = getElementConfig(element);
 
             element.x2 = event.currentX;
             element.y2 = event.currentY;
@@ -45,7 +46,7 @@ export abstract class ElementTool extends ToolState {
     onPointerUp(event: EditorPointEvent) {
         if (this.editor.activeElement?.creating) {
             const element = this.editor.activeElement;
-            const config = this.editor.getElementConfig(element);
+            const config = getElementConfig(element);
 
             element.creating = false;
             if (typeof config.onCreateEnd === "function") {

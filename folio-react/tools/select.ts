@@ -4,13 +4,12 @@ import {
     GRID_SIZE,
     CHANGES,
     KEYS,
-    SNAP_THRESHOLD,
 } from "../constants.js";
 import { isArrowKey } from "../utils/keys.js";
 import { isInputTarget } from "../utils/events.js";
 import { getElementConfig } from "../lib/elements.js";
 import { ToolState } from "../lib/tool.ts";
-import { removeTextElement } from "./utils/element.ts";
+import { removeTextElement, getSnappedCoordinate } from "./utils/element.ts";
 
 import { SelectDraggingState } from "./children/select-dragging.ts";
 import { SelectBrushingState } from "./children/select-brushing.ts";
@@ -30,7 +29,6 @@ export class SelectTool extends ToolState {
     public snapEdges: any[] = [];
     public activeSnapEdges: any[] = [];
     public activeElement: any = null;
-    public isPrevSelected = false;
 
     children = {
         "idle": SelectIdleState,
@@ -46,29 +44,11 @@ export class SelectTool extends ToolState {
         this.snapshotBounds = null;
         this.snapEdges = [];
         this.activeSnapEdges = [];
-        this.isPrevSelected = false;
         this.transition("idle");
     }
 
-    public getPosition(pos: number, edge: string | null = null, size: number = 0, includeCenter: boolean = false): number {
-        if (this.editor.appState?.grid) {
-            return Math.round(pos / GRID_SIZE) * GRID_SIZE;
-        }
-        if (edge && this.editor.appState?.snapToElements) {
-            const edges = size > 0 ? (includeCenter ? [0, size / 2, size] : [0, size]) : [0];
-            for (let i = 0; i < this.snapEdges.length; i++) {
-                const item = this.snapEdges[i];
-                if (item.edge === edge && typeof item[edge] !== "undefined") {
-                    for (let j = 0; j < edges.length; j++) {
-                        if (Math.abs(item[edge] - pos - edges[j]) < SNAP_THRESHOLD) {
-                            this.activeSnapEdges.push(item);
-                            return item[edge] - edges[j];
-                        }
-                    }
-                }
-            }
-        }
-        return pos;
+    private getSnappedCoordinate(value: number): number {
+        return getSnappedCoordinate(value, !!this.editor.appState?.grid);
     }
 
     onKeyDown(event: EditorKeyboardEvent): boolean | void {
@@ -115,8 +95,8 @@ export class SelectTool extends ToolState {
                     if (typeof elementConfig.getUpdatedFields === "function") {
                         (elementConfig.getUpdatedFields(el) || []).forEach((f: string) => fields.push(f));
                     }
-                    el[field1] = event.shiftKey ? snap[field1] + sign : this.getPosition(snap[field1] + sign * GRID_SIZE);
-                    el[field2] = event.shiftKey ? snap[field2] + sign : this.getPosition(snap[field2] + sign * GRID_SIZE);
+                    el[field1] = event.shiftKey ? snap[field1] + sign : this.getSnappedCoordinate(snap[field1] + sign * GRID_SIZE);
+                    el[field2] = event.shiftKey ? snap[field2] + sign : this.getSnappedCoordinate(snap[field2] + sign * GRID_SIZE);
                     elementConfig.onDrag?.(el, snap, null);
                     return {
                         id: el.id,

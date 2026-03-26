@@ -13,6 +13,7 @@ import { HistoryPanel } from "../components/panels/history.jsx";
 import { ZoomPanel } from "../components/panels/zoom.jsx";
 import { Minimap } from "../components/minimap.tsx";
 import { Toolbar } from "../components/toolbar.tsx";
+import { Picks } from "../components/picks.tsx";
 import { Layers } from "../components/layers.tsx";
 import { Overlays } from "../components/overlays.tsx";
 import { Brush } from "../components/brush.tsx";
@@ -71,6 +72,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             ZoomPanel: ZoomPanel,
             Minimap: Minimap,
             Toolbar: Toolbar,
+            Picks: Picks,
             Layers: Layers,
             Title: null,
             Library: null,

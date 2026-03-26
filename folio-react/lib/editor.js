@@ -246,7 +246,9 @@ export const getEditorStateFromInitialData = initialData => {
 
 // @description Create a new editor
 export const createEditor = (options = {}) => {
-    const editor = {
+    const editor = {};
+
+    Object.assign(editor, {
         ...getEditorStateFromInitialData(options?.data || {}),
         defaults: getDefaults(),
         updatedAt: Date.now(),
@@ -269,6 +271,9 @@ export const createEditor = (options = {}) => {
         }),
         activeTool: null,
         toolLocked: false,
+
+        // active snaps edges and points
+        snaps: [],
 
         // @description editor size
         width: 0,
@@ -1351,9 +1356,20 @@ export const createEditor = (options = {}) => {
             });
         },
 
-        // @description get the current active tool
-        getTool: () => editor.state.tool,
-    };
+        // 
+        // Snaps API
+        // 
+
+        // @description Get active snaps
+        getSnaps: () => {
+            return editor.snaps || [];
+        },
+
+        // @description Set active snaps
+        setSnaps: (snaps = []) => {
+            editor.snaps = snaps;
+        },
+    });
 
     return editor;
 };

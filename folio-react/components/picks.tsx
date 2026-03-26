@@ -8,7 +8,7 @@ import type { ToolItem } from "../contexts/tools.tsx";
 
 export const Picks = (): React.JSX.Element | null => {
     const editor = useEditor();
-    const tools = useTools();
+    const { getToolById } = useTools();
     const picksClassName = classNames({
         "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
         "bg-white border-1 border-gray-200 shadow-sm": true,
@@ -17,10 +17,10 @@ export const Picks = (): React.JSX.Element | null => {
     const activeTool = editor.getCurrentTool() as ToolState | null;
     const toolConfig = React.useMemo<ToolItem | null>(() => {
         if (activeTool) {
-            return tools.find((tool: ToolItem) => tool.id === activeTool.id) || null;
+            return getToolById(activeTool.id) || null;
         }
         return null;
-    }, [activeTool, tools]);
+    }, [activeTool, getToolById]);
 
     // check if the tool configuration is defined and has picks
     if (!toolConfig || !toolConfig?.picks) {
