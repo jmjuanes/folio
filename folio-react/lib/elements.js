@@ -157,8 +157,7 @@ export const elementsConfig = {
                 element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
             }
         },
-        onResize: (element, snapshot, event) => {
-            const handler = event.handler || "";
+        onResize: (element, handler, snapshot, event) => {
             if (element.text) {
                 const [ width, height ] = getElementSize(element);
                 const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
@@ -346,8 +345,7 @@ export const elementsConfig = {
                 element.y2 = getPosition(element.y1 + Math.sin(angle) * d);
             }
         },
-        onResizeStart: (element, snapshot, event) => {
-            const handler = event.nativeEvent?.target?.dataset?.handler || "";
+        onResizeStart: (element, handler, snapshot, event) => {
             if (handler === HANDLERS.NODE_MIDDLE) {
                 if (typeof snapshot.xCenter !== "number") {
                     snapshot.xCenter = (snapshot.x1 + snapshot.x2) / 2;
@@ -355,8 +353,7 @@ export const elementsConfig = {
                 }
             }
         },
-        onResize: (element, snapshot, event, getPosition) => {
-            const handler = event.nativeEvent?.target?.dataset?.handler || "";
+        onResize: (element, handler, snapshot, event, getPosition) => {
             if (handler === HANDLERS.NODE_MIDDLE) {
                 const x = getPosition(snapshot.xCenter + event.dx);
                 const y = getPosition(snapshot.yCenter + event.dy);
@@ -387,8 +384,7 @@ export const elementsConfig = {
                 }
             }   
         },
-        onResizeEnd: (element, snapshot, event) => {
-            const handler = event.nativeEvent?.target?.dataset?.handler || "";
+        onResizeEnd: (element, handler, snapshot, event) => {
             if (handler === HANDLERS.NODE_MIDDLE) {
                 const center = [element.xCenter, element.yCenter];
                 if (getPointDistanceToLine(center, [[element.x1, element.y1], [element.x2, element.y2]]) < GRID_SIZE) {
@@ -468,8 +464,7 @@ export const elementsConfig = {
                 element.y2 = newPoint[1];
             }
         },
-        onResize: (element, snapshot, event) => {
-            const handler = event.handler || "";
+        onResize: (element, handler, snapshot, event) => {
             const [ width, height ] = getElementSize(element);
             if (isCornerHandler(handler) || handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.EDGE_TOP) {
                 let textSize = TEXT_SIZE_MIN;

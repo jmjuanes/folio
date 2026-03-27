@@ -3,11 +3,9 @@ import { getElementConfig } from "../lib/elements.js";
 import { ToolState } from "../lib/tool.ts";
 import type { EditorPointEvent } from "../lib/events.ts";
 
-export abstract class ElementTool extends ToolState {
-    abstract id: string;
-    elementType = "";
-    elementPicks: any = null;
-    onPickChange: any = null;
+export class ElementTool extends ToolState {
+    id = TOOLS.ELEMENT;
+    private elementType: string = "";
 
     onPointerDown(event: EditorPointEvent) {
         const element = this.editor.createElement(this.elementType);
@@ -69,72 +67,36 @@ export abstract class ElementTool extends ToolState {
 };
 
 export class ShapeTool extends ElementTool {
-    static id = ELEMENTS.SHAPE;
     id = ELEMENTS.SHAPE;
-    icon = "square";
-    name = "Shape";
-    primary = true;
-    shortcut = "s";
     elementType = ELEMENTS.SHAPE;
-    elementPicks = {
-        shape: { icon: "square" },
-        fillColor: { icon: "palette" },
-        strokeColor: { icon: "brush" },
-    };
 };
 
 export class ArrowTool extends ElementTool {
-    static id = ELEMENTS.ARROW;
     id = ELEMENTS.ARROW;
-    icon = "arrow-up-right";
-    name = "Arrow";
-    primary = true;
-    shortcut = "a";
     elementType = ELEMENTS.ARROW;
 };
 
 export class TextTool extends ElementTool {
-    static id = ELEMENTS.TEXT;
     id = ELEMENTS.TEXT;
-    icon = "type";
-    name = "Text";
-    primary = true;
-    shortcut = "t";
     elementType = ELEMENTS.TEXT;
 };
 
 export class DrawTool extends ElementTool {
-    static id = ELEMENTS.DRAW;
     id = ELEMENTS.DRAW;
-    icon = "draw";
-    name = "Draw";
-    primary = true;
-    shortcut = "d";
     elementType = ELEMENTS.DRAW;
 };
 
 export class ImageTool extends ElementTool {
-    static id = ELEMENTS.IMAGE;
     id = ELEMENTS.IMAGE;
-    icon = "image";
-    name = "Image";
     elementType = ELEMENTS.IMAGE;
 };
 
 export class StickerTool extends ElementTool {
-    static id = ELEMENTS.STICKER;
     id = ELEMENTS.STICKER;
-    icon = "smile";
-    name = "Sticker";
     elementType = ELEMENTS.STICKER;
 };
 
 export class NoteTool extends ElementTool {
-    static id = ELEMENTS.NOTE;
     id = ELEMENTS.NOTE;
-    icon = "sticky-note";
-    name = "Note";
-    primary = true;
-    shortcut = "n";
     elementType = ELEMENTS.NOTE;
 };

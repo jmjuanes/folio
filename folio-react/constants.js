@@ -372,6 +372,7 @@ export const TOOLS = {
     SELECT: "select",
     ERASER: "erase",
     POINTER: "pointer",
+    ELEMENT: "element",
 };
 
 export const CHANGES = {

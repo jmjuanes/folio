@@ -53,6 +53,15 @@ export class SelectResizingState extends ToolState {
         this.snapshot = selectedElements.map((element: any) => Object.assign({}, element));
         this.snapEdges = this.editor?.appState?.snapToElements ? getElementsSnappingEdges(notSelectedElements) : [];
         this.activeSnapEdges = [];
+
+        // execute onResizeStart handler in all selected elements
+        selectedElements.forEach((element: any, index: number) => {
+            const elementConfig = getElementConfig(element);
+            if (typeof elementConfig.onResizeStart === "function") {
+                elementConfig.onResizeStart(element, this.handler, this.snapshot[index], params?.event);
+            }
+        });
+
         this.editor.setSnaps([]);
     }
 
@@ -181,7 +190,7 @@ export class SelectResizingState extends ToolState {
             }
         }
         // Execute onResize handler
-        elementConfig?.onResize?.(element, this.snapshot[0], event, (value: number, edge: string) => this.getPosition(value, edge));
+        elementConfig?.onResize?.(element, this.handler, this.snapshot[0], event, (value: number, edge: string) => this.getPosition(value, edge));
 
         // Set visible snap edges
         this.editor.setSnaps([]);
@@ -197,42 +206,44 @@ export class SelectResizingState extends ToolState {
     }
 
     onPointerUp(event: EditorPointEvent) {
-        const selectedElements = this.editor.getSelection();
-        if (this.handler && this.snapshot.length === 1) {
-            const element = this.editor.getElement(this.snapshot[0].id);
-            const elementConfig = getElementConfig(element);
-            if (typeof elementConfig.onResizeEnd === "function") {
-                elementConfig.onResizeEnd(element, this.snapshot[0], event);
-            }
-        }
-
-        // update version in all elements of the selection
-        selectedElements.forEach((element: any) => {
-            element[FIELDS.VERSION] = element[FIELDS.VERSION] + 1;
-        });
-
-        this.editor.addHistory({
-            type: CHANGES.UPDATE,
-            elements: selectedElements.map((element: any, index: number) => {
-                const updatedFields = new Set(["x1", "x2", "y1", "y2", "rotation", "version"]);
-                // We need to check the fields that the element has updated internally
+        if (this.resized && this.handler) {
+            const selectedElements = this.editor.getSelection();
+            // execute onResizeEnd listener in all elements
+            selectedElements.forEach((element: any, index: number) => {
                 const elementConfig = getElementConfig(element);
-                if (typeof elementConfig.getUpdatedFields === "function") {
-                    (elementConfig.getUpdatedFields(element, this.snapshot[index]) || []).forEach(key => {
-                        updatedFields.add(key);
-                    });
+                if (typeof elementConfig.onResizeEnd === "function") {
+                    elementConfig.onResizeEnd(element, this.handler, this.snapshot[index], event);
                 }
-                // Generate list of fields to update
-                const keys = Array.from(updatedFields);
-                return {
-                    id: element.id,
-                    prevValues: Object.fromEntries(keys.map(key => [key, this.snapshot[index][key]])),
-                    newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
-                };
-            }),
-        });
-
-        this.editor.dispatchChange();
+            });
+            // update version in all elements of the selection
+            selectedElements.forEach((element: any) => {
+                element[FIELDS.VERSION] = element[FIELDS.VERSION] + 1;
+            });
+            // register history change
+            this.editor.addHistory({
+                type: CHANGES.UPDATE,
+                elements: selectedElements.map((element: any, index: number) => {
+                    const updatedFields = new Set(["x1", "x2", "y1", "y2", "rotation", "version"]);
+                    // We need to check the fields that the element has updated internally
+                    const elementConfig = getElementConfig(element);
+                    if (typeof elementConfig.getUpdatedFields === "function") {
+                        (elementConfig.getUpdatedFields(element, this.snapshot[index]) || []).forEach(key => {
+                            updatedFields.add(key);
+                        });
+                    }
+                    // Generate list of fields to update
+                    const keys = Array.from(updatedFields);
+                    return {
+                        id: element.id,
+                        prevValues: Object.fromEntries(keys.map(key => [key, this.snapshot[index][key]])),
+                        newValues: Object.fromEntries(keys.map(key => [key, element[key]])),
+                    };
+                }),
+            });
+            // dispatch change event in editor
+            this.editor.dispatchChange();
+        }
+        // reset internal variables
         this.editor.setSnaps([]);
         this.parent?.transition("idle");
         this.handler = null;

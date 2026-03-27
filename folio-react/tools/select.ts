@@ -22,12 +22,6 @@ import type { EditorKeyboardEvent } from "../lib/events.ts";
 
 export class SelectTool extends ToolState {
     id = TOOLS.SELECT;
-
-    // shared state for sub-states
-    public snapshot: any[] = [];
-    public snapshotBounds: any = null;
-    public snapEdges: any[] = [];
-    public activeSnapEdges: any[] = [];
     public activeElement: any = null;
 
     children = {
@@ -39,26 +33,21 @@ export class SelectTool extends ToolState {
         "brushing": SelectBrushingState,
     };
 
-    onEnter() {
-        this.snapshot = [];
-        this.snapshotBounds = null;
-        this.snapEdges = [];
-        this.activeSnapEdges = [];
-        this.transition("idle");
-    }
-
     private getSnappedCoordinate(value: number): number {
         return getSnappedCoordinate(value, !!this.editor.appState?.grid);
+    }
+
+    onEnter(params: { activeElement?: any }) {
+        this.activeElement = params?.activeElement || null;
+        this.transition("idle");
     }
 
     onKeyDown(event: EditorKeyboardEvent): boolean | void {
         // on readonly key-down listening is disabled
         if (this.editor.page.readonly) {
-            return;
+            return false;
         }
 
-        // TODO: move this logic to canvas
-        // const isCtrlKey = IS_DARWIN ? event.metaKey : event.ctrlKey;
         if (isInputTarget(event)) {
             if (this.activeElement?.editing && event.key === KEYS.ESCAPE) {
                 event.nativeEvent.preventDefault();
