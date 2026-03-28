@@ -1,5 +1,6 @@
 import { ToolState } from "../../lib/tool.ts";
 import type { EditorPointEvent } from "../../lib/events.ts";
+import { isRotationHandler } from "../../lib/handlers.ts";
 
 export class SelectPointingState extends ToolState {
     onEnter(event: EditorPointEvent) {
@@ -9,7 +10,8 @@ export class SelectPointingState extends ToolState {
 
         // 1. check if a handler or element has been pointed
         if (handler) {
-            return this.parent?.transition("resizing", {
+            const state = isRotationHandler(handler) ? "rotating" : "resizing";
+            return this.parent?.transition(state, {
                 event: event,
                 handler: handler,
             });
