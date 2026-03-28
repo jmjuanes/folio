@@ -5,98 +5,73 @@ import type { EditorPointEvent } from "../lib/events.ts";
 
 export class ElementTool extends ToolState {
     id = TOOLS.ELEMENT;
+    private element: any | null = null;
     private elementType: string = "";
 
+    onEnter(params: any) {
+        this.element = null;
+        this.elementType = params.type;
+    }
+
+    onExit() {
+        this.element = null;
+        this.elementType = "";
+    }
+
     onPointerDown(event: EditorPointEvent) {
-        const element = this.editor.createElement(this.elementType);
-        const config = getElementConfig(element);
-
-        element.x1 = event.originalX;
-        element.y1 = event.originalY;
-        element.x2 = event.originalX;
-        element.y2 = event.originalY;
-        element.creating = true;
-
+        // 1. create the new element
+        this.element = Object.assign(this.editor.createElement(this.elementType), {
+            x1: event.originalX,
+            y1: event.originalY,
+            x2: event.originalX,
+            y2: event.originalY,
+            creating: true,
+        });
+        // 2. call onCreateStart if this element has this callback
+        const config = getElementConfig(this.element);
         if (typeof config.onCreateStart === "function") {
-            config.onCreateStart(element, event);
+            config.onCreateStart(this.element, event);
         }
-
+        // 3. update the editor state
         this.editor.clearSelection();
-        this.editor.addElements([element]);
-        this.editor.setSelection([element.id]);
-        this.editor.activeElement = element;
+        this.editor.addElements([this.element]);
+        this.editor.setSelection([this.element.id]);
     }
 
     onPointerMove(event: EditorPointEvent) {
-        if (this.editor.activeElement?.creating) {
-            const element = this.editor.activeElement;
-            const config = getElementConfig(element);
-
-            element.x2 = event.currentX;
-            element.y2 = event.currentY;
-
+        if (this.element?.creating) {
+            // 1. update the element position
+            this.element.x2 = event.currentX;
+            this.element.y2 = event.currentY;
+            // 2. call onCreateMove if this element has this callback
+            const config = getElementConfig(this.element);
             if (typeof config.onCreateMove === "function") {
-                config.onCreateMove(element, event, (pos: number) => pos);
+                config.onCreateMove(this.element, event, (pos: number) => pos);
             }
         }
     }
 
     onPointerUp(event: EditorPointEvent) {
-        if (this.editor.activeElement?.creating) {
-            const element = this.editor.activeElement;
-            const config = getElementConfig(element);
-
-            element.creating = false;
+        if (this.element?.creating) {
+            // 1. mark the element as not creating
+            this.element.creating = false;
+            // 2. call onCreateEnd if this element has this callback
+            const config = getElementConfig(this.element);
             if (typeof config.onCreateEnd === "function") {
-                config.onCreateEnd(element, event);
+                config.onCreateEnd(this.element, event);
             }
-
+            // 3. add the element to the history
             this.editor.addHistory({
                 type: CHANGES.CREATE,
-                elements: [element],
+                elements: [this.element],
             });
-
-            this.editor.activeElement = null;
+            // 4. clear the element reference and dispatch change
+            this.element = null;
             this.editor.dispatchChange();
-
+            // 5. if the tool is not locked, switch to select tool
             if (!this.editor.toolLocked) {
                 this.editor.setCurrentTool(TOOLS.SELECT);
             }
         }
     }
-};
-
-export class ShapeTool extends ElementTool {
-    id = ELEMENTS.SHAPE;
-    elementType = ELEMENTS.SHAPE;
-};
-
-export class ArrowTool extends ElementTool {
-    id = ELEMENTS.ARROW;
-    elementType = ELEMENTS.ARROW;
-};
-
-export class TextTool extends ElementTool {
-    id = ELEMENTS.TEXT;
-    elementType = ELEMENTS.TEXT;
-};
-
-export class DrawTool extends ElementTool {
-    id = ELEMENTS.DRAW;
-    elementType = ELEMENTS.DRAW;
-};
-
-export class ImageTool extends ElementTool {
-    id = ELEMENTS.IMAGE;
-    elementType = ELEMENTS.IMAGE;
-};
-
-export class StickerTool extends ElementTool {
-    id = ELEMENTS.STICKER;
-    elementType = ELEMENTS.STICKER;
-};
-
-export class NoteTool extends ElementTool {
-    id = ELEMENTS.NOTE;
-    elementType = ELEMENTS.NOTE;
 };

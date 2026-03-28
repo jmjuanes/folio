@@ -143,7 +143,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                     },
                 },
                 onSelect: () => {
-                    editor.setCurrentTool(ELEMENTS.SHAPE);
+                    editor.setCurrentTool(TOOLS.ELEMENT, { type: ELEMENTS.SHAPE });
                     editor.update();
                 },
             },
@@ -196,7 +196,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                     }
                 },
                 onSelect: () => {
-                    editor.setCurrentTool(ELEMENTS.ARROW);
+                    editor.setCurrentTool(TOOLS.ELEMENT, { type: ELEMENTS.ARROW });
                     editor.update();
                 },
             },
@@ -221,7 +221,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                     },
                 },
                 onSelect: () => {
-                    editor.setCurrentTool(ELEMENTS.TEXT);
+                    editor.setCurrentTool(TOOLS.ELEMENT, { type: ELEMENTS.TEXT });
                     editor.update();
                 },
             },
@@ -246,7 +246,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                     },
                 },
                 onSelect: () => {
-                    editor.setCurrentTool(ELEMENTS.DRAW);
+                    editor.setCurrentTool(TOOLS.ELEMENT, { type: ELEMENTS.DRAW });
                     editor.update();
                 },
             },
@@ -295,7 +295,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                     },
                 },
                 onSelect: () => {
-                    editor.setCurrentTool(ELEMENTS.STICKER);
+                    editor.setCurrentTool(TOOLS.ELEMENT, { type: ELEMENTS.STICKER });
                     editor.update();
                 },
             },
@@ -305,7 +305,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                 icon: "note",
                 shortcut: "n",
                 onSelect: () => {
-                    editor.setCurrentTool(ELEMENTS.NOTE);
+                    editor.setCurrentTool(TOOLS.ELEMENT, { type: ELEMENTS.NOTE });
                     editor.update();
                 },
             },

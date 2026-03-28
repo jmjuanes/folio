@@ -1279,13 +1279,14 @@ export const createEditor = (options = {}) => {
             if (!tool) {
                 return console.error(`Tool ${toolId} not found`);
             }
-            // 2. Handle tool change
-            if (!editor.activeTool || editor.activeTool?.id !== tool.id) {
+            // 2. call onExit if needed
+            if (!editor.activeTool || editor.activeTool.id !== tool.id) {
                 editor.activeTool?.onExit?.();
                 editor.activeTool = tool;
-                editor.activeTool?.onEnter?.(info);
             }
-            // 3. Handle sub-state transition if path is provided
+            // 3. call onEnter in the new tool
+            editor.activeTool?.onEnter?.(info);
+            // 4. handle sub-state transition if path is provided
             if (path.length > 0) {
                 editor.activeTool?.transition?.(path.join("."), info);
             }
