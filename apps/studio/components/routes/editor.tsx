@@ -1,6 +1,6 @@
 import React from "react";
 import { exportToDataURL } from "folio-react/lib/export.js";
-import { Editor } from "folio-react/components/editor.jsx";
+import { Editor } from "folio-react/components/editor.tsx";
 import {
     MainMenu,
     MainMenuOpenAction,

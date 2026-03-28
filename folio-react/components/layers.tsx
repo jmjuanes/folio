@@ -1,9 +1,9 @@
 import React from "react";
 import classNames from "classnames";
-import {CloseIcon} from "@josemi-icons/react";
-import {useEditor} from "../contexts/editor.jsx";
-import {exportToDataURL} from "../lib/export.js";
-import {FIELDS, TOOLS, TRANSPARENT} from "../constants.js";
+import { CloseIcon } from "@josemi-icons/react";
+import { useEditor } from "../contexts/editor.tsx";
+import { exportToDataURL } from "../lib/export.js";
+import { FIELDS, TOOLS, TRANSPARENT } from "../constants.js";
 
 // Layers preview variables
 const LAYER_PREVIEW_SIZE = 64;
@@ -12,7 +12,7 @@ const LAYER_PREVIEW_BACKGROUND = TRANSPARENT;
 // Tiny hook to generate the preview of the element
 const useElementPreview = (elements: any[], dependencies = []): string | null => {
     const editor = useEditor();
-    const [ previewImage, setPreviewImage ] = React.useState<string | null>(null);
+    const [previewImage, setPreviewImage] = React.useState<string | null>(null);
     React.useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
@@ -93,7 +93,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
             }
         });
         return groupsMap;
-    }, [ key ]);
+    }, [key]);
 
     // get the elements to be displayed in the layers panel
     const visibleElements = React.useMemo(() => {
@@ -103,14 +103,14 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
         }
         // 2. activeGroup is empty, return all the elements
         return editor.getElements();
-    }, [ editor, key, activeGroup ]);
+    }, [editor, key, activeGroup]);
 
     // exit the current active group
     const handleCloseActiveGroup = React.useCallback(() => {
         editor.setTool(TOOLS.SELECT);
         editor.page.activeGroup = "";
         editor.update();
-    }, [ editor ]);
+    }, [editor]);
 
     // handle click on a layer item
     const handleClick = React.useCallback(elements => {
@@ -119,7 +119,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
             editor.setSelection(elements.map(el => el.id));
             editor.update();
         }
-    }, [ editor, editor.page, editor.page.readonly ]);
+    }, [editor, editor.page, editor.page.readonly]);
 
     // handle double click on a group item
     const handleDoubleClick = React.useCallback(groupId => {
@@ -128,7 +128,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
             editor.page.activeGroup = groupId;
             editor.update();
         }
-    }, [ editor, editor.page, editor.page.readonly ]);
+    }, [editor, editor.page, editor.page.readonly]);
 
     // calculate the container style
     const containerStyle = React.useMemo<React.CSSProperties>(() => {
@@ -136,7 +136,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
             maxHeight: `calc(${maxHeight} - ${activeGroup ? "3rem" : "0rem"})`,
             scrollbarWidth: "none",
         } as React.CSSProperties;
-    }, [ activeGroup, maxHeight ]);
+    }, [activeGroup, maxHeight]);
 
     return (
         <React.Fragment>

@@ -13,16 +13,22 @@ import { HistoryPanel } from "../components/panels/history.jsx";
 import { ZoomPanel } from "../components/panels/zoom.jsx";
 import { Minimap } from "../components/minimap.tsx";
 import { Toolbar } from "../components/toolbar.tsx";
+import { Picks } from "../components/picks.tsx";
 import { Layers } from "../components/layers.tsx";
+import { Overlays } from "../components/overlays.tsx";
+import { Brush } from "../components/brush.tsx";
+import { Bounds } from "../components/bounds.tsx";
+import { Handlers } from "../components/handlers.tsx";
+import { Dimensions } from "../components/dimensions.tsx";
 
 // export type for the editor components
 // export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
 export type EditorComponentsMap = {
-    [key: string]: ((props?: any) => React.JSX.Element) | null;
+    [key: string]: React.ElementType | any;
 };
 
 // @description editor components context
-export const EditorComponentsContext = React.createContext<EditorComponentsMap>({});
+export const EditorComponentsContext = React.createContext<EditorComponentsMap>({} as EditorComponentsMap);
 
 // @description hook to access to editor components
 export const useEditorComponents = (): EditorComponentsMap => {
@@ -42,6 +48,12 @@ export type EditorComponentsProviderProps = {
 export const EditorComponentsProvider = (props: EditorComponentsProviderProps): React.JSX.Element => {
     const editorComponents = React.useMemo<EditorComponentsMap>(() => {
         return {
+            // canvas components
+            Overlays: Overlays,
+            Brush: Brush,
+            Bounds: Bounds,
+            Handlers: Handlers,
+            Dimensions: Dimensions,
             // general components
             Loading: Loading,
             Layout: Layout,
@@ -60,6 +72,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             ZoomPanel: ZoomPanel,
             Minimap: Minimap,
             Toolbar: Toolbar,
+            Picks: Picks,
             Layers: Layers,
             Title: null,
             Library: null,

@@ -372,6 +372,7 @@ export const TOOLS = {
     SELECT: "select",
     ERASER: "erase",
     POINTER: "pointer",
+    ELEMENT: "element",
 };
 
 export const CHANGES = {
@@ -389,6 +390,7 @@ export const STATUS = {
     TRANSLATING: "translating",
     BRUSHING: "brushing",
     ERASING: "erasing",
+    ROTATING: "rotating",
 };
 
 // Paste constants

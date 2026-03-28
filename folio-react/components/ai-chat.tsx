@@ -8,7 +8,7 @@ import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { Panel } from "./ui/panel.tsx";
 import { useAi, AiChatMessageRole, AiTool } from "../contexts/ai.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useElementsPreview } from "../hooks/use-preview.ts";
 import { parseElementsFromAiResponse } from "../lib/ai.ts";

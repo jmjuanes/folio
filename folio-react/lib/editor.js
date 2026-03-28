@@ -246,7 +246,9 @@ export const getEditorStateFromInitialData = initialData => {
 
 // @description Create a new editor
 export const createEditor = (options = {}) => {
-    const editor = {
+    const editor = {};
+
+    Object.assign(editor, {
         ...getEditorStateFromInitialData(options?.data || {}),
         defaults: getDefaults(),
         updatedAt: Date.now(),
@@ -262,6 +264,16 @@ export const createEditor = (options = {}) => {
             selection: null,
             snapEdges: null,
         },
+
+        // @description tools registry
+        tools: (options?.tools || []).map(Tool => {
+            return new Tool(editor);
+        }),
+        activeTool: null,
+        toolLocked: false,
+
+        // active snaps edges and points
+        snaps: [],
 
         // @description editor size
         width: 0,
@@ -294,6 +306,30 @@ export const createEditor = (options = {}) => {
         // @description reset editor
         reset: () => {
             editor.fromJSON({});
+        },
+
+        //
+        // Defaults api
+        //
+
+        // @description get defaults
+        getDefaults: () => {
+            return editor.defaults;
+        },
+
+        // @description update defaults
+        setDefaults: (newDefaults) => {
+            Object.assign(editor.defaults, newDefaults);
+        },
+
+        // @description get a single default field
+        getDefaultValue: (key, defaultValue) => {
+            return editor.defaults[key] ?? defaultValue;
+        },
+
+        // @description get a single default field
+        setDefaultValue: (key, value) => {
+            editor.defaults[key] = value;
         },
 
         //
@@ -1226,6 +1262,56 @@ export const createEditor = (options = {}) => {
             editor.height = +newHeight;
         },
 
+        // 
+        // Tools api
+        //
+
+        // @description get the current tool
+        getCurrentTool: () => {
+            return editor.activeTool;
+        },
+
+        // @description change the active tool or sub-state
+        setCurrentTool: (id, info = {}) => {
+            const [toolId, ...path] = id.split(".");
+            // 1. find the tool in the list of tools
+            const tool = editor.tools.find(tool => tool.id === toolId);
+            if (!tool) {
+                return console.error(`Tool ${toolId} not found`);
+            }
+            // 2. call onExit if needed
+            if (!editor.activeTool || editor.activeTool.id !== tool.id) {
+                editor.activeTool?.onExit?.();
+                editor.activeTool = tool;
+            }
+            // 3. call onEnter in the new tool
+            editor.activeTool?.onEnter?.(info);
+            // 4. handle sub-state transition if path is provided
+            if (path.length > 0) {
+                editor.activeTool?.transition?.(path.join("."), info);
+            }
+            editor.update();
+        },
+
+        // @description return true/false if tool is locked
+        getToolLocked: () => {
+            return !!editor.toolLocked;
+        },
+
+        // @description set the tool locked state
+        setToolLocked: (locked = false) => {
+            editor.toolLocked = !!locked;
+            editor.update();
+        },
+
+        // @description dispatch an event to the active tool
+        dispatchToolEvent: (eventName, eventData) => {
+            if (editor.activeTool) {
+                editor.activeTool.dispatch?.(eventName, eventData);
+                editor.update();
+            }
+        },
+
         //
         // Clipboard api
         //
@@ -1271,22 +1357,20 @@ export const createEditor = (options = {}) => {
             });
         },
 
-        //
-        // Tool API
-        //
+        // 
+        // Snaps API
+        // 
 
-        // @description change the active tool
-        setTool: newTool => {
-            editor.state.tool = newTool;
-            editor.getElements().forEach(element => {
-                element.selected = false;
-                element.editing = false;
-            });
+        // @description Get active snaps
+        getSnaps: () => {
+            return editor.snaps || [];
         },
 
-        // @description get the current active tool
-        getTool: () => editor.state.tool,
-    };
+        // @description Set active snaps
+        setSnaps: (snaps = []) => {
+            editor.snaps = snaps;
+        },
+    });
 
     return editor;
 };

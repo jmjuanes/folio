@@ -3,7 +3,7 @@ import { renderIcon } from "@josemi-icons/react";
 import { Panel } from "./ui/panel.tsx";
 import { Island } from "./ui/island.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useActions } from "../hooks/use-actions.js";
 import { ACTIONS, PREFERENCES } from "../constants.js";

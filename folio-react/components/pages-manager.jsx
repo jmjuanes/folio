@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { DotsVerticalIcon, CheckIcon } from "@josemi-icons/react";
 import { Island } from "./island.tsx";
 import { Dropdown } from "./ui/dropdown.tsx";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { usePagePreview } from "../hooks/use-page-preview.js";
 import { clearFocus } from "../utils/dom.js";
 

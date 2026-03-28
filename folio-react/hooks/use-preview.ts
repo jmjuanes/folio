@@ -1,5 +1,5 @@
 import React from "react";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { exportToDataURL } from "../lib/export.js";
 import { FIELDS, TRANSPARENT } from "../constants.js";
 

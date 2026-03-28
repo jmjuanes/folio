@@ -157,8 +157,7 @@ export const elementsConfig = {
                 element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
             }
         },
-        onResize: (element, snapshot, event) => {
-            const handler = event.handler || "";
+        onResize: (element, handler, snapshot, event) => {
             if (element.text) {
                 const [ width, height ] = getElementSize(element);
                 const [ textWidth, textHeight ] = measureText(element.text || " ", element.textSize, element.textFont, width + "px");
@@ -346,16 +345,16 @@ export const elementsConfig = {
                 element.y2 = getPosition(element.y1 + Math.sin(angle) * d);
             }
         },
-        onResizeStart: (element, snapshot, event) => {
-            if (event.handler === HANDLERS.NODE_MIDDLE) {
+        onResizeStart: (element, handler, snapshot, event) => {
+            if (handler === HANDLERS.NODE_MIDDLE) {
                 if (typeof snapshot.xCenter !== "number") {
                     snapshot.xCenter = (snapshot.x1 + snapshot.x2) / 2;
                     snapshot.yCenter = (snapshot.y1 + snapshot.y2) / 2;
                 }
             }
         },
-        onResize: (element, snapshot, event, getPosition) => {
-            if (event.handler === HANDLERS.NODE_MIDDLE) {
+        onResize: (element, handler, snapshot, event, getPosition) => {
+            if (handler === HANDLERS.NODE_MIDDLE) {
                 const x = getPosition(snapshot.xCenter + event.dx);
                 const y = getPosition(snapshot.yCenter + event.dy);
                 // Check to reset the position of the center
@@ -375,7 +374,7 @@ export const elementsConfig = {
                 const dy = element.y2 - element.y1;
                 const angle = Math.round(Math.atan2(dy, dx) / a) * a;
                 const d = hypotenuse(dx, dy);
-                if (event.handler === HANDLERS.NODE_END) {
+                if (handler === HANDLERS.NODE_END) {
                     element.x2 = getPosition(element.x1 + Math.cos(angle) * d);
                     element.y2 = getPosition(element.y1 + Math.sin(angle) * d);
                 }   
@@ -385,8 +384,8 @@ export const elementsConfig = {
                 }
             }   
         },
-        onResizeEnd: (element, snapshot, event) => {
-            if (event.handler === HANDLERS.NODE_MIDDLE) {
+        onResizeEnd: (element, handler, snapshot, event) => {
+            if (handler === HANDLERS.NODE_MIDDLE) {
                 const center = [element.xCenter, element.yCenter];
                 if (getPointDistanceToLine(center, [[element.x1, element.y1], [element.x2, element.y2]]) < GRID_SIZE) {
                     element.xCenter = null;
@@ -465,8 +464,7 @@ export const elementsConfig = {
                 element.y2 = newPoint[1];
             }
         },
-        onResize: (element, snapshot, event) => {
-            const handler = event.handler || "";
+        onResize: (element, handler, snapshot, event) => {
             const [ width, height ] = getElementSize(element);
             if (isCornerHandler(handler) || handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.EDGE_TOP) {
                 let textSize = TEXT_SIZE_MIN;

@@ -1,9 +1,9 @@
 import React from "react";
 import { renderIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
-import { useTools } from "../hooks/use-tools.tsx";
+import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { useSurface } from "../contexts/surface.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
@@ -86,15 +86,15 @@ export const CommandsContent = (): React.JSX.Element => {
     const commandToExecute = React.useRef<CommandItem | null>(null);
 
     const toolItems = React.useMemo<CommandItem[]>(() => {
-        return Object.entries(tools).map(([toolId, toolData]) => ({
-            id: toolId,
-            label: toolData.name || toolId,
-            shortcut: toolData.keyboardShortcut ? toolData.keyboardShortcut.toUpperCase() : "",
+        return tools.getTools().map(toolData => ({
+            id: toolData.id,
+            label: toolData.name || toolData.id,
+            shortcut: toolData.shortcut ? toolData.shortcut.toUpperCase() : "",
             icon: toolData.icon,
-            disabled: toolData.toolEnabledOnReadOnly === false && editor.page.readonly,
+            disabled: toolData.enabledOnReadOnly === false && editor.page.readonly,
             execute: () => {
-                if (!(toolData.toolEnabledOnReadOnly === false && editor.page.readonly)) {
-                    toolData.onSelect(editor);
+                if (!(toolData.enabledOnReadOnly === false && editor.page.readonly)) {
+                    tools.setActiveTool(toolData.id);
                 }
             },
         } as CommandItem));
