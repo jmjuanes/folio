@@ -92,7 +92,7 @@ export class SelectResizingState extends ToolState {
                 const [width, height] = getElementSize(this.snapshot[0]);
                 const diagLen = Math.hypot(width, height);
                 if (this.handler === HANDLERS.CORNER_TOP_LEFT) {
-                    const axisDir = [(-1) * width / diagLen, (-1) * height / diagLen];
+                    const axisDir: Point = [(-1) * width / diagLen, (-1) * height / diagLen];
                     const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], this.snapshot[0].rotation, axisDir, event.shiftKey);
                     const newCorner: Point = [
                         this.getPosition(this.snapshot[0].x1 + gDx, null),
@@ -103,7 +103,7 @@ export class SelectResizingState extends ToolState {
                     element.y1 = clampedCorner[1];
                 }
                 else if (this.handler === HANDLERS.CORNER_BOTTOM_RIGHT) {
-                    const axisDir = [width / diagLen, height / diagLen];
+                    const axisDir: Point = [width / diagLen, height / diagLen];
                     const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], this.snapshot[0].rotation, axisDir, event.shiftKey);
                     const newCorner: Point = [
                         this.getPosition(this.snapshot[0].x2 + gDx, null),
@@ -114,7 +114,7 @@ export class SelectResizingState extends ToolState {
                     element.y2 = clampedCorner[1];
                 }
                 else if (this.handler === HANDLERS.CORNER_TOP_RIGHT) {
-                    const axisDir = [(-1) * width / diagLen, height / diagLen];
+                    const axisDir: Point = [(-1) * width / diagLen, height / diagLen];
                     const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], this.snapshot[0].rotation, axisDir, event.shiftKey);
                     const newCorner: Point = [
                         this.getPosition(rect[1][0] + gDx, null),
@@ -128,7 +128,7 @@ export class SelectResizingState extends ToolState {
                     element.y2 = newRect[1][1];
                 }
                 else if (this.handler === HANDLERS.CORNER_BOTTOM_LEFT) {
-                    const axisDir = [width / diagLen, (-1) * height / diagLen];
+                    const axisDir: Point = [width / diagLen, (-1) * height / diagLen];
                     const [gDx, gDy] = computeResizeDelta([event.dx, event.dy], this.snapshot[0].rotation, axisDir, event.shiftKey);
                     const newCorner: Point = [
                         this.getPosition(rect[3][0] + gDx, null),

@@ -4,11 +4,10 @@ export type EditorPointEvent = {
     originalY: number;
     currentX?: number; // on move
     currentY?: number; // on move
-    dx?: number;       // on move
-    dy?: number;       // on move
+    dx: number;       // on move
+    dy: number;       // on move
     shiftKey: boolean;
     nativeEvent?: PointerEvent;
-    drag?: boolean;    // true on move
 };
 
 export type EditorKeyboardEvent = {

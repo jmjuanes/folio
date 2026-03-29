@@ -170,6 +170,8 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             drag: false,
             originalX: (event.nativeEvent.clientX - left - editor.page.translateX) / editor.page.zoom,
             originalY: (event.nativeEvent.clientY - top - editor.page.translateY) / editor.page.zoom,
+            dx: 0,
+            dy: 0,
             shiftKey: event.nativeEvent.shiftKey,
             nativeEvent: event.nativeEvent,
         };
