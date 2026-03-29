@@ -21,7 +21,6 @@ export class SelectIdleState extends ToolState {
     }
 
     onEnter(params: any = {}) {
-        debugger;
         this.activeElement = params?.activeElement || null;
     }
 

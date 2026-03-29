@@ -152,7 +152,7 @@ export const elementsConfig = {
             // normalize coordinates after creating the element
             Object.assign(element, getElementNormalizedPosition(element));
             // prevent drawing 0-sized shapes
-            if (!event.drag) {
+            if (Math.abs(element.x2 - element.x1) < 1.5 && Math.abs(element.y2 - element.y1) < 1.5) {
                 element.x2 = element.x1 + SHAPE_MIN_WIDTH;
                 element.y2 = element.y1 + SHAPE_MIN_HEIGHT;
             }
