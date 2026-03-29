@@ -68,7 +68,7 @@ export class ElementTool extends ToolState {
             const last = this.editor.page.history[0] || {};
             if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === this.element.id) {
                 last.elements[0].newValues = {
-                    ...element,
+                    ...this.element,
                     selected: false,
                 };
             }
@@ -77,7 +77,7 @@ export class ElementTool extends ToolState {
             // 5.1. if the tool is not locked, switch to select tool
             // check also if the tool is not the handdraw
             if (!this.editor.toolLocked && this.elementType !== ELEMENTS.DRAW) {
-                const toolChangeParams = {};
+                const toolChangeParams: any = {};
                 // terrible hack to enable editing in a text element
                 if (this.element.type === ELEMENTS.TEXT) {
                     this.element.editing = true;
