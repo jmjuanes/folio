@@ -20,16 +20,19 @@ export class ElementTool extends ToolState {
 
     onPointerDown(event: EditorPointEvent) {
         // 1. create the new element
-        this.element = Object.assign(this.editor.createElement(this.elementType), {
+        this.element = this.editor.createElement(this.elementType);
+        const config = getElementConfig(this.element);
+        const editorDefaults = this.editor.getDefaults();
+        Object.assign(this.element, {
+            ...(config?.initialize?.(editorDefaults) || {}),
             x1: event.originalX,
             y1: event.originalY,
             x2: event.originalX,
             y2: event.originalY,
             creating: true,
         });
-        // 2. call onCreateStart if this element has this callback
-        const config = getElementConfig(this.element);
-        if (typeof config.onCreateStart === "function") {
+        // 2. call creation hooks
+        if (typeof config?.onCreateStart === "function") {
             config.onCreateStart(this.element, event);
         }
         // 3. update the editor state
