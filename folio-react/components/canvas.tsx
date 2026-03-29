@@ -167,7 +167,6 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         }
         const { top, left } = canvasRef.current!.getBoundingClientRect();
         const eventInfo: EditorPointEvent = {
-            drag: false,
             originalX: (event.nativeEvent.clientX - left - editor.page.translateX) / editor.page.zoom,
             originalY: (event.nativeEvent.clientY - top - editor.page.translateY) / editor.page.zoom,
             dx: 0,
@@ -186,7 +185,6 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             clearLongPressTimer();
             event.preventDefault();
             editor.dispatchToolEvent("pointerMove", Object.assign({}, eventInfo, {
-                drag: true,
                 nativeEvent: event,
                 currentX: (event.clientX - left - editor.page.translateX) / editor.page.zoom,
                 currentY: (event.clientY - top - editor.page.translateY) / editor.page.zoom,
@@ -201,7 +199,6 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             clearLongPressTimer();
             event.preventDefault();
             editor.dispatchToolEvent("pointerUp", Object.assign({}, eventInfo, {
-                drag: false,
                 nativeEvent: event,
             }));
             update();
@@ -233,6 +230,8 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             originalX: (event.nativeEvent.clientX - left - editor.page.translateX) / editor.page.zoom,
             originalY: (event.nativeEvent.clientY - top - editor.page.translateY) / editor.page.zoom,
             shiftKey: event.nativeEvent.shiftKey,
+            dx: 0,
+            dy: 0,
             nativeEvent: event.nativeEvent,
         };
 
