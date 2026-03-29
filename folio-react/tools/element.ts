@@ -1,4 +1,4 @@
-import { ELEMENTS, CHANGES, TOOLS } from "../constants.js";
+import { ELEMENTS, CHANGES, TOOLS, FIELDS } from "../constants.js";
 import { getElementConfig } from "../lib/elements.js";
 import { ToolState } from "../lib/tool.ts";
 import type { EditorPointEvent } from "../lib/events.ts";
@@ -38,7 +38,6 @@ export class ElementTool extends ToolState {
         // 3. update the editor state
         this.editor.clearSelection();
         this.editor.addElements([this.element]);
-        this.editor.setSelection([this.element.id]);
     }
 
     onPointerMove(event: EditorPointEvent) {
@@ -58,23 +57,40 @@ export class ElementTool extends ToolState {
         if (this.element?.creating) {
             // 1. mark the element as not creating
             this.element.creating = false;
+            this.element.selected = true; // By default select this element
+            this.element[FIELDS.VERSION] = 1; // Set as initial version of this element
             // 2. call onCreateEnd if this element has this callback
             const config = getElementConfig(this.element);
             if (typeof config.onCreateEnd === "function") {
                 config.onCreateEnd(this.element, event);
             }
-            // 3. add the element to the history
-            this.editor.addHistory({
-                type: CHANGES.CREATE,
-                elements: [this.element],
-            });
-            // 4. clear the element reference and dispatch change
-            this.element = null;
-            this.editor.dispatchChange();
-            // 5. if the tool is not locked, switch to select tool
-            if (!this.editor.toolLocked) {
-                this.editor.setCurrentTool(TOOLS.SELECT);
+            // 3. we need to patch the history to save the new element values
+            const last = this.editor.page.history[0] || {};
+            if (last.type === CHANGES.CREATE && last.elements?.[0]?.id === this.element.id) {
+                last.elements[0].newValues = {
+                    ...element,
+                    selected: false,
+                };
             }
+            // 4. clear the element reference and dispatch change
+            this.editor.dispatchChange();
+            // 5.1. if the tool is not locked, switch to select tool
+            // check also if the tool is not the handdraw
+            if (!this.editor.toolLocked && this.elementType !== ELEMENTS.DRAW) {
+                const toolChangeParams = {};
+                // terrible hack to enable editing in a text element
+                if (this.element.type === ELEMENTS.TEXT) {
+                    this.element.editing = true;
+                    toolChangeParams.activeElement = this.element;
+                }
+                this.editor.setCurrentTool(TOOLS.SELECT, toolChangeParams);
+            }
+            // 5.2. if tool is locked, we need to reset the current selection
+            else {
+                this.element.selected = false;
+                this.element = null;
+            }
+            // this.editor.update();
         }
     }
 };
