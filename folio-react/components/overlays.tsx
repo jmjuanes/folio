@@ -12,6 +12,7 @@ export const Overlays = (): React.JSX.Element => {
         Brush,
         Dimensions,
         Handlers,
+        Snaps,
     } = useEditorComponents();
 
     return (
@@ -24,6 +25,9 @@ export const Overlays = (): React.JSX.Element => {
             )}
             {!!Brush && tool?.id === TOOLS.SELECT && tool?.activeStateId === "brushing" && (
                 <Brush />
+            )}
+            {!!Snaps && tool?.id === TOOLS.SELECT && (
+                <Snaps />
             )}
             {!!Dimensions && editor?.appState?.objectDimensions && (
                 <Dimensions />
