@@ -6,12 +6,13 @@ import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../hooks/use-actions.js";
-import { ACTIONS } from "../constants.js";
+import { ACTIONS, TOOLS, ELEMENTS } from "../constants.js";
 
-import { ToolState } from "../lib/tool.ts";
+import type { ToolState } from "../lib/tool.ts";
+import type { ElementTool } from "../tools/element.ts";
 import type { ToolItem } from "../contexts/tools.tsx";
 
-type ToolbarButtonProps = {
+export type ToolbarButtonProps = {
     active?: boolean;
     disabled?: boolean;
     onClick?: () => void;
@@ -20,7 +21,7 @@ type ToolbarButtonProps = {
     className?: string;
 };
 
-const ToolbarButton = (props: ToolbarButtonProps): React.JSX.Element => {
+export const ToolbarButton = (props: ToolbarButtonProps): React.JSX.Element => {
     const classList = classNames({
         "flex flex-col justify-center items-center px-4 py-2 gap-1 rounded-xl": true,
         "cursor-pointer": !props.active,
@@ -45,22 +46,47 @@ const ToolbarButton = (props: ToolbarButtonProps): React.JSX.Element => {
     );
 };
 
+export type ToolbarToolButtonProps = {
+    tool: string;
+};
+
+export const ToolbarToolButton = (props: ToolbarToolButtonProps): React.JSX.Element | null => {
+    const editor = useEditor();
+    const { getToolById } = useTools();
+    const activeTool = editor.getCurrentTool() as ToolState | null;
+    const activeElementTye = activeTool?.id === TOOLS.ELEMENT ? (activeTool as ElementTool).getElementType?.() : null;
+    const tool = React.useMemo<ToolItem | null>(() => getToolById(props.tool), [getToolById, props.tool]);
+    const toolActive = React.useMemo<boolean>(() => {
+        return props.tool === activeTool?.id || props.tool === activeElementTye;
+    }, [props.tool, activeTool, activeElementTye]);
+
+    if (!tool) {
+        return null;
+    }
+
+    return (
+        <ToolbarButton
+            text={tool.name}
+            icon={tool.icon}
+            active={toolActive}
+            disabled={editor.page.readonly && !tool.allowedInReadonly}
+            onClick={() => {
+                tool.onSelect();
+            }}
+        />
+    );
+};
+
 // @description Toolbar panel component
 export const ToolbarContent = (): React.JSX.Element => {
     const editor = useEditor();
-    const { getTools } = useTools();
     const contextMenu = useContextMenu() as any;
     const dispatchAction = useActions();
 
-    const allTools: ToolItem[] = getTools();
     const activeTool: ToolState | null = editor.getCurrentTool();
     const locked = editor.getToolLocked();
 
     const prevSelectedTool = React.useRef<string | null>(activeTool?.id || null);
-
-    const primaryTools = React.useMemo<ToolItem[]>(() => {
-        return allTools;
-    }, [allTools]);
 
     // when a tool is selected, make sure to hide the context menu
     React.useEffect(() => {
@@ -84,19 +110,13 @@ export const ToolbarContent = (): React.JSX.Element => {
     return (
         <div className="flex items-center relative select-none">
             <div className="rounded-2xl items-center flex gap-2 p-1 border-1 border-gray-200 bg-white shadow-sm text-gray-900">
-                {primaryTools.map(tool => (
-                    <div key={tool.id} className="flex relative">
-                        <ToolbarButton
-                            text={tool.name}
-                            icon={tool.icon}
-                            active={activeTool?.id === tool.id}
-                            disabled={editor.page.readonly && !tool.enabledOnReadOnly}
-                            onClick={() => {
-                                tool.onSelect();
-                            }}
-                        />
-                    </div>
-                ))}
+                <ToolbarToolButton tool={TOOLS.DRAG} />
+                <ToolbarToolButton tool={TOOLS.SELECT} />
+                <ToolbarToolButton tool={ELEMENTS.SHAPE} />
+                <ToolbarToolButton tool={ELEMENTS.ARROW} />
+                <ToolbarToolButton tool={ELEMENTS.TEXT} />
+                <ToolbarToolButton tool={ELEMENTS.DRAW} />
+                <ToolbarToolButton tool={ELEMENTS.STICKER} />
                 <ToolbarButton
                     text="Actions"
                     icon="tools"

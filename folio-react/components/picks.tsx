@@ -1,10 +1,12 @@
 import React from "react";
 import classNames from "classnames";
+import { TOOLS } from "../constants.js";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { ToolState } from "../lib/tool.ts";
 import type { ToolItem } from "../contexts/tools.tsx";
+import type { ElementTool } from "../tools/element.ts";
 
 export const Picks = (): React.JSX.Element | null => {
     const editor = useEditor();
@@ -15,12 +17,13 @@ export const Picks = (): React.JSX.Element | null => {
     });
     // get the active tool configuration
     const activeTool = editor.getCurrentTool() as ToolState | null;
+    const activeElementTye = activeTool?.id === TOOLS.ELEMENT ? (activeTool as ElementTool).getElementType?.() : null;
     const toolConfig = React.useMemo<ToolItem | null>(() => {
-        if (activeTool) {
-            return getToolById(activeTool.id) || null;
+        if (activeElementTye) {
+            return getToolById(activeElementTye) || null;
         }
         return null;
-    }, [activeTool, getToolById]);
+    }, [activeTool, activeElementTye, getToolById]);
 
     // check if the tool configuration is defined and has picks
     if (!toolConfig || !toolConfig?.picks) {
