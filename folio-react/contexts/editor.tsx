@@ -60,7 +60,7 @@ export const EditorProvider = (props: EditorProviderProps): React.JSX.Element =>
             // case 1: page is now in readonly mode
             if (editor.page.readonly) {
                 editor.setCurrentTool(TOOLS.DRAG);
-                // const readonlyTools = availableTools.filter(tool => !!tool.enabledOnReadOnly);
+                // const readonlyTools = availableTools.filter(tool => !!tool.allowedInReadonly);
                 // // check if the current active tool is a readonly tool
                 // if (!readonlyTools.some(tool => tool.id === editor.state.tool && readonlyTools.length > 0)) {
                 //     editor.setCurrentTool(readonlyTools[0]?.id || TOOLS.SELECT);

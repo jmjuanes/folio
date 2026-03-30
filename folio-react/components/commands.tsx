@@ -91,10 +91,10 @@ export const CommandsContent = (): React.JSX.Element => {
             label: toolData.name || toolData.id,
             shortcut: toolData.shortcut ? toolData.shortcut.toUpperCase() : "",
             icon: toolData.icon,
-            disabled: toolData.enabledOnReadOnly === false && editor.page.readonly,
+            disabled: toolData.allowedInReadonly === false && editor.page.readonly,
             execute: () => {
-                if (!(toolData.enabledOnReadOnly === false && editor.page.readonly)) {
-                    tools.setActiveTool(toolData.id);
+                if (!(toolData.allowedInReadonly === false && editor.page.readonly)) {
+                    toolData.onSelect();
                 }
             },
         } as CommandItem));

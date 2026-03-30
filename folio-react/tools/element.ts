@@ -8,6 +8,10 @@ export class ElementTool extends ToolState {
     private element: any | null = null;
     private elementType: string = "";
 
+    getElementType(): string {
+        return this.elementType;
+    }
+
     onEnter(params: any) {
         this.element = null;
         this.elementType = params.type;

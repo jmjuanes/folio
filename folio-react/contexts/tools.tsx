@@ -40,7 +40,7 @@ export type ToolItem = {
     id: string;
     name?: string;
     icon?: React.JSX.Element | React.ReactNode | string;
-    toolEnabledOnReadOnly?: boolean;
+    allowedInReadonly?: boolean;
     shortcut?: string;
     picks?: {
         [field: string]: PickField;
@@ -84,7 +84,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                 name: "Drag",
                 icon: "hand-grab",
                 shortcut: "h",
-                toolEnabledOnReadOnly: true,
+                allowedInReadonly: true,
                 onSelect: () => {
                     editor.setCurrentTool(TOOLS.DRAG);
                     editor.update();
@@ -104,7 +104,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                 id: TOOLS.POINTER,
                 icon: "laser-pointer",
                 name: "Laser Pointer",
-                toolEnabledOnReadOnly: true,
+                allowedInReadonly: true,
                 shortcut: "l",
                 onSelect: () => {
                     editor.setCurrentTool(TOOLS.POINTER);
