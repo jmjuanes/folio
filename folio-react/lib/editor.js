@@ -900,7 +900,7 @@ export const createEditor = (options = {}) => {
         // @description add a new text element into editor
         addTextElement: (text, tx = null, ty = null) => {
             // editor.clearSelection();
-            editor.setTool(TOOLS.SELECT);
+            editor.setCurrentTool(TOOLS.SELECT);
             const x = tx ?? ((-1) * editor.page.translateX + editor.width / 2);
             const y = ty ?? ((-1) * editor.page.translateY + editor.height / 2);
             const element = createElement(ELEMENTS.TEXT);
@@ -931,7 +931,7 @@ export const createEditor = (options = {}) => {
         // @description adds a new image into the editor as an element
         addImageElement: (image, tx = null, ty = null) => {
             // editor.clearSelection();
-            editor.setTool(TOOLS.SELECT);
+            editor.setCurrentTool(TOOLS.SELECT);
             return loadImage(image).then(img => {
                 const x = tx ?? ((-1) * editor.page.translateX + editor.width / 2);
                 const y = ty ?? ((-1) * editor.page.translateY + editor.height / 2);
@@ -962,7 +962,7 @@ export const createEditor = (options = {}) => {
         // @description adds a new bookmark element
         addBookmarkElement: (src, tx = null, ty = null) => {
             // editor.clearSelection();
-            editor.setTool(TOOLS.SELECT);
+            editor.setCurrentTool(TOOLS.SELECT);
             return getLinkMetadata(src).then(linkMetadata => {
                 const element = createElement(ELEMENTS.BOOKMARK);
                 const elementConfig = getElementConfig(element);
@@ -983,7 +983,7 @@ export const createEditor = (options = {}) => {
         // @description add a new library item element
         // @DEPRECATED
         addLibraryElement: (LibraryComponent, tx = null, ty = null) => {
-            editor.setTool(TOOLS.SELECT);
+            editor.setCurrentTool(TOOLS.SELECT);
             const bounds = getElementsBoundingRectangle(LibraryComponent.elements);
             const group = generateRandomId();
             const x = (tx ?? ((-1) * editor.page.translateX + editor.width / 2)) - (bounds.x2 - bounds.x1)/ 2;
@@ -1302,14 +1302,6 @@ export const createEditor = (options = {}) => {
         setToolLocked: (locked = false) => {
             editor.toolLocked = !!locked;
             editor.update();
-        },
-
-        // @description dispatch an event to the active tool
-        dispatchToolEvent: (eventName, eventData) => {
-            if (editor.activeTool) {
-                editor.activeTool.dispatch?.(eventName, eventData);
-                editor.update();
-            }
         },
 
         //

@@ -226,7 +226,7 @@ export const useActions = () => {
             [ACTIONS.INSERT_LIBRARY_COMPONENT]: (component) => {
                 // Note: we avoid to inster the component if the page is in readonly mode
                 if (!editor.page.readonly) {
-                    editor.setTool(TOOLS.SELECT);
+                    editor.setCurrentTool(TOOLS.SELECT);
                     editor.importElements(component.elements, null, null, uid(20));
                     editor.dispatchChange();
                     editor.update();
