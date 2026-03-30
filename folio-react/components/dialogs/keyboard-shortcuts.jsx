@@ -1,8 +1,8 @@
 import React from "react";
-import {ACTIONS} from "../../constants.js";
-import {useTools} from "../../contexts/tools.tsx";
-import {Dialog} from "../ui/dialog.tsx";
-import {getShortcutByAction, printShortcut} from "../../lib/actions.js";
+import { ACTIONS } from "../../constants.js";
+import { useTools } from "../../contexts/tools.tsx";
+import { Dialog } from "../ui/dialog.tsx";
+import { getShortcutByAction, printShortcut } from "../../lib/actions.js";
 
 // @description keyboard shortcuts section
 const KeyboardShortcutsGroup = props => (
@@ -41,11 +41,11 @@ export const KeyboardShortcutsDialogContent = () => {
     const tools = useTools();
     const toolsShortcuts = React.useMemo(() => {
         return tools.getTools()
-            .filter(tool => !!tool.keyboardShortcut)
+            .filter(tool => !!tool.shortcut)
             .map(tool => {
                 return {
                     label: tool.name,
-                    shortcut: tool.keyboardShortcut.toUpperCase(),
+                    shortcut: tool.shortcut.toUpperCase(),
                 };
             });
     }, [tools]);
