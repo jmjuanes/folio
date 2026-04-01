@@ -25,6 +25,14 @@ export class SelectIdleState extends ToolState {
     }
 
     onExit() {
+        if (this.activeElement?.editing) {
+            this.activeElement.editing = false;
+            if (this.activeElement.type === ELEMENTS.TEXT && !this.activeElement.text) {
+                removeTextElement(this.editor, this.activeElement);
+            }
+            this.editor.dispatchChange();
+            this.editor.update();
+        }
         this.activeElement = null;
     }
 
@@ -96,5 +104,26 @@ export class SelectIdleState extends ToolState {
             return true;
         }
         return false;
+    }
+
+    onDoubleClick(event: EditorPointEvent): void {
+        if (!this.editor.page.readonly) {
+            const elementId = (event.nativeEvent?.target as HTMLElement)?.dataset?.element;
+            if (elementId) {
+                const element = this.editor.getElement(elementId);
+                // Check for entering in group edition mode
+                if (!this.editor.page.activeGroup && element.group) {
+                    this.editor.page.activeGroup = element.group;
+                    this.editor.clearSelection();
+                    element.selected = true; // Mark this element as selected
+                }
+                else if (element && !element.locked) {
+                    this.activeElement = element;
+                    this.activeElement.editing = true;
+                }
+                this.editor.dispatchChange();
+                this.editor.update();
+            }
+        }
     }
 };
