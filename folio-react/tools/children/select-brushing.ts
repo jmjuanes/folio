@@ -13,6 +13,12 @@ export class SelectBrushingState extends ToolState {
     selection: SelectionArea | null = null;
 
     onEnter(event: EditorPointEvent) {
+        // 1. check if there is an active group and we have to reset it
+        if (this.editor.page.activeGroup) {
+            this.editor.page.activeGroup = null;
+            this.editor.update();
+        }
+        // 2. initialize selection area
         this.selection = {
             x1: event.originalX,
             y1: event.originalY,
