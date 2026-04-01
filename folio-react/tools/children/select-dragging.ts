@@ -109,8 +109,8 @@ export class SelectDraggingState extends ToolState {
                 }
                 // select all elements of this group
                 if (element.group && !this.editor.page.activeGroup) {
-                    this.editor.getElements().forEach((element: any) => {
-                        element.selected = element.group === element.group ? element.selected : element.selected;
+                    this.editor.getElements().forEach((el: any) => {
+                        el.selected = el.group === element.group ? element.selected : el.selected;
                     });
                 }
             }
