@@ -16,6 +16,7 @@ import { Canvas } from "./canvas.tsx";
 
 import type { ToolsOverrides } from "../contexts/tools.tsx";
 import type { ActionsOverrides } from "../contexts/actions.tsx";
+import type { Library } from "../lib/library.ts";
 
 // @private inner editor component
 const InnerEditor = () => {
@@ -54,7 +55,7 @@ export type EditorProps = {
     tools?: any[];
     overrides?: EditorOverrides | null,
     onChange?: (data: any) => void;
-    onLibraryChange?: (library: any) => void;
+    onLibraryChange?: (library: Library) => void;
 };
 
 // @description Public editor

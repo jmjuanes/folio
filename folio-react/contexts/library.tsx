@@ -11,8 +11,8 @@ import { VERSION } from "../constants.js";
 import type { Library, LibraryComponent, LibraryCollection } from "../lib/library.ts";
 
 export type LibraryProviderProps = {
-    data: any;
-    onChange: (library: Library) => void;
+    data?: any;
+    onChange?: (library: Library) => void;
     children: React.ReactNode,
 };
 
