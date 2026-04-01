@@ -1,8 +1,9 @@
 import React from "react";
 import { ACTIONS } from "../../constants.js";
 import { useTools } from "../../contexts/tools.tsx";
+import { useActions } from "../../contexts/actions.tsx";
 import { Dialog } from "../ui/dialog.tsx";
-import { getShortcutByAction, printShortcut } from "../../lib/actions.js";
+import { printShortcut } from "../../lib/actions.ts";
 
 // @description keyboard shortcuts section
 const KeyboardShortcutsGroup = props => (
@@ -18,8 +19,9 @@ const KeyboardShortcutsGroup = props => (
 
 // @description keyboard shortcuts item
 const KeyboardShortcutsItem = props => {
+    const { getShortcutByActionId } = useActions();
     const shortcut = React.useMemo(() => {
-        return props.action ? getShortcutByAction(props.action) : props.shortcut;
+        return props.action ? getShortcutByActionId(props.action) : props.shortcut;
     }, [props.action, props.shortcut]);
 
     return (

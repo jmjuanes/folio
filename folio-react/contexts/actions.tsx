@@ -1,6 +1,6 @@
 import React from "react";
 import { uid } from "uid/secure";
-import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS } from "../constants.js";
+import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN } from "../constants.js";
 import { useEditor } from "./editor.tsx";
 import { useConfirm } from "./confirm.jsx";
 import { useDialog } from "./dialogs.tsx";
@@ -8,8 +8,11 @@ import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
 import { useSurface } from "./surface.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
+import { getShortcutKey } from "../lib/actions.ts";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
+import { getKeyFromKeyCode } from "../utils/keys.js";
+
 import type { LibraryCollection } from "../lib/library.ts";
 
 export enum ActionCategory {
@@ -23,7 +26,7 @@ export type ActionItem = {
     name: string;
     category?: ActionCategory;
     icon?: React.JSX.Element | React.ReactNode | string;
-    shortcut?: string;
+    shortcut?: string | string[];
     onSelect: (payload?: any) => void;
 };
 
@@ -38,6 +41,8 @@ export type ActionsManager = {
     getActions: () => ActionItem[];
     getActionById: (actionId: string) => ActionItem | null;
     getActionByShortcut: (shortcut: string) => ActionItem | null;
+    getActionByKeysCombination: (key: string, keyCode: string, ctrlKey: boolean, altKey: boolean, shiftKey: boolean) => ActionItem | null;
+    getShortcutByActionId: (actionId: string) => string | string[];
     dispatchAction: (actionId: string, payload?: any) => void;
 };
 
@@ -74,8 +79,6 @@ const getLibraryComponentFields = (collections: LibraryCollection[]) => {
     };
 };
 
-
-
 export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element => {
     const editor = useEditor();
     const library = useLibrary();
@@ -93,6 +96,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
         const defaultActions = Object.values({
             [ACTIONS.OPEN]: {
                 id: ACTIONS.OPEN,
+                shortcut: getShortcutKey("CtrlOrCmd+O"),
                 onSelect: () => {
                     const openFile = () => {
                         return loadFromJson()
@@ -117,6 +121,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             },
             [ACTIONS.SAVE]: {
                 id: ACTIONS.SAVE,
+                shortcut: getShortcutKey("CtrlOrCmd+S"),
                 onSelect: () => {
                     saveAsJson(editor.toJSON())
                         .then(() => console.log("Folio file saved"))
@@ -145,6 +150,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Undo",
                 icon: "history-undo",
                 category: ActionCategory.BOARD_ACTIONS,
+                shortcut: getShortcutKey("CtrlOrCmd+Z"),
                 onSelect: () => {
                     editor.undo();
                     editor.dispatchChange();
@@ -156,6 +162,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Redo",
                 icon: "history-redo",
                 category: ActionCategory.BOARD_ACTIONS,
+                shortcut: getShortcutKey("CtrlOrCmd+Shift+Z"),
                 onSelect: () => {
                     editor.redo();
                     editor.dispatchChange();
@@ -167,6 +174,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Zoom in",
                 icon: "zoom-in",
                 category: ActionCategory.BOARD_ACTIONS,
+                shortcut: getShortcutKey("CtrlOrCmd++"),
                 onSelect: () => {
                     editor.setZoom(editor.getZoom() + ZOOM_STEP);
                     editor.update();
@@ -177,6 +185,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Zoom out",
                 icon: "zoom-out",
                 category: ActionCategory.BOARD_ACTIONS,
+                shortcut: getShortcutKey("CtrlOrCmd+-"),
                 onSelect: () => {
                     editor.setZoom(editor.getZoom() - ZOOM_STEP);
                     editor.update();
@@ -214,6 +223,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Select all",
                 icon: "box-selection",
                 category: ActionCategory.EDITION,
+                shortcut: getShortcutKey("CtrlOrCmd+A"),
                 onSelect: () => {
                     editor.getElements().forEach((el: any) => {
                         el.selected = true;
@@ -226,6 +236,10 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Delete selection",
                 icon: "trash",
                 category: ActionCategory.EDITION,
+                shortcut: [
+                    getShortcutKey("Delete"),
+                    getShortcutKey("Backspace"),
+                ],
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -240,6 +254,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Duplicate selection",
                 icon: "copy",
                 category: ActionCategory.EDITION,
+                shortcut: getShortcutKey("CtrlOrCmd+D"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -254,6 +269,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Lock selection",
                 icon: "lock",
                 category: ActionCategory.EDITION,
+                shortcut: getShortcutKey("CtrlOrCmd+L"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -268,6 +284,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Unlock selection",
                 icon: "unlock",
                 category: ActionCategory.EDITION,
+                shortcut: getShortcutKey("CtrlOrCmd+Shift+L"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -282,6 +299,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Group selection",
                 icon: "object-group",
                 category: ActionCategory.EDITION,
+                shortcut: getShortcutKey("CtrlOrCmd+G"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 1) {
@@ -296,6 +314,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Ungroup selection",
                 icon: "object-ungroup",
                 category: ActionCategory.EDITION,
+                shortcut: getShortcutKey("CtrlOrCmd+Shift+G"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -557,6 +576,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.CUT,
                 name: "Cut",
                 icon: "cut",
+                shortcut: getShortcutKey("CtrlOrCmd+X"),
                 category: ActionCategory.EDITION,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -572,6 +592,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.COPY,
                 name: "Copy",
                 icon: "copy",
+                shortcut: getShortcutKey("CtrlOrCmd+C"),
                 category: ActionCategory.EDITION,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -587,6 +608,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.PASTE,
                 name: "Paste",
                 icon: "paste",
+                shortcut: getShortcutKey("CtrlOrCmd+V"),
                 category: ActionCategory.EDITION,
                 onSelect: ({ event = null, position = null }) => {
                     editor.pasteElementsFromClipboard(event, position).then(() => {
@@ -768,6 +790,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.SHOW_COMMANDS]: {
                 id: ACTIONS.SHOW_COMMANDS,
                 name: "Commands",
+                shortcut: getShortcutKey("CtrlOrCmd+K"),
                 onSelect: () => {
                     showSurface("commands", () => (
                         <Commands />
@@ -813,6 +836,41 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
         return actions.find(action => action.shortcut === shortcut) || null;
     }, [actions]);
 
+    // @description get action name by the provided key combination
+    // @param {string} key - key pressed by the user
+    // @param {boolean} ctrlKey - ctrl key pressed (in DARWIN this is Cmd key)
+    // @param {boolean} shiftKey - shift key pressed
+    // @param {boolean} altKey - alt key pressed (in DARWIN this is Opt key)
+    // @returns {string} - action name
+    const getActionByKeysCombination = React.useCallback((key = "", keyCode = "", ctrlKey = false, altKey = false, shiftKey = false) => {
+        // build the shortcut command
+        const shortcutCommand = [
+            ctrlKey && !IS_DARWIN ? "Ctrl" : "",
+            ctrlKey && IS_DARWIN ? "Cmd" : "",
+            altKey && IS_DARWIN ? "Opt" : "",
+            altKey && !IS_DARWIN ? "Alt" : "",
+            shiftKey ? "Shift" : "",
+            (altKey ? getKeyFromKeyCode(keyCode) : key).toUpperCase(),
+        ];
+        const shortcut = shortcutCommand.filter(Boolean).join("+");
+        // find the action name by the shortcut
+        return actions.find(action => {
+            if (action?.shortcut) {
+                return [action.shortcut].flat().some((key: string) => {
+                    return key === shortcut || key.toUpperCase() === shortcut;
+                });
+            }
+            return false;
+        }) || null;
+    }, [actions]);
+
+    // @description get shortcut key for the provided action
+    // @param {string} actionName - action name to get the shortcut
+    // @returns {string} - shortcut key
+    const getShortcutByActionId = React.useCallback((actionId: string) => {
+        return actions.find(action => action.id === actionId)?.shortcut || "";
+    }, [actions]);
+
     // build the actions manager
     const actionsManager = React.useMemo<ActionsManager>(() => {
         return {
@@ -820,8 +878,10 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             getActions,
             getActionById,
             getActionByShortcut,
+            getActionByKeysCombination,
+            getShortcutByActionId,
         };
-    }, [dispatchAction, getActions, getActionById, getActionByShortcut]);
+    }, [dispatchAction, getActions, getActionById, getActionByShortcut, getActionByKeysCombination]);
 
     // return the actions provider
     return (

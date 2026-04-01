@@ -9,7 +9,6 @@ import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
-import { getShortcutByAction } from "../lib/actions.js";
 
 const COMMANDS_LIST = [
     {
@@ -48,7 +47,7 @@ const COMMANDS_LIST = [
 export type CommandItem = {
     id: string;
     label: string;
-    shortcut?: string;
+    shortcut?: string | string[];
     icon?: React.JSX.Element | string;
     disabled?: boolean;
     execute: () => void;
@@ -77,7 +76,7 @@ const CommandItemWrapper = (props: any): React.JSX.Element => (
 export const CommandsContent = (): React.JSX.Element => {
     const editor = useEditor();
     const tools = useTools();
-    const { dispatchAction } = useActions();
+    const { dispatchAction, getShortcutByActionId } = useActions();
     const { clearSurface } = useSurface();
     const [query, setQuery] = React.useState<string>("");
     const [highlightIndex, setHighlightIndex] = React.useState<number>(0);
@@ -108,7 +107,7 @@ export const CommandsContent = (): React.JSX.Element => {
                 id: groupItem.id,
                 label: groupItem.label,
                 icon: groupItem.icon,
-                shortcut: getShortcutByAction(groupItem.id),
+                shortcut: getShortcutByActionId(groupItem.id),
                 execute: () => dispatchAction(groupItem.id),
             })),
         }));

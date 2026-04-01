@@ -15,7 +15,6 @@ import { useContextMenu } from "../contexts/context-menu.jsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { useCursor } from "../hooks/use-cursor.js";
-import { getActionByKeysCombination } from "../lib/actions.js";
 import { renderElement } from "./elements/index.jsx";
 import { SvgContainer } from "./svg.tsx";
 import { Grid } from "./grid.jsx";
@@ -37,7 +36,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     const cursor = useCursor();
     const contextMenu = useContextMenu() as any;
     const { showContextMenu, hideContextMenu } = contextMenu || {};
-    const { dispatchAction } = useActions();
+    const { dispatchAction, getActionByKeysCombination } = useActions();
     const preferences = usePreferences();
 
     const activeTool = editor.activeTool;
@@ -115,7 +114,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
             if (action) {
                 event.preventDefault();
-                return dispatchAction(action, { event: event });
+                return dispatchAction(action.id, { event: event });
             }
             // 4. Check for tool shortcuts
             if (!isCtrlKey && !event.shiftKey) {
@@ -123,11 +122,10 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
                 if (tool && typeof tool?.onSelect === "function") {
                     event.preventDefault();
                     tool.onSelect();
-                    // editor.setCurrentTool(tool.id);
                 }
             }
         }
-    }, [editor, activeTool, getToolByShortcut, preferences, dispatchAction]);
+    }, [editor, activeTool, getToolByShortcut, preferences, dispatchAction, getActionByKeysCombination]);
 
     const handleKeyUp = React.useCallback((event: any) => {
         editor.getCurrentTool().dispatch("keyUp", {
