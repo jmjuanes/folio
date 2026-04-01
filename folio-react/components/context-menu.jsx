@@ -4,7 +4,7 @@ import { ContextMenu as Menu } from "./ui/context-menu.jsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
-import { useActions } from "../hooks/use-actions.js";
+import { useActions } from "../contexts/actions.tsx";
 import { getShortcutByAction, printShortcut } from "../lib/actions.js";
 
 // Not allowed elements in library
@@ -33,7 +33,7 @@ const ContextMenuItem = props => (
 // @param {number} props.left Left position of the context menu
 export const ContextMenu = props => {
     const editor = useEditor();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const { Library } = useEditorComponents();
     const { hideContextMenu } = useContextMenu();
     const selectedElements = editor.getSelection();

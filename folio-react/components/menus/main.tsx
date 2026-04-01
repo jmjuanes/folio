@@ -5,7 +5,7 @@ import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.tsx";
 import { useEditor } from "../../contexts/editor.tsx";
 import { usePreferences } from "../../contexts/preferences.tsx";
-import { useActions } from "../../hooks/use-actions.js";
+import { useActions } from "../../contexts/actions.tsx";
 import { getShortcutByAction, printShortcut } from "../../lib/actions.js";
 
 export type MainMenuLinkProps = {
@@ -72,7 +72,7 @@ export const MainMenuLinks = (): React.JSX.Element => (
 
 // action to open a .folio file from the local computer of the user
 export const MainMenuOpenAction = (): React.JSX.Element => {
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const shortcutsEnabled = true;
     return (
         <MainMenuAction
@@ -88,7 +88,7 @@ export const MainMenuOpenAction = (): React.JSX.Element => {
 
 // action to save the current content to a file
 export const MainMenuSaveAction = (): React.JSX.Element => {
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const shortcutsEnabled = true;
     return (
         <MainMenuAction
@@ -104,7 +104,7 @@ export const MainMenuSaveAction = (): React.JSX.Element => {
 
 // action to export the current page to an image
 export const MainMenuExportAction = (): React.JSX.Element => {
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
     const shortcutsEnabled = true;
@@ -126,7 +126,7 @@ export const MainMenuExportAction = (): React.JSX.Element => {
 
 // action to remove the content of the board
 export const MainMenuResetAction = (): React.JSX.Element => {
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
     return (
@@ -146,7 +146,7 @@ export const MainMenuResetAction = (): React.JSX.Element => {
 
 // action to display the shortcuts menu
 export const MainMenuShowShortcutsAction = (): React.JSX.Element => {
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     return (
         <MainMenuAction
             icon="keyboard"

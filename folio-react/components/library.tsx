@@ -6,7 +6,7 @@ import { ACTIONS } from "../constants.js";
 import { Button } from "../components/ui/button.jsx";
 import { Panel } from "./ui/panel.tsx";
 import { useLibrary } from "../contexts/library.tsx";
-import { useActions } from "../hooks/use-actions.js";
+import { useActions } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { formatDate } from "../utils/dates.ts";
 import type { LibraryCollection, LibraryComponent } from "../lib/library.ts";
@@ -102,7 +102,7 @@ export const Library = (): React.JSX.Element => {
     const [activeComponent, setActiveComponent] = React.useState<LibraryComponent | null>(null);
     const editor = useEditor();
     const library = useLibrary();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const components = library?.getComponents() || [];
     const collections = library?.getCollections() || [];
 

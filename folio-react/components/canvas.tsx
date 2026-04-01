@@ -13,7 +13,7 @@ import { useEditor } from "../contexts/editor.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { usePreferences } from "../contexts/preferences.tsx";
-import { useActions } from "../hooks/use-actions.js";
+import { useActions } from "../contexts/actions.tsx";
 import { useCursor } from "../hooks/use-cursor.js";
 import { getActionByKeysCombination } from "../lib/actions.js";
 import { renderElement } from "./elements/index.jsx";
@@ -37,7 +37,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     const cursor = useCursor();
     const contextMenu = useContextMenu() as any;
     const { showContextMenu, hideContextMenu } = contextMenu || {};
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const preferences = usePreferences();
 
     const activeTool = editor.activeTool;

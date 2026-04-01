@@ -5,7 +5,7 @@ import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu } from "../contexts/context-menu.jsx";
 import { useTools } from "../contexts/tools.tsx";
-import { useActions } from "../hooks/use-actions.js";
+import { useActions } from "../contexts/actions.tsx";
 import { ACTIONS, TOOLS, ELEMENTS } from "../constants.js";
 
 import type { ToolState } from "../lib/tool.ts";
@@ -81,7 +81,7 @@ export const ToolbarToolButton = (props: ToolbarToolButtonProps): React.JSX.Elem
 export const ToolbarContent = (): React.JSX.Element => {
     const editor = useEditor();
     const contextMenu = useContextMenu() as any;
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
 
     const activeTool: ToolState | null = editor.getCurrentTool();
     const locked = editor.getToolLocked();

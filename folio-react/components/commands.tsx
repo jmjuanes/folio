@@ -2,7 +2,7 @@ import React from "react";
 import { renderIcon } from "@josemi-icons/react";
 import { ACTIONS } from "../constants.js";
 import { useTools } from "../contexts/tools.tsx";
-import { useActions } from "../hooks/use-actions.js";
+import { useActions } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useSurface } from "../contexts/surface.tsx";
 import { Command } from "./ui/command.tsx";
@@ -77,7 +77,7 @@ const CommandItemWrapper = (props: any): React.JSX.Element => (
 export const CommandsContent = (): React.JSX.Element => {
     const editor = useEditor();
     const tools = useTools();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const { clearSurface } = useSurface();
     const [query, setQuery] = React.useState<string>("");
     const [highlightIndex, setHighlightIndex] = React.useState<number>(0);
