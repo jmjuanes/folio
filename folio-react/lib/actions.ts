@@ -1,8 +1,8 @@
-import {IS_DARWIN, ACTIONS} from "../constants.js";
-import {getKeyFromKeyCode} from "../utils/keys.js";
+import { IS_DARWIN, ACTIONS } from "../constants.js";
+import { getKeyFromKeyCode } from "../utils/keys.js";
 
 // @description utility function to get the correct shortcut key
-const getShortcutKey = command => {
+export const getShortcutKey = (command: string): string => {
     if (IS_DARWIN) {
         return command.replace(/\bCtrlOrCmd\b/gi, "Cmd").replace(/\bAlt\b/gi, "Opt");
     }
@@ -58,42 +58,10 @@ export const shortcutsMap = {
     [ACTIONS.SHOW_COMMANDS]: getShortcutKey("CtrlOrCmd+K"),
 };
 
-// @description get shortcut key for the provided action
-// @param {string} actionName - action name to get the shortcut
-// @returns {string} - shortcut key
-export const getShortcutByAction = actionName => {
-    return shortcutsMap[actionName] || null;
-};
-
-// @description get action name by the provided key combination
-// @param {string} key - key pressed by the user
-// @param {boolean} ctrlKey - ctrl key pressed (in DARWIN this is Cmd key)
-// @param {boolean} shiftKey - shift key pressed
-// @param {boolean} altKey - alt key pressed (in DARWIN this is Opt key)
-// @returns {string} - action name
-export const getActionByKeysCombination = (key = "", keyCode = "", ctrlKey = false, altKey = false, shiftKey = false) => {
-    // build the shortcut command
-    const shortcutCommand = [
-        ctrlKey && !IS_DARWIN ? "Ctrl" : "",
-        ctrlKey && IS_DARWIN ? "Cmd" : "",
-        altKey && IS_DARWIN ? "Opt" : "",
-        altKey && !IS_DARWIN ? "Alt" : "",
-        shiftKey ? "Shift" : "",
-        (altKey ? getKeyFromKeyCode(keyCode) : key).toUpperCase(),
-    ];
-    const shortcut = shortcutCommand.filter(Boolean).join("+");
-    // find the action name by the shortcut
-    return Object.keys(shortcutsMap).find(actionName => {
-        return [shortcutsMap[actionName]].flat().some(shortcutKey => {
-            return shortcutKey === shortcut || shortcutKey.toUpperCase() === shortcut;
-        });
-    });
-};
-
 // @description print shortcut
 // @param {string} shortcut - shortcut key
 // @returns {string} - formatted shortcut
-export const printShortcut = shortcut => {
+export const printShortcut = (shortcut: string | string[]): string => {
     return [shortcut].flat().map(s => {
         return (s || "")
             .replace(/\b[+]/g, " ")
