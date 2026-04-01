@@ -265,24 +265,27 @@ const getVisibleItems = (items, data) => {
         });
 };
 
-export const Form = props => (
-    <div data-testid="form" className={props.className || "flex flex-col gap-4"} style={props.style || {}}>
-        {getVisibleItems(props.items, props.data).map(key => (
-            <React.Fragment key={key}>
-                <Option
-                    {...props.items[key]}
-                    key={key}
-                    field={key}
-                    value={props.data?.[key] ?? null}
-                    data={props.data ?? {}}
-                    onChange={value => props.onChange?.(key, value)}
-                />
-                {props.separator && (
-                    <div className="last:hidden flex items-center justify-center">
-                        {props.separator}
-                    </div>
-                )}
-            </React.Fragment>
-        ))}
-    </div>
-);
+export const Form = props => {
+    const visibleItems = getVisibleItems(props.items, props.data);
+    return (
+        <div data-testid="form" className={props.className || "flex flex-col gap-4"} style={props.style || {}}>
+            {visibleItems.map((key, index) => (
+                <React.Fragment key={key}>
+                    <Option
+                        {...props.items[key]}
+                        key={key}
+                        field={key}
+                        value={props.data?.[key] ?? null}
+                        data={props.data ?? {}}
+                        onChange={value => props.onChange?.(key, value)}
+                    />
+                    {props.separator && index < visibleItems.length - 1 && (
+                        <div className="flex items-center justify-center">
+                            {props.separator}
+                        </div>
+                    )}
+                </React.Fragment>
+            ))}
+        </div>
+    );
+};
