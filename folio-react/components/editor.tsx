@@ -11,8 +11,11 @@ import { DialogsProvider } from "../contexts/dialogs.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 import { ToolsProvider } from "../contexts/tools.tsx";
+import { ActionsProvider } from "../contexts/actions.tsx";
 import { Canvas } from "./canvas.tsx";
+
 import type { ToolsOverrides } from "../contexts/tools.tsx";
+import type { ActionsOverrides } from "../contexts/actions.tsx";
 
 // @private inner editor component
 const InnerEditor = () => {
@@ -39,6 +42,7 @@ const InnerEditor = () => {
 };
 
 export type EditorOverrides = {
+    actions?: ActionsOverrides;
     tools?: ToolsOverrides;
 };
 
@@ -64,9 +68,11 @@ export const Editor: React.FC<EditorProps> = props => {
                             <ConfirmProvider>
                                 <DialogsProvider>
                                     <SurfaceProvider>
-                                        <ContextMenuProvider>
-                                            <InnerEditor />
-                                        </ContextMenuProvider>
+                                        <ActionsProvider overrides={props.overrides?.actions}>
+                                            <ContextMenuProvider>
+                                                <InnerEditor />
+                                            </ContextMenuProvider>
+                                        </ActionsProvider>
                                     </SurfaceProvider>
                                 </DialogsProvider>
                             </ConfirmProvider>
