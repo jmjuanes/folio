@@ -1,13 +1,19 @@
 import React from "react";
-import { ACTIONS } from "../../constants.js";
-import { useTools } from "../../contexts/tools.tsx";
-import { useActions } from "../../contexts/actions.tsx";
-import { Dialog } from "../ui/dialog.tsx";
-import { printShortcut } from "../../lib/actions.ts";
+import { ACTIONS } from "../constants.js";
+import { useTools } from "../contexts/tools.tsx";
+import { useActions } from "../contexts/actions.tsx";
+import { Dialog } from "./ui/dialog.tsx";
+import { printShortcut } from "../lib/actions.ts";
+
+export type KeyboardShortcutsGroupProps = {
+    label?: string;
+    title?: string;
+    children: React.ReactNode;
+};
 
 // @description keyboard shortcuts section
-const KeyboardShortcutsGroup = props => (
-    <div className="mb-4" style={{breakInside: "avoid-column"}}>
+export const KeyboardShortcutsGroup = (props: KeyboardShortcutsGroupProps): React.JSX.Element => (
+    <div className="mb-4" style={{ breakInside: "avoid-column" }}>
         <div className="text-xs text-gray-600 font-bold mb-1">
             {props.label || props.title || ""}
         </div>
@@ -17,8 +23,14 @@ const KeyboardShortcutsGroup = props => (
     </div>
 );
 
+export type KeyboardShortcutsItemProps = {
+    action?: string;
+    shortcut?: string | string[];
+    label?: string;
+};
+
 // @description keyboard shortcuts item
-const KeyboardShortcutsItem = props => {
+export const KeyboardShortcutsItem = (props: KeyboardShortcutsItemProps): React.JSX.Element => {
     const { getShortcutByActionId } = useActions();
     const shortcut = React.useMemo(() => {
         return props.action ? getShortcutByActionId(props.action) : props.shortcut;
@@ -39,18 +51,18 @@ const KeyboardShortcutsItem = props => {
 };
 
 // @description content of the keyboard shortcuts dialog
-export const KeyboardShortcutsDialogContent = () => {
-    const tools = useTools();
+export const KeyboardShortcutsContent = (): React.JSX.Element => {
+    const { getTools } = useTools();
     const toolsShortcuts = React.useMemo(() => {
-        return tools.getTools()
+        return getTools()
             .filter(tool => !!tool.shortcut)
             .map(tool => {
                 return {
                     label: tool.name,
-                    shortcut: tool.shortcut.toUpperCase(),
+                    shortcut: (tool.shortcut || "").toUpperCase(),
                 };
             });
-    }, [tools]);
+    }, [getTools]);
 
     return (
         <div className="" style={{columnCount: 2, columnGap: "1rem"}}>
@@ -122,14 +134,20 @@ export const KeyboardShortcutsDialogContent = () => {
     );
 };
 
-export const KeyboardShortcutsDialog = () => {
+export type KeyboardShortcutsProps = {
+    title?: string;
+    children: React.ReactNode;
+};
+
+export const KeyboardShortcuts = (props: KeyboardShortcutsProps): React.JSX.Element => {
+    const content = props?.children ?? <KeyboardShortcutsContent />
     return (
         <React.Fragment>
             <Dialog.Header className="pb-4">
-                <Dialog.Title>Keyboard Shortcuts</Dialog.Title>
+                <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body className="pt-0 overflow-y-auto" style={{maxHeight: "min(75vh, 35rem)"}}>
-                <KeyboardShortcutsDialogContent />
+                {content}
             </Dialog.Body>
         </React.Fragment>
     );
