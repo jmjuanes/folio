@@ -1,6 +1,6 @@
 import React from "react";
 import {ACTIONS} from "../../constants.js";
-import {useEditor} from "../../contexts/editor.jsx";
+import {useEditor} from "../../contexts/editor.tsx";
 import {useActions} from "../../hooks/use-actions.js";
 import {Island} from "../ui/island.tsx";
 

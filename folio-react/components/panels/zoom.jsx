@@ -2,7 +2,7 @@ import React from "react";
 import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../../constants.js";
 import { Island } from "../ui/island.tsx";
 import { Dropdown } from "../ui/dropdown.tsx";
-import { useEditor } from "../../contexts/editor.jsx";
+import { useEditor } from "../../contexts/editor.tsx";
 import { useActions } from "../../hooks/use-actions.js";
 
 const ZoomDropdownItem = props => (

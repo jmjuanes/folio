@@ -1,18 +1,18 @@
 import React from "react";
 import classNames from "classnames";
-import {CloseIcon} from "@josemi-icons/react";
-import {useEditor} from "../contexts/editor.jsx";
-import {exportToDataURL} from "../lib/export.js";
-import {FIELDS, TOOLS, TRANSPARENT} from "../constants.js";
+import { CloseIcon } from "@josemi-icons/react";
+import { useEditor } from "../contexts/editor.tsx";
+import { exportToDataURL } from "../lib/export.js";
+import { FIELDS, TOOLS, TRANSPARENT } from "../constants.js";
 
 // Layers preview variables
 const LAYER_PREVIEW_SIZE = 64;
 const LAYER_PREVIEW_BACKGROUND = TRANSPARENT;
 
 // Tiny hook to generate the preview of the element
-const useElementPreview = (elements: any[], dependencies = []): string | null => {
+const useElementPreview = (elements: any[], dependencies: string[] = []): string | null => {
     const editor = useEditor();
-    const [ previewImage, setPreviewImage ] = React.useState<string | null>(null);
+    const [previewImage, setPreviewImage] = React.useState<string | null>(null);
     React.useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
@@ -70,7 +70,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     const activeGroup = editor.page.activeGroup || "";
 
     // generate a key to force the update of the groups map
-    const key = editor.getElements().map(el => el.id + "." + (el.group || ".")).join("-");
+    const key = editor.getElements().map((element: any) => element.id + "." + (element.group || ".")).join("-");
 
     // generate a map of groups in the board
     // each group contains the list of elements on it, the index of the group
@@ -78,7 +78,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     const groups = React.useMemo(() => {
         const groupsMap = new Map();
         let currentGroupIndex = 1;
-        editor.getElements().forEach(element => {
+        editor.getElements().forEach((element: any) => {
             if (element.group) {
                 if (!groupsMap.has(element.group)) {
                     groupsMap.set(element.group, {
@@ -93,42 +93,42 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
             }
         });
         return groupsMap;
-    }, [ key ]);
+    }, [key]);
 
     // get the elements to be displayed in the layers panel
     const visibleElements = React.useMemo(() => {
         // 1. activeGroup is not empty, return the elements on this group
         if (activeGroup) {
-            return editor.getElements().filter(element => element.group === activeGroup);
+            return editor.getElements().filter((element: any) => element.group === activeGroup);
         }
         // 2. activeGroup is empty, return all the elements
         return editor.getElements();
-    }, [ editor, key, activeGroup ]);
+    }, [editor, key, activeGroup]);
 
     // exit the current active group
     const handleCloseActiveGroup = React.useCallback(() => {
-        editor.setTool(TOOLS.SELECT);
+        editor.setCurrentTool(TOOLS.SELECT);
         editor.page.activeGroup = "";
         editor.update();
-    }, [ editor ]);
+    }, [editor]);
 
     // handle click on a layer item
-    const handleClick = React.useCallback(elements => {
+    const handleClick = React.useCallback((elements: any[]) => {
         if (!editor.page.readonly) {
-            editor.setTool(TOOLS.SELECT);
-            editor.setSelection(elements.map(el => el.id));
+            editor.setCurrentTool(TOOLS.SELECT);
+            editor.setSelection(elements.map((el: any) => el.id));
             editor.update();
         }
-    }, [ editor, editor.page, editor.page.readonly ]);
+    }, [editor, editor.page, editor.page.readonly]);
 
     // handle double click on a group item
-    const handleDoubleClick = React.useCallback(groupId => {
+    const handleDoubleClick = React.useCallback((groupId: string) => {
         if (!editor.page.readonly) {
-            editor.setTool(TOOLS.SELECT);
+            editor.setCurrentTool(TOOLS.SELECT);
             editor.page.activeGroup = groupId;
             editor.update();
         }
-    }, [ editor, editor.page, editor.page.readonly ]);
+    }, [editor, editor.page, editor.page.readonly]);
 
     // calculate the container style
     const containerStyle = React.useMemo<React.CSSProperties>(() => {
@@ -136,12 +136,12 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
             maxHeight: `calc(${maxHeight} - ${activeGroup ? "3rem" : "0rem"})`,
             scrollbarWidth: "none",
         } as React.CSSProperties;
-    }, [ activeGroup, maxHeight ]);
+    }, [activeGroup, maxHeight]);
 
     return (
         <React.Fragment>
             <div className="flex flex-col-reverse gap-2 overflow-y-auto" style={containerStyle}>
-                {visibleElements.map(element => (
+                {visibleElements.map((element: any) => (
                     <React.Fragment key={element.id + "." + (element.group || "")}>
                         {(!element.group || activeGroup) && (
                             <LayerItem

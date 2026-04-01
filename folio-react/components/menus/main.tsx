@@ -3,7 +3,7 @@ import classnames from "classnames";
 import { ACTIONS, PREFERENCES } from "../../constants.js";
 import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.tsx";
-import { useEditor } from "../../contexts/editor.jsx";
+import { useEditor } from "../../contexts/editor.tsx";
 import { usePreferences } from "../../contexts/preferences.tsx";
 import { useActions } from "../../hooks/use-actions.js";
 import { getShortcutByAction, printShortcut } from "../../lib/actions.js";

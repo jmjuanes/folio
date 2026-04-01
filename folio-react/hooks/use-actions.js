@@ -1,7 +1,7 @@
 import React from "react";
 import { uid } from "uid/secure";
 import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS } from "../constants.js";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { useConfirm } from "../contexts/confirm.jsx";
 import { useDialog } from "../contexts/dialogs.tsx";
 import { useLibrary } from "../contexts/library.tsx";
@@ -226,7 +226,7 @@ export const useActions = () => {
             [ACTIONS.INSERT_LIBRARY_COMPONENT]: (component) => {
                 // Note: we avoid to inster the component if the page is in readonly mode
                 if (!editor.page.readonly) {
-                    editor.setTool(TOOLS.SELECT);
+                    editor.setCurrentTool(TOOLS.SELECT);
                     editor.importElements(component.elements, null, null, uid(20));
                     editor.dispatchChange();
                     editor.update();
