@@ -6,7 +6,7 @@ import { useSurface } from "../contexts/surface.tsx";
 import { printShortcut } from "../lib/actions.ts";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
-import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
+import { Overlay } from "./ui/overlay.tsx";
 
 export type KeyboardShortcutsGroupProps = {
     label?: string;
@@ -147,8 +147,8 @@ export const KeyboardShortcuts = (props: KeyboardShortcutsProps): React.JSX.Elem
     const content = props?.children ?? <KeyboardShortcutsContent />;
     return (
         <React.Fragment>
-            <Overlay key="dialog:overlay" className="z-50" onClick={clearSurface} />
-            <Centered key="dialog:content" className="fixed z-50 h-full">
+            <Overlay key="shortcuts:overlay" className="z-50" onClick={clearSurface} />
+            <Centered key="shortcuts:content" className="fixed z-50 h-full">
                 <Dialog.Content className="w-full max-w-xl">
                     <Dialog.Close onClick={clearSurface} />
                     <Dialog.Header className="pb-4">
