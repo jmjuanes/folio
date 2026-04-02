@@ -11,7 +11,7 @@ import {
 import { AssetsProvider } from "../contexts/assets.jsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useTools } from "../contexts/tools.tsx";
-import { useContextMenu } from "../contexts/context-menu.jsx";
+import { useContextMenu } from "../contexts/context-menu.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { useCursor } from "../hooks/use-cursor.js";
@@ -34,8 +34,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     const editor = useEditor();
     const { getToolByShortcut } = useTools();
     const cursor = useCursor();
-    const contextMenu = useContextMenu() as any;
-    const { showContextMenu, hideContextMenu } = contextMenu || {};
+    const { showContextMenu, hideContextMenu } = useContextMenu();
     const { dispatchAction, getActionByKeysCombination } = useActions();
     const preferences = usePreferences();
 

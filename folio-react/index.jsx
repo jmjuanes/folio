@@ -42,7 +42,7 @@ export {
 export {
     ContextMenuProvider,
     useContextMenu,
-} from "./contexts/context-menu.jsx";
+} from "./contexts/context-menu.tsx";
 export {
     DialogsProvider,
     useDialog,
@@ -63,7 +63,10 @@ export {
 export {Canvas} from "./components/canvas.tsx";
 export {Editor} from "./components/editor.tsx";
 
-export {ContextMenu} from "./components/context-menu.jsx";
+export {
+    ContextMenu,
+    ContextMenuContent,
+} from "./components/context-menu.tsx";
 export { Layout } from "./components/layout.tsx";
 export { Title } from "./components/title.tsx";
 export { Layers } from "./components/layers.tsx";

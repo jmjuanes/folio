@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
 import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
-import { useContextMenu } from "../contexts/context-menu.jsx";
+import { useContextMenu } from "../contexts/context-menu.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { ACTIONS, TOOLS, ELEMENTS } from "../constants.js";
@@ -80,7 +80,7 @@ export const ToolbarToolButton = (props: ToolbarToolButtonProps): React.JSX.Elem
 // @description Toolbar panel component
 export const ToolbarContent = (): React.JSX.Element => {
     const editor = useEditor();
-    const contextMenu = useContextMenu() as any;
+    const { hideContextMenu } = useContextMenu();
     const { dispatchAction } = useActions();
 
     const activeTool: ToolState | null = editor.getCurrentTool();
@@ -92,9 +92,9 @@ export const ToolbarContent = (): React.JSX.Element => {
     React.useEffect(() => {
         if (prevSelectedTool.current !== activeTool?.id) {
             prevSelectedTool.current = activeTool?.id || null;
-            contextMenu?.hideContextMenu?.();
+            hideContextMenu();
         }
-    }, [activeTool?.id, contextMenu]);
+    }, [activeTool?.id, hideContextMenu]);
 
     const handleLockClick = React.useCallback(() => {
         editor.setToolLocked(!locked);

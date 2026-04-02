@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout } from "../components/layout.tsx";
 import { Loading } from "../components/loading.jsx";
-import { ContextMenu } from "../components/context-menu.jsx";
+import { ContextMenu } from "../components/context-menu.tsx";
 import { ExportDialog } from "../components/dialogs/export.jsx";
 import { KeyboardShortcuts } from "../components/keyboard-shortcuts.tsx";
 import { MainMenu } from "../components/menus/main.tsx";
