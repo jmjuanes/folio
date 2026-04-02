@@ -71,7 +71,12 @@ export { Minimap } from "./components/minimap.tsx";
 export { Toolbar } from "./components/toolbar.tsx";
 
 export {ExportDialog} from "./components/dialogs/export.jsx";
-export {KeyboardShortcutsDialog} from "./components/dialogs/keyboard-shortcuts.jsx";
+export {
+    KeyboardShortcuts,
+    KeyboardShortcutsContent,
+    KeyboardShortcutsItem,
+    KeyboardShortcutsGroup,
+} from "./components/keyboard-shortcuts.tsx";
 export {
     MainMenu,
     MainMenuContent,
