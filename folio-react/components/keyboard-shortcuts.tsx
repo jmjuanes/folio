@@ -2,8 +2,11 @@ import React from "react";
 import { ACTIONS } from "../constants.js";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
-import { Dialog } from "./ui/dialog.tsx";
+import { useSurface } from "../contexts/surface.tsx";
 import { printShortcut } from "../lib/actions.ts";
+import { Centered } from "./ui/centered.tsx";
+import { Dialog } from "./ui/dialog.tsx";
+import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
 
 export type KeyboardShortcutsGroupProps = {
     label?: string;
@@ -140,15 +143,22 @@ export type KeyboardShortcutsProps = {
 };
 
 export const KeyboardShortcuts = (props: KeyboardShortcutsProps): React.JSX.Element => {
-    const content = props?.children ?? <KeyboardShortcutsContent />
+    const { clearSurface } = useSurface();
+    const content = props?.children ?? <KeyboardShortcutsContent />;
     return (
         <React.Fragment>
-            <Dialog.Header className="pb-4">
-                <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body className="pt-0 overflow-y-auto" style={{maxHeight: "min(75vh, 35rem)"}}>
-                {content}
-            </Dialog.Body>
+            <Overlay key="dialog:overlay" className="z-50" onClick={clearSurface} />
+            <Centered key="dialog:content" className="fixed z-50 h-full">
+                <Dialog.Content className="w-full max-w-xl">
+                    <Dialog.Close onClick={clearSurface} />
+                    <Dialog.Header className="pb-4">
+                        <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body className="pt-0 overflow-y-auto" style={{maxHeight: "min(75vh, 35rem)"}}>
+                        {content}
+                    </Dialog.Body>
+                </Dialog.Content>
+            </Centered>
         </React.Fragment>
     );
 };

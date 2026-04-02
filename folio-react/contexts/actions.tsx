@@ -87,7 +87,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const { showDialog } = useDialog();
     const { showSurface } = useSurface();
     const {
-        KeyboardShortcutsDialog,
+        KeyboardShortcuts,
         ExportDialog,
         Commands,
     } = useEditorComponents();
@@ -770,10 +770,9 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG,
                 name: "Keyboard shortcuts",
                 onSelect: () => {
-                    showDialog({
-                        dialogClassName: "w-full max-w-xl",
-                        component: KeyboardShortcutsDialog,
-                    });
+                    showSurface("keyboard-shortcuts", () => (
+                        <KeyboardShortcuts />
+                    ));
                 },
             },
             [ACTIONS.SHOW_EXPORT_DIALOG]: {
