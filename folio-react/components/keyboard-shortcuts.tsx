@@ -68,7 +68,7 @@ export const KeyboardShortcutsContent = (): React.JSX.Element => {
     }, [getTools]);
 
     return (
-        <div className="" style={{columnCount: 2, columnGap: "1rem"}}>
+        <div className="" style={{ columnCount: 2, columnGap: "1rem" }}>
             <KeyboardShortcutsGroup title="Drawing">
                 <KeyboardShortcutsItem action={ACTIONS.OPEN} label="Open" />
                 <KeyboardShortcutsItem action={ACTIONS.SAVE} label="Save" />
@@ -149,12 +149,12 @@ export const KeyboardShortcuts = (props: KeyboardShortcutsProps): React.JSX.Elem
         <React.Fragment>
             <Overlay key="shortcuts:overlay" className="z-50" onClick={clearSurface} />
             <Centered key="shortcuts:content" className="fixed z-50 h-full">
-                <Dialog.Content className="w-full max-w-xl">
+                <Dialog.Content className="w-full max-w-xl relative">
                     <Dialog.Close onClick={clearSurface} />
                     <Dialog.Header className="pb-4">
                         <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
                     </Dialog.Header>
-                    <Dialog.Body className="pt-0 overflow-y-auto" style={{maxHeight: "min(75vh, 35rem)"}}>
+                    <Dialog.Body className="pt-0 overflow-y-auto" style={{ maxHeight: "min(75vh, 35rem)" }}>
                         {content}
                     </Dialog.Body>
                 </Dialog.Content>
