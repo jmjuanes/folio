@@ -9,7 +9,7 @@ export type SurfaceManager = {
 };
 
 export type SurfaceProviderProps = {
-    children: React.ReactNode;
+    render: (surfaceContent: React.JSX.Element | null) => React.JSX.Element | null;
 };
 
 type SurfaceProviderState = null | {
@@ -66,12 +66,15 @@ export const SurfaceProvider = (props: SurfaceProviderProps): React.JSX.Element 
 
     return (
         <SurfaceContext.Provider value={{ showSurface, clearSurface }}>
-            {props.children}
-            {!!activeSurface && createPortal([
-                <React.Fragment key={`surface:${activeSurface.key}`}>
-                    {activeSurface.render()}
-                </React.Fragment>,
-            ], document.body)}
+            {props.render((
+                <React.Fragment>
+                    {!!activeSurface && createPortal([
+                        <React.Fragment key={`surface:${activeSurface.key}`}>
+                            {activeSurface.render()}
+                        </React.Fragment>,
+                    ], document.body)}
+                </React.Fragment>
+            ))}
         </SurfaceContext.Provider>
     );
 };

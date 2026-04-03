@@ -68,13 +68,14 @@ export const Editor: React.FC<EditorProps> = props => {
                         <ToolsProvider overrides={props.overrides?.tools}>
                             <ConfirmProvider>
                                 <DialogsProvider>
-                                    <SurfaceProvider>
+                                    <SurfaceProvider render={(surfaceContent) => (
                                         <ActionsProvider overrides={props.overrides?.actions}>
                                             <ContextMenuProvider>
                                                 <InnerEditor />
+                                                {surfaceContent}
                                             </ContextMenuProvider>
                                         </ActionsProvider>
-                                    </SurfaceProvider>
+                                    )} />
                                 </DialogsProvider>
                             </ConfirmProvider>
                         </ToolsProvider>
