@@ -131,6 +131,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.CLEAR]: {
                 id: ACTIONS.CLEAR,
                 name: "Clear board",
+                icon: "trash",
                 category: ActionCategory.BOARD_ACTIONS,
                 onSelect: () => {
                     showConfirm({
@@ -194,6 +195,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.ZOOM_RESET]: {
                 id: ACTIONS.ZOOM_RESET,
                 name: "Reset zoom",
+                icon: "search-check",
                 category: ActionCategory.BOARD_ACTIONS,
                 onSelect: () => {
                     editor.resetZoom();
@@ -203,6 +205,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.ZOOM_FIT]: {
                 id: ACTIONS.ZOOM_FIT,
                 name: "Fit zoom to visible elements in board",
+                icon: "arrows-maximize",
                 category: ActionCategory.BOARD_ACTIONS,
                 onSelect: () => {
                     editor.fitZoomToSelection();
@@ -212,6 +215,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.ZOOM_FIT_SELECTION]: {
                 id: ACTIONS.ZOOM_FIT_SELECTION,
                 name: "Fit zoom to current selection",
+                icon: "box-selection",
                 category: ActionCategory.BOARD_ACTIONS,
                 onSelect: () => {
                     editor.fitZoomToSelection(editor.getSelection());
@@ -341,7 +345,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.BRING_TO_FRONT]: {
                 id: ACTIONS.BRING_TO_FRONT,
                 name: "Bring to front",
-                icon: "bring-to-front",
+                icon: "bring-front",
                 category: ActionCategory.EDITION,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -369,7 +373,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.SEND_TO_BACK]: {
                 id: ACTIONS.SEND_TO_BACK,
                 name: "Send to back",
-                icon: "send-to-back",
+                icon: "send-back",
                 category: ActionCategory.EDITION,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -607,7 +611,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.PASTE]: {
                 id: ACTIONS.PASTE,
                 name: "Paste",
-                icon: "paste",
+                icon: "clipboard",
                 shortcut: getShortcutKey("CtrlOrCmd+V"),
                 category: ActionCategory.EDITION,
                 onSelect: ({ event = null, position = null }) => {
