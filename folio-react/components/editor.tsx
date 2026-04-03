@@ -1,6 +1,6 @@
 import React from "react";
 import { EditorProvider } from "../contexts/editor.tsx";
-import { ContextMenuProvider } from "../contexts/context-menu.jsx";
+import { ContextMenuProvider } from "../contexts/context-menu.tsx";
 import { SurfaceProvider } from "../contexts/surface.tsx";
 import {
     EditorComponentsProvider,
@@ -11,8 +11,12 @@ import { DialogsProvider } from "../contexts/dialogs.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 import { ToolsProvider } from "../contexts/tools.tsx";
+import { ActionsProvider } from "../contexts/actions.tsx";
 import { Canvas } from "./canvas.tsx";
+
 import type { ToolsOverrides } from "../contexts/tools.tsx";
+import type { ActionsOverrides } from "../contexts/actions.tsx";
+import type { Library } from "../lib/library.ts";
 
 // @private inner editor component
 const InnerEditor = () => {
@@ -39,6 +43,7 @@ const InnerEditor = () => {
 };
 
 export type EditorOverrides = {
+    actions?: ActionsOverrides;
     tools?: ToolsOverrides;
 };
 
@@ -50,7 +55,7 @@ export type EditorProps = {
     tools?: any[];
     overrides?: EditorOverrides | null,
     onChange?: (data: any) => void;
-    onLibraryChange?: (library: any) => void;
+    onLibraryChange?: (library: Library) => void;
 };
 
 // @description Public editor
@@ -63,11 +68,14 @@ export const Editor: React.FC<EditorProps> = props => {
                         <ToolsProvider overrides={props.overrides?.tools}>
                             <ConfirmProvider>
                                 <DialogsProvider>
-                                    <SurfaceProvider>
-                                        <ContextMenuProvider>
-                                            <InnerEditor />
-                                        </ContextMenuProvider>
-                                    </SurfaceProvider>
+                                    <SurfaceProvider render={(surfaceContent) => (
+                                        <ActionsProvider overrides={props.overrides?.actions}>
+                                            <ContextMenuProvider>
+                                                <InnerEditor />
+                                                {surfaceContent}
+                                            </ContextMenuProvider>
+                                        </ActionsProvider>
+                                    )} />
                                 </DialogsProvider>
                             </ConfirmProvider>
                         </ToolsProvider>

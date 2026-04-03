@@ -5,7 +5,7 @@ import { Island } from "./ui/island.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
-import { useActions } from "../hooks/use-actions.js";
+import { useActions } from "../contexts/actions.tsx";
 import { ACTIONS, PREFERENCES } from "../constants.js";
 
 export type LayoutProps = {
@@ -34,7 +34,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
     const [sidebarTab, setSidebarTab] = React.useState<SidebarTab | null>(null);
     const editor = useEditor();
     const preferences = usePreferences();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const {
         MainMenu,
         PagesMenu,

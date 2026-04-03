@@ -1,9 +1,9 @@
 import React from "react";
 import { Layout } from "../components/layout.tsx";
 import { Loading } from "../components/loading.jsx";
-import { ContextMenu } from "../components/context-menu.jsx";
+import { ContextMenu } from "../components/context-menu.tsx";
 import { ExportDialog } from "../components/dialogs/export.jsx";
-import { KeyboardShortcutsDialog } from "../components/dialogs/keyboard-shortcuts.jsx";
+import { KeyboardShortcuts } from "../components/keyboard-shortcuts.tsx";
 import { MainMenu } from "../components/menus/main.tsx";
 import { PagesMenu } from "../components/menus/pages.tsx";
 import { SettingsMenu } from "../components/menus/settings.jsx";
@@ -62,7 +62,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             ContextMenu: ContextMenu,
             // dialogs components
             ExportDialog: ExportDialog,
-            KeyboardShortcutsDialog: KeyboardShortcutsDialog,
+            KeyboardShortcuts: KeyboardShortcuts,
             Commands: Commands,
             // menus
             MainMenu: MainMenu,
