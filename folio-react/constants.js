@@ -371,7 +371,7 @@ export const TOOLS = {
     DRAG: "drag",
     SELECT: "select",
     ERASER: "erase",
-    POINTER: "pointer",
+    LASER: "laser",
     ELEMENT: "element",
 };
 

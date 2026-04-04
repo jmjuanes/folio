@@ -19,7 +19,6 @@ import { ToolState } from "../lib/tool.ts";
 // alias for setInterval
 const createInterval = (ms: number, listener: () => void) => setInterval(listener, ms);
 
-// @private method to group points by id
-export class PointerTool extends ToolState {
-    id = TOOLS.POINTER;
+export class LaserTool extends ToolState {
+    id = TOOLS.LASER;
 };
