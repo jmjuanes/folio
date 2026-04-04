@@ -21,6 +21,7 @@ import { Bounds } from "../components/bounds.tsx";
 import { Handlers } from "../components/handlers.tsx";
 import { Dimensions } from "../components/dimensions.tsx";
 import { Snaps } from "../components/snaps.tsx";
+import { Pointer } from "../components/pointer.tsx";
 
 // export type for the editor components
 // export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
@@ -56,6 +57,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Handlers: Handlers,
             Dimensions: Dimensions,
             Snaps: Snaps,
+            Pointer: Pointer,
             // general components
             Loading: Loading,
             Layout: Layout,

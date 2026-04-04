@@ -84,7 +84,7 @@ const pointerStyle: React.CSSProperties = {
     WebkitTouchCallout: "none",
 };
 
-export const PointerCanvasOverlay = () => {
+export const Pointer = (): React.JSX.Element => {
     const [points, setPoints] = React.useState<any[]>([]);
     const timer = React.useRef<any>(null);
 

@@ -13,6 +13,7 @@ export const Overlays = (): React.JSX.Element => {
         Dimensions,
         Handlers,
         Snaps,
+        Pointer,
     } = useEditorComponents();
 
     return (
@@ -31,6 +32,9 @@ export const Overlays = (): React.JSX.Element => {
             )}
             {!!Dimensions && editor?.appState?.objectDimensions && (
                 <Dimensions />
+            )}
+            {!!Pointer && tool?.id === TOOLS.POINTER && (
+                <Pointer />
             )}
         </React.Fragment>
     );
