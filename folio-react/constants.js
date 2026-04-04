@@ -371,7 +371,7 @@ export const TOOLS = {
     DRAG: "drag",
     SELECT: "select",
     ERASER: "erase",
-    POINTER: "pointer",
+    LASER: "laser",
     ELEMENT: "element",
 };
 
@@ -407,11 +407,11 @@ export const NOTE_PADDING = 16;
 export const NOTE_PLACEHOLDER = "Type something...";
 
 // Laser pointer constants
-export const POINTER_COLOR = "#e01010";
-export const POINTER_SIZE = 5;
-export const POINTER_DELAY = 1000;
-export const POINTER_INTERVAL_DELAY = 50;
-export const POINTER_TENSION = 0.5 * 12;
+export const LASER_COLOR = "#e01010";
+export const LASER_SIZE = 5;
+export const LASER_FADE_DELAY = 1000;
+export const LASER_FADE_DURATION = 50;
+export const LASER_TENSION = 0.5 * 12;
 
 // Snap constants
 export const SNAP_THRESHOLD = GRID_SIZE / 2;
@@ -487,6 +487,12 @@ export const MINIMAP_POSITION = {
     BOTTOM_LEFT: "bottom-left",
     BOTTOM_RIGHT: "bottom-right",
 };
+
+// eraser tool constants
+export const ERASER_COLOR = "#cbd5e1";
+export const ERASER_SIZE = 16;
+export const ERASER_OPACITY = 0.5;
+export const ERASER_FADE_DELAY = 100;
 
 // editor actions
 export const ACTIONS = {

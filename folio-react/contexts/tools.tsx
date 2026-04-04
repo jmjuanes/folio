@@ -100,14 +100,14 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                     editor.update();
                 },
             },
-            [TOOLS.POINTER]: {
-                id: TOOLS.POINTER,
+            [TOOLS.LASER]: {
+                id: TOOLS.LASER,
                 icon: "laser-pointer",
-                name: "Laser Pointer",
+                name: "Laser",
                 allowedInReadonly: true,
                 shortcut: "l",
                 onSelect: () => {
-                    editor.setCurrentTool(TOOLS.POINTER);
+                    editor.setCurrentTool(TOOLS.LASER);
                     editor.update();
                 },
             },

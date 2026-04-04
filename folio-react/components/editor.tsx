@@ -1,5 +1,5 @@
 import React from "react";
-import { EditorProvider } from "../contexts/editor.tsx";
+import { EditorProvider, useEditor } from "../contexts/editor.tsx";
 import { ContextMenuProvider } from "../contexts/context-menu.tsx";
 import { SurfaceProvider } from "../contexts/surface.tsx";
 import {
@@ -17,14 +17,17 @@ import { Canvas } from "./canvas.tsx";
 import type { ToolsOverrides } from "../contexts/tools.tsx";
 import type { ActionsOverrides } from "../contexts/actions.tsx";
 import type { Library } from "../lib/library.ts";
+import type { PointerSession } from "../lib/pointer.ts";
 
 // @private inner editor component
 const InnerEditor = () => {
+    const editor = useEditor();
     const {
         Layout,
         BehindTheCanvas,
         OverTheCanvas,
         Overlays,
+        Pointer,
     } = useEditorComponents();
 
     return (
@@ -34,6 +37,15 @@ const InnerEditor = () => {
             )}
             <Canvas>
                 <Overlays />
+                {!!Pointer && editor.pointer.getSessions().map((pointerSession: PointerSession) => (
+                    <Pointer
+                        key={pointerSession.id}
+                        points={pointerSession.points}
+                        color={pointerSession.color}
+                        size={pointerSession.size}
+                        opacity={pointerSession.opacity}
+                    />
+                ))}
             </Canvas>
             {!!OverTheCanvas && (
                 <OverTheCanvas />
