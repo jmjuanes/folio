@@ -488,6 +488,12 @@ export const MINIMAP_POSITION = {
     BOTTOM_RIGHT: "bottom-right",
 };
 
+// eraser tool constants
+export const ERASER_COLOR = "#cbd5e1";
+export const ERASER_SIZE = 20;
+export const ERASER_OPACITY = 0.5;
+export const ERASER_FADE_DELAY = 100;
+
 // editor actions
 export const ACTIONS = {
     CUT: "cut",
