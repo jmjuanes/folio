@@ -56,6 +56,14 @@ export const Pointer = (props: PointerProps) => {
             <g opacity={opacity}>
                 {points.length > 2 && (
                     <React.Fragment>
+                        <ellipse
+                            cx={points[0].x}
+                            cy={points[0].y}
+                            rx={size * 0.25}
+                            ry={size * 0.25}
+                            fill={color}
+                            stroke={NONE}
+                        />
                         {steps.map((step, index) => (
                             <path
                                 key={index}
