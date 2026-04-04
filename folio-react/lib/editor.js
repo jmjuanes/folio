@@ -26,10 +26,9 @@ import {
     getElementsBoundingRectangle,
 } from "./elements.js";
 import {
-    parseZoomValue,
-    getTranslateCoordinatesForNewZoom,
     getZoomToFitElements,
 } from "./zoom.js";
+import { PointerManager } from "./pointer.ts";
 // import {
 //     getLibraryStateFromInitialData,
 //     createLibraryComponent,
@@ -274,6 +273,9 @@ export const createEditor = (options = {}) => {
 
         // active snaps edges and points
         snaps: [],
+
+        // pointer manager and pointers list
+        pointer: new PointerManager(editor),
 
         // @description editor size
         width: 0,

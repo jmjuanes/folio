@@ -407,11 +407,11 @@ export const NOTE_PADDING = 16;
 export const NOTE_PLACEHOLDER = "Type something...";
 
 // Laser pointer constants
-export const POINTER_COLOR = "#e01010";
-export const POINTER_SIZE = 5;
-export const POINTER_DELAY = 1000;
-export const POINTER_INTERVAL_DELAY = 50;
-export const POINTER_TENSION = 0.5 * 12;
+export const LASER_COLOR = "#e01010";
+export const LASER_SIZE = 5;
+export const LASER_FADE_DELAY = 1000;
+export const LASER_FADE_DURATION = 50;
+export const LASER_TENSION = 0.5 * 12;
 
 // Snap constants
 export const SNAP_THRESHOLD = GRID_SIZE / 2;
