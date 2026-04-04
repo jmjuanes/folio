@@ -1,11 +1,15 @@
 import { uid } from "uid/secure";
 
+const DEFAULT_OPACITY = 1;
+const DEFAULT_FADE_DELAY = 50;
+const DEFAULT_FADE_DURATION = 50;
+
 export type PointerSessionOptions = {
     color: string;
     size: number;
     opacity?: number;
-    fadeDuration: number;
-    fadeDelay: number;
+    fadeDuration?: number;
+    fadeDelay?: number;
 };
 
 export type PointerPoint = {
@@ -54,11 +58,11 @@ export class PointerManager {
             points: [],
             color: options.color,
             size: options.size,
-            opacity: options.opacity ?? 1,
+            opacity: options.opacity ?? DEFAULT_OPACITY,
             finished: false,
             lastUpdate: Date.now(),
-            fadeDuration: options.fadeDuration,
-            fadeDelay: options.fadeDelay,
+            fadeDuration: options.fadeDuration ?? DEFAULT_FADE_DURATION,
+            fadeDelay: options.fadeDelay ?? DEFAULT_FADE_DELAY,
             timer: null,
         });
         this.startTimer(pointerId);
@@ -125,4 +129,4 @@ export class PointerManager {
             pointer.timer = null;
         }
     }
-}
+};
