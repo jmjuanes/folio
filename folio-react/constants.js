@@ -490,7 +490,7 @@ export const MINIMAP_POSITION = {
 
 // eraser tool constants
 export const ERASER_COLOR = "#cbd5e1";
-export const ERASER_SIZE = 20;
+export const ERASER_SIZE = 16;
 export const ERASER_OPACITY = 0.5;
 export const ERASER_FADE_DELAY = 100;
 
