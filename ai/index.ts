@@ -5,7 +5,7 @@ import cors from "@koa/cors";
 import { ENDPOINTS, API_ERROR_MESSAGES } from "./constants.ts";
 import { HTTP_CODES } from "../server/constants.ts";
 import { createLogger } from "../server/utils/logger.ts";
-import { sendResponse, sendDataResponse, sendErrorResponse } from "../server/utils/response.ts";
+import { sendDataResponse, sendErrorResponse } from "../server/utils/response.ts";
 import { createAssistant } from "./ai.ts";
 import type { Config } from "../server/config.ts";
 
@@ -75,10 +75,7 @@ export const startAiServer = async (config: Config): Promise<any> => {
                 prompt: body?.prompt,
                 messages: body?.messages || [],
             });
-            return sendResponse(context, HTTP_CODES.OK, {
-                data: result.content || {},
-                warnings: result.warnings,
-            });
+            sendDataResponse(context, result);
         }
         catch (response) {
             error(response?.error?.message || response);
