@@ -1,13 +1,13 @@
 import React from "react";
 import {ACTIONS} from "../../constants.js";
-import {useEditor} from "../../contexts/editor.jsx";
-import {useActions} from "../../hooks/use-actions.js";
+import {useEditor} from "../../contexts/editor.tsx";
+import {useActions} from "../../contexts/actions.tsx";
 import {Island} from "../ui/island.tsx";
 
 // History panel component
 export const HistoryPanel = () => {
     const editor = useEditor();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     return (
         <Island>
             <Island.Button

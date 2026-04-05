@@ -33,8 +33,8 @@ export const isRotationHandler = (handler: string): boolean => {
 export const resizeFromFixedCorner = (corner: Point, width: number, height: number, rotation: number, fromCorner: Corner): Point => {
     const cos: number = Math.cos(rotation);
     const sin: number = Math.sin(rotation);
-    const xAxis: [number, number] = [ cos, sin ];       // horizontal
-    const yAxis: [number, number] = [ -sin, cos ];      // vertical
+    const xAxis: [number, number] = [cos, sin];       // horizontal
+    const yAxis: [number, number] = [-sin, cos];      // vertical
 
     // calculate the displacement direction according to the corner
     const dx = fromCorner.includes("right") ? -width : width;
@@ -55,7 +55,7 @@ export const resizeFromFixedCorner = (corner: Point, width: number, height: numb
 // - lockAspect tells us to project onto axisDir, otherwise we keep full local delta.
 export const computeResizeDelta = (delta: Point, angle: number, axisDir: Point, lockAspect: boolean = false): Point => {
     // 1. bring pointer delta into local coords
-    const [ localDelta ] = rotatePoints([ delta ], [ 0, 0 ], -angle);
+    const [localDelta] = rotatePoints([delta], [0, 0], -angle);
     let computedDeltaX = localDelta[0], computedDeltaY = localDelta[1];
     // 2. optionally project onto the “resize axis”
     if (lockAspect) {
@@ -64,7 +64,7 @@ export const computeResizeDelta = (delta: Point, angle: number, axisDir: Point, 
         computedDeltaY = projection * axisDir[1];
     }
     // 3. back to global coords
-    return rotatePoints([ [ computedDeltaX, computedDeltaY ] ], [0, 0], angle)[0];
+    return rotatePoints([[computedDeltaX, computedDeltaY]], [0, 0], angle)[0];
 };
 
 // Clamp the moving corner of a rotated rectangle to the provided minimum width and height.
@@ -76,8 +76,8 @@ export const computeResizeDelta = (delta: Point, angle: number, axisDir: Point, 
 export const clampCornerResizeToMinSize = (fixedCorner: Point, movingCorner: Point, rotation: number, minWidth: number, minHeight: number, corner: Corner): Point => {
     const cos = Math.cos(rotation);
     const sin = Math.sin(rotation);
-    const xAxis: [number, number] = [ cos, sin ];  // horizontal
-    const yAxis: [number, number] = [ -sin, cos ]; // vertical
+    const xAxis: [number, number] = [cos, sin];  // horizontal
+    const yAxis: [number, number] = [-sin, cos]; // vertical
     const vec: [number, number] = [
         movingCorner[0] - fixedCorner[0],
         movingCorner[1] - fixedCorner[1],
@@ -109,7 +109,7 @@ export const clampCornerResizeToMinSize = (fixedCorner: Point, movingCorner: Poi
 export const clampEdgeResizeToMinSize = (fixedCorner: Point, movingPoint: Point, rotation: number, minSize: number, edge: Edge): Point => {
     const cos = Math.cos(rotation);
     const sin = Math.sin(rotation);
-    const axis: [number, number] = (edge === "left" || edge === "right") ? [ cos, sin ] : [ -sin, cos ];
+    const axis: [number, number] = (edge === "left" || edge === "right") ? [cos, sin] : [-sin, cos];
     const vec: [number, number] = [
         movingPoint[0] - fixedCorner[0],
         movingPoint[1] - fixedCorner[1]

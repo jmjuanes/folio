@@ -1,54 +1,19 @@
 import React from "react";
 import { renderIcon } from "@josemi-icons/react";
-import { ACTIONS } from "../constants.js";
-import { useTools } from "../hooks/use-tools.tsx";
-import { useActions } from "../hooks/use-actions.js";
-import { useEditor } from "../contexts/editor.jsx";
+import { useTools } from "../contexts/tools.tsx";
+import { useActions, ActionCategory } from "../contexts/actions.tsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { useSurface } from "../contexts/surface.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
-import { getShortcutByAction } from "../lib/actions.js";
-
-const COMMANDS_LIST = [
-    {
-        label: "Edition",
-        items: [
-            { id: ACTIONS.CUT, label: "Cut", icon: "cut" },
-            { id: ACTIONS.COPY, label: "Copy", icon: "copy" },
-            { id: ACTIONS.PASTE, label: "Paste", icon: "clipboard" },
-            { id: ACTIONS.SELECT_ALL, label: "Select All", icon: "box-selection" },
-            { id: ACTIONS.DELETE_SELECTION, label: "Delete Selection", icon: "trash" },
-            { id: ACTIONS.DUPLICATE_SELECTION, label: "Duplicate Selection", icon: "copy" },
-            { id: ACTIONS.GROUP_SELECTION, label: "Group Selection", icon: "object-group" },
-            { id: ACTIONS.UNGROUP_SELECTION, label: "Ungroup Selection", icon: "object-ungroup" },
-        ],
-    },
-    {
-        label: "Board Actions",
-        items: [
-            { id: ACTIONS.UNDO, label: "Undo", icon: "history-undo" },
-            { id: ACTIONS.REDO, label: "Redo", icon: "history-redo" },
-            { id: ACTIONS.ZOOM_IN, label: "Zoom In", icon: "zoom-in" },
-            { id: ACTIONS.ZOOM_OUT, label: "Zoom Out", icon: "zoom-out" },
-            { id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG, label: "Keyboard Shortcuts", icon: "keyboard" },
-        ],
-    },
-    {
-        label: "Settings",
-        items: [
-            { id: ACTIONS.TOGGLE_GRID, label: "Toggle Grid", icon: "grid" },
-            { id: ACTIONS.TOGGLE_SNAP_TO_ELEMENTS, label: "Toggle Snap to Elements", icon: "magnet" },
-            { id: ACTIONS.TOGGLE_SHOW_DIMENSIONS, label: "Toggle Show Dimensions", icon: "ruler" },
-        ],
-    },
-];
+import type { ActionItem } from "../contexts/actions.tsx";
 
 export type CommandItem = {
     id: string;
     label: string;
-    shortcut?: string;
+    shortcut?: string | string[];
     icon?: React.JSX.Element | string;
     disabled?: boolean;
     execute: () => void;
@@ -76,8 +41,8 @@ const CommandItemWrapper = (props: any): React.JSX.Element => (
 
 export const CommandsContent = (): React.JSX.Element => {
     const editor = useEditor();
-    const tools = useTools();
-    const dispatchAction = useActions();
+    const { getTools } = useTools();
+    const { getActions } = useActions();
     const { clearSurface } = useSurface();
     const [query, setQuery] = React.useState<string>("");
     const [highlightIndex, setHighlightIndex] = React.useState<number>(0);
@@ -86,40 +51,49 @@ export const CommandsContent = (): React.JSX.Element => {
     const commandToExecute = React.useRef<CommandItem | null>(null);
 
     const toolItems = React.useMemo<CommandItem[]>(() => {
-        return Object.entries(tools).map(([toolId, toolData]) => ({
-            id: toolId,
-            label: toolData.name || toolId,
-            shortcut: toolData.keyboardShortcut ? toolData.keyboardShortcut.toUpperCase() : "",
+        return getTools().map(toolData => ({
+            id: toolData.id,
+            label: toolData.name || toolData.id,
+            shortcut: toolData.shortcut ? toolData.shortcut.toUpperCase() : "",
             icon: toolData.icon,
-            disabled: toolData.toolEnabledOnReadOnly === false && editor.page.readonly,
+            disabled: toolData.allowedInReadonly === false && editor.page.readonly,
             execute: () => {
-                if (!(toolData.toolEnabledOnReadOnly === false && editor.page.readonly)) {
-                    toolData.onSelect(editor);
+                if (!(toolData.allowedInReadonly === false && editor.page.readonly)) {
+                    toolData.onSelect();
                 }
             },
         } as CommandItem));
-    }, [tools, editor]);
+    }, [getTools, editor]);
 
     // join all available actions and tools into a single list and filter based on the query
     const groups = React.useMemo<CommandGroup[]>(() => {
-        const defaultCommands: CommandGroup[] = COMMANDS_LIST.map(group => ({
-            label: group.label,
-            items: group.items.map(groupItem => ({
-                id: groupItem.id,
-                label: groupItem.label,
-                icon: groupItem.icon,
-                shortcut: getShortcutByAction(groupItem.id),
-                execute: () => dispatchAction(groupItem.id),
-            })),
-        }));
+        // 1. get only the actions that has a category and an associated name
+        const availableActions = getActions().filter((action: ActionItem) => {
+            return !!action.category && !!action.name;
+        });
+        // 2. group action items
+        const actionCommands: CommandGroup[] = Object.values(ActionCategory).map((category: string) => {
+            const actions = availableActions.filter(action => action.category === category);
+            return {
+                label: category,
+                items: actions.map(action => ({
+                    id: action.id,
+                    label: action.name,
+                    icon: action.icon,
+                    shortcut: action.shortcut,
+                    execute: () => action.onSelect(),
+                })),
+            } as CommandGroup;
+        });
+        // 3. merge with tools
         return [
             {
                 label: "Tools",
                 items: toolItems,
             },
-            ...defaultCommands,
+            ...actionCommands.filter(command => command.items.length > 0),
         ];
-    }, [toolItems]);
+    }, [toolItems, getActions]);
 
     // get filtered items based on the query - match against label and shortcut
     const filteredGroups = React.useMemo<CommandGroup[]>(() => {

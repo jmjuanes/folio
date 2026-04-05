@@ -7,7 +7,7 @@ import {
 import { Button } from "folio-react/components/ui/button.jsx";
 import { Centered } from "folio-react/components/ui/centered.tsx";
 import { Overlay } from "folio-react/components/ui/overlay.tsx";
-import { useEditor } from "folio-react/contexts/editor.jsx";
+import { useEditor } from "folio-react/contexts/editor.tsx";
 import { loadFromJson } from "folio-react/lib/json.js";
 
 const defaultWelcomeFeatures = [

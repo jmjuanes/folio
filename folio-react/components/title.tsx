@@ -1,12 +1,12 @@
 import React from "react";
 import classNames from "classnames";
-import { useEditor } from "../contexts/editor.jsx";
+import { useEditor } from "../contexts/editor.tsx";
 
 export const Title = (): React.JSX.Element => {
     const editor = useEditor();
     const title = editor.title || "Untitled";
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [ editing, setEditing ] = React.useState<Boolean>(false);
+    const [editing, setEditing] = React.useState<Boolean>(false);
     const editable = true; // TODO: check editor if data is editable
     const previewClass = classNames({
         "flex items-center leading-none p-2 w-full rounded-md": true,
@@ -19,7 +19,7 @@ export const Title = (): React.JSX.Element => {
         if (editable && editing && inputRef?.current) {
             inputRef.current.focus();
         }
-    }, [ editable && editing ]);
+    }, [editable && editing]);
 
     // handle title change
     const handleChange = React.useCallback((newTitle: string) => {
@@ -28,7 +28,7 @@ export const Title = (): React.JSX.Element => {
             editor.title = newTitle;
             editor.dispatchChange();
         }
-    }, [ editor ]);
+    }, [editor]);
 
     return (
         <div className="flex max-w-56">

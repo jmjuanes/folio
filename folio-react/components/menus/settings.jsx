@@ -4,7 +4,7 @@ import { BACKGROUND_COLOR_PALETTE } from "../../utils/colors.js";
 import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.tsx";
 import { Form } from "../form/index.jsx";
-import { useEditor } from "../../contexts/editor.jsx";
+import { useEditor } from "../../contexts/editor.tsx";
 
 // settings fields
 const FIELDS = {

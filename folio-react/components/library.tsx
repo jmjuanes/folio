@@ -6,8 +6,8 @@ import { ACTIONS } from "../constants.js";
 import { Button } from "../components/ui/button.jsx";
 import { Panel } from "./ui/panel.tsx";
 import { useLibrary } from "../contexts/library.tsx";
-import { useActions } from "../hooks/use-actions.js";
-import { useEditor } from "../contexts/editor.jsx";
+import { useActions } from "../contexts/actions.tsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { formatDate } from "../utils/dates.ts";
 import type { LibraryCollection, LibraryComponent } from "../lib/library.ts";
 
@@ -44,7 +44,7 @@ export const LibraryComponentIcon = ({ thumbnail, onClick }: LibraryComponentIco
         "hover:border-gray-300 cursor-pointer": typeof onClick === "function",
     });
     return (
-        <div className={className} onClick={onClick}> 
+        <div className={className} onClick={onClick}>
             <img src={thumbnail} width="100%" height="100%" />
         </div>
     );
@@ -98,11 +98,11 @@ export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
 
 // @description library container
 export const Library = (): React.JSX.Element => {
-    const [ activeCollection, setActiveCollection ] = React.useState<LibraryCollection | null>(null);
-    const [ activeComponent, setActiveComponent ] = React.useState<LibraryComponent | null>(null);
+    const [activeCollection, setActiveCollection] = React.useState<LibraryCollection | null>(null);
+    const [activeComponent, setActiveComponent] = React.useState<LibraryComponent | null>(null);
     const editor = useEditor();
     const library = useLibrary();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const components = library?.getComponents() || [];
     const collections = library?.getCollections() || [];
 
@@ -120,7 +120,7 @@ export const Library = (): React.JSX.Element => {
             return components;
         }
         return [];
-    }, [ components.length, collections.length, activeCollection, activeComponent ]);
+    }, [components.length, collections.length, activeCollection, activeComponent]);
 
     // hook to check if we have to clear the active collection or the active item
     React.useEffect(() => {
@@ -137,7 +137,7 @@ export const Library = (): React.JSX.Element => {
                 setActiveCollection(null);
             }
         }
-    }, [ components.length, collections.length ]);
+    }, [components.length, collections.length]);
 
     return (
         <Panel.Content>

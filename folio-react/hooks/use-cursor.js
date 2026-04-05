@@ -1,5 +1,5 @@
 import {CURSORS, TOOLS} from "../constants.js";
-import {useEditor} from "../contexts/editor.jsx";
+import {useEditor} from "../contexts/editor.tsx";
 
 export const useCursor = () => {
     const editor = useEditor();

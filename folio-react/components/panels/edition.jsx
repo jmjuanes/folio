@@ -66,8 +66,8 @@ import {
 } from "../icons.jsx";
 import {Panel} from "../ui/panel.tsx";
 import {Form} from "../form/index.jsx";
-import {useEditor} from "../../contexts/editor.jsx";
-import {useActions} from "../../hooks/use-actions.js";
+import {useEditor} from "../../contexts/editor.tsx";
+import {useActions} from "../../contexts/actions.tsx";
 
 // Available sections
 const SECTIONS = {
@@ -336,7 +336,7 @@ const getVisibleSections = (sections, values) => {
 
 export const EditionPanel = () => {
     const editor = useEditor();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const selectedElements = editor.getSelection();
     const [activeSection, setActiveSection] = React.useState("");
     const values = useValues(selectedElements);

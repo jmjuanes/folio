@@ -4,8 +4,8 @@ import { BarsIcon, LockIcon, DotsIcon } from "@josemi-icons/react";
 import { ACTIONS, EXPORT_PADDING } from "../../constants.js";
 import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.tsx";
-import { useActions } from "../../hooks/use-actions.js";
-import { useEditor } from "../../contexts/editor.jsx";
+import { useActions } from "../../contexts/actions.tsx";
+import { useEditor } from "../../contexts/editor.tsx";
 import { exportToDataURL } from "../../lib/export.js";
 import type { Page } from "../../lib/pages.ts";
 
@@ -159,7 +159,7 @@ const initializeSortedPages = (pages: Page[]) => {
 // @description content of the pages menu component
 export const PagesMenuContent = (): React.JSX.Element => {
     const editor = useEditor();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const [sortedPages, setSortedPages] = React.useState(() => {
         return initializeSortedPages(editor.pages);
     });

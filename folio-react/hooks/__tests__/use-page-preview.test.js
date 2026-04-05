@@ -3,7 +3,7 @@ import { renderHook, waitFor} from "@testing-library/react";
 
 const BASE_64_DATA = "data:image/png;base64,aaaa";
 
-jest.unstable_mockModule("../../contexts/editor.jsx", () => ({
+jest.unstable_mockModule("../../contexts/editor.tsx", () => ({
     useEditor: jest.fn(() => ({
         assets: {},
         background: "#fff",

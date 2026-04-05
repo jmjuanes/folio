@@ -2,8 +2,8 @@ import React from "react";
 import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../../constants.js";
 import { Island } from "../ui/island.tsx";
 import { Dropdown } from "../ui/dropdown.tsx";
-import { useEditor } from "../../contexts/editor.jsx";
-import { useActions } from "../../hooks/use-actions.js";
+import { useEditor } from "../../contexts/editor.tsx";
+import { useActions } from "../../contexts/actions.tsx";
 
 const ZoomDropdownItem = props => (
     <Dropdown.Item disabled={props.disabled} onClick={props.onClick}>
@@ -14,7 +14,7 @@ const ZoomDropdownItem = props => (
 
 export const ZoomPanel = () => {
     const editor = useEditor();
-    const dispatchAction = useActions();
+    const { dispatchAction } = useActions();
     const zoom = editor.getZoom();
     const selection = editor.getSelection();
     return (
