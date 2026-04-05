@@ -19,7 +19,7 @@ const getPointerPosition = (event: EditorPointEvent): [number, number] => {
 
 export class EraserTool extends ToolState {
     id = TOOLS.ERASER;
-    private pointerId: string | null = null;
+    private sessionId: string | null = null;
 
     onEnter() {
         // when entering in the eraser tool, reset the erased key in all elements
@@ -27,23 +27,30 @@ export class EraserTool extends ToolState {
         this.editor.getElements().forEach((element: any) => {
             element.erased = false;
         });
-        this.pointerId = null;
+        this.sessionId = null;
+    }
+
+    onExit() {
+        if (this.sessionId) {
+            this.editor.pointer.removeSession(this.sessionId);
+            this.sessionId = null;
+        }
     }
 
     onPointerDown(event: EditorPointEvent) {
         const [x, y] = getPointerPosition(event);
-        this.pointerId = this.editor.pointer.start({
+        this.sessionId = this.editor.pointer.startSession({
             color: ERASER_COLOR,
             size: ERASER_SIZE,
             opacity: ERASER_OPACITY,
             fadeDelay: ERASER_FADE_DELAY,
         });
-        this.editor.pointer.addPoint(this.pointerId, x, y);
+        this.editor.pointer.addPoint(this.sessionId, x, y);
     }
 
     onPointerMove(event: EditorPointEvent) {
         const [x, y] = getPointerPosition(event);
-        this.editor.pointer.addPoint(this.pointerId, x, y);
+        this.editor.pointer.addPoint(this.sessionId, x, y);
         this.editor.getElements().forEach((element: any) => {
             if (!element.erased) {
                 const b = element.type === ELEMENTS.ARROW ? getElementNormalizedPosition(element) : element;
@@ -54,10 +61,10 @@ export class EraserTool extends ToolState {
         });
     }
 
-    onPointerUp(event: EditorPointEvent) {
-        if (this.pointerId) {
-            this.editor.pointer.finish(this.pointerId);
-            this.pointerId = null;
+    onPointerUp() {
+        if (this.sessionId) {
+            this.editor.pointer.finishSession(this.sessionId);
+            this.sessionId = null;
         }
         // get the elements that has to be removed from the board
         const erasedElements = this.editor.getElements().filter((element: any) => {
