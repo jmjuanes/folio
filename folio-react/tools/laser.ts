@@ -12,14 +12,25 @@ export class LaserTool extends ToolState {
     id = TOOLS.LASER;
     sessionId: string | null = null;
 
+    onEnter() {
+        this.sessionId = null;
+    }
+
+    onExit() {
+        if (this.sessionId) {
+            this.editor.pointer.removeSession(this.sessionId);
+            this.sessionId = null;
+        }
+    }
+
     onPointerDown(event: EditorPointEvent) {
-        this.sessionId = this.editor.pointer.start({
+        this.sessionId = this.editor.pointer.startSession({
             color: LASER_COLOR,
             size: LASER_SIZE,
             fadeDelay: LASER_FADE_DELAY,
             fadeDuration: LASER_FADE_DURATION,
         });
-        this.editor.pointer.addPoint(this.sessionId!, event.originalX, event.originalY);
+        this.editor.pointer.addPoint(this.sessionId, event.originalX, event.originalY);
     }
 
     onPointerMove(event: EditorPointEvent) {
@@ -32,7 +43,7 @@ export class LaserTool extends ToolState {
 
     onPointerUp() {
         if (this.sessionId) {
-            this.editor.pointer.finish(this.sessionId);
+            this.editor.pointer.finishSession(this.sessionId);
             this.sessionId = null;
         }
     }

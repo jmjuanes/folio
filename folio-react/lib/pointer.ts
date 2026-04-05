@@ -33,28 +33,36 @@ export type PointerSession = {
 
 export class PointerManager {
     private editor: any;
-    private pointers: PointerSession[];
+    private sessions: PointerSession[];
 
     constructor(editor: any) {
         this.editor = editor;
-        this.pointers = [];
+        this.sessions = [];
     }
 
     // @description get all pointer sessions
     getSessions(): PointerSession[] {
-        return this.pointers || [];
+        return this.sessions || [];
     }
 
     // @description get a pointer session by id
-    getSession(pointerId: string): PointerSession | undefined {
-        return this.pointers.find((p: PointerSession) => p.id === pointerId);
+    getSession(sessionId: string): PointerSession | undefined {
+        return this.sessions.find((session: PointerSession) => session.id === sessionId);
+    }
+
+    // @description clear all sessions
+    clearSessions() {
+        this.sessions.forEach((session: PointerSession) => {
+            clearInterval(session.timer);
+        });
+        this.sessions = [];
     }
 
     // @description start a new pointer effect
-    start(options: PointerSessionOptions): string {
-        const pointerId = uid(20);
-        this.pointers.push({
-            id: pointerId,
+    startSession(options: PointerSessionOptions): string {
+        const sessionId = uid(20);
+        this.sessions.push({
+            id: sessionId,
             points: [],
             color: options.color,
             size: options.size,
@@ -65,13 +73,13 @@ export class PointerManager {
             fadeDelay: options.fadeDelay ?? DEFAULT_FADE_DELAY,
             timer: null,
         });
-        this.startTimer(pointerId);
-        return pointerId;
+        this.startTimer(sessionId);
+        return sessionId;
     }
 
     // @description Add a point to an existing pointer effect
-    addPoint(pointerId: string, x: number, y: number) {
-        const pointer = this.getSession(pointerId);
+    addPoint(sessionId: string, x: number, y: number) {
+        const pointer = this.getSession(sessionId);
         if (pointer && !pointer.finished) {
             pointer.points.push({ x, y, time: Date.now() });
             pointer.lastUpdate = Date.now();
@@ -80,8 +88,8 @@ export class PointerManager {
     }
 
     // @description Mark a pointer effect as finished
-    finish(pointerId: string) {
-        const pointer = this.getSession(pointerId);
+    finishSession(sessionId: string) {
+        const pointer = this.getSession(sessionId);
         if (pointer) {
             pointer.finished = true;
             this.editor.update();
@@ -89,15 +97,15 @@ export class PointerManager {
     }
 
     // @description Remove a pointer effect
-    remove(pointerId: string) {
-        this.stopTimer(pointerId); // stop the timer before removing the pointer session
-        this.pointers = this.pointers.filter((p: any) => p.id !== pointerId);
+    removeSession(sessionId: string) {
+        this.stopTimer(sessionId); // stop the timer before removing the pointer session
+        this.sessions = this.sessions.filter((session: PointerSession) => session.id !== sessionId);
         this.editor.update();
     }
 
     // @description Timer to handle fading/removal of points
-    startTimer(pointerId: string) {
-        const pointer = this.getSession(pointerId);
+    private startTimer(sessionId: string) {
+        const pointer = this.getSession(sessionId);
         if (pointer && !pointer.timer) {
             pointer.timer = setInterval(() => {
                 const now = Date.now();
@@ -111,7 +119,7 @@ export class PointerManager {
 
                 // if finished and no points left, we can remove it
                 if (pointer.finished && pointer.points.length === 0) {
-                    return this.remove(pointer.id);
+                    return this.removeSession(pointer.id);
                 }
 
                 // check if we have to perform an update
@@ -122,8 +130,8 @@ export class PointerManager {
         }
     }
 
-    stopTimer(pointerId: string) {
-        const pointer = this.getSession(pointerId);
+    private stopTimer(sessionId: string) {
+        const pointer = this.getSession(sessionId);
         if (pointer && pointer?.timer) {
             clearInterval(pointer.timer);
             pointer.timer = null;
