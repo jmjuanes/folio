@@ -373,6 +373,7 @@ export const TOOLS = {
     ERASER: "erase",
     LASER: "laser",
     ELEMENT: "element",
+    GENERATE_ELEMENTS: "generateElements",
 };
 
 export const CHANGES = {
