@@ -503,5 +503,18 @@ describe("editor", () => {
             expect(editor.pages).toHaveLength(2);
             expect(editor.page.title).not.toEqual(editor.pages[0].title);
         });
+
+        describe("editor.clearPage", () => {
+            it("should allow to clear content of the specified page", () => {
+                editor.elements = [
+                    {id: "el0", page: editor.page.id},
+                    {id: "el1", page: editor.page.id},
+                    {id: "el2", page: "otherPageId"},
+                ];
+                expect(editor.elements).toHaveLength(3);
+                editor.clearPage(editor.page.id);
+                expect(editor.elements).toHaveLength(1);
+            });
+        });
     });
 });
