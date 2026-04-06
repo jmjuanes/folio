@@ -411,12 +411,19 @@ export const createEditor = (options = {}) => {
         },
 
         // @description clear the content of the provided page
-        clearPage: id => {
+        clearPage: (id = "") => {
+            // 1. remove all elements on this page
+            editor.elements = editor.elements.filter(element => {
+                return element.page !== id;
+            });
+            // 2. reset page attributes
             Object.assign(editor.getPage(id), {
-                elements: [],
                 history: [], // remove all history
                 historyIndex: 0,
                 activeGroup: null,
+                translateX: 0,
+                translateY: 0,
+                zoom: ZOOM_DEFAULT,
             });
         },
 
