@@ -17,6 +17,8 @@ export type AiPromptInputProps = {
 };
 
 export type AiPromptSubmitProps = {
+    icon?: string;
+    text?: string;
     className?: string;
     disabled?: boolean;
     onClick?: () => void;
@@ -148,14 +150,19 @@ export const Ai: AiComponents = {
     },
     PromptSubmit: (props: AiPromptSubmitProps): React.JSX.Element => {
         const buttonClassName = classNames({
-            "border-0 flex items-center rounded-full p-2 text-lg": true,
+            "border-0 flex items-center rounded-full p-2": true,
             "bg-gray-950 hover:bg-gray-900 text-white": true,
             "cursor-pointer": !props.disabled,
             "opacity-60 cursor-not-allowed": !!props.disabled,
         }, props.className);
         return (
             <button className={buttonClassName} onClick={props.onClick}>
-                {renderIcon("arrow-up")}
+                <div className="flex items-center text-lg">
+                    {renderIcon(props.icon ?? "arrow-up")}
+                </div>
+                {!!props.text && (
+                    <div className="text-sm leading-none">{props.text}</div>
+                )}
             </button>
         );
     },

@@ -3,6 +3,7 @@ import { HandTool } from "./hand.ts";
 import { EraserTool } from "./eraser.ts";
 import { LaserTool } from "./laser.ts";
 import { ElementTool } from "./element.ts";
+import { GenerateElementsTool } from "./generate-elements.ts";
 
 export const defaultTools = [
     SelectTool,
@@ -10,4 +11,5 @@ export const defaultTools = [
     LaserTool,
     EraserTool,
     ElementTool,
+    GenerateElementsTool,
 ];

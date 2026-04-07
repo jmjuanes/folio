@@ -22,6 +22,7 @@ import { Handlers } from "../components/handlers.tsx";
 import { Dimensions } from "../components/dimensions.tsx";
 import { Snaps } from "../components/snaps.tsx";
 import { Pointer } from "../components/pointer.tsx";
+import { Generate } from "../components/generate.tsx";
 
 // export type for the editor components
 // export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
@@ -78,6 +79,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Toolbar: Toolbar,
             Picks: Picks,
             Layers: Layers,
+            Generate: Generate,
             Title: null,
             Library: null,
             // ai components
