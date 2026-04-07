@@ -23,4 +23,11 @@ export class SelectTool extends ToolState {
     onEnter(params: any) {
         this.transition("idle", params);
     }
+
+    onExit() {
+        // when exiting selection tool, we have to reset the current selection
+        // this is necessary to hide the edition panel, displayed only if that is at least one element
+        // selected
+        this.editor.clearSelection();
+    }
 };
