@@ -14,13 +14,17 @@ export enum AiTool {
     GENERATE_SVG = "generateSvg",
 };
 
+export enum AiChatMessageType {
+    TEXT = "text",
+    ELEMENTS = "elements",
+};
+
 export type AiChatMessage = {
     id: string;
     role: AiChatMessageRole;
-    text?: string;
-    elements?: any[];
+    type: AiChatMessageType;
+    content: any;
     timestamp?: string;
-    loading?: boolean;
 };
 
 export type AiChat = {
@@ -131,6 +135,8 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
                     id: uid(20),
                     timestamp: new Date().toISOString(),
                     role: AiChatMessageRole.USER,
+                    type: AiChatMessageType.TEXT,
+                    content: "",
                     ...messageData,
                 };
                 setChatState((prevState: AiChat[] | null) => {
@@ -169,18 +175,17 @@ export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
         } as AiChatManager;
         const toolsManager = {
             generateElements: (prompt: string, messages: AiChatMessage[]) => {
-                // const validMessages = (messages || []).filter(message => !message.loading);
                 // 1. update the requests performed to the server
                 quotas.current.lastRequestDate = new Date(); // update last request date
-                quotas.current.requestsUsed = quotas.current.requestsUsed + 1; // increment requests count
+                quotas.current.requestsUsed = (quotas?.current?.requestsUsed ?? 0) + 1; // increment requests count
                 // 2. perform the request to the ai service
                 return api("POST", "/_ai/generateElements", {
                     prompt: prompt,
                     messages: messages.map((message: AiChatMessage) => {
                         return {
                             role: message.role,
-                            text: message.text,
-                            elements: message.elements,
+                            type: message.type,
+                            content: message.content,
                         };
                     }),
                 });
