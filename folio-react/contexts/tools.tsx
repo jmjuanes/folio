@@ -121,16 +121,6 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                     editor.update();
                 },
             },
-            [TOOLS.GENERATE_ELEMENTS]: {
-                id: TOOLS.GENERATE_ELEMENTS,
-                icon: "sparkles",
-                name: "Generate Elements using AI",
-                shortcut: "g",
-                onSelect: () => {
-                    editor.setCurrentTool(TOOLS.GENERATE_ELEMENTS);
-                    editor.update();
-                },
-            },
             [ELEMENTS.SHAPE]: {
                 id: ELEMENTS.SHAPE,
                 icon: "square",

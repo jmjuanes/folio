@@ -19,6 +19,7 @@ export enum ActionCategory {
     EDITION = "Edition",
     BOARD_ACTIONS = "Board Actions",
     SETTINGS = "Settings",
+    AI = "AI",
 };
 
 export type ActionItem = {
@@ -90,6 +91,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
         KeyboardShortcuts,
         ExportDialog,
         Commands,
+        AiGenerateElements,
     } = useEditorComponents();
 
     const actions = React.useMemo<ActionItem[]>(() => {
@@ -798,6 +800,19 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                     showSurface("commands", () => (
                         <Commands />
                     ));
+                },
+            },
+            [ACTIONS.AI_GENERATE_ELEMENTS]: {
+                id: ACTIONS.AI_GENERATE_ELEMENTS,
+                icon: "sparkles",
+                name: "Generate Elements using AI",
+                category: ActionCategory.AI,
+                onSelect: () => {
+                    if (!!AiGenerateElements) {
+                        showSurface("aiGenerateElements", () => (
+                            <AiGenerateElements />
+                        ));
+                    }
                 },
             },
         }) as ActionItem[];

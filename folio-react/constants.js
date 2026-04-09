@@ -373,7 +373,6 @@ export const TOOLS = {
     ERASER: "erase",
     LASER: "laser",
     ELEMENT: "element",
-    GENERATE_ELEMENTS: "generateElements",
 };
 
 export const CHANGES = {
@@ -545,6 +544,8 @@ export const ACTIONS = {
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
     SHOW_COMMANDS: "show-commands",
+    AI_GENERATE_ELEMENTS: "ai-generate-elements",
+    AI_TRANSFORM_ELEMENTS: "ai-transform-elements",
 };
 
 export const PREFERENCES = {

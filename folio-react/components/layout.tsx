@@ -1,5 +1,4 @@
 import React from "react";
-import { renderIcon } from "@josemi-icons/react";
 import { Panel } from "./ui/panel.tsx";
 import { Island } from "./ui/island.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
@@ -15,14 +14,7 @@ export type LayoutProps = {
 
 export enum SidebarTab {
     LIBRARY = "library",
-    AI = "ai",
 };
-
-// list of sidebar tabs
-export const sidebarTabs = [
-    { value: SidebarTab.LIBRARY, label: "Library", icon: "album" },
-    { value: SidebarTab.AI, label: "AI", icon: "sparkles" },
-];
 
 // @description: default editor layout
 // @param {object} props React props
@@ -30,7 +22,6 @@ export const sidebarTabs = [
 export const Layout = (props: LayoutProps): React.JSX.Element => {
     const hideUi = props.hideUi ?? false;
     const [layersVisible, setLayersVisible] = React.useState(false);
-    const [sidebarVisible, setSidebarVisible] = React.useState(false);
     const [sidebarTab, setSidebarTab] = React.useState<SidebarTab | null>(null);
     const editor = useEditor();
     const preferences = usePreferences();
@@ -47,14 +38,21 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
         Minimap,
         ZoomPanel,
         Library,
-        AiChat,
+        AiGenerateElements,
     } = useEditorComponents();
+
+    // toggle active sidebar tab
+    const toggleSidebarTab = React.useCallback((newSidebarTab: SidebarTab) => {
+        setSidebarTab((prevSidebarTab: SidebarTab | null) => {
+            return prevSidebarTab !== newSidebarTab ? newSidebarTab : null;
+        });
+    }, [setSidebarTab]);
 
     // we need the selected elements list to display the edition panel
     const selectedElements = editor.getSelection();
     const isLibraryEnabled = !!preferences[PREFERENCES.LIBRARY_ENABLED] && !!Library;
-    const isAiChatEnabled = !!preferences[PREFERENCES.AI_ENABLED] && !!AiChat;
-    const showSidebarButton = isLibraryEnabled || isAiChatEnabled;
+    // const isAiChatEnabled = !!preferences[PREFERENCES.AI_ENABLED] && !!AiGenerateElements;
+    const showSidebarButtons = isLibraryEnabled;
 
     return (
         <React.Fragment>
@@ -78,13 +76,12 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                 {!!PagesMenu && <PagesMenu />}
                                 {!!SettingsMenu && <SettingsMenu />}
                                 <Island.Separator />
-                                {isAiChatEnabled && (
+                                {!!preferences[PREFERENCES.AI_ENABLED] && !!AiGenerateElements && (
                                     <Island.Button
                                         icon="sparkles"
                                         iconClassName="text-white"
                                         onClick={() => {
-                                            setSidebarVisible(true);
-                                            setSidebarTab(SidebarTab.AI);
+                                            dispatchAction(ACTIONS.AI_GENERATE_ELEMENTS);
                                         }}
                                         style={{
                                             background: "linear-gradient(60deg, #4A74E6, #8D54E9)",
@@ -100,7 +97,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                 />
                             </Island>
                         </div>
-                        {(!!HistoryPanel || !!ZoomPanel || !!Layers || showSidebarButton) && (
+                        {(!!HistoryPanel || !!ZoomPanel || !!Layers || showSidebarButtons) && (
                             <div className="absolute top-0 right-0 pt-4 pr-4 z-30 flex gap-2 pointer-events-auto">
                                 {!!HistoryPanel && <HistoryPanel />}
                                 {!!ZoomPanel && <ZoomPanel />}
@@ -113,18 +110,14 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                         />
                                     </Island>
                                 )}
-                                {showSidebarButton && (
+                                {showSidebarButtons && (
                                     <Island>
                                         <Island.Button
-                                            icon="sidebar-right"
+                                            icon="album"
                                             onClick={() => {
-                                                // note: the default active tab when the sidebar is visible is one of the two available tabs
-                                                // we set it to the library tab if the library is enabled, otherwise we set it to the AI tab
-                                                setSidebarVisible(!sidebarVisible);
-                                                // setSidebarTab(isLibraryEnabled ? SidebarTab.LIBRARY : SidebarTab.AI);
-                                                setSidebarTab(SidebarTab.AI);
+                                                toggleSidebarTab(SidebarTab.LIBRARY);
                                             }}
-                                            active={sidebarVisible}
+                                            active={!!sidebarTab}
                                         />
                                     </Island>
                                 )}
@@ -157,28 +150,11 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                             </div>
                         )}
                     </div>
-                    {sidebarVisible && (
-                        <div className="shrink-0 w-88 h-full pointer-events-auto">
+                    {!!sidebarTab && (
+                        <div className="shrink-0 w-80 h-full pointer-events-auto">
                             <Panel className="relative h-full rounded-tr-none rounded-br-none overflow-hidden flex flex-col min-h-0">
-                                {isLibraryEnabled && isAiChatEnabled && (
-                                    <Panel.Tabs>
-                                        {sidebarTabs.map((tab: any) => (
-                                            <Panel.TabsItem key={tab.value} active={sidebarTab === tab.value} onClick={() => setSidebarTab(tab.value)}>
-                                                <div className="flex items-center gap-1">
-                                                    <div className="flex items-center">
-                                                        {renderIcon(tab.icon)}
-                                                    </div>
-                                                    <div className="text-sm font-bold">{tab.label}</div>
-                                                </div>
-                                            </Panel.TabsItem>
-                                        ))}
-                                    </Panel.Tabs>
-                                )}
-                                {sidebarTab === SidebarTab.LIBRARY && isLibraryEnabled && (
+                                {isLibraryEnabled && (
                                     <Library />
-                                )}
-                                {sidebarTab === SidebarTab.AI && isAiChatEnabled && (
-                                    <AiChat />
                                 )}
                             </Panel>
                         </div>
