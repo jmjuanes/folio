@@ -27,6 +27,8 @@ import {
 } from "./elements.js";
 import {
     getZoomToFitElements,
+    getTranslateCoordinatesForNewZoom,
+    parseZoomValue,
 } from "./zoom.js";
 import { PointerManager } from "./pointer.ts";
 // import {
