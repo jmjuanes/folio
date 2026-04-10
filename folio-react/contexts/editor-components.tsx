@@ -10,7 +10,7 @@ import { SettingsMenu } from "../components/menus/settings.jsx";
 import { Commands } from "../components/commands.tsx";
 import { EditionPanel } from "../components/panels/edition.jsx";
 import { HistoryPanel } from "../components/panels/history.jsx";
-import { ZoomPanel } from "../components/panels/zoom.jsx";
+import { Zoom } from "../components/zoom.tsx";
 import { Minimap } from "../components/minimap.tsx";
 import { Toolbar } from "../components/toolbar.tsx";
 import { Picks } from "../components/picks.tsx";
@@ -73,7 +73,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             // panels
             EditionPanel: EditionPanel,
             HistoryPanel: HistoryPanel,
-            ZoomPanel: ZoomPanel,
+            Zoom: Zoom,
             Minimap: Minimap,
             Toolbar: Toolbar,
             Picks: Picks,
