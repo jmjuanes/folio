@@ -1,18 +1,25 @@
 import React from "react";
-import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../../constants.js";
-import { Island } from "../ui/island.tsx";
-import { Dropdown } from "../ui/dropdown.tsx";
-import { useEditor } from "../../contexts/editor.tsx";
-import { useActions } from "../../contexts/actions.tsx";
+import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../constants.js";
+import { Island } from "./ui/island.tsx";
+import { Dropdown } from "./ui/dropdown.tsx";
+import { useEditor } from "../contexts/editor.tsx";
+import { useActions } from "../contexts/actions.tsx";
 
-const ZoomDropdownItem = props => (
+type ZoomDropdownItemProps = {
+    disabled?: boolean,
+    icon: string,
+    text: string,
+    onClick: () => void,
+};
+
+const ZoomDropdownItem = (props: ZoomDropdownItemProps): React.JSX.Element => (
     <Dropdown.Item disabled={props.disabled} onClick={props.onClick}>
         <Dropdown.Icon icon={props.icon} />
         <span>{props.text}</span>
     </Dropdown.Item>
 );
 
-export const ZoomPanel = () => {
+export const Zoom = (): React.JSX.Element => {
     const editor = useEditor();
     const { dispatchAction } = useActions();
     const zoom = editor.getZoom();
@@ -26,7 +33,7 @@ export const ZoomPanel = () => {
                     dispatchAction(ACTIONS.ZOOM_OUT);
                 }}
             />
-            <div className="flex items-center justify-center w-16 h-full select-none relative group" tabIndex="0">
+            <div className="flex items-center justify-center w-16 h-full select-none relative group" tabIndex={0}>
                 <Island.Button
                     className="text-xs"
                     text={(

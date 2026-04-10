@@ -45,7 +45,7 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
         EditionPanel,
         HistoryPanel,
         Minimap,
-        ZoomPanel,
+        Zoom,
         Library,
         AiChat,
     } = useEditorComponents();
@@ -100,10 +100,10 @@ export const Layout = (props: LayoutProps): React.JSX.Element => {
                                 />
                             </Island>
                         </div>
-                        {(!!HistoryPanel || !!ZoomPanel || !!Layers || showSidebarButton) && (
+                        {(!!HistoryPanel || !!Zoom || !!Layers || showSidebarButton) && (
                             <div className="absolute top-0 right-0 pt-4 pr-4 z-30 flex gap-2 pointer-events-auto">
                                 {!!HistoryPanel && <HistoryPanel />}
-                                {!!ZoomPanel && <ZoomPanel />}
+                                {!!Zoom && <Zoom />}
                                 {!!Layers && (
                                     <Island>
                                         <Island.Button

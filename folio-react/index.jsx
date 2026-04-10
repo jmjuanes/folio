@@ -103,7 +103,7 @@ export {
 } from "./components/menus/settings.jsx";
 export {EditionPanel} from "./components/panels/edition.jsx";
 export {HistoryPanel} from "./components/panels/history.jsx";
-export {ZoomPanel} from "./components/panels/zoom.jsx";
+export { Zoom } from "./components/zoom.tsx";
 
 export {
     renderElement,
