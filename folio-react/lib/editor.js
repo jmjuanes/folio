@@ -29,7 +29,7 @@ import {
     getZoomToFitElements,
     getTranslateCoordinatesForNewZoom,
     parseZoomValue,
-} from "./zoom.js";
+} from "./zoom.ts";
 import { PointerManager } from "./pointer.ts";
 // import {
 //     getLibraryStateFromInitialData,
@@ -1233,9 +1233,7 @@ export const createEditor = (options = {}) => {
         // @description set current zoom
         setZoom: (value = ZOOM_DEFAULT) => {
             const newZoom = Math.round(parseZoomValue(value, true) * 10) / 10;
-            const {translateX, translateY} = getTranslateCoordinatesForNewZoom(newZoom, {
-                width: editor.width,
-                height: editor.height,
+            const { translateX, translateY } = getTranslateCoordinatesForNewZoom(newZoom, editor.width, editor.height, {
                 translateX: editor.page.translateX,
                 translateY: editor.page.translateY,
                 zoom: editor.page.zoom,
@@ -1253,10 +1251,7 @@ export const createEditor = (options = {}) => {
         fitZoomToSelection: (elements = []) => {
             const selection = elements.length > 0 ? elements : editor.getElements();
             if (selection.length > 0) {
-                const {zoom, translateX, translateY} = getZoomToFitElements(selection, {
-                    width: editor.width,
-                    height: editor.height,
-                });
+                const { zoom, translateX, translateY } = getZoomToFitElements(selection, editor.width, editor.height);
                 editor.page.zoom = zoom;
                 editor.page.translateX = translateX;
                 editor.page.translateY = translateY;
