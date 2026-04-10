@@ -17,6 +17,11 @@ jest.unstable_mockModule("../export.js", () => ({
 jest.unstable_mockModule("../migrate.js", () => ({
     migrateElements: jest.fn(),
 }));
+jest.unstable_mockModule("../zoom.ts", () => ({
+    getZoomToFitElements: jest.fn(),
+    getTranslateCoordinatesForNewZoom: jest.fn(),
+    parseZoomValue: jest.fn(),
+}));
 // jest.unstable_mockModule("../library.js", () => ({
 //     getLibraryStateFromInitialData: jest.fn(),
 //     createLibraryComponent: jest.fn(),
