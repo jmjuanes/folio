@@ -43,6 +43,7 @@ export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: Mini
         const y1 = Math.min(bounds[0]?.[1] ?? Infinity, (-1) * editor.page.translateY / editor.page.zoom);
         const x2 = Math.max(bounds[1]?.[0] ?? -Infinity, ((-1) * editor.page.translateX + editor.width) / editor.page.zoom);
         const y2 = Math.max(bounds[1]?.[1] ?? -Infinity, ((-1) * editor.page.translateY + editor.height) / editor.page.zoom);
+        console.log(editor.page.translateX, editor.page.translateY, x1, y1, x2, y2);
         // calculate the scale factor for the minimap
         const ratio = Math.min(width / Math.max(1, x2 - x1), height / Math.max(1, y2 - y1));
         return {
@@ -53,8 +54,8 @@ export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: Mini
                 const [elementWidth, elementHeight, x, y] = getElementSize(element);
                 return {
                     id: element.id,
-                    x: x * ratio,
-                    y: y * ratio,
+                    x: (x - x1) * ratio,
+                    y: (y - y1) * ratio,
                     width: elementWidth * ratio,
                     height: elementHeight * ratio,
                     rotation: convertRadiansToDegrees(element.rotation || 0),
