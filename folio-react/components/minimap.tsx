@@ -13,26 +13,10 @@ import { useEditor } from "../contexts/editor.tsx";
 import { getElementsBoundingRectangle, getElementSize } from "../lib/elements.js";
 import { convertRadiansToDegrees } from "../utils/math.ts";
 
-export type MinimapProps = {
-    width?: number,
-    height?: number,
-};
-
-export type MinimapElement = {
-    id: string,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    rotation: number,
-};
-
-// @description minimap panel component
-export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: MinimapProps): React.JSX.Element => {
+// extracted minimap generation to a separated hook
+export const useMinimap = (width: number, height: number) => {
     const editor = useEditor();
-    // TODO: handle if minimap is not visible
-
-    const minimap = React.useMemo(() => {
+    return React.useMemo(() => {
         if (!editor.width || !editor.height) {
             return null;
         }
@@ -53,8 +37,8 @@ export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: Mini
                 const [elementWidth, elementHeight, x, y] = getElementSize(element);
                 return {
                     id: element.id,
-                    x: x * ratio,
-                    y: y * ratio,
+                    x: (x - x1) * ratio,
+                    y: (y - y1) * ratio,
                     width: elementWidth * ratio,
                     height: elementHeight * ratio,
                     rotation: convertRadiansToDegrees(element.rotation || 0),
@@ -66,11 +50,30 @@ export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: Mini
             visibleHeight: editor.height * ratio / editor.page.zoom, // update the visible height
         };
     }, [editor.updatedAt, editor.page.id, editor.width, editor.height, editor.page.zoom, editor.page.translateX, editor.page.translateY]);
+};
+
+export type MinimapProps = {
+    width?: number,
+    height?: number,
+};
+
+export type MinimapElement = {
+    id: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    rotation: number,
+};
+
+// @description minimap panel component
+export const Minimap = ({ width = MINIMAP_WIDTH, height = MINIMAP_HEIGHT }: MinimapProps): React.JSX.Element => {
+    const minimap = useMinimap(width, height);
 
     return (
         <Island className="items-center justify-center">
             {!!minimap && (
-                <div className="flex items-center justify-center bg-white" style={{ width: width, height: height }}>
+                <div data-testid="minimap" className="flex items-center justify-center bg-white" style={{ width: width, height: height }}>
                     <svg width={minimap.width} height={minimap.height}>
                         <rect
                             x={minimap.visibleX}
