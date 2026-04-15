@@ -3,18 +3,15 @@ import { createPortal } from "react-dom";
 
 export type SurfaceRenderer = () => React.JSX.Element;
 
-export type SurfaceManager = {
-    showSurface: (id: string, render: SurfaceRenderer) => void;
-    clearSurface: () => void;
-};
-
-export type SurfaceProviderProps = {
-    render: (surfaceContent: React.JSX.Element | null) => React.JSX.Element | null;
-};
-
 type SurfaceProviderState = null | {
     render: SurfaceRenderer;
     key: string;
+};
+
+export type SurfaceManager = {
+    surface: SurfaceProviderState | null;
+    showSurface: (id: string, render: SurfaceRenderer) => void;
+    clearSurface: () => void;
 };
 
 // @description surface context
@@ -35,7 +32,7 @@ export const useSurface = (): SurfaceManager => {
 // @description surface provider component
 // @param {object} props React props
 // @param {React Children} props.children React children to render
-export const SurfaceProvider = (props: SurfaceProviderProps): React.JSX.Element => {
+export const SurfaceProvider = (props: React.PropsWithChildren): React.JSX.Element => {
     const [activeSurface, setActiveSurface] = React.useState<SurfaceProviderState>(null);
 
     // callback to show content in the surface
@@ -66,6 +63,15 @@ export const SurfaceProvider = (props: SurfaceProviderProps): React.JSX.Element 
 
     return (
         <SurfaceContext.Provider value={{ showSurface, clearSurface }}>
+            {props.children}
+        </SurfaceContext.Provider>
+    );
+};
+
+// export component to render content of the surface
+export const SurfaceSlot = (): React.JSX.Element | null => {
+    return (
+        <React.Fragment>
             {props.render((
                 <React.Fragment>
                     {!!activeSurface && createPortal([
@@ -75,6 +81,6 @@ export const SurfaceProvider = (props: SurfaceProviderProps): React.JSX.Element 
                     ], document.body)}
                 </React.Fragment>
             ))}
-        </SurfaceContext.Provider>
-    );
+        </React.Fragment>
+    )
 };
