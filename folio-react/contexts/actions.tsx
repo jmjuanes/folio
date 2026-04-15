@@ -7,6 +7,7 @@ import { useDialog } from "./dialogs.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
 import { useSurface } from "./surface.tsx";
+import { usePanels } from "./panels.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
 import { getShortcutKey } from "../lib/actions.ts";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
@@ -87,6 +88,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const { showConfirm } = useConfirm();
     const { showDialog } = useDialog();
     const { showSurface } = useSurface();
+    const { showPanel } = usePanels();
     const {
         KeyboardShortcuts,
         ExportDialog,
@@ -809,9 +811,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 category: ActionCategory.AI,
                 onSelect: () => {
                     if (!!AiGenerateElements) {
-                        showSurface("aiGenerateElements", () => (
-                            <AiGenerateElements />
-                        ));
+                        showPanel("toolbar", AiGenerateElements);
                     }
                 },
             },

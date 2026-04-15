@@ -6,6 +6,7 @@ import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu } from "../contexts/context-menu.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
+import { PanelOutlet, usePanels } from "../contexts/panels.tsx";
 import { ACTIONS, TOOLS, ELEMENTS } from "../constants.js";
 
 import type { ToolState } from "../lib/tool.ts";
@@ -53,6 +54,7 @@ export type ToolbarToolButtonProps = {
 export const ToolbarToolButton = (props: ToolbarToolButtonProps): React.JSX.Element | null => {
     const editor = useEditor();
     const { getToolById } = useTools();
+    const { hidePanel } = usePanels();
     const activeTool = editor.getCurrentTool() as ToolState | null;
     const activeElementTye = activeTool?.id === TOOLS.ELEMENT ? (activeTool as ElementTool).getElementType?.() : null;
     const tool = React.useMemo<ToolItem | null>(() => getToolById(props.tool), [getToolById, props.tool]);
@@ -71,6 +73,7 @@ export const ToolbarToolButton = (props: ToolbarToolButtonProps): React.JSX.Elem
             active={toolActive}
             disabled={editor.page.readonly && !tool.allowedInReadonly}
             onClick={() => {
+                hidePanel("toolbar");
                 tool.onSelect();
             }}
         />
@@ -139,11 +142,9 @@ export const Toolbar = (props: { children: React.ReactNode }): React.JSX.Element
 
     return (
         <div className="flex flex-col justify-center items-center select-none">
+            <PanelOutlet position="toolbar" />
             {!!Picks && (
                 <Picks />
-            )}
-            {!!Generate && editor.getCurrentTool()?.id === TOOLS.GENERATE_ELEMENTS && (
-                <Generate />
             )}
             {content}
         </div>

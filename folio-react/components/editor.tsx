@@ -12,6 +12,7 @@ import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 import { ToolsProvider } from "../contexts/tools.tsx";
 import { ActionsProvider } from "../contexts/actions.tsx";
+import { PanelsProvider } from "../contexts/panels.tsx";
 import { Canvas } from "./canvas.tsx";
 
 import type { ToolsOverrides } from "../contexts/tools.tsx";
@@ -80,14 +81,16 @@ export const Editor: React.FC<EditorProps> = props => {
                         <ToolsProvider overrides={props.overrides?.tools}>
                             <ConfirmProvider>
                                 <DialogsProvider>
-                                    <SurfaceProvider render={(surfaceContent) => (
-                                        <ActionsProvider overrides={props.overrides?.actions}>
-                                            <ContextMenuProvider>
-                                                <InnerEditor />
-                                                {surfaceContent}
-                                            </ContextMenuProvider>
-                                        </ActionsProvider>
-                                    )} />
+                                    <PanelsProvider>
+                                        <SurfaceProvider render={(surfaceContent) => (
+                                            <ActionsProvider overrides={props.overrides?.actions}>
+                                                <ContextMenuProvider>
+                                                    <InnerEditor />
+                                                    {surfaceContent}
+                                                </ContextMenuProvider>
+                                            </ActionsProvider>
+                                        )} />
+                                    </PanelsProvider>
                                 </DialogsProvider>
                             </ConfirmProvider>
                         </ToolsProvider>
