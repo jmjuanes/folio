@@ -27,7 +27,7 @@ export type IslandButtonProps = {
     style?: React.CSSProperties,
     iconClassName?: string,
     icon?: string,
-    text?: string,
+    text?: string | React.ReactNode,
     disabled?: boolean,
     active?: boolean,
     showChevron?: boolean,
