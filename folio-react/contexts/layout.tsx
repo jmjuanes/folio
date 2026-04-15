@@ -1,5 +1,4 @@
 import React from "react";
-import { createPortal } from "react-dom";
 
 export enum LayoutSlot {
     SIDEBAR = "sidebar",
@@ -34,6 +33,7 @@ export type LayoutManager = {
 
 // @description layout context
 export const LayoutContext = React.createContext<LayoutManager>({} as LayoutManager);
+export const LayoutOutletContext = React.createContext<any>(null);
 
 // @description hook to access layout management
 export const useLayout = (): LayoutManager => {
@@ -85,6 +85,10 @@ export const LayoutProvider = (props: LayoutProviderProps): React.JSX.Element =>
     );
 };
 
+export const useLayoutOutlet = (): any => {
+    return React.useContext(LayoutOutletContext);
+};
+
 export type LayoutOutletProps = {
     slot: LayoutSlot;
     portal?: boolean;
@@ -96,12 +100,19 @@ export const LayoutOutlet = (props: LayoutOutletProps): React.JSX.Element | null
     const { layout } = useLayout();
     const entry = layout[props.slot];
 
-    if (!entry || !entry.component) {
+    // 1. check if the entry exists and there is a component registered
+    if (!entry || !entry?.component) {
         return null;
     }
 
+    // 2. get the component and data from the entry, and render the content
     const { component: Component, data } = entry;
-    const content = props.render ? props.render(Component, data) : <Component {...data} />;
+    const content = props.render ? props.render(Component) : <Component />;
 
-    return props.portal ? createPortal(content, document.body) : content;
+    // 3. render the component in the layout outlet context
+    return (
+        <LayoutOutletContext.Provider value={data || {}}>
+            {content}
+        </LayoutOutletContext.Provider>
+    );
 };
