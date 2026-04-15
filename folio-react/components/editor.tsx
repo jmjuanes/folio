@@ -1,7 +1,7 @@
 import React from "react";
 import { EditorProvider, useEditor } from "../contexts/editor.tsx";
 import { ContextMenuProvider } from "../contexts/context-menu.tsx";
-import { SurfaceProvider } from "../contexts/surface.tsx";
+import { SurfaceProvider, SurfaceSlot } from "../contexts/surface.tsx";
 import {
     EditorComponentsProvider,
     useEditorComponents,
@@ -80,14 +80,14 @@ export const Editor: React.FC<EditorProps> = props => {
                         <ToolsProvider overrides={props.overrides?.tools}>
                             <ConfirmProvider>
                                 <DialogsProvider>
-                                    <SurfaceProvider render={(surfaceContent) => (
+                                    <SurfaceProvider>
                                         <ActionsProvider overrides={props.overrides?.actions}>
                                             <ContextMenuProvider>
                                                 <InnerEditor />
-                                                {surfaceContent}
+                                                <SurfaceSlot />
                                             </ContextMenuProvider>
                                         </ActionsProvider>
-                                    )} />
+                                    </SurfaceProvider>
                                 </DialogsProvider>
                             </ConfirmProvider>
                         </ToolsProvider>
