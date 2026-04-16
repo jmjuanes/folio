@@ -4,7 +4,7 @@ import {
     DrawingIcon,
     FolderIcon,
 } from "@josemi-icons/react";
-import { Button } from "folio-react/components/ui/button.jsx";
+import { Button } from "folio-react/components/ui/button.tsx";
 import { Centered } from "folio-react/components/ui/centered.tsx";
 import { Overlay } from "folio-react/components/ui/overlay.tsx";
 import { useEditor } from "folio-react/contexts/editor.tsx";
