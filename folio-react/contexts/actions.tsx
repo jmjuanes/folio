@@ -85,7 +85,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const prompt = usePrompt();
     const { showConfirm } = useConfirm();
     const { showDialog } = useDialog();
-    const { showSurface } = useSurface();
+    const { showInSurface } = useSurface();
     const {
         KeyboardShortcuts,
         ExportDialog,
@@ -774,9 +774,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG,
                 name: "Keyboard shortcuts",
                 onSelect: () => {
-                    showSurface("keyboard-shortcuts", () => (
-                        <KeyboardShortcuts />
-                    ));
+                    showInSurface("keyboard-shortcuts", KeyboardShortcuts);
                 },
             },
             [ACTIONS.SHOW_EXPORT_DIALOG]: {
@@ -795,9 +793,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Commands",
                 shortcut: getShortcutKey("CtrlOrCmd+K"),
                 onSelect: () => {
-                    showSurface("commands", () => (
-                        <Commands />
-                    ));
+                    showInSurface("commands", Commands);
                 },
             },
         }) as ActionItem[];

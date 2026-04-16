@@ -9,9 +9,13 @@ type SurfaceEntry ={
 
 export type SurfaceManager = {
     surface: SurfaceEntry[];
-    showInSurface: (id: string, component: React.ElementType, data: any) => void;
+    showInSurface: (id: string, component: React.ElementType, data?: any) => void;
     removeFromSurface: (id: string) => void;
     clearSurface: () => void;
+};
+
+export type SurfaceSlotManager = {
+    hideSurfaceSlot: () => void;
 };
 
 // @description surface context
@@ -38,7 +42,7 @@ export const SurfaceProvider = (props: React.PropsWithChildren): React.JSX.Eleme
 
     // callback to show content in the surface
     // @param {function} render function to render the surface content
-    const showInSurface = React.useCallback((id: string, component: React.ElementType, data: any) => {
+    const showInSurface = React.useCallback((id: string, component: React.ElementType, data?: any) => {
         setSurface((prevSurface) => {
             return [
                 ...prevSurface,
@@ -73,6 +77,19 @@ export const useSurfaceSlotContext = (): SurfaceEntry => {
         throw new Error("Cannot call 'useSurfaceSlotContext' outside SurfaceProvider");
     }
     return surfaceSlotContext;
+};
+
+// @description hook to manage the surface slot
+export const useSurfaceSlot = (): SurfaceSlotManager => {
+    const { removeFromSurface } = useSurface();
+    const surfaceSlotContext = useSurfaceSlotContext();
+
+    // method to hide the surface slot
+    const hideSurfaceSlot = React.useCallback(() => {
+        removeFromSurface(surfaceSlotContext.id);
+    }, [removeFromSurface, surfaceSlotContext?.id]);
+
+    return { hideSurfaceSlot };
 };
 
 // @description hook to remove the surface when the user press the ESC key

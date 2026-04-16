@@ -3,7 +3,7 @@ import { renderIcon } from "@josemi-icons/react";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions, ActionCategory } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
-import { useSurface } from "../contexts/surface.tsx";
+import { useSurfaceSlot, useSurfaceSlotClearWithEscKey } from "../contexts/surface.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
@@ -43,7 +43,7 @@ export const CommandsContent = (): React.JSX.Element => {
     const editor = useEditor();
     const { getTools } = useTools();
     const { getActions } = useActions();
-    const { clearSurface } = useSurface();
+    const { hideSurfaceSlot } = useSurfaceSlot();
     const [query, setQuery] = React.useState<string>("");
     const [highlightIndex, setHighlightIndex] = React.useState<number>(0);
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -123,8 +123,8 @@ export const CommandsContent = (): React.JSX.Element => {
     // callback listener to run the specified command
     const executeCommand = React.useCallback((command: CommandItem) => {
         commandToExecute.current = command; // set the provided command to execute
-        clearSurface();
-    }, [clearSurface]);
+        hideSurfaceSlot();
+    }, [hideSurfaceSlot]);
 
     // reset the highlight index when the filtered items change to avoid out of bounds issues
     React.useEffect(() => setHighlightIndex(0), [filteredItems.length]);
@@ -225,12 +225,14 @@ export type CommandsProps = {
 };
 
 export const Commands = (props: CommandsProps): React.JSX.Element => {
-    const { clearSurface } = useSurface();
+    const { hideSurfaceSlot } = useSurfaceSlot();
     const content = props.children ?? <CommandsContent />;
+
+    useSurfaceSlotClearWithEscKey();
 
     return (
         <React.Fragment>
-            <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={clearSurface} />
+            <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={hideSurfaceSlot} />
             <Centered className="fixed z-50" style={{ top: "33%" }}>
                 <Dialog.Content className="w-full max-w-md">
                     <div className="p-2">

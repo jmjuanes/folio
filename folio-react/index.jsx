@@ -56,7 +56,11 @@ export {
 } from "./contexts/editor.tsx";
 export {
     SurfaceProvider,
+    SurfaceSlot,
     useSurface,
+    useSurfaceSlot,
+    useSurfaceSlotContext,
+    useSurfaceSlotClearWithEscKey,
 } from "./contexts/surface.tsx";
 
 export {Canvas} from "./components/canvas.tsx";
