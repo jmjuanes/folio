@@ -40,13 +40,12 @@ export {
     useConfirm,
 } from "./contexts/confirm.jsx";
 export {
-    ContextMenuProvider,
     useContextMenu,
-} from "./contexts/context-menu.tsx";
+    useContextMenuPosition,
+} from "./hooks/use-context-menu.tsx";
 export {
-    DialogsProvider,
     useDialog,
-} from "./contexts/dialogs.tsx";
+} from "./hooks/use-dialog.tsx";
 export {
     EditorComponentsProvider,
     useEditorComponents,

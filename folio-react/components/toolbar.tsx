@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
 import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
-import { useContextMenu } from "../contexts/context-menu.tsx";
+import { useContextMenu } from "../hooks/use-context-menu.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { ACTIONS, TOOLS, ELEMENTS } from "../constants.js";
