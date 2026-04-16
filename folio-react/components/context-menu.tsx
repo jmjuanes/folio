@@ -1,6 +1,6 @@
 import React from "react";
 import { ACTIONS, ELEMENTS } from "../constants.js";
-import { ContextMenu as Menu } from "./ui/context-menu.jsx";
+import { ContextMenu as Menu } from "./ui/context-menu.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu, useContextMenuPosition } from "../hooks/use-context-menu.tsx";

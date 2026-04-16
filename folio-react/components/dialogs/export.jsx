@@ -11,11 +11,11 @@ import {
     exportToFile,
     exportToClipboard,
 } from "../../lib/export.js";
-import { Button } from "../ui/button.jsx";
+import { Button } from "../ui/button.tsx";
 import { Dialog } from "../ui/dialog.tsx";
 import { Form } from "../form/index.jsx";
 import { useEditor } from "../../contexts/editor.tsx";
-import { useDialog } from "../../contexts/dialogs.tsx";
+import { useDialog } from "../../hooks/use-dialog.tsx";
 import transparentBg from "../../assets/transparent.svg";
 
 const previewStyle = {
@@ -27,7 +27,7 @@ const previewStyle = {
 // @description content of the Export dialog
 export const ExportDialog = () => {
     const editor = useEditor();
-    const {hideDialog} = useDialog();
+    const { hideDialog } = useDialog();
     const elements = editor.getElements();
     const [previewImage, setPreviewImage] = React.useState(null);
     const [options, setOptions] = React.useState({

@@ -20,7 +20,8 @@ export type DialogManager = {
 export const DialogWrapper = (): React.JSX.Element => {
     const { removeFromSurface } = useSurface();
     const surface = useSurfaceSlotContext();
-    const DialogComponent = surface.component;
+    const DialogComponent = surface.data?.dialogComponent || null;
+
     useSurfaceSlotClearWithEscKey();
 
     return createPortal([
@@ -43,11 +44,15 @@ export const useDialog = (): DialogManager => {
 
     // method to display the provided component inside a dialog
     const showDialog = React.useCallback((component: React.ElementType, data: any) => {
-        showInSurface(DIALOG_ID, component, data || {});
+        showInSurface(DIALOG_ID, DialogWrapper, Object.assign({}, data, {
+            dialogComponent: component,
+        }));
     }, [showInSurface]);
 
     // method to hide the current dialog
-    const hideDialog = React.useCallback(() => removeFromSurface(DIALOG_ID), [removeFromSurface]);
+    const hideDialog = React.useCallback(() => {
+        removeFromSurface(DIALOG_ID);
+    }, [removeFromSurface]);
 
     return { showDialog, hideDialog };
 };

@@ -3,7 +3,7 @@ import { PlusIcon } from "@josemi-icons/react";
 import { renderIcon } from "@josemi-icons/react";
 import classNames from "classnames";
 import { ACTIONS } from "../constants.js";
-import { Button } from "../components/ui/button.jsx";
+import { Button } from "../components/ui/button.tsx";
 import { Panel } from "./ui/panel.tsx";
 import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../contexts/actions.tsx";
