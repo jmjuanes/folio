@@ -1,26 +1,27 @@
 import React from "react";
-import { createPortal } from "react-dom";
+// import { createPortal } from "react-dom";
 
-export type SurfaceRenderer = () => React.JSX.Element;
-
-type SurfaceProviderState = null | {
-    render: SurfaceRenderer;
-    key: string;
+type SurfaceEntry ={
+    id: string;
+    component: React.ElementType,
+    data: any,
 };
 
 export type SurfaceManager = {
-    surface: SurfaceProviderState | null;
-    showSurface: (id: string, render: SurfaceRenderer) => void;
+    surface: SurfaceEntry[];
+    showInSurface: (id: string, component: React.ElementType, data: any) => void;
+    removeFromSurface: (id: string) => void;
     clearSurface: () => void;
 };
 
 // @description surface context
 export const SurfaceContext = React.createContext<SurfaceManager | null>(null);
+export const SurfaceSlotContext = React.createContext<SurfaceEntry | null>(null);
 
 // @description hook to access to surface
 // @returns {object} surface object
-// @returns {function} surface.showSurface function to show a surface
-// @returns {function} surface.hideSurface function to hide the surface
+// @returns {function} surface.showSurface function to show a component in the surface
+// @returns {function} surface.clearSurface function to clear all components in the surface
 export const useSurface = (): SurfaceManager => {
     const surfaceManager = React.useContext(SurfaceContext);
     if (!surfaceManager) {
@@ -33,54 +34,79 @@ export const useSurface = (): SurfaceManager => {
 // @param {object} props React props
 // @param {React Children} props.children React children to render
 export const SurfaceProvider = (props: React.PropsWithChildren): React.JSX.Element => {
-    const [activeSurface, setActiveSurface] = React.useState<SurfaceProviderState>(null);
+    const [surface, setSurface] = React.useState<SurfaceEntry[]>([] as SurfaceEntry[]);
 
     // callback to show content in the surface
     // @param {function} render function to render the surface content
-    const showSurface = React.useCallback((surfaceId: string, surfaceRender: SurfaceRenderer) => {
-        if (surfaceId && typeof surfaceRender === "function") {
-            setActiveSurface({ key: surfaceId, render: surfaceRender });
-        }
-    }, [setActiveSurface]);
+    const showInSurface = React.useCallback((id: string, component: React.ElementType, data: any) => {
+        setSurface((prevSurface) => {
+            return [
+                ...prevSurface,
+                { id, component, data: data || {} } as SurfaceEntry,
+            ];
+        });
+    }, [setSurface]);
 
-    // callback to hide the surface
+    // callback to remove the provided component from the surface
+    const removeFromSurface = React.useCallback((id: string) => {
+        setSurface((prevSurface) => {
+            return prevSurface.filter(surfaceEntry => surfaceEntry.id !== id);
+        });
+    }, [setSurface]);
+
+    // callback to clear all elements in the surface
     const clearSurface = React.useCallback(() => {
-        setActiveSurface(null);
-    }, [setActiveSurface]);
+        setSurface([] as SurfaceEntry[]);
+    }, [setSurface]);
 
-    // register an effect to listen for the escape key
+    return (
+        <SurfaceContext.Provider value={{ surface, showInSurface, removeFromSurface, clearSurface }}>
+            {props.children}
+        </SurfaceContext.Provider>
+    );
+};
+
+// @description hook to access to the surface slot context
+export const useSurfaceSlotContext = (): SurfaceEntry => {
+    const surfaceSlotContext = React.useContext(SurfaceSlotContext);
+    if (!surfaceSlotContext) {
+        throw new Error("Cannot call 'useSurfaceSlotContext' outside SurfaceProvider");
+    }
+    return surfaceSlotContext;
+};
+
+// @description hook to remove the surface when the user press the ESC key
+export const useSurfaceSlotClearWithEscKey = (): void => {
+    const { removeFromSurface } = useSurface();
+    const { id } = useSurfaceSlotContext();
     React.useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape" && !!activeSurface) {
-                clearSurface();
+            if (event.key === "Escape" && !!id) {
+                removeFromSurface(id);
             }
         };
         document.addEventListener("keydown", handleKeyDown);
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [activeSurface, clearSurface]);
-
-    return (
-        <SurfaceContext.Provider value={{ showSurface, clearSurface }}>
-            {props.children}
-        </SurfaceContext.Provider>
-    );
+    }, [removeFromSurface, id]);
 };
 
 // export component to render content of the surface
-export const SurfaceSlot = (): React.JSX.Element | null => {
+export const SurfaceSlot = (): React.JSX.Element => {
+    const { surface } = useSurface();
     return (
         <React.Fragment>
-            {props.render((
-                <React.Fragment>
-                    {!!activeSurface && createPortal([
-                        <React.Fragment key={`surface:${activeSurface.key}`}>
-                            {activeSurface.render()}
-                        </React.Fragment>,
-                    ], document.body)}
-                </React.Fragment>
-            ))}
+            {surface.map((surfaceItem: SurfaceEntry, index: number) => {
+                const Component = surfaceItem.component;
+                return (
+                    <React.Fragment key={`surface:${index}:${surfaceItem.id}`}>
+                        <SurfaceSlotContext.Provider value={surfaceItem}>
+                            <Component />
+                        </SurfaceSlotContext.Provider>
+                    </React.Fragment>
+                );
+            })}
         </React.Fragment>
-    )
+    );
 };
