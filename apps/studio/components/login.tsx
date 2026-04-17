@@ -1,6 +1,6 @@
 import React from "react";
 import { ExclamationCircleIcon } from "@josemi-icons/react";
-import { Button } from "folio-react/components/ui/button.jsx";
+import { Button } from "folio-react/components/ui/button.tsx";
 import { Centered } from "folio-react/components/ui/centered.tsx";
 import { useConfiguration } from "../contexts/configuration.tsx";
 import { useToaster } from "../contexts/toaster.tsx";

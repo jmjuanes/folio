@@ -1,13 +1,10 @@
 import React from "react";
 import { EditorProvider, useEditor } from "../contexts/editor.tsx";
-import { ContextMenuProvider } from "../contexts/context-menu.tsx";
-import { SurfaceProvider } from "../contexts/surface.tsx";
+import { SurfaceProvider, SurfaceSlot } from "../contexts/surface.tsx";
 import {
     EditorComponentsProvider,
     useEditorComponents,
 } from "../contexts/editor-components.tsx";
-import { ConfirmProvider } from "../contexts/confirm.jsx";
-import { DialogsProvider } from "../contexts/dialogs.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 import { ToolsProvider } from "../contexts/tools.tsx";
@@ -78,18 +75,12 @@ export const Editor: React.FC<EditorProps> = props => {
                 <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
                     <EditorProvider {...props}>
                         <ToolsProvider overrides={props.overrides?.tools}>
-                            <ConfirmProvider>
-                                <DialogsProvider>
-                                    <SurfaceProvider render={(surfaceContent) => (
-                                        <ActionsProvider overrides={props.overrides?.actions}>
-                                            <ContextMenuProvider>
-                                                <InnerEditor />
-                                                {surfaceContent}
-                                            </ContextMenuProvider>
-                                        </ActionsProvider>
-                                    )} />
-                                </DialogsProvider>
-                            </ConfirmProvider>
+                            <SurfaceProvider>
+                                <ActionsProvider overrides={props.overrides?.actions}>
+                                    <InnerEditor />
+                                    <SurfaceSlot />
+                                </ActionsProvider>
+                            </SurfaceProvider>
                         </ToolsProvider>
                     </EditorProvider>
                 </LibraryProvider>

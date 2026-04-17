@@ -2,7 +2,7 @@ import React from "react";
 import { ACTIONS } from "../constants.js";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
-import { useSurface } from "../contexts/surface.tsx";
+import { useSurfaceSlot } from "../contexts/surface.tsx";
 import { printShortcut } from "../lib/actions.ts";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
@@ -143,14 +143,14 @@ export type KeyboardShortcutsProps = {
 };
 
 export const KeyboardShortcuts = (props: KeyboardShortcutsProps): React.JSX.Element => {
-    const { clearSurface } = useSurface();
+    const { hideSurfaceSlot } = useSurfaceSlot();
     const content = props?.children ?? <KeyboardShortcutsContent />;
     return (
         <React.Fragment>
-            <Overlay key="shortcuts:overlay" className="z-50" onClick={clearSurface} />
+            <Overlay key="shortcuts:overlay" className="z-50" onClick={hideSurfaceSlot} />
             <Centered key="shortcuts:content" className="fixed z-50 h-full">
                 <Dialog.Content className="w-full max-w-xl relative">
-                    <Dialog.Close onClick={clearSurface} />
+                    <Dialog.Close onClick={hideSurfaceSlot} />
                     <Dialog.Header className="pb-4">
                         <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
                     </Dialog.Header>
