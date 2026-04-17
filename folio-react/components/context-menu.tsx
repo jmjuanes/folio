@@ -1,9 +1,9 @@
 import React from "react";
 import { ACTIONS, ELEMENTS } from "../constants.js";
-import { ContextMenu as Menu } from "./ui/context-menu.jsx";
+import { ContextMenu as Menu } from "./ui/context-menu.tsx";
 import { useEditor } from "../contexts/editor.tsx";
-import { useContextMenu } from "../contexts/context-menu.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
+import { useContextMenu, useContextMenuPosition } from "../hooks/use-context-menu.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { printShortcut } from "../lib/actions.ts";
 
@@ -38,9 +38,9 @@ export const ContextMenuContent = (): React.JSX.Element => {
     const editor = useEditor();
     const { dispatchAction, getShortcutByActionId } = useActions();
     const { Library } = useEditorComponents();
-    const { hideContextMenu, getContextMenuPosition } = useContextMenu();
+    const { hideContextMenu } = useContextMenu();
+    const position = useContextMenuPosition();
     const selectedElements = editor.getSelection();
-    const position = getContextMenuPosition();
     const shortcutsEnabled = true;
 
     const addLibraryComponent = React.useMemo<boolean>(() => {
@@ -218,9 +218,8 @@ export type ContextMenuProps = {
 
 export const ContextMenu = (props: ContextMenuProps): React.JSX.Element => {
     const editor = useEditor();
-    const { getContextMenuPosition } = useContextMenu();
+    const position = useContextMenuPosition();
     const contextMenuContent = props.children ?? <ContextMenuContent />
-    const position = getContextMenuPosition();
     const contextMenuStyle = {
         "top": (position?.top ?? 0) + "px",
         "left": (position?.left ?? 0) + "px",
@@ -228,8 +227,8 @@ export const ContextMenu = (props: ContextMenuProps): React.JSX.Element => {
     } as React.CSSProperties;
 
     return (
-        <Menu className="absolute z-40 w-48" style={contextMenuStyle}>
+        <Menu.Container className="absolute z-40 w-48" style={contextMenuStyle}>
             {contextMenuContent}
-        </Menu>
+        </Menu.Container>
     );
 };

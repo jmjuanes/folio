@@ -2,12 +2,11 @@ import React from "react";
 import { uid } from "uid/secure";
 import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN } from "../constants.js";
 import { useEditor } from "./editor.tsx";
-import { useConfirm } from "./confirm.jsx";
-import { useDialog } from "./dialogs.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
 import { useSurface } from "./surface.tsx";
-import { usePanels } from "./panels.tsx";
+import { useConfirm } from "../hooks/use-confirm.tsx";
+import { useDialog } from "../hooks/use-dialog.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
 import { getShortcutKey } from "../lib/actions.ts";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
@@ -85,10 +84,9 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const editor = useEditor();
     const library = useLibrary();
     const prompt = usePrompt();
-    const { showConfirm } = useConfirm();
+    const confirm = useConfirm();
     const { showDialog } = useDialog();
-    const { showSurface } = useSurface();
-    const { showPanel } = usePanels();
+    const { showInSurface } = useSurface();
     const {
         KeyboardShortcuts,
         ExportDialog,
@@ -116,10 +114,12 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                         return openFile();
                     }
                     // If is not empty, display confirmation
-                    showConfirm({
+                    confirm({
                         title: "Load new drawing",
                         message: "Changes made in this drawing will be lost. Do you want to continue?",
-                        callback: () => openFile(),
+                        callback: () => {
+                            openFile();
+                        },
                     });
                 },
             },
@@ -138,7 +138,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "trash",
                 category: ActionCategory.BOARD_ACTIONS,
                 onSelect: () => {
-                    showConfirm({
+                    confirm({
                         title: "Delete all data",
                         message: "This will delete all the information of this board, including all pages and drawings. Do you want to continue?",
                         confirmText: "Yes, delete all data",
@@ -450,7 +450,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.DELETE_LIBRARY_COMPONENT,
                 name: "Delete library component",
                 onSelect: (component: any) => {
-                    showConfirm({
+                    confirm({
                         title: "Delete library item",
                         message: `Do you want to delete this item from the library? This action can not be undone.`,
                         callback: () => {
@@ -464,7 +464,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.CLEAR_LIBRARY,
                 name: "Delete library",
                 onSelect: () => {
-                    showConfirm({
+                    confirm({
                         title: "Delete library",
                         message: `Do you want to delete your library? This action can not be undone.`,
                         callback: () => {
@@ -568,7 +568,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.DELETE_LIBRARY_COLLECTION,
                 name: "Delete collection",
                 onSelect: (collection: any) => {
-                    showConfirm({
+                    confirm({
                         title: "Delete collection",
                         message: `Do you want to delete the collection ${collection.name}?`,
                         confirmText: "Yes, delete collection",
@@ -681,7 +681,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Delete page",
                 onSelect: (page = null) => {
                     const pageToDelete = page || editor.page; // if no page is provided, use the current page
-                    showConfirm({
+                    confirm({
                         title: "Delete page",
                         message: `Do you want to delete '${pageToDelete.title}'? This action can not be undone.`,
                         callback: () => {
@@ -707,7 +707,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Clear page",
                 onSelect: (page = null) => {
                     const pageToClear = page || editor.page; // if no page is provided, use the current page
-                    showConfirm({
+                    confirm({
                         title: "Clear Page",
                         message: "This will remove all elements of this page. Do you want to continue?",
                         confirmText: "Yes, clear page",
@@ -778,19 +778,16 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG,
                 name: "Keyboard shortcuts",
                 onSelect: () => {
-                    showSurface("keyboard-shortcuts", () => (
-                        <KeyboardShortcuts />
-                    ));
+                    showInSurface("keyboard-shortcuts", KeyboardShortcuts);
                 },
             },
             [ACTIONS.SHOW_EXPORT_DIALOG]: {
                 id: ACTIONS.SHOW_EXPORT_DIALOG,
                 name: "Export",
                 onSelect: (exportOptions: any) => {
-                    showDialog({
+                    showDialog(ExportDialog, {
                         dialogClassName: "w-full max-w-md",
-                        component: ExportDialog,
-                        props: exportOptions,
+                        options: exportOptions,
                     });
                 },
             },
@@ -799,20 +796,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Commands",
                 shortcut: getShortcutKey("CtrlOrCmd+K"),
                 onSelect: () => {
-                    showSurface("commands", () => (
-                        <Commands />
-                    ));
-                },
-            },
-            [ACTIONS.AI_GENERATE_ELEMENTS]: {
-                id: ACTIONS.AI_GENERATE_ELEMENTS,
-                icon: "sparkles",
-                name: "Generate Elements using AI",
-                category: ActionCategory.AI,
-                onSelect: () => {
-                    if (!!AiGenerateElements) {
-                        showPanel("toolbar", AiGenerateElements);
-                    }
+                    showInSurface("commands", Commands);
                 },
             },
         }) as ActionItem[];

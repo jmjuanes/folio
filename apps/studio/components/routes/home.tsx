@@ -1,7 +1,7 @@
 import React from "react";
 import { Collection } from "folio-server/types/document.ts";
 import { UploadIcon, PlusIcon, ClockIcon, ImageSlashIcon, CalendarIcon } from "@josemi-icons/react";
-import { Button } from "folio-react/components/ui/button.jsx";
+import { Button } from "folio-react/components/ui/button.tsx";
 import { useAppState } from "../../contexts/app-state.tsx";
 import { getGreetingMessage, formatDate } from "../../utils/dates.ts";
 import { useToaster } from "../../contexts/toaster.tsx";

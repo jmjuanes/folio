@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 import { fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { Button } from "../button.jsx";
+import { Button } from "../button.tsx";
 
 describe("<Button />", () => {
     it("should render", () => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import { Button } from "../components/ui/button.jsx";
+import { Button } from "../components/ui/button.tsx";
 import { Overlay } from "../components/ui/overlay.tsx";
 import { Centered } from "../components/ui/centered.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";

@@ -36,17 +36,18 @@ export {
     useAssets,
 } from "./contexts/assets.jsx";
 export {
-    ConfirmProvider,
     useConfirm,
-} from "./contexts/confirm.jsx";
+} from "./hooks/use-confirm.tsx";
 export {
-    ContextMenuProvider,
     useContextMenu,
-} from "./contexts/context-menu.tsx";
+    useContextMenuPosition,
+} from "./hooks/use-context-menu.tsx";
 export {
-    DialogsProvider,
     useDialog,
-} from "./contexts/dialogs.tsx";
+} from "./hooks/use-dialog.tsx";
+export {
+    usePrompt,
+} from "./hooks/use-prompt.tsx";
 export {
     EditorComponentsProvider,
     useEditorComponents,
@@ -57,7 +58,11 @@ export {
 } from "./contexts/editor.tsx";
 export {
     SurfaceProvider,
+    SurfaceSlot,
     useSurface,
+    useSurfaceSlot,
+    useSurfaceSlotContext,
+    useSurfaceSlotClearWithEscKey,
 } from "./contexts/surface.tsx";
 
 export {Canvas} from "./components/canvas.tsx";
@@ -121,7 +126,7 @@ export {Arrowhead} from "./components/elements/arrow-head.jsx";
 export {EditableText} from "./components/elements/editable-text.jsx";
 
 export {Alert} from "./components/ui/alert.tsx";
-export {Button} from "./components/ui/button.jsx";
+export {Button} from "./components/ui/button.tsx";
 export {Centered} from "./components/ui/centered.tsx";
 export {Dialog} from "./components/ui/dialog.tsx";
 export {Dropdown} from "./components/ui/dropdown.tsx";
