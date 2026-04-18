@@ -5,6 +5,7 @@ import { useEditor } from "./editor.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
 import { useSurface } from "./surface.tsx";
+import { useShellPanels } from "./shell.tsx";
 import { useConfirm } from "../hooks/use-confirm.tsx";
 import { useDialog } from "../hooks/use-dialog.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
@@ -86,10 +87,13 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const confirm = useConfirm();
     const { showDialog } = useDialog();
     const { showInSurface } = useSurface();
+    const { togglePanel } = useShellPanels();
     const {
         KeyboardShortcuts,
         ExportDialog,
         Commands,
+        Library,
+        Layers,
     } = useEditorComponents();
 
     const actions = React.useMemo<ActionItem[]>(() => {
@@ -795,6 +799,20 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 shortcut: getShortcutKey("CtrlOrCmd+K"),
                 onSelect: () => {
                     showInSurface("commands", Commands);
+                },
+            },
+            [ACTIONS.TOGGLE_LIBRARY_PANEL]: {
+                id: ACTIONS.TOGGLE_LIBRARY_PANEL,
+                name: "Show/hide Library Panel",
+                onSelect: () => {
+                    togglePanel("library", Library);
+                },
+            },
+            [ACTIONS.TOGGLE_LAYERS_PANEL]: {
+                id: ACTIONS.TOGGLE_LAYERS_PANEL,
+                name: "Show/hide Layers Panel",
+                onSelect: () => {
+                    togglePanel("layers", Layers);
                 },
             },
         }) as ActionItem[];

@@ -12,6 +12,7 @@ export type PanelsRegistryAction = {
 
 export type ShellPanelsManager = {
     panels: PanelsRegistry;
+    isPanelOpen: (id: string) => boolean;
     openPanel: (id: string, component: React.ElementType | null) => void;
     togglePanel: (id: string, component: React.ElementType | null) => void;
     closePanel: (id: string) => void;
@@ -58,8 +59,12 @@ export const ShellPanelsProvider = (props: React.PropsWithChildren): React.JSX.E
         setPanels({ type: "toggle", id, component });
     }, [setPanels]);
 
+    const isPanelOpen = (id: string) => {
+        return !!panels[id];
+    };
+
     return (
-        <ShellPanelsContext.Provider value={{ panels, openPanel, closePanel, togglePanel }}>
+        <ShellPanelsContext.Provider value={{ panels, isPanelOpen, openPanel, closePanel, togglePanel }}>
             {props.children}
         </ShellPanelsContext.Provider>
     );
