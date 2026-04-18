@@ -22,7 +22,7 @@ export const ShellPanelsContext = React.createContext<ShellPanelsManager>({} as 
 
 // @description hook to access to panels
 export const useShellPanels = (): ShellPanelsManager => {
-    return React.useContext(PanelsContext);
+    return React.useContext(ShellPanelsContext);
 };
 
 // @description panels provider
@@ -33,7 +33,7 @@ export const ShellPanelsProvider = (props: React.PropsWithChildren): React.JSX.E
             case "show":
                 newPanels[action.id] = action.component;
                 break;
-            case "hide":
+            case "close":
                 newPanels[action.id] = null;
                 break;
             case "toggle":
@@ -44,7 +44,7 @@ export const ShellPanelsProvider = (props: React.PropsWithChildren): React.JSX.E
     }, {} as PanelsRegistry);
 
     // 1. method to show a panel by ID
-    const showPanel = React.useCallback((id: string, component: React.ElementType | null) => {
+    const openPanel = React.useCallback((id: string, component: React.ElementType | null) => {
         setPanels({ type: "show", id, component });
     }, [setPanels]);
 
@@ -59,7 +59,7 @@ export const ShellPanelsProvider = (props: React.PropsWithChildren): React.JSX.E
     }, [setPanels]);
 
     return (
-        <ShellPanelsContext.Provider value={{ panels, showPanel, hidePanel, togglePanel }}>
+        <ShellPanelsContext.Provider value={{ panels, openPanel, closePanel, togglePanel }}>
             {props.children}
         </ShellPanelsContext.Provider>
     );
@@ -71,7 +71,7 @@ export type ShellPanelSlotProps = {
 };
 
 // @description component to render panel in the provided position
-export const ShellPanelSlot = (props: ShellPanelSlotProps): React.JSX.Element | null => {
+export const PanelSlot = (props: ShellPanelSlotProps): React.JSX.Element | null => {
     const { panels } = useShellPanels();
     // 1. if an id is provided and we have registered a panel in this slot 
     if (props.id && !!panels[props.id]) {
