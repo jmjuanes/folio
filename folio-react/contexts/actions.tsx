@@ -20,6 +20,7 @@ export enum ActionCategory {
     EDITION = "Edition",
     BOARD_ACTIONS = "Board Actions",
     SETTINGS = "Settings",
+    EDITOR_UI = "Editor UI",
 };
 
 export type ActionItem = {
@@ -804,6 +805,8 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.TOGGLE_LIBRARY_PANEL]: {
                 id: ACTIONS.TOGGLE_LIBRARY_PANEL,
                 name: "Show/hide Library Panel",
+                icon: "album",
+                category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
                     togglePanel("library", Library);
                 },
@@ -811,6 +814,8 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.TOGGLE_LAYERS_PANEL]: {
                 id: ACTIONS.TOGGLE_LAYERS_PANEL,
                 name: "Show/hide Layers Panel",
+                icon: "stack",
+                category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
                     togglePanel("layers", Layers);
                 },
