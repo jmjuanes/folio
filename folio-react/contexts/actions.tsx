@@ -822,6 +822,15 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                     togglePanel("layers", Layers);
                 },
             },
+            [ACTIONS.AI_GENERATE_ELEMENTS]: {
+                id: ACTIONS.AI_GENERATE_ELEMENTS,
+                name: "Generate Elements with AI",
+                icon: "sparkles",
+                category: ActionCategory.AI,
+                onSelect: () => {
+                    showInSurface("ai-generate-elements", AiGenerateElements);
+                },
+            },
         }) as ActionItem[];
         // 1. check if the props.overrides is a function
         if (typeof props.overrides === "function") {
