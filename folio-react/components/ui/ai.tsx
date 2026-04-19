@@ -125,7 +125,7 @@ export const Ai: AiComponents = {
             disabled={!!props.disabled}
             placeholder={props.placeholder}
             rows={props?.rows ?? 4}
-            value={props.value}
+            defaultValue={props.value}
             onChange={event => props.onChange?.(event.target.value)}
             className={classNames("text-sm bg-transparent outline-none border-0 w-full p-0", props.className)}
             style={{ resize: "none" }}
