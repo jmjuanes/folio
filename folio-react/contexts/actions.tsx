@@ -5,6 +5,7 @@ import { useEditor } from "./editor.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
 import { useSurface } from "./surface.tsx";
+import { useShellPanels } from "./shell.tsx";
 import { useConfirm } from "../hooks/use-confirm.tsx";
 import { useDialog } from "../hooks/use-dialog.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
@@ -19,6 +20,7 @@ export enum ActionCategory {
     EDITION = "Edition",
     BOARD_ACTIONS = "Board Actions",
     SETTINGS = "Settings",
+    EDITOR_UI = "Editor UI",
     AI = "AI",
 };
 
@@ -87,10 +89,13 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const confirm = useConfirm();
     const { showDialog } = useDialog();
     const { showInSurface } = useSurface();
+    const { togglePanel } = useShellPanels();
     const {
         KeyboardShortcuts,
         ExportDialog,
         Commands,
+        Library,
+        Layers,
         AiGenerateElements,
     } = useEditorComponents();
 
@@ -797,6 +802,24 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 shortcut: getShortcutKey("CtrlOrCmd+K"),
                 onSelect: () => {
                     showInSurface("commands", Commands);
+                },
+            },
+            [ACTIONS.TOGGLE_LIBRARY_PANEL]: {
+                id: ACTIONS.TOGGLE_LIBRARY_PANEL,
+                name: "Show/hide Library Panel",
+                icon: "album",
+                category: ActionCategory.EDITOR_UI,
+                onSelect: () => {
+                    togglePanel("library", Library);
+                },
+            },
+            [ACTIONS.TOGGLE_LAYERS_PANEL]: {
+                id: ACTIONS.TOGGLE_LAYERS_PANEL,
+                name: "Show/hide Layers Panel",
+                icon: "stack",
+                category: ActionCategory.EDITOR_UI,
+                onSelect: () => {
+                    togglePanel("layers", Layers);
                 },
             },
         }) as ActionItem[];
