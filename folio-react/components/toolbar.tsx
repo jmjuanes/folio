@@ -133,12 +133,15 @@ export const ToolbarContent = (): React.JSX.Element => {
 };
 
 export const Toolbar = (props: { children: React.ReactNode }): React.JSX.Element => {
-    const { Picks } = useEditorComponents();
+    const editor = useEditor();
+    const { Picks, Generate } = useEditorComponents();
     const content = props.children ?? <ToolbarContent />;
 
     return (
         <div className="flex flex-col justify-center items-center select-none">
-            <Picks />
+            {!!Picks && (
+                <Picks />
+            )}
             {content}
         </div>
     );

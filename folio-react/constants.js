@@ -546,6 +546,8 @@ export const ACTIONS = {
     SHOW_COMMANDS: "show-commands",
     TOGGLE_LIBRARY_PANEL: "library:panel:toggle",
     TOGGLE_LAYERS_PANEL: "layers:panel:toggle",
+    AI_GENERATE_ELEMENTS: "ai-generate-elements",
+    AI_TRANSFORM_ELEMENTS: "ai-transform-elements",
 };
 
 export const PREFERENCES = {

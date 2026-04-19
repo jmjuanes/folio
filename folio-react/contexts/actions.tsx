@@ -21,6 +21,7 @@ export enum ActionCategory {
     BOARD_ACTIONS = "Board Actions",
     SETTINGS = "Settings",
     EDITOR_UI = "Editor UI",
+    AI = "AI",
 };
 
 export type ActionItem = {
@@ -95,6 +96,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
         Commands,
         Library,
         Layers,
+        AiGenerateElements,
     } = useEditorComponents();
 
     const actions = React.useMemo<ActionItem[]>(() => {
@@ -818,6 +820,15 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
                     togglePanel("layers", Layers);
+                },
+            },
+            [ACTIONS.AI_GENERATE_ELEMENTS]: {
+                id: ACTIONS.AI_GENERATE_ELEMENTS,
+                name: "Generate Elements with AI",
+                icon: "sparkles",
+                category: ActionCategory.AI,
+                onSelect: () => {
+                    showInSurface("ai-generate-elements", AiGenerateElements);
                 },
             },
         }) as ActionItem[];
