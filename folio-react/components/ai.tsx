@@ -1,38 +1,52 @@
 import React from "react";
 import classNames from "classnames";
 import { useEditor } from "../contexts/editor.tsx";
-import { usePanels } from "../contexts/panels.tsx";
+import { useSurfaceSlot, useSurfaceSlotClearWithEscKey } from "../contexts/surface.tsx";
 import { Ai as AiComponents } from "./ui/ai.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 
 export type AiDialogProps = {
     title: string;
+    onSubmit: (prompt: string) => Promise<void>;
 };
 
 export const AiDialog = (props: AiDialogProps): React.JSX.Element => {
-    // const { clearSurface } = useSurface();
-    const { hidePanel } = usePanels();
-    // const generateClassName = classNames({
-    //     "absolute left-half p-3 rounded-2xl shadow-md bottom-full mb-3 w-full": true,
-    //     "bg-white border-1 border-gray-200 shadow-sm": true,
-    //     "flex flex-col gap-2": true,
-    // });
+    useSurfaceSlotClearWithEscKey();
+    const { hideSurfaceSlot } = useSurfaceSlot();
+    const [prompt, setPrompt] = React.useState<string>("");
+    const shouldCancelRequest = React.useRef<boolean>(false);
+
+    // handle submit
+    const handleSubmit = async () => {
+        try {
+            await props.onSubmit(prompt);
+            hideSurfaceSlot();
+        }
+        catch (error: any) {
+            console.error(error);
+        }
+    };
+
+    // on unmount, cancel the request if is in process
+    React.useEffect(() => {
+        return () => {
+            shouldCancelRequest.current = true;
+        };
+    }, []);
 
     return (
-        <Dialog.Content className="relative w-full max-w-lg">
-            <Dialog.Header className="relative">
-                <div className="flex items-center gap-2">
-                    <Dialog.Title className="leading-none">{props.title}</Dialog.Title>
-                    <div className="flex rounded-md p-1 opacity-60 border-1 border-gray-200">
-                        <span className="text-2xs leading-none">BETA</span>
-                    </div>
+        <Dialog.Content className="relative w-full p-2 flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+                <div className="leading-none font-bold">{props.title}</div>
+                <div className="flex rounded-md p-1 opacity-60 border-1 border-gray-200 leading-none">
+                    <span className="text-2xs font-medium">BETA</span>
                 </div>
-                <Dialog.Close onClick={() => hidePanel("toolbar")} />
-            </Dialog.Header>
-            <Dialog.Body className="flex flex-col gap-4">
+            </div>
+            <div className="flex flex-col gap-2">
                 <AiComponents.Prompt>
                     <AiComponents.PromptInput
                         placeholder="Let's create a..."
+                        onChange={(value: string) => setPrompt(value)}
                     />
                     <div className="flex items-center justify-between">
                         <div className=""></div>
@@ -40,13 +54,15 @@ export const AiDialog = (props: AiDialogProps): React.JSX.Element => {
                             className="gap-2 px-3"
                             icon="sparkles"
                             text="Generate"
+                            disabled={!prompt}
+                            onClick={() => handleSubmit()}
                         />
                     </div>
                 </AiComponents.Prompt>
                 <div className="text-2xs opacity-60 text-center">
                     <span>Folio AI can make mistakes. Check important info.</span>
                 </div>
-            </Dialog.Body>
+            </div>
         </Dialog.Content>
     );
 };
@@ -54,8 +70,13 @@ export const AiDialog = (props: AiDialogProps): React.JSX.Element => {
 export const AiGenerateElements = (): React.JSX.Element => {
     const editor = useEditor();
     return (
-        <AiDialog
-            title="Generate"
-        />
+        <div className="absolute z-50 left-half top-0 mt-4 w-full max-w-lg pointer-events-auto" style={{ transform: "translateX(-50%)" }}>
+            <AiDialog
+                title="Generate Elements with AI"
+                onSubmit={(prompt) => {
+                    return Promise.resolve();
+                }}
+            />
+        </div>
     );
 };
