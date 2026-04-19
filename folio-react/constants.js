@@ -544,6 +544,8 @@ export const ACTIONS = {
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
     SHOW_COMMANDS: "show-commands",
+    TOGGLE_LIBRARY_PANEL: "library:panel:toggle",
+    TOGGLE_LAYERS_PANEL: "layers:panel:toggle",
 };
 
 export const PREFERENCES = {
