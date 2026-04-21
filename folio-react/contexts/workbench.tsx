@@ -128,12 +128,12 @@ export const WorkbenchProvider = (props: WorkbenchProviderProps): JSX.Element =>
 };
 
 // hook to access to the context of the workbench part
-export const useWorkbenchViewContext = (): any => {
+export const useViewContext = (): any => {
     return (useContext(WorkbenchViewContext) as View)?.context || {};
 };
 
 // hook to control the view
-export const useWorkbenchView = (): WorkbenchViewManager => {
+export const useView = (): WorkbenchViewManager => {
     const workbench = useContext(WorkbenchContext);
     const view = useContext(WorkbenchViewContext);
 
