@@ -1,6 +1,4 @@
-import React from "react";
 import { EditorProvider, useEditor } from "../contexts/editor.tsx";
-import { SurfaceProvider, SurfaceSlot } from "../contexts/surface.tsx";
 import {
     EditorComponentsProvider,
     useEditorComponents,
@@ -9,9 +7,10 @@ import { LibraryProvider } from "../contexts/library.tsx";
 import { PreferencesProvider } from "../contexts/preferences.tsx";
 import { ToolsProvider } from "../contexts/tools.tsx";
 import { ActionsProvider } from "../contexts/actions.tsx";
-import { ShellPanelsProvider } from "../contexts/shell.tsx";
+import { WorkbenchProvider } from "../contexts/workbench.tsx";
 import { Canvas } from "./canvas.tsx";
 
+import type { JSX } from "react";
 import type { ToolsOverrides } from "../contexts/tools.tsx";
 import type { ActionsOverrides } from "../contexts/actions.tsx";
 import type { Library } from "../lib/library.ts";
@@ -69,21 +68,18 @@ export type EditorProps = {
 };
 
 // @description Public editor
-export const Editor: React.FC<EditorProps> = props => {
+export const Editor = (props: EditorProps): JSX.Element => {
     return (
         <PreferencesProvider preferences={props.preferences}>
             <EditorComponentsProvider components={props.components}>
                 <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
                     <EditorProvider {...props}>
                         <ToolsProvider overrides={props.overrides?.tools}>
-                            <ShellPanelsProvider>
-                                <SurfaceProvider>
-                                    <ActionsProvider overrides={props.overrides?.actions}>
-                                        <InnerEditor />
-                                        <SurfaceSlot />
-                                    </ActionsProvider>
-                                </SurfaceProvider>
-                            </ShellPanelsProvider>
+                            <WorkbenchProvider>
+                                <ActionsProvider overrides={props.overrides?.actions}>
+                                    <InnerEditor />
+                                </ActionsProvider>
+                            </WorkbenchProvider>
                         </ToolsProvider>
                     </EditorProvider>
                 </LibraryProvider>

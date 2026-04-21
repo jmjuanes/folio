@@ -4,8 +4,7 @@ import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN } from "../constants
 import { useEditor } from "./editor.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
-import { useSurface } from "./surface.tsx";
-import { useShellPanels } from "./shell.tsx";
+import { Part, useWorkbench } from "./workbench.tsx";
 import { useConfirm } from "../hooks/use-confirm.tsx";
 import { useDialog } from "../hooks/use-dialog.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
@@ -13,7 +12,6 @@ import { getShortcutKey } from "../lib/actions.ts";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
 import { getKeyFromKeyCode } from "../utils/keys.js";
-
 import type { LibraryCollection } from "../lib/library.ts";
 
 export enum ActionCategory {
@@ -87,8 +85,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const prompt = usePrompt();
     const confirm = useConfirm();
     const { showDialog } = useDialog();
-    const { showInSurface } = useSurface();
-    const { togglePanel } = useShellPanels();
+    const workbench = useWorkbench();
     const {
         KeyboardShortcuts,
         ExportDialog,
@@ -781,7 +778,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG,
                 name: "Keyboard shortcuts",
                 onSelect: () => {
-                    showInSurface("keyboard-shortcuts", KeyboardShortcuts);
+                    workbench.openView(Part.SURFACE, KeyboardShortcuts);
                 },
             },
             [ACTIONS.SHOW_EXPORT_DIALOG]: {
@@ -799,7 +796,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Commands",
                 shortcut: getShortcutKey("CtrlOrCmd+K"),
                 onSelect: () => {
-                    showInSurface("commands", Commands);
+                    workbench.openView(Part.SURFACE, Commands);
                 },
             },
             [ACTIONS.TOGGLE_LIBRARY_PANEL]: {
@@ -808,7 +805,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "album",
                 category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
-                    togglePanel("library", Library);
+                    workbench.toggleView(Part.SIDEBAR, Library);
                 },
             },
             [ACTIONS.TOGGLE_LAYERS_PANEL]: {
@@ -817,7 +814,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "stack",
                 category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
-                    togglePanel("layers", Layers);
+                    workbench.toggleView(Part.CANVAS, Layers);
                 },
             },
         }) as ActionItem[];

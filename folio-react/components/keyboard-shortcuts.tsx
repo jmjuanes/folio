@@ -1,12 +1,13 @@
-import React from "react";
+import { Fragment, useMemo } from "react";
 import { ACTIONS } from "../constants.js";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
-import { useSurfaceSlot } from "../contexts/surface.tsx";
+import { useView } from "../contexts/workbench.tsx";
 import { printShortcut } from "../lib/actions.ts";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay } from "./ui/overlay.tsx";
+import type { JSX, ReactNode } from "react";
 
 export type KeyboardShortcutsGroupProps = {
     label?: string;
@@ -15,7 +16,7 @@ export type KeyboardShortcutsGroupProps = {
 };
 
 // @description keyboard shortcuts section
-export const KeyboardShortcutsGroup = (props: KeyboardShortcutsGroupProps): React.JSX.Element => (
+export const KeyboardShortcutsGroup = (props: KeyboardShortcutsGroupProps): JSX.Element => (
     <div className="mb-4" style={{ breakInside: "avoid-column" }}>
         <div className="text-xs text-gray-600 font-bold mb-1">
             {props.label || props.title || ""}
@@ -33,9 +34,9 @@ export type KeyboardShortcutsItemProps = {
 };
 
 // @description keyboard shortcuts item
-export const KeyboardShortcutsItem = (props: KeyboardShortcutsItemProps): React.JSX.Element => {
+export const KeyboardShortcutsItem = (props: KeyboardShortcutsItemProps): JSX.Element => {
     const { getShortcutByActionId } = useActions();
-    const shortcut = React.useMemo(() => {
+    const shortcut = useMemo(() => {
         return props.action ? getShortcutByActionId(props.action) : props.shortcut;
     }, [props.action, props.shortcut]);
 
@@ -54,9 +55,9 @@ export const KeyboardShortcutsItem = (props: KeyboardShortcutsItemProps): React.
 };
 
 // @description content of the keyboard shortcuts dialog
-export const KeyboardShortcutsContent = (): React.JSX.Element => {
+export const KeyboardShortcutsContent = (): JSX.Element => {
     const { getTools } = useTools();
-    const toolsShortcuts = React.useMemo(() => {
+    const toolsShortcuts = useMemo(() => {
         return getTools()
             .filter(tool => !!tool.shortcut)
             .map(tool => {
@@ -139,18 +140,18 @@ export const KeyboardShortcutsContent = (): React.JSX.Element => {
 
 export type KeyboardShortcutsProps = {
     title?: string;
-    children: React.ReactNode;
+    children: ReactNode;
 };
 
-export const KeyboardShortcuts = (props: KeyboardShortcutsProps): React.JSX.Element => {
-    const { hideSurfaceSlot } = useSurfaceSlot();
+export const KeyboardShortcuts = (props: KeyboardShortcutsProps): JSX.Element => {
+    const view = useView();
     const content = props?.children ?? <KeyboardShortcutsContent />;
     return (
-        <React.Fragment>
-            <Overlay key="shortcuts:overlay" className="z-50" onClick={hideSurfaceSlot} />
+        <Fragment>
+            <Overlay key="shortcuts:overlay" className="z-50" onClick={() => view.close()} />
             <Centered key="shortcuts:content" className="fixed z-50 h-full">
                 <Dialog.Content className="w-full max-w-xl relative">
-                    <Dialog.Close onClick={hideSurfaceSlot} />
+                    <Dialog.Close onClick={() => view.close()} />
                     <Dialog.Header className="pb-4">
                         <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
                     </Dialog.Header>
@@ -159,6 +160,6 @@ export const KeyboardShortcuts = (props: KeyboardShortcutsProps): React.JSX.Elem
                     </Dialog.Body>
                 </Dialog.Content>
             </Centered>
-        </React.Fragment>
+        </Fragment>
     );
 };
