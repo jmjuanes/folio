@@ -1,10 +1,11 @@
-import React from "react";
+import { Fragment, useCallback } from "react";
 import { Button, ButtonVariant } from "../components/ui/button.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";
 import { Form } from "../components/form/index.jsx";
 import { useDialog } from "./use-dialog.tsx";
 import { useFormData } from "./use-form-data.js";
-import { useSurfaceSlot, useSurfaceSlotContext } from "../contexts/surface.tsx";
+import { useView, useViewContext } from "../contexts/workbench.tsx";
+import type { JSX } from "react";
 
 export type PromptOptions = {
     className?: string;
@@ -19,42 +20,42 @@ export type PromptOptions = {
 export type Prompt = (options: PromptOptions) => void;
 
 // @description internal prompt component
-const PromptWrapper = (): React.JSX.Element => {
-    const { hideSurfaceSlot } = useSurfaceSlot();
-    const surfaceSlotContext = useSurfaceSlotContext();
-    const [ data, setData ] = useFormData(surfaceSlotContext?.data?.initialData || {});
+const PromptWrapper = (): JSX.Element => {
+    const view = useView();
+    const viewContext = useViewContext();
+    const [data, setData] = useFormData(viewContext?.initialData || {});
 
-    const handleSubmit = React.useCallback(() => {
-        if (typeof surfaceSlotContext?.data?.callback === "function") {
-            surfaceSlotContext.data.callback(data);
+    const handleSubmit = useCallback(() => {
+        if (typeof viewContext?.callback === "function") {
+            viewContext.callback(data);
         }
-        hideSurfaceSlot();
-    }, [data, surfaceSlotContext?.data?.callback, hideSurfaceSlot]);
+        view.close();
+    }, [data, viewContext?.callback, view?.close]);
 
     return (
-        <React.Fragment>
-            {surfaceSlotContext?.data?.title && (
+        <Fragment>
+            {viewContext?.title && (
                 <Dialog.Header>
-                    <Dialog.Title>{surfaceSlotContext?.data?.title}</Dialog.Title>
+                    <Dialog.Title>{viewContext?.title}</Dialog.Title>
                 </Dialog.Header>
             )}
             <Dialog.Body>
                 <Form
                     className="flex flex-col gap-2"
                     data={data}
-                    items={surfaceSlotContext?.data?.items}
+                    items={viewContext?.items}
                     onChange={setData}
                 />
             </Dialog.Body>
             <Dialog.Footer>
-                <Button variant={ButtonVariant.SECONDARY} onClick={() => hideSurfaceSlot()}>
-                    {surfaceSlotContext?.data?.cancelText || "Cancel"}
+                <Button variant={ButtonVariant.SECONDARY} onClick={() => view.close()}>
+                    {viewContext?.cancelText || "Cancel"}
                 </Button>
                 <Button variant={ButtonVariant.PRIMARY} onClick={() => handleSubmit()}>
-                    {surfaceSlotContext?.data?.confirmText || "Confirm"}
+                    {viewContext?.confirmText || "Confirm"}
                 </Button>
             </Dialog.Footer>
-        </React.Fragment>
+        </Fragment>
     );
 };
 
@@ -62,7 +63,7 @@ const PromptWrapper = (): React.JSX.Element => {
 export const usePrompt = (): Prompt => {
     const { showDialog } = useDialog();
 
-    return React.useCallback((options: PromptOptions) => {
+    return useCallback((options: PromptOptions) => {
         showDialog(PromptWrapper, {
             ...options,
             dialogClassName: options.className || "w-full max-w-md",

@@ -1,8 +1,9 @@
-import React from "react";
+import { useCallback, Fragment } from "react";
 import { Button, ButtonVariant } from "../components/ui/button.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";
 import { useDialog } from "./use-dialog.tsx";
-import { useSurfaceSlot, useSurfaceSlotContext } from "../contexts/surface.tsx";
+import { useView, useViewContext } from "../contexts/workbench.tsx";
+import type { JSX } from "react";
 
 export type ConfirmOptions = {
     title?: string;
@@ -16,51 +17,50 @@ export type ConfirmOptions = {
 
 export type Confirm = (options: ConfirmOptions) => void;
 
-export const ConfirmWrapper = (): React.JSX.Element => {
-    const { hideSurfaceSlot } = useSurfaceSlot();
-    const surfaceSlotContext = useSurfaceSlotContext();
+export const ConfirmWrapper = (): JSX.Element => {
+    const view = useView();
+    const viewContext = useViewContext();
 
-    const handleSubmit = React.useCallback(() => {
-        if (typeof surfaceSlotContext?.data?.onSubmit === "function") {
-            surfaceSlotContext.data.onSubmit();
+    const handleSubmit = useCallback(() => {
+        if (typeof viewContext?.onSubmit === "function") {
+            viewContext.onSubmit();
         }
-        if (typeof surfaceSlotContext?.data?.callback === "function") {
-            surfaceSlotContext.data.callback();
+        if (typeof viewContext?.callback === "function") {
+            viewContext.callback();
         }
-        hideSurfaceSlot();
-    }, [surfaceSlotContext?.data?.onSubmit, surfaceSlotContext?.data?.callback, hideSurfaceSlot]);
+        view.close();
+    }, [viewContext?.onSubmit, viewContext?.callback, view?.close]);
 
-    const handleCancel = React.useCallback(() => {
-        if (typeof surfaceSlotContext?.data?.onCancel === "function") {
-            surfaceSlotContext.data.onCancel();
+    const handleCancel = useCallback(() => {
+        if (typeof viewContext?.onCancel === "function") {
+            viewContext.onCancel();
         }
-        hideSurfaceSlot();
-    }, [surfaceSlotContext?.data?.onCancel, hideSurfaceSlot]);
+        view.close();
+    }, [viewContext?.onCancel, view?.close]);
 
     return (
-        <React.Fragment>
-            {surfaceSlotContext?.data?.title && (
+        <Fragment>
+            {viewContext?.title && (
                 <Dialog.Header>
-                    <Dialog.Title>{surfaceSlotContext.data.title}</Dialog.Title>
+                    <Dialog.Title>{viewContext.title}</Dialog.Title>
                 </Dialog.Header>
             )}
             <Dialog.Body>
-                {surfaceSlotContext?.data?.message && (
+                {viewContext?.message && (
                     <Dialog.Description>
-                        {surfaceSlotContext?.data?.message}
+                        {viewContext?.message}
                     </Dialog.Description>
                 )}
             </Dialog.Body>
             <Dialog.Footer>
                 <Button variant={ButtonVariant.SECONDARY} onClick={handleCancel}>
-                    {surfaceSlotContext?.data?.cancelText || "Cancel"}
+                    {viewContext?.cancelText || "Cancel"}
                 </Button>
                 <Button variant={ButtonVariant.PRIMARY} onClick={handleSubmit}>
-                    {surfaceSlotContext?.data?.confirmText || "Confirm"}
+                    {viewContext?.confirmText || "Confirm"}
                 </Button>
             </Dialog.Footer>
-
-        </React.Fragment>
+        </Fragment>
     );
 };
 
@@ -69,7 +69,7 @@ export const useConfirm = (): Confirm => {
     const { showDialog } = useDialog();
 
     // method to display a confirmation 
-    return React.useCallback((options: ConfirmOptions) => {
+    return useCallback((options: ConfirmOptions) => {
         showDialog(ConfirmWrapper, {
             ...options,
             dialogClassName: "max-w-lg relative",
