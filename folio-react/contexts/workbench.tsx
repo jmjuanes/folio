@@ -1,4 +1,5 @@
-import React from "react";
+import { Fragment, createContext, useReducer, useContext, useCallback } from "react";
+import type { ElementType, ReactNode, JSX } from "react";
 
 enum WorkbenchActionType {
     OPEN_VIEW = "workbench.action.open_view",
@@ -14,7 +15,7 @@ export enum Part {
 
 export type View = {
     part: Part,
-    component: React.ElementType;
+    component: ElementType;
     context: any;
 };
 
@@ -23,16 +24,16 @@ export type PartsRegistry = Record<Part, View[]>
 export type WorkbenchAction = {
     type: WorkbenchActionType;
     part: Part;
-    component?: React.ElementType;
+    component?: ElementType;
     context?: any;
 };
 
 export type WorkbenchManager = {
     parts: PartsRegistry;
-    isViewOpen: (part: Part, component: React.ElementType) => boolean;
-    openView: (part: Part, component: React.ElementType, context?: any) => void;
-    closeView: (part: Part, component: React.ElementType) => void;
-    toggleView: (part: Part, component: React.ElementType, context?: any) => void;
+    isViewOpen: (part: Part, component: ElementType) => boolean;
+    openView: (part: Part, component: ElementType, context?: any) => void;
+    closeView: (part: Part, component: ElementType) => void;
+    toggleView: (part: Part, component: ElementType, context?: any) => void;
 };
 
 export type WorkbenchViewManager = {
@@ -40,22 +41,22 @@ export type WorkbenchViewManager = {
 };
 
 // @description workbench context
-export const WorkbenchContext = React.createContext<WorkbenchManager>({} as WorkbenchManager);
-export const WorkbenchViewContext = React.createContext<View>({} as View);
+export const WorkbenchContext = createContext<WorkbenchManager>({} as WorkbenchManager);
+export const WorkbenchViewContext = createContext<View>({} as View);
 
 // @description hook to access to workbench manager
 export const useWorkbench = (): WorkbenchManager => {
-    return React.useContext(WorkbenchContext);
+    return useContext(WorkbenchContext);
 };
 
 export type WorkbenchProviderProps = {
     initialParts?: PartsRegistry;
-    children: React.ReactNode;
+    children: ReactNode;
 };
 
 // @description workbench provider
-export const WorkbenchProvider = (props: WorkbenchProviderProps): React.JSX.Element => {
-    const [parts, dispatch] = React.useReducer((prevParts: PartsRegistry, action: WorkbenchAction) => {
+export const WorkbenchProvider = (props: WorkbenchProviderProps): JSX.Element => {
+    const [parts, dispatch] = useReducer((prevParts: PartsRegistry, action: WorkbenchAction) => {
         const newParts = Object.assign({}, prevParts);
         // make sure that views list of this part is defined
         if (typeof newParts[action.part] === "undefined") {
@@ -98,26 +99,26 @@ export const WorkbenchProvider = (props: WorkbenchProviderProps): React.JSX.Elem
     }, (props.initialParts || {}) as PartsRegistry);
 
     // 1. method to open a part in the workbench
-    const openView = React.useCallback((part: Part, component: React.ElementType, context?: any) => {
+    const openView = useCallback((part: Part, component: ElementType, context?: any) => {
         dispatch({ type: WorkbenchActionType.OPEN_VIEW, part, component, context });
     }, [dispatch]);
 
     // 2. method to close a part in the workbench
-    const closeView = React.useCallback((part: Part, component: React.ElementType) => {
+    const closeView = useCallback((part: Part, component: ElementType) => {
         dispatch({ type: WorkbenchActionType.CLOSE_VIEW, part, component });
     }, [dispatch]);
 
     // 2. method to toggle a view in the workbench
-    const toggleView = React.useCallback((part: Part, component: React.ElementType, context?: any) => {
+    const toggleView = useCallback((part: Part, component: ElementType, context?: any) => {
         dispatch({ type: WorkbenchActionType.TOGGLE_VIEW, part, component, context });
     }, [dispatch]);
 
     // 4. method to check if the provided part is visible in the workbench
-    const isViewOpen = (part: Part, component: React.ElementType): boolean => {
+    const isViewOpen = useCallback((part: Part, component: ElementType): boolean => {
         return (parts[part] || []).some((view: View) => {
             return view.component === component;
         });
-    };
+    }, [parts]);
 
     return (
         <WorkbenchContext.Provider value={{ parts, isViewOpen, openView, closeView, toggleView }}>
@@ -128,15 +129,15 @@ export const WorkbenchProvider = (props: WorkbenchProviderProps): React.JSX.Elem
 
 // hook to access to the context of the workbench part
 export const useWorkbenchViewContext = (): any => {
-    return (React.useContext(WorkbenchViewContext) as View)?.context || {};
+    return (useContext(WorkbenchViewContext) as View)?.context || {};
 };
 
 // hook to control the view
 export const useWorkbenchView = (): WorkbenchViewManager => {
-    const workbench = React.useContext(WorkbenchContext);
-    const view = React.useContext(WorkbenchViewContext);
+    const workbench = useContext(WorkbenchContext);
+    const view = useContext(WorkbenchViewContext);
 
-    const close = React.useCallback(() => {
+    const close = useCallback(() => {
         workbench.closeView(view.part, view.component);
     }, [workbench, view]);
 
@@ -145,11 +146,11 @@ export const useWorkbenchView = (): WorkbenchViewManager => {
 
 export type WorkbenchSlotProps = {
     part: Part;
-    render?: (content: React.JSX.Element) => React.JSX.Element;
+    render?: (content: JSX.Element) => JSX.Element;
 };
 
 // @description component to display a specific part of the workbench
-export const WorkbenchSlot = (props: WorkbenchSlotProps): React.JSX.Element | null => {
+export const WorkbenchSlot = (props: WorkbenchSlotProps): JSX.Element | null => {
     const { parts } = useWorkbench();
 
     // if no visible parts are available
@@ -159,16 +160,16 @@ export const WorkbenchSlot = (props: WorkbenchSlotProps): React.JSX.Element | nu
 
     // get the content and check if we have to wrap its content into the provided render method
     const content = (
-        <React.Fragment>
+        <Fragment>
             {parts[props.part].map((view: View, index: number) => {
-                const Component = view.component as React.ElementType;
+                const Component = view.component as ElementType;
                 return (
                     <WorkbenchViewContext.Provider key={index} value={view}>
                         <Component />
                     </WorkbenchViewContext.Provider>
                 );
             })}
-        </React.Fragment>
+        </Fragment>
     );
     return props.render ? props.render(content) : content;
 };
