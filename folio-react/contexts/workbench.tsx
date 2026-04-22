@@ -8,9 +8,12 @@ enum WorkbenchActionType {
 };
 
 export enum Part {
+    TITLEBAR = "workbench.parts.titlebar",
     CANVAS = "workbench.parts.canvas",
     SURFACE = "workbench.parts.surface",
     SIDEBAR = "workbench.parts.sidebar",
+    STATUSBAR = "workbench.parts.statusbar",
+    AUXILIARYBAR = "workbench.parts.auxiliarybar",
 };
 
 export type View = {
@@ -40,6 +43,62 @@ export type WorkbenchViewManager = {
     close: () => void;
 };
 
+// reducer for workbench parts
+const workbenchPartsReducer = (prevParts: PartsRegistry, action: WorkbenchAction): PartsRegistry => {
+    const newParts = Object.assign({}, prevParts);
+    // make sure that views list of this part is defined
+    if (typeof newParts[action.part] === "undefined") {
+        newParts[action.part] = [];
+    }
+    switch (action.type) {
+        case WorkbenchActionType.OPEN_VIEW:
+            if (action.component) {
+                newParts[action.part].push({
+                    part: action.part,
+                    component: action.component,
+                    context: action.context || {},
+                });
+            }
+            break;
+        case WorkbenchActionType.CLOSE_VIEW:
+            newParts[action.part] = newParts[action.part].filter((view: View) => {
+                return view.component !== action.component;
+            });
+            break;
+        case WorkbenchActionType.TOGGLE_VIEW:
+            const existsView = newParts[action.part].some((view: View) => {
+                return view.component === action.component;
+            });
+            if (existsView) {
+                newParts[action.part] = newParts[action.part].filter((view: View) => {
+                    return view.component !== action.component;
+                });
+            }
+            else if (action.component) {
+                newParts[action.part].push({
+                    part: action.part,
+                    component: action.component,
+                    context: action.context || {},
+                });
+            }
+            break;
+    }
+    return newParts;
+};
+
+// function to initialize the views in the workbench
+const workbenchPartsInitializer = (initialViews: View[]): PartsRegistry => {
+    const initialParts = {} as PartsRegistry;
+    (initialViews || []).forEach((view: View) => {
+        if (typeof initialParts[view.part] === "undefined") {
+            initialParts[view.part] = [] as View[];
+        }
+        // insert this view
+        initialParts[view.part].push(view);
+    });
+    return initialParts;
+};
+
 // @description workbench context
 export const WorkbenchContext = createContext<WorkbenchManager>({} as WorkbenchManager);
 export const WorkbenchViewContext = createContext<View>({} as View);
@@ -50,53 +109,13 @@ export const useWorkbench = (): WorkbenchManager => {
 };
 
 export type WorkbenchProviderProps = {
-    initialParts?: PartsRegistry;
+    initialViews?: View[];
     children: ReactNode;
 };
 
 // @description workbench provider
 export const WorkbenchProvider = (props: WorkbenchProviderProps): JSX.Element => {
-    const [parts, dispatch] = useReducer((prevParts: PartsRegistry, action: WorkbenchAction) => {
-        const newParts = Object.assign({}, prevParts);
-        // make sure that views list of this part is defined
-        if (typeof newParts[action.part] === "undefined") {
-            newParts[action.part] = [];
-        }
-        switch (action.type) {
-            case WorkbenchActionType.OPEN_VIEW:
-                if (action.component) {
-                    newParts[action.part].push({
-                        part: action.part,
-                        component: action.component,
-                        context: action.context || {},
-                    });
-                }
-                break;
-            case WorkbenchActionType.CLOSE_VIEW:
-                newParts[action.part] = newParts[action.part].filter((view: View) => {
-                    return view.component !== action.component;
-                });
-                break;
-            case WorkbenchActionType.TOGGLE_VIEW:
-                const existsView = newParts[action.part].some((view: View) => {
-                    return view.component === action.component;
-                });
-                if (existsView) {
-                    newParts[action.part] = newParts[action.part].filter((view: View) => {
-                        return view.component !== action.component;
-                    });
-                }
-                else if (action.component) {
-                    newParts[action.part].push({
-                        part: action.part,
-                        component: action.component,
-                        context: action.context || {},
-                    });
-                }
-                break;
-        }
-        return newParts;
-    }, (props.initialParts || {}) as PartsRegistry);
+    const [parts, dispatch] = useReducer(workbenchPartsReducer, props.initialViews || [], workbenchPartsInitializer);
 
     // 1. method to open a part in the workbench
     const openView = useCallback((part: Part, component: ElementType, context?: any) => {
