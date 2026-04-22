@@ -1,10 +1,12 @@
-import React from "react";
+import { Fragment } from "react";
 import { TOOLS } from "../constants.js";
 import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
+import type { JSX } from "react";
 import type { ToolState } from "../lib/tool.ts";
+import type { PointerSession } from "../lib/pointer.ts";
 
-export const Overlays = (): React.JSX.Element => {
+export const Overlays = (): JSX.Element => {
     const editor = useEditor();
     const tool = editor.getCurrentTool() as ToolState | null;
     const {
@@ -13,10 +15,11 @@ export const Overlays = (): React.JSX.Element => {
         Dimensions,
         Handlers,
         Snaps,
+        Pointer,
     } = useEditorComponents();
 
     return (
-        <React.Fragment>
+        <Fragment>
             {!!Bounds && tool?.id === TOOLS.SELECT && (
                 <Bounds />
             )}
@@ -32,6 +35,15 @@ export const Overlays = (): React.JSX.Element => {
             {!!Dimensions && editor?.appState?.objectDimensions && (
                 <Dimensions />
             )}
-        </React.Fragment>
+            {!!Pointer && editor.pointer.getSessions().map((pointerSession: PointerSession) => (
+                <Pointer
+                    key={pointerSession.id}
+                    points={pointerSession.points}
+                    color={pointerSession.color}
+                    size={pointerSession.size}
+                    opacity={pointerSession.opacity}
+                />
+            ))}
+        </Fragment>
     );
 };
