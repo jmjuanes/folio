@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useMemo, useEffect, Fragment } from "react";
 import { PlusIcon } from "@josemi-icons/react";
 import { renderIcon } from "@josemi-icons/react";
 import classNames from "classnames";
@@ -9,6 +9,7 @@ import { useLibrary } from "../contexts/library.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { formatDate } from "../utils/dates.ts";
+import type { JSX, PropsWithChildren } from "react";
 import type { LibraryCollection, LibraryComponent } from "../lib/library.ts";
 
 type EmptyLibraryProps = {
@@ -18,7 +19,7 @@ type EmptyLibraryProps = {
 };
 
 // @description display an empty library message
-const EmptyLibrary = (props: EmptyLibraryProps): React.JSX.Element => (
+const EmptyLibrary = (props: EmptyLibraryProps): JSX.Element => (
     <div className="flex flex-col items-center justify-center gap-1 py-12 bg-gray-100 rounded-lg">
         <div className="flex items-center text-5xl">
             {renderIcon(props.icon)}
@@ -38,7 +39,7 @@ export type LibraryComponentIconProps = {
 };
 
 // @description library item
-export const LibraryComponentIcon = ({ thumbnail, onClick }: LibraryComponentIconProps): React.JSX.Element => {
+export const LibraryComponentIcon = ({ thumbnail, onClick }: LibraryComponentIconProps): JSX.Element => {
     const className = classNames({
         "bg-gray-50 border-2 border-gray-200 rounded-lg overflow-hidden": true,
         "hover:border-gray-300 cursor-pointer": typeof onClick === "function",
@@ -56,7 +57,7 @@ export type LibraryCollectionIconProps = {
     onClick: () => void;
 };
 
-export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): React.JSX.Element => {
+export const LibraryCollectionIcon = (props: LibraryCollectionIconProps): JSX.Element => {
     const visibleComponents = props.components.slice(0, 4);
     return (
         <div className="border-2 border-gray-200 hover:border-gray-300 rounded-lg bg-white cursor-pointer overflow-hidden" onClick={props.onClick}>
@@ -87,7 +88,7 @@ export type LibraryDetailProps = {
     text: string;
 };
 
-export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
+export const LibraryDetail = (props: LibraryDetailProps): JSX.Element => (
     <div className="flex items-center gap-2 opacity-60">
         <div className="flex text-base">
             {renderIcon(props.icon)}
@@ -97,9 +98,9 @@ export const LibraryDetail = (props: LibraryDetailProps): React.JSX.Element => (
 );
 
 // @description library container
-export const Library = (): React.JSX.Element => {
-    const [activeCollection, setActiveCollection] = React.useState<LibraryCollection | null>(null);
-    const [activeComponent, setActiveComponent] = React.useState<LibraryComponent | null>(null);
+export const LibraryContent = (): JSX.Element => {
+    const [activeCollection, setActiveCollection] = useState<LibraryCollection | null>(null);
+    const [activeComponent, setActiveComponent] = useState<LibraryComponent | null>(null);
     const editor = useEditor();
     const library = useLibrary();
     const { dispatchAction } = useActions();
@@ -107,7 +108,7 @@ export const Library = (): React.JSX.Element => {
     const collections = library?.getCollections() || [];
 
     // get visible components
-    const visibleComponents = React.useMemo<LibraryComponent[]>(() => {
+    const visibleComponents = useMemo<LibraryComponent[]>(() => {
         if (!activeComponent && components.length > 0) {
             // 1. a collection is active, we will display the items on this collection
             if (activeCollection) {
@@ -123,7 +124,7 @@ export const Library = (): React.JSX.Element => {
     }, [components.length, collections.length, activeCollection, activeComponent]);
 
     // hook to check if we have to clear the active collection or the active item
-    React.useEffect(() => {
+    useEffect(() => {
         // if we have an active item, check if this item is still in the items array
         if (activeComponent) {
             if (!components.find((item: LibraryComponent) => item.id === activeComponent?.id)) {
@@ -143,7 +144,7 @@ export const Library = (): React.JSX.Element => {
         <Panel.Content>
             <Panel.Header>
                 {!activeCollection && !activeComponent && (
-                    <React.Fragment>
+                    <Fragment>
                         <Panel.HeaderTitle
                             showBackButton={false}
                             title="Library"
@@ -170,10 +171,10 @@ export const Library = (): React.JSX.Element => {
                                 onClick={() => dispatchAction(ACTIONS.CLEAR_LIBRARY)}
                             />
                         </div>
-                    </React.Fragment>
+                    </Fragment>
                 )}
                 {activeCollection && !activeComponent && (
-                    <React.Fragment>
+                    <Fragment>
                         <Panel.HeaderTitle
                             showBackButton={true}
                             onBackButtonClick={() => setActiveCollection(null)}
@@ -202,10 +203,10 @@ export const Library = (): React.JSX.Element => {
                                 }}
                             />
                         </div>
-                    </React.Fragment>
+                    </Fragment>
                 )}
                 {activeComponent && (
-                    <React.Fragment>
+                    <Fragment>
                         <Panel.HeaderTitle
                             showBackButton={true}
                             onBackButtonClick={() => setActiveComponent(null)}
@@ -227,7 +228,7 @@ export const Library = (): React.JSX.Element => {
                                 }}
                             />
                         </div>
-                    </React.Fragment>
+                    </Fragment>
                 )}
             </Panel.Header>
             <Panel.Body className="grow flex flex-col gap-6 min-h-0">
@@ -320,5 +321,17 @@ export const Library = (): React.JSX.Element => {
                 )}
             </Panel.Body>
         </Panel.Content>
+    );
+};
+
+// @description main library panel
+export const Library = (props: PropsWithChildren): JSX.Element => {
+    const content = props.children ?? <LibraryContent />;
+    return (
+        <div className="shrink-0 w-88 h-full pointer-events-auto">
+            <Panel className="relative h-full rounded-tr-none rounded-br-none overflow-hidden flex flex-col min-h-0">
+                {content}
+            </Panel>
+        </div>
     );
 };
