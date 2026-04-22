@@ -1,9 +1,10 @@
-import React from "react";
+import { useMemo, useCallback, useState, useEffect, Fragment } from "react";
 import classNames from "classnames";
 import { CloseIcon } from "@josemi-icons/react";
 import { useEditor } from "../contexts/editor.tsx";
 import { exportToDataURL } from "../lib/export.js";
 import { FIELDS, TOOLS, TRANSPARENT } from "../constants.js";
+import type { JSX, CSSProperties, PropsWithChildren } from "react";
 
 // Layers preview variables
 const LAYER_PREVIEW_SIZE = 64;
@@ -12,8 +13,8 @@ const LAYER_PREVIEW_BACKGROUND = TRANSPARENT;
 // Tiny hook to generate the preview of the element
 const useElementPreview = (elements: any[], dependencies: string[] = []): string | null => {
     const editor = useEditor();
-    const [previewImage, setPreviewImage] = React.useState<string | null>(null);
-    React.useEffect(() => {
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    useEffect(() => {
         if (elements.length > 1 || !elements[0]?.[FIELDS.CREATING]) {
             const previewOptions = {
                 assets: editor.assets,
@@ -36,7 +37,7 @@ export type LayerItemProps = {
     onDoubleClick?: () => void,
 };
 
-export const LayerItem = ({ elements, active = false, onClick, onDoubleClick }: LayerItemProps): React.JSX.Element => {
+export const LayerItem = ({ elements, active = false, onClick, onDoubleClick }: LayerItemProps): JSX.Element => {
     const previewImage = useElementPreview(elements, elements.map(el => el.version));
     const layerClass = classNames({
         "relative shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white border-2 p-2": true,
@@ -64,7 +65,7 @@ export type LayersProps = {
 // @description Layers panel component
 // @param {object} props React props
 // @param {string} [props.maxHeight] Maximum height of the layers panel
-export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.Element => {
+export const LayersContent = ({ maxHeight = "100vh - 5rem" }: LayersProps): JSX.Element => {
     // const [activeGroup, setActiveGroup] = React.useState("");
     const editor = useEditor();
     const activeGroup = editor.page.activeGroup || "";
@@ -75,7 +76,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     // generate a map of groups in the board
     // each group contains the list of elements on it, the index of the group
     // and the last element of the group (to display the group item in the layers panel)
-    const groups = React.useMemo(() => {
+    const groups = useMemo(() => {
         const groupsMap = new Map();
         let currentGroupIndex = 1;
         editor.getElements().forEach((element: any) => {
@@ -96,7 +97,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     }, [key]);
 
     // get the elements to be displayed in the layers panel
-    const visibleElements = React.useMemo(() => {
+    const visibleElements = useMemo(() => {
         // 1. activeGroup is not empty, return the elements on this group
         if (activeGroup) {
             return editor.getElements().filter((element: any) => element.group === activeGroup);
@@ -106,14 +107,14 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     }, [editor, key, activeGroup]);
 
     // exit the current active group
-    const handleCloseActiveGroup = React.useCallback(() => {
+    const handleCloseActiveGroup = useCallback(() => {
         editor.setCurrentTool(TOOLS.SELECT);
         editor.page.activeGroup = "";
         editor.update();
     }, [editor]);
 
     // handle click on a layer item
-    const handleClick = React.useCallback((elements: any[]) => {
+    const handleClick = useCallback((elements: any[]) => {
         if (!editor.page.readonly) {
             editor.setCurrentTool(TOOLS.SELECT);
             editor.setSelection(elements.map((el: any) => el.id));
@@ -122,7 +123,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     }, [editor, editor.page, editor.page.readonly]);
 
     // handle double click on a group item
-    const handleDoubleClick = React.useCallback((groupId: string) => {
+    const handleDoubleClick = useCallback((groupId: string) => {
         if (!editor.page.readonly) {
             editor.setCurrentTool(TOOLS.SELECT);
             editor.page.activeGroup = groupId;
@@ -131,7 +132,7 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     }, [editor, editor.page, editor.page.readonly]);
 
     // calculate the container style
-    const containerStyle = React.useMemo<React.CSSProperties>(() => {
+    const containerStyle = useMemo<CSSProperties>(() => {
         return {
             maxHeight: `calc(${maxHeight} - ${activeGroup ? "3rem" : "0rem"})`,
             scrollbarWidth: "none",
@@ -139,10 +140,10 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
     }, [activeGroup, maxHeight]);
 
     return (
-        <React.Fragment>
+        <Fragment>
             <div className="flex flex-col-reverse gap-2 overflow-y-auto" style={containerStyle}>
                 {visibleElements.map((element: any) => (
-                    <React.Fragment key={element.id + "." + (element.group || "")}>
+                    <Fragment key={element.id + "." + (element.group || "")}>
                         {(!element.group || activeGroup) && (
                             <LayerItem
                                 key={element.id}
@@ -155,12 +156,12 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
                             <LayerItem
                                 key={element.group}
                                 elements={groups.get(element.group).elements}
-                                active={groups.get(element.group).elements.some(el => el.selected)}
+                                active={groups.get(element.group).elements.some((el: any) => el.selected)}
                                 onClick={() => handleClick(groups.get(element.group).elements)}
                                 onDoubleClick={() => handleDoubleClick(element.group)}
                             />
                         )}
-                    </React.Fragment>
+                    </Fragment>
                 ))}
             </div>
             {activeGroup && (
@@ -170,6 +171,15 @@ export const Layers = ({ maxHeight = "100vh - 5rem" }: LayersProps): React.JSX.E
                     </div>
                 </div>
             )}
-        </React.Fragment>
+        </Fragment>
+    );
+};
+
+export const Layers = (props: PropsWithChildren): JSX.Element => {
+    const content = props.children ?? <LayersContent />;
+    return (
+        <div className="absolute z-30 top-0 right-0 pointer-events-auto">
+            {content}
+        </div>
     );
 };
