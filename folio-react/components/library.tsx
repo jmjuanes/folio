@@ -329,7 +329,7 @@ export const Library = (props: PropsWithChildren): JSX.Element => {
     const content = props.children ?? <LibraryContent />;
     return (
         <div className="shrink-0 w-88 h-full pointer-events-auto">
-            <Panel className="relative h-full rounded-tr-none rounded-br-none overflow-hidden flex flex-col min-h-0">
+            <Panel className="relative h-full overflow-hidden flex flex-col min-h-0">
                 {content}
             </Panel>
         </div>

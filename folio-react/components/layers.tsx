@@ -136,7 +136,7 @@ export const LayersContent = ({ maxHeight = "100vh - 5rem" }: LayersProps): JSX.
         return {
             maxHeight: `calc(${maxHeight} - ${activeGroup ? "3rem" : "0rem"})`,
             scrollbarWidth: "none",
-        } as React.CSSProperties;
+        } as CSSProperties;
     }, [activeGroup, maxHeight]);
 
     return (
@@ -178,8 +178,8 @@ export const LayersContent = ({ maxHeight = "100vh - 5rem" }: LayersProps): JSX.
 export const Layers = (props: PropsWithChildren): JSX.Element => {
     const content = props.children ?? <LayersContent />;
     return (
-        <div className="absolute z-30 top-0 right-0 pointer-events-auto">
+        <Fragment>
             {content}
-        </div>
+        </Fragment>
     );
 };

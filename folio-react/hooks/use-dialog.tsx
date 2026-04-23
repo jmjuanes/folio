@@ -6,14 +6,14 @@ import { Dialog } from "../components/ui/dialog.tsx";
 import { Overlay } from "../components/ui/overlay.tsx";
 import { Part, useWorkbench, useView, useViewContext } from "../contexts/workbench.tsx";
 import { useEscapeKey } from "./use-key.ts";
-import type { ElementType } from "react";
+import type { ElementType, JSX } from "react";
 
 export type DialogManager = {
     showDialog: (component: ElementType, context?: any) => void;
     hideDialog: () => void;
 };
 
-export const DialogWrapper = (): React.JSX.Element => {
+export const DialogWrapper = (): JSX.Element => {
     const view = useView();
     const viewContext = useViewContext();
     const DialogComponent = viewContext?.dialogComponent || null;

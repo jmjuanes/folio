@@ -9,14 +9,14 @@ import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
 import { useEscapeKey } from "../hooks/use-key.ts";
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import type { ActionItem } from "../contexts/actions.tsx";
 
 export type CommandItem = {
     id: string;
     label: string;
     shortcut?: string | string[];
-    icon?: React.JSX.Element | string;
+    icon?: JSX.Element | string;
     disabled?: boolean;
     execute: () => void;
 };
@@ -223,7 +223,7 @@ export const CommandsContent = (): JSX.Element => {
 };
 
 export type CommandsProps = {
-    children?: React.ReactNode;
+    children?: ReactNode;
 };
 
 export const Commands = (props: CommandsProps): JSX.Element => {

@@ -7,7 +7,7 @@ import type { JSX } from "react";
 
 export type ConfirmOptions = {
     title?: string;
-    message?: string | React.JSX.Element;
+    message?: string | JSX.Element;
     confirmText?: string;
     cancelText?: string;
     callback?: () => void; // DEPRECATED
