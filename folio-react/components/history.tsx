@@ -1,18 +1,17 @@
-import React from "react";
-import {ACTIONS} from "../../constants.js";
-import {useEditor} from "../../contexts/editor.tsx";
-import {useActions} from "../../contexts/actions.tsx";
-import {Island} from "../ui/island.tsx";
+import { ACTIONS } from "../constants.js";
+import { useEditor } from "../contexts/editor.tsx";
+import { useActions } from "../contexts/actions.tsx";
+import { Island } from "./ui/island.tsx";
+import { JSX } from "react";
 
-// History panel component
-export const HistoryPanel = () => {
+// history component
+export const History = (): JSX.Element => {
     const editor = useEditor();
     const { dispatchAction } = useActions();
     return (
         <Island>
             <Island.Button
                 icon="history-undo"
-                roundedEnd={false}
                 disabled={editor.page.readonly || !editor.canUndo()}
                 onClick={() => {
                     dispatchAction(ACTIONS.UNDO);
@@ -20,7 +19,6 @@ export const HistoryPanel = () => {
             />
             <Island.Button
                 icon="history-redo"
-                roundedStart={false}
                 disabled={editor.page.readonly || !editor.canRedo()}
                 onClick={() => {
                     dispatchAction(ACTIONS.REDO);

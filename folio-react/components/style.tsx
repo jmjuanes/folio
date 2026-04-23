@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import {
     AlignBottomIcon,
     AlignMiddleIcon,
@@ -41,13 +41,13 @@ import {
     ARROWHEADS,
     ARROW_SHAPES,
     FORM_OPTIONS,
-} from "../../constants.js";
+} from "../constants.js";
 import {
     FILL_COLOR_PALETTE,
     STROKE_COLOR_PALETTE,
     TEXT_COLOR_PALETTE,
     NOTE_COLOR_PALETTE,
-} from "../../utils/colors.js";
+} from "../utils/colors.js";
 import {
     ArrowIcon,
     ArrowConnectorIcon,
@@ -63,11 +63,12 @@ import {
     ArrowheadTriangleIcon,
     ArrowheadSquareIcon,
     ArrowheadCircleIcon,
-} from "../icons.jsx";
-import {Panel} from "../ui/panel.tsx";
-import {Form} from "../form/index.jsx";
-import {useEditor} from "../../contexts/editor.tsx";
-import {useActions} from "../../contexts/actions.tsx";
+} from "./icons.jsx";
+import { Panel } from "./ui/panel.tsx";
+import { Form } from "./form/index.jsx";
+import { useEditor } from "../contexts/editor.tsx";
+import { useActions } from "../contexts/actions.tsx";
+import type { CSSProperties, JSX } from "react";
 
 // Available sections
 const SECTIONS = {
@@ -146,7 +147,7 @@ const styleSections = {
             strokeStyle: {
                 title: "Stroke style",
                 type: FORM_OPTIONS.LABELED_SELECT,
-                isVisible: (value, currentValue, data) => {
+                isVisible: (value: any, currentValue: any, data: any) => {
                     return value !== STROKES.NONE || typeof data[FIELDS.FILL_STYLE] !== "undefined";
                 },
                 values: [
@@ -182,7 +183,7 @@ const styleSections = {
                 title: "Text color",
                 type: FORM_OPTIONS.COLOR,
                 values: TEXT_COLOR_PALETTE,
-                test: data => typeof data[FIELDS.TEXT_COLOR] !== "undefined",
+                test: (data: any) => typeof data[FIELDS.TEXT_COLOR] !== "undefined",
             },
             [FIELDS.TEXT_FONT]: {
                 title: "Font family",
@@ -209,7 +210,7 @@ const styleSections = {
                     {value: TEXT_ALIGNS.RIGHT, icon: TextRightIcon()},
                     {value: TEXT_ALIGNS.JUSTIFY, icon: TextJustifyIcon()},
                 ],
-                test: data => typeof data[FIELDS.TEXT_ALIGN] !== "undefined",
+                test: (data: any) => typeof data[FIELDS.TEXT_ALIGN] !== "undefined",
             },
             [FIELDS.TEXT_VERTICAL_ALIGN]: {
                 title: "Text vertical align",
@@ -219,7 +220,7 @@ const styleSections = {
                     {value: TEXT_VERTICAL_ALIGNS.MIDDLE, icon: AlignMiddleIcon()},
                     {value: TEXT_VERTICAL_ALIGNS.BOTTOM, icon: AlignBottomIcon()},
                 ],
-                test: data => typeof data[FIELDS.TEXT_VERTICAL_ALIGN] !== "undefined",
+                test: (data: any) => typeof data[FIELDS.TEXT_VERTICAL_ALIGN] !== "undefined",
             },
         },
     },
@@ -295,7 +296,7 @@ const displaySections = {
                 type: FORM_OPTIONS.SELECT,
                 title: "Actions",
                 className: "grid grid-cols-4 gap-1 w-full",
-                isVisible: (field, value, data) => {
+                isVisible: (field: string, value: any, data: any) => {
                     if (field === ACTIONS.LOCK_SELECTION) {
                         return !data[FIELDS.LOCKED];
                     }
@@ -305,7 +306,7 @@ const displaySections = {
                     // Field is visible
                     return true;
                 },
-                isActive: (field, value, data) => {
+                isActive: (field: string, value: any, data: any) => {
                     return field === ACTIONS.UNLOCK_SELECTION;
                 },
                 values: [
@@ -319,7 +320,7 @@ const displaySections = {
     },
 };
 
-const useValues = selection => {
+const useValues = (selection: any[]): any => {
     // Check if we have only one selected item
     if (selection.length === 1) {
         return selection[0];
@@ -328,22 +329,22 @@ const useValues = selection => {
     return selection.reduce((prev, item) => ({...prev, ...item}), {});
 };
 
-const getVisibleSections = (sections, values) => {
-    return Object.keys(sections).filter(option => {
+const getVisibleSections = (sections: any, values: any): any[] => {
+    return Object.keys(sections).filter((option: string) => {
         return typeof values[sections[option].test] !== "undefined";
     });
 };
 
-export const EditionPanel = () => {
+export const Style = (): JSX.Element => {
     const editor = useEditor();
     const { dispatchAction } = useActions();
     const selectedElements = editor.getSelection();
-    const [activeSection, setActiveSection] = React.useState("");
+    const [activeSection, setActiveSection] = useState("");
     const values = useValues(selectedElements);
     const keys = Object.keys(values);
 
     // Get visible sections
-    const visibleSections = React.useMemo(() => {
+    const visibleSections = useMemo(() => {
         return {
             style: getVisibleSections(styleSections, values),
             display: getVisibleSections(displaySections, values),
@@ -351,7 +352,7 @@ export const EditionPanel = () => {
     }, [keys.length]);
 
     // Handle selection change
-    const handleChange = React.useCallback((key, value) => {
+    const handleChange = useCallback((key: string, value: any) => {
         if (key === "actions" || key === "layers") {
             dispatchAction(value);
         }
@@ -363,11 +364,12 @@ export const EditionPanel = () => {
     }, [selectedElements.length, editor]);
 
     // Handle active section change
-    const handleSectionChange = newSection => {
-        return setActiveSection(prevSection => {
+    const handleSectionChange = useCallback((newSection: string) => {
+        setActiveSection(prevSection => {
             return prevSection === newSection ? "" : newSection;
         });
-    };
+    }, [setActiveSection]);
+
     // Fix value of active section
     const currentSection = activeSection || visibleSections.style[0];
     return (
@@ -384,7 +386,7 @@ export const EditionPanel = () => {
                     ))}
                 </Panel.Tabs>
             )}
-            <Panel.Body className="flex flex-col gap-2 overflow-y-auto" style={{maxHeight: "calc(75vh - 8rem)"}}>
+            <Panel.Body className="flex flex-col gap-2 overflow-y-auto" style={{maxHeight: "calc(75vh - 8rem)"} as CSSProperties}>
                 {visibleSections.style.length > 0 && (
                     <Form
                         key={currentSection}
@@ -395,7 +397,7 @@ export const EditionPanel = () => {
                     />
                 )}
                 {visibleSections.display.map((key, index) => (
-                    <React.Fragment key={key}>
+                    <Fragment key={key}>
                         {(index > 0 || visibleSections.style.length > 0) && (
                             <Panel.Separator />
                         )}
@@ -406,7 +408,7 @@ export const EditionPanel = () => {
                             items={displaySections[key].items}
                             onChange={handleChange}
                         />
-                    </React.Fragment>
+                    </Fragment>
                 ))}
             </Panel.Body>
         </Panel>
