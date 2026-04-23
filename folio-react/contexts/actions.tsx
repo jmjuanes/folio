@@ -91,7 +91,6 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
         ExportDialog,
         Commands,
         Library,
-        Layers,
     } = useEditorComponents();
 
     const actions = React.useMemo<ActionItem[]>(() => {
@@ -805,16 +804,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "album",
                 category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
-                    workbench.toggleView(Part.SIDEBAR, Library);
-                },
-            },
-            [ACTIONS.TOGGLE_LAYERS_PANEL]: {
-                id: ACTIONS.TOGGLE_LAYERS_PANEL,
-                name: "Show/hide Layers Panel",
-                icon: "stack",
-                category: ActionCategory.EDITOR_UI,
-                onSelect: () => {
-                    workbench.toggleView(Part.CANVAS, Layers);
+                    workbench.toggleView(Part.AUXILIARYBAR, Library);
                 },
             },
         }) as ActionItem[];
