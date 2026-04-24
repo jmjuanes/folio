@@ -2,7 +2,7 @@ import { useCallback, Fragment } from "react";
 import { Button, ButtonVariant } from "../components/ui/button.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";
 import { useDialog } from "./use-dialog.tsx";
-import { useView, useViewContext } from "../contexts/workbench.tsx";
+import { useFloating } from "../contexts/surface.tsx";
 import type { JSX } from "react";
 
 export type ConfirmOptions = {
@@ -18,46 +18,46 @@ export type ConfirmOptions = {
 export type Confirm = (options: ConfirmOptions) => void;
 
 export const ConfirmWrapper = (): JSX.Element => {
-    const view = useView();
-    const viewContext = useViewContext();
+    const floatingElement = useFloating();
+    const context = floatingElement.getContext();
 
     const handleSubmit = useCallback(() => {
-        if (typeof viewContext?.onSubmit === "function") {
-            viewContext.onSubmit();
+        if (typeof context?.onSubmit === "function") {
+            context.onSubmit();
         }
-        if (typeof viewContext?.callback === "function") {
-            viewContext.callback();
+        if (typeof context?.callback === "function") {
+            context.callback();
         }
-        view.close();
-    }, [viewContext?.onSubmit, viewContext?.callback, view?.close]);
+        floatingElement.close();
+    }, [context?.onSubmit, context?.callback, floatingElement.close]);
 
     const handleCancel = useCallback(() => {
-        if (typeof viewContext?.onCancel === "function") {
-            viewContext.onCancel();
+        if (typeof context?.onCancel === "function") {
+            context.onCancel();
         }
-        view.close();
-    }, [viewContext?.onCancel, view?.close]);
+        floatingElement.close();
+    }, [context?.onCancel, floatingElement.close]);
 
     return (
         <Fragment>
-            {viewContext?.title && (
+            {context?.title && (
                 <Dialog.Header>
-                    <Dialog.Title>{viewContext.title}</Dialog.Title>
+                    <Dialog.Title>{context.title}</Dialog.Title>
                 </Dialog.Header>
             )}
             <Dialog.Body>
-                {viewContext?.message && (
+                {context?.message && (
                     <Dialog.Description>
-                        {viewContext?.message}
+                        {context?.message}
                     </Dialog.Description>
                 )}
             </Dialog.Body>
             <Dialog.Footer>
                 <Button variant={ButtonVariant.SECONDARY} onClick={handleCancel}>
-                    {viewContext?.cancelText || "Cancel"}
+                    {context?.cancelText || "Cancel"}
                 </Button>
                 <Button variant={ButtonVariant.PRIMARY} onClick={handleSubmit}>
-                    {viewContext?.confirmText || "Confirm"}
+                    {context?.confirmText || "Confirm"}
                 </Button>
             </Dialog.Footer>
         </Fragment>

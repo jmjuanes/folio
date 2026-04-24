@@ -4,7 +4,7 @@ import { Dialog } from "../components/ui/dialog.tsx";
 import { Form } from "../components/form/index.jsx";
 import { useDialog } from "./use-dialog.tsx";
 import { useFormData } from "./use-form-data.js";
-import { useView, useViewContext } from "../contexts/workbench.tsx";
+import { useFloating } from "../contexts/surface.tsx";
 import type { JSX } from "react";
 
 export type PromptOptions = {
@@ -21,38 +21,38 @@ export type Prompt = (options: PromptOptions) => void;
 
 // @description internal prompt component
 const PromptWrapper = (): JSX.Element => {
-    const view = useView();
-    const viewContext = useViewContext();
-    const [data, setData] = useFormData(viewContext?.initialData || {});
+    const floatingElement = useFloating();
+    const context = floatingElement.getContext();
+    const [data, setData] = useFormData(context?.initialData || {});
 
     const handleSubmit = useCallback(() => {
-        if (typeof viewContext?.callback === "function") {
-            viewContext.callback(data);
+        if (typeof context?.callback === "function") {
+            context.callback(data);
         }
-        view.close();
-    }, [data, viewContext?.callback, view?.close]);
+        floatingElement.close();
+    }, [data, context?.callback, floatingElement.close]);
 
     return (
         <Fragment>
-            {viewContext?.title && (
+            {context?.title && (
                 <Dialog.Header>
-                    <Dialog.Title>{viewContext?.title}</Dialog.Title>
+                    <Dialog.Title>{context?.title}</Dialog.Title>
                 </Dialog.Header>
             )}
             <Dialog.Body>
                 <Form
                     className="flex flex-col gap-2"
                     data={data}
-                    items={viewContext?.items}
+                    items={context?.items}
                     onChange={setData}
                 />
             </Dialog.Body>
             <Dialog.Footer>
-                <Button variant={ButtonVariant.SECONDARY} onClick={() => view.close()}>
-                    {viewContext?.cancelText || "Cancel"}
+                <Button variant={ButtonVariant.SECONDARY} onClick={() => floatingElement.close()}>
+                    {context?.cancelText || "Cancel"}
                 </Button>
                 <Button variant={ButtonVariant.PRIMARY} onClick={() => handleSubmit()}>
-                    {viewContext?.confirmText || "Confirm"}
+                    {context?.confirmText || "Confirm"}
                 </Button>
             </Dialog.Footer>
         </Fragment>

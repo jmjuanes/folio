@@ -1,33 +1,34 @@
-import React from "react";
-// import { createPortal } from "react-dom";
+import { createContext, useContext, useState, useCallback, Fragment } from "react";
+import type { JSX, ElementType, PropsWithChildren } from "react";
 
 type SurfaceEntry ={
     id: string;
-    component: React.ElementType,
-    data: any,
+    component: ElementType,
+    context: any,
 };
 
 export type SurfaceManager = {
     surface: SurfaceEntry[];
-    showInSurface: (id: string, component: React.ElementType, data?: any) => void;
+    showInSurface: (id: string, component: ElementType, context?: any) => void;
     removeFromSurface: (id: string) => void;
     clearSurface: () => void;
 };
 
-export type SurfaceSlotManager = {
-    hideSurfaceSlot: () => void;
+export type FloatingManager = {
+    getContext: () => any;
+    close: () => void;
 };
 
 // @description surface context
-export const SurfaceContext = React.createContext<SurfaceManager | null>(null);
-export const SurfaceSlotContext = React.createContext<SurfaceEntry | null>(null);
+export const SurfaceContext = createContext<SurfaceManager | null>(null);
+export const FloatingContext = createContext<SurfaceEntry | null>(null);
 
 // @description hook to access to surface
 // @returns {object} surface object
 // @returns {function} surface.showSurface function to show a component in the surface
 // @returns {function} surface.clearSurface function to clear all components in the surface
 export const useSurface = (): SurfaceManager => {
-    const surfaceManager = React.useContext(SurfaceContext);
+    const surfaceManager = useContext(SurfaceContext);
     if (!surfaceManager) {
         throw new Error("Cannot call 'useSurface' outside SurfaceProvider");
     }
@@ -37,29 +38,29 @@ export const useSurface = (): SurfaceManager => {
 // @description surface provider component
 // @param {object} props React props
 // @param {React Children} props.children React children to render
-export const SurfaceProvider = (props: React.PropsWithChildren): React.JSX.Element => {
-    const [surface, setSurface] = React.useState<SurfaceEntry[]>([] as SurfaceEntry[]);
+export const SurfaceProvider = (props: PropsWithChildren): JSX.Element => {
+    const [surface, setSurface] = useState<SurfaceEntry[]>([] as SurfaceEntry[]);
 
     // callback to show content in the surface
     // @param {function} render function to render the surface content
-    const showInSurface = React.useCallback((id: string, component: React.ElementType, data?: any) => {
+    const showInSurface = useCallback((id: string, component: React.ElementType, context?: any) => {
         setSurface((prevSurface) => {
             return [
                 ...prevSurface,
-                { id, component, data: data || {} } as SurfaceEntry,
+                { id, component, context: context || {} } as SurfaceEntry,
             ];
         });
     }, [setSurface]);
 
     // callback to remove the provided component from the surface
-    const removeFromSurface = React.useCallback((id: string) => {
+    const removeFromSurface = useCallback((id: string) => {
         setSurface((prevSurface) => {
             return prevSurface.filter(surfaceEntry => surfaceEntry.id !== id);
         });
     }, [setSurface]);
 
     // callback to clear all elements in the surface
-    const clearSurface = React.useCallback(() => {
+    const clearSurface = useCallback(() => {
         setSurface([] as SurfaceEntry[]);
     }, [setSurface]);
 
@@ -70,60 +71,39 @@ export const SurfaceProvider = (props: React.PropsWithChildren): React.JSX.Eleme
     );
 };
 
-// @description hook to access to the surface slot context
-export const useSurfaceSlotContext = (): SurfaceEntry => {
-    const surfaceSlotContext = React.useContext(SurfaceSlotContext);
-    if (!surfaceSlotContext) {
-        throw new Error("Cannot call 'useSurfaceSlotContext' outside SurfaceProvider");
-    }
-    return surfaceSlotContext;
-};
-
-// @description hook to manage the surface slot
-export const useSurfaceSlot = (): SurfaceSlotManager => {
+// hook to access to the manager for the floating element
+export const useFloating = (): FloatingManager => {
     const { removeFromSurface } = useSurface();
-    const surfaceSlotContext = useSurfaceSlotContext();
+    const surfaceFloatingContext = useContext(FloatingContext);
 
-    // method to hide the surface slot
-    const hideSurfaceSlot = React.useCallback(() => {
-        removeFromSurface(surfaceSlotContext.id);
-    }, [removeFromSurface, surfaceSlotContext?.id]);
+    // method to access to the context of the floating element
+    const getContext = useCallback(() => {
+        return surfaceFloatingContext?.context || {};
+    }, [surfaceFloatingContext]);
 
-    return { hideSurfaceSlot };
-};
+    // method to close the floating element
+    const close = useCallback(() => {
+        removeFromSurface(surfaceFloatingContext?.id || "");
+    }, [removeFromSurface, surfaceFloatingContext?.id]);
 
-// @description hook to remove the surface when the user press the ESC key
-export const useSurfaceSlotClearWithEscKey = (): void => {
-    const { removeFromSurface } = useSurface();
-    const { id } = useSurfaceSlotContext();
-    React.useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape" && !!id) {
-                removeFromSurface(id);
-            }
-        };
-        document.addEventListener("keydown", handleKeyDown);
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [removeFromSurface, id]);
+    return { getContext, close };
 };
 
 // export component to render content of the surface
-export const SurfaceSlot = (): React.JSX.Element => {
+export const SurfaceSlot = (): JSX.Element => {
     const { surface } = useSurface();
     return (
-        <React.Fragment>
+        <Fragment>
             {surface.map((surfaceItem: SurfaceEntry, index: number) => {
-                const Component = surfaceItem.component;
+                const Component: ElementType = surfaceItem.component;
                 return (
-                    <React.Fragment key={`surface:${index}:${surfaceItem.id}`}>
-                        <SurfaceSlotContext.Provider value={surfaceItem}>
+                    <Fragment key={`surface:${index}:${surfaceItem.id}`}>
+                        <FloatingContext.Provider value={surfaceItem}>
                             <Component />
-                        </SurfaceSlotContext.Provider>
-                    </React.Fragment>
+                        </FloatingContext.Provider>
+                    </Fragment>
                 );
             })}
-        </React.Fragment>
+        </Fragment>
     );
 };
