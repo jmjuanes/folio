@@ -1,4 +1,5 @@
 import React from "react";
+import { useAlure as useSurface, withDismiss } from "alure";
 import { uid } from "uid/secure";
 import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN } from "../constants.js";
 import { useEditor } from "./editor.tsx";
@@ -85,10 +86,11 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const prompt = usePrompt();
     const confirm = useConfirm();
     const { showDialog } = useDialog();
+    const surface = useSurface();
     const workbench = useWorkbench();
     const {
         KeyboardShortcuts,
-        ExportDialog,
+        Export,
         Commands,
         Library,
     } = useEditorComponents();
@@ -777,17 +779,14 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG,
                 name: "Keyboard shortcuts",
                 onSelect: () => {
-                    workbench.openView(Part.SURFACE, KeyboardShortcuts);
+                    showDialog(KeyboardShortcuts);
                 },
             },
             [ACTIONS.SHOW_EXPORT_DIALOG]: {
                 id: ACTIONS.SHOW_EXPORT_DIALOG,
                 name: "Export",
-                onSelect: (exportOptions: any) => {
-                    showDialog(ExportDialog, {
-                        dialogClassName: "w-full max-w-md",
-                        options: exportOptions,
-                    });
+                onSelect: () => {
+                    showDialog(Export);
                 },
             },
             [ACTIONS.SHOW_COMMANDS]: {
@@ -795,7 +794,12 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Commands",
                 shortcut: getShortcutKey("CtrlOrCmd+K"),
                 onSelect: () => {
-                    workbench.openView(Part.SURFACE, Commands);
+                    surface.open("commands", {
+                        component: Commands,
+                        middlewares: [
+                            withDismiss(),
+                        ],
+                    });
                 },
             },
             [ACTIONS.TOGGLE_LIBRARY_PANEL]: {
