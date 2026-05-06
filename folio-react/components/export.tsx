@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useCallback, useState, useMemo } from "react";
+import { useAlure as useSurface } from "alure";
 import { ImageIcon, DownloadIcon, ClipboardIcon } from "@josemi-icons/react";
 import {
     EXPORT_FORMATS,
@@ -12,10 +13,11 @@ import {
     exportToClipboard,
 } from "../lib/export.js";
 import { Button } from "./ui/button.tsx";
+import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
+import { Overlay } from "./ui/overlay.tsx";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.tsx";
-import { useDialog } from "../hooks/use-dialog.tsx";
 import transparentBg from "../assets/transparent.svg";
 import type { JSX, ReactNode } from "react";
 
@@ -27,7 +29,7 @@ const previewStyle = {
 
 export const ExportContent = (): JSX.Element => {
     const editor = useEditor();
-    const { hideDialog } = useDialog();
+    const { close } = useSurface();
     const elements = editor.getElements();
     const [previewImage, setPreviewImage] = useState(null);
     const [options, setOptions] = useState({
@@ -75,8 +77,8 @@ export const ExportContent = (): JSX.Element => {
         // TODO: display a notification if the export is successful
         return exportToFile(exportElements, exportOptions)
             .catch(error => console.error(error))
-            .finally(() => hideDialog());
-    }, [hideDialog, exportElements, exportOptions]);
+            .finally(() => close());
+    }, [close, exportElements, exportOptions]);
 
     // handle copy to clipboard action
     // @param {array} elements elements to export
@@ -85,8 +87,8 @@ export const ExportContent = (): JSX.Element => {
         // TODO: display a notification if the export is successful
         return exportToClipboard(exportElements, exportOptions)
             .catch(error => console.error(error))
-            .finally(() => hideDialog());
-    }, [hideDialog, exportElements, exportOptions]);
+            .finally(() => close());
+    }, [close, exportElements, exportOptions]);
 
     // Handle preview update when an option is changed
     useEffect(() => {
@@ -154,17 +156,22 @@ export type ExportProps = {
 };
 
 export const Export = (props: ExportProps): JSX.Element => {
-    const { hideDialog } = useDialog();
+    const { close } = useSurface();
     const content = props.children ?? <ExportContent />;
     return (
-        <Dialog.Content className="relative w-full max-w-md">
-            <Dialog.Close onClick={() => hideDialog()} />
-            <Dialog.Header>
-                <Dialog.Title>{props.title || "Export as image"}</Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body className="">
-                {content}
-            </Dialog.Body>
-        </Dialog.Content>
+        <Fragment>
+            <Overlay className="z-50" onClick={() => close()} />
+            <Centered className="fixed z-50 h-full">
+                <Dialog.Content className="relative w-full max-w-md">
+                    <Dialog.Close onClick={() => close()} />
+                    <Dialog.Header>
+                        <Dialog.Title>{props.title || "Export as image"}</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body className="">
+                        {content}
+                    </Dialog.Body>
+                </Dialog.Content>
+            </Centered>
+        </Fragment>
     );
 };

@@ -7,7 +7,6 @@ import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
 import { Part, useWorkbench } from "./workbench.tsx";
 import { useConfirm } from "../hooks/use-confirm.tsx";
-import { useDialog } from "../hooks/use-dialog.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
 import { getShortcutKey } from "../lib/actions.ts";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
@@ -85,7 +84,6 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const library = useLibrary();
     const prompt = usePrompt();
     const confirm = useConfirm();
-    const { showDialog } = useDialog();
     const surface = useSurface();
     const workbench = useWorkbench();
     const {
@@ -779,14 +777,24 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG,
                 name: "Keyboard shortcuts",
                 onSelect: () => {
-                    showDialog(KeyboardShortcuts);
+                    surface.open("dialog:keyboardShortcuts", {
+                        component: KeyboardShortcuts,
+                        middlewares: [
+                            withDismiss(),
+                        ],
+                    });
                 },
             },
             [ACTIONS.SHOW_EXPORT_DIALOG]: {
                 id: ACTIONS.SHOW_EXPORT_DIALOG,
                 name: "Export",
                 onSelect: () => {
-                    showDialog(Export);
+                    surface.open("dialog:export", {
+                        component: Export,
+                        middlewares: [
+                            withDismiss(),
+                        ],
+                    });
                 },
             },
             [ACTIONS.SHOW_COMMANDS]: {
