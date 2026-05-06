@@ -1,22 +1,23 @@
-import React from "react";
+import { Fragment, useEffect, useCallback, useState, useMemo } from "react";
 import { ImageIcon, DownloadIcon, ClipboardIcon } from "@josemi-icons/react";
 import {
     EXPORT_FORMATS,
     EXPORT_PADDING,
     FORM_OPTIONS,
     TRANSPARENT,
-} from "../../constants.js";
+} from "../constants.js";
 import {
     exportToDataURL,
     exportToFile,
     exportToClipboard,
-} from "../../lib/export.js";
-import { Button } from "../ui/button.tsx";
-import { Dialog } from "../ui/dialog.tsx";
-import { Form } from "../form/index.jsx";
-import { useEditor } from "../../contexts/editor.tsx";
-import { useDialog } from "../../hooks/use-dialog.tsx";
-import transparentBg from "../../assets/transparent.svg";
+} from "../lib/export.js";
+import { Button } from "./ui/button.tsx";
+import { Dialog } from "./ui/dialog.tsx";
+import { Form } from "./form/index.jsx";
+import { useEditor } from "../contexts/editor.tsx";
+import { useDialog } from "../hooks/use-dialog.tsx";
+import transparentBg from "../assets/transparent.svg";
+import type { JSX, ReactNode } from "react";
 
 const previewStyle = {
     backgroundImage: `url('${transparentBg}')`,
@@ -24,20 +25,19 @@ const previewStyle = {
     backgroundRepeat: "repeat",
 };
 
-// @description content of the Export dialog
-export const ExportDialog = () => {
+export const ExportContent = (): JSX.Element => {
     const editor = useEditor();
     const { hideDialog } = useDialog();
     const elements = editor.getElements();
-    const [previewImage, setPreviewImage] = React.useState(null);
-    const [options, setOptions] = React.useState({
+    const [previewImage, setPreviewImage] = useState(null);
+    const [options, setOptions] = useState({
         includeBackground: true,
-        onlySelectedElements: elements.every(el => el.selected),
+        onlySelectedElements: elements.every((el: any) => el.selected),
     });
 
     // Utility function to generate export options
-    const [exportElements, exportOptions] = React.useMemo(() => {
-        const exportElements = elements.filter(el => {
+    const [exportElements, exportOptions] = useMemo(() => {
+        const exportElements = elements.filter((el: any) => {
             return options.onlySelectedElements ? el.selected : true;
         });
         const exportOptions = {
@@ -50,9 +50,9 @@ export const ExportDialog = () => {
     }, [options.includeBackground, options.onlySelectedElements]);
 
     // Generate export fields
-    const exportFields = React.useMemo(() => {
-        const hasElementsSelected = elements.some(el => el.selected);
-        const allElementsSelected = elements.every(el => el.selected);
+    const exportFields = useMemo(() => {
+        const hasElementsSelected = elements.some((el: any) => el.selected);
+        const allElementsSelected = elements.every((el: any) => el.selected);
         return {
             includeBackground: {
                 type: FORM_OPTIONS.CHECKBOX,
@@ -71,7 +71,7 @@ export const ExportDialog = () => {
     // handle download action
     // @param {array} elements elements to export
     // @param {object} options export options
-    const handleDownload = React.useCallback(() => {
+    const handleDownload = useCallback(() => {
         // TODO: display a notification if the export is successful
         return exportToFile(exportElements, exportOptions)
             .catch(error => console.error(error))
@@ -81,7 +81,7 @@ export const ExportDialog = () => {
     // handle copy to clipboard action
     // @param {array} elements elements to export
     // @param {object} options export options
-    const handleCopyToClipboard = React.useCallback(() => {
+    const handleCopyToClipboard = useCallback(() => {
         // TODO: display a notification if the export is successful
         return exportToClipboard(exportElements, exportOptions)
             .catch(error => console.error(error))
@@ -89,7 +89,7 @@ export const ExportDialog = () => {
     }, [hideDialog, exportElements, exportOptions]);
 
     // Handle preview update when an option is changed
-    React.useEffect(() => {
+    useEffect(() => {
         // TODO: we would need to delay the preview update if we depend on another option, for example padding,
         // so we can just update the preview once for multiple consecutive changes.
         exportToDataURL(exportElements, exportOptions).then(data => {
@@ -98,40 +98,35 @@ export const ExportDialog = () => {
     }, [options.includeBackground, options.onlySelectedElements]);
 
     return (
-        <React.Fragment>
-            <Dialog.Header>
-                <Dialog.Title>Export as image</Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body className="">
-                <div className="select-none mb-4 rounded-lg overflow-hidden text-gray-500 border-1 border-gray-200">
-                    {!!previewImage && (
-                        <div className="flex items-center justify-center h-48" style={previewStyle}>
-                            <img src={previewImage} className="max-h-48" />
+        <Fragment>
+            <div className="select-none mb-4 rounded-lg overflow-hidden text-gray-500 border-1 border-gray-200">
+                {!!previewImage && (
+                    <div className="flex items-center justify-center h-48" style={previewStyle}>
+                        <img src={previewImage} className="max-h-48" />
+                    </div>
+                )}
+                {!previewImage && (
+                    <div className="flex flex-col items-center justify-center gap-1 h-48">
+                        <div className="flex text-lg">
+                            <ImageIcon />
                         </div>
-                    )}
-                    {!previewImage && (
-                        <div className="flex flex-col items-center justify-center gap-1 h-48">
-                            <div className="flex text-lg">
-                                <ImageIcon />
-                            </div>
-                            <span className="text-xs">
-                                Generating preview...
-                            </span>
-                        </div>
-                    )}
-                </div>
-                <Form
-                    data={options}
-                    items={exportFields}
-                    onChange={(key, value) => {
-                        setOptions(prevOptions => ({
-                            ...prevOptions,
-                            [key]: value,
-                        }));
-                    }}
-                />
-            </Dialog.Body>
-            <Dialog.Footer className="gap-2">
+                        <span className="text-xs">
+                            Generating preview...
+                        </span>
+                    </div>
+                )}
+            </div>
+            <Form
+                data={options}
+                items={exportFields}
+                onChange={(key: string, value: any) => {
+                    setOptions(prevOptions => ({
+                        ...prevOptions,
+                        [key]: value,
+                    }));
+                }}
+            />
+            <div className="flex flex-col gap-2">
                 <Button variant="secondary" className="w-full" onClick={handleDownload}>
                     <div className="flex items-center text-lg">
                         <DownloadIcon />
@@ -148,7 +143,28 @@ export const ExportDialog = () => {
                         <span>Copy to clipboard</span>
                     </div>
                 </Button>
-            </Dialog.Footer>
-        </React.Fragment>
+            </div>
+        </Fragment>
+    );
+};
+
+export type ExportProps = {
+    title?: string;
+    children?: ReactNode;
+};
+
+export const Export = (props: ExportProps): JSX.Element => {
+    const { hideDialog } = useDialog();
+    const content = props.children ?? <ExportContent />;
+    return (
+        <Dialog.Content className="relative w-full max-w-md">
+            <Dialog.Close onClick={() => hideDialog()} />
+            <Dialog.Header>
+                <Dialog.Title>{props.title || "Export as image"}</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body className="">
+                {content}
+            </Dialog.Body>
+        </Dialog.Content>
     );
 };
