@@ -10,7 +10,6 @@ enum WorkbenchActionType {
 export enum Part {
     TITLEBAR = "workbench.parts.titlebar",
     CANVAS = "workbench.parts.canvas",
-    SURFACE = "workbench.parts.surface",
     SIDEBAR = "workbench.parts.sidebar",
     STATUSBAR = "workbench.parts.statusbar",
     AUXILIARYBAR = "workbench.parts.auxiliarybar",

@@ -1,14 +1,13 @@
 import { Fragment, useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { useAlure as useSurface } from "alure";
 import { renderIcon } from "@josemi-icons/react";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions, ActionCategory } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
-import { useView } from "../contexts/workbench.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
-import { useEscapeKey } from "../hooks/use-key.ts";
 import type { JSX, ReactNode } from "react";
 import type { ActionItem } from "../contexts/actions.tsx";
 
@@ -43,7 +42,7 @@ const CommandItemWrapper = (props: any): JSX.Element => (
 
 export const CommandsContent = (): JSX.Element => {
     const editor = useEditor();
-    const view = useView();
+    const { close } = useSurface();
     const { getTools } = useTools();
     const { getActions } = useActions();
     const [query, setQuery] = useState<string>("");
@@ -125,8 +124,8 @@ export const CommandsContent = (): JSX.Element => {
     // callback listener to run the specified command
     const executeCommand = useCallback((command: CommandItem) => {
         commandToExecute.current = command; // set the provided command to execute
-        view.close();
-    }, [view]);
+        close();
+    }, [close]);
 
     // reset the highlight index when the filtered items change to avoid out of bounds issues
     useEffect(() => setHighlightIndex(0), [filteredItems.length]);
@@ -227,15 +226,11 @@ export type CommandsProps = {
 };
 
 export const Commands = (props: CommandsProps): JSX.Element => {
-    const view = useView();
+    const { close } = useSurface();
     const content = props.children ?? <CommandsContent />;
-
-    // automatically hide the commands when the Escape key is pressed
-    useEscapeKey(() => view.close());
-
     return (
         <Fragment>
-            <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={() => view.close()} />
+            <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={() => close()} />
             <Centered className="fixed z-50" style={{ top: "33%" }}>
                 <Dialog.Content className="w-full max-w-md">
                     <div className="p-2">

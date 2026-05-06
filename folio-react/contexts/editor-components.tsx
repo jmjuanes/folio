@@ -1,7 +1,7 @@
 import React from "react";
 import { Loading } from "../components/loading.jsx";
 import { ContextMenu } from "../components/context-menu.tsx";
-import { ExportDialog } from "../components/dialogs/export.jsx";
+import { Export } from "../components/export.tsx";
 import { KeyboardShortcuts } from "../components/keyboard-shortcuts.tsx";
 import { MainMenu } from "../components/menus/main.tsx";
 import { PagesMenu } from "../components/menus/pages.tsx";
@@ -61,7 +61,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Loading: Loading,
             ContextMenu: ContextMenu,
             // dialogs components
-            ExportDialog: ExportDialog,
+            Export: Export,
             KeyboardShortcuts: KeyboardShortcuts,
             Commands: Commands,
             // menus

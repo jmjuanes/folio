@@ -1,8 +1,8 @@
 import { Fragment, useMemo } from "react";
+import { useAlure as useSurface } from "alure";
 import { ACTIONS } from "../constants.js";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
-import { useView } from "../contexts/workbench.tsx";
 import { printShortcut } from "../lib/actions.ts";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
@@ -144,14 +144,14 @@ export type KeyboardShortcutsProps = {
 };
 
 export const KeyboardShortcuts = (props: KeyboardShortcutsProps): JSX.Element => {
-    const view = useView();
+    const { close } = useSurface();
     const content = props?.children ?? <KeyboardShortcutsContent />;
     return (
         <Fragment>
-            <Overlay key="shortcuts:overlay" className="z-50" onClick={() => view.close()} />
-            <Centered key="shortcuts:content" className="fixed z-50 h-full">
+            <Overlay className="z-50" onClick={() => close()} />
+            <Centered className="fixed z-50 h-full">
                 <Dialog.Content className="w-full max-w-xl relative">
-                    <Dialog.Close onClick={() => view.close()} />
+                    <Dialog.Close onClick={() => close()} />
                     <Dialog.Header className="pb-4">
                         <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
                     </Dialog.Header>

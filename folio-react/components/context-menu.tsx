@@ -217,17 +217,9 @@ export type ContextMenuProps = {
 };
 
 export const ContextMenu = (props: ContextMenuProps): React.JSX.Element => {
-    const editor = useEditor();
-    const position = useContextMenuPosition();
     const contextMenuContent = props.children ?? <ContextMenuContent />
-    const contextMenuStyle = {
-        "top": (position?.top ?? 0) + "px",
-        "left": (position?.left ?? 0) + "px",
-        "transform": (position?.top ?? 0) > editor.height / 2 ? "translateY(-100%)" : "",
-    } as React.CSSProperties;
-
     return (
-        <Menu.Container className="absolute z-40 w-48" style={contextMenuStyle}>
+        <Menu.Container className="w-48">
             {contextMenuContent}
         </Menu.Container>
     );
