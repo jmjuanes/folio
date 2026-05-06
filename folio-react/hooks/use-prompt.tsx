@@ -1,10 +1,10 @@
-import { Fragment, useCallback } from "react";
+import { useCallback } from "react";
+import { useAlure as useSurface } from "alure";
 import { Button, ButtonVariant } from "../components/ui/button.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";
 import { Form } from "../components/form/index.jsx";
 import { useDialog } from "./use-dialog.tsx";
 import { useFormData } from "./use-form-data.js";
-import { useFloating } from "../contexts/surface.tsx";
 import type { JSX } from "react";
 
 export type PromptOptions = {
@@ -21,22 +21,23 @@ export type Prompt = (options: PromptOptions) => void;
 
 // @description internal prompt component
 const PromptWrapper = (): JSX.Element => {
-    const floatingElement = useFloating();
-    const context = floatingElement.getContext();
+    const { close, getContext } = useSurface();
+    const context = getContext();
     const [data, setData] = useFormData(context?.initialData || {});
 
     const handleSubmit = useCallback(() => {
         if (typeof context?.callback === "function") {
             context.callback(data);
         }
-        floatingElement.close();
-    }, [data, context?.callback, floatingElement.close]);
+        close();
+    }, [data, context?.callback, close]);
 
     return (
-        <Fragment>
+        <Dialog.Content className="w-full max-w-md relative">
             {context?.title && (
                 <Dialog.Header>
                     <Dialog.Title>{context?.title}</Dialog.Title>
+                    <Dialog.Close onClick={() => close()} />
                 </Dialog.Header>
             )}
             <Dialog.Body>
@@ -48,14 +49,14 @@ const PromptWrapper = (): JSX.Element => {
                 />
             </Dialog.Body>
             <Dialog.Footer>
-                <Button variant={ButtonVariant.SECONDARY} onClick={() => floatingElement.close()}>
+                <Button variant={ButtonVariant.SECONDARY} onClick={() => close()}>
                     {context?.cancelText || "Cancel"}
                 </Button>
                 <Button variant={ButtonVariant.PRIMARY} onClick={() => handleSubmit()}>
                     {context?.confirmText || "Confirm"}
                 </Button>
             </Dialog.Footer>
-        </Fragment>
+        </Dialog.Content>
     );
 };
 
@@ -64,9 +65,6 @@ export const usePrompt = (): Prompt => {
     const { showDialog } = useDialog();
 
     return useCallback((options: PromptOptions) => {
-        showDialog(PromptWrapper, {
-            ...options,
-            dialogClassName: options.className || "w-full max-w-md",
-        });
+        showDialog(PromptWrapper, options);
     }, [showDialog]);
 };

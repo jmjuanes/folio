@@ -1,12 +1,12 @@
 import { useCallback, useContext, createContext } from "react";
+import { useAlure as useSurface, withDismiss, withFixedPosition } from "alure";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
-import { useSurface, useFloating } from "../contexts/surface.tsx";
-import { useEscapeKey } from "./use-key.ts";
+import { useEditor } from "../contexts/editor.tsx";
 import type { JSX } from "react";
 
 // internal id to control displaying/removing the context menu in the surface
 // note: this means that only a single context menu can be used at the same time
-const CONTEXT_MENU_ID = "surface/context-menu";
+const CONTEXT_MENU_ID = "floating/context-menu";
 
 export type ContextMenuPosition = { top: number, left: number };
 
@@ -22,12 +22,8 @@ const ContexMenuPositionContext = createContext<ContextMenuPosition | null>(null
 // it allows the internal ContextMenu component to access to its position using the useContextMenuPosition hook
 export const ContextMenuWrapper = (): JSX.Element => {
     const { ContextMenu } = useEditorComponents();
-    const floatingElement = useFloating();
-    const { top, left } = floatingElement.getContext();
-
-    // automatically clear the context menu when the user press the ESC key
-    useEscapeKey(() => floatingElement.close());
-
+    const { getContext } = useSurface();
+    const { top, left } = getContext();
     return (
         <ContexMenuPositionContext.Provider value={{ top: top as number, left: left as number }}>
             <ContextMenu />
@@ -49,17 +45,29 @@ export const useContextMenuPosition = (): ContextMenuPosition => {
 // @returns {function} contextMenu.showContextMenu function to show the context menu
 // @returns {function} contextMenu.hideContextMenu function to hide the context menu
 export const useContextMenu = (): ContextMenuManager => {
-    const { showInSurface, removeFromSurface } = useSurface();
+    const editor = useEditor();
+    const { open, close } = useSurface();
 
     // method to display the context menu in the specified position
     const showContextMenu = useCallback((top: number, left: number) => {
-        showInSurface(CONTEXT_MENU_ID, ContextMenuWrapper, { top, left });
-    }, [showInSurface]);
+        open(CONTEXT_MENU_ID, {
+            component: ContextMenuWrapper,
+            context: { top, left },
+            middlewares: [
+                withFixedPosition({
+                    top: top,
+                    left: left,
+                    style: {
+                        transform: top > editor.height / 2 ? "translateY(-100%)" : "",
+                    },
+                }),
+                withDismiss(),
+            ],
+        });
+    }, [editor, open, ContextMenuWrapper]);
 
     // method to remove the context menu from the surface
-    const hideContextMenu = useCallback(() => {
-        removeFromSurface(CONTEXT_MENU_ID);
-    }, [removeFromSurface]);
+    const hideContextMenu = useCallback(() => close(CONTEXT_MENU_ID), [close]);
 
     return { showContextMenu, hideContextMenu };
 };

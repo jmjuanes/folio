@@ -1,8 +1,8 @@
-import { useCallback, Fragment } from "react";
+import { useCallback } from "react";
+import { useAlure as useSurface } from "alure";
 import { Button, ButtonVariant } from "../components/ui/button.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";
 import { useDialog } from "./use-dialog.tsx";
-import { useFloating } from "../contexts/surface.tsx";
 import type { JSX } from "react";
 
 export type ConfirmOptions = {
@@ -18,8 +18,8 @@ export type ConfirmOptions = {
 export type Confirm = (options: ConfirmOptions) => void;
 
 export const ConfirmWrapper = (): JSX.Element => {
-    const floatingElement = useFloating();
-    const context = floatingElement.getContext();
+    const { close, getContext } = useSurface();
+    const context = getContext();
 
     const handleSubmit = useCallback(() => {
         if (typeof context?.onSubmit === "function") {
@@ -28,21 +28,22 @@ export const ConfirmWrapper = (): JSX.Element => {
         if (typeof context?.callback === "function") {
             context.callback();
         }
-        floatingElement.close();
-    }, [context?.onSubmit, context?.callback, floatingElement.close]);
+        close();
+    }, [context?.onSubmit, context?.callback, close]);
 
     const handleCancel = useCallback(() => {
         if (typeof context?.onCancel === "function") {
             context.onCancel();
         }
-        floatingElement.close();
-    }, [context?.onCancel, floatingElement.close]);
+        close();
+    }, [context?.onCancel, close]);
 
     return (
-        <Fragment>
+        <Dialog.Content className="w-full max-w-lg relative">
             {context?.title && (
                 <Dialog.Header>
                     <Dialog.Title>{context.title}</Dialog.Title>
+                    <Dialog.Close onClick={() => close()} />
                 </Dialog.Header>
             )}
             <Dialog.Body>
@@ -60,7 +61,7 @@ export const ConfirmWrapper = (): JSX.Element => {
                     {context?.confirmText || "Confirm"}
                 </Button>
             </Dialog.Footer>
-        </Fragment>
+        </Dialog.Content>
     );
 };
 
@@ -70,9 +71,6 @@ export const useConfirm = (): Confirm => {
 
     // method to display a confirmation 
     return useCallback((options: ConfirmOptions) => {
-        showDialog(ConfirmWrapper, {
-            ...options,
-            dialogClassName: "max-w-lg relative",
-        });
+        showDialog(ConfirmWrapper, options);
     }, [showDialog]);
 };
