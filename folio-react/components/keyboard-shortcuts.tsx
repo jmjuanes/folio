@@ -2,7 +2,7 @@ import { Fragment, useMemo } from "react";
 import { ACTIONS } from "../constants.js";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
-import { useView } from "../contexts/workbench.tsx";
+import { useDialog } from "../hooks/use-dialog.tsx";
 import { printShortcut } from "../lib/actions.ts";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
@@ -144,22 +144,17 @@ export type KeyboardShortcutsProps = {
 };
 
 export const KeyboardShortcuts = (props: KeyboardShortcutsProps): JSX.Element => {
-    const view = useView();
+    const { hideDialog } = useDialog();
     const content = props?.children ?? <KeyboardShortcutsContent />;
     return (
-        <Fragment>
-            <Overlay key="shortcuts:overlay" className="z-50" onClick={() => view.close()} />
-            <Centered key="shortcuts:content" className="fixed z-50 h-full">
-                <Dialog.Content className="w-full max-w-xl relative">
-                    <Dialog.Close onClick={() => view.close()} />
-                    <Dialog.Header className="pb-4">
-                        <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
-                    </Dialog.Header>
-                    <Dialog.Body className="pt-0 overflow-y-auto" style={{ maxHeight: "min(75vh, 35rem)" }}>
-                        {content}
-                    </Dialog.Body>
-                </Dialog.Content>
-            </Centered>
-        </Fragment>
+        <Dialog.Content className="w-full max-w-xl relative">
+            <Dialog.Close onClick={() => hideDialog()} />
+            <Dialog.Header className="pb-4">
+                <Dialog.Title>{props.title || "Keyboard Shortcuts"}</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body className="pt-0 overflow-y-auto" style={{ maxHeight: "min(75vh, 35rem)" }}>
+                {content}
+            </Dialog.Body>
+        </Dialog.Content>
     );
 };

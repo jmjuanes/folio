@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { AlureOutlet as SurfaceOutlet, AlureProvider as SurfaceProvider } from "alure";
 import { EditorProvider, useEditor } from "../contexts/editor.tsx";
 import { EditorComponentsProvider, useEditorComponents } from "../contexts/editor-components.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
@@ -51,7 +52,6 @@ export const EditorUi = (props: PropsWithChildren): JSX.Element => {
                     </div>
                 )} />
             </div>
-            <WorkbenchSlot part={Part.SURFACE} />
         </Fragment>
     );
 };
@@ -219,13 +219,16 @@ export const Editor = (props: EditorProps): JSX.Element => {
                 <LibraryProvider data={props.library} onChange={props.onLibraryChange}>
                     <EditorProvider {...props}>
                         <ToolsProvider overrides={props.overrides?.tools}>
-                            <WorkbenchProvider initialViews={defaultWorkbenchViews}>
-                                <ActionsProvider overrides={props.overrides?.actions}>
-                                    <EditorUi>
-                                        <InsideEditorWithUi />
-                                    </EditorUi>
-                                </ActionsProvider>
-                            </WorkbenchProvider>
+                            <SurfaceProvider>
+                                <WorkbenchProvider initialViews={defaultWorkbenchViews}>
+                                    <ActionsProvider overrides={props.overrides?.actions}>
+                                        <EditorUi>
+                                            <InsideEditorWithUi />
+                                            <SurfaceOutlet />
+                                        </EditorUi>
+                                    </ActionsProvider>
+                                </WorkbenchProvider>
+                            </SurfaceProvider>
                         </ToolsProvider>
                     </EditorProvider>
                 </LibraryProvider>
