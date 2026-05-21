@@ -1,20 +1,21 @@
-import React from "react";
+import { Fragment, useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { useAlure as useSurface } from "alure";
 import { renderIcon } from "@josemi-icons/react";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions, ActionCategory } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
-import { useSurfaceSlot, useSurfaceSlotClearWithEscKey } from "../contexts/surface.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
+import type { JSX, ReactNode } from "react";
 import type { ActionItem } from "../contexts/actions.tsx";
 
 export type CommandItem = {
     id: string;
     label: string;
     shortcut?: string | string[];
-    icon?: React.JSX.Element | string;
+    icon?: JSX.Element | string;
     disabled?: boolean;
     execute: () => void;
 };
@@ -25,7 +26,7 @@ export type CommandGroup = {
 };
 
 // Command component
-const CommandItemWrapper = (props: any): React.JSX.Element => (
+const CommandItemWrapper = (props: any): JSX.Element => (
     <Command.Item active={props.active} disabled={props.disabled} onClick={props.onClick}>
         <div className="text-lg flex w-4">
             {props.icon && renderIcon(props.icon)}
@@ -39,18 +40,18 @@ const CommandItemWrapper = (props: any): React.JSX.Element => (
     </Command.Item>
 );
 
-export const CommandsContent = (): React.JSX.Element => {
+export const CommandsContent = (): JSX.Element => {
     const editor = useEditor();
+    const { close } = useSurface();
     const { getTools } = useTools();
     const { getActions } = useActions();
-    const { hideSurfaceSlot } = useSurfaceSlot();
-    const [query, setQuery] = React.useState<string>("");
-    const [highlightIndex, setHighlightIndex] = React.useState<number>(0);
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    const listRef = React.useRef<HTMLDivElement>(null); // ref to the list container
-    const commandToExecute = React.useRef<CommandItem | null>(null);
+    const [query, setQuery] = useState<string>("");
+    const [highlightIndex, setHighlightIndex] = useState<number>(0);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const listRef = useRef<HTMLDivElement>(null); // ref to the list container
+    const commandToExecute = useRef<CommandItem | null>(null);
 
-    const toolItems = React.useMemo<CommandItem[]>(() => {
+    const toolItems = useMemo<CommandItem[]>(() => {
         return getTools().map(toolData => ({
             id: toolData.id,
             label: toolData.name || toolData.id,
@@ -66,7 +67,7 @@ export const CommandsContent = (): React.JSX.Element => {
     }, [getTools, editor]);
 
     // join all available actions and tools into a single list and filter based on the query
-    const groups = React.useMemo<CommandGroup[]>(() => {
+    const groups = useMemo<CommandGroup[]>(() => {
         // 1. get only the actions that has a category and an associated name
         const availableActions = getActions().filter((action: ActionItem) => {
             return !!action.category && !!action.name;
@@ -96,7 +97,7 @@ export const CommandsContent = (): React.JSX.Element => {
     }, [toolItems, getActions]);
 
     // get filtered items based on the query - match against label and shortcut
-    const filteredGroups = React.useMemo<CommandGroup[]>(() => {
+    const filteredGroups = useMemo<CommandGroup[]>(() => {
         const normalizedQuery = query.trim().toLowerCase();
         if (normalizedQuery) {
             const groupsWithFilteredItems = groups.map(group => {
@@ -116,21 +117,21 @@ export const CommandsContent = (): React.JSX.Element => {
     }, [query, groups]);
 
     // get the items flatten
-    const filteredItems = React.useMemo<CommandItem[]>(() => {
+    const filteredItems = useMemo<CommandItem[]>(() => {
         return filteredGroups.flatMap(group => group.items);
     }, [filteredGroups]);
 
     // callback listener to run the specified command
-    const executeCommand = React.useCallback((command: CommandItem) => {
+    const executeCommand = useCallback((command: CommandItem) => {
         commandToExecute.current = command; // set the provided command to execute
-        hideSurfaceSlot();
-    }, [hideSurfaceSlot]);
+        close();
+    }, [close]);
 
     // reset the highlight index when the filtered items change to avoid out of bounds issues
-    React.useEffect(() => setHighlightIndex(0), [filteredItems.length]);
+    useEffect(() => setHighlightIndex(0), [filteredItems.length]);
 
     // when the component is mounted, listen to keydown events for navigation and execution
-    React.useEffect(() => {
+    useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "ArrowDown") {
                 event.preventDefault();
@@ -154,7 +155,7 @@ export const CommandsContent = (): React.JSX.Element => {
         };
     }, [filteredItems, highlightIndex, executeCommand]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         // when the component is mounted, focus the input field to allow immediate typing
         if (inputRef.current) {
             inputRef.current?.focus();
@@ -172,7 +173,7 @@ export const CommandsContent = (): React.JSX.Element => {
     const highlightedItemId: string | null = filteredItems[highlightIndex]?.id || null;
 
     // when the highlighted index changes, scroll to display it in the commands list
-    React.useEffect(() => {
+    useEffect(() => {
         if (listRef.current && !!highlightedItemId) {
             const itemElement = listRef.current.querySelector(`div[data-command="${highlightedItemId}"]`);
             if (itemElement) {
@@ -221,18 +222,15 @@ export const CommandsContent = (): React.JSX.Element => {
 };
 
 export type CommandsProps = {
-    children?: React.ReactNode;
+    children?: ReactNode;
 };
 
-export const Commands = (props: CommandsProps): React.JSX.Element => {
-    const { hideSurfaceSlot } = useSurfaceSlot();
+export const Commands = (props: CommandsProps): JSX.Element => {
+    const { close } = useSurface();
     const content = props.children ?? <CommandsContent />;
-
-    useSurfaceSlotClearWithEscKey();
-
     return (
-        <React.Fragment>
-            <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={hideSurfaceSlot} />
+        <Fragment>
+            <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={() => close()} />
             <Centered className="fixed z-50" style={{ top: "33%" }}>
                 <Dialog.Content className="w-full max-w-md">
                     <div className="p-2">
@@ -240,6 +238,6 @@ export const Commands = (props: CommandsProps): React.JSX.Element => {
                     </div>
                 </Dialog.Content>
             </Centered>
-        </React.Fragment>
+        </Fragment>
     );
 };  

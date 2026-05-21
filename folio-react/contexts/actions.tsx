@@ -1,19 +1,17 @@
 import React from "react";
+import { useAlure as useSurface, withDismiss } from "alure";
 import { uid } from "uid/secure";
 import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN } from "../constants.js";
 import { useEditor } from "./editor.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
-import { useSurface } from "./surface.tsx";
-import { useShellPanels } from "./shell.tsx";
+import { Part, useWorkbench } from "./workbench.tsx";
 import { useConfirm } from "../hooks/use-confirm.tsx";
-import { useDialog } from "../hooks/use-dialog.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
 import { getShortcutKey } from "../lib/actions.ts";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
 import { getKeyFromKeyCode } from "../utils/keys.js";
-
 import type { LibraryCollection } from "../lib/library.ts";
 
 export enum ActionCategory {
@@ -87,15 +85,13 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const library = useLibrary();
     const prompt = usePrompt();
     const confirm = useConfirm();
-    const { showDialog } = useDialog();
-    const { showInSurface } = useSurface();
-    const { togglePanel } = useShellPanels();
+    const surface = useSurface();
+    const workbench = useWorkbench();
     const {
         KeyboardShortcuts,
-        ExportDialog,
+        Export,
         Commands,
         Library,
-        Layers,
         AiGenerateElements,
     } = useEditorComponents();
 
@@ -783,16 +779,23 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG,
                 name: "Keyboard shortcuts",
                 onSelect: () => {
-                    showInSurface("keyboard-shortcuts", KeyboardShortcuts);
+                    surface.open("dialog:keyboardShortcuts", {
+                        component: KeyboardShortcuts,
+                        middlewares: [
+                            withDismiss(),
+                        ],
+                    });
                 },
             },
             [ACTIONS.SHOW_EXPORT_DIALOG]: {
                 id: ACTIONS.SHOW_EXPORT_DIALOG,
                 name: "Export",
-                onSelect: (exportOptions: any) => {
-                    showDialog(ExportDialog, {
-                        dialogClassName: "w-full max-w-md",
-                        options: exportOptions,
+                onSelect: () => {
+                    surface.open("dialog:export", {
+                        component: Export,
+                        middlewares: [
+                            withDismiss(),
+                        ],
                     });
                 },
             },
@@ -801,7 +804,12 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Commands",
                 shortcut: getShortcutKey("CtrlOrCmd+K"),
                 onSelect: () => {
-                    showInSurface("commands", Commands);
+                    surface.open("commands", {
+                        component: Commands,
+                        middlewares: [
+                            withDismiss(),
+                        ],
+                    });
                 },
             },
             [ACTIONS.TOGGLE_LIBRARY_PANEL]: {
@@ -810,16 +818,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "album",
                 category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
-                    togglePanel("library", Library);
-                },
-            },
-            [ACTIONS.TOGGLE_LAYERS_PANEL]: {
-                id: ACTIONS.TOGGLE_LAYERS_PANEL,
-                name: "Show/hide Layers Panel",
-                icon: "stack",
-                category: ActionCategory.EDITOR_UI,
-                onSelect: () => {
-                    togglePanel("layers", Layers);
+                    workbench.toggleView(Part.AUXILIARYBAR, Library);
                 },
             },
             [ACTIONS.AI_GENERATE_ELEMENTS]: {
@@ -828,7 +827,12 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "sparkles",
                 category: ActionCategory.AI,
                 onSelect: () => {
-                    showInSurface("ai-generate-elements", AiGenerateElements);
+                    surface.open("ai-generate-elements", {
+                        component: AiGenerateElements,
+                        middlewares: [
+                            withDismiss(),
+                        ],
+                    });
                 },
             },
         }) as ActionItem[];

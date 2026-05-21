@@ -1,6 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { renderIcon } from "@josemi-icons/react";
+import type { HTMLProps } from "react";
 
 export type PanelProps = {
     className?: string,
@@ -34,7 +35,7 @@ export type PanelContentProps = {
     children: React.ReactNode,
 };
 
-export type PanelBodyProps = {
+export type PanelBodyProps = HTMLProps<HTMLDivElement> & {
     className?: string,
     children: React.ReactNode,
 };
