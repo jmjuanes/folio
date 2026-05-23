@@ -16,6 +16,7 @@
         "FOLIO_AI_ALLOWED_ORIGINS": "https://folio.josemi.xyz",
         "FOLIO_AI_BASE_URL": "https://api.groq.com/openai/v1",
         "FOLIO_AI_MODEL": "openai/gpt-oss-120b",
+        "FOLIO_AI_PROVIDER": "groq",
         "FOLIO_AI_MAX_REQUESTS_PER_DAY": "10"
     }
 }
