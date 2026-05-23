@@ -6,9 +6,9 @@
     "scripts": {
         "build": "yarn compile",
         "compile": "tsc",
-        "typecheck": "tsc --noEmit",
-        "worker:dev": "wrangler dev",
-        "worker:deploy": "wrangler deploy"
+        "dev": "wrangler dev",
+        "deploy": "wrangler deploy",
+        "typecheck": "tsc --noEmit"
     },
     "dependencies": {
         "dotenv": "^17.3.1"
