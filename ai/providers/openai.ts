@@ -1,10 +1,12 @@
-import { AIProvider, AIProviderError, AIParseError, GenerateStructuredContentParams, AIProviderConfig } from "../types.ts";
+import { Provider } from "../constants.ts";
+import { AIProviderError, AIParseError } from "../types.ts";
+import type { AIProvider, GenerateStructuredContentParams, AIProviderConfig } from "../types.ts";
 
 // default base URLs per compatible provider
 const BASE_URLS: Record<string, string> = {
-    openai: "https://api.openai.com/v1",
-    groq: "https://api.groq.com/openai/v1",
-    openrouter: "https://openrouter.ai/api/v1",
+    [Provider.OpenAI]: "https://api.openai.com/v1",
+    [Provider.Groq]: "https://api.groq.com/openai/v1",
+    [Provider.OpenRouter]: "https://openrouter.ai/api/v1",
 };
 
 // extracts the generated text from an OpenAI Responses API response object.

@@ -1,4 +1,5 @@
-import { AIProvider, AIProviderError, AIParseError, GenerateStructuredContentParams, AIProviderConfig } from "../types.ts";
+import { AIProviderError, AIParseError } from "../types.ts";
+import type { AIProvider, GenerateStructuredContentParams, AIProviderConfig } from "../types.ts";
 
 // minimum Anthropic API version that supports structured JSON output via tools
 const ANTHROPIC_VERSION = "2023-06-01";
