@@ -1,17 +1,37 @@
-import { ENDPOINTS, API_ERROR_MESSAGES } from "./constants.ts";
-import { createAssistant } from "./ai.ts";
+import { Provider } from "./constants.ts";
+import { createAssistant } from "./assistant.ts";
+import { createProvider } from "./providers/index.ts";
 
+const DEFAULT_PROVIDER = Provider.Groq;
 const DEFAULT_MODEL = "openai/gpt-oss-120b";
 const DEFAULT_MAX_REQUESTS_PER_DAY = 10;
 
+// available endpoints
+enum Endpoint {
+    Status = "/_ai/status",
+    Quotas = "/_ai/quotas",
+    GenerateElements = "/_ai/generateElements",
+    TransformElements = "/_ai/transformElements",
+};
+
+// error messages
+enum APIErrorMessage {
+    APIKeyNotConfigured = "FOLIO_AI_APIKEY not configured.",
+    ErrorPerformingRequest = "Error performing the request. Contact the administrator.",
+    EmptyPrompt = "Prompt is empty.",
+    DailyRequestsLimitReached = "Daily requests limit reached. Please try again tomorrow.",
+    NotFound = "Not found.",
+};
+
 export interface Env {
+    FOLIO_AI_PROVIDER?: string;
     FOLIO_AI_APIKEY?: string;
     FOLIO_AI_BASE_URL?: string;
     FOLIO_AI_MODEL?: string;
     FOLIO_AI_MAX_REQUESTS_PER_DAY?: string;
     FOLIO_AI_ALLOWED_ORIGINS?: string;
     QUOTAS_KV: KVNamespace;
-}
+};
 
 // get today's date as YYYY-MM-DD for KV key
 const getTodayKey = (requestIp: string): string => {
@@ -88,13 +108,13 @@ export default {
             return sendResponse(env, request, 204, null);
         }
 
-        // --- GET /_status ---
-        if (url.pathname === ENDPOINTS.STATUS && request.method === "GET") {
+        // --- GET /status ---
+        if (url.pathname === Endpoint.Status && request.method === "GET") {
             return sendDataResponse(env, request, { message: "ok" });
         }
 
-        // --- POST /_quotas ---
-        if (url.pathname === ENDPOINTS.QUOTAS && request.method === "POST") {
+        // --- POST /quotas ---
+        if (url.pathname === Endpoint.Quotas && request.method === "POST") {
             try {
                 const requestsUsed = await getRequestsUsed(env, ip);
                 return sendDataResponse(env, request, {
@@ -103,38 +123,39 @@ export default {
                 });
             } catch (error: any) {
                 console.error("Error reading quotas:", error.message);
-                return sendErrorResponse(env, request, 500, error.message || API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
+                return sendErrorResponse(env, request, 500, error.message || APIErrorMessage.ErrorPerformingRequest);
             }
         }
 
-        // --- POST /_generateElements ---
-        if (url.pathname === ENDPOINTS.GENERATE_ELEMENTS && request.method === "POST") {
+        // --- POST /generateElements ---
+        if (url.pathname === Endpoint.GenerateElements && request.method === "POST") {
             // validate API key
             if (!env.FOLIO_AI_APIKEY) {
-                return sendErrorResponse(env, request, 500, "FOLIO_AI_APIKEY is not configured");
+                return sendErrorResponse(env, request, 500, APIErrorMessage.APIKeyNotConfigured);
             }
 
             try {
                 const body: any = await request.json();
                 // validate prompt to prevent empty requests
                 if (!body?.prompt) {
-                    return sendErrorResponse(env, request, 400, API_ERROR_MESSAGES.EMPTY_PROMPT);
+                    return sendErrorResponse(env, request, 400, APIErrorMessage.EmptyPrompt);
                 }
 
                 const requestsLimit = getRequestsLimit(env);
                 const requestsUsed = await getRequestsUsed(env, ip);
                 if (requestsUsed >= requestsLimit) {
-                    return sendErrorResponse(env, request, 429, API_ERROR_MESSAGES.DAILY_REQUESTS_LIMIT_REACHED);
+                    return sendErrorResponse(env, request, 429, APIErrorMessage.DailyRequestsLimitReached);
                 }
                 // increment requests counter before performing the request
                 await incrementRequestsUsed(env, ip);
                 // create assistant and generate elements
-                const assistant = createAssistant({
-                    baseUrl: env.FOLIO_AI_BASE_URL,
-                    apiKey: env.FOLIO_AI_APIKEY,
+                const providerInstance = createProvider({
+                    provider: (env.FOLIO_AI_PROVIDER ?? DEFAULT_PROVIDER) as Provider,
+                    apiKey: env.FOLIO_AI_APIKEY || "",
                     model: env.FOLIO_AI_MODEL || DEFAULT_MODEL,
+                    baseUrl: env.FOLIO_AI_BASE_URL || "",
                 });
-
+                const assistant = createAssistant(providerInstance);
                 const result = await assistant.generateElements({
                     prompt: body.prompt,
                 });
@@ -142,11 +163,11 @@ export default {
                 return sendDataResponse(env, request, result);
             } catch (error: any) {
                 console.error(error?.error?.message || error);
-                return sendErrorResponse(env, request, 500, error?.error?.message || API_ERROR_MESSAGES.ERROR_PERFORMING_REQUEST);
+                return sendErrorResponse(env, request, 500, error?.error?.message || APIErrorMessage.ErrorPerformingRequest);
             }
         }
 
         // --- Not found ---
-        return sendErrorResponse(env, request, 404, API_ERROR_MESSAGES.NOT_FOUND);
+        return sendErrorResponse(env, request, 404, APIErrorMessage.NotFound);
     },
 };
