@@ -32,7 +32,9 @@
         "method": "POST",
         "path": "/_ai/generateElements",
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-Folio-Requests-Limit": 10,
+            "X-Folio-Requests-Used": 6
         },
         "response": {
             "body": {

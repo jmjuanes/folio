@@ -2,7 +2,7 @@
     "$schema": "../node_modules/wrangler/config-schema.json",
     "name": "folio-ai",
     "main": "worker.ts",
-    "compatibility_date": "2026-02-24",
+    "compatibility_date": "2026-05-24",
     "observability": {
         "enabled": true
     },
@@ -13,10 +13,7 @@
         }
     ],
     "vars": {
-        "FOLIO_AI_ALLOWED_ORIGIN": "https://folio.josemi.xyz",
-        "FOLIO_AI_BASE_URL": "https://api.groq.com/openai/v1",
-        "FOLIO_AI_MODEL": "openai/gpt-oss-120b",
-        "FOLIO_AI_REQUESTS_LIMIT": "10",
-        "FOLIO_AI_MAX_MESSAGES": "5"
+        "FOLIO_AI_ALLOWED_ORIGINS": "https://folio.josemi.xyz",
+        "FOLIO_AI_MAX_REQUESTS_PER_DAY": "5"
     }
 }

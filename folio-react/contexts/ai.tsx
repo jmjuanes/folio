@@ -1,235 +1,139 @@
-import React from "react";
-import { uid } from "uid/secure";
-import { useApi } from "../hooks/use-api.ts";
-import { promisifyValue } from "../utils/promises.js";
-
-export enum AiChatMessageRole {
-    USER = "user",
-    ASSISTANT = "assistant",
-};
-
-export enum AiTool {
-    GENERATE_ELEMENTS = "generateElements",
-    GENERATE_DIAGRAM = "generateDiagram",
-    GENERATE_SVG = "generateSvg",
-};
-
-export type AiChatMessage = {
-    id: string;
-    role: AiChatMessageRole;
-    text?: string;
-    elements?: any[];
-    timestamp?: string;
-    loading?: boolean;
-};
-
-export type AiChat = {
-    id: string;
-    tool: AiTool;
-    messages: AiChatMessage[];
-    title?: string;
-    timestamp?: string;
-};
+import { createContext, useState, useCallback, useEffect, useContext } from "react";
+import type { JSX } from "react";
 
 export type AiQuotas = {
-    requestsLimit?: number;
-    requestsUsed?: number;
-    lastRequestDate?: Date;
+    requestsLimit: number | null; // null --> no limit
+    requestsUsed: number;
 };
 
-export type AiChatManager = {
-    getChats: () => AiChat[];
-    clearChats: () => void;
-    getChat: (chatId: string) => AiChat | null;
-    addChat: (chatData: Partial<AiChat>) => AiChat;
-    updateChat: (chatId: string, chatData: Partial<AiChat>) => void;
-    removeChat: (chatId: string) => void;
-    getMessages: (chatId: string) => AiChatMessage[];
-    getMessage: (chatId: string, messageId: string) => AiChatMessage | null;
-    addMessage: (chatId: string, messageData: Partial<AiChatMessage>) => AiChatMessage;
-    updateMessage: (chatId: string, messageId: string, messageData: Partial<AiChatMessage>) => void;
-    removeMessage: (chatId: string, messageId: string) => void;
+export type AiContextValue = {
+    host: string;
+    quotas: AiQuotas | null; // null --> still loading
+    updateQuotas: (partial: Partial<AiQuotas>) => void;
 };
 
-export type AiToolsManager = {
-    generateElements: (prompt: string, messages: AiChatMessage[]) => Promise<any>;
+export const AiContext = createContext<AiContextValue | null>(null);
+
+// parse quotas from response headers
+const parseQuotasFromHeaders = (headers: Headers): AiQuotas => {
+    const limit = headers.get("X-Folio-Requests-Limit");
+    const used = headers.get("X-Folio-Requests-Used");
+    return {
+        requestsLimit: limit !== null ? (limit === "null" ? null : Number(limit)) : null,
+        requestsUsed: used !== null ? Number(used) : 0,
+    };
 };
 
-export type AiManager = {
-    chat: AiChatManager;
-    tools: AiToolsManager;
-    quotas?: AiQuotas;
+export type UseAi = {
+    loading: boolean;
+    error: Error | null;
+    quotas: AiQuotas | null;
+    isQuotaExceeded: boolean;
+    isQuotaLoading: boolean;
+    generateElements: (prompt: string) => Promise<any[]>;
+    transformElements: (prompt: string, elements: any[]) => Promise<any[]>;
+};
+
+export const useAi = (): UseAi => {
+    const context = useContext(AiContext);
+    if (!context) {
+        throw new Error("useAi must be used within an AiProvider");
+    }
+    const { host, quotas, updateQuotas } = context;
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const call = useCallback(async (endpoint: string, body: object): Promise<any> => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${host}${endpoint}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+            // update quotas from response headers regardless of status
+            const partialQuotas = parseQuotasFromHeaders(response.headers);
+            if (partialQuotas?.requestsLimit !== null && partialQuotas?.requestsUsed > 0) {
+                updateQuotas(partialQuotas);
+            }
+            // 429 = quota exceeded on the server side
+            if (response.status === 429) {
+                throw new Error("quota_exceeded");
+            }
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+            return await response.json();
+        } catch (responseError: any) {
+            setError(responseError);
+        } finally {
+            setLoading(false);
+        }
+    }, [host, updateQuotas]);
+
+    return {
+        loading,
+        error,
+        quotas,
+        isQuotaExceeded: !!quotas && quotas.requestsLimit !== null && quotas.requestsUsed >= quotas.requestsLimit,
+        isQuotaLoading: quotas === null,
+        generateElements: (prompt) => {
+            return call("/_ai/generateElements", { prompt }).then(response => response?.data?.elements ?? []);
+        },
+        transformElements: (prompt, elements) => {
+            return call("/_ai/transformElements", { prompt, elements }).then(response => response?.data?.elements ?? []);
+        },
+    };
 };
 
 export type AiProviderProps = {
     host: string;
-    chats?: AiChat[] | Promise<AiChat[]> | (() => Promise<AiChat[]>) | (() => AiChat[]);
-    onChatChange?: (chats: AiChat[]) => void;
-    children: React.ReactNode,
+    children: React.ReactNode;
 };
 
-// export ai context to
-export const AiContext = React.createContext<AiManager | null>(null);
+export const AiProvider = ({ host, children }: AiProviderProps): JSX.Element => {
+    const [quotas, setQuotas] = useState<AiQuotas | null>(null);
 
-// export hook to access to the ai manager
-export const useAi = (): AiManager | null => {
-    return React.useContext(AiContext);
-};
+    const updateQuotas = useCallback((partial: Partial<AiQuotas>) => {
+        setQuotas(prev => {
+            return Object.assign({}, prev ?? { requestsLimit: null, requestsUsed: 0 }, partial);
+        });
+    }, [setQuotas]);
 
-export const AiProvider = (props: AiProviderProps): React.JSX.Element => {
-    const [chatState, setChatState] = React.useState<AiChat[] | null>(null);
-    const quotas = React.useRef<AiQuotas>({ requestsUsed: 0 });
-    const api = useApi(props.host);
-
-    // create the api manager
-    const manager = React.useMemo<AiManager>(() => {
-        const chatManager = {
-            getChats: () => {
-                return chatState || [];
-            },
-            clearChats: () => {
-                setChatState([]);
-            },
-            getChat: (chatId: string) => {
-                return chatState?.find((chat: AiChat) => chat.id === chatId) || null;
-            },
-            addChat: (chatData: Partial<AiChat> = {}) => {
-                const newChatItem = {
-                    id: uid(20),
-                    messages: [],
-                    timestamp: new Date().toISOString(),
-                    title: "Untitled Chat",
-                    tool: AiTool.GENERATE_ELEMENTS,
-                    ...chatData,
-                } as AiChat;
-                setChatState((prevState: AiChat[] | null) => {
-                    return [...(prevState || []), newChatItem];
-                });
-                // return the new chat item
-                return newChatItem;
-            },
-            updateChat: (chatId: string, chatData: Partial<AiChat>) => {
-                setChatState((prevState: AiChat[] | null) => {
-                    return prevState?.map((chat: AiChat) => {
-                        return chat.id === chatId ? Object.assign(chat, chatData) : chat;
-                    }) || [];
-                });
-            },
-            removeChat: (chatId: string) => {
-                setChatState((prevState: AiChat[] | null) => {
-                    return prevState?.filter((chat: AiChat) => chat.id !== chatId) || [];
-                });
-            },
-            getMessages: (chatId: string) => {
-                return (chatState || []).find((chat: AiChat) => chat.id === chatId)?.messages || [];
-            },
-            getMessage: (chatId: string, messageId: string) => {
-                return chatManager.getMessages(chatId).find((message: AiChatMessage) => message.id === messageId) || null;
-            },
-            addMessage: (chatId: string, messageData: Partial<AiChatMessage>) => {
-                const newChatMessage: AiChatMessage = {
-                    id: uid(20),
-                    timestamp: new Date().toISOString(),
-                    role: AiChatMessageRole.USER,
-                    ...messageData,
-                };
-                setChatState((prevState: AiChat[] | null) => {
-                    return prevState?.map((chat: AiChat) => {
-                        if (chat.id === chatId) {
-                            chat.messages.push(newChatMessage);
-                        }
-                        return chat;
-                    }) || [];
-                });
-                // return the new chat message
-                return newChatMessage;
-            },
-            updateMessage: (chatId: string, messageId: string, messageData: Partial<AiChatMessage>) => {
-                setChatState((prevState: AiChat[] | null) => {
-                    return prevState?.map((chat: AiChat) => {
-                        if (chat.id === chatId) {
-                            chat.messages = chat.messages.map((message: AiChatMessage) => {
-                                return message.id === messageId ? Object.assign({}, message, messageData) : message;
-                            });
-                        }
-                        return chat;
-                    }) || [];
-                });
-            },
-            removeMessage: (chatId: string, messageId: string) => {
-                setChatState((prevState: AiChat[] | null) => {
-                    return prevState?.map((chat: AiChat) => {
-                        if (chat.id === chatId) {
-                            chat.messages = chat.messages.filter((message: AiChatMessage) => message.id !== messageId);
-                        }
-                        return chat;
-                    }) || [];
-                });
-            },
-        } as AiChatManager;
-        const toolsManager = {
-            generateElements: (prompt: string, messages: AiChatMessage[]) => {
-                // const validMessages = (messages || []).filter(message => !message.loading);
-                // 1. update the requests performed to the server
-                quotas.current.lastRequestDate = new Date(); // update last request date
-                quotas.current.requestsUsed = quotas.current.requestsUsed + 1; // increment requests count
-                // 2. perform the request to the ai service
-                return api("POST", "/_ai/generateElements", {
-                    prompt: prompt,
-                    messages: messages.map((message: AiChatMessage) => {
-                        return {
-                            role: message.role,
-                            text: message.text,
-                            elements: message.elements,
-                        };
-                    }),
-                });
-                // 3. return the data object
-                // return data;
-            },
-        } as AiToolsManager;
-        return {
-            chat: chatManager,
-            tools: toolsManager,
-            quotas: quotas.current,
-        } as AiManager;
-    }, [chatState]);
-
-    // on init, import chat data
-    React.useEffect(() => {
-        promisifyValue(props.chats)
-            .then((chats: AiChat[]) => {
-                setChatState(chats || []);
-            })
-            .catch((error: Error) => {
-                console.error("Error loading chats:", error);
-                setChatState([]); // initialize as empty chats
-            });
-    }, []);
-
-    // when a change in the chats is performed, use the useEffect hook to dispatch a chat change
-    React.useEffect(() => {
-        if (!!chatState && typeof props.onChatChange === "function") {
-            props.onChatChange(chatState);
-        }
-    }, [chatState]);
-
-    // when the baseurl changes, perform a request to status endpoint to update quotas
-    React.useEffect(() => {
-        if (props.host) {
-            quotas.current.lastRequestDate = new Date();
-            api("POST", "/_ai/quotas").then((response: any) => {
-                if (typeof response.requestsLimit === "number" && response.requestsLimit >= 0) {
-                    quotas.current.requestsLimit = response.requestsLimit;
-                    quotas.current.requestsUsed = response.requestsUsed ?? 0;
+    // on mount (or when host changes), fetch initial quotas
+    useEffect(() => {
+        if (!host) return;
+        // setQuotas(null); // reset to loading state
+        fetch(`${host}/_ai/quotas`, { method: "POST" })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Quotas request failed: ${response.status}`);
                 }
+                return response.json();
+            })
+            .then((response: any) => {
+                setQuotas({
+                    requestsLimit: response?.data?.requestsLimit ?? null,
+                    requestsUsed: response?.data?.requestsUsed ?? 0,
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+                // if quotas endpoint fails, assume limit is 0 so the user is not blocked
+                // but the ai service is not available
+                setQuotas({
+                    requestsLimit: null,
+                    requestsUsed: 0,
+                });
             });
-        }
-    }, [props.host]);
+    }, [host]);
 
     return (
-        <AiContext.Provider value={manager}>
-            {props.children}
+        <AiContext.Provider value={{ host, quotas, updateQuotas }}>
+            {children}
         </AiContext.Provider>
     );
 };
