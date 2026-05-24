@@ -1,10 +1,12 @@
 import { Fragment, useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useAlure as useSurface } from "alure";
+import { CloseIcon } from "@josemi-icons/react";
 import { useAi } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { Ai as AiComponents } from "./ui/ai.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
+import { parseElementsFromAiResponse } from "../lib/ai.ts";
 import type { JSX } from "react";
 
 export type AiDialogProps = {
@@ -64,10 +66,15 @@ export const AiDialog = (props: AiDialogProps): JSX.Element => {
 
     return (
         <Dialog.Content className="relative w-full p-2 flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-                <div className="leading-none font-bold">{props.title}</div>
-                <div className="flex rounded-md p-1 opacity-60 border-1 border-gray-200 leading-none">
-                    <span className="text-2xs font-medium">BETA</span>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="leading-none font-bold">{props.title}</div>
+                    <div className="flex rounded-md p-1 opacity-60 border-1 border-gray-200 leading-none">
+                        <span className="text-2xs font-medium">BETA</span>
+                    </div>
+                </div>
+                <div className="flex text-xl cursor-pointer opacity-60 hover:opacity-80" onClick={() => close()}>
+                    <CloseIcon />
                 </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -123,8 +130,9 @@ export const AiGenerateElements = (): JSX.Element => {
                         return generateElements(prompt);
                     }}
                     processResponse={(elements) => {
-                        if (elements?.length > 0) {
-                            editor.importElements(elements);
+                        const parsedElements = parseElementsFromAiResponse(elements);
+                        if (parsedElements?.length > 0) {
+                            editor.importElements(parsedElements);
                             editor.dispatchChange();
                             editor.update();
                         }
