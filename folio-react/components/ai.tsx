@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useAlure as useSurface } from "alure";
 import { useAi } from "../contexts/ai.tsx";
+import { useEditor } from "../contexts/editor.tsx";
 import { Ai as AiComponents } from "./ui/ai.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
@@ -104,6 +105,7 @@ export const AiDialog = (props: AiDialogProps): JSX.Element => {
 export const AiGenerateElements = (): JSX.Element => {
     const { close } = useSurface();
     const { loading, isQuotaExceeded, isQuotaLoading, generateElements } = useAi();
+    const editor = useEditor();
     return (
         <Fragment>
             <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={() => close()} />
@@ -121,7 +123,11 @@ export const AiGenerateElements = (): JSX.Element => {
                         return generateElements(prompt);
                     }}
                     processResponse={(elements) => {
-                        console.log("Generated elements", elements);
+                        if (elements?.length > 0) {
+                            editor.importElements(elements);
+                            editor.dispatchChange();
+                            editor.update();
+                        }
                     }}
                 />
             </div>
