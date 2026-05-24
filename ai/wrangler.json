@@ -2,7 +2,7 @@
     "$schema": "../node_modules/wrangler/config-schema.json",
     "name": "folio-ai",
     "main": "worker.ts",
-    "compatibility_date": "2026-02-24",
+    "compatibility_date": "2026-05-24",
     "observability": {
         "enabled": true
     },
