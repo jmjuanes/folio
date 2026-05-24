@@ -29,7 +29,7 @@ const parseResponse = (responseObject: any): string => {
 // AI provider for OpenAI Responses API.
 // Also works with Groq and OpenRouter, which expose a compatible implementation.
 export const createOpenAIProvider = (config: AIProviderConfig): AIProvider => {
-    const baseUrl = config.baseUrl ?? BASE_URLS[config.provider];
+    const baseUrl = config.baseUrl || BASE_URLS[config.provider];
     return {
         async generateStructuredContent(params: GenerateStructuredContentParams): Promise<any> {
             const response = await fetch(`${baseUrl}/responses`, {
@@ -47,7 +47,7 @@ export const createOpenAIProvider = (config: AIProviderConfig): AIProvider => {
                         format: {
                             type: "json_schema",
                             name: "folio_response_schema",
-                            strict: false,
+                            strict: true,
                             schema: params.responseSchema,
                         },
                     },
@@ -55,6 +55,7 @@ export const createOpenAIProvider = (config: AIProviderConfig): AIProvider => {
             });
 
             if (!response.ok) {
+                console.error(await response.text().catch(() => null));
                 throw new AIProviderError(config.provider, response.status, await response.json().catch(() => null));
             }
 
