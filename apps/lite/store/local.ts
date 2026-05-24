@@ -11,7 +11,6 @@ enum STORE_KEYS {
     VERSION = "folio:version",
     DATA = "folio:data",
     LIBRARY = "folio:library",
-    AI_CHAT = "folio:ai-chat",
 };
 
 // @description create a new local store instance
@@ -29,7 +28,7 @@ export const createLocalStore = (options: any = {}): Store => {
             // Check if we need to migrate to new projects data
             if (!keys.includes(STORE_KEYS.VERSION)) {
                 // 1. Initialize new data object
-                const newData = {
+                const newData: any = {
                     pages: [],
                     assets: {},
                     createdAt: Date.now(),
@@ -54,10 +53,6 @@ export const createLocalStore = (options: any = {}): Store => {
             if (!keys.includes(STORE_KEYS.LIBRARY)) {
                 await idb.set(STORE_KEYS.LIBRARY, {}, store);
             }
-            // check if the ai chat key is not initialized
-            if (!keys.includes(STORE_KEYS.AI_CHAT)) {
-                await idb.set(STORE_KEYS.AI_CHAT, [], store);
-            }
         },
 
         getInitialData: async () => {
@@ -81,13 +76,6 @@ export const createLocalStore = (options: any = {}): Store => {
         },
         updateLibrary: (library: any = {}) => {
             return idb.set(STORE_KEYS.LIBRARY, library, store);
-        },
-
-        getInitialAiChat: () => {
-            return idb.get(STORE_KEYS.AI_CHAT, store);
-        },
-        updateAiChat: (aiChatData: any = []) => {
-            return idb.set(STORE_KEYS.AI_CHAT, aiChatData, store);
         },
     } as Store;
 };

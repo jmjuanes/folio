@@ -3,7 +3,7 @@ import { PREFERENCES } from "folio-react/constants.js";
 import { Editor } from "folio-react/components/editor.tsx";
 import { Title } from "folio-react/components/title.tsx";
 import { Library } from "folio-react/components/library.tsx";
-import { AiChat } from "folio-react/components/ai-chat.tsx";
+import { AiGenerateElements } from "folio-react/components/ai.tsx";
 import { AiProvider } from "folio-react/contexts/ai.tsx";
 import { Loading } from "folio-react/components/loading.jsx";
 import { Welcome } from "./welcome.tsx";
@@ -26,7 +26,7 @@ export const App = (props: AppProps): React.JSX.Element => {
             Title: Title,
             Library: Library,
             OverTheCanvas: Welcome,
-            AiChat: AiChat,
+            AiGenerateElements: AiGenerateElements,
         };
     }, [props.store]);
 
@@ -77,7 +77,7 @@ export const App = (props: AppProps): React.JSX.Element => {
     }
 
     return (
-        <AiProvider host={process.env.AI_HOST} chats={props.store.getInitialAiChat} onChatChange={props.store.updateAiChat}>
+        <AiProvider host={process.env.AI_HOST}>
             <Editor
                 data={handleDataLoad}
                 library={props.store.getInitialLibrary}
