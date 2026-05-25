@@ -21,7 +21,6 @@ import { Handlers } from "../components/handlers.tsx";
 import { Dimensions } from "../components/dimensions.tsx";
 import { Snaps } from "../components/snaps.tsx";
 import { Pointer } from "../components/pointer.tsx";
-import { Preferences } from "../components/preferences.tsx";
 
 // export type for the editor components
 // export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
@@ -65,7 +64,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Export: Export,
             KeyboardShortcuts: KeyboardShortcuts,
             Commands: Commands,
-            Preferences: Preferences,
+            Preferences: null,
             // menus
             MainMenu: MainMenu,
             PagesMenu: PagesMenu,
