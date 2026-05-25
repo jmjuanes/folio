@@ -93,6 +93,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
         Export,
         Commands,
         Library,
+        Preferences,
         AiGenerateElements,
     } = useEditorComponents();
 
@@ -798,6 +799,22 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                             withDismiss(),
                         ],
                     });
+                },
+            },
+            [ACTIONS.SHOW_PREFERENCES_DIALOG]: {
+                id: ACTIONS.SHOW_PREFERENCES_DIALOG,
+                name: "Preferences",
+                icon: "sliders",
+                disabled: !Preferences,
+                onSelect: () => {
+                    if (!!Preferences) {
+                        surface.open("dialog:preferences", {
+                            component: Preferences,
+                            middlewares: [
+                                withDismiss(),
+                            ],
+                        });
+                    }
                 },
             },
             [ACTIONS.SHOW_COMMANDS]: {

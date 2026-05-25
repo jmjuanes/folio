@@ -1,12 +1,15 @@
 import React from "react";
+import { Fragment } from "react";
 import classnames from "classnames";
 import { ACTIONS, PREFERENCES } from "../../constants.js";
 import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.tsx";
 import { useEditor } from "../../contexts/editor.tsx";
 import { usePreferences } from "../../contexts/preferences.tsx";
+import { useEditorComponents } from "../../contexts/editor-components.tsx";
 import { useActions } from "../../contexts/actions.tsx";
 import { printShortcut } from "../../lib/actions.ts";
+import type { JSX } from "react";
 
 export type MainMenuLinkProps = {
     url?: string,
@@ -26,7 +29,7 @@ export type MainMenuActionProps = {
     className?: string,
     disabled?: boolean,
     text: string,
-    icon?: string,
+    icon: string,
     shortcut?: string | string[],
     onClick: (event: React.SyntheticEvent) => void,
 };
@@ -158,18 +161,40 @@ export const MainMenuShowShortcutsAction = (): React.JSX.Element => {
     );
 };
 
+// action to display the editor preferences dialog
+export const MainMenuPreferencesAction = (): JSX.Element => {
+    const { dispatchAction } = useActions();
+    return (
+        <MainMenuAction
+            icon="sliders"
+            text="Preferences"
+            onClick={() => {
+                dispatchAction(ACTIONS.SHOW_PREFERENCES_DIALOG);
+            }}
+        />
+    );
+};
+
 // @description default content of the main menu
 export const MainMenuContent = (): React.JSX.Element => {
     const preferences = usePreferences();
+    const { Preferences } = useEditorComponents();
     return (
         <React.Fragment>
             <MainMenuOpenAction />
             <MainMenuSaveAction />
             <MainMenuExportAction />
             <MainMenuResetAction />
-            <MainMenuSeparator />
-            {!!preferences[PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED] && (
-                <MainMenuShowShortcutsAction />
+            {(!!preferences[PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED] || !!Preferences) && (
+                <Fragment>
+                    <MainMenuSeparator />
+                    {!!preferences[PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED] && (
+                        <MainMenuShowShortcutsAction />
+                    )}
+                    {!!Preferences && (
+                        <MainMenuPreferencesAction />
+                    )}
+                </Fragment>
             )}
             <MainMenuSeparator />
             <MainMenuLinks />
