@@ -483,10 +483,6 @@ export const MINIMAL_ELEMENT_FILL = "#ABABAB";
 export const MINIMAP_ELEMENT_RADIUS = 3;
 export const MINIMAP_VISIBLE_FILL = "#F3F4F5";
 export const MINIMAP_VISIBLE_RADIUS = 8;
-export const MINIMAP_POSITION = {
-    BOTTOM_LEFT: "bottom-left",
-    BOTTOM_RIGHT: "bottom-right",
-};
 
 // eraser tool constants
 export const ERASER_COLOR = "#cbd5e1";
@@ -543,28 +539,26 @@ export const ACTIONS = {
     TOGGLE_SHOW_DIMENSIONS: "toggle-show-dimensions",
     SHOW_KEYBOARD_SHORTCUTS_DIALOG: "show-keyboard-shortcuts-dialog",
     SHOW_EXPORT_DIALOG: "show-export-dialog",
+    SHOW_PREFERENCES_DIALOG: "preferences:show",
     SHOW_COMMANDS: "show-commands",
     TOGGLE_LIBRARY_PANEL: "library:panel:toggle",
-    TOGGLE_LAYERS_PANEL: "layers:panel:toggle",
     AI_GENERATE_ELEMENTS: "ai-generate-elements",
     AI_TRANSFORM_ELEMENTS: "ai-transform-elements",
 };
 
 export const PREFERENCES = {
     // global preferences
-    THEME: "theme",
+    // THEME: "theme",
     // keyboard shortcuts
     KEYBOARD_SHORTCUTS_ENABLED: "keyboardShortcuts.enabled",
-    // minimap
-    MINIMAP_ENABLED: "minimap.enabled",
-    MINIMAP_POSITION: "minimap.position",
-    MINIMAP_SCALE: "minimap.scale",
+    // editor elements
+    MINIMAP_ENABLED: "editor.minimap.enabled",
+    MINIMAP_SIDE: "editor.minimap.side",
+    LAYERS_ENABLED: "editor.layers.enabled",
     // library
     LIBRARY_ENABLED: "library.enabled",
     LIBRARY_EXPORT_COLLECTIONS: "library.exportCollections",
     LIBRARY_EXPORT_COMPONENTS: "library.exportComponents",
     // ai
     AI_ENABLED: "ai.enabled",
-    AI_CHAT_MAX_CHATS: "ai.chat.maxChats",
-    AI_CHAT_MAX_MESSAGES: "ai.chat.maxMessages",
 };
