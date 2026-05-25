@@ -4,7 +4,7 @@ import { Button, ButtonVariant } from "../components/ui/button.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";
 import { Form } from "../components/form/index.jsx";
 import { useDialog } from "./use-dialog.tsx";
-import { useFormData } from "./use-form-data.js";
+import { useFormData } from "./use-form-data.ts";
 import type { JSX } from "react";
 
 export type PromptOptions = {
