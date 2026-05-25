@@ -1,8 +1,6 @@
-import React from "react";
-import {
-    PREFERENCES,
-    MINIMAP_POSITION,
-} from "../constants.js";
+import { createContext, useContext, useMemo } from "react";
+import { PREFERENCES } from "../constants.js";
+import type { JSX } from "react";
 
 export type Preferences = {
     [key: string]: string | boolean | number | null;
@@ -19,32 +17,40 @@ export const DEFAULT_PREFERENCES = {
     [PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED]: true,
     // minimap preferences
     [PREFERENCES.MINIMAP_ENABLED]: true,
-    [PREFERENCES.MINIMAP_SCALE]: 1,
-    [PREFERENCES.MINIMAP_POSITION]: MINIMAP_POSITION.BOTTOM_LEFT,
+    [PREFERENCES.MINIMAP_SIDE]: "left",
+    // layers preferences
+    [PREFERENCES.LAYERS_ENABLED]: true,
     // library preferences
     [PREFERENCES.LIBRARY_ENABLED]: true,
     [PREFERENCES.LIBRARY_EXPORT_COLLECTIONS]: true,
     [PREFERENCES.LIBRARY_EXPORT_COMPONENTS]: true,
     // ai preferences
-    [PREFERENCES.AI_ENABLED]: false,
-    [PREFERENCES.AI_CHAT_MAX_CHATS]: 50,
-    [PREFERENCES.AI_CHAT_MAX_MESSAGES]: 30,
+    // [PREFERENCES.AI_ENABLED]: false,
 };
 
 // @private Shared preferences context
-export const PreferencesContext = React.createContext<Preferences>({});
+export const UserPreferencesContext = createContext<Preferences>({});
+
+// @description access only to user preferences
+export const useUserPreferences = (): Preferences => {
+    return useContext(UserPreferencesContext);
+};
 
 // @description use preferences hook
+// this hook will return 
 export const usePreferences = (): Preferences => {
-    return React.useContext(PreferencesContext);
+    const userPreferences = useContext(UserPreferencesContext);
+    return useMemo(() => {
+        return Object.assign({}, DEFAULT_PREFERENCES, userPreferences);
+    }, [userPreferences]);
 };
 
 // @description Preferences provider component
-export const PreferencesProvider = (props: PreferencesProviderProps): React.JSX.Element => {
-    const preferences = Object.assign({}, DEFAULT_PREFERENCES, props.preferences || {});
+export const PreferencesProvider = (props: PreferencesProviderProps): JSX.Element => {
+    const userPreferences = props.preferences || {};
     return (
-        <PreferencesContext.Provider value={preferences}>
+        <UserPreferencesContext.Provider value={userPreferences}>
             {props.children}
-        </PreferencesContext.Provider>
+        </UserPreferencesContext.Provider>
     );
 };
