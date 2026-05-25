@@ -160,7 +160,7 @@ export const EditorCanvasOverlay = (): JSX.Element => {
                     <Toolbar />
                 </div>
             )}
-            {!!Layers && (
+            {!!Layers && !!preferences[PREFERENCES.LAYERS_ENABLED] && (
                 <div className="absolute z-30 top-0 right-0 pointer-events-auto">
                     <Layers />
                 </div>
