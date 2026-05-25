@@ -103,7 +103,7 @@ export const Command: CommandComponents = {
             "relative p-2 rounded-lg w-full shrink-0 flex flex-row flex-nowrap gap-2 text-sm items-center": true,
             "bg-white hover:bg-gray-100 cursor-pointer": !props.active && !props.disabled,
             "bg-gray-100": props.active,
-            "opacity-60 cursor-not-allowed": props.disabled,
+            "opacity-60 cursor-not-allowed pointer-events-none": props.disabled,
         }, props.className);
         return (
             <div className={itemClassName} onClick={props.onClick}>

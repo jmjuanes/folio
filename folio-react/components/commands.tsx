@@ -82,6 +82,7 @@ export const CommandsContent = (): JSX.Element => {
                     label: action.name,
                     icon: action.icon,
                     shortcut: action.shortcut,
+                    disabled: !!action.disabled,
                     execute: () => action.onSelect(),
                 })),
             } as CommandGroup;

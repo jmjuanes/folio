@@ -27,6 +27,7 @@ export type ActionItem = {
     name: string;
     category?: ActionCategory;
     icon?: React.JSX.Element | React.ReactNode | string;
+    disabled?: boolean;
     shortcut?: string | string[];
     onSelect: (payload?: any) => void;
 };
@@ -826,13 +827,16 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Generate Elements with AI",
                 icon: "sparkles",
                 category: ActionCategory.AI,
+                disabled: !AiGenerateElements,
                 onSelect: () => {
-                    surface.open("ai-generate-elements", {
-                        component: AiGenerateElements,
-                        middlewares: [
-                            withDismiss(),
-                        ],
-                    });
+                    if (AiGenerateElements) {
+                        surface.open("ai-generate-elements", {
+                            component: AiGenerateElements,
+                            middlewares: [
+                                withDismiss(),
+                            ],
+                        });
+                    }
                 },
             },
         }) as ActionItem[];

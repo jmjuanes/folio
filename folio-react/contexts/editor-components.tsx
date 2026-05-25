@@ -21,7 +21,6 @@ import { Handlers } from "../components/handlers.tsx";
 import { Dimensions } from "../components/dimensions.tsx";
 import { Snaps } from "../components/snaps.tsx";
 import { Pointer } from "../components/pointer.tsx";
-import { AiGenerateElements } from "../components/ai.tsx";
 
 // export type for the editor components
 // export type EditorComponentsMap = Record<string, ((props?: any) => React.JSX.Element) | null> | null;
@@ -80,8 +79,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Title: null,
             Library: null,
             // ai components
-            AiChat: null,
-            AiGenerateElements: AiGenerateElements,
+            AiGenerateElements: null,
             // canvas
             BehindTheCanvas: null,
             OverTheCanvas: null,
