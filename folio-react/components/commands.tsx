@@ -232,8 +232,8 @@ export const Commands = (props: CommandsProps): JSX.Element => {
     return (
         <Fragment>
             <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={() => close()} />
-            <Centered className="fixed z-50" style={{ top: "33%" }}>
-                <Dialog.Content className="w-full max-w-md">
+            <Centered className="fixed z-50 pointer-events-none" style={{ top: "33%" }}>
+                <Dialog.Content className="w-full max-w-md pointer-events-auto">
                     <div className="p-2">
                         {content}
                     </div>
