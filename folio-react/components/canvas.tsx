@@ -113,7 +113,9 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             const action = getActionByKeysCombination(event.key, event.code, isCtrlKey, event.altKey, event.shiftKey);
             if (action) {
                 event.preventDefault();
-                return dispatchAction(action.id, { event: event });
+                if (typeof action.disabled === "undefined" || !action.disabled) {
+                    return dispatchAction(action.id, { event: event });
+                }
             }
             // 4. Check for tool shortcuts
             if (!isCtrlKey && !event.shiftKey) {

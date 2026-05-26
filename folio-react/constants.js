@@ -555,10 +555,16 @@ export const PREFERENCES = {
     MINIMAP_ENABLED: "editor.minimap.enabled",
     MINIMAP_SIDE: "editor.minimap.side",
     LAYERS_ENABLED: "editor.layers.enabled",
+    TOOLBAR_ENABLED: "editor.toolbar.enabled",
+    TOOLBAR_LOCK_TOOL_VISIBLE: "editor.toolbar.lockToolVisible",
+    TOOLBAR_LOCK_TOOL_SIDE: "editor.toolbar.lockToolSide",
     // library
     LIBRARY_ENABLED: "library.enabled",
-    LIBRARY_EXPORT_COLLECTIONS: "library.exportCollections",
-    LIBRARY_EXPORT_COMPONENTS: "library.exportComponents",
+    LIBRARY_EXPORT_ENABLED: "library.export.enabled",
+    LIBRARY_EXPORT_COLLECTIONS: "library.export.collections",
+    LIBRARY_EXPORT_COMPONENTS: "library.export.components",
+    // command palette
+    COMMAND_PALETTE_ENABLED: "workbench.commandPalette.enabled",
     // ai
     AI_ENABLED: "ai.enabled",
 };

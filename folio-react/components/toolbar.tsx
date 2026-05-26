@@ -6,7 +6,8 @@ import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu } from "../hooks/use-context-menu.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
-import { ACTIONS, TOOLS, ELEMENTS } from "../constants.js";
+import { usePreferences } from "../contexts/preferences.tsx";
+import { ACTIONS, TOOLS, ELEMENTS, PREFERENCES } from "../constants.js";
 
 import type { ToolState } from "../lib/tool.ts";
 import type { ElementTool } from "../tools/element.ts";
@@ -80,6 +81,7 @@ export const ToolbarToolButton = (props: ToolbarToolButtonProps): React.JSX.Elem
 // @description Toolbar panel component
 export const ToolbarContent = (): React.JSX.Element => {
     const editor = useEditor();
+    const preferences = usePreferences();
     const { hideContextMenu } = useContextMenu();
     const { dispatchAction } = useActions();
 
@@ -101,10 +103,12 @@ export const ToolbarContent = (): React.JSX.Element => {
     }, [editor, locked]);
 
     const lockButtonClass = classNames({
-        "absolute left-full flex items-center cursor-pointer text-lg rounded-full p-2 ml-2": true,
+        "absolute flex items-center cursor-pointer text-lg rounded-full p-2": true,
         "bg-gray-950 text-white": locked,
         "opacity-50 hover:opacity-100": !locked,
         "pointer-events-none opacity-40 cursor-not-allowed": editor.page.readonly,
+        "right-full mr-2": preferences[PREFERENCES.TOOLBAR_LOCK_TOOL_SIDE] === "left",
+        "left-full ml-2": preferences[PREFERENCES.TOOLBAR_LOCK_TOOL_SIDE] === "right",
     });
 
     return (
@@ -117,17 +121,21 @@ export const ToolbarContent = (): React.JSX.Element => {
                 <ToolbarToolButton tool={ELEMENTS.TEXT} />
                 <ToolbarToolButton tool={ELEMENTS.DRAW} />
                 <ToolbarToolButton tool={ELEMENTS.STICKER} />
-                <ToolbarButton
-                    text="Actions"
-                    icon="tools"
-                    onClick={() => {
-                        dispatchAction(ACTIONS.SHOW_COMMANDS);
-                    }}
-                />
+                {!!preferences[PREFERENCES.COMMAND_PALETTE_ENABLED] && (
+                    <ToolbarButton
+                        text="Actions"
+                        icon="tools"
+                        onClick={() => {
+                            dispatchAction(ACTIONS.SHOW_COMMANDS);
+                        }}
+                    />
+                )}
             </div>
-            <div className={lockButtonClass} onClick={handleLockClick}>
-                {locked ? <LockIcon /> : <UnlockIcon />}
-            </div>
+            {!!preferences[PREFERENCES.TOOLBAR_LOCK_TOOL_VISIBLE] && (
+                <div className={lockButtonClass} onClick={handleLockClick}>
+                    {locked ? <LockIcon /> : <UnlockIcon />}
+                </div>
+            )}
         </div>
     );
 };

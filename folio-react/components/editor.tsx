@@ -155,7 +155,7 @@ export const EditorCanvasOverlay = (): JSX.Element => {
     const selectedElements = editor.getSelection();
     return (
         <Fragment>
-            {!!Toolbar && (
+            {!!Toolbar && !!preferences[PREFERENCES.TOOLBAR_ENABLED] && (
                 <div className="absolute z-20 left-half bottom-0 pointer-events-auto" style={{ transform: "translateX(-50%)" }}>
                     <Toolbar />
                 </div>

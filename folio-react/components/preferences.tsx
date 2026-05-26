@@ -16,7 +16,10 @@ export type PreferencesContentProps = {
 
 export const PreferencesContent = (props: PreferencesContentProps): JSX.Element => {
     const userPreferences = useUserPreferences();
-    const [preferences, setPreferences] = useState(userPreferences);
+    const [preferences, setPreferences] = useState({});
+    const computedPreferences = useMemo(() => {
+        return Object.assign({}, DEFAULT_PREFERENCES, userPreferences, preferences);
+    }, [userPreferences, preferences]);
     const preferencesFields = useMemo(() => {
         const disabledFields = new Set(props.disabledFields || []);
         const allPreferencesFields = {
@@ -25,6 +28,17 @@ export const PreferencesContent = (props: PreferencesContentProps): JSX.Element 
                 disabled: disabledFields.has(PREFERENCES.MINIMAP_ENABLED),
                 title: "Enable Minimap",
                 helper: "Display a Minimap with the current page distribution.",
+            },
+            [PREFERENCES.MINIMAP_SIDE]: {
+                type: FORM_OPTIONS.DROPDOWN_SELECT,
+                disabled: true, // !computedPreferences[PREFERENCES.MINIMAP_ENABLED],
+                title: "Minimap position",
+                values: [
+                    { text: "Left Side", value: "left" },
+                    { text: "Right Side", value: "right" },
+                ],
+                allowToRemove: false,
+                helper: "Change the position of the minimap in the editor.",
             },
             [PREFERENCES.LAYERS_ENABLED]: {
                 type: FORM_OPTIONS.CHECKBOX,
@@ -41,7 +55,7 @@ export const PreferencesContent = (props: PreferencesContentProps): JSX.Element 
         });
         // return parsed preferences field
         return allPreferencesFields;
-    }, [props.hiddenFields, props.disabledFields]);
+    }, [props.hiddenFields, props.disabledFields, computedPreferences]);
 
     // update preferences
     const updatePreferences = useCallback((key: string, value: any) => {
@@ -51,15 +65,16 @@ export const PreferencesContent = (props: PreferencesContentProps): JSX.Element 
     }, [setPreferences]);
 
     // when preferences change, dispatch the onChange listener
+    // NOTE: this will emit an object containing ONLY the preferences that has been changed
     useEffect(() => {
-        if (typeof props.onChange === "function") {
+        if (typeof props.onChange === "function" && Object.keys(preferences).length > 0) {
             props.onChange(preferences);
         }
     }, [preferences]);
 
     return (
         <Form
-            data={Object.assign({}, DEFAULT_PREFERENCES, preferences)}
+            data={computedPreferences}
             items={preferencesFields}
             onChange={updatePreferences}
         />
@@ -77,8 +92,8 @@ export const Preferences = (props: PreferencesProps): JSX.Element => {
     return (
         <Fragment>
             <Overlay className="z-50" onClick={() => close()} />
-            <Centered className="fixed z-50 h-full">
-                <Dialog.Content className="relative w-full max-w-md">
+            <Centered className="fixed z-50 h-full pointer-events-none">
+                <Dialog.Content className="relative w-full max-w-md pointer-events-auto">
                     <Dialog.Close onClick={() => close()} />
                     <Dialog.Header>
                         <Dialog.Title>{props.title || "Preferences"}</Dialog.Title>

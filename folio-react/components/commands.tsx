@@ -75,9 +75,12 @@ export const CommandsContent = (): JSX.Element => {
         // 2. group action items
         const actionCommands: CommandGroup[] = Object.values(ActionCategory).map((category: string) => {
             const actions = availableActions.filter(action => action.category === category);
+            const visibleItems = actions.filter(action => {
+                return typeof action.visible === "undefined" || action.visible === true;
+            });
             return {
                 label: category,
-                items: actions.map(action => ({
+                items: visibleItems.map(action => ({
                     id: action.id,
                     label: action.name,
                     icon: action.icon,
