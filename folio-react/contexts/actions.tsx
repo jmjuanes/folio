@@ -1,11 +1,12 @@
 import React from "react";
 import { useAlure as useSurface, withDismiss } from "alure";
 import { uid } from "uid/secure";
-import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN } from "../constants.js";
+import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN, PREFERENCES } from "../constants.js";
 import { useEditor } from "./editor.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
 import { Part, useWorkbench } from "./workbench.tsx";
+import { usePreferences } from "./preferences.tsx";
 import { useConfirm } from "../hooks/use-confirm.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
 import { getShortcutKey } from "../lib/actions.ts";
@@ -28,6 +29,7 @@ export type ActionItem = {
     category?: ActionCategory;
     icon?: React.JSX.Element | React.ReactNode | string;
     disabled?: boolean;
+    visible?: boolean;
     shortcut?: string | string[];
     onSelect: (payload?: any) => void;
 };
@@ -88,11 +90,13 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const confirm = useConfirm();
     const surface = useSurface();
     const workbench = useWorkbench();
+    const preferences = usePreferences();
     const {
         KeyboardShortcuts,
         Export,
         Commands,
         Library,
+        Preferences,
         AiGenerateElements,
     } = useEditorComponents();
 
@@ -779,6 +783,8 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG]: {
                 id: ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG,
                 name: "Keyboard shortcuts",
+                icon: "keyboard",
+                category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
                     surface.open("dialog:keyboardShortcuts", {
                         component: KeyboardShortcuts,
@@ -791,6 +797,8 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             [ACTIONS.SHOW_EXPORT_DIALOG]: {
                 id: ACTIONS.SHOW_EXPORT_DIALOG,
                 name: "Export",
+                icon: "image",
+                category: ActionCategory.EDITOR_UI,
                 onSelect: () => {
                     surface.open("dialog:export", {
                         component: Export,
@@ -800,10 +808,28 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                     });
                 },
             },
+            [ACTIONS.SHOW_PREFERENCES_DIALOG]: {
+                id: ACTIONS.SHOW_PREFERENCES_DIALOG,
+                name: "Preferences",
+                icon: "sliders",
+                category: ActionCategory.EDITOR_UI,
+                visible: !!Preferences,
+                onSelect: () => {
+                    if (!!Preferences) {
+                        surface.open("dialog:preferences", {
+                            component: Preferences,
+                            middlewares: [
+                                withDismiss(),
+                            ],
+                        });
+                    }
+                },
+            },
             [ACTIONS.SHOW_COMMANDS]: {
                 id: ACTIONS.SHOW_COMMANDS,
                 name: "Commands",
                 shortcut: getShortcutKey("CtrlOrCmd+K"),
+                disabled: !preferences[PREFERENCES.COMMAND_PALETTE_ENABLED],
                 onSelect: () => {
                     surface.open("commands", {
                         component: Commands,
@@ -815,11 +841,15 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
             },
             [ACTIONS.TOGGLE_LIBRARY_PANEL]: {
                 id: ACTIONS.TOGGLE_LIBRARY_PANEL,
-                name: "Show/hide Library Panel",
+                name: "Library Panel",
                 icon: "album",
                 category: ActionCategory.EDITOR_UI,
+                disabled: !Library || !preferences[PREFERENCES.LIBRARY_ENABLED],
+                visible: !!Library && !!preferences[PREFERENCES.LIBRARY_ENABLED],
                 onSelect: () => {
-                    workbench.toggleView(Part.AUXILIARYBAR, Library);
+                    if (preferences[PREFERENCES.LIBRARY_ENABLED] && !!Library) {
+                        workbench.toggleView(Part.AUXILIARYBAR, Library);
+                    }
                 },
             },
             [ACTIONS.AI_GENERATE_ELEMENTS]: {
@@ -850,7 +880,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
         }
         // 3. return the default actions
         return defaultActions;
-    }, [editor, props.overrides]);
+    }, [editor, props.overrides, preferences]);
 
     // create a map to quickly access an action by its id
     const actionsMap = React.useMemo(() => {

@@ -1,7 +1,8 @@
 import { expect, describe, it } from "@jest/globals";
 import { act, renderHook } from "@testing-library/react";
 
-import { useFormData } from "../use-form-data.js";
+import { useFormData } from "../use-form-data.ts";
+import type { FormData, SetKeyValue } from "../use-form-data.ts";
 
 describe("useFormData", () => {
     it("should initialize with a default empty object", () => {
@@ -24,7 +25,7 @@ describe("useFormData", () => {
             age: 30,
         };
         const { result } = renderHook(() => useFormData(initialData));
-        const setKeyValue = result.current[1];
+        const setKeyValue = result.current[1] as SetKeyValue;
 
         await act(async () => {
             setKeyValue("name", "Jane");
@@ -42,11 +43,11 @@ describe("useFormData", () => {
             age: 30,
         };
         const { result } = renderHook(() => useFormData(initialData));
-        const setData = result.current[2];
+        const setData = result.current[2] as ((data: FormData) => void);
 
-        const newData = {
-            name: "Alice",
-            age: 25,
+        const newData: FormData = {
+            "name": "Alice",
+            "age": 25,
         };
 
         await act(async () => {

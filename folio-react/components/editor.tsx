@@ -155,12 +155,12 @@ export const EditorCanvasOverlay = (): JSX.Element => {
     const selectedElements = editor.getSelection();
     return (
         <Fragment>
-            {!!Toolbar && (
+            {!!Toolbar && !!preferences[PREFERENCES.TOOLBAR_ENABLED] && (
                 <div className="absolute z-20 left-half bottom-0 pointer-events-auto" style={{ transform: "translateX(-50%)" }}>
                     <Toolbar />
                 </div>
             )}
-            {!!Layers && (
+            {!!Layers && !!preferences[PREFERENCES.LAYERS_ENABLED] && (
                 <div className="absolute z-30 top-0 right-0 pointer-events-auto">
                     <Layers />
                 </div>

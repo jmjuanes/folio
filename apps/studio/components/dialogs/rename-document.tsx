@@ -3,7 +3,7 @@ import { Button } from "folio-react/components/ui/button.tsx";
 import { Dialog } from "folio-react/components/ui/dialog.tsx";
 import { Form } from "folio-react/components/form/index.jsx";
 import { FORM_OPTIONS } from "folio-react/constants.js";
-import { useFormData } from "folio-react/hooks/use-form-data.js";
+import { useFormData } from "folio-react/hooks/use-form-data.ts";
 import { useAppState } from "../../contexts/app-state.tsx";
 import { useToaster } from "../../contexts/toaster.tsx";
 

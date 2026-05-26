@@ -4,10 +4,12 @@ import { renderIcon } from "@josemi-icons/react";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions, ActionCategory } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
+import { usePreferences } from "../contexts/preferences.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
+import { PREFERENCES } from "../constants.js";
 import type { JSX, ReactNode } from "react";
 import type { ActionItem } from "../contexts/actions.tsx";
 
@@ -42,6 +44,7 @@ const CommandItemWrapper = (props: any): JSX.Element => (
 
 export const CommandsContent = (): JSX.Element => {
     const editor = useEditor();
+    const preferences = usePreferences();
     const { close } = useSurface();
     const { getTools } = useTools();
     const { getActions } = useActions();
@@ -75,9 +78,12 @@ export const CommandsContent = (): JSX.Element => {
         // 2. group action items
         const actionCommands: CommandGroup[] = Object.values(ActionCategory).map((category: string) => {
             const actions = availableActions.filter(action => action.category === category);
+            const visibleItems = actions.filter(action => {
+                return typeof action.visible === "undefined" || action.visible === true;
+            });
             return {
                 label: category,
-                items: actions.map(action => ({
+                items: visibleItems.map(action => ({
                     id: action.id,
                     label: action.name,
                     icon: action.icon,
@@ -188,12 +194,14 @@ export const CommandsContent = (): JSX.Element => {
 
     return (
         <Command.Content className="max-w-xl">
-            <Command.Input
-                value={query}
-                focus={true}
-                placeholder="Type a command or tool..."
-                onChange={value => setQuery(value)}
-            />
+            {preferences[PREFERENCES.COMMAND_PALETTE_SEARCH] && (
+                <Command.Input
+                    value={query}
+                    focus={true}
+                    placeholder="Type a command or tool..."
+                    onChange={value => setQuery(value)}
+                />
+            )}
             <Command.List className="">
                 {filteredItems.length === 0 && (
                     <Command.Empty>No results found.</Command.Empty>
@@ -232,8 +240,8 @@ export const Commands = (props: CommandsProps): JSX.Element => {
     return (
         <Fragment>
             <Overlay variant={OverlayVariant.WHITE} className="z-50" onClick={() => close()} />
-            <Centered className="fixed z-50" style={{ top: "33%" }}>
-                <Dialog.Content className="w-full max-w-md">
+            <Centered className="fixed z-50 pointer-events-none" style={{ top: "33%" }}>
+                <Dialog.Content className="w-full max-w-md pointer-events-auto">
                     <div className="p-2">
                         {content}
                     </div>

@@ -12,6 +12,7 @@ export type DropdownSelectProps = {
     value: string;
     values: DropdownSelectValue[];
     emptyValueText?: string;
+    disabled?: boolean;
     allowToRemove?: boolean;
     onChange: (value: string | null) => void;
 };
@@ -28,7 +29,7 @@ export const DropdownSelect = (props: DropdownSelectProps): React.JSX.Element =>
                 "relative w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
                 "flex items-center justify-between": true,
                 "bg-white border-1 border-gray-200 text-current": true,
-                "pointer-events-none opacity-60": props.values.length === 0,
+                "pointer-events-none opacity-60": props.values.length === 0 || props.disabled,
             })}
             contentClassName="absolute z-50"
             toggleRender={() => {

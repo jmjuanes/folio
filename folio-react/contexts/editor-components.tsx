@@ -64,6 +64,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Export: Export,
             KeyboardShortcuts: KeyboardShortcuts,
             Commands: Commands,
+            Preferences: null,
             // menus
             MainMenu: MainMenu,
             PagesMenu: PagesMenu,
