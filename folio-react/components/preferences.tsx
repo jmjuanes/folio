@@ -20,41 +20,53 @@ export const PreferencesContent = (props: PreferencesContentProps): JSX.Element 
     const computedPreferences = useMemo(() => {
         return Object.assign({}, DEFAULT_PREFERENCES, userPreferences, preferences);
     }, [userPreferences, preferences]);
-    const preferencesFields = useMemo(() => {
+    const preferencesGroups = useMemo(() => {
         const disabledFields = new Set(props.disabledFields || []);
-        const allPreferencesFields = {
-            [PREFERENCES.MINIMAP_ENABLED]: {
-                type: FORM_OPTIONS.CHECKBOX,
-                disabled: disabledFields.has(PREFERENCES.MINIMAP_ENABLED),
-                title: "Enable Minimap",
-                helper: "Display a Minimap with the current page distribution.",
+        const allPreferencesGroups = [
+            {
+                title: "Minimap",
+                fields: {
+                    [PREFERENCES.MINIMAP_ENABLED]: {
+                        type: FORM_OPTIONS.CHECKBOX,
+                        disabled: disabledFields.has(PREFERENCES.MINIMAP_ENABLED),
+                        title: "Enable Minimap",
+                        helper: "Display a Minimap with the current page distribution.",
+                    },
+                    [PREFERENCES.MINIMAP_SIDE]: {
+                        type: FORM_OPTIONS.DROPDOWN_SELECT,
+                        disabled: true, // !computedPreferences[PREFERENCES.MINIMAP_ENABLED],
+                        title: "Minimap position",
+                        values: [
+                            { text: "Left Side", value: "left" },
+                            { text: "Right Side", value: "right" },
+                        ],
+                        allowToRemove: false,
+                        helper: "Change the position of the minimap in the editor.",
+                    },
+                },
             },
-            [PREFERENCES.MINIMAP_SIDE]: {
-                type: FORM_OPTIONS.DROPDOWN_SELECT,
-                disabled: true, // !computedPreferences[PREFERENCES.MINIMAP_ENABLED],
-                title: "Minimap position",
-                values: [
-                    { text: "Left Side", value: "left" },
-                    { text: "Right Side", value: "right" },
-                ],
-                allowToRemove: false,
-                helper: "Change the position of the minimap in the editor.",
+            {
+                title: "Layers",
+                fields: {
+                    [PREFERENCES.LAYERS_ENABLED]: {
+                        type: FORM_OPTIONS.CHECKBOX,
+                        disabled: disabledFields.has(PREFERENCES.LAYERS_ENABLED),
+                        title: "Enable Layers",
+                        helper: "Display the layers structure of the board.",
+                    },
+                },
             },
-            [PREFERENCES.LAYERS_ENABLED]: {
-                type: FORM_OPTIONS.CHECKBOX,
-                disabled: disabledFields.has(PREFERENCES.LAYERS_ENABLED),
-                title: "Enable Layers",
-                helper: "Display the layers structure of the board.",
-            },
-        };
+        ];
         // remove hidden fields
         (props.hiddenFields || []).forEach((field: string) => {
-            if (allPreferencesFields[field]) {
-                delete allPreferencesFields[field];
-            }
+            allPreferencesGroups.forEach(group => {
+                if (group.fields[field]) {
+                    delete group.fields[field];
+                }
+            });
         });
         // return parsed preferences field
-        return allPreferencesFields;
+        return allPreferencesGroups.filter(group => Object.keys(group.fields).length > 0);
     }, [props.hiddenFields, props.disabledFields, computedPreferences]);
 
     // update preferences
@@ -73,11 +85,18 @@ export const PreferencesContent = (props: PreferencesContentProps): JSX.Element 
     }, [preferences]);
 
     return (
-        <Form
-            data={computedPreferences}
-            items={preferencesFields}
-            onChange={updatePreferences}
-        />
+        <div className="flex flex-col gap-6">
+            {preferencesGroups.map(group => (
+                <div className="flex flex-col gap-2" key={group.title}>
+                    <div className="text-base font-bold">{group.title}</div>
+                    <Form
+                        data={computedPreferences}
+                        items={group.fields}
+                        onChange={updatePreferences}
+                    />
+                </div>
+            ))}
+        </div>
     );
 };
 
