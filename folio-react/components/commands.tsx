@@ -4,10 +4,12 @@ import { renderIcon } from "@josemi-icons/react";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions, ActionCategory } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
+import { usePreferences } from "../contexts/preferences.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
+import { PREFERENCES } from "../constants.js";
 import type { JSX, ReactNode } from "react";
 import type { ActionItem } from "../contexts/actions.tsx";
 
@@ -42,6 +44,7 @@ const CommandItemWrapper = (props: any): JSX.Element => (
 
 export const CommandsContent = (): JSX.Element => {
     const editor = useEditor();
+    const preferences = usePreferences();
     const { close } = useSurface();
     const { getTools } = useTools();
     const { getActions } = useActions();
@@ -191,12 +194,14 @@ export const CommandsContent = (): JSX.Element => {
 
     return (
         <Command.Content className="max-w-xl">
-            <Command.Input
-                value={query}
-                focus={true}
-                placeholder="Type a command or tool..."
-                onChange={value => setQuery(value)}
-            />
+            {preferences[PREFERENCES.COMMAND_PALETTE_SEARCH] && (
+                <Command.Input
+                    value={query}
+                    focus={true}
+                    placeholder="Type a command or tool..."
+                    onChange={value => setQuery(value)}
+                />
+            )}
             <Command.List className="">
                 {filteredItems.length === 0 && (
                     <Command.Empty>No results found.</Command.Empty>

@@ -31,6 +31,7 @@ export const DEFAULT_PREFERENCES = {
     [PREFERENCES.LIBRARY_EXPORT_COMPONENTS]: true,
     // command palette
     [PREFERENCES.COMMAND_PALETTE_ENABLED]: true,
+    [PREFERENCES.COMMAND_PALETTE_SEARCH]: true,
     // ai preferences
     // [PREFERENCES.AI_ENABLED]: false,
 };

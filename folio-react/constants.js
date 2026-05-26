@@ -565,6 +565,7 @@ export const PREFERENCES = {
     LIBRARY_EXPORT_COMPONENTS: "library.export.components",
     // command palette
     COMMAND_PALETTE_ENABLED: "workbench.commandPalette.enabled",
+    COMMAND_PALETTE_SEARCH: "workbench.commandPalette.search",
     // ai
     AI_ENABLED: "ai.enabled",
 };
