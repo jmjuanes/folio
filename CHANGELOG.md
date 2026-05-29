@@ -89,7 +89,7 @@ We have added a convenient new Clear Page button to the main menu, allowing you 
 We have enhanced the **Laser Pointer Tool** to allow multiple paths during a single session.
 
 
-## v0.23.0 (October 28, 2024) Enhanced Precision and New Library Feature
+## v0.23.0 (October 28, 2024) - Enhanced Precision and New Library Feature
 
 This release introduces the Library feature, allowing users to manage, export, and import design elements effortlessly. Additionally, new Shift key functionalities enable users to preserve aspect ratios while resizing and snap lines and arrows to 15° increments. We have also improved text elements to prevent word breaks and maintain their aspect ratio during resizing.
 
