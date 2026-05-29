@@ -1,0 +1,216 @@
+{
+    "title": "Folio",
+    "description": "The minimal digital whiteboard for sketching and prototyping.",
+    "keywords": "folio,whiteboard,sketching,prototyping,design,ui",
+    "url": "https://folio.josemi.xyz",
+    "favicon": "/favicon.png",
+    "open_graph": {
+        "image": "/og.png"
+    },
+    "navbar": {
+        "links": [
+            { "text": "Studio", "href": "/studio" },
+            { "text": "Plans", "href": "/#plans" },
+            { "text": "Docs", "href": "/docs" }
+        ],
+        "callToAction": {
+            "text": "Try it",
+            "href": "/app"
+        }
+    },
+    "footer": {
+        "sections": [
+            {
+                "text": "Project",
+                "links": [
+                    { "text": "Docs", "href": "/docs.html" },
+                    { "text": "Roadmap", "href": "https://github.com/users/jmjuanes/projects/4/views/1" },
+                    { "text": "Changelog", "href": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"}
+                ]
+            },
+            {
+                "text": "Open Source",
+                "links": [
+                    { "text": "GitHub", "href": "https://github.com/jmjuanes/folio" },
+                    { "text": "Report a bug", "href": "https://github.com/jmjuanes/folio/issues" }
+                ]
+            }
+        ]
+    },
+    "pages": {
+        "index.html": {
+            "title": "Sketch, design, prototype - folio.",
+            "sections": [
+                {
+                    "id": "hero",
+                    "blocks": [
+                        {
+                            "type": "hero",
+                            "heading": "Your Sketching Suite.",
+                            "description": "Folio is an infinite canvas for your creative journey. Sketch, prototype, and bring your ideas to life with ease.",
+                            "callToAction": {
+                                "href": "/app",
+                                "text": "Try folio &rarr;",
+                                "hint": "No signup. Start in less than 5 seconds."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "features",
+                    "blocks": [
+                        {
+                            "type": "section-intro",
+                            "heading": "Sketch and Design with <u>Freedom</u>."
+                        },
+                        {
+                            "type": "pillars",
+                            "className": "grid-cols-1 md:grid-cols-2 gap-8",
+                            "pillars": [
+                                {
+                                    "icon": "shield",
+                                    "heading": "Design with total Privacy.",
+                                    "description": "We are committed to keeping your work private and secure. For that reason, folio uses the local storage of your browser to ensure that your drawings are accessible only to you."
+                                },
+                                {
+                                    "icon": "square",
+                                    "heading": "Boundless Canvas.",
+                                    "description": "Unleash your imagination on an infinite canvas. Whether you are sketching, prototyping, or creating, folio provides limitless space for your creativity to flourish."
+                                },
+                                {
+                                    "icon": "files",
+                                    "heading": "Organize your Ideas.",
+                                    "description": "The new Pages feature allows you to organize your drawings into distinct pages, making it effortless to manage and present your ideas."
+                                },
+                                {
+                                    "icon": "album",
+                                    "heading": "Save, Organize, and Reuse Elements.",
+                                    "description": "Use the Library to create a personal repository of reusable components. Import and export your collections to collaborate or organize projects, and sync across all boards for consistent access."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "releases",
+                    "blocks": [
+                        {
+                            "type": "section-intro",
+                            "heading": "Latest Releases.",
+                            "description": "Keep up with the latest changes and improvements in Folio."
+                        },
+                        {
+                            "type": "releases-latest"
+                        }
+                    ]
+                },
+                {
+                    "id": "get-started",
+                    "blocks": [
+                        {
+                            "type": "section-intro",
+                            "heading": "Get Started."
+                        },
+                        {
+                            "type": "pillars",
+                            "className": "grid-cols-1 md:grid-cols-2 gap-8",
+                            "pillars": [
+                                {
+                                    "heading": "Folio Lite",
+                                    "headingClassName": "text-2xl",
+                                    "description": "Use Folio directly in your browser. No signup, no installation — perfect for capturing ideas on the fly.",
+                                    "linkText": "Try it &rarr;",
+                                    "linkHref": "/app",
+                                    "linkClassName": "text-current border-2 border-gray-950"
+                                },
+                                {
+                                    "heading": "Folio Studio",
+                                    "headingClassName": "text-2xl",
+                                    "description": "Deploy Folio Studio via Docker on your machine or server. Perfect for teams or personal infrastructure.",
+                                    "linkText": "Read more &rarr;",
+                                    "linkHref": "/studio",
+                                    "linkClassName": "text-current border-2 border-gray-950"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "studio.html": {
+            "title": "Folio Studio",
+            "sections": [
+                {
+                    "id": "hero",
+                    "blocks": [
+                        {
+                            "type": "product-hero",
+                            "label": "Folio Studio",
+                            "heading": "Sketching. Self-Hosted.",
+                            "description": "A self-hosted whiteboard built for creators and designers who prefer full control and zero distractions.",
+                            "links": [
+                                { "href": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio", "text": "Install &rarr;", "className": "bg-gray-950 text-white" },
+                                { "href": "/docs", "text": "Documentation", "className": "border-2 border-gray-950 bg-transparent text-current"}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "features",
+                    "blocks": [
+                        {
+                            "type": "section-intro",
+                            "heading": "Meet Folio Studio."
+                        },
+                        {
+                            "type": "pillars",
+                            "className": "grid-cols-1 md:grid-cols-3 gap-12",
+                            "pillars": [
+                                {
+                                    "icon": "bolt",
+                                    "heading": "Same Power, but local.",
+                                    "description": "All the features of Folio, but running entirely on your own server or computer without any external dependencies."
+                                },
+                                {
+                                    "icon": "lock",
+                                    "heading": "Your data, your rules.",
+                                    "description": "No cloud, no tracking. Folio Studio stores everything on your server, ensuring that your data remains private and under your control."
+                                },
+                                {
+                                    "icon": "files",
+                                    "heading": "Unlimited Creativity.",
+                                    "description": "Organize ideas and prototypes in separate spaces. Folio Studio supports unlimited boards to keep your projects tidy and accessible."
+                                },
+                                {
+                                    "icon": "sidebar-left",
+                                    "heading": "One Sidebar to Rule Them All.",
+                                    "description": "Rename, duplicate, download, or delete your boards with a single click from your sidebar. Stay organized and in control of your workspace."
+                                },
+                                {
+                                    "icon": "image",
+                                    "heading": "Visual Previews of Your Boards.",
+                                    "description": "Get a quick glance at your recent boards with live thumbnails. Your Home screen will show your recent boards with clarity, so you know exactly where to jump back in."
+                                },
+                                {
+                                    "icon": "upload",
+                                    "heading": "Import and Export with Ease.",
+                                    "description": "Easily import existing Folio boards or export your current work. Folio Studio allows seamless transitions between local and web versions, ensuring your creativity flows uninterrupted."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "get-started",
+                    "blocks": [
+                        {
+                            "type": "callToAction",
+                            "heading": "Get Started",
+                            "description": "Install Folio Studio on your computer or server with a single command."
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
