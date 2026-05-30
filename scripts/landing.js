@@ -32,11 +32,12 @@ const getChangelog = (changelogPath) => {
     return blocks.map(lines => {
         const [versionAndDate, title] = lines[0].replace("## ", "").split(" - ");
         return {
+            url: title.trim().toLowerCase().replaceAll(" ", "-"),
             title: title.trim(),
             version: versionAndDate.split("(")[0].trim(),
             date: versionAndDate.split("(")[1].replace(")", "").trim(),
             description: lines[1].trim(),
-            content: blocks.slice(2).join("\n"),
+            content: lines.slice(2).join("\n\n"),
         };
     });
 };
@@ -58,6 +59,18 @@ build({
         mikel.SetStatePlugin("site", site),
         mikel.SetStatePlugin("changelog", getChangelog(join(process.cwd(), "CHANGELOG.md"))),
         frontmatterPlugin(),
-        markdownPlugin({}),
+        markdownPlugin({
+            classNames: {
+                link: "font-medium underline",
+                code: "bg-gray-100 rounded-md py-1 px-2 text-sm font-mono font-bold",
+                pre: "w-full overflow-x-auto bg-gray-950 text-gray-100 text-sm font-mono leading-relaxed my-6 p-4 rounded-xl",
+                heading: "font-bold mb-4 first:mt-0 mt-8 text-gray-950",
+                heading3: "text-2xl",
+                heading4: "text-xl",
+                list: "list-inside mb-6 pl-4",
+                listItem: "mb-3 pl-1",
+                paragraph: "block leading-relaxed mb-6"
+            }
+        }),
     ],
 });
