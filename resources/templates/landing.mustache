@@ -43,7 +43,7 @@
     </header>
     <!-- sections -->
     {{#each @page.sections}}
-    <section id="{{this.id}}" class="w-full py-16 {{this.className}}">
+    <section id="{{this.id}}" class="w-full py-8 sm:py-12 md:py-16 {{this.className}}">
         <div class="w-full max-w-6xl mx-auto px-4">
             {{#each this.blocks}}
             {{#eq this.type "hero"}}
@@ -98,6 +98,13 @@
                 {{#if this.description}}
                 <div class="max-w-4xl text-lg o-80">{{!this.description}}</div>
                 {{/if}}
+                {{#if this.linkText}}
+                <div class="flex">
+                    <a href="{{this.linkHref}}" class="hover:underline font-medium text-lg">
+                        <span>{{this.linkText}} &rarr;</span>
+                    </a>
+                </div>
+                {{/if}}
             </div>
             {{/eq}}
             {{#eq this.type "pillars"}}
@@ -136,9 +143,9 @@
                 {{/if}}
             </div>
             {{/eq}}
-            {{#eq this.type "releases-latest"}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {{#each @changelog limit=2}}
+            {{#eq this.type "changelog-cards"}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{#each @changelog limit=this.limit}}
                 <div class="rounded-2xl p-8 bg-white flex flex-col gap-2">
                     <div class="text-sm font-medium opacity-40">{{!this.version}}</div>
                     <div class="font-bold text-xl leading-tight mb-1">{{!this.title}}</div>
@@ -146,13 +153,63 @@
                         {{#inlineMarkdown}}{{!this.description}}{{/inlineMarkdown}}
                     </div>
                     <div class="flex mt-4">
-                        <a href="" class="flex items-center px-3 py-2 font-bold rounded-xl bg-gray-950 text-white hover:underline">
+                        <a href="/releases#{{!this.url}}" class="flex items-center px-3 py-2 font-bold rounded-xl bg-gray-950 text-white hover:underline">
                             <span>Read more &rarr;</span>
                         </a>
                     </div>
                 </div>
                 {{/each}}
             </div>
+            {{/eq}}
+            {{#eq this.type "changelog"}}
+            <div class="flex flex-col gap-8">
+                {{#each @changelog}}
+                <div class="flex flex-col md:flex-row gap-2 border-t-1 border-gray-200 pt-8 pb-16">
+                    <div class="relative w-full max-w-xs shrink-0">
+                        <div class="sticky top-0 left-0">
+                            <div class="font-medium opacity-60">{{this.date}}</div>
+                            <div class="text-sm opacity-60">{{this.version}}</div>
+                        </div>
+                    </div>
+                    <div class="w-full flex flex-col gap-6">
+                        <div class="font-extrabold text-4xl leading-tight">
+                            <a name="{{!this.url}}"></a>
+                            <span>{{!this.title}}</span>
+                        </div>
+                        {{#if this description}}
+                        <div class="text-lg">
+                            {{#inlineMarkdown}}{{!this.description}}{{/inlineMarkdown}}
+                        </div>
+                        {{/if}}
+                        {{#if this.content}}
+                        <div class="">
+                            {{#markdown}}{{!this.content}}{{/markdown}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{/eq}}
+            {{#eq this.type "faq"}}
+            <div class="flex flex-col md:flex-row gap-6">
+                {{#if this.heading}}
+                <div class="w-full md:max-w-sm shrink-0">
+                    <div class="font-extrabold text-4xl sm:text-5xl leading-tight">{{!this.heading}}</div>
+                </div>
+                {{/if}}
+                <div class="w-full flex flex-col gap-8">
+                    {{#each this.items}}
+                    <div class="flex flex-col gap-3">
+                        <div class="font-bold text-lg">{{this.question}}</div>
+                        <div class="text-base">{{#inlineMarkdown}}{{!this.answer}}{{/inlineMarkdown}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/eq}}
+            {{#eq this.type "raw"}}
+            <div class="{{this.className}}">{{this.text || !this.content}}</div>
             {{/eq}}
             {{/each}}
         </div>
