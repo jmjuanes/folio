@@ -20,11 +20,17 @@
     "footer": {
         "sections": [
             {
+                "text": "Products",
+                "links": [
+                    { "text": "Studio", "href": "/studio.html" }
+                ]
+            },
+            {
                 "text": "Project",
                 "links": [
-                    { "text": "Docs", "href": "/docs.html" },
-                    { "text": "Roadmap", "href": "https://github.com/users/jmjuanes/projects/4/views/1" },
-                    { "text": "Changelog", "href": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"}
+                    { "text": "Developer Docs", "href": "/docs.html" },
+                    { "text": "Releases", "href": "/releases.html" },
+                    { "text": "Roadmap", "href": "https://github.com/users/jmjuanes/projects/4/views/1" }
                 ]
             },
             {

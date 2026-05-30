@@ -194,8 +194,10 @@
             {{#eq this.type "faq"}}
             <div class="flex flex-col md:flex-row gap-6">
                 {{#if this.heading}}
-                <div class="w-full md:max-w-sm shrink-0">
-                    <div class="font-extrabold text-4xl sm:text-5xl leading-tight">{{!this.heading}}</div>
+                <div class="relative w-full md:max-w-sm shrink-0">
+                    <div class="w-full sticky top-0 left-0">
+                        <div class="font-extrabold text-4xl sm:text-5xl leading-tight">{{!this.heading}}</div>
+                    </div>
                 </div>
                 {{/if}}
                 <div class="w-full flex flex-col gap-8">
@@ -218,8 +220,8 @@
     <!-- footer -->
     <footer class="w-full py-8" data-role="footer">
         <div class="w-full max-w-6xl mx-auto px-8 bg-current opacity-10 h-px"></div>
-        <div class="px-8 pt-16 pb-24 max-w-6xl w-full mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="col-span-1 sm:col-span-2 flex flex-col gap-4">
+        <div class="px-8 pt-16 pb-24 max-w-6xl w-full mx-auto flex flex-col sm:flex-row gap-8">
+            <div class="w-full sm:max-w-md shrink-0 flex flex-col gap-4">
                 {{>folio::logo}}
                 <div class="text-sm">
                     <span class="opacity-60">Made by</span>
@@ -227,15 +229,18 @@
                     <span class="opacity-60">in Valencia, Spain.</span>
                 </div>
             </div>
-            {{#each @site.footer.sections}}
-            <div class="col-span-1 flex flex-col gap-2">
-                {{#each this.links}}
-                <a href="{{this.href}}" class="hover:underline text-current font-medium text-base">
-                    <span>{{this.text}}</span>
-                </a>
+            <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                {{#each @site.footer.sections}}
+                <div class="col-span-1 flex flex-col gap-2">
+                    <div class="text-xs font-bold opacity-40">{{this.text}}</div>
+                    {{#each this.links}}
+                    <a href="{{this.href}}" class="hover:underline text-current font-medium text-sm">
+                        <span>{{this.text}}</span>
+                    </a>
+                    {{/each}}
+                </div>
                 {{/each}}
             </div>
-            {{/each}}
         </div>
     </footer>
 </body>
