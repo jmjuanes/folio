@@ -1,11 +1,8 @@
 ---
-{
-    "title": "Authentication",
-    "description": "How authentication works in folio studio.",
-    "permalink": "/studio/authentication.html",
-    "layout": "base.mustache",
-    "prevPage": "persistence.md"
-}
+title: "Authentication"
+description: "How authentication works in folio studio."
+permalink: "/studio/authentication.html"
+prevPage: "persistence.md"
 ---
 
 Folio Studio currently supports a single authentication method: **access token-based authentication**. This mechanism ensures that only authorized users can interact with the application.

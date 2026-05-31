@@ -1,12 +1,9 @@
 ---
-{
-    "title": "Configuration",
-    "description": "Setting up all necessary configuration to run folio studio.",
-    "permalink": "/studio/configuration.html",
-    "layout": "base.mustache",
-    "prevPage": "installation.md",
-    "nextPage": "persistence.md"
-}
+title: "Configuration"
+description: "Setting up all necessary configuration to run folio studio."
+permalink: "/studio/configuration.html"
+prevPage: "installation.md"
+nextPage: "persistence.md"
 ---
 
 Folio Studio supports two levels of configuration: environment variables and a YAML configuration file. Environment variables take precedence over the YAML file and are useful for quick overrides, although they only expose a limited subset of the full configuration options.
