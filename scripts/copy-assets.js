@@ -33,6 +33,10 @@ const assets = [
         from: "node_modules/@josemi-icons/svg/sprite.svg",
         to: "icons.svg",
     },
+    {
+        from: "node_modules/highlight.js/styles/atom-one-light.css",
+        to: "highlight.css",
+    },
 ].filter(Boolean);
 
 // helper method to copy from one source to another
