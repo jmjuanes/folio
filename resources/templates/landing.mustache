@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en" style="overscroll-behavior-x:none;" class="">
+<head>
+    <meta charSet="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta name="title" content="{{@site.title}}">
+    <meta name="description" content="{{@site.description}}">
+    <meta name="keywords" content="{{@site.keywords}}">
+    {{#if @site.open_graph}}
+    <meta name="og:site_name" content="{{@site.title}}">
+    <meta name="og:description" content="{{@site.description}}">
+    <meta name="og:url" content="{{@iste.url}}">
+    <meta name="og:image" content="{{@iste.open_graph.image}}">
+    {{/if}}
+    {{#if @site.favicon}}
+    <link rel="icon" href="{{@site.favicon}}" type="image/png">
+    {{/if}}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
+    <link rel="stylesheet" href="/low.css">
+    <link rel="stylesheet" href="/brand.css">
+    <title>{{@page.title}}</title>
+</head>
+<body class="m-0 p-0 font-sans leading-normal bg-gray-100 text-gray-950">
+    <!-- header -->
+    <header class="flex items-center justify-between w-full px-6 py-8 max-w-9xl mx-auto" data-role="navbar">
+        {{>folio::logo}}
+        <div class="flex gap-6 items-center">
+            {{#each @site.navbar.links}}
+            <a href="{{this.href}}" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
+                <span>{{this.text}}</span>
+            </a>
+            {{/each}}
+            {{#if @site.navbar.callToAction}}
+            <a href="{{@site.navbar.callToAction.href}}" class="hidden sm:flex items-center gap-1 px-3 py-2 bg-gray-950 text-white rounded-xl hover:opacity-90">
+                <span class="font-bold text-lg md:text-xl">{{@site.navbar.callToAction.text}}</span>
+                <div class="flex items-center text-xl">
+                    {{>folio::icon icon="arrow-right" className=""}}
+                </div>
+            </a>
+            {{/if}}
+        </div>
+    </header>
+    <!-- sections -->
+    {{#each @page.sections}}
+    <section id="{{this.id}}" class="w-full py-8 sm:py-12 md:py-16 {{this.className}}">
+        <div class="w-full max-w-6xl mx-auto px-6">
+            {{#each this.blocks}}
+            {{#eq this.type "hero"}}
+            <div class="flex flex-col items-center gap-4">
+                {{#if this.heading}}
+                <div class="w-full max-w-3xl font-extrabold text-6xl sm:text-7xl text-center" style="line-height:1.15;">{{!this.heading}}</div>
+                {{/if}}
+                {{#if this.description}}
+                <div class="w-full max-w-xl text-lg text-center opacity-70">{{!this.description}}</div>
+                {{/if}}
+                {{#if this.callToAction}}
+                <div class="flex flex-col items-center gap-2">
+                    <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
+                        <a href="{{this.callToAtion.href}}" class="flex cursor-pointer bg-gray-950 text-white px-4 py-2 rounded-xl text-xl hover:underline">
+                            <span class="font-bold">{{!this.callToAction.text}}</span>
+                        </a>
+                    </div>
+                    {{#if this.callToAction.hint}}
+                    <div class="text-sm select-none text-center opacity-40">{{!this.callToAction.hint}}</div>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+            {{/eq}}
+            {{#eq this.type "product-hero"}}
+            <div class="flex flex-col gap-4">
+                {{#if this.label}}
+                <div class="text-lg font-bold">{{!this.label}}</div>
+                {{/if}}
+                {{#if this.heading}}
+                <div class="w-full max-w-4xl font-extrabold text-6xl sm:text-7xl text-left" style="line-height:1.15;">{{!this.heading}}</div>
+                {{/if}}
+                {{#if this.description}}
+                <div class="w-full max-w-xl text-lg text-left opacity-70">{{!this.description}}</div>
+                {{/if}}
+                {{#if this.links}}
+                <div class="flex flex-row items-center gap-4">
+                    {{#each this.links}}
+                    <a href="{{this.href}}" class="flex cursor-pointer px-4 py-2 rounded-xl text-xl hover:underline {{this.className}}">
+                        <span class="font-bold">{{!this.text}}</span>
+                    </a>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+            {{/eq}}
+            {{#eq this.type "section-intro"}}
+            <div class="flex flex-col gap-2 {{this.className}} mb-8">
+                {{#if this.heading}}
+                <div class="font-extrabold text-4xl sm:text-5xl max-w-4xl leading-tight">{{!this.heading}}</div>
+                {{/if}}
+                {{#if this.description}}
+                <div class="max-w-4xl text-lg o-80">{{!this.description}}</div>
+                {{/if}}
+                {{#if this.linkText}}
+                <div class="flex">
+                    <a href="{{this.linkHref}}" class="hover:underline font-medium text-lg">
+                        <span>{{this.linkText}} &rarr;</span>
+                    </a>
+                </div>
+                {{/if}}
+            </div>
+            {{/eq}}
+            {{#eq this.type "pillars"}}
+            <div class="grid {{this.className}}">
+                {{#each this.pillars}}
+                <div class="rounded-2xl p-8 bg-white flex flex-col gap-2">
+                    {{#if this.icon}}
+                    <div class="flex items-center">
+                        {{>folio::icon icon=this.icon className="w-10 h-10 opacity-60"}}
+                    </div>
+                    {{/if}}
+                    {{#if this.heading}}
+                    <div class="font-bold text-xl leading-tight {{this.headingClassName}}">{{!this.heading}}</div>
+                    {{/if}}
+                    {{#if this.description}}
+                    <div class="leading-relaxed opacity-80 {{this.descriptionClassName}}">{{!this.description}}</div>
+                    {{/if}}
+                    {{#if this.linkText}}
+                    <div class="flex mt-4">
+                        <a href="{{this.linkHref}}" class="flex items-center hover:underline px-3 py-2 rounded-xl {{this.linkClassName}}">
+                            <div class="font-bold">{{!this.linkText}}</div>
+                        </a>
+                    </div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/eq}}
+            {{#eq this.type "callToAction"}}
+            <div class="flex flex-col items-center gap-4 px-8 py-16 rounded-4xl bg-gray-950 text-white {{this.className}}">
+                {{#if this.heading}}
+                <div class="font-extrabold text-4xl sm:text-5xl max-w-4xl leading-tight text-center">{{!this.heading}}</div>
+                {{/if}}
+                {{#if this.description}}
+                <div class="max-w-4xl text-center text-lg o-80">{{!this.description}}</div>
+                {{/if}}
+            </div>
+            {{/eq}}
+            {{#eq this.type "changelog-cards"}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{#each @changelog limit=this.limit}}
+                <div class="rounded-2xl p-8 bg-white flex flex-col gap-2">
+                    <div class="text-sm font-medium opacity-40">{{!this.version}}</div>
+                    <div class="font-bold text-xl leading-tight mb-1">{{!this.title}}</div>
+                    <div class="leading-relaxed opacity-80">
+                        {{#inlineMarkdown}}{{!this.description}}{{/inlineMarkdown}}
+                    </div>
+                    <div class="flex mt-4">
+                        <a href="/releases#{{!this.url}}" class="flex items-center px-3 py-2 font-bold rounded-xl bg-gray-950 text-white hover:underline">
+                            <span>Read more &rarr;</span>
+                        </a>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{/eq}}
+            {{#eq this.type "changelog"}}
+            <div class="flex flex-col gap-8">
+                {{#each @changelog}}
+                <div class="flex flex-col md:flex-row gap-2 border-t-1 border-gray-200 pt-8 pb-16">
+                    <div class="relative w-full max-w-xs shrink-0">
+                        <div class="sticky top-0 left-0">
+                            <div class="font-medium opacity-60">{{this.date}}</div>
+                            <div class="text-sm opacity-60">{{this.version}}</div>
+                        </div>
+                    </div>
+                    <div class="w-full flex flex-col gap-6">
+                        <div class="font-extrabold text-4xl leading-tight">
+                            <a name="{{!this.url}}"></a>
+                            <span>{{!this.title}}</span>
+                        </div>
+                        {{#if this description}}
+                        <div class="text-lg">
+                            {{#inlineMarkdown}}{{!this.description}}{{/inlineMarkdown}}
+                        </div>
+                        {{/if}}
+                        {{#if this.content}}
+                        <div class="">
+                            {{#markdown}}{{!this.content}}{{/markdown}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{/eq}}
+            {{#eq this.type "faq"}}
+            <div class="flex flex-col md:flex-row gap-6">
+                {{#if this.heading}}
+                <div class="relative w-full md:max-w-sm shrink-0">
+                    <div class="w-full sticky top-0 left-0">
+                        <div class="font-extrabold text-4xl sm:text-5xl leading-tight">{{!this.heading}}</div>
+                    </div>
+                </div>
+                {{/if}}
+                <div class="w-full flex flex-col gap-8">
+                    {{#each this.items}}
+                    <div class="flex flex-col gap-3">
+                        <div class="font-bold text-lg">{{this.question}}</div>
+                        <div class="text-base">{{#inlineMarkdown}}{{!this.answer}}{{/inlineMarkdown}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/eq}}
+            {{#eq this.type "raw"}}
+            <div class="{{this.className}}">{{this.text || !this.content}}</div>
+            {{/eq}}
+            {{/each}}
+        </div>
+    </section>
+    {{/each}}
+    <!-- footer -->
+    <footer class="w-full py-8" data-role="footer">
+        <div class="w-full max-w-6xl mx-auto px-8 bg-current opacity-10 h-px"></div>
+        <div class="px-8 pt-16 pb-24 max-w-6xl w-full mx-auto flex flex-col md:flex-row gap-8">
+            <div class="w-full sm:max-w-xs lg:max-w-md shrink-0 flex flex-col gap-4 mb-8">
+                {{>folio::logo}}
+                <div class="text-sm">
+                    <span class="opacity-60">Made by</span>
+                    <a href="https://www.josemi.xyz" class="font-bold hover:underline">Josemi</a>
+                    <span class="opacity-60">in Valencia, Spain.</span>
+                </div>
+            </div>
+            <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-8">
+                {{#each @site.footer.sections}}
+                <div class="col-span-1 flex flex-col gap-2">
+                    <div class="text-sm font-bold opacity-40">{{this.text}}</div>
+                    {{#each this.links}}
+                    <a href="{{this.href}}" class="hover:underline text-current font-medium text-sm">
+                        <span>{{this.text}}</span>
+                    </a>
+                    {{/each}}
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

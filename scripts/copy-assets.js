@@ -10,7 +10,7 @@ const assets = [
         to: "brand.css",
     },
     {
-        from: "resources/folio-white.svg",
+        from: "resources/folio-black.svg",
         to: "logo.svg"
     },
     {
