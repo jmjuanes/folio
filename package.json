@@ -81,6 +81,7 @@
         "mikel-cli": "^0.38.0",
         "mikel-frontmatter": "^0.38.0",
         "mikel-markdown": "^0.38.0",
+        "mikel-press": "^0.38.0",
         "picomatch": "^4.0.2",
         "purgecss": "^7.0.2",
         "react-test-renderer": "^18.2.0",
