@@ -232,9 +232,9 @@
             <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-8">
                 {{#each @site.footer.sections}}
                 <div class="col-span-1 flex flex-col gap-2">
-                    <div class="text-sm font-bold opacity-40 mb-1">{{this.text}}</div>
+                    <div class="text-sm font-bold opacity-40">{{this.text}}</div>
                     {{#each this.links}}
-                    <a href="{{this.href}}" class="hover:underline text-current font-medium text-base">
+                    <a href="{{this.href}}" class="hover:underline text-current font-medium text-sm">
                         <span>{{this.text}}</span>
                     </a>
                     {{/each}}
