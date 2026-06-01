@@ -1,12 +1,9 @@
 ---
-{
-    "title": "Persistence",
-    "description": "Persist data across sessions.",
-    "permalink": "/studio/persistence.html",
-    "layout": "base.mustache",
-    "prevPage": "configuration.md",
-    "nextPage": "authentication.md"
-}
+title: "Persistence"
+description: "Persist data across sessions."
+permalink: "/docs/studio/persistence.html"
+prevPage: "configuration.md"
+nextPage: "authentication.md"
 ---
 
 By default, Folio Studio uses `storage: 'local'`, which enables persistent storage through a lightweight SQLite database. This database is saved at the path defined by the `storage_file` parameter in the configuration file. If no custom path is provided, the default location is `/opt/folio/data/folio.db` inside the Docker container.

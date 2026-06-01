@@ -1,7 +1,0 @@
-## node stuff
-node_modules
-package-lock.json
-yarn.lock
-
-## output stuff
-www
