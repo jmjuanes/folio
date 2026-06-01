@@ -80,15 +80,6 @@ build({
         frontmatterPlugin(),
         markdownPlugin({
             classNames: {
-                // link: "font-medium underline",
-                // code: "bg-gray-100 rounded-md py-1 px-2 text-sm font-mono font-bold",
-                // pre: "w-full overflow-x-auto bg-gray-950 text-gray-100 text-sm font-mono leading-relaxed my-6 p-4 rounded-xl",
-                // heading: "font-bold mb-4 first:mt-0 mt-8 text-gray-950",
-                // heading3: "text-2xl",
-                // heading4: "text-xl",
-                // list: "list-inside mb-6 pl-4",
-                // listItem: "mb-3 pl-1",
-                // paragraph: "block leading-relaxed mb-6"
                 "link": "font-medium underline",
                 "code": "rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-200",
                 "pre": "w-full overflow-x-auto bg-gray-200 text-xs font-mono leading-relaxed p-6 mb-6 rounded-md",

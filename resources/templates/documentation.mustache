@@ -1,23 +1,6 @@
 <!doctype html>
 <html lang="en" style="overscroll-behavior-x:none;">
-<head>
-    <meta charSet="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
-    <meta name="title" content="{{site.title}}">
-    <meta name="description" content="{{site.description}}">
-    <meta name="og:type" content="website">
-    <meta name="og:site_name" content="{{site.title}}">
-    <meta name="og:description" content="{{site.description}}">
-    <meta name="og:image" content="/og.png">
-    <meta name="og:url" content="{{site.url}}">
-    <link rel="icon" href="/favicon.png" type="image/png">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
-    <link rel="stylesheet" href="/low.css">
-    <link rel="stylesheet" href="/highlight.css">
-    <link rel="stylesheet" href="/brand.css">
-    <title>{{@page.title}} - {{@site.title}}</title>
-</head>
+{{>folio::head}}
 <body class="m-0 p-0 font-sans leading-normal bg-gray-100 text-gray-950">
     <header class="flex items-center justify-between w-full px-6 py-8 max-w-9xl mx-auto">
         {{>folio::logo}}
