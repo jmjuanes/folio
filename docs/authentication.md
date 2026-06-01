@@ -1,7 +1,7 @@
 ---
 title: "Authentication"
 description: "How authentication works in folio studio."
-permalink: "/studio/authentication.html"
+permalink: "/docs/studio/authentication.html"
 prevPage: "persistence.md"
 ---
 

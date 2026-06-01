@@ -1,7 +1,7 @@
 ---
 title: "Configuration"
 description: "Setting up all necessary configuration to run folio studio."
-permalink: "/studio/configuration.html"
+permalink: "/docs/studio/configuration.html"
 prevPage: "installation.md"
 nextPage: "persistence.md"
 ---

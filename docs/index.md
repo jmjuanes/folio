@@ -1,7 +1,7 @@
 ---
-title: "Welcome & Overview"
+title: "Overview"
 description: "Quick overview of what Folio is and how to get started."
-permalink: "/introduction.html"
+permalink: "/docs/index.html"
 nextPage: "installation.md"
 quickstart:
   - icon: "globe"
@@ -11,7 +11,7 @@ quickstart:
   - icon: "server"
     title: "Self Hosted"
     description: "Install Folio Studio in your local machine for full control."
-    href: "/studio/installation.html"
+    href: "/docs/studio/installation.html"
 ---
 
 {{>>folio::alert}}

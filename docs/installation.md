@@ -1,8 +1,8 @@
 ---
 title: "Installation"
 description: "Learn how to install Folio Studio on your own computer"
-permalink: "/studio/installation.html"
-prevPage: "introduction.md"
+permalink: "/docs/studio/installation.html"
+prevPage: "index.md"
 nextPage: "configuration.md"
 ---
 

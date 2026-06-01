@@ -1,7 +1,7 @@
 ---
 title: "Persistence"
 description: "Persist data across sessions."
-permalink: "/studio/persistence.html"
+permalink: "/docs/studio/persistence.html"
 prevPage: "configuration.md"
 nextPage: "authentication.md"
 ---

@@ -1,7 +1,7 @@
 ---
 title: "Privacy Policy"
 description: "Effective Date: September 10, 2023"
-permalink: "/privacy.html"
+permalink: "/docs/privacy.html"
 ---
 
 Welcome to **Folio**, a digital and minimalistic whiteboard. At Folio, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy is intended to inform you about how we collect, use, and safeguard your data while using our application.
