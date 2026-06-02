@@ -1,7 +1,9 @@
 import * as idb from "idb-keyval";
 import { VERSION } from "folio-react/constants.js";
 import { migrate } from "folio-react/lib/migrate.js";
+
 import type { Store } from "../types/store.ts";
+import type { Preferences } from "folio-react/contexts/preferences.tsx";
 
 // @private internal store version
 const STORE_VERSION = "1";
@@ -9,6 +11,7 @@ const STORE_VERSION = "1";
 // @private store keys
 enum STORE_KEYS {
     VERSION = "folio:version",
+    PREFERENCES = "folio:preferences",
     DATA = "folio:data",
     LIBRARY = "folio:library",
 };
@@ -53,6 +56,10 @@ export const createLocalStore = (options: any = {}): Store => {
             if (!keys.includes(STORE_KEYS.LIBRARY)) {
                 await idb.set(STORE_KEYS.LIBRARY, {}, store);
             }
+            // check if preferences is not initialized
+            if (!keys.includes(STORE_KEYS.PREFERENCES)) {
+                await idb.set(STORE_KEYS.PREFERENCES, {}, store);
+            }
         },
 
         getInitialData: async () => {
@@ -76,6 +83,13 @@ export const createLocalStore = (options: any = {}): Store => {
         },
         updateLibrary: (library: any = {}) => {
             return idb.set(STORE_KEYS.LIBRARY, library, store);
+        },
+
+        getInitialPreferences: async () => {
+            return (await idb.get(STORE_KEYS.PREFERENCES, store)) as Partial<Preferences>;
+        },
+        updatePreferences: (preferences: Partial<Preferences>) => {
+            return idb.update(STORE_KEYS.PREFERENCES, prevPreferences => ({ ...prevPreferences, ...preferences }), store);
         },
     } as Store;
 };
