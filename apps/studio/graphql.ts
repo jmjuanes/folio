@@ -64,13 +64,3 @@ export const DELETE_DOCUMENT = `
         }
     }
 `;
-
-// @description get the current authenticated user
-export const GET_USER = `
-    query GetUser {
-        getUser {
-            username
-            display_name
-        }
-    }
-`;

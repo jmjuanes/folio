@@ -1,20 +1,21 @@
-import React from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Loading } from "folio-react/components/loading.jsx";
 import { useClient } from "../contexts/client.tsx";
 import { Login } from "../components/login.tsx";
-import { GET_USER } from "../graphql.ts";
+
+import type { PropsWithChildren, JSX } from "react";
 
 // component that makes sure that the user is authenticated
-export const Authentication = ({ children }) => {
-    const [ sessionValid, setSessionValid ] = React.useState<Boolean>(false);
+export const Authentication = ({ children }: PropsWithChildren): JSX.Element => {
+    const [ sessionValid, setSessionValid ] = useState<Boolean>(false);
     const client = useClient();
 
     // hook to validate session
     // we have to perform a query to the api to check if the session is valid
-    React.useEffect(() => {
+    useEffect(() => {
         setSessionValid(false);
         if (client.token) {
-            client.graphql(GET_USER, {})
+            client.getAuthenticatedUser()
                 .then(() => setSessionValid(true))
                 .catch(error => {
                     console.error(error);
@@ -40,5 +41,7 @@ export const Authentication = ({ children }) => {
         );
     }
 
-    return children;
+    return (
+        <Fragment>{children}</Fragment>
+    );
 };

@@ -2,6 +2,10 @@ import React from "react";
 import { useLocalStorage } from "react-use";
 import { useApi } from "../hooks/use-api.ts";
 
+import type { PropsWithChildren, JSX } from "react";
+import type { User } from "folio-server/types/user.ts";
+import { Preferences } from "folio-react/contexts/preferences.tsx";
+
 const SESSION_KEY = "folio-session";
 
 export type Client = {
@@ -10,6 +14,9 @@ export type Client = {
     login: (credentials: any) => Promise<void>;
     logout: () => void;
     graphql: (query: string, variables?: any) => Promise<any>;
+    getAuthenticatedUser: () => Promise<User>;
+    getUserPreferences: () => Promise<Partial<Preferences>>;
+    updateUserPreferences: (preferences: Partial<Preferences>) => Promise<void>;
 };
 
 // main client context
@@ -21,7 +28,7 @@ export const useClient = (): Client => {
 };
 
 // @description client context provider
-export const ClientProvider = ({ children }): React.JSX.Element => {
+export const ClientProvider = ({ children }: PropsWithChildren): JSX.Element => {
     const [ token, setToken, removeToken ] = useLocalStorage<string>(SESSION_KEY, "");
     const api = useApi(token);
 
@@ -43,6 +50,17 @@ export const ClientProvider = ({ children }): React.JSX.Element => {
         },
         graphql: (query, variables) => {
             return api("POST", "/_graphql", { query, variables });
+        },
+        getAuthenticatedUser: () => {
+            return api("GET", "/_user");
+        },
+        getUserPreferences: () => {
+            return api("GET", "/_user/preferences").then((preferences: any) => {
+                return (preferences || {}) as Partial<Preferences>;
+            });
+        },
+        updateUserPreferences: (preferences: Partial<Preferences>) => {
+            return api("POST", "/_user/preferences", preferences || {});
         },
     }), [ token, setToken, removeToken ]);
 

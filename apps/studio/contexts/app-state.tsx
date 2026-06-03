@@ -10,7 +10,6 @@ import {
     ADD_DOCUMENT,
     UPDATE_DOCUMENT,
     DELETE_DOCUMENT,
-    GET_USER,
 } from "../graphql.ts";
 
 import type { User } from "folio-server/types/user.ts";
@@ -141,9 +140,8 @@ export const AppStateProvider = ({ children }): React.JSX.Element => {
                 };
             },
 
-            getUser: async () => {
-                const response = await client.graphql(GET_USER, {});
-                return response?.getUser as User || null;
+            getUser: () => {
+                return client.getAuthenticatedUser();
             },
             logout: () => {
                 // on logout, we just destroy the session. This will automatically
