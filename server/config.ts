@@ -14,6 +14,7 @@ export enum StorageTypes {
 
 export type AccessTokenAuthConfig = {
     access_token?: string;
+    user_preferences_file?: string;
     user_name?: string;
     user_display_name?: string;
     user_avatar_url?: string;
@@ -90,14 +91,14 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
     const config = await readConfig(configPath, new Set()) as Config;
 
     // get fields to override with custom environment values
-    const fields = {
-        "port": environment.FOLIO_PORT,
+    const fields: Partial<Config> = {
+        "port": environment.FOLIO_PORT ? Number(environment.FOLIO_PORT) : undefined,
         "access_token": environment.FOLIO_ACCESS_TOKEN,
         "storage_file": environment.FOLIO_STORAGE_FILE,
         "app_directory": environment.FOLIO_APP_PATH || environment.FOLIO_APP_DIRECTORY || environment.FOLIO_WEBSITE_PATH,
         "jwt_token_secret": environment.FOLIO_TOKEN_SECRET,
         "jwt_token_expiration": environment.FOLIO_TOKEN_EXPIRATION,
-        "ai_port": environment.FOLIO_AI_PORT,
+        "ai_port": environment.FOLIO_AI_PORT ? Number(environment.FOLIO_AI_PORT) : undefined,
         "ai_base_url": environment.FOLIO_AI_BASE_URL,
         "ai_apikey": environment.FOLIO_AI_APIKEY,
         "ai_model": environment.FOLIO_AI_MODEL,
@@ -107,7 +108,7 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
     // if the field is not defined in the config object, it will be skipped
     // this allows to override only the fields that are defined in the config object
     // and to keep the default values for the fields that are not defined
-    Object.keys(fields).forEach(field => {
+    Object.keys(fields).forEach((field: string) => {
         if (typeof fields[field] !== "undefined") {
             config[field] = fields[field];
         }

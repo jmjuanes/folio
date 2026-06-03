@@ -7,18 +7,13 @@ import type { Config } from "../config.js";
 const { debug, error } = createLogger("folio:auth");
 
 export const createAuth = async (config: Config): Promise<AuthContext> => {
-    let auth = null as AuthContext;
-
     // check if access token has been configured as the authentication method
     if (config?.authentication === AuthenticationTypes.ACCESS_TOKEN) {
         debug("using access_token as authentication method");
-        auth = await createAccessTokenAuth(config);
-    }
-    else {
-        error("No valid authentication method configured");
-        process.exit(1);
+        return createAccessTokenAuth(config);
     }
 
-    // return the auth instance
-    return auth;
+    // not valid authentication method --> stop server
+    error("No valid authentication method configured");
+    process.exit(1);
 };

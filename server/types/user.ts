@@ -5,11 +5,7 @@ export type User = {
     // this is the only required field in the user model
     username: string;
 
-    // name of the user. May be the same of 'username'
-    name?: string;
-
     // name of the user displayed in the user interface
-    // will be the same as 'name' if empty
     display_name?: string;
 
     // link to the avatar of the user
@@ -20,3 +16,6 @@ export type User = {
     initials?: string;
     color?: string;
 };
+
+// general user preferences object
+export type UserPreferences = Record<string, any>;

@@ -1,4 +1,4 @@
-import type { User } from "./user.ts";
+import type { User, UserPreferences } from "./user.ts";
 
 export type Credentials = {
     // this is the token used by 'access_token' plugin
@@ -23,4 +23,6 @@ export type UserPayload = {
 export type AuthContext = {
     authenticate: (credentials: Credentials) => Promise<string|null>;
     getUser: (username: string) => Promise<User|null>;
+    getUserPreferences: (username: string) => Promise<UserPreferences>;
+    updateUserPreferences: (username: string, preferences: UserPreferences) => Promise<void>;
 };

@@ -1,13 +1,17 @@
+import { existsSync } from "node:fs";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { generateToken } from "../token.ts";
 import { createLogger } from "../utils/logger.ts";
 import type { Config } from "../config.ts";
 import type { AuthContext } from "../types/authentication.ts";
-import type { User } from "../types/user.ts";
+import type { User, UserPreferences } from "../types/user.ts";
 
 const { info } = createLogger("folio:auth");
 
 const ACCESS_TOKEN_LENGTH = 24;
 const ACCESS_USERNAME = "folio";
+const USER_PREFERENCES_FILE = "data/preferences.json";
 
 // create an authentication method based on access-tokens
 export const createAccessTokenAuth = async (config: Config): Promise<AuthContext> => {
@@ -15,6 +19,13 @@ export const createAccessTokenAuth = async (config: Config): Promise<AuthContext
     // or generate a token each time server is restarted
     const accessToken = config.access_token || generateToken(ACCESS_TOKEN_LENGTH);
     const username = config.user_name || ACCESS_USERNAME;
+    const userPreferencesPath = path.resolve(config.user_preferences_file || USER_PREFERENCES_FILE);
+
+    // make sure that preferences file exists
+    if (!existsSync(userPreferencesPath)) {
+        await fs.mkdir(path.dirname(userPreferencesPath), { recursive: true });
+        await fs.writeFile(userPreferencesPath, JSON.stringify({}), "utf8");
+    }
 
     // print login information in logs
     info(`Using Access Token as authentication method.`);
@@ -31,12 +42,17 @@ export const createAccessTokenAuth = async (config: Config): Promise<AuthContext
         getUser: async (username: string): Promise<User|null> => {
             return Promise.resolve({
                 username: username,
-                name: username,
                 display_name: config.user_display_name || username,
                 avatar_url: config.user_avatar_url || null,
                 initials: (config.user_display_name || username)[0].toUpperCase(),
                 color: "#000000",
-            });
+            } as User);
+        },
+        getUserPreferences: async (username: string): Promise<UserPreferences> => {
+            return JSON.parse(await fs.readFile(userPreferencesPath, "utf8"));
+        },
+        updateUserPreferences: async (username: string, preferences: UserPreferences): Promise<void> => {
+            return fs.writeFile(userPreferencesPath, JSON.stringify(preferences || {}, null, "    "), "utf8");
         },
     };
 };
