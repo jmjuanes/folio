@@ -14,6 +14,10 @@ authentication: 'access_token'
 ## you can override this token also using the FOLIO_ACCESS_TOKEN env variable
 # access_token: "123456abcd"
 
+## path where preferences file is stored
+## only applicable if the authentication method is 'access_token'
+user_preferences_file: 'data/preferences.json'
+
 ## information about the user to display in the website
 ## only applicable if the authentication method is 'access_token'
 user_name: 'john_doe'
