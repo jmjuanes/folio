@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en" style="overscroll-behavior-x:none;">
 {{>folio::head}}
-<body class="m-0 p-0 font-sans leading-normal bg-gray-100 text-gray-950">
-    <header class="flex items-center justify-between w-full px-6 py-8 max-w-9xl mx-auto">
+<body class="m-0 p-0 font-sans leading-normal bg-white text-gray-950">
+    <header class="flex items-center justify-between w-full px-6 py-6 max-w-8xl mx-auto">
         {{>folio::logo}}
         <div class="flex gap-6 items-center">
             {{#each @site.navbar.links}}
@@ -10,16 +10,20 @@
                 <span>{{this.label || this.title}}</span>
             </a>
             {{/each}}
-            {{#if @site.navbar.cta}}
-            <a href="{{@site.navbar.cta.href}}" class="flex items-center gap-1 text-base hover:opacity-90">
-                <span class="font-bold">{{!@site.navbar.cta.text}}</span>
+            {{#if @site.navbar.callToAction}}
+            <a href="{{@site.navbar.callToAction.href}}" class="hidden sm:flex items-center gap-1 px-3 py-2 bg-gray-950 text-white rounded-xl hover:opacity-90">
+                <span class="font-medium text-base">{{@site.navbar.callToAction.text}}</span>
+                <div class="flex items-center text-lg">
+                    {{>folio::icon icon="arrow-right" className=""}}
+                </div>
             </a>
             {{/if}}
         </div>
     </header>
-    <main class="max-w-9xl w-full mx-auto px-6 pt-4 pb-6">
+    <div class="bg-gray-200 h-px w-full"></div>
+    <main class="max-w-8xl w-full mx-auto px-6 pt-6 pb-0">
         <div class="w-full flex flex-row flex-nowrap md:gap-12">
-            <div class="hidden lg:block w-48 shrink-0">
+            <div class="hidden lg:block w-56 shrink-0">
                 <div class="sticky flex flex-col gap-8 top-0 h-screen overflow-y-auto overflow-x-hidden py-4">
                     {{#each @site.sidebar}}
                     <div class="">
@@ -28,8 +32,8 @@
                         </div>
                         {{#each this.pages}}
                         {{#withPage this}}
-                        <a href="{{this.attributes.permalink}}" class="block text-sm mb-1 font-medium text-current opacity-80 hover:underline py-1">
-                            <span>{{this.attributes.title}}</span>
+                        <a href="{{this.attributes.permalink}}" class="flex text-sm mb-1 font-medium text-current {{#eq this.attributes.permalink @page.permalink}}bg-gray-100{{/eq}} hover:bg-gray-100 rounded-lg px-3 py-2">
+                            <span class="leading-tight opacity-70">{{this.attributes.title}}</span>
                         </a>
                         {{/withPage}}
                         {{/each}}
@@ -37,8 +41,7 @@
                     {{/each}}
                 </div>
             </div>
-            <div class="w-px bg-gray-300 shrink-0"></div>
-            <div class="w-full max-w-4xl min-w-0 mx-auto py-4">
+            <div class="w-full max-w-3xl min-w-0 mx-auto pt-4 pb-16">
                 <div class="mb-12">
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-0 mt-0 leading-none">
                         <span>{{!@page.title}}</span>
@@ -54,7 +57,7 @@
                     {{!@content}}
                 {{/markdown}}
                 </div>
-                <div class="grid items-center grid-cols-2 gap-4 pt-10">
+                <div class="grid items-center grid-cols-2 gap-4 pt-16">
                     <div class="w-full flex justify-start">
                     {{#if @page.prevPage}}
                         {{#withPage @page.prevPage}}
@@ -81,8 +84,8 @@
                     </div>
                 </div>
             </div>
-            <div class="hidden xl:block w-48 shrink-0">
-                <div class="sticky top-0 py-4 text-sm flex flex-col gap-2">
+            <div class="hidden xl:block w-56 shrink-0">
+                <div class="sticky top-0 py-12 text-sm flex flex-col gap-2">
                     <div class="flex items-center gap-2 opacity-80 mb-2">
                         <div class="text-base flex items-center">
                             {{>folio::icon icon="text-left"}}
@@ -98,7 +101,8 @@
             </div>
         </div>
     </main>
-    <div class="w-full h-px bg-white opacity-10"></div>
+    <!--
+    <div class="w-full h-px bg-gray-200"></div>
     <footer class="py-8 px-6 max-w-9xl w-full mx-auto flex items-center gap-4 justify-between">
         <div class="text-sm opacity-60">
             <span>{{!@site.footer.text}}</span>
@@ -111,5 +115,6 @@
             {{/each}}
         </div>
     </footer>
+    -->
 </body>
 </html>
