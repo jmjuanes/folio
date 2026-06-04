@@ -1,18 +1,17 @@
 <!--html-->
-<div class="rounded-lg overflow-hidden mb-6 bg-gray-200">
-{{#if label}}
-<div class="flex items-center gap-2 text-current text-xs font-mono px-3 py-3 select-none">
-    {{#if icon}}
+<div class="rounded-xl overflow-hidden mb-6 bg-gray-100 border-1 border-gray-200 p-3 flex flex-col gap-3">
+{{#if this.label}}
+<div class="flex items-center gap-2 text-current text-xs font-mono select-none">
+    {{#if this.icon}}
     <span class="flex items-center text-lg">
-        {{>folio::icon icon=icon}}
+        {{>folio::icon icon=this.icon}}
     </span>
     {{/if}}
-    <span>{{label}}</span>
+    <span>{{this.label}}</span>
 </div>
-<div class="h-px bg-gray-300 w-full"></div>
 {{/if}}
-<pre class="w-full overflow-x-auto text-current text-xs font-mono leading-relaxed p-6">
-{{=highlight code=@content language=language}}
+<pre class="w-full overflow-x-auto text-current text-xs font-mono leading-relaxed p-4 bg-white rounded-lg">
+{{=highlight code=@content language=this.language}}
 </pre>
 </div>
 <!--/html-->
