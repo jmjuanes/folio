@@ -1,16 +1,17 @@
 {
+    "template": "landing",
     "title": "Folio",
     "description": "The minimal digital whiteboard for sketching and prototyping.",
     "keywords": "folio,whiteboard,sketching,prototyping,design,ui",
     "url": "https://folio.josemi.xyz",
     "favicon": "/favicon.png",
-    "open_graph": {
-        "image": "/og.png"
+    "metatags": {
+        "og:image": "/og.png"
     },
     "navbar": {
         "links": [
             { "text": "Studio", "href": "/studio" },
-            { "text": "Docs", "href": "/docs" }
+            { "text": "Docs", "href": "/docs/index.html" }
         ],
         "callToAction": {
             "text": "Try it free",
@@ -28,7 +29,7 @@
             {
                 "text": "Project",
                 "links": [
-                    { "text": "Developer Docs", "href": "/docs.html" },
+                    { "text": "Developer Docs", "href": "/docs/index.html" },
                     { "text": "Releases", "href": "/releases.html" },
                     { "text": "Roadmap", "href": "https://github.com/users/jmjuanes/projects/4/views/1" }
                 ]
@@ -41,6 +42,19 @@
                 ]
             }
         ]
+    },
+    "markdown": {
+        "classNames": {
+            "link": "font-medium underline",
+            "code": "bg-gray-100 rounded-md py-1 px-2 text-sm font-mono font-bold",
+            "pre": "w-full overflow-x-auto bg-gray-950 text-gray-100 text-sm font-mono leading-relaxed my-6 p-4 rounded-xl",
+            "heading": "font-bold mb-4 first:mt-0 mt-8 text-gray-950",
+            "heading3": "text-2xl",
+            "heading4": "text-xl",
+            "list": "list-inside mb-6 pl-4",
+            "listItem": "mb-3 pl-1",
+            "paragraph": "block leading-relaxed mb-6"
+        }
     },
     "pages": {
         "index.html": {
@@ -194,7 +208,7 @@
                             "description": "A self-hosted whiteboard for creators and teams who want full control over their tools and data — no cloud, no compromises.",
                             "links": [
                                 { "href": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio", "text": "Install &rarr;", "className": "bg-gray-950 text-white" },
-                                { "href": "/docs", "text": "Read the docs", "className": "border-2 border-gray-950 bg-transparent text-current"}
+                                { "href": "/docs/index.html", "text": "Read the docs", "className": "border-2 border-gray-950 bg-transparent text-current"}
                             ]
                         }
                     ]

@@ -2,7 +2,7 @@
 title: "Overview"
 description: "Quick overview of what Folio is and how to get started."
 permalink: "/docs/index.html"
-nextPage: "installation.md"
+nextPage: "docs/installation.md"
 quickstart:
   - icon: "globe"
     title: "Web App"
@@ -14,7 +14,7 @@ quickstart:
     href: "/docs/studio/installation.html"
 ---
 
-{{>>folio::alert}}
+{{>>folio::alert className="border-yellow-200 bg-yellow-100 text-yellow-800"}}
 ⚠️ **Folio Studio** is currently in an **experimental phase**. Breaking changes may occur between versions, potentially leading to data loss. **Please use with caution and make regular backups**.
 {{/folio::alert}}
 
@@ -31,7 +31,7 @@ quickstart:
 <!--html-->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
 {{#each @page.quickstart}}
-    <a href="{{this.href}}" class="p-6 border-1 border-gray-300 rounded-xl">
+    <a href="{{this.href}}" class="p-6 border-1 border-gray-200 rounded-xl">
         <div class="flex items-center text-3xl mb-3">
             {{>folio::icon icon=this.icon}}
         </div>

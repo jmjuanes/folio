@@ -2,8 +2,8 @@
 title: "Configuration"
 description: "Setting up all necessary configuration to run folio studio."
 permalink: "/docs/studio/configuration.html"
-prevPage: "installation.md"
-nextPage: "persistence.md"
+prevPage: "docs/installation.md"
+nextPage: "docs/persistence.md"
 ---
 
 Folio Studio supports two levels of configuration: environment variables and a YAML configuration file. Environment variables take precedence over the YAML file and are useful for quick overrides, although they only expose a limited subset of the full configuration options.
@@ -14,7 +14,7 @@ The main configuration file is located at `/opt/folio/config.yaml`. It allows fo
 
 This is the default configuration:
 
-```yaml
+```yaml icon="code" label="YAML"
 ## port where folio server will listen
 port: 8080
 
@@ -52,7 +52,7 @@ The `port` field defines the port where Folio Studio will listen for incoming re
 
 Authentication is configured using the `authentication` block. The default method is `access_token`, which can be paired with a fixed token using the `access_token` field.
 
-```yaml
+```yaml icon="code" label="YAML"
 authentication: 'access_token'
 ```
 
@@ -62,7 +62,7 @@ If no token is provided, Folio Studio will generate one automatically on each re
 
 User information is defined using `user_name`, `user_display_name`, and optionally `user_avatar_url`. These values personalize the interface and help identify the user within the application.
 
-```yaml
+```yaml icon="code" label="YAML"
 user_name: 'john'
 user_display_name: 'John Doe'
 user_avatar_url: 'https://gravatar.com/avatar/12345'
@@ -72,14 +72,14 @@ user_avatar_url: 'https://gravatar.com/avatar/12345'
 
 Storage settings are managed through the `storage` section. The default backend is `local`, which stores data in a file defined by `storage_file`.
 
-```yaml
+```yaml icon="code" label="YAML"
 storage: 'local'
 storage_file: 'data/folio.db'
 ```
 
 Alternatively, the `memory` option can be used for ephemeral sessions. For more information, see the Persistence guide.
 
-```yaml
+```yaml icon="code" label="YAML"
 storage: 'memory'
 ```
 
@@ -87,7 +87,7 @@ storage: 'memory'
 
 JWT token behavior is controlled using `jwt_token_secret` and `jwt_token_expiration`. These fields define the secret key used for signing tokens and the duration for which they remain valid.
 
-```yaml
+```yaml icon="code" label="YAML"
 jwt_token_secret: 'abcde12345'
 jwt_token_expiration: '1y'
 ```
@@ -96,7 +96,7 @@ jwt_token_expiration: '1y'
 
 You can configure the web application using the following fields:
 
-```yaml
+```yaml icon="code" label="YAML"
 app_directory: 'app/' # folder where the web application is located. Default is /opt/folio/app
 app_index: 'app.html' # file to use as the entry file (aka index)
 ```
