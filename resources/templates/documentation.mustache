@@ -41,8 +41,8 @@
                     {{/each}}
                 </div>
             </div>
-            <div class="w-full max-w-3xl min-w-0 mx-auto pt-4 pb-16">
-                <div class="mb-12">
+            <div class="w-full max-w-3xl min-w-0 mx-auto py-4 flex flex-col gap-12">
+                <div class="">
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-0 mt-0 leading-none">
                         <span>{{!@page.title}}</span>
                     </h1>
@@ -57,7 +57,7 @@
                     {{!@content}}
                 {{/markdown}}
                 </div>
-                <div class="grid items-center grid-cols-2 gap-4 pt-16">
+                <div class="grid items-center grid-cols-2 gap-4">
                     <div class="w-full flex justify-start">
                     {{#if @page.prevPage}}
                         {{#withPage @page.prevPage}}
@@ -83,6 +83,18 @@
                     {{/if}}
                     </div>
                 </div>
+                <footer class="border-t-1 border-gray-200 py-8 flex items-center gap-4 justify-between">
+                    <div class="text-sm opacity-60">
+                        <span>{{!@site.footer.text}}</span>
+                    </div>
+                    <div class="flex gap-4">
+                        {{#each @site.footer.links}}
+                        <a href="{{this.href}}" class="hover:underline text-current font-bold text-sm">
+                            <span>{{!this.text}}</span>
+                        </a>
+                        {{/each}}
+                    </div>
+                </footer>
             </div>
             <div class="hidden xl:block w-56 shrink-0">
                 <div class="sticky top-0 py-12 text-sm flex flex-col gap-2">
@@ -101,20 +113,5 @@
             </div>
         </div>
     </main>
-    <!--
-    <div class="w-full h-px bg-gray-200"></div>
-    <footer class="py-8 px-6 max-w-9xl w-full mx-auto flex items-center gap-4 justify-between">
-        <div class="text-sm opacity-60">
-            <span>{{!@site.footer.text}}</span>
-        </div>
-        <div class="flex gap-4">
-            {{#each @site.footer.links}}
-            <a href="{{this.href}}" class="hover:underline text-current font-bold text-sm">
-                <span>{{!this.text}}</span>
-            </a>
-            {{/each}}
-        </div>
-    </footer>
-    -->
 </body>
 </html>
