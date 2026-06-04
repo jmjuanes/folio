@@ -2,7 +2,7 @@
 title: "Authentication"
 description: "How authentication works in folio studio."
 permalink: "/docs/studio/authentication.html"
-prevPage: "persistence.md"
+prevPage: "docs/persistence.md"
 ---
 
 Folio Studio currently supports a single authentication method: **access token-based authentication**. This mechanism ensures that only authorized users can interact with the application.
@@ -17,7 +17,7 @@ For more control, you can define a **fixed access token**. This can be done in t
 
 You can customize the access token by setting the `access_token` field in the `config.yaml` file:
 
-```yaml
+```yaml label="YAML" icon="code"
 access_token: 'your_fixed_access_token'
 ```
 

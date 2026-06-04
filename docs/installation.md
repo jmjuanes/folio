@@ -2,13 +2,13 @@
 title: "Installation"
 description: "Learn how to install Folio Studio on your own computer"
 permalink: "/docs/studio/installation.html"
-prevPage: "index.md"
-nextPage: "configuration.md"
+prevPage: "docs/index.md"
+nextPage: "docs/configuration.md"
 ---
 
 **Folio Studio** runs as a Docker container and can be installed on Linux, macOS, or Windows.
 
-{{>>folio::alert}}
+{{>>folio::alert className="border-yellow-200 bg-yellow-100 text-yellow-800"}}
 ⚠️ Folio Studio is **not designed to be exposed to public networks or the open internet**. It is intended for **local or internal use only**, such as on a personal machine or within a private LAN. If you choose to expose it externally, **you do so entirely at your own risk and responsibility**.
 {{/folio::alert}}
 
@@ -24,14 +24,14 @@ Before installing Folio Studio, make sure you have the following minimum require
 
 First, you have to pull Folio Studio using `docker pull`:
 
-{{>>folio::code language="bash" label="Terminal" icon="terminal"}}
-$ docker pull ghcr.io/jmjuanes/folio-studio:{{site.version}}
-{{/folio::code}}
+```bash icon="terminal" label="Terminal"
+$ docker pull ghcr.io/jmjuanes/folio-studio:{{@pkg.version}}
+```
 
 Then, you can launch a new docker container with `docker run`: 
 
-{{>>folio::code language="bash" label="Terminal" icon="terminal"}}
+```bash icon="terminal" label="Terminal"
 $ docker run -it --name folio-studio -p 8080:8080 jmjuanes/folio-studio
-{{/folio::code}}
+```
 
 Open a new browser window and type `localhost:8080` to start using **Folio**.
