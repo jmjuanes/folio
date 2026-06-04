@@ -1,4 +1,5 @@
 {
+    "template": "documentation",
     "title": "Folio Docs",
     "description": "Discover how to use and what can you build with Folio.",
     "url": "https://folio.josemi.xyz/docs",
@@ -7,31 +8,23 @@
         "og:image": "/og.png"
     },
     "markdown": {
-        "link": "font-medium underline",
-        "code": "rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-900",
-        "pre": "w-full overflow-x-auto bg-gray-900 text-foreground text-xs font-mono leading-relaxed p-6 mb-6 rounded-md",
-        "heading": "font-bold mb-4 first:mt-0 mt-8",
-        "heading1": "text-4xl font-extrabold",
-        "heading2": "text-2xl",
-        "heading3": "text-xl",
-        "heading4": "text-lg",
-        "table": "w-full mb-6",
-        "tableColumn": "p-3 border-b-1 border-gray-800",
-        "tableHead": "font-bold",
-        "list": "list-inside mb-6 pl-4",
-        "listItem": "mb-3 pl-1",
-        "paragraph": "block leading-relaxed mb-6 opacity-80"
-    },
-    "redirections": [
-        {
-            "from": "index.html",
-            "to": "/introduction.html"
-        },
-        {
-            "from": "docs.html",
-            "to": "/introduction.html"
+        "classNames": {
+            "link": "font-medium underline",
+            "code": "rounded-md py-1 px-2 text-xs font-mono font-bold bg-gray-100",
+            "pre": "w-full overflow-x-auto bg-gray-200 text-xs font-mono leading-relaxed p-6 mb-6 rounded-md",
+            "heading": "font-bold mb-4 first:mt-0 mt-8",
+            "heading1": "text-4xl font-extrabold",
+            "heading2": "text-2xl",
+            "heading3": "text-xl",
+            "heading4": "text-lg",
+            "table": "w-full mb-6",
+            "tableColumn": "p-3 border-b-1 border-gray-200",
+            "tableHead": "font-bold",
+            "list": "list-inside mb-6 pl-4",
+            "listItem": "mb-3 pl-1",
+            "paragraph": "block leading-relaxed mb-6 opacity-80"
         }
-    ],
+    },
     "navbar": {
         "links": [
             {
@@ -39,9 +32,8 @@
                 "href": "/"
             }
         ],
-        "cta": {
+        "callToAction": {
             "text": "Get started",
-            "icon": "arrow-right",
             "href": "/app"
         }
     },
@@ -49,22 +41,16 @@
         {
             "group": "Get Started",
             "pages": [
-                "index.md"
+                "docs/index.md"
             ]
         },
         {
             "group": "Studio",
             "pages": [
-                "installation.md",
-                "configuration.md",
-                "persistence.md",
-                "authentication.md"
-            ]
-        },
-        {
-            "group": "Community",
-            "pages": [
-                "privacy.md"
+                "docs/installation.md",
+                "docs/configuration.md",
+                "docs/persistence.md",
+                "docs/authentication.md"
             ]
         }
     ],
@@ -81,5 +67,11 @@
             }
         ]
     },
-    "pages": {}
+    "pages": [
+        "docs/index.md",
+        "docs/installation.md",
+        "docs/configuration.md",
+        "docs/persistence.md",
+        "docs/authentication.md"
+    ]
 }
