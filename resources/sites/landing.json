@@ -11,7 +11,7 @@
     "navbar": {
         "links": [
             { "text": "Studio", "href": "/studio" },
-            { "text": "Docs", "href": "/docs" }
+            { "text": "Docs", "href": "/docs/index.html" }
         ],
         "callToAction": {
             "text": "Try it free",
@@ -29,7 +29,7 @@
             {
                 "text": "Project",
                 "links": [
-                    { "text": "Developer Docs", "href": "/docs.html" },
+                    { "text": "Developer Docs", "href": "/docs/index.html" },
                     { "text": "Releases", "href": "/releases.html" },
                     { "text": "Roadmap", "href": "https://github.com/users/jmjuanes/projects/4/views/1" }
                 ]
@@ -208,7 +208,7 @@
                             "description": "A self-hosted whiteboard for creators and teams who want full control over their tools and data — no cloud, no compromises.",
                             "links": [
                                 { "href": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio", "text": "Install &rarr;", "className": "bg-gray-950 text-white" },
-                                { "href": "/docs", "text": "Read the docs", "className": "border-2 border-gray-950 bg-transparent text-current"}
+                                { "href": "/docs/index.html", "text": "Read the docs", "className": "border-2 border-gray-950 bg-transparent text-current"}
                             ]
                         }
                     ]
