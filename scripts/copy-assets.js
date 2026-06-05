@@ -11,7 +11,11 @@ const assets = [
     },
     {
         from: "resources/folio-black.svg",
-        to: "logo.svg"
+        to: "logo-dark.svg",
+    },
+    {
+        from: "resources/folio-white.svg",
+        to: "logo-light.svg",
     },
     {
         from: "resources/og.png",
