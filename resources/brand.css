@@ -29,3 +29,13 @@
     font-family: var(--folio-brand-font);
     font-weight: var(--folio-brand-weight) !important;
 }
+
+/* utilities for colors */
+.text-primary { color: var(--color-primary); }
+.text-primary-foreground { color: var(--color-primary-foreground); }
+.text-secondary { color: var(--color-secondary); }
+.text-secondary-foreground { color: var(--color-secondary-foreground); }
+.bg-primary { background-color: var(--color-primary); }
+.bg-primary-foreground { background-color: var(--color-primary-foreground); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-secondary-foreground { background-color: var(--color-secondary-foreground); }

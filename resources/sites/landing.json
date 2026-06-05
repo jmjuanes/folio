@@ -46,9 +46,9 @@
     "markdown": {
         "classNames": {
             "link": "font-medium underline",
-            "code": "bg-gray-100 rounded-md py-1 px-2 text-sm font-mono font-bold",
+            "code": "bg-gray-900 rounded-md py-1 px-2 text-sm font-mono font-bold",
             "pre": "w-full overflow-x-auto bg-gray-950 text-gray-100 text-sm font-mono leading-relaxed my-6 p-4 rounded-xl",
-            "heading": "font-bold mb-4 first:mt-0 mt-8 text-gray-950",
+            "heading": "font-bold mb-4 first:mt-0 mt-8",
             "heading3": "text-2xl",
             "heading4": "text-xl",
             "list": "list-inside mb-6 pl-4",
@@ -58,51 +58,84 @@
     },
     "pages": {
         "index.html": {
-            "title": "Sketch, design, prototype - folio.",
-            "sections": [
+            "title": "Sketch, design, prototype",
+            "children": [
                 {
+                    "type": "announcement",
+                    "content": "Introducing <b>folio studio</b>: sketch, design, and prototype in your self-hosted whiteboard.",
+                    "href": "/studio.html"
+                },
+                {
+                    "type": "section",
                     "id": "hero",
-                    "blocks": [
+                    "children": [
                         {
                             "type": "hero",
-                            "heading": "Your Sketching Suite.",
-                            "description": "An infinite canvas built for clarity. Sketch ideas, wireframe interfaces, and prototype flows — all in one place.",
-                            "callToAction": {
-                                "href": "/app",
-                                "text": "Start sketching &rarr;",
-                                "hint": "No signup. No install. Ready in seconds."
-                            }
+                            "children": [
+                                {
+                                    "type": "hero::label",
+                                    "text": "Sketch. Design. Prototype."
+                                },
+                                {
+                                    "type": "hero::heading",
+                                    "content": "Your <i class='font-medium'>Instant</i> Sketching <span class='opacity-70'>Suite</span>."
+                                },
+                                {
+                                    "type": "hero::description",
+                                    "content": "An infinite canvas built for clarity. Sketch ideas, wireframe interfaces, and prototype flows — all in one place."
+                                },
+                                {
+                                    "type": "hero::cta",
+                                    "href": "/app",
+                                    "text": "Start sketching &rarr;",
+                                    "hint": "No signup. No install. Ready in seconds."
+                                }
+                            ]
                         }
                     ]
                 },
                 {
+                    "type": "section",
                     "id": "features",
-                    "blocks": [
+                    "children": [
                         {
                             "type": "section-intro",
-                            "heading": "Sketch and Design with <u>Freedom</u>."
+                            "children": [
+                                {
+                                    "type": "section-intro::heading",
+                                    "content": "Sketch and Design with <u>Freedom</u>."
+                                }
+                            ]
                         },
                         {
-                            "type": "pillars",
-                            "className": "grid-cols-1 md:grid-cols-2 gap-6",
-                            "pillars": [
+                            "type": "grid-2",
+                            "className": "gap-6",
+                            "children": [
                                 {
+                                    "type": "pillar",
                                     "icon": "shield",
+                                    "iconClassName": "bg-primary text-primary-foreground",
                                     "heading": "Private by design.",
                                     "description": "Your work stays yours. Folio stores everything in your browser's local storage — no accounts, no servers, no tracking. What you draw never leaves your device."
                                 },
                                 {
+                                    "type": "pillar",
                                     "icon": "square",
+                                    "iconClassName": "bg-primary text-primary-foreground",
                                     "heading": "An infinite canvas.",
                                     "description": "No boundaries, no grids, no constraints. Pan, zoom, and sketch freely on a canvas that grows with your ideas — however big or complex they get."
                                 },
                                 {
+                                    "type": "pillar",
                                     "icon": "files",
+                                    "iconClassName": "bg-primary text-primary-foreground",
                                     "heading": "Keep ideas organized.",
                                     "description": "Group related work into pages within a single board. Switch between them instantly, present them in sequence, or use them to break down a project into stages."
                                 },
                                 {
+                                    "type": "pillar",
                                     "icon": "album",
+                                    "iconClassName": "bg-primary text-primary-foreground",
                                     "heading": "Build your own library.",
                                     "description": "Save shapes, components, and layouts you use often. Import and export collections to reuse across boards or share with your team — your personal design system, always at hand."
                                 }
@@ -111,23 +144,44 @@
                     ]
                 },
                 {
-                    "id": "releases",
-                    "blocks": [
+                    "type": "section",
+                    "id": "studio",
+                    "className": "bg-primary text-primary-foreground",
+                    "children": [
                         {
-                            "type": "section-intro",
-                            "heading": "Latest Releases.",
-                            "linkHref": "/releases",
-                            "linkText": "See all releases"
-                        },
-                        {
-                            "type": "changelog-cards",
-                            "limit": 2
+                            "type": "cta",
+                            "children": [
+                                {
+                                    "type": "cta::icon",
+                                    "icon": "sidebar-left"
+                                },
+                                {
+                                    "type": "cta::heading",
+                                    "text": "Meet Folio Studio."
+                                },
+                                {
+                                    "type": "cta::description",
+                                    "text": "Every feature from Folio, running entirely on your own infrastructure using a single Docker image."
+                                },
+                                {
+                                    "type": "raw",
+                                    "className": "py-3 px-6 text-xl sm:text-2xl md:text-3xl text-center font-medium border-2 border-current rounded-3xl",
+                                    "text": "$ docker pull ghcr.io/jmjuanes/folio-studio"
+                                },
+                                {
+                                    "type": "cta::links",
+                                    "links": [
+                                        { "href": "/studio.html", "text": "Read more" },
+                                        { "href": "/docs/index.html", "text": "Documentation" }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
                 {
                     "id": "get-started",
-                    "blocks": [
+                    "children": [
                         {
                             "type": "section-intro",
                             "heading": "Pick your setup."
@@ -159,8 +213,9 @@
                     ]
                 },
                 {
+                    "type": "section",
                     "id": "faq",
-                    "blocks": [
+                    "children": [
                         {
                             "type": "faq",
                             "heading": "Questions and Answers",
@@ -196,61 +251,105 @@
             ]
         },
         "studio.html": {
-            "title": "Folio Studio — Self-hosted whiteboard",
-            "sections": [
+            "title": "Self-hosted whiteboard",
+            "children": [
                 {
+                    "type": "section",
                     "id": "hero",
-                    "blocks": [
+                    "children": [
                         {
-                            "type": "product-hero",
-                            "label": "Folio Studio",
-                            "heading": "Sketching. Self-Hosted.",
-                            "description": "A self-hosted whiteboard for creators and teams who want full control over their tools and data — no cloud, no compromises.",
-                            "links": [
-                                { "href": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio", "text": "Install &rarr;", "className": "bg-gray-950 text-white" },
-                                { "href": "/docs/index.html", "text": "Read the docs", "className": "border-2 border-gray-950 bg-transparent text-current"}
+                            "type": "vertical-stack",
+                            "className": "gap-8 items-center pb-8 sm:pb-16",
+                            "children": [
+                                {
+                                    "type": "cta::icon",
+                                    "icon": "sidebar-left"
+                                },
+                                {
+                                    "type": "cta::label",
+                                    "text": "Introducing Folio Studio"
+                                },
+                                {
+                                    "type": "cta::heading",
+                                    "content": "<span class='opacity-70'>Your Sketching Tool</span>. Self-Hosted."
+                                },
+                                {
+                                    "type": "cta::description",
+                                    "text": "A self-hosted whiteboard for creators and teams who want full control over their tools and data."
+                                },
+                                {
+                                    "type": "raw",
+                                    "className": "py-3 px-6 text-xl sm:text-2xl md:text-3xl text-center font-medium border-2 border-current rounded-3xl",
+                                    "text": "$ docker pull ghcr.io/jmjuanes/folio-studio"
+                                },
+                                {
+                                    "type": "cta::links",
+                                    "links": [
+                                        { "href": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio", "text": "Install" },
+                                        { "href": "/docs/index.html", "text": "Read the docs" }
+                                    ]
+                                }
                             ]
                         }
                     ]
                 },
                 {
+                    "type": "section",
                     "id": "features",
-                    "blocks": [
+                    "className": "bg-primary text-primary-foreground",
+                    "children": [
                         {
                             "type": "section-intro",
-                            "heading": "Everything Folio. Fully yours."
+                            "children": [
+                                {
+                                    "type": "section-intro::heading",
+                                    "text": "Everything Folio. Fully yours."
+                                }
+                            ]
                         },
                         {
-                            "type": "pillars",
-                            "className": "grid-cols-1 md:grid-cols-3 gap-6",
-                            "pillars": [
+                            "type": "grid-3",
+                            "className": "gap-6",
+                            "children": [
                                 {
+                                    "type": "pillar",
                                     "icon": "bolt",
+                                    "iconClassName": "bg-primary-foreground text-primary",
                                     "heading": "Full Folio, no compromises.",
                                     "description": "Every feature from Folio Lite, running entirely on your own infrastructure. No external dependencies, no third-party services, no surprises."
                                 },
                                 {
+                                    "type": "pillar",
                                     "icon": "lock",
+                                    "iconClassName": "bg-primary-foreground text-primary",
                                     "heading": "Your data stays with you.",
                                     "description": "No cloud sync, no telemetry, no tracking. Folio Studio stores everything locally on your server — you decide who has access and what happens to your files."
                                 },
                                 {
+                                    "type": "pillar",
                                     "icon": "files",
+                                    "iconClassName": "bg-primary-foreground text-primary",
                                     "heading": "Unlimited boards.",
                                     "description": "Create as many boards as you need. Organize projects, explorations, and prototypes in separate spaces — no artificial limits."
                                 },
                                 {
+                                    "type": "pillar",
                                     "icon": "sidebar-left",
+                                    "iconClassName": "bg-primary-foreground text-primary",
                                     "heading": "A sidebar that does it all.",
                                     "description": "Rename, duplicate, download, or delete boards in one click. Your full workspace is always one panel away."
                                 },
                                 {
+                                    "type": "pillar",
                                     "icon": "image",
+                                    "iconClassName": "bg-primary-foreground text-primary",
                                     "heading": "Visual board previews.",
                                     "description": "Your home screen shows live thumbnails of recent boards so you always know exactly where to pick up."
                                 },
                                 {
+                                    "type": "pillar",
                                     "icon": "upload",
+                                    "iconClassName": "bg-primary-foreground text-primary",
                                     "heading": "Import and export freely.",
                                     "description": "Move boards between Folio Lite and Studio without friction. Export your work at any time — your files are always portable."
                                 }
@@ -259,8 +358,9 @@
                     ]
                 },
                 {
+                    "type": "section",
                     "id": "faq",
-                    "blocks": [
+                    "children": [
                         {
                             "type": "faq",
                             "heading": "Questions and Answers",
@@ -288,25 +388,62 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "type": "section",
+                    "id": "get-started",
+                    "children": [
+                        {
+                            "type": "cta",
+                            "children": [
+                                {
+                                    "type": "cta::heading",
+                                    "text": "Get Started with Studio."
+                                },
+                                {
+                                    "type": "raw",
+                                    "className": "py-3 px-6 text-xl sm:text-2xl md:text-3xl text-center font-medium border-2 border-current rounded-3xl",
+                                    "text": "$ docker pull ghcr.io/jmjuanes/folio-studio"
+                                },
+                                {
+                                    "type": "cta::links",
+                                    "links": [
+                                        { "href": "https://github.com/jmjuanes/folio/pkgs/container/folio-studio", "text": "Install" },
+                                        { "href": "/docs/index.html", "text": "Documentation" }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
         "releases.html": {
-            "title": "What's new - folio",
-            "sections": [
+            "title": "What's new",
+            "children": [
                 {
+                    "type": "section",
                     "id": "hero",
-                    "blocks": [
+                    "children": [
                         {
-                            "type": "product-hero",
-                            "heading": "What's New.",
-                            "description": "Every improvement, fix, and new feature — in one place."
+                            "type": "cta",
+                            "children": [
+                                {
+                                    "type": "cta::heading",
+                                    "text": "What's New."
+                                },
+                                {
+                                    "type": "cta::description",
+                                    "text": "Every improvement, fix, and new feature — in one place."
+                                }
+                            ]
                         }
                     ]
                 },
                 {
+                    "type": "section",
                     "id": "changelog",
-                    "blocks": [
+                    "children": [
                         {
                             "type": "changelog"
                         }

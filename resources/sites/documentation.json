@@ -28,8 +28,12 @@
     "navbar": {
         "links": [
             {
-                "text": "About",
-                "href": "/"
+                "text": "Report a bug",
+                "href": "https://github.com/jmjuanes/folio/issues"
+            },
+            {
+                "text": "Changelog",
+                "href": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
             }
         ],
         "callToAction": {
@@ -54,19 +58,6 @@
             ]
         }
     ],
-    "footer": {
-        "text": "2026 &copy; Josemi Juanes.",
-        "links": [
-            {
-                "text": "Report a bug",
-                "href": "https://github.com/jmjuanes/folio/issues"
-            },
-            {
-                "text": "Changelog",
-                "href": "https://github.com/jmjuanes/folio/blob/main/CHANGELOG.md"
-            }
-        ]
-    },
     "pages": [
         "docs/index.md",
         "docs/installation.md",

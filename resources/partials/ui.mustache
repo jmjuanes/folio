@@ -1,0 +1,271 @@
+{{!-- layout components --}}
+{{#macro "box"}}
+<div class="{{this.className}}">{{#call "content" children=this.children}}{{/call}}</div>
+{{/macro}}
+
+{{!-- vertical stack component --}}
+{{#macro "vertical-stack"}}
+<div class="flex flex-col {{this.className}}">{{#call "content" children=this.children}}{{/call}}</div>
+{{/macro}}
+
+{{!-- grid with 2 columns --}}
+{{#macro "grid-2"}}
+<div class="grid grid-cols-1 md:grid-cols-2 {{this.className}}">
+    {{#call "content" children=this.children}}{{/call}}
+</div>
+{{/macro}}
+
+{{!-- grid with 3 columns --}}
+{{#macro "grid-3"}}
+<div class="grid grid-cols-1 md:grid-cols-3 {{this.className}}">
+    {{#call "content" children=this.children}}{{/call}}
+</div>
+{{/macro}}
+
+{{!-- main section --}}
+{{#macro "section"}}
+<section id="{{this.id}}" class="w-full py-10 sm:py-16 md:py-20 {{this.className}}">
+    <div class="w-full max-w-6xl mx-auto px-6">
+        {{#call "content" children=this.children}}{{/call}}
+    </div>
+</section>
+{{/macro}}
+
+{{!-- announcement block --}}
+{{#macro "announcement"}}
+<div class="bg-primary text-primary-foreground w-full">
+    <div class="flex items-center justify-between gap-1 w-full max-w-9xl mx-auto px-8 py-3">
+        <div class="flex items-center gap-2">
+            <div class="bg-primary-foreground text-primary px-2 py-1 rounded-full text-xs font-bold">New</div>
+            <div class="text-sm">{{this.text || !this.content}}</div>
+        </div>
+        {{#if this.href}}
+        <div class="hidden md:flex items-center">
+            <a href="{{this.href}}" class="font-bold underline flex items-center gap-1">
+                <span class="text-sm">Learn more</span>
+                <div class="flex items-center text-base">
+                    {{>folio::icon icon="chevron-right" className=""}}
+                </div>
+            </a>
+        </div>
+        {{/if}}
+    </div>
+</div>
+{{/macro}}
+
+{{!-- call to action root component --}}
+{{#macro "cta"}}
+<div class="flex flex-col gap-8 items-center {{this.className}}">{{#call "content" children=this.children}}{{/call}}</div>
+{{/macro}}
+
+{{!-- icon block for a cta --}}
+{{#macro "cta::icon"}}
+<div class="flex justify-center mb-0">
+    <div class="flex items-center opacity-90">
+        {{>folio::icon icon=this.icon className="w-20 sm:w-28 h-20 sm:h-28"}}
+    </div>
+</div>
+{{/macro}}
+
+{{!-- label block for a cta --}}
+{{#macro "cta::label"}}
+<div class="font-bold text-xl md:text-2xl text-center opacity-70">{{this.text || !this.content}}</div>
+{{/macro}}
+
+{{!-- heading for a call to action --}}
+{{#macro "cta::heading"}}
+<div class="max-w-5xl w-full mx-auto flex flex-col items-center">
+    <div class="text-6xl sm:text-7xl md:text-8xl leading-none font-extrabold text-center">
+        {{this.text || !this.content}}
+    </div>
+</div>
+{{/macro}}
+
+{{!-- description block for a call to action --}}
+{{#macro "cta::description"}}
+<div class="max-w-2xl text-xl md:text-2xl text-center opacity-80 font-medium">
+    {{this.text || !this.content}}
+</div>
+{{/macro}}
+
+{{!-- links block for a call to action --}}
+{{#macro "cta::links"}}
+<div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+    {{#each this.links}}
+    <a href="{{this.href}}" class="font-bold text-2xl md:text-3xl hover:underline {{this.className}}">
+        <span>{{!this.text}} →</span>
+    </a>
+    {{/each}}
+</div>
+{{/macro}}
+
+{{!-- hero component --}}
+{{#macro "hero"}}
+<div class="flex flex-col items-center gap-8 {{this.className}}">
+    {{#call "content" children=this.children}}{{/call}}
+</div>
+{{/macro}}
+
+{{!-- hero label --}}
+{{#macro "hero::label"}}
+<div class="items-center justify-center">
+    <div class="text-current px-4 py-1 rounded-full border-1 border-current text-base opacity-60">
+        <span class="font-medium">{{this.text}}</span>
+    </div>
+</div>
+{{/macro}}
+
+{{!-- hero heading --}}
+{{#macro "hero::heading"}}
+<div class="mb-0 text-7xl sm:text-8xl md:text-9xl text-center font-extrabold" style="line-height:1.15;">
+    {{this.text || !this.content}}
+</div>
+{{/macro}}
+
+{{!-- hero description component --}}
+{{#macro "hero::description"}}
+<div class="max-w-4xl mb-0 text-2xl md:text-3xl text-center opacity-70">
+    {{this.text || !this.content}}
+</div>
+{{/macro}}
+
+{{!-- hero call to action link --}}
+{{#macro "hero::cta"}}
+<div class="flex flex-col items-center gap-2">
+    <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
+        <a href="{{this.href}}" class="flex cursor-pointer hover:underline">
+            <span class="font-bold text-2xl sm:text-3xl md:text-4xl">{{!this.text}}</span>
+        </a>
+    </div>
+    {{#if this.hint}}
+    <div class="text-sm select-none text-center opacity-40">{{!this.hint}}</div>
+    {{/if}}
+</div>
+{{/macro}}
+
+{{!-- section intro block --}}
+{{#macro "section-intro"}}
+<div class="flex flex-col items-center gap-2 {{this.className}} mb-16">
+    {{#call "content" children=this.children}}{{/call}}
+</div>
+{{/macro}}
+
+{{!-- heading block for a section intro --}}
+{{#macro "section-intro::heading"}}
+<div class="font-extrabold text-5xl sm:text-6xl md:text-7xl text-center max-w-2xl leading-tight">
+    {{this.text || !this.content}}
+</div>
+{{/macro}}
+
+{{!-- description block for a section intro --}}
+{{#macro "section-intro::description"}}
+<div class="max-w-xl text-lg sm:text-xl o-80 text-center">{{this.text}}</div>
+{{/macro}}
+
+{{!-- link block for a section intro --}}
+{{#macro "section-intro::link"}}
+<div class="flex">
+    <a href="{{this.href}}" class="hover:underline font-medium text-lg">
+        <span>{{!this.text}} &rarr;</span>
+    </a>
+</div>
+{{/macro}}
+
+{{!-- pillar component --}}
+{{#macro "pillar"}}
+<div class="mb-2 flex flex-col gap-2">
+    {{#if this.icon}}
+    <div class="flex justify-center mb-6">
+        <div class="flex items-center p-6 rounded-full {{this.iconClassName}}">
+            {{>folio::icon icon=this.icon className="w-16 h-16 opacity-90"}}
+        </div>
+    </div>
+    {{/if}}
+    {{#if this.heading}}
+    <div class="font-extrabold text-2xl leading-tight mb-3 text-center">
+        <span>{{!this.heading}}</span>
+    </div>
+    {{/if}}
+    {{#if this.description}}
+    <div class="leading-relaxed opacity-80 text-lg text-center">
+        <span>{{!this.description}}</span>
+    </div>
+    {{/if}}
+    {{#if this.linkText}}
+    <div class="flex justify-center mt-4">
+        <a href="{{this.linkHref}}" class="flex items-center hover:underline px-3 py-2 rounded-xl {{this.linkClassName}}">
+            <div class="font-bold text-center">{{!this.linkText}}</div>
+        </a>
+    </div>
+    {{/if}}
+</div>
+{{/macro}}
+
+{{!-- pre-built faq section --}}
+{{#macro "faq"}}
+<div class="flex flex-col md:flex-row gap-6">
+    {{#if this.heading}}
+    <div class="relative w-full md:max-w-sm shrink-0">
+        <div class="w-full sticky top-0 left-0">
+            <div class="font-extrabold text-4xl sm:text-5xl leading-tight">{{!this.heading}}</div>
+        </div>
+    </div>
+    {{/if}}
+    <div class="w-full flex flex-col gap-8">
+        {{#each this.items}}
+        <div class="flex flex-col gap-3">
+            <div class="font-bold text-lg">{{this.question}}</div>
+            <div class="text-base">{{#inlineMarkdown}}{{!this.answer}}{{/inlineMarkdown}}</div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+{{/macro}}
+
+{{!-- pre-built changelog section --}}
+{{#macro "changelog"}}
+<div class="flex flex-col gap-8">
+    {{#each @changelog}}
+    <div class="flex flex-col md:flex-row gap-2 border-t-1 border-gray-200 pt-8 pb-16">
+        <div class="relative w-full max-w-xs shrink-0">
+            <div class="sticky top-0 left-0">
+                <div class="font-medium opacity-60">{{this.date}}</div>
+                <div class="text-sm opacity-60">{{this.version}}</div>
+            </div>
+        </div>
+        <div class="w-full flex flex-col gap-6">
+            <div class="font-extrabold text-4xl leading-tight">
+                <a name="{{!this.url}}"></a>
+                <span>{{!this.title}}</span>
+            </div>
+            {{#if this description}}
+            <div class="text-lg">
+                {{#inlineMarkdown}}{{!this.description}}{{/inlineMarkdown}}
+            </div>
+            {{/if}}
+            {{#if this.content}}
+            <div class="">
+                {{#markdown}}{{!this.content}}{{/markdown}}
+            </div>
+            {{/if}}
+        </div>
+    </div>
+    {{/each}}
+</div>
+{{/macro}}
+
+{{!-- raw component --}}
+{{!-- this component allows to render raw HTML in the template --}}
+{{#macro "raw"}}
+<div class="{{this.className}}">{{this.text || !this.content}}</div>
+{{/macro}}
+
+{{!-- main container --}}
+{{#macro "content"}}
+{{#each this.children}}
+    {{#call this.type ...this}}{{/call}}
+{{/each}}
+{{/macro}}
+
+{{!-- build ui --}}
+{{#call "content" children=this.children}}{{/call}}

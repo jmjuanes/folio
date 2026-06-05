@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en" style="overscroll-behavior-x:none;" class="">
 {{>folio::head}}
-<body class="m-0 p-0 font-sans leading-normal bg-gray-100 text-gray-950">
+<body class="m-0 p-0 font-sans leading-normal bg-gray-950 text-white">
     <!-- header -->
     <header class="flex items-center justify-between w-full px-6 py-8 max-w-9xl mx-auto" data-role="navbar">
-        {{>folio::logo}}
+        {{>folio::logo variant="light"}}
         <div class="flex gap-6 items-center">
             {{#each @site.navbar.links}}
             <a href="{{this.href}}" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
@@ -12,7 +12,7 @@
             </a>
             {{/each}}
             {{#if @site.navbar.callToAction}}
-            <a href="{{@site.navbar.callToAction.href}}" class="hidden sm:flex items-center gap-1 px-3 py-2 bg-gray-950 text-white rounded-xl hover:opacity-90">
+            <a href="{{@site.navbar.callToAction.href}}" class="hidden sm:flex items-center gap-1 px-3 py-2 bg-primary text-primary-foreground rounded-xl hover:opacity-90">
                 <span class="font-bold text-lg md:text-xl">{{@site.navbar.callToAction.text}}</span>
                 <div class="flex items-center text-xl">
                     {{>folio::icon icon="arrow-right" className=""}}
@@ -21,105 +21,41 @@
             {{/if}}
         </div>
     </header>
+    <div class="h-px w-full bg-white opacity-20"></div>
+    {{>folio::ui children=@page.children}}
     <!-- sections -->
     {{#each @page.sections}}
-    <section id="{{this.id}}" class="w-full py-8 sm:py-12 md:py-16 {{this.className}}">
+    <section id="{{this.id}}" class="w-full py-8 sm:py-12 md:py-20 {{this.className}}">
         <div class="w-full max-w-6xl mx-auto px-6">
-            {{#each this.blocks}}
-            {{#eq this.type "hero"}}
-            <div class="flex flex-col items-center gap-4">
-                {{#if this.heading}}
-                <div class="w-full max-w-3xl font-extrabold text-6xl sm:text-7xl text-center" style="line-height:1.15;">{{!this.heading}}</div>
-                {{/if}}
-                {{#if this.description}}
-                <div class="w-full max-w-xl text-lg text-center opacity-70">{{!this.description}}</div>
-                {{/if}}
-                {{#if this.callToAction}}
-                <div class="flex flex-col items-center gap-2">
-                    <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
-                        <a href="{{this.callToAtion.href}}" class="flex cursor-pointer bg-gray-950 text-white px-4 py-2 rounded-xl text-xl hover:underline">
-                            <span class="font-bold">{{!this.callToAction.text}}</span>
-                        </a>
+            {{#each this.children}}
+            {{#eq this.type "product-hero"}}
+            <div class="flex flex-col gap-8 items-center {{this.className}}">
+                {{#if this.icon}}
+                <div class="flex justify-center mb-0">
+                    <div class="flex items-center opacity-90">
+                        {{>folio::icon icon=this.icon className="w-20 sm:w-28 h-20 sm:h-28"}}
                     </div>
-                    {{#if this.callToAction.hint}}
-                    <div class="text-sm select-none text-center opacity-40">{{!this.callToAction.hint}}</div>
-                    {{/if}}
                 </div>
                 {{/if}}
-            </div>
-            {{/eq}}
-            {{#eq this.type "product-hero"}}
-            <div class="flex flex-col gap-4">
                 {{#if this.label}}
-                <div class="text-lg font-bold">{{!this.label}}</div>
+                <div class="font-bold text-xl md:text-2xl text-center opacity-70">{{!this.label}}</div>
                 {{/if}}
-                {{#if this.heading}}
-                <div class="w-full max-w-4xl font-extrabold text-6xl sm:text-7xl text-left" style="line-height:1.15;">{{!this.heading}}</div>
-                {{/if}}
+                <div class="max-w-5xl w-full mx-auto flex flex-col items-center">
+                    <div class="text-6xl sm:text-7xl md:text-8xl leading-none font-extrabold text-center">
+                        {{!this.heading}}
+                    </div>
+                </div>
                 {{#if this.description}}
-                <div class="w-full max-w-xl text-lg text-left opacity-70">{{!this.description}}</div>
+                <div class="max-w-2xl text-xl md:text-2xl text-center opacity-80 font-medium">{{!this.description}}</div>
                 {{/if}}
                 {{#if this.links}}
-                <div class="flex flex-row items-center gap-4">
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
                     {{#each this.links}}
-                    <a href="{{this.href}}" class="flex cursor-pointer px-4 py-2 rounded-xl text-xl hover:underline {{this.className}}">
-                        <span class="font-bold">{{!this.text}}</span>
+                    <a href="{{this.href}}" class="font-bold text-2xl md:text-4xl hover:underline {{this.className}}">
+                        <span>{{!this.text}} →</span>
                     </a>
                     {{/each}}
                 </div>
-                {{/if}}
-            </div>
-            {{/eq}}
-            {{#eq this.type "section-intro"}}
-            <div class="flex flex-col gap-2 {{this.className}} mb-8">
-                {{#if this.heading}}
-                <div class="font-extrabold text-4xl sm:text-5xl max-w-4xl leading-tight">{{!this.heading}}</div>
-                {{/if}}
-                {{#if this.description}}
-                <div class="max-w-4xl text-lg o-80">{{!this.description}}</div>
-                {{/if}}
-                {{#if this.linkText}}
-                <div class="flex">
-                    <a href="{{this.linkHref}}" class="hover:underline font-medium text-lg">
-                        <span>{{this.linkText}} &rarr;</span>
-                    </a>
-                </div>
-                {{/if}}
-            </div>
-            {{/eq}}
-            {{#eq this.type "pillars"}}
-            <div class="grid {{this.className}}">
-                {{#each this.pillars}}
-                <div class="rounded-2xl p-8 bg-white flex flex-col gap-2">
-                    {{#if this.icon}}
-                    <div class="flex items-center">
-                        {{>folio::icon icon=this.icon className="w-10 h-10 opacity-60"}}
-                    </div>
-                    {{/if}}
-                    {{#if this.heading}}
-                    <div class="font-bold text-xl leading-tight {{this.headingClassName}}">{{!this.heading}}</div>
-                    {{/if}}
-                    {{#if this.description}}
-                    <div class="leading-relaxed opacity-80 {{this.descriptionClassName}}">{{!this.description}}</div>
-                    {{/if}}
-                    {{#if this.linkText}}
-                    <div class="flex mt-4">
-                        <a href="{{this.linkHref}}" class="flex items-center hover:underline px-3 py-2 rounded-xl {{this.linkClassName}}">
-                            <div class="font-bold">{{!this.linkText}}</div>
-                        </a>
-                    </div>
-                    {{/if}}
-                </div>
-                {{/each}}
-            </div>
-            {{/eq}}
-            {{#eq this.type "callToAction"}}
-            <div class="flex flex-col items-center gap-4 px-8 py-16 rounded-4xl bg-gray-950 text-white {{this.className}}">
-                {{#if this.heading}}
-                <div class="font-extrabold text-4xl sm:text-5xl max-w-4xl leading-tight text-center">{{!this.heading}}</div>
-                {{/if}}
-                {{#if this.description}}
-                <div class="max-w-4xl text-center text-lg o-80">{{!this.description}}</div>
                 {{/if}}
             </div>
             {{/eq}}
@@ -141,58 +77,6 @@
                 {{/each}}
             </div>
             {{/eq}}
-            {{#eq this.type "changelog"}}
-            <div class="flex flex-col gap-8">
-                {{#each @changelog}}
-                <div class="flex flex-col md:flex-row gap-2 border-t-1 border-gray-200 pt-8 pb-16">
-                    <div class="relative w-full max-w-xs shrink-0">
-                        <div class="sticky top-0 left-0">
-                            <div class="font-medium opacity-60">{{this.date}}</div>
-                            <div class="text-sm opacity-60">{{this.version}}</div>
-                        </div>
-                    </div>
-                    <div class="w-full flex flex-col gap-6">
-                        <div class="font-extrabold text-4xl leading-tight">
-                            <a name="{{!this.url}}"></a>
-                            <span>{{!this.title}}</span>
-                        </div>
-                        {{#if this description}}
-                        <div class="text-lg">
-                            {{#inlineMarkdown}}{{!this.description}}{{/inlineMarkdown}}
-                        </div>
-                        {{/if}}
-                        {{#if this.content}}
-                        <div class="">
-                            {{#markdown}}{{!this.content}}{{/markdown}}
-                        </div>
-                        {{/if}}
-                    </div>
-                </div>
-                {{/each}}
-            </div>
-            {{/eq}}
-            {{#eq this.type "faq"}}
-            <div class="flex flex-col md:flex-row gap-6">
-                {{#if this.heading}}
-                <div class="relative w-full md:max-w-sm shrink-0">
-                    <div class="w-full sticky top-0 left-0">
-                        <div class="font-extrabold text-4xl sm:text-5xl leading-tight">{{!this.heading}}</div>
-                    </div>
-                </div>
-                {{/if}}
-                <div class="w-full flex flex-col gap-8">
-                    {{#each this.items}}
-                    <div class="flex flex-col gap-3">
-                        <div class="font-bold text-lg">{{this.question}}</div>
-                        <div class="text-base">{{#inlineMarkdown}}{{!this.answer}}{{/inlineMarkdown}}</div>
-                    </div>
-                    {{/each}}
-                </div>
-            </div>
-            {{/eq}}
-            {{#eq this.type "raw"}}
-            <div class="{{this.className}}">{{this.text || !this.content}}</div>
-            {{/eq}}
             {{/each}}
         </div>
     </section>
@@ -202,7 +86,7 @@
         <div class="w-full max-w-6xl mx-auto px-8 bg-current opacity-10 h-px"></div>
         <div class="px-8 pt-16 pb-24 max-w-6xl w-full mx-auto flex flex-col md:flex-row gap-8">
             <div class="w-full sm:max-w-xs lg:max-w-md shrink-0 flex flex-col gap-4 mb-8">
-                {{>folio::logo}}
+                {{>folio::logo variant="light"}}
                 <div class="text-sm">
                     <span class="opacity-60">Made by</span>
                     <a href="https://www.josemi.xyz" class="font-bold hover:underline">Josemi</a>
