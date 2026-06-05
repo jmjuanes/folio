@@ -450,6 +450,36 @@
                     ]
                 }
             ]
+        },
+        "404.html": {
+            "title": "Not found",
+            "children": [
+                {
+                    "type": "section",
+                    "children": [
+                        {
+                            "type": "box",
+                            "className": "py-16 flex flex-col items-center gap-8",
+                            "children": [
+                                {
+                                    "type": "cta::heading",
+                                    "text": "Hmm, something is broken :("
+                                },
+                                {
+                                    "type": "cta::description",
+                                    "text": "It looks like you have followed a broken link or entered a URL that does not exist. Please try again or contact us if the problem persists."
+                                },
+                                {
+                                    "type": "cta::links",
+                                    "links": [
+                                        { "text": "Return to Home", "href": "/" }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     }
 }
