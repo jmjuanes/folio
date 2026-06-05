@@ -161,7 +161,7 @@
                                 },
                                 {
                                     "type": "cta::description",
-                                    "text": "Every feature from Folio Lite, running entirely on your own infrastructure."
+                                    "text": "Every feature from Folio, running entirely on your own infrastructure using a single Docker image."
                                 },
                                 {
                                     "type": "raw",
