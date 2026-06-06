@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.28.0 (June 6, 2026) - Commands Palette and Editor Preferences
+
+Version `v0.28.0` brings a smarter, more flexible editor experience with the introduction of the **Commands Palette**, a new **Editor Preferences** dialog, and several internal improvements that make the app faster and easier to extend.
+
+### Commands Palette
+
+We have added a **Commands Palette** to the editor, giving you quick access to tools, board actions, and more from a single place. You can open it via the last button in the **Actions toolbar**, or by pressing **Cmd+K** on macOS (or **Ctrl+K** on Windows and Linux).
+
+### Editor Preferences
+
+You can now customize your editor experience through the new **Editor Preferences** dialog. In Folio Lite, preferences are persisted in your browser's local storage, so your settings are remembered across sessions.
+
+### Improved Editor Layout
+
+We have refined the overall editor layout for a cleaner and more focused workspace. The toggle button for showing and hiding the layers panel has been removed — this option is now available directly in the Editor Preferences.
+
+### Internal Improvements
+
+We have improved the internal model for managing tools and board elements, laying the groundwork for a more consistent and extensible editing experience.
+
+### Improved Documentation
+
+We have continued to improve the official documentation website, making it easier to learn and get the most out of Folio.
+
+
 ## v0.27.0 (February 15, 2026) - A Major Step Forward
 
 Version `v0.27.0` introduces some of the most significant improvements to Folio so far, expanding its capabilities both for individual creators and for teams who want to run Folio in their own environment.
