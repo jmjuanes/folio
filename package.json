@@ -1,6 +1,6 @@
 {
     "name": "folio",
-    "version": "0.27.1",
+    "version": "0.28.0",
     "description": "A minimalistic digital whiteboard for sketching and prototyping",
     "private": true,
     "type": "module",
@@ -29,7 +29,7 @@
         "postbuild:dist": "node scripts/purge-css.js --input folio-react/folio.js --output folio-react/folio.css --config obfuscate.map.json",
         "copy:app": "yarn copy:studio",
         "copy:studio": "yarn clean && cp -R apps/studio/www www",
-        "copy:website": "yarn clean && cp -R .cache/documentation/* www && cp -R apps/lite/www/* www/ && cp -R .cache/landing/* www/",
+        "copy:website": "yarn clean && mkdir www && cp -R .cache/documentation/* www && cp -R apps/lite/www/* www/ && cp -R .cache/landing/* www/",
         "clean": "rm -rf www",
         "deploy:ai": "yarn workspace folio-ai deploy",
         "dev": "serve www -p 8080",
