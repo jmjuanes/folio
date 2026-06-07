@@ -1,7 +1,7 @@
 import React from "react";
 import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../constants.js";
 import { Island } from "./ui/island.tsx";
-import { Dropdown } from "./ui/dropdown.tsx";
+import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useActions } from "../contexts/actions.tsx";
 
@@ -33,42 +33,58 @@ export const Zoom = (): React.JSX.Element => {
                     dispatchAction(ACTIONS.ZOOM_OUT);
                 }}
             />
-            <div className="flex items-center justify-center w-16 h-full select-none relative group" tabIndex={0}>
-                <Island.Button
-                    className="text-xs"
-                    text={(
-                        <span className="text-xs text-center">
-                            {((zoom ?? 1) * 100).toFixed(0) + "%"}
-                        </span>
+            <div className="flex items-center justify-center w-16 h-full select-none">
+                <Dropdown.Portal
+                    id="zoom:options"
+                    position={DropdownPortalPosition.BOTTOM_RIGHT}
+                    toggleClassName="flex items-center"
+                    contentClassName="absolute z-50 mt-2 w-48"
+                    contentStyle={{
+                        transform: "translateX(-100%)",
+                    }}
+                    toggleRender={() => (
+                        <Island.Button
+                            className="text-xs"
+                            text={(
+                                <span className="text-xs text-center">
+                                    {((zoom ?? 1) * 100).toFixed(0) + "%"}
+                                </span>
+                            )}
+                            showChevron={true}
+                        />
                     )}
-                    showChevron={true}
+                    contentRender={(closeDropdown) => (
+                        <Dropdown className="w-full">
+                            <ZoomDropdownItem
+                                icon="search-check"
+                                text="Zoom to 100%"
+                                disabled={zoom === 1}
+                                onClick={() => {
+                                    closeDropdown?.();
+                                    dispatchAction(ACTIONS.ZOOM_RESET);
+                                }}
+                            />
+                            <ZoomDropdownItem
+                                icon="arrows-maximize"
+                                text="Zoom to fit"
+                                disabled={editor.getElements().length === 0}
+                                onClick={() => {
+                                    closeDropdown?.();
+                                    dispatchAction(ACTIONS.ZOOM_FIT);
+                                }}
+                            />
+                            <ZoomDropdownItem
+                                icon="box-selection"
+                                text="Zoom to selection"
+                                disabled={selection.length === 0}
+                                onClick={() => {
+                                    closeDropdown?.();
+                                    dispatchAction(ACTIONS.ZOOM_FIT_SELECTION);
+                                }}
+                            />
+                        </Dropdown>
+                    )}
                 />
-                <Dropdown className="hidden group-focus-within:block top-full right-0 mt-2 w-48 z-50">
-                    <ZoomDropdownItem
-                        icon="search-check"
-                        text="Zoom to 100%"
-                        disabled={zoom === 1}
-                        onClick={() => {
-                            dispatchAction(ACTIONS.ZOOM_RESET);
-                        }}
-                    />
-                    <ZoomDropdownItem
-                        icon="arrows-maximize"
-                        text="Zoom to fit"
-                        disabled={editor.getElements().length === 0}
-                        onClick={() => {
-                            dispatchAction(ACTIONS.ZOOM_FIT);
-                        }}
-                    />
-                    <ZoomDropdownItem
-                        icon="box-selection"
-                        text="Zoom to selection"
-                        disabled={selection.length === 0}
-                        onClick={() => {
-                            dispatchAction(ACTIONS.ZOOM_FIT_SELECTION);
-                        }}
-                    />
-                </Dropdown>
             </div>
             <Island.Button
                 icon="zoom-in"
