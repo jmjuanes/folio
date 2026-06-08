@@ -5,9 +5,6 @@ export type User = {
     // this is the only required field in the user model
     username: string;
 
-    // name of the user. May be the same of 'username'
-    name?: string;
-
     // name of the user displayed in the user interface
     // will be the same as 'name' if empty
     display_name?: string;

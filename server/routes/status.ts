@@ -1,14 +1,14 @@
 import Router from "@koa/router";
-import type { ExtendedContext } from "../types/custom.ts";
+import { sendDataResponse } from "../utils/response.ts";
+
+import type { Context } from "koa";
 
 // status router
 export const statusRouter = new Router();
 
 // health check endpoint
-statusRouter.get("/", (ctx: ExtendedContext) => {
-    ctx.ok({
-        data: {
-            message: "ok",
-        },
+statusRouter.get("/", (ctx: Context) => {
+    sendDataResponse(ctx, {
+        message: "ok",
     });
 });
