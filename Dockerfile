@@ -12,14 +12,13 @@ FROM node:24-alpine AS base
 
 # Set environment variables
 ENV FOLIO_APPDIR=/opt/folio \
-    FOLIO_PORT=8080
+    FOLIO_PORT=8080 \
+    FOLIO_SERVER_PORT=3000
 
 # Install security updates and required packages
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache \
-        dumb-init \
-        tini && \
+    apk add --no-cache tini nginx supervisor gettext && \
     rm -rf /var/cache/apk/*
 
 # Create application directory with proper ownership
@@ -30,7 +29,7 @@ RUN mkdir -p $FOLIO_APPDIR && \
 WORKDIR $FOLIO_APPDIR
 
 # Switch to non-root user early for security
-USER node
+# USER node
 
 # =============================================================================
 # Server Build Stage
@@ -76,6 +75,14 @@ ENV NODE_ENV=production \
     # Disable npm update check
     NO_UPDATE_NOTIFIER=true
 
+# Copy third-party configurations
+COPY nginx.conf /etc/nginx/nginx.conf.template
+COPY supervisord.conf /etc/supervisord.conf.template
+
+# Copy entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Copy application files with proper ownership
 COPY --chown=node:node server/ ./server/
 COPY --chown=node:node folio.js ./
@@ -119,4 +126,4 @@ LABEL org.opencontainers.image.source="https://github.com/jmjuanes/folio"
 ENTRYPOINT ["/sbin/tini", "--"]
 
 # Start the application
-CMD ["node", "folio.js", "start"]
+CMD ["/entrypoint.sh"]

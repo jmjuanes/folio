@@ -11,6 +11,9 @@ import { createLogger } from "./server/dist/utils/logger.js";
 // it is used to resolve paths to the data and www directories
 const ROOT_PATH = process.cwd();
 
+// default port for folio server
+const DEFAULT_PORT = 3000;
+
 // available commands
 const COMMANDS = {
     START: "start",
@@ -71,7 +74,7 @@ const main = async (command = "", options = {}) => {
     // initialize base request options
     const baseRequestOptions = {
         hostname: "localhost", 
-        port: parseInt(config.port),
+        port: parseInt(options.port || config.port || DEFAULT_PORT),
         timeout: 5000,
         path: "/",
         headers: {
@@ -81,7 +84,11 @@ const main = async (command = "", options = {}) => {
 
     // 1. start the folio server services
     if (command === COMMANDS.START) {
-        startServer(config);
+        // NOTE: make sure that we use the correct port for folio server
+        // using the --port argument takes preference over the port in configuration
+        startServer(Object.assign(config, {
+            port: parseInt(options.port || config.port || DEFAULT_PORT),
+        }));
     }
     // 2. health check
     else if (command === COMMANDS.PING) {
@@ -139,6 +146,11 @@ const { values, positionals } = parseArgs({
         token: {
             type: "string",
             description: "token to use",
+        },
+        port: {
+            type: "string",
+            description: "port to use",
+            short: "p",
         },
     },
     allowPositionals: true,

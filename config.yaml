@@ -1,10 +1,6 @@
 ## default configuration for folio-studio
 ## https://github.com/jmjuanes/folio/blob/main/config.yaml
 
-## port where folio server will listen
-## this value can be overrided using the FOLIO_PORT env variable
-port: 8080
-
 ## configure the authentication method
 ## allowed values: "access_token"
 authentication: 'access_token'
@@ -50,9 +46,6 @@ storage_file: 'data/folio.db'
 # ai_apikey: 'your_api_key'
 ## model to use
 # ai_model: 'gpt-3.5-turbo'
-
-## configure the folder where the frontend app is located
-app_directory: 'app/'
 
 ## branding configuration (title, favicon, etc.)
 ## app_config:
