@@ -1,11 +1,11 @@
 import { createLogger } from "../utils/logger.ts";
-import type { ExtendedContext } from "../types/custom.ts";
+import type { Context } from "koa";
 
 const { log } = createLogger("folio:http");
 
 // simple logger middleware
 export const logger = () => {
-    return async (ctx: ExtendedContext, next: () => Promise<void>) => {
+    return async (ctx: Context, next: () => Promise<void>) => {
         const start = Date.now();
         await next();
         ctx.set("X-Response-Time", `${(Date.now() - start)}ms`);
