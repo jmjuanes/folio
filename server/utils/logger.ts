@@ -19,7 +19,7 @@ const isDebugEnabled = (namespace: string): boolean => {
     if (process.env.DEBUG === "*") {
         return true; // all namespaces are enabled
     }
-    return process.env.DEBUG.split(",").some(ns => {
+    return (process.env.DEBUG || "").split(",").some(ns => {
         return ns === namespace || namespace.startsWith(ns.replace("*", ""));
     });
 };
