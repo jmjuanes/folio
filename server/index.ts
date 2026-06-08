@@ -29,7 +29,7 @@ export const startServer = async (config: Config): Promise<any> => {
     // register custom methods to send responses
     app.use(async (ctx: Context, next: () => Promise<void>) => {
         // include server state in the context
-        ctx.state.store = store;
+        ctx.state.storage = store;
         ctx.state.auth = auth;
         ctx.state.config = config;
         ctx.state.username = null;

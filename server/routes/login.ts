@@ -22,7 +22,7 @@ loginRouter.post("/", async (ctx: Context) => {
     // pass the request body object to the authenticate method
     // it should return the user information of the user, or null
     try {
-        const username: string|null = await ctx.state.auth.authenticate(ctx.request.body);
+        const username: string | null = await ctx.state.auth.authenticate(ctx.request.body);
         if (!username) {
             throw new UnauthorizedError();
         }
