@@ -2,13 +2,15 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createLogger } from "./utils/logger.ts";
 
+export type MigrationResource = "storage";
+
 const MIGRATIONS_TABLE = "migrations";
 const MIGRATIONS_DIR = path.resolve("migrations");
 
 const { debug } = createLogger("folio::migration");
 
 // run the provided migrations in the database
-export const runMigrations = async (db: any) => {
+export const runMigrations = async (db: any, resource: MigrationResource) => {
     await db.exec(`
         CREATE TABLE IF NOT EXISTS ${MIGRATIONS_TABLE} (
             id TEXT NOT NULL PRIMARY KEY,
@@ -17,8 +19,9 @@ export const runMigrations = async (db: any) => {
     `);
 
     // read migrations and sort by name
+    // TODO: filter migrations by resource
     const files = (await fs.readdir(MIGRATIONS_DIR))
-        .filter(f => f.endsWith(".sql"))
+        .filter(file => file.endsWith(".sql"))
         .sort();
 
     for (const file of files) {
