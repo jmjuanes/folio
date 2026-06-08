@@ -1,5 +1,4 @@
-// import type { Context } from "koa";
-import { HTTP_CODES } from "../constants.ts";
+import type { Context } from "koa";
 
 // error/warning response object
 export type ResponseMessage = {
@@ -14,18 +13,18 @@ export type ResponseData = {
 };
 
 // send the provided response
-export const sendResponse = (context: any, responseCode: number, responseData: ResponseData = {}) => {
+export const sendResponse = (context: Context, responseCode: number, responseData: ResponseData = {}) => {
     context.status = responseCode;
     context.body = responseData;
 };
 
 // send the provided response data
-export const sendDataResponse = (context: any, data: any) => {
-    sendResponse(context, HTTP_CODES.OK, { data: data });
+export const sendDataResponse = (context: Context, data: any) => {
+    sendResponse(context, 200, { data: data });
 };
 
 // send the provided error message
-export const sendErrorResponse = (context: any, errorCode: number, errorMessage: string) => {
+export const sendErrorResponse = (context: Context, errorCode: number, errorMessage: string) => {
     sendResponse(context, errorCode, {
         errors: [
             { message: errorMessage },
