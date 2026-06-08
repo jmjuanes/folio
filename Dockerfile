@@ -43,7 +43,7 @@ COPY --chown=node:node server ./server
 RUN cd server && \
     yarn install --frozen-lockfile --production --network-timeout 300000 && \
     yarn cache clean && \
-    yarn compile && \
+    yarn build && \
     # Remove unnecessary files to reduce image size
     find node_modules -name "*.md" -delete && \
     find node_modules -name "*.txt" -delete && \
