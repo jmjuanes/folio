@@ -65,7 +65,7 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
     // return api to access to the database
     return {
         getDocuments: async (): Promise<DocumentWithAttributes[]> => {
-            const results = await db.all(`SELECT id,created_at,updated_at,name,attributes FROM ${DOCUMENTS_TABLE} ORDER BY updated_at DESC`, []);
+            const results = await db.all(`SELECT id,created_at,updated_at,attributes FROM ${DOCUMENTS_TABLE} ORDER BY updated_at DESC`, []);
             return (results || []).map(result => {
                 return Object.assign(result, {
                     attributes: JSON.parse(result.attributes || "{}"),
