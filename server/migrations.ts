@@ -5,7 +5,7 @@ import { createLogger } from "./utils/logger.ts";
 export type MigrationResource = "storage";
 
 const MIGRATIONS_TABLE = "migrations";
-const MIGRATIONS_DIR = path.resolve("migrations");
+const MIGRATIONS_DIR = path.resolve(import.meta.dirname, "migrations");
 
 const { debug } = createLogger("folio::migration");
 

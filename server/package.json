@@ -13,8 +13,7 @@
         "./package.json": "./package.json"
     },
     "scripts": {
-        "build": "yarn compile",
-        "compile": "tsc",
+        "build": "tsc && cp -r migrations dist/migrations",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
