@@ -1,9 +1,7 @@
 import { UnauthorizedError } from "../errors.ts";
 import { verifyJwtToken } from "../token.ts";
-
 import type { Context } from "koa";
 import type { Config } from "../config.ts";
-import type { TokenPayload } from "../authentication.ts";
 
 // authentication middleware
 export const authentication = async (ctx: Context, next: () => Promise<any>) => {
@@ -19,10 +17,7 @@ export const authentication = async (ctx: Context, next: () => Promise<any>) => 
 
     // verify the token and extract user information
     // if the JWT is not valid, this method will return null
-    const tokenPayload: TokenPayload | null = verifyJwtToken(token, {
-        secret: config?.jwt_token_secret,
-    });
-
+    const tokenPayload: { username: string } | null = verifyJwtToken(token, config?.jwt_token_secret);
     if (!tokenPayload?.username) {
         throw new UnauthorizedError("Token is not valid");
     }

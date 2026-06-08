@@ -3,10 +3,8 @@ import { generateJwtToken } from "../token.ts";
 import { InternalServerError, MethodNotAllowedError, UnauthorizedError } from "../errors.ts";
 import { createLogger } from "../utils/logger.ts";
 import { sendDataResponse } from "../utils/response.ts";
-
 import type { Context } from "koa";
 import type { Config } from "../config.ts";
-import type { TokenPayload } from "../authentication.ts";
 
 const log = createLogger("folio:route:login");
 
@@ -31,15 +29,8 @@ loginRouter.post("/", async (ctx: Context) => {
 
         // generate the JWT token for API access and return it as part 
         // of the response object
-        return sendDataResponse(ctx, {
-            token: generateJwtToken({
-                secret: config?.jwt_token_secret,
-                expiration: config?.jwt_token_expiration,
-                payload: {
-                    username: username,
-                } as TokenPayload,
-            }),
-        });
+        const token = generateJwtToken({ username: username }, config?.jwt_token_secret, config?.jwt_token_expiration);
+        return sendDataResponse(ctx, { token: token });
     }
     catch (error: any) {
         log.error(`error authenticating user: '${error.message}'`);

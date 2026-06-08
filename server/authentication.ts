@@ -9,11 +9,6 @@ export type Credentials = {
     token?: string;
 };
 
-// @description type of the token payload
-export type TokenPayload = {
-    username: string;
-};
-
 export type AuthContext = {
     authenticate: (credentials: Credentials) => Promise<string | null>;
     getUser: (username: string) => Promise<User | null>;
@@ -36,7 +31,7 @@ export const createAccessTokenAuth = async (config: Config): Promise<AuthContext
     info(`Use '${accessToken}' to login.`);
 
     return {
-        authenticate: async (requestBody: any): Promise<string|null> => {
+        authenticate: async (requestBody: Credentials): Promise<string|null> => {
             if (requestBody?.token && requestBody.token === accessToken) {
                 return username;
             }
