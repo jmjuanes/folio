@@ -57,10 +57,6 @@ export const createLocalStore = async (config: Config): Promise<Storage> => {
             data TEXT,
             PRIMARY KEY (id)
         );
-        CREATE INDEX IF NOT EXISTS idx_${DOCUMENTS_TABLE}_owner ON ${DOCUMENTS_TABLE} (owner);
-        CREATE INDEX IF NOT EXISTS idx_${DOCUMENTS_TABLE}_owner_id ON ${DOCUMENTS_TABLE} (owner, id);
-        CREATE INDEX IF NOT EXISTS idx_${DOCUMENTS_TABLE}_owner_collection ON ${DOCUMENTS_TABLE} (owner, collection);
-        CREATE INDEX IF NOT EXISTS idx_${DOCUMENTS_TABLE}_owner_id_collection ON ${DOCUMENTS_TABLE} (owner, id, collection);
     `);
 
     // 4. run migrations
