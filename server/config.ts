@@ -98,15 +98,15 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         "ai_base_url": environment.FOLIO_AI_BASE_URL,
         "ai_apikey": environment.FOLIO_AI_APIKEY,
         "ai_model": environment.FOLIO_AI_MODEL,
-    } as any;
+    } as Partial<Config>;
 
     // iterate over the fields and set the values in the config object
     // if the field is not defined in the config object, it will be skipped
     // this allows to override only the fields that are defined in the config object
     // and to keep the default values for the fields that are not defined
     Object.keys(fields).forEach((field: string) => {
-        if (typeof fields[field] !== "undefined") {
-            config[field] = fields[field];
+        if (typeof fields[field as keyof Config] !== "undefined") {
+            config[field as keyof Config] = fields[field as keyof Config];
         }
     });
 
