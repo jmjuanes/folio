@@ -5,14 +5,14 @@ import {BACKGROUND_COLORS} from "../utils/colors.js";
 import {migrate} from "./migrate.js";
 
 export const saveAsJson = data => {
-    const pages = data?.pages || [];
     const exportData = {
         type: MIME_TYPES.FOLIO,
         version: VERSION,
         title: data?.title || "Untitled",
         createdAt: data?.createdAt,
         updatedAt: data?.updatedAt,
-        pages: pages,
+        pages: data?.pages || [],
+        elements: data?.elements || [],
         assets: (data?.elements || []).reduce((assets, element) => {
             if (element.assetId && data?.assets?.[element.assetId]) {
                 assets[element.assetId] = data.assets[element.assetId];
