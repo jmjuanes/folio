@@ -1,8 +1,8 @@
-import {fileOpen, fileSave} from "browser-fs-access";
-import {VERSION, MIME_TYPES, FILE_EXTENSIONS} from "../constants.js";
-import {blobToText} from "../utils/blob.js";
-import {BACKGROUND_COLORS} from "../utils/colors.js";
-import {migrate} from "./migrate.js";
+import { fileOpen, fileSave } from "browser-fs-access";
+import { VERSION, MIME_TYPES, FILE_EXTENSIONS } from "../constants.js";
+import { blobToText } from "../utils/blob.js";
+import { BACKGROUND_COLORS } from "../utils/colors.js";
+import { migrate } from "./migrate.js";
 
 export const saveAsJson = data => {
     const exportData = {
