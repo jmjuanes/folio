@@ -8,6 +8,7 @@ import { useEditorComponents } from "./editor-components.tsx";
 import { Part, useWorkbench } from "./workbench.tsx";
 import { usePreferences } from "./preferences.tsx";
 import { useConfirm } from "../hooks/use-confirm.tsx";
+import { useTools } from "./tools.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
 import { getShortcutKey } from "../lib/actions.ts";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
@@ -91,6 +92,10 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     const surface = useSurface();
     const workbench = useWorkbench();
     const preferences = usePreferences();
+    const { getToolById } = useTools();
+    const activeToolId = editor.getCurrentTool()?.id;
+    const activeTool = getToolById(activeToolId);
+    const disableEditorActions = !!activeTool?.disableEditorActions;
     const {
         KeyboardShortcuts,
         Export,
@@ -238,6 +243,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "box-selection",
                 category: ActionCategory.EDITION,
                 shortcut: getShortcutKey("CtrlOrCmd+A"),
+                disabled: disableEditorActions,
                 onSelect: () => {
                     editor.getElements().forEach((el: any) => {
                         el.selected = true;
@@ -250,6 +256,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Delete selection",
                 icon: "trash",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 shortcut: [
                     getShortcutKey("Delete"),
                     getShortcutKey("Backspace"),
@@ -268,6 +275,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Duplicate selection",
                 icon: "copy",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 shortcut: getShortcutKey("CtrlOrCmd+D"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -283,6 +291,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Lock selection",
                 icon: "lock",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 shortcut: getShortcutKey("CtrlOrCmd+L"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -298,6 +307,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Unlock selection",
                 icon: "unlock",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 shortcut: getShortcutKey("CtrlOrCmd+Shift+L"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -313,6 +323,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Group selection",
                 icon: "object-group",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 shortcut: getShortcutKey("CtrlOrCmd+G"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -328,6 +339,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Ungroup selection",
                 icon: "object-ungroup",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 shortcut: getShortcutKey("CtrlOrCmd+Shift+G"),
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
@@ -343,6 +355,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Bring forward",
                 icon: "bring-forward",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -357,6 +370,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Bring to front",
                 icon: "bring-front",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -371,6 +385,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Send backward",
                 icon: "send-backward",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -385,6 +400,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 name: "Send to back",
                 icon: "send-back",
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -592,6 +608,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "cut",
                 shortcut: getShortcutKey("CtrlOrCmd+X"),
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -608,6 +625,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "copy",
                 shortcut: getShortcutKey("CtrlOrCmd+C"),
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 onSelect: () => {
                     const selectedElements = editor.getSelection();
                     if (selectedElements.length > 0) {
@@ -624,6 +642,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                 icon: "clipboard",
                 shortcut: getShortcutKey("CtrlOrCmd+V"),
                 category: ActionCategory.EDITION,
+                disabled: disableEditorActions,
                 onSelect: ({ event = null, position = null }) => {
                     editor.pasteElementsFromClipboard(event, position).then(() => {
                         editor.dispatchChange();
@@ -880,7 +899,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
         }
         // 3. return the default actions
         return defaultActions;
-    }, [editor, props.overrides, preferences]);
+    }, [editor, props.overrides, preferences, disableEditorActions]);
 
     // create a map to quickly access an action by its id
     const actionsMap = React.useMemo(() => {
@@ -890,7 +909,7 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
     // method to dispatch an action
     const dispatchAction = React.useCallback((actionId: string, payload: any) => {
         const action = actionsMap.get(actionId);
-        if (action) {
+        if (action && !action.disabled) {
             action.onSelect(payload);
         }
     }, [actionsMap]);
