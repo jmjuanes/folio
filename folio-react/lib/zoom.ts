@@ -19,11 +19,10 @@ export const parseZoomValue = (value: number): number => {
 // @param {number} editor.width Width value of the current editor
 // @param {number} editor.height Height value of the current editor
 export const getTranslateCoordinatesForNewZoom = (value: number, width: number, height: number, currentView: CameraView): CameraView => {
-    const delta = currentView.zoom - value;
     return {
         zoom: value,
-        translateX: Math.floor(currentView.translateX + width * delta / 2),
-        translateY: Math.floor(currentView.translateY + height * delta / 2),
+        translateX: Math.floor(width / 2 - (width / 2 - currentView.translateX) * value / currentView.zoom),
+        translateY: Math.floor(height / 2 - (height / 2 - currentView.translateY) * value / currentView.zoom),
     };
 };
 
