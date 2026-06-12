@@ -45,6 +45,7 @@ export type ToolItem = {
     picks?: {
         [field: string]: PickField;
     };
+    disableEditorActions?: boolean;
     onSelect: () => void;
     onPickChange?: (defaults: Record<string, any>, field: string, value: any) => void;
 };
@@ -85,6 +86,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                 icon: "hand-grab",
                 shortcut: "h",
                 allowedInReadonly: true,
+                disableEditorActions: true,
                 onSelect: () => {
                     editor.setCurrentTool(TOOLS.DRAG);
                     editor.update();
@@ -105,6 +107,7 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
                 icon: "laser-pointer",
                 name: "Laser",
                 allowedInReadonly: true,
+                disableEditorActions: true,
                 shortcut: "l",
                 onSelect: () => {
                     editor.setCurrentTool(TOOLS.LASER);
