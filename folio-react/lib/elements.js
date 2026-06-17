@@ -464,6 +464,9 @@ export const elementsConfig = {
                 element.y2 = newPoint[1];
             }
         },
+        getUpdatedFields: element => {
+            return ["textSize", "textWidth", "textHeight", "x1", "x2", "y1", "y2"];
+        },
         onResize: (element, handler, snapshot, event) => {
             const [ width, height ] = getElementSize(element);
             if (isCornerHandler(handler) || handler === HANDLERS.EDGE_BOTTOM || handler === HANDLERS.EDGE_TOP) {
