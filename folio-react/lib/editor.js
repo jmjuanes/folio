@@ -644,25 +644,50 @@ export const createEditor = (options = {}) => {
             });
             if (elementsToChange.length > 0) {
                 // 1. Register element update in the history
+                const changedKeysByElement = new Map();
+                const newValuesByElement = new Map();
                 editor.addHistory({
                     type: CHANGES.UPDATE,
                     ids: groupChanges && elementsToChange.map(element => element.id).join(","),
                     keys: groupChanges && keys.join(","),
-                    elements: elementsToChange.map(element => ({
-                        id: element.id,
-                        prevValues: Object.fromEntries(keys.map(key => {
-                            return [key, element[key]];
-                        })),
-                        newValues: Object.fromEntries(keys.map((key, index) => {
-                            return [key, values[index]];
-                        })),
-                    })),
+                    elements: elementsToChange.map(element => {
+                        // we need to check the fields that the element has updated internally
+                        const changedKeys = new Set(keys);
+                        const elementConfig = getElementConfig(element);
+                        const clonedElement = Object.assign({}, element);
+                        keys.forEach((key, index) => {
+                            clonedElement[key] = values[index];
+                        });
+                        if (typeof elementConfig?.onUpdate === "function") {
+                            elementConfig?.onUpdate?.(clonedElement, changedKeys);
+                        }
+                        // run getUpdatedFields to check if the element has updated any other field internally
+                        if (typeof elementConfig?.getUpdatedFields === "function") {
+                            elementConfig?.getUpdatedFields?.(clonedElement, element)?.forEach(key => {
+                                changedKeys.add(key);
+                            });
+                        }
+                        changedKeysByElement.set(element.id, changedKeys);
+                        newValuesByElement.set(element.id, clonedElement);
+                        return {
+                            id: element.id,
+                            prevValues: Object.fromEntries(Array.from(changedKeys).map(key => {
+                                return [key, element[key]];
+                            })),
+                            newValues: Object.fromEntries(Array.from(changedKeys).map(key => {
+                                return [key, clonedElement[key]];
+                            })),
+                        };
+                    }),
                 });
                 // 2. Update the elements
-                const changedKeys = new Set(keys);
                 elementsToChange.forEach(element => {
-                    keys.forEach((key, index) => element[key] = values[index]);
-                    getElementConfig(element)?.onUpdate?.(element, changedKeys);
+                    const changedKeys = changedKeysByElement.get(element.id);
+                    const newValues = newValuesByElement.get(element.id);
+                    // keys.forEach((key, index) => element[key] = values[index]);
+                    Array.from(changedKeys).forEach(key => {
+                        element[key] = newValues[key];
+                    });
                 });
             }
             // 3. Update defaults
@@ -1162,8 +1187,8 @@ export const createEditor = (options = {}) => {
                             const element = editor.elements.find(el => el.id === item.id);
                             Object.assign(element, item.prevValues);
                             // 2. Apply element update
-                            const changedKeys = new Set(Object.keys(item.prevValues));
-                            getElementConfig(element)?.onUpdate?.(element, changedKeys);
+                            // const changedKeys = new Set(Object.keys(item.prevValues));
+                            // getElementConfig(element)?.onUpdate?.(element, changedKeys);
                         });
                     }
                 });
@@ -1195,8 +1220,8 @@ export const createEditor = (options = {}) => {
                             const element = editor.elements.find(el => el.id === item.id);
                             Object.assign(element, item.newValues);
                             // 2. Apply element update
-                            const changedKeys = new Set(Object.keys(item.newValues));
-                            getElementConfig(element)?.onUpdate?.(element, changedKeys);
+                            // const changedKeys = new Set(Object.keys(item.newValues));
+                            // getElementConfig(element)?.onUpdate?.(element, changedKeys);
                         });
                     }
                 });
