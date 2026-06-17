@@ -1,0 +1,29 @@
+## default configuration for folio-studio
+## https://github.com/jmjuanes/folio/blob/main/workers/cloud/config/default.yaml
+
+## configure the authentication method
+## allowed values: 'access_token', 'local:<path>'
+## 'access_token' enables single-user login using an access token, configured in the access_token field
+## 'local:<path>' enables multiuser login and saves authentication data in the provided path. Example: 'local:data/auth.db'
+authentication: 'access_token'
+
+## configure here your access token, if want a fixed access token
+## if not provided, a new one will be generated and printed in logs every time the server is restarted
+## you can override this token also using the FOLIO_ACCESS_TOKEN env variable
+# access_token: "123456abcd"
+
+## configure the storage method to use
+## allowed values: 'local:<path>', 'memory'
+## 'local:<path>' allows to save storage in the provided database path. Example: 'local:data/storage.db'
+## 'memory' saves storage in memory, and is cleared when the server stops
+storage: 'local:data/storage.db'
+
+## configure CORS in the application
+# cors_allowed_origins: "*"
+# cors_allowed_methods: "OPTIONS,GET,POST,PATCH,DELETE"
+
+## session configuration
+## secret: allows to specify a fixed secret key to generate jwt tokens.
+# session_secret: "abcd"
+## expiration: specify the expiration time. Times are parsed by https://www.npmjs.com/package/ms
+# session_expiration: "1y"
