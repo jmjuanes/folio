@@ -29,7 +29,7 @@ export const createKV = async (path: string, namespace: string): Promise<KVAdapt
         CREATE TABLE IF NOT EXISTS kv (
             key TEXT PRIMARY KEY,
             value TEXT,
-            metadata TEXT,
+            metadata TEXT
         ) STRICT;
     `);
     // 4. return adaptor
