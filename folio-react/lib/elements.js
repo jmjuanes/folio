@@ -230,7 +230,7 @@ export const elementsConfig = {
             }
         },
         getUpdatedFields: element => {
-            return element.text ? [ "textWidth", "textHeight", "x1", "x2", "y1", "y2" ] : [];
+            return ["textWidth", "textHeight", "x1", "x2", "y1", "y2"];
         },
     },
     [ELEMENTS.ARROW]: {
