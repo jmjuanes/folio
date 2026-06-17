@@ -230,7 +230,7 @@ export const elementsConfig = {
             }
         },
         getUpdatedFields: element => {
-            return element.text ? [ "textWidth", "textHeight", "x1", "x2", "y1", "y2" ] : [];
+            return ["textWidth", "textHeight", "x1", "x2", "y1", "y2"];
         },
     },
     [ELEMENTS.ARROW]: {
@@ -463,6 +463,9 @@ export const elementsConfig = {
                 element.x2 = newPoint[0];
                 element.y2 = newPoint[1];
             }
+        },
+        getUpdatedFields: element => {
+            return ["textSize", "textWidth", "textHeight", "x1", "x2", "y1", "y2"];
         },
         onResize: (element, handler, snapshot, event) => {
             const [ width, height ] = getElementSize(element);
