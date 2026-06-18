@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import ms from "ms";
 import { parseCookie } from "cookie";
 import { sendResponse, sendDataResponse, sendErrorResponse } from "./response.ts";
@@ -13,10 +12,7 @@ enum Endpoints {
     STATUS = "/status",
     AUTH_LOGIN = "/auth/login",
     AUTH_LOGOUT = "/auth/logout",
-    AUTHENTICATED_USER = "/user",
-    AUTHENTICATED_USER_PREFERENCES = "/user/preferences",
-    AUTHENTICATED_USER_DOCUMENTS = "/user/documents",
-    DOCUMENTS = "/documents",
+    STORAGE = "/storage",
 };
 
 // middleware to validate the session and return the username that is performing the request
@@ -42,10 +38,9 @@ export default {
             if (url.pathname === Endpoints.ROOT && request.method === "GET") {
                 return sendDataResponse(env, request, {
                     "status_url": Endpoints.STATUS,
-                    "current_user_url": Endpoints.AUTHENTICATED_USER,
-                    "current_user_preferences_url": Endpoints.AUTHENTICATED_USER_PREFERENCES,
-                    "current_user_documents_url": Endpoints.AUTHENTICATED_USER_DOCUMENTS,
-                    "documents_url": Endpoints.DOCUMENTS,
+                    "login_url": Endpoints.AUTH_LOGIN,
+                    "logout_url": Endpoints.AUTH_LOGOUT,
+                    "storage_url": Endpoints.STORAGE,
                 });
             }
             // -- GET Status --
@@ -84,87 +79,49 @@ export default {
                 // not allowed
                 throw new MethodNotAllowedError();
             }
-            // -- GET/PATCH Authenticated user --
-            else if (url.pathname === Endpoints.AUTHENTICATED_USER) {
+            // -- GET/POST Storage --
+            else if (url.pathname === Endpoints.STORAGE) {
                 const username = await authenticationMiddleware(env, request);
                 if (request.method === "GET") {
-                    // get information about the authenticated user in the storage
-                    const userInfo = await env.STORAGE.getWithMetadata(`users/${username}`, "json");
-                    return sendDataResponse(env, request, userInfo?.value || {});
-                }
-                else if (request.method === "PATCH") {
-                    const body: any = await request.json();
-                    await env.STORAGE.put(`users/${username}`, body || {}, {
-                        metadata: {
-                            "updated_at": Date.now(),
-                        },
+                    const prefix = url.searchParams.get("prefix") || "";
+                    const list = await env.STORAGE.list({
+                        prefix: `${username}/${prefix}`,
                     });
-                    return sendDataResponse(env, request, {
-                        message: "user info updated",
-                    });
-                }
-                // other case, method not allowed
-                throw new MethodNotAllowedError();
-            }
-            // -- GET/PATCH Authenticated user preferences --
-            else if (url.pathname === Endpoints.AUTHENTICATED_USER_PREFERENCES) {
-                const username = await authenticationMiddleware(env, request);
-                if (request.method === "GET") {
-                    const userPreferences = await env.STORAGE.getWithMetadata(`preferences/${username}`, "json");
-                    return sendDataResponse(env, request, userPreferences?.value || {});
-                }
-                else if (request.method === "PATCH") {
-                    const body: any = await request.json();
-                    await env.STORAGE.put(`preferences/${username}`, body || {}, {
-                        metadata: {
-                            "updated_at": Date.now(),
-                        },
-                    });
-                    return sendDataResponse(env, request, {
-                        message: "user preferences updated",
-                    });
-                }
-                // other case --> method not allowed
-                throw new MethodNotAllowedError();
-            }
-            // -- GET/POST Authenticated user documents --
-            else if (url.pathname === Endpoints.AUTHENTICATED_USER_DOCUMENTS) {
-                const username = await authenticationMiddleware(env, request);
-                if (request.method === "GET") {
-                    const userDocuments = await env.STORAGE.list({
-                        prefix: `documents/${username}/`,
-                    });
-                    return sendDataResponse(env, request, userDocuments?.keys || []);
+                    return sendDataResponse(env, request, list?.keys || []);
                 }
                 else if (request.method === "POST") {
                     const body: any = await request.json();
-                    const documentId: string = randomUUID();
-                    await env.STORAGE.put(`documents/${username}/${documentId}`, body?.value || {}, {
+                    // valudate that at least an 'id' and 'value' fields exists in body
+                    if (!body.id || !body.value) {
+                        throw new ValidationError("and 'id' and 'value' is required to register in the storage");
+                    }
+                    // const storageId: string = randomUUID();
+                    await env.STORAGE.put(`${username}/${body.id}`, body?.value || {}, {
                         metadata: body?.metadata || {},
                     });
                     return sendDataResponse(env, request, {
-                        id: documentId,
+                        id: body.id,
                     });
                 }
                 // other case --> method not allowed
                 throw new MethodNotAllowedError();
             }
-            // -- GET/PATCH/DELETE Documents --
-            else if (url.pathname.startsWith(Endpoints.DOCUMENTS)) {
+            // -- GET/PATCH/DELETE Storage with ID --
+            else if (url.pathname.startsWith(Endpoints.STORAGE) && url.pathname !== Endpoints.STORAGE) {
                 // extract the document from the path
-                const match = url.pathname.match(/^\/documents\/([^/]+)\/?$/);
+                const match = url.pathname.match(/^\/storage\/([^/]+)\/?$/);
                 if (!match) {
                     throw new NotFoundError();
                 }
-                const documentId = match[1];
+                const id = match[1];
                 const username = await authenticationMiddleware(env, request);
                 // GET document content and metadata
                 if (request.method === "GET") {
-                    const document = await env.STORAGE.getWithMetadata(`documents/${username}/${documentId}`, "json");
-                    if (document.value) {
+                    const entry = await env.STORAGE.getWithMetadata(`${username}/${id}`, "json");
+                    if (entry.value) {
                         return sendDataResponse(env, request, {
-                            value: document.value,
-                            metadata: document.metadata,
+                            value: entry.value,
+                            metadata: entry.metadata,
                         });
                     }
                     // if document.value is null, this document does not exist
@@ -172,17 +129,17 @@ export default {
                 }
                 else if (request.method === "PATCH") {
                     const body: any = await request.json();
-                    await env.STORAGE.put(`documents/${username}/${documentId}`, body.value || {}, {
+                    await env.STORAGE.put(`${username}/${id}`, body.value || {}, {
                         metadata: body.metadata || {},
                     });
                     return sendDataResponse(env, request, {
-                        message: "document updated",
+                        message: "updated",
                     });
                 }
                 else if (request.method === "DELETE") {
-                    await env.STORAGE.delete(`documents/${username}/${documentId}`);
+                    await env.STORAGE.delete(`${username}/${id}`);
                     return sendDataResponse(env, request, {
-                        message: "document deleted",
+                        message: "deleted",
                     });
                 }
                 // other case --> method not allowed
