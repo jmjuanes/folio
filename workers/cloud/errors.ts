@@ -23,7 +23,7 @@ export class NotFoundError extends Error {
 };
 
 export class MethodNotAllowedError extends Error {
-    statusCode = 500;
+    statusCode = 405;
     name = "MethodNotAllowedError";
     constructor() {
         super("Method not allowed");
