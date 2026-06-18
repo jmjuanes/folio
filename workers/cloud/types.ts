@@ -14,7 +14,8 @@ export type KVAdaptorListResponse = {
 };
 
 export type KVAdaptor = {
-    get: (key: string, type?: string) => Promise<string | null>;
+    get: (key: string, type?: string) => Promise<string | object | null>;
+    getWithMetadata: (key: string, type?: string) => Promise<{ value: string | object | null, metadata: object | null }>;
     put: (key: string, value: string, options?: KVAdaptorPutOptions) => Promise<void>;
     delete: (key: string) => Promise<void>;
     list: (options?: KVAdaptorListOptions) => Promise<KVAdaptorListResponse>;
@@ -23,7 +24,9 @@ export type KVAdaptor = {
 // interface for worker environment
 export interface Env {
     ACCESS_TOKEN: string;
-    ALLOWED_ORIGINS: string,
-    AUTHENTICATION: KVNamespace | KVAdaptor | null,
-    STORAGE: KVNamespace | KVAdaptor,
+    ALLOWED_ORIGINS: string;
+    SESSION_SECRET: string;
+    SESSION_EXPIRATION: string;
+    AUTHENTICATION: KVNamespace | KVAdaptor | null;
+    STORAGE: KVNamespace | KVAdaptor;
 };

@@ -34,13 +34,28 @@ export const createKV = async (path: string, namespace: string): Promise<KVAdapt
     `);
     // 4. return adaptor
     return Promise.resolve({
-        get: (key: string, type: string = "text"): Promise<any | null> => {
+        get: (key: string, type?: string) => {
             return new Promise(resolve => {
                 const row = db.prepare("SELECT value FROM kv WHERE key = ?").get(key);
                 if (row) {
                     return resolve(type === "json" ? JSON.parse(row.value as string) : row.value as string);
                 }
                 return resolve(null);
+            });
+        },
+        getWithMetadata: (key: string, type?: string) => {
+            return new Promise(resolve => {
+                const row = db.prepare("SELECT value,metadata FROM kv WHERE key = ?").get(key);
+                if (row) {
+                    return resolve({
+                        value: type === "json" ? JSON.parse(row.value as string) : row.value as string,
+                        metadata: JSON.parse(row.metadata as string || "{}"),
+                    });
+                }
+                return resolve({
+                    value: null,
+                    metadata: null,
+                });
             });
         },
         put: (key: string, value: any, options: KVAdaptorPutOptions = {}): Promise<void> => {
