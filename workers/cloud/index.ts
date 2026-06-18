@@ -19,6 +19,11 @@ export const startServer = async (config: Config) => {
         SESSION_EXPIRATION: config.session_expiration || "7d",
         STORAGE: (await createKV(config.storage, "storage")),
     };
+    // 2. check if authentication method is access token to print the token in console
+    if (isAccessTokenAuth) {
+        info(`using 'access_token' as authentication method.`);
+        info(`use '${env.ACCESS_TOKEN}' to login.`);
+    }
     // 2. create the http server instance
     const server = createServer(async (req, res) => {
         const start = Date.now();
