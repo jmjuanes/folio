@@ -15,10 +15,13 @@ export const startServer = async (config: Config) => {
         ACCESS_TOKEN: isAccessTokenAuth ? config.access_token : "",
         ALLOWED_ORIGINS: config.cors_allowed_origins || "*",
         AUTHENTICATION: !isAccessTokenAuth ? (await createKV(config.authentication, "authentication")) : null,
+        SESSION_SECRET: config.session_secret,
+        SESSION_EXPIRATION: config.session_expiration || "7d",
         STORAGE: (await createKV(config.storage, "storage")),
     };
     // 2. create the http server instance
     const server = createServer(async (req, res) => {
+        const start = Date.now();
         const hasBody = req.method !== "GET" && req.method !== "HEAD";
         const request = new Request(`http://localhost${req.url}`, {
             method: req.method,
@@ -26,15 +29,19 @@ export const startServer = async (config: Config) => {
             body: hasBody ? Readable.toWeb(req) : undefined,
             duplex: hasBody ? "half" : undefined,
         } as RequestInit);
-
+        // generate response from worker
         const response = await worker.fetch(request, env);
-
+        const end = Date.now();
+        // register headers and status code in node response
         res.writeHead(response.status, Object.fromEntries(response.headers));
+        res.setHeader("X-Response-Time", `${(end - start)}ms`);
         if (response.body) {
             await response.body.pipeTo(Writable.toWeb(res));
         } else {
             res.end();
         }
+        // print in console information about the response
+        info(`${req.method} ${req.url} - Returned ${res.statusCode} in ${end - start}ms`);
     });
     // 3. start http server in config.port
     debug(`starting server at port ${config.port}...`);
