@@ -38,8 +38,8 @@ export const startServer = async (config: Config) => {
         const response = await worker.fetch(request, env);
         const end = Date.now();
         // register headers and status code in node response
-        res.writeHead(response.status, Object.fromEntries(response.headers));
         res.setHeader("X-Response-Time", `${(end - start)}ms`);
+        res.writeHead(response.status, Object.fromEntries(response.headers));
         if (response.body) {
             await response.body.pipeTo(Writable.toWeb(res));
         } else {

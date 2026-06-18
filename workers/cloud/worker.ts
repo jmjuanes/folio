@@ -134,7 +134,7 @@ export default {
                     const userDocuments = await env.STORAGE.list({
                         prefix: `documents/${username}/`,
                     });
-                    return sendDataResponse(env, request, userDocuments || []);
+                    return sendDataResponse(env, request, userDocuments?.keys || []);
                 }
                 else if (request.method === "POST") {
                     const body: any = await request.json();
