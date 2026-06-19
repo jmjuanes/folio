@@ -7,7 +7,11 @@ import {
     CURSORS,
     EVENTS,
     FONT_SOURCES,
+    ZOOM_MIN,
+    ZOOM_MAX,
+    ZOOM_STEP,
 } from "../constants.js";
+import { getTranslateCoordinatesForZoomAtPoint } from "../lib/zoom.ts";
 import { AssetsProvider } from "../contexts/assets.jsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useTools } from "../contexts/tools.tsx";
@@ -43,6 +47,14 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     const canvasRef = React.useRef<HTMLDivElement>(null);
     const longPressTimerRef = React.useRef<number>(0);
     const clearLongPressTimer = React.useCallback(() => window.clearTimeout(longPressTimerRef.current), []);
+
+    // Touch state refs for pinch-to-zoom and two-finger pan
+    const touchStateRef = React.useRef<{
+        touches: { id: number; x: number; y: number }[];
+        lastDist: number;
+        lastMidX: number;
+        lastMidY: number;
+    } | null>(null);
     const [canvasSize, setCanvasSize] = React.useState<[number, number]>([100, 100]);
 
     const handleContextMenu = React.useCallback((event: any) => {
@@ -244,6 +256,104 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         editor.update();
     }, [editor]);
 
+    // Handle mouse-wheel: Ctrl/Cmd+wheel → zoom at cursor; shift+wheel → pan X; plain wheel → pan Y
+    // Note: on macOS, pinch-to-zoom on a trackpad also fires wheel events with ctrlKey=true,
+    // so this handler covers both mouse-wheel and trackpad pinch gestures.
+    const handleWheel = React.useCallback((event: WheelEvent) => {
+        event.preventDefault();
+        if (!canvasRef.current) return;
+        // ctrlKey is set by browsers for trackpad pinch gestures on macOS too
+        const isZoomGesture = event.ctrlKey || (IS_DARWIN && event.metaKey);
+        if (isZoomGesture) {
+            // Zoom centred on the cursor / pinch focal point
+            const { top, left } = canvasRef.current.getBoundingClientRect();
+            const pointX = event.clientX - left;
+            const pointY = event.clientY - top;
+            // Use proportional scaling for smooth trackpad, fixed step for mouse wheel
+            // Clamp deltaY to avoid extreme jumps on discrete wheels
+            const delta = Math.abs(event.deltaY) > 10 ? (event.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP) : -event.deltaY * 0.01;
+            const newZoom = Math.round(Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, editor.page.zoom + delta)) * 100) / 100;
+            const { zoom, translateX, translateY } = getTranslateCoordinatesForZoomAtPoint(newZoom, pointX, pointY, {
+                zoom: editor.page.zoom,
+                translateX: editor.page.translateX,
+                translateY: editor.page.translateY,
+            });
+            editor.page.zoom = zoom;
+            editor.page.translateX = translateX;
+            editor.page.translateY = translateY;
+        } else if (event.shiftKey) {
+            // Shift+wheel → horizontal pan
+            editor.page.translateX -= event.deltaY;
+        } else {
+            // Plain scroll → pan (deltaX for horizontal trackpad scrolling)
+            editor.page.translateX -= event.deltaX;
+            editor.page.translateY -= event.deltaY;
+        }
+        editor.update();
+    }, [editor]);
+
+    // Handle touch start: track touches for pinch/pan detection
+    const handleTouchStart = React.useCallback((event: TouchEvent) => {
+        if (event.touches.length < 2) return;
+        event.preventDefault();
+        const t0 = event.touches[0];
+        const t1 = event.touches[1];
+        const midX = (t0.clientX + t1.clientX) / 2;
+        const midY = (t0.clientY + t1.clientY) / 2;
+        const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+        touchStateRef.current = {
+            touches: [
+                { id: t0.identifier, x: t0.clientX, y: t0.clientY },
+                { id: t1.identifier, x: t1.clientX, y: t1.clientY },
+            ],
+            lastDist: dist,
+            lastMidX: midX,
+            lastMidY: midY,
+        };
+    }, []);
+
+    // Handle touch move: pinch-to-zoom and two-finger pan
+    const handleTouchMove = React.useCallback((event: TouchEvent) => {
+        if (event.touches.length < 2 || !touchStateRef.current || !canvasRef.current) return;
+        event.preventDefault();
+        const t0 = event.touches[0];
+        const t1 = event.touches[1];
+        const { top, left } = canvasRef.current.getBoundingClientRect();
+
+        const midX = (t0.clientX + t1.clientX) / 2 - left;
+        const midY = (t0.clientY + t1.clientY) / 2 - top;
+        const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+
+        const { lastDist, lastMidX, lastMidY } = touchStateRef.current;
+        const scaleFactor = dist / lastDist;
+        const newZoom = Math.round(Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, editor.page.zoom * scaleFactor)) * 100) / 100;
+
+        // 1. Apply pinch zoom centred on the midpoint
+        const { zoom, translateX, translateY } = getTranslateCoordinatesForZoomAtPoint(newZoom, midX, midY, {
+            zoom: editor.page.zoom,
+            translateX: editor.page.translateX,
+            translateY: editor.page.translateY,
+        });
+
+        // 2. Apply pan delta (difference in midpoint)
+        const panDx = midX - lastMidX;
+        const panDy = midY - lastMidY;
+
+        editor.page.zoom = zoom;
+        editor.page.translateX = translateX + panDx;
+        editor.page.translateY = translateY + panDy;
+
+        touchStateRef.current = { ...touchStateRef.current, lastDist: dist, lastMidX: midX, lastMidY: midY };
+        editor.update();
+    }, [editor]);
+
+    // Handle touch end: clear touch state when fingers lift
+    const handleTouchEnd = React.useCallback((event: TouchEvent) => {
+        if (event.touches.length < 2) {
+            touchStateRef.current = null;
+        }
+    }, []);
+
     // Register additional events
     React.useEffect(() => {
         const target = canvasRef.current;
@@ -252,6 +362,12 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             target.addEventListener(EVENTS.GESTURE_START, preventDefault);
             target.addEventListener(EVENTS.GESTURE_CHANGE, preventDefault);
             target.addEventListener(EVENTS.GESTURE_END, preventDefault);
+            // Wheel must be registered with { passive: false } to allow preventDefault()
+            target.addEventListener(EVENTS.WHEEL, handleWheel as EventListener, { passive: false });
+            // Touch events for pinch/pan
+            target.addEventListener(EVENTS.TOUCH_START, handleTouchStart as EventListener, { passive: false });
+            target.addEventListener(EVENTS.TOUCH_MOVE, handleTouchMove as EventListener, { passive: false });
+            target.addEventListener(EVENTS.TOUCH_END, handleTouchEnd as EventListener);
         }
         document.addEventListener(EVENTS.KEY_DOWN, handleKeyDown);
         document.addEventListener(EVENTS.KEY_UP, handleKeyUp);
@@ -265,13 +381,17 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
                 target.removeEventListener(EVENTS.GESTURE_START, preventDefault);
                 target.removeEventListener(EVENTS.GESTURE_CHANGE, preventDefault);
                 target.removeEventListener(EVENTS.GESTURE_END, preventDefault);
+                target.removeEventListener(EVENTS.WHEEL, handleWheel as EventListener);
+                target.removeEventListener(EVENTS.TOUCH_START, handleTouchStart as EventListener);
+                target.removeEventListener(EVENTS.TOUCH_MOVE, handleTouchMove as EventListener);
+                target.removeEventListener(EVENTS.TOUCH_END, handleTouchEnd as EventListener);
             }
             document.removeEventListener(EVENTS.KEY_DOWN, handleKeyDown);
             document.removeEventListener(EVENTS.KEY_UP, handleKeyUp);
             document.removeEventListener(EVENTS.PASTE, handlePaste);
             window.removeEventListener(EVENTS.RESIZE, handleResize);
         };
-    }, [handleKeyDown, handleKeyUp, handlePaste, handleResize]);
+    }, [handleKeyDown, handleKeyUp, handlePaste, handleResize, handleWheel, handleTouchStart, handleTouchMove, handleTouchEnd]);
 
     // generate canvas style
     const canvasStyle = React.useMemo(() => ({
