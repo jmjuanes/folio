@@ -10,6 +10,10 @@
 # Use specific Node.js version with Alpine for minimal footprint and security
 FROM node:26-alpine AS base
 
+# install yarn using corepack
+# RUN corepack enable && corepack prepare yarn@stable --activate
+RUN npm install -g yarn
+
 # Set environment variables
 ENV FOLIO_APPDIR=/opt/folio \
     FOLIO_PORT=8080
@@ -36,10 +40,10 @@ FROM base AS server
 COPY --chown=node:node workers/cloud/ .
 
 # Install dependencies with security optimizations
-RUN yarn install --frozen-lockfile --production --network-timeout 300000 && \
-    yarn cache clean && \
+RUN yarn install --frozen-lockfile --network-timeout 300000 && \
     yarn build && \
-    # Remove unnecessary files to reduce image size
+    yarn install --frozen-lockfile --production --network-timeout 300000 && \
+    yarn cache clean && \
     find node_modules -name "*.md" -delete && \
     find node_modules -name "*.txt" -delete && \
     find node_modules -name "LICENSE*" -delete
