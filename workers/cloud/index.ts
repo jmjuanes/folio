@@ -24,7 +24,7 @@ export const startServer = async (config: Config) => {
         info(`using 'access_token' as authentication method.`);
         info(`use '${env.ACCESS_TOKEN}' to login.`);
     }
-    // 2. create the http server instance
+    // 3. create the http server instance
     const server = createServer(async (req, res) => {
         const start = Date.now();
         const hasBody = req.method !== "GET" && req.method !== "HEAD";
@@ -48,7 +48,7 @@ export const startServer = async (config: Config) => {
         // print in console information about the response
         info(`${req.method} ${req.url} - Returned ${res.statusCode} in ${end - start}ms`);
     });
-    // 3. start http server in config.port
+    // 4. start http server in config.port
     debug(`starting server at port ${config.port}...`);
     server.listen(Number(config.port), () => {
         info(`server running at 'http://127.0.0.1:${config.port}'`);
