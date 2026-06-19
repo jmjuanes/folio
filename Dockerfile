@@ -8,7 +8,7 @@
 # =============================================================================
 
 # Use specific Node.js version with Alpine for minimal footprint and security
-FROM node:24-alpine AS base
+FROM node:26-alpine AS base
 
 # Set environment variables
 ENV FOLIO_APPDIR=/opt/folio \
@@ -33,7 +33,7 @@ WORKDIR $FOLIO_APPDIR
 FROM base AS server
 
 # Copy stuff from workers/cloud folder
-COPY --chown=node:node workers/cloud .
+COPY --chown=node:node workers/cloud/ .
 
 # Install dependencies with security optimizations
 RUN yarn install --frozen-lockfile --production --network-timeout 300000 && \
