@@ -26,6 +26,24 @@ export const getTranslateCoordinatesForNewZoom = (value: number, width: number, 
     };
 };
 
+// @description get transform coordinates for a new zoom value centred on a specific screen point
+// @param {number} value New zoom value
+// @param {number} pointX Screen X coordinate of the focal point (e.g. cursor or pinch midpoint)
+// @param {number} pointY Screen Y coordinate of the focal point
+// @param {CameraView} currentView Current camera state (zoom, translateX, translateY)
+export const getTranslateCoordinatesForZoomAtPoint = (value: number, pointX: number, pointY: number, currentView: CameraView): CameraView => {
+    const newZoom = parseZoomValue(value);
+    // The world point under the focal screen point must stay fixed after the zoom.
+    // worldX = (pointX - translateX) / zoom  →  newTranslateX = pointX - worldX * newZoom
+    const worldX = (pointX - currentView.translateX) / currentView.zoom;
+    const worldY = (pointY - currentView.translateY) / currentView.zoom;
+    return {
+        zoom: newZoom,
+        translateX: Math.floor(pointX - worldX * newZoom),
+        translateY: Math.floor(pointY - worldY * newZoom),
+    };
+};
+
 // @description get zoom level and transform coordinates to fit the provided elements into the viewport
 // @param {Array} elements Array of elements to fit into the viewport
 // @param {number} editor.width Width value of the current editor
