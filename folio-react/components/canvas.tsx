@@ -278,7 +278,9 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     // so this handler covers both mouse-wheel and trackpad pinch gestures.
     const handleWheel = React.useCallback((event: WheelEvent) => {
         event.preventDefault();
-        if (!canvasRef.current) return;
+        if (!canvasRef.current || !preferences[PREFERENCES.GESTURES_WHEEL]) {
+            return;
+        }
         // ctrlKey is set by browsers for trackpad pinch gestures on macOS too
         const isZoomGesture = event.ctrlKey || (IS_DARWIN && event.metaKey);
         if (isZoomGesture) {
@@ -307,11 +309,11 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             editor.page.translateY -= event.deltaY;
         }
         editor.update();
-    }, [editor]);
+    }, [editor, preferences[PREFERENCES.GESTURES_WHEEL]]);
 
     // Handle touch start: track touches for pinch/pan detection
     const handleTouchStart = React.useCallback((event: TouchEvent) => {
-        if (event.touches.length >= 2) {
+        if (event.touches.length >= 2 && preferences[PREFERENCES.GESTURES_PINCH]) {
             event.preventDefault();
 
             // set touch as active and clear long-press event
@@ -333,11 +335,13 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
                 lastMidY: midY,
             };
         }
-    }, []);
+    }, [preferences[PREFERENCES.GESTURES_PINCH]]);
 
     // Handle touch move: pinch-to-zoom and two-finger pan
     const handleTouchMove = React.useCallback((event: TouchEvent) => {
-        if (event.touches.length < 2 || !touchStateRef.current || !canvasRef.current) return;
+        if (event.touches.length < 2 || !touchStateRef.current || !canvasRef.current || !preferences[PREFERENCES.GESTURES_PINCH]) {
+            return;
+        }
         event.preventDefault();
         const t0 = event.touches[0];
         const t1 = event.touches[1];
@@ -368,11 +372,11 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
 
         touchStateRef.current = { ...touchStateRef.current, lastDist: dist, lastMidX: midX, lastMidY: midY };
         editor.update();
-    }, [editor]);
+    }, [editor, preferences[PREFERENCES.GESTURES_PINCH]]);
 
     // Handle touch end: clear touch state when fingers lift
     const handleTouchEnd = React.useCallback((event: TouchEvent) => {
-        if (event.touches.length < 2) {
+        if (event.touches.length < 2 && preferences[PREFERENCES.GESTURES_PINCH]) {
             touchStateRef.current = null;
             // little delay to prevent additional actions dispatched by the last finger
             delay(100, () => {
@@ -380,7 +384,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
                 isMultiTouchRef.current = false;
             });
         }
-    }, []);
+    }, [preferences[PREFERENCES.GESTURES_PINCH]]);
 
     // Register additional events
     React.useEffect(() => {

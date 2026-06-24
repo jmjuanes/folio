@@ -15,6 +15,9 @@ export type PreferencesProviderProps = {
 export const DEFAULT_PREFERENCES = {
     // keyboard shortcuts
     [PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED]: true,
+    // gestures
+    [PREFERENCES.GESTURES_PINCH]: true,
+    [PREFERENCES.GESTURES_WHEEL]: true,
     // minimap preferences
     [PREFERENCES.MINIMAP_ENABLED]: true,
     [PREFERENCES.MINIMAP_SIDE]: "left",
