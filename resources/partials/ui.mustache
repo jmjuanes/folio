@@ -41,7 +41,7 @@
         </div>
         {{#if this.href}}
         <div class="hidden md:flex items-center">
-            <a href="{{this.href}}" class="font-bold underline flex items-center gap-1">
+            <a href="{{=resolve_path this.href}}" class="font-bold underline flex items-center gap-1">
                 <span class="text-sm">Learn more</span>
                 <div class="flex items-center text-base">
                     {{>folio::icon icon="chevron-right" className=""}}
@@ -92,7 +92,7 @@
 {{#macro "cta::links"}}
 <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
     {{#each this.links}}
-    <a href="{{this.href}}" class="font-bold text-2xl md:text-3xl hover:underline {{this.className}}">
+    <a href="{{=resolve_path this.href}}" class="font-bold text-2xl md:text-3xl hover:underline {{this.className}}">
         <span>{{!this.text}} →</span>
     </a>
     {{/each}}
@@ -133,7 +133,7 @@
 {{#macro "hero::cta"}}
 <div class="flex flex-col items-center gap-2">
     <div class="flex flex-col sm:flex-row items-center gap-4 text-center">
-        <a href="{{this.href}}" class="flex cursor-pointer hover:underline">
+        <a href="{{=resolve_path this.href}}" class="flex cursor-pointer hover:underline">
             <span class="font-bold text-2xl sm:text-3xl md:text-4xl">{{!this.text}}</span>
         </a>
     </div>
@@ -165,7 +165,7 @@
 {{!-- link block for a section intro --}}
 {{#macro "section-intro::link"}}
 <div class="flex">
-    <a href="{{this.href}}" class="hover:underline font-medium text-lg">
+    <a href="{{=resolve_path this.href}}" class="hover:underline font-medium text-lg">
         <span>{{!this.text}} &rarr;</span>
     </a>
 </div>
@@ -193,7 +193,7 @@
     {{/if}}
     {{#if this.linkText}}
     <div class="flex justify-center mt-4">
-        <a href="{{this.linkHref}}" class="flex items-center hover:underline px-3 py-2 rounded-xl {{this.linkClassName}}">
+        <a href="{{=resolve_path this.linkHref}}" class="flex items-center hover:underline px-3 py-2 rounded-xl {{this.linkClassName}}">
             <div class="font-bold text-center">{{!this.linkText}}</div>
         </a>
     </div>

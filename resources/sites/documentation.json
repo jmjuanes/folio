@@ -1,11 +1,12 @@
 {
     "template": "documentation",
     "title": "Folio Docs",
+    "base": "/",
     "description": "Discover how to use and what can you build with Folio.",
-    "url": "https://folio.josemi.xyz/docs",
+    "url": "https://josemi.xyz/folio/docs",
     "favicon": "/favicon.png",
     "metatags": {
-        "og:image": "/og.png"
+        "og:image": "/folio/og.png"
     },
     "markdown": {
         "classNames": {
@@ -38,7 +39,7 @@
         ],
         "callToAction": {
             "text": "Get started",
-            "href": "/app"
+            "href": "https://folio.josemi.xyz"
         }
     },
     "sidebar": [

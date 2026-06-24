@@ -7,7 +7,7 @@
         {{#if @site.navbar.links}}
         <div class="hidden md:flex gap-6 items-center">
             {{#each @site.navbar.links}}
-            <a href="{{this.href}}" class="cursor-pointer hover:underline text-current text-base">
+            <a href="{{=resolve_path this.href}}" class="cursor-pointer hover:underline text-current text-base">
                 <span>{{this.text}}</span>
             </a>
             {{/each}}
@@ -33,7 +33,7 @@
                         </div>
                         {{#each this.pages}}
                         {{#withPage this}}
-                        <a href="{{this.attributes.permalink}}" class="flex text-sm mb-1 font-medium text-current {{#eq this.attributes.permalink @page.permalink}}bg-gray-100 font-bold{{/eq}} hover:bg-gray-100 rounded-lg px-3 py-2">
+                        <a href="{{=resolve_path this.attributes.permalink}}" class="flex text-sm mb-1 font-medium text-current {{#eq this.attributes.permalink @page.permalink}}bg-gray-100 font-bold{{/eq}} hover:bg-gray-100 rounded-lg px-3 py-2">
                             <span class="leading-tight opacity-70">{{this.attributes.title}}</span>
                         </a>
                         {{/withPage}}
@@ -62,7 +62,7 @@
                     <div class="w-full flex justify-start">
                     {{#if @page.prevPage}}
                         {{#withPage @page.prevPage}}
-                        <a href="{{this.attributes.permalink}}" class="flex flex-nowrap justify-start items-center gap-2 opacity-60 hover:opacity-100">
+                        <a href="{{=resolve_path this.attributes.permalink}}" class="flex flex-nowrap justify-start items-center gap-2 opacity-60 hover:opacity-100">
                             <div class="flex items-center text-xl">
                                 {{>folio::icon icon="chevron-left"}}
                             </div>
@@ -74,7 +74,7 @@
                     <div class="w-full flex justify-end">
                     {{#if @page.nextPage}}
                         {{#withPage @page.nextPage}}
-                        <a href="{{this.attributes.permalink}}" class="flex flex-nowrap justify-end items-center gap-2 opacity-60 hover:opacity-100">
+                        <a href="{{=resolve_path this.attributes.permalink}}" class="flex flex-nowrap justify-end items-center gap-2 opacity-60 hover:opacity-100">
                             <div class="font-medium">{{this.attributes.title}}</div>
                             <div class="flex items-center text-xl">
                                 {{>folio::icon icon="chevron-right"}}

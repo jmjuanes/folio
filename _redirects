@@ -1,0 +1,5 @@
+/app        /index.html  200
+/app.html   /index.html  200
+/studio.html       https://josemi.xyz/folio/studio.html    301
+/docs       https://josemi.xyz/folio/docs    301
+/docs/:splat    https://josemi.xyz/folio/docs/:splat    301

@@ -7,7 +7,7 @@
         {{>folio::logo variant="light"}}
         <div class="flex gap-6 items-center">
             {{#each @site.navbar.links}}
-            <a href="{{this.href}}" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
+            <a href="{{=resolve_path this.href}}" class="cursor-pointer font-medium hover:underline text-current text-lg md:text-2xl">
                 <span>{{this.text}}</span>
             </a>
             {{/each}}
@@ -51,7 +51,7 @@
                 {{#if this.links}}
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
                     {{#each this.links}}
-                    <a href="{{this.href}}" class="font-bold text-2xl md:text-4xl hover:underline {{this.className}}">
+                    <a href="{{=resolve_path this.href}}" class="font-bold text-2xl md:text-4xl hover:underline {{this.className}}">
                         <span>{{!this.text}} →</span>
                     </a>
                     {{/each}}
@@ -69,7 +69,7 @@
                         {{#inlineMarkdown}}{{!this.description}}{{/inlineMarkdown}}
                     </div>
                     <div class="flex mt-4">
-                        <a href="/releases#{{!this.url}}" class="flex items-center px-3 py-2 font-bold rounded-xl bg-gray-950 text-white hover:underline">
+                        <a href="{{=resolve "releases#" this.url}}" class="flex items-center px-3 py-2 font-bold rounded-xl bg-gray-950 text-white hover:underline">
                             <span>Read more &rarr;</span>
                         </a>
                     </div>
@@ -98,7 +98,7 @@
                 <div class="col-span-1 flex flex-col gap-2">
                     <div class="text-sm font-bold opacity-40">{{this.text}}</div>
                     {{#each this.links}}
-                    <a href="{{this.href}}" class="hover:underline text-current font-medium text-sm">
+                    <a href="{{=resolve_path this.href}}" class="hover:underline text-current font-medium text-sm">
                         <span>{{this.text}}</span>
                     </a>
                     {{/each}}
