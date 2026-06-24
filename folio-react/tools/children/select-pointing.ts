@@ -59,4 +59,8 @@ export class SelectPointingState extends ToolState {
     onPointerUp() {
         this.parent?.transition("idle");
     }
+
+    onPointerCancel(): void {
+        this.parent?.transition("idle");
+    }
 };

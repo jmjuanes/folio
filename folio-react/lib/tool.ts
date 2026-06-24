@@ -78,6 +78,7 @@ export class ToolState {
     onPointerDown?(event: EditorPointEvent): void;
     onPointerMove?(event: EditorPointEvent): void;
     onPointerUp?(event: EditorPointEvent): void;
+    onPointerCancel?(): void;
     onDoubleClick?(event: EditorPointEvent): void;
     onKeyDown?(event: EditorKeyboardEvent): void;
     onKeyUp?(event: EditorKeyboardEvent): void;
