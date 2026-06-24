@@ -105,7 +105,6 @@ export default {
                 },
                 {
                     from: path.resolve("../../_redirects"),
-                    to: "_redirects",
                 },
             ],
         }),
