@@ -2,11 +2,12 @@
     "template": "landing",
     "title": "Folio",
     "description": "The minimal digital whiteboard for sketching and prototyping.",
+    "base": "/",
     "keywords": "folio,whiteboard,sketching,prototyping,design,ui",
-    "url": "https://folio.josemi.xyz",
+    "url": "https://josemi.xyz/folio",
     "favicon": "/favicon.png",
     "metatags": {
-        "og:image": "/og.png"
+        "og:image": "/folio/og.png"
     },
     "navbar": {
         "links": [
@@ -15,7 +16,7 @@
         ],
         "callToAction": {
             "text": "Try it free",
-            "href": "/app"
+            "href": "https://folio.josemi.xyz"
         }
     },
     "footer": {

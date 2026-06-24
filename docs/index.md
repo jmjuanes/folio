@@ -31,7 +31,7 @@ quickstart:
 <!--html-->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
 {{#each @page.quickstart}}
-    <a href="{{this.href}}" class="p-6 border-1 border-gray-200 rounded-xl">
+    <a href="{{=resolve_path this.href}}" class="p-6 border-1 border-gray-200 rounded-xl">
         <div class="flex items-center text-3xl mb-3">
             {{>folio::icon icon=this.icon}}
         </div>

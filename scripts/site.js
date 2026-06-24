@@ -10,6 +10,7 @@ import markdownPlugin from "mikel-markdown";
 
 import pkg from "../package.json" with { type: "json" };
 
+const BASE_PATH = "/folio";
 const BLOCK_REGEX = /^```(\w+)((?:\s+[\w-]+=(?:"[^"]*"|'[^']*'|[^\s`]+))*)\n([\s\S]*?)^```$/gm;
 
 // utility method to convert code blocks into calls to folio::code partial
@@ -52,7 +53,10 @@ const pages = (() => {
             return {
                 source: file,
                 body: replaceCodeBlocks(body),
-                attributes: attributes,
+                attributes: {
+                    ...attributes,
+                    // permalink: join(BASE_PATH, attributes?.permalink || ""),
+                },
             };
         });
     }
@@ -143,6 +147,10 @@ build({
     functions: {
         highlight: params => {
             return highlightCode(params?.options?.code, params?.options?.language);
+        },
+        resolve_path: params => {
+            // NOTE: external links won't be appended with the base_path
+            return params.args[0].startsWith("http") ? params.args[0] : join(BASE_PATH, join(...params.args));
         },
     },
     plugins: [
