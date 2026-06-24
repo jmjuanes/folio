@@ -168,7 +168,8 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             return;
         }
         // Register timer function
-        if (isTouchOrPenEvent(event)) {
+        if (isTouchOrPenEvent(event) && !isMultiTouchRef.current) {
+            clearLongPressTimer(); // reset previous timer
             longPressTimerRef.current = delay(props.longPressDelay || 700, () => {
                 document.removeEventListener("pointermove", handlePointerMove);
                 document.removeEventListener("pointerup", handlePointerUp);
@@ -375,6 +376,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
             touchStateRef.current = null;
             // little delay to prevent additional actions dispatched by the last finger
             delay(100, () => {
+                clearLongPressTimer();
                 isMultiTouchRef.current = false;
             });
         }
