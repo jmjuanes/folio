@@ -41,12 +41,12 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     const { showContextMenu, hideContextMenu } = useContextMenu();
     const { dispatchAction, getActionByKeysCombination } = useActions();
     const preferences = usePreferences();
-
-    const activeTool = editor.activeTool;
-
+    const isMultiTouchRef = React.useRef<boolean>(false);
     const canvasRef = React.useRef<HTMLDivElement>(null);
     const longPressTimerRef = React.useRef<number>(0);
-    const clearLongPressTimer = React.useCallback(() => window.clearTimeout(longPressTimerRef.current), []);
+    const clearLongPressTimer = React.useCallback(() => {
+        window.clearTimeout(longPressTimerRef.current);
+    }, []);
 
     // Touch state refs for pinch-to-zoom and two-finger pan
     const touchStateRef = React.useRef<{
@@ -56,10 +56,11 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         lastMidY: number;
     } | null>(null);
     const [canvasSize, setCanvasSize] = React.useState<[number, number]>([100, 100]);
+    const activeTool = editor.activeTool;
 
     const handleContextMenu = React.useCallback((event: any) => {
         event.preventDefault();
-        if (activeTool?.id === TOOLS.SELECT && canvasRef.current) {
+        if (!isMultiTouchRef.current && activeTool?.id === TOOLS.SELECT && canvasRef.current) {
             const { top, left } = canvasRef.current.getBoundingClientRect();
             showContextMenu(
                 event.nativeEvent.clientY - top,
@@ -161,8 +162,9 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         event.preventDefault();
         event.stopPropagation();
 
-        // Prevent fire pointer down event if pressed button is not left
-        if (event.nativeEvent.button) {
+        // prevent fire pointer down event if pressed button is not left
+        // also prevents dispatching this event if we are handing a multi-touch event
+        if (event.nativeEvent.button || isMultiTouchRef.current) {
             return;
         }
         // Register timer function
@@ -194,6 +196,16 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         const handlePointerMove = (event: any) => {
             clearLongPressTimer();
             event.preventDefault();
+
+            // check if we have to cancel the event if a multitouch event is currently handled
+            if (isMultiTouchRef.current) {
+                editor.getCurrentTool().dispatch("pointerCancel");
+                editor.update(); // required to remove visual elements of the tool
+                cancelPointerEventsListeners();
+                return;
+            }
+
+            // dispatch pointer move event
             editor.getCurrentTool().dispatch("pointerMove", Object.assign({}, eventInfo, {
                 nativeEvent: event,
                 currentX: (event.clientX - left - editor.page.translateX) / editor.page.zoom,
@@ -212,12 +224,16 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
                 nativeEvent: event,
             }));
             editor.update();
+            cancelPointerEventsListeners();
+        };
 
-            // Remove events listeners
+        // cancel events listeners
+        const cancelPointerEventsListeners = () => {
             document.removeEventListener("pointermove", handlePointerMove);
             document.removeEventListener("pointerup", handlePointerUp);
             document.removeEventListener("pointerleave", handlePointerUp);
         };
+
         // Register event listeners
         document.addEventListener("pointermove", handlePointerMove);
         document.addEventListener("pointerup", handlePointerUp);
@@ -294,22 +310,28 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
 
     // Handle touch start: track touches for pinch/pan detection
     const handleTouchStart = React.useCallback((event: TouchEvent) => {
-        if (event.touches.length < 2) return;
-        event.preventDefault();
-        const t0 = event.touches[0];
-        const t1 = event.touches[1];
-        const midX = (t0.clientX + t1.clientX) / 2;
-        const midY = (t0.clientY + t1.clientY) / 2;
-        const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
-        touchStateRef.current = {
-            touches: [
-                { id: t0.identifier, x: t0.clientX, y: t0.clientY },
-                { id: t1.identifier, x: t1.clientX, y: t1.clientY },
-            ],
-            lastDist: dist,
-            lastMidX: midX,
-            lastMidY: midY,
-        };
+        if (event.touches.length >= 2) {
+            event.preventDefault();
+
+            // set touch as active and clear long-press event
+            isMultiTouchRef.current = true;
+            clearLongPressTimer();
+
+            const t0 = event.touches[0];
+            const t1 = event.touches[1];
+            const midX = (t0.clientX + t1.clientX) / 2;
+            const midY = (t0.clientY + t1.clientY) / 2;
+            const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+            touchStateRef.current = {
+                touches: [
+                    { id: t0.identifier, x: t0.clientX, y: t0.clientY },
+                    { id: t1.identifier, x: t1.clientX, y: t1.clientY },
+                ],
+                lastDist: dist,
+                lastMidX: midX,
+                lastMidY: midY,
+            };
+        }
     }, []);
 
     // Handle touch move: pinch-to-zoom and two-finger pan
@@ -351,6 +373,10 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     const handleTouchEnd = React.useCallback((event: TouchEvent) => {
         if (event.touches.length < 2) {
             touchStateRef.current = null;
+            // little delay to prevent additional actions dispatched by the last finger
+            delay(100, () => {
+                isMultiTouchRef.current = false;
+            });
         }
     }, []);
 
