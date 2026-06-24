@@ -56,6 +56,23 @@ export const PreferencesContent = (props: PreferencesContentProps): JSX.Element 
                     },
                 },
             },
+            {
+                title: "Gestures",
+                fields: {
+                    [PREFERENCES.GESTURES_WHEEL]: {
+                        type: FORM_OPTIONS.CHECKBOX,
+                        disabled: disabledFields.has(PREFERENCES.GESTURES_WHEEL),
+                        title: "Wheel gestures",
+                        helper: "Enable zoom and pan using the mouse wheel.",
+                    },
+                    [PREFERENCES.GESTURES_PINCH]: {
+                        type: FORM_OPTIONS.CHECKBOX,
+                        disabled: disabledFields.has(PREFERENCES.GESTURES_PINCH),
+                        title: "Pinch gestures",
+                        helper: "Enable zoom and pan using two-finger gestures on touch devices.",
+                    },
+                },
+            },
         ];
         // remove hidden fields
         (props.hiddenFields || []).forEach((field: string) => {

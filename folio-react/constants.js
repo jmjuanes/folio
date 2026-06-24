@@ -550,7 +550,10 @@ export const PREFERENCES = {
     // global preferences
     // THEME: "theme",
     // keyboard shortcuts
-    KEYBOARD_SHORTCUTS_ENABLED: "keyboardShortcuts.enabled",
+    KEYBOARD_SHORTCUTS_ENABLED: "editor.keyboardShortcuts.enabled",
+    // gestures
+    GESTURES_WHEEL: "editor.gestures.wheel",
+    GESTURES_PINCH: "editor.gestures.pinch",
     // editor elements
     MINIMAP_ENABLED: "editor.minimap.enabled",
     MINIMAP_SIDE: "editor.minimap.side",

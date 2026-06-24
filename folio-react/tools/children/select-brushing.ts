@@ -48,4 +48,9 @@ export class SelectBrushingState extends ToolState {
         this.selection = null;
         this.parent?.transition("idle");
     }
+
+    onPointerCancel() {
+        this.selection = null;
+        this.parent?.transition("idle");
+    }
 };
