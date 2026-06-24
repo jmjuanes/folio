@@ -2,7 +2,7 @@
 
 > A minimalistic and infinite whiteboard. Sketch, Prototype, and Design with total freedom.
 
-[Website](https://folio.josemi.xyz) · [Try it](https://folio.josemi.xyz/app) · [Documentation](https://folio.josemi.xyz/docs) · [Changelog](https://github.com/jmjuanes/folio/CHANGELOG.md) · [Report a bug](https://github.com/jmjuanes/folio/issues)
+[Website](https://josemi.xyz/folio) · [Try it](https://folio.josemi.xyz) · [Documentation](https://josemi.xyz/folio/docs) · [Changelog](https://github.com/jmjuanes/folio/CHANGELOG.md) · [Report a bug](https://github.com/jmjuanes/folio/issues)
 
 ![](https://badgen.net/github/license/jmjuanes/folio?labelColor=1d2734&color=21bf81)
 ![](https://badgen.net/badge/PRs/welcome/codecake?labelColor=1d2734&color=21bf81)
@@ -17,7 +17,7 @@ We encourage you to share your thoughts, suggestions, and any issues you encount
 
 ## About this Repository
 
-This repository contains the core source code for [Folio](https://folio.josemi.xyz), a modular whiteboard built with React and TypeScript (mostly), designed for structured sketching and local-first workflows. It also includes the full codebase for [Folio Studio](https://folio.josemi.xyz/studio) - a full-stack and self-hosted application combining a Node.js backend (GraphQL + SQLite) with the frontend editor — as well as the [landing page](https://folio.josemi.xyz) and [documentation](https://folio.josemi.xyz/docs) for the project.
+This repository contains the core source code for [Folio](https://folio.josemi.xyz), a modular whiteboard built with React and TypeScript (mostly), designed for structured sketching and local-first workflows. It also includes the full codebase for [Folio Studio](https://josemi.xyz/folio/#studio) - a full-stack and self-hosted application combining a Node.js backend (GraphQL + SQLite) with the frontend editor — as well as the [landing page](https://josemi.xyz/folio) and [documentation](https://josemi.xyz/folio/docs) for the project.
 
 ## Repository Structure
 
