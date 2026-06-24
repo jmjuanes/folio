@@ -1,10 +1,13 @@
 import React from "react";
-import { ACTIONS, ELEMENTS } from "../constants.js";
+import { ChevronRightIcon } from "@josemi-icons/react";
+import { ACTIONS, ELEMENTS, PREFERENCES } from "../constants.js";
 import { ContextMenu as Menu } from "./ui/context-menu.tsx";
+import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu, useContextMenuPosition } from "../hooks/use-context-menu.tsx";
 import { useActions } from "../contexts/actions.tsx";
+import { usePreferences } from "../contexts/preferences.tsx";
 import { printShortcut } from "../lib/actions.ts";
 
 // Not allowed elements in library
@@ -18,6 +21,9 @@ const NOT_ALLOWED_ELEMENTS_IN_LIBRARY = [
 export type ContextMenuItemProps = {
     icon: string;
     text: string;
+    className?: string;
+    expandable?: boolean;
+    active?: boolean;
     disabled?: boolean;
     shortcut?: string | string[];
     onClick?: () => void;
@@ -25,17 +31,27 @@ export type ContextMenuItemProps = {
 
 // @private wrapper for the context menu items
 export const ContextMenuItem = (props: ContextMenuItemProps): React.JSX.Element => (
-    <Menu.Item disabled={!!props.disabled} onClick={props.onClick}>
+    <Menu.Item active={props.active} className={props.className} disabled={!!props.disabled} onClick={props.onClick}>
         <Menu.Icon icon={props.icon} />
         <span>{props.text}</span>
-        {props.shortcut && (
-            <Menu.Shortcut>{printShortcut(props.shortcut)}</Menu.Shortcut>
+        {(props.shortcut || props.expandable) && (
+            <div className="flex items-center ml-auto">
+                {props.shortcut && (
+                    <Menu.Shortcut>{printShortcut(props.shortcut)}</Menu.Shortcut>
+                )}
+                {props.expandable && (
+                    <div className="flex text-sm opacity-40">
+                        <ChevronRightIcon />                        
+                    </div>
+                )}
+            </div>
         )}
     </Menu.Item>
 );
 
 export const ContextMenuContent = (): React.JSX.Element => {
     const editor = useEditor();
+    const preferences = usePreferences();
     const { dispatchAction, getShortcutByActionId } = useActions();
     const { Library } = useEditorComponents();
     const { hideContextMenu } = useContextMenu();
@@ -177,6 +193,57 @@ export const ContextMenuContent = (): React.JSX.Element => {
                         onClick={() => {
                             dispatchAction(ACTIONS.BRING_FORWARD);
                         }}
+                    />
+                </React.Fragment>
+            )}
+            {selectedElements.length > 0 && preferences[PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_ENABLED] && (
+                <React.Fragment>
+                    <Menu.Separator />
+                    <Dropdown.Portal
+                        id="contextMenu:export"
+                        position={DropdownPortalPosition.TOP_RIGHT}
+                        toggleClassName="flex items-center w-full min-w-0"
+                        contentClassName="absolute z-50 w-40"
+                        contentStyle={{
+                            transform: "translateX(100%)",
+                        }}
+                        toggleRender={(isActive) => (
+                            <ContextMenuItem
+                                className="grow-1"
+                                active={isActive}
+                                icon="image"
+                                text="Export selection"
+                                expandable={true}
+                            />
+                        )}
+                        contentRender={() => (
+                            <Dropdown className="w-full">
+                                {preferences[PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_IMAGE] && (
+                                    <ContextMenuItem
+                                        icon="image"
+                                        text="As PNG"
+                                        onClick={() => {
+                                            dispatchAction(ACTIONS.EXPORT_SELECTION_IMAGE, {
+                                                includeBackground: !!preferences[PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_INCLUDE_BACKGROUND],
+                                            });
+                                            hideContextMenu();
+                                        }}
+                                    />
+                                )}
+                                {preferences[PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_CLIPBOARD] && (
+                                    <ContextMenuItem
+                                        icon="clipboard"
+                                        text="To Clipboard"
+                                        onClick={() => {
+                                            dispatchAction(ACTIONS.EXPORT_SELECTION_CLIPBOARD, {
+                                                includeBackground: !!preferences[PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_INCLUDE_BACKGROUND],
+                                            });
+                                            hideContextMenu();
+                                        }}
+                                    />
+                                )}
+                            </Dropdown>
+                        )}
                     />
                 </React.Fragment>
             )}

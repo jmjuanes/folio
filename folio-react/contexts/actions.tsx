@@ -2,6 +2,7 @@ import React from "react";
 import { useAlure as useSurface, withDismiss } from "alure";
 import { uid } from "uid/secure";
 import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN, PREFERENCES } from "../constants.js";
+import { EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT } from "../constants.js";
 import { useEditor } from "./editor.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";
@@ -11,6 +12,7 @@ import { useConfirm } from "../hooks/use-confirm.tsx";
 import { useTools } from "./tools.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
 import { getShortcutKey } from "../lib/actions.ts";
+import { exportToFile, exportToClipboard } from "../lib/export.js";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
 import { getKeyFromKeyCode } from "../utils/keys.js";
@@ -347,6 +349,42 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
                         editor.ungroupElements(selectedElements);
                         editor.dispatchChange();
                         editor.update();
+                    }
+                },
+            },
+            [ACTIONS.EXPORT_SELECTION_IMAGE]: {
+                id: ACTIONS.EXPORT_SELECTION_IMAGE,
+                name: "Export Selection as PNG Image",
+                icon: "image",
+                // category: ActionCategory.EDITION,
+                onSelect: async (options: any = {}) => {
+                    // TODO: display a notification if the export is successful
+                    const elements = editor.getSelection();
+                    if (elements.length > 0) {
+                        await exportToFile(elements, {
+                            assets: editor.assets,
+                            format: EXPORT_FORMATS.PNG,
+                            background: options?.includeBackground ? editor.background : TRANSPARENT,
+                            padding: EXPORT_PADDING,
+                        });
+                    }
+                },
+            },
+            [ACTIONS.EXPORT_SELECTION_CLIPBOARD]: {
+                id: ACTIONS.EXPORT_SELECTION_CLIPBOARD,
+                name: "Export Selection to Clipboard",
+                icon: "clipboard",
+                // category: ActionCategory.EDITION,
+                onSelect: async (options: any = {}) => {
+                    // TODO: display a notification if the export is successful
+                    const elements = editor.getSelection();
+                    if (elements.length > 0) {
+                        await exportToClipboard(elements, {
+                            assets: editor.assets,
+                            format: EXPORT_FORMATS.PNG,
+                            background: options?.includeBackground ? editor.background : TRANSPARENT,
+                            padding: EXPORT_PADDING,
+                        });
                     }
                 },
             },
