@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.29.0 (June 24, 2026) - Scroll, Pinch Zoom, and Export to Image
+
+Version `v0.29.0` brings more natural navigation on all devices, new export options directly from the context menu, and a cleaner separation between the Folio app and its documentation.
+
+### Scroll and Pinch Zoom Support
+
+Navigating your boards now feels more natural across all devices. We have added support for **scroll wheel zooming** on desktop and **pinch-to-zoom** on tablets, so you can move around your canvas the way you expect.
+
+### Export Selection to Image from Context Menu
+
+We have improved the **context menu** with a new option to export your current selection directly to a **PNG image** — either to download it or copy it to your clipboard. No need to go through the screenshot mode for quick exports.
+
+### New Home for Documentation and Landing
+
+We have moved the Folio landing page and documentation to [josemi.xyz/folio](https://josemi.xyz/folio), and the Folio app is now available at [folio.josemi.xyz](https://folio.josemi.xyz). This gives each part of the project its own dedicated space and makes it easier to find what you are looking for.
+
 ## v0.28.0 (June 6, 2026) - Commands Palette and Editor Preferences
 
 Version `v0.28.0` brings a smarter, more flexible editor experience with the introduction of the **Commands Palette**, a new **Editor Preferences** dialog, and several internal improvements that make the app faster and easier to extend.
