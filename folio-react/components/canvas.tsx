@@ -1,4 +1,4 @@
-import React from "react";
+import { useMemo, useCallback, useRef, useState, useEffect } from "react";
 import {
     ACTIONS,
     IS_DARWIN,
@@ -25,40 +25,41 @@ import { Grid } from "./grid.jsx";
 import { clearFocus } from "../utils/dom.js";
 import { preventDefault, isTouchOrPenEvent, isInputTarget } from "../utils/events.js";
 import type { EditorPointEvent, EditorKeyboardEvent } from "../lib/events.ts";
+import type { JSX, ReactNode, CSSProperties } from "react";
 
 const delay = (timeout: number, cb: () => void) => window.setTimeout(cb, timeout);
 
 export type CanvasProps = {
     fonts?: string[];
     longPressDelay?: number;
-    children?: React.ReactNode;
+    children?: ReactNode;
 };
 
-export const Canvas = (props: CanvasProps): React.JSX.Element => {
+export const Canvas = (props: CanvasProps): JSX.Element => {
     const editor = useEditor();
     const { getToolByShortcut } = useTools();
     const cursor = useCursor();
     const { showContextMenu, hideContextMenu } = useContextMenu();
     const { dispatchAction, getActionByKeysCombination } = useActions();
     const preferences = usePreferences();
-    const isMultiTouchRef = React.useRef<boolean>(false);
-    const canvasRef = React.useRef<HTMLDivElement>(null);
-    const longPressTimerRef = React.useRef<number>(0);
-    const clearLongPressTimer = React.useCallback(() => {
+    const isMultiTouchRef = useRef<boolean>(false);
+    const canvasRef = useRef<HTMLDivElement>(null);
+    const longPressTimerRef = useRef<number>(0);
+    const clearLongPressTimer = useCallback(() => {
         window.clearTimeout(longPressTimerRef.current);
     }, []);
 
     // Touch state refs for pinch-to-zoom and two-finger pan
-    const touchStateRef = React.useRef<{
+    const touchStateRef = useRef<{
         touches: { id: number; x: number; y: number }[];
         lastDist: number;
         lastMidX: number;
         lastMidY: number;
     } | null>(null);
-    const [canvasSize, setCanvasSize] = React.useState<[number, number]>([100, 100]);
+    const [canvasSize, setCanvasSize] = useState<[number, number]>([100, 100]);
     const activeTool = editor.activeTool;
 
-    const handleContextMenu = React.useCallback((event: any) => {
+    const handleContextMenu = useCallback((event: any) => {
         event.preventDefault();
         if (!isMultiTouchRef.current && activeTool?.id === TOOLS.SELECT && canvasRef.current) {
             const { top, left } = canvasRef.current.getBoundingClientRect();
@@ -70,7 +71,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         return false;
     }, [activeTool, showContextMenu]);
 
-    const handleResize = React.useCallback(() => {
+    const handleResize = useCallback(() => {
         if (canvasRef.current) {
             const size = canvasRef.current.getBoundingClientRect();
             setCanvasSize([size.width, size.height]);
@@ -79,7 +80,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         }
     }, [editor, setCanvasSize]);
 
-    const handleElementChange = React.useCallback((elementId: string, keys: string[], values: any[]) => {
+    const handleElementChange = useCallback((elementId: string, keys: string[], values: any[]) => {
         const element = editor.getElement(elementId) as any;
         if (element && element.editing) {
             editor.updateElements([element], keys, values, true);
@@ -88,7 +89,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         }
     }, [editor]);
 
-    const handleElementBlur = React.useCallback((elementId: string) => {
+    const handleElementBlur = useCallback((elementId: string) => {
         const element = editor.getElement(elementId) as any;
         if (element) {
             element.editing = false;
@@ -96,7 +97,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         editor.update();
     }, [editor]);
 
-    const handleKeyDown = React.useCallback((event: any) => {
+    const handleKeyDown = useCallback((event: any) => {
         if (editor.page.readonly) {
             return null;
         }
@@ -141,7 +142,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         }
     }, [editor, activeTool, getToolByShortcut, preferences, dispatchAction, getActionByKeysCombination]);
 
-    const handleKeyUp = React.useCallback((event: any) => {
+    const handleKeyUp = useCallback((event: any) => {
         editor.getCurrentTool().dispatch("keyUp", {
             key: event.key,
             shiftKey: !!event.shiftKey,
@@ -151,14 +152,14 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         editor.update();
     }, [editor]);
 
-    const handlePaste = React.useCallback((event: any) => {
+    const handlePaste = useCallback((event: any) => {
         if (!isInputTarget(event) && !editor.page.readonly) {
             editor.page.activeGroup = null;
             dispatchAction(ACTIONS.PASTE, { event: event });
         }
     }, [editor, dispatchAction]);
 
-    const handlePointerDown = React.useCallback((event: any, source: any, pointListener: any) => {
+    const handlePointerDown = useCallback((event: any, source: any, pointListener: any) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -243,7 +244,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     }, [editor, handleContextMenu, hideContextMenu]);
 
     // Handle double click
-    const handleDoubleClick = React.useCallback((event: any, source: any, listener: any) => {
+    const handleDoubleClick = useCallback((event: any, source: any, listener: any) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -276,7 +277,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     // Handle mouse-wheel: Ctrl/Cmd+wheel → zoom at cursor; shift+wheel → pan X; plain wheel → pan Y
     // Note: on macOS, pinch-to-zoom on a trackpad also fires wheel events with ctrlKey=true,
     // so this handler covers both mouse-wheel and trackpad pinch gestures.
-    const handleWheel = React.useCallback((event: WheelEvent) => {
+    const handleWheel = useCallback((event: WheelEvent) => {
         event.preventDefault();
         if (!canvasRef.current || !preferences[PREFERENCES.GESTURES_WHEEL]) {
             return;
@@ -312,7 +313,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     }, [editor, preferences[PREFERENCES.GESTURES_WHEEL]]);
 
     // Handle touch start: track touches for pinch/pan detection
-    const handleTouchStart = React.useCallback((event: TouchEvent) => {
+    const handleTouchStart = useCallback((event: TouchEvent) => {
         if (event.touches.length >= 2 && preferences[PREFERENCES.GESTURES_PINCH]) {
             event.preventDefault();
 
@@ -338,7 +339,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     }, [preferences[PREFERENCES.GESTURES_PINCH]]);
 
     // Handle touch move: pinch-to-zoom and two-finger pan
-    const handleTouchMove = React.useCallback((event: TouchEvent) => {
+    const handleTouchMove = useCallback((event: TouchEvent) => {
         if (event.touches.length < 2 || !touchStateRef.current || !canvasRef.current || !preferences[PREFERENCES.GESTURES_PINCH]) {
             return;
         }
@@ -375,7 +376,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     }, [editor, preferences[PREFERENCES.GESTURES_PINCH]]);
 
     // Handle touch end: clear touch state when fingers lift
-    const handleTouchEnd = React.useCallback((event: TouchEvent) => {
+    const handleTouchEnd = useCallback((event: TouchEvent) => {
         if (event.touches.length < 2 && preferences[PREFERENCES.GESTURES_PINCH]) {
             touchStateRef.current = null;
             // little delay to prevent additional actions dispatched by the last finger
@@ -387,7 +388,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     }, [preferences[PREFERENCES.GESTURES_PINCH]]);
 
     // Register additional events
-    React.useEffect(() => {
+    useEffect(() => {
         const target = canvasRef.current;
         // Add events listeners
         if (target) {
@@ -426,7 +427,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
     }, [handleKeyDown, handleKeyUp, handlePaste, handleResize, handleWheel, handleTouchStart, handleTouchMove, handleTouchEnd]);
 
     // generate canvas style
-    const canvasStyle = React.useMemo(() => ({
+    const canvasStyle = useMemo(() => ({
         display: "block",
         position: "relative",
         width: "100%",
@@ -437,7 +438,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
         userSelect: "none",
         WebkitTouchCallout: "none",
         cursor: cursor as string,
-    } as React.CSSProperties), [editor.background, cursor]);
+    } as CSSProperties), [editor.background, cursor]);
 
     // generate transform attribute
     const transform = [
@@ -489,7 +490,7 @@ export const Canvas = (props: CanvasProps): React.JSX.Element => {
                             cursor: cursor ? CURSORS.NONE : CURSORS.MOVE,
                         };
                         return (
-                            <div key={element.id} style={style as React.CSSProperties}>
+                            <div key={element.id} style={style as CSSProperties}>
                                 <SvgContainer>
                                     {content}
                                 </SvgContainer>
