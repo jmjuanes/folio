@@ -39,9 +39,6 @@ export const Zoom = (): React.JSX.Element => {
                     position={DropdownPortalPosition.BOTTOM_RIGHT}
                     toggleClassName="flex items-center"
                     contentClassName="absolute z-50 mt-2 w-48"
-                    contentStyle={{
-                        transform: "translateX(-100%)",
-                    }}
                     toggleRender={() => (
                         <Island.Button
                             className="text-xs"

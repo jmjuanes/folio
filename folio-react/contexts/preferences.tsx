@@ -15,6 +15,9 @@ export type PreferencesProviderProps = {
 export const DEFAULT_PREFERENCES = {
     // keyboard shortcuts
     [PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED]: true,
+    // gestures
+    [PREFERENCES.GESTURES_PINCH]: true,
+    [PREFERENCES.GESTURES_WHEEL]: true,
     // minimap preferences
     [PREFERENCES.MINIMAP_ENABLED]: true,
     [PREFERENCES.MINIMAP_SIDE]: "left",
@@ -32,6 +35,11 @@ export const DEFAULT_PREFERENCES = {
     // command palette
     [PREFERENCES.COMMAND_PALETTE_ENABLED]: true,
     [PREFERENCES.COMMAND_PALETTE_SEARCH]: true,
+    // context menu
+    [PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_ENABLED]: true,
+    [PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_IMAGE]: true,
+    [PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_CLIPBOARD]: true,
+    [PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_INCLUDE_BACKGROUND]: false,
     // ai preferences
     // [PREFERENCES.AI_ENABLED]: false,
 };

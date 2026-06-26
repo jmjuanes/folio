@@ -260,10 +260,11 @@ Dropdown.Portal = (props: DropdownPortalProps): React.JSX.Element => {
                 bottom: coordinates.current[1],
                 left: coordinates.current[2],
                 right: coordinates.current[3],
+                ...(props.contentStyle || {}),
             };
         }
         return null;
-    }, [coordinates.current]);
+    }, [coordinates.current, props.contentStyle]);
 
     return (
         <React.Fragment>

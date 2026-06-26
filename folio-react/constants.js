@@ -544,13 +544,18 @@ export const ACTIONS = {
     TOGGLE_LIBRARY_PANEL: "library:panel:toggle",
     AI_GENERATE_ELEMENTS: "ai-generate-elements",
     AI_TRANSFORM_ELEMENTS: "ai-transform-elements",
+    EXPORT_SELECTION_IMAGE: "exportSelection:image",
+    EXPORT_SELECTION_CLIPBOARD: "exportSelection:clipboard",
 };
 
 export const PREFERENCES = {
     // global preferences
     // THEME: "theme",
     // keyboard shortcuts
-    KEYBOARD_SHORTCUTS_ENABLED: "keyboardShortcuts.enabled",
+    KEYBOARD_SHORTCUTS_ENABLED: "editor.keyboardShortcuts.enabled",
+    // gestures
+    GESTURES_WHEEL: "editor.gestures.wheel",
+    GESTURES_PINCH: "editor.gestures.pinch",
     // editor elements
     MINIMAP_ENABLED: "editor.minimap.enabled",
     MINIMAP_SIDE: "editor.minimap.side",
@@ -566,6 +571,11 @@ export const PREFERENCES = {
     // command palette
     COMMAND_PALETTE_ENABLED: "workbench.commandPalette.enabled",
     COMMAND_PALETTE_SEARCH: "workbench.commandPalette.search",
+    // context menu
+    CONTEXT_MENU_EXPORT_SELECTION_ENABLED: "workbench.contextMenu.exportSelection.enabled",
+    CONTEXT_MENU_EXPORT_SELECTION_INCLUDE_BACKGROUND: "workbench.contextMenu.exportSelection.includeBackground",
+    CONTEXT_MENU_EXPORT_SELECTION_IMAGE: "workbench.contextMenu.exportSelection.downloadImage",
+    CONTEXT_MENU_EXPORT_SELECTION_CLIPBOARD: "workbench.contextMenu.exportSelection.copyToClipboard",
     // ai
     AI_ENABLED: "ai.enabled",
 };

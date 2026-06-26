@@ -11,12 +11,12 @@
     <meta name="{{@key}}" content="{{@value}}">
     {{/each}}
     {{#if @site.favicon}}
-    <link rel="icon" href="{{@site.favicon}}" type="image/png">
+    <link rel="icon" href="{{=resolve_path @site.favicon}}" type="image/png">
     {{/if}}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
-    <link rel="stylesheet" href="/low.css">
-    <link rel="stylesheet" href="/highlight.css">
-    <link rel="stylesheet" href="/brand.css">
+    <link rel="stylesheet" href="{{=resolve_path "/low.css"}}">
+    <link rel="stylesheet" href="{{=resolve_path "/highlight.css"}}">
+    <link rel="stylesheet" href="{{=resolve_path "/brand.css"}}">
     <title>{{@page.title}} - {{@site.title}}</title>
 </head>

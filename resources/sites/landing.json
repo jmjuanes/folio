@@ -2,11 +2,12 @@
     "template": "landing",
     "title": "Folio",
     "description": "The minimal digital whiteboard for sketching and prototyping.",
+    "base": "/",
     "keywords": "folio,whiteboard,sketching,prototyping,design,ui",
-    "url": "https://folio.josemi.xyz",
+    "url": "https://josemi.xyz/folio",
     "favicon": "/favicon.png",
     "metatags": {
-        "og:image": "/og.png"
+        "og:image": "/folio/og.png"
     },
     "navbar": {
         "links": [
@@ -15,7 +16,7 @@
         ],
         "callToAction": {
             "text": "Try it free",
-            "href": "/app"
+            "href": "https://folio.josemi.xyz"
         }
     },
     "footer": {
@@ -86,7 +87,7 @@
                                 },
                                 {
                                     "type": "hero::cta",
-                                    "href": "/app",
+                                    "href": "https://folio.josemi.xyz",
                                     "text": "Start sketching &rarr;",
                                     "hint": "No signup. No install. Ready in seconds."
                                 }
@@ -196,7 +197,7 @@
                                     "description": "Open your browser and start drawing. No account, no setup, no friction. Perfect for quick ideas, sketches on the fly, or anyone who just wants to get started immediately.",
                                     "image": "/images/folio-lite-preview.png",
                                     "linkText": "Try it now &rarr;",
-                                    "linkHref": "/app",
+                                    "linkHref": "https://folio.josemi.xyz",
                                     "linkClassName": "text-current border-2 border-gray-950"
                                 },
                                 {

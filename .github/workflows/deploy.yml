@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  deploy-website:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: current
       - uses: actions/configure-pages@v5
       - run: yarn install
       - run: yarn run build:website
@@ -39,3 +39,18 @@ jobs:
           path: www
       - uses: actions/deploy-pages@v4
         id: deployment
+  deploy-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: current
+      - run: corepack enable
+      - run: yarn install
+      - run: yarn run build:lite
+      - uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/lite/www --project-name=folio-application --branch=main

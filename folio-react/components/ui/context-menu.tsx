@@ -7,6 +7,7 @@ export type ContextMenuContainerProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 export type ContextMenuItemProps = React.HTMLAttributes<HTMLDivElement> & {
+    active?: boolean;
     className?: string;
     disabled?: boolean;
 };
@@ -40,7 +41,7 @@ export const ContextMenu = {
             {...otherProps}
         />
     ),
-    Item: ({ className, disabled = false, ...otherProps }: ContextMenuItemProps): React.JSX.Element => (
+    Item: ({ className, active = false, disabled = false, ...otherProps }: ContextMenuItemProps): React.JSX.Element => (
         <div
             data-testid="contextmenu-item"
             className={classNames({
@@ -48,6 +49,7 @@ export const ContextMenu = {
                 "pointer-events-none opacity-60 cursor-disabled": disabled,
                 "cursor-pointer": !disabled,
                 "hover:bg-gray-200": !disabled,
+                "bg-gray-200": !!active && !disabled,
             }, className)}
             {...otherProps}
         />

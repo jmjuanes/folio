@@ -39,8 +39,7 @@ export default {
         },
         historyApiFallback: {
             rewrites: [
-                {from: /^\/$/, to: "app.html"},
-                {from: /^\/index.html$/, to: "app.html"},
+                {from: /^\/$/, to: "index.html"},
             ],
         },
         setupMiddlewares: createServer([...aiRules]),
@@ -104,11 +103,14 @@ export default {
                     from: path.resolve("../../resources/favicon-32x32.png"),
                     to: "favicon.png",
                 },
+                {
+                    from: path.resolve("../../_redirects"),
+                },
             ],
         }),
         new HtmlWebpackPlugin({
             template: path.resolve("app.html"),
-            filename: "app.html",
+            filename: "index.html",
             minify: true,
         }),
     ],

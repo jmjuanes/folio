@@ -56,6 +56,43 @@ export const PreferencesContent = (props: PreferencesContentProps): JSX.Element 
                     },
                 },
             },
+            {
+                title: "Gestures",
+                fields: {
+                    [PREFERENCES.GESTURES_WHEEL]: {
+                        type: FORM_OPTIONS.CHECKBOX,
+                        disabled: disabledFields.has(PREFERENCES.GESTURES_WHEEL),
+                        title: "Wheel gestures",
+                        helper: "Enable zoom and pan using the mouse wheel.",
+                    },
+                    [PREFERENCES.GESTURES_PINCH]: {
+                        type: FORM_OPTIONS.CHECKBOX,
+                        disabled: disabledFields.has(PREFERENCES.GESTURES_PINCH),
+                        title: "Pinch gestures",
+                        helper: "Enable zoom and pan using two-finger gestures on touch devices.",
+                    },
+                },
+            },
+            {
+                title: "Context Menu",
+                fields: {
+                    [PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_ENABLED]: {
+                        type: FORM_OPTIONS.CHECKBOX,
+                        disabled: disabledFields.has(PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_ENABLED),
+                        title: "Export Selection",
+                        helper: "Allow to export selected elements from the context menu.",
+                    },
+                    [PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_INCLUDE_BACKGROUND]: {
+                        type: FORM_OPTIONS.CHECKBOX,
+                        disabled: (
+                            disabledFields.has(PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_INCLUDE_BACKGROUND) ||
+                            !computedPreferences[PREFERENCES.CONTEXT_MENU_EXPORT_SELECTION_ENABLED]
+                        ),
+                        title: "Include background exporting selection",
+                        helper: "Include background when exporting selected elements from the context menu.",
+                    },
+                },
+            },
         ];
         // remove hidden fields
         (props.hiddenFields || []).forEach((field: string) => {
@@ -117,7 +154,7 @@ export const Preferences = (props: PreferencesProps): JSX.Element => {
                     <Dialog.Header>
                         <Dialog.Title>{props.title || "Preferences"}</Dialog.Title>
                     </Dialog.Header>
-                    <Dialog.Body className="">
+                    <Dialog.Body className="h-full overflow-y-scroll max-h-96">
                         {content}
                     </Dialog.Body>
                 </Dialog.Content>
