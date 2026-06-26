@@ -87,7 +87,13 @@ export default {
                     const list = await env.STORAGE.list({
                         prefix: `${username}/${prefix}`,
                     });
-                    return sendDataResponse(env, request, list?.keys || []);
+                    // note: we have to remove the 'username/' prefix of the returned items
+                    // as the user is only used internally
+                    return sendDataResponse(env, request, (list?.keys || []).map(item => {
+                        return Object.assign(item, {
+                            name: item.name.replace(username + "/", ""),
+                        });
+                    }));
                 }
                 else if (request.method === "POST") {
                     const body: any = await request.json();
