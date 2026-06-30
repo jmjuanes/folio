@@ -68,6 +68,7 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
         authentication: config.authentication || "access_token",
         access_token: process.env.FOLIO_ACCESS_TOKEN || config.access_token || randomBytes(32).toString("base64url"),
         storage: config.storage || "memory",
-        session_secret: config.session_secret || randomBytes(32).toString("base64url"),
+        session_secret: process.env.FOLIO_SESSION_SECRET || config.session_secret || randomBytes(32).toString("base64url"),
+        session_expiration: process.env.FOLIO_SESSION_EXPIRATION || config.session_expiration || "7d",
     });
 };

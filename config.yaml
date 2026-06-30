@@ -1,5 +1,5 @@
 ## default configuration for folio-studio
-## https://github.com/jmjuanes/folio/blob/main/workers/cloud/config/default.yaml
+## https://github.com/jmjuanes/folio/blob/main/config.yaml
 
 ## configure the authentication method
 ## allowed values: 'access_token', 'local:<path>'
@@ -22,8 +22,9 @@ storage: 'local:data/storage.db'
 # cors_allowed_origins: "*"
 # cors_allowed_methods: "OPTIONS,GET,POST,PATCH,DELETE"
 
-## session configuration
-## secret: allows to specify a fixed secret key to generate jwt tokens.
-# session_secret: "abcd"
+## session_secret: allows to specify a fixed secret key to generate session tokens.
+## note that this is shared between authentication and storage services
+session_secret: ""
+
 ## expiration: specify the expiration time. Times are parsed by https://www.npmjs.com/package/ms
 # session_expiration: "1y"
