@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "allowImportingTsExtensions": true,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "outDir": "./dist",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "target": "es2022",
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "rewriteRelativeImportExtensions": true,
+        "types": [
+            "@cloudflare/workers-types",
+            "@types/node"
+        ]
+    },
+    "exclude": [
+        "*.js",
+        "dist/**/*",
+        "data/**/*",
+        "node_modules/**/*"
+    ]
+}

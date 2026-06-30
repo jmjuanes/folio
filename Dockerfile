@@ -36,12 +36,15 @@ WORKDIR $FOLIO_APPDIR
 # =============================================================================
 FROM base AS server
 
-# Copy stuff from workers/cloud folder
-COPY --chown=node:node workers/cloud/ .
+# Copy stuff from workers folder
+COPY --chown=node:node workers/ .
+COPY --chown=node:node docker/package.json ./package.json
 
 # Install dependencies with security optimizations
 RUN yarn install --frozen-lockfile --network-timeout 300000 && \
-    yarn build && \
+    yarn workspace folio-shared build && \
+    yarn workspace folio-auth build && \
+    yarn workspace folio-storage build && \
     yarn install --frozen-lockfile --production --network-timeout 300000 && \
     yarn cache clean && \
     find node_modules -name "*.md" -delete && \
@@ -75,16 +78,19 @@ ENV NODE_ENV=production \
     NO_UPDATE_NOTIFIER=true
 
 # Copy third-party configurations
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY supervisord.conf /etc/supervisord.conf
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/supervisord.conf /etc/supervisord.conf
 
 # Copy application files with proper ownership
-COPY --chown=node:node workers/cloud/folio.js ./
-COPY --chown=node:node workers/cloud/config ./config
+COPY --chown=node:node folio.js ./folio.js
+COPY --chown=node:node config.yaml ./config.yaml
 
 # Copy builds from previous stage
+COPY --from=server --chown=node:node $FOLIO_APPDIR/package.json ./package.json
 COPY --from=server --chown=node:node $FOLIO_APPDIR/node_modules ./node_modules
-COPY --from=server --chown=node:node $FOLIO_APPDIR/lib ./lib
+COPY --from=server --chown=node:node $FOLIO_APPDIR/auth ./auth
+COPY --from=server --chown=node:node $FOLIO_APPDIR/shared ./shared
+COPY --from=server --chown=node:node $FOLIO_APPDIR/storage ./storage
 # COPY --from=app --chown=node:node $FOLIO_APPDIR/apps/studio/www ./public
 
 # Set proper permissions for executable files

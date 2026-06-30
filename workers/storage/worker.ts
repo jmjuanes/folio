@@ -1,27 +1,12 @@
-import ms from "ms";
-import { parseCookie } from "cookie";
-import { sendResponse, sendDataResponse, sendErrorResponse } from "./response.ts";
-import { MethodNotAllowedError, NotFoundError, UnauthorizedError, ValidationError } from "./errors.ts";
-import { authenticateUser, generateSession, validateSession } from "./authentication.ts";
-import type { StringValue } from "ms";
+import { authenticationMiddleware } from "folio-shared";
+import { sendResponse, sendDataResponse, sendErrorResponse } from "folio-shared";
+import { MethodNotAllowedError, NotFoundError, ValidationError } from "folio-shared";
 import type { Env } from "./types.ts";
 
 // available endpoints
 enum Endpoints {
     ROOT = "/",
     STATUS = "/status",
-    AUTH_LOGIN = "/auth/login",
-    AUTH_LOGOUT = "/auth/logout",
-    STORAGE = "/storage",
-};
-
-// middleware to validate the session and return the username that is performing the request
-const authenticationMiddleware = async (env: Env, request: Request): Promise<string> => {
-    const cookies = parseCookie(request.headers.get("Cookie") ?? "");
-    if (!cookies?.session) {
-        throw new UnauthorizedError();
-    }
-    return validateSession(env, cookies.session);
 };
 
 export default {
@@ -34,54 +19,17 @@ export default {
         }
         // 2. handle routes
         try {
-            // --- GET Root ---
-            if (url.pathname === Endpoints.ROOT && request.method === "GET") {
-                return sendDataResponse(env, request, {
-                    "status_url": Endpoints.STATUS,
-                    "login_url": Endpoints.AUTH_LOGIN,
-                    "logout_url": Endpoints.AUTH_LOGOUT,
-                    "storage_url": Endpoints.STORAGE,
-                });
-            }
-            // -- GET Status --
-            else if (url.pathname === Endpoints.STATUS && request.method === "GET") {
-                return sendDataResponse(env, request, { message: "ok" });
-            }
-            // -- POST Login --
-            else if (url.pathname === Endpoints.AUTH_LOGIN) {
-                if (request.method !== "POST") {
-                    throw new MethodNotAllowedError();
+            if (url.pathname === Endpoints.STATUS) {
+                if (request.method === "GET") {
+                    return sendDataResponse(env, request, { message: "ok" });
                 }
-                // get login information from body and call authenticate method
-                const body: any = await request.json();
-                if (env.ACCESS_TOKEN && !body.token) {
-                    throw new ValidationError("Token is required for login");
-                }
-                if (!env.ACCESS_TOKEN && (!body.username || !body.password)) {
-                    throw new ValidationError("Username and password are required for login");
-                }
-                // authenticate user and create the session
-                const username: string = await authenticateUser(env, body);
-                const session: string = await generateSession(env, username);
-                const sessionMaxAge = ms(env.SESSION_EXPIRATION as StringValue) / 1000;
-                // create the cookie and send a message that the user has been authenticated
-                return sendResponse(env, request, 200, {}, {
-                    "Set-Cookie": `session=${session}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${sessionMaxAge}`,
-                });
-            }
-            // -- POST logout --
-            else if (url.pathname === Endpoints.AUTH_LOGOUT) {
-                if (request.method === "POST") {
-                    return sendResponse(env, request, 200, {}, {
-                        "Set-Cookie": `session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0`,
-                    });
-                }
-                // not allowed
+                // method not allowed
                 throw new MethodNotAllowedError();
             }
-            // -- GET/POST Storage --
-            else if (url.pathname === Endpoints.STORAGE) {
-                const username = await authenticationMiddleware(env, request);
+            // other routes require authentication
+            const username: string = await authenticationMiddleware(request, env.SESSION_SECRET);
+            // -- GET/POST / --
+            if (url.pathname === Endpoints.ROOT) {
                 if (request.method === "GET") {
                     const prefix = url.searchParams.get("prefix") || "";
                     const list = await env.STORAGE.list({
@@ -89,9 +37,9 @@ export default {
                     });
                     // note: we have to remove the 'username/' prefix of the returned items
                     // as the user is only used internally
-                    return sendDataResponse(env, request, (list?.keys || []).map(item => {
+                    return sendDataResponse(env, request, (list?.keys || []).map((item: any) => {
                         return Object.assign(item, {
-                            name: item.name.replace(username + "/", ""),
+                            id: item.name.replace(username + "/", ""),
                         });
                     }));
                 }
@@ -99,7 +47,7 @@ export default {
                     const body: any = await request.json();
                     // valudate that at least an 'id' and 'value' fields exists in body
                     if (!body.id || !body.value) {
-                        throw new ValidationError("and 'id' and 'value' is required to register in the storage");
+                        throw new ValidationError("fields 'id' and 'value' are required to register in the storage");
                     }
                     // const storageId: string = randomUUID();
                     await env.STORAGE.put(`${username}/${body.id}`, body?.value || {}, {
@@ -113,14 +61,13 @@ export default {
                 throw new MethodNotAllowedError();
             }
             // -- GET/PATCH/DELETE Storage with ID --
-            else if (url.pathname.startsWith(Endpoints.STORAGE) && url.pathname !== Endpoints.STORAGE) {
+            else if (url.pathname.startsWith(Endpoints.ROOT)) {
                 // extract the document from the path
-                const match = url.pathname.match(/^\/storage\/([^/]+)\/?$/);
+                const match = url.pathname.match(/^\/([^/]+)\/?$/);
                 if (!match) {
                     throw new NotFoundError();
                 }
                 const id = match[1];
-                const username = await authenticationMiddleware(env, request);
                 // GET document content and metadata
                 if (request.method === "GET") {
                     const entry = await env.STORAGE.getWithMetadata(`${username}/${id}`, "json");

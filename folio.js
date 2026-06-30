@@ -3,16 +3,17 @@
 import path from "node:path";
 import http from "node:http";
 import { parseArgs } from "node:util";
-import { getConfiguration, resolveConfigPath } from "./lib/config.js";
-import { startServer } from "./lib/index.js";
-import { createLogger } from "./lib/logger.js";
+import { getConfiguration, resolveConfigPath, createLogger } from "#folio-shared";
+import { startAuthServer } from "#folio-auth";
+import { startStorageServer } from "#folio-storage";
 
 // this is the root path of the project
 // it is used to resolve paths to the data and www directories
 const ROOT_PATH = process.cwd();
 
 const COMMANDS = {
-    START: "start",
+    START_AUTH: "start:auth",
+    START_STORAGE: "start:storage",
 };
 
 const { info, error } = createLogger("folio:cli");
@@ -47,12 +48,18 @@ const main = async (command = "", options = {}) => {
     const configPath = resolveConfigPath(ROOT_PATH, options.config || "");
     const config = await getConfiguration(configPath);
 
-    // 1. start the folio server services
-    if (command === COMMANDS.START) {
+    // 1. start the folio auth service
+    if (command === COMMANDS.START_AUTH) {
         // NOTE: make sure that we use the correct port for folio server
         // using the --port argument takes preference over the port in configuration
-        startServer(Object.assign(config, {
-            port: options.port || config.port,
+        startAuthServer(Object.assign(config, {
+            authentication_port: options.port || config.authentication_port,
+        }));
+    }
+    // 2. start the storage service
+    else if (command === COMMANDS.START_STORAGE) {
+        startStorageServer(Object.assign(config, {
+            storage_port: options.port || config.storage_port,
         }));
     }
     // unknown command

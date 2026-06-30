@@ -9,4 +9,4 @@ yarn.lock
 
 ## output and data stuff
 data
-lib
+dist

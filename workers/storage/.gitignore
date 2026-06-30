@@ -1,0 +1,12 @@
+## nodejs stuff
+node_modules
+package-lock.json
+yarn.lock
+*.log
+
+# wrangler stuff
+.wranger
+
+## output and data stuff
+data
+dist

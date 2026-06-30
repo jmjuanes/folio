@@ -4,9 +4,6 @@
         "paths": {
             "folio-react/*": [
                 "./folio-react/*"
-            ],
-            "folio-server/*": [
-                "./server/*"
             ]
         }
     },
