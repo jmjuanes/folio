@@ -24,7 +24,6 @@
         "build:docker": "docker build -f ./Dockerfile -t folio-studio .",
         "build:docs": "node scripts/site.js -c resources/sites/documentation.json -o .cache/documentation && node scripts/copy-assets.js -o .cache/documentation",
         "build:lite": "yarn workspace folio-lite build",
-        "build:studio": "yarn build:cloud",
         "build:landing": "node scripts/site.js -c resources/sites/landing.json -o .cache/landing && node scripts/copy-assets.js -o .cache/landing",
         "build:website": "yarn build:docs && yarn build:landing",
         "build:workers": "yarn build:shared && yarn build:auth && yarn build:storage",
