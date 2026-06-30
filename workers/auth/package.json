@@ -1,0 +1,24 @@
+{
+    "name": "folio-auth",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "main": "./dist/index.js",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+        "folio-shared": "*",
+        "yaml": "^2.9.0"
+    },
+    "devDependencies": {
+        "@cloudflare/workers-types": "^4.20260617.1",
+        "@types/node": "^25.9.3",
+        "typescript": "^6.0.3",
+        "wrangler": "^4.101.0"
+    }
+}
