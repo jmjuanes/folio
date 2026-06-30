@@ -37,9 +37,9 @@ export default {
                     });
                     // note: we have to remove the 'username/' prefix of the returned items
                     // as the user is only used internally
-                    return sendDataResponse(env, request, (list?.keys || []).map(item => {
+                    return sendDataResponse(env, request, (list?.keys || []).map((item: any) => {
                         return Object.assign(item, {
-                            name: item.name.replace(username + "/", ""),
+                            id: item.name.replace(username + "/", ""),
                         });
                     }));
                 }
@@ -47,7 +47,7 @@ export default {
                     const body: any = await request.json();
                     // valudate that at least an 'id' and 'value' fields exists in body
                     if (!body.id || !body.value) {
-                        throw new ValidationError("and 'id' and 'value' is required to register in the storage");
+                        throw new ValidationError("fields 'id' and 'value' are required to register in the storage");
                     }
                     // const storageId: string = randomUUID();
                     await env.STORAGE.put(`${username}/${body.id}`, body?.value || {}, {
