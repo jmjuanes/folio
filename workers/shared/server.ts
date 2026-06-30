@@ -1,30 +1,10 @@
 import { createServer } from "node:http";
 import { Readable, Writable } from "node:stream";
-import { createKV } from "./kv.ts";
 import { createLogger } from "./logger.ts";
-import worker from "./worker.ts";
-import type { Env } from "./types.ts";
-import type { Config } from "./config.ts";
 
 // start the application
-export const startServer = async (config: Config) => {
-    const { debug, info } = createLogger("folio:server");
-    const isAccessTokenAuth = config.authentication === "access_token";
-    // 1. create environment for the worker
-    const env: Env = {
-        ACCESS_TOKEN: isAccessTokenAuth ? config.access_token : "",
-        ALLOWED_ORIGINS: config.cors_allowed_origins || "*",
-        AUTHENTICATION: !isAccessTokenAuth ? (await createKV(config.authentication, "authentication")) : null,
-        SESSION_SECRET: config.session_secret,
-        SESSION_EXPIRATION: config.session_expiration || "7d",
-        STORAGE: (await createKV(config.storage, "storage")),
-    };
-    // 2. check if authentication method is access token to print the token in console
-    if (isAccessTokenAuth) {
-        info(`using 'access_token' as authentication method.`);
-        info(`use '${env.ACCESS_TOKEN}' to login.`);
-    }
-    // 3. create the http server instance
+export const startServer = async (namespace: string, port: number, env: any, worker: any) => {
+    const { debug, info } = createLogger("folio:" + namespace);
     const server = createServer(async (req, res) => {
         const start = Date.now();
         const hasBody = req.method !== "GET" && req.method !== "HEAD";
@@ -49,9 +29,9 @@ export const startServer = async (config: Config) => {
         info(`${req.method} ${req.url} - Returned ${res.statusCode} in ${end - start}ms`);
     });
     // 4. start http server in config.port
-    debug(`starting server at port ${config.port}...`);
-    server.listen(Number(config.port), () => {
-        info(`server running at 'http://127.0.0.1:${config.port}'`);
+    debug(`starting server at port ${port}...`);
+    server.listen(port, () => {
+        info(`server running at 'http://127.0.0.1:${port}'`);
         info(`use Control-C to stop this server.`);
     });
 };

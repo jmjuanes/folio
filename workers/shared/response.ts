@@ -1,7 +1,5 @@
-import type { Env } from "./types.ts";
-
 // helper to send a JSON response
-export const sendResponse = (env: Env, request: Request, statusCode: number, body: any, extraHeaders: Record<string, string> = {}): Response => {
+export const sendResponse = (env: any, request: Request, statusCode: number, body: any, extraHeaders: Record<string, string> = {}): Response => {
     const origin = request.headers.get("Origin");
     const allowedOrigins = env.ALLOWED_ORIGINS || "*";
     const responseOrigin = (allowedOrigins === "*" || allowedOrigins === origin) ? (origin || allowedOrigins) : allowedOrigins;
@@ -21,11 +19,11 @@ export const sendResponse = (env: Env, request: Request, statusCode: number, bod
     });
 };
 
-export const sendDataResponse = (env: Env, request: Request, data: any): Response => {
+export const sendDataResponse = (env: any, request: Request, data: any): Response => {
     return sendResponse(env, request, 200, { data });
 };
 
-export const sendErrorResponse = (env: Env, request: Request, errorCode: number, errorMessage: string): Response => {
+export const sendErrorResponse = (env: any, request: Request, errorCode: number, errorMessage: string): Response => {
     return sendResponse(env, request, errorCode, {
         errors: [
             { message: errorMessage },

@@ -4,9 +4,5 @@ package-lock.json
 yarn.lock
 *.log
 
-# wrangler stuff
-.wranger
-
 ## output and data stuff
-data
-lib
+dist

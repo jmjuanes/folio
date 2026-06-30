@@ -8,8 +8,11 @@ export type Config = {
     // allows to extend configuration
     extends?: string;
 
-    // port to run folio studio. Default is 3000
-    port: number | string;
+    // port to run folio authentication service
+    authentication_port: number | string;
+
+    // port to run folio storage service
+    storage_port: number | string;
 
     // authentication configuration
     // allowed values: 'access_token', 'local:<path>'
@@ -32,7 +35,7 @@ export type Config = {
 
 // @description resolve configuration file path
 export const resolveConfigPath = (currentWorkingDir: string, defaultConfigPath: string): string => {
-    return resolve(currentWorkingDir, defaultConfigPath || process.env.FOLIO_CONFIG_PATH || "config/default.yaml");
+    return resolve(currentWorkingDir, defaultConfigPath || process.env.FOLIO_CONFIG_PATH || "config.yaml");
 };
 
 // @description read configuration file recursive
@@ -60,7 +63,8 @@ export const getConfiguration = async (configPath: string): Promise<Config> => {
 
     // merge configuration from default config with configuration from env variables
     return Object.assign({}, config, {
-        port: process.env.FOLIO_PORT || config.port || 3000,
+        authentication_port: process.env.FOLIO_AUTH_PORT || config.authentication_port || 3001,
+        storage_port: process.env.FOLIO_STORAGE_PORT || config.storage_port || 3002,
         authentication: config.authentication || "access_token",
         access_token: process.env.FOLIO_ACCESS_TOKEN || config.access_token || randomBytes(32).toString("base64url"),
         storage: config.storage || "memory",
