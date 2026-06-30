@@ -1,24 +1,19 @@
 {
-    "name": "folio-cloud",
+    "name": "folio-storage",
     "version": "0.0.0",
     "private": true,
     "type": "module",
     "scripts": {
         "build": "tsc",
         "dev": "echo 'not implemented yet...'",
-        "ping": "node folio.js ping",
-        "start": "node folio.js start",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "cookie": "^2.0.0",
-        "ms": "^2.1.3",
-        "yaml": "^2.9.0"
+        "folio-storage": "*"
     },
     "devDependencies": {
         "@cloudflare/workers-types": "^4.20260617.1",
-        "@types/ms": "^2.1.0",
-        "@types/node": "^26.0.1",
+        "@types/node": "^25.9.3",
         "typescript": "^6.0.3",
         "wrangler": "^4.101.0"
     },

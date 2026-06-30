@@ -1,0 +1,22 @@
+{
+    "name": "folio-studio",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "workspaces": [
+        "auth",
+        "storage",
+        "shared"
+    ],
+    "imports": {
+        "#folio-shared": {
+            "default": "./shared/dist/index.js"
+        },
+        "#folio-auth": {
+            "default": "./auth/dist/index.js"
+        },
+        "#folio-storage": {
+            "default": "./storage/dist/index.js"
+        }
+    }
+}

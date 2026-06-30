@@ -17,15 +17,16 @@
         "build": "yarn build:studio",
         "build:ai": "yarn workspace folio-ai build",
         "build:app": "yarn build:studio",
-        "build:cloud": "yarn workspace folio-cloud build",
+        "build:shared": "yarn workspace folio-shared build",
+        "build:auth": "yarn workspace folio-auth build",
+        "build:storage": "yarn workspace folio-storage build",
         "build:dist": "cross-env NODE_ENV=production webpack build",
         "build:docker": "docker build -f ./Dockerfile -t folio-studio .",
         "build:docs": "node scripts/site.js -c resources/sites/documentation.json -o .cache/documentation && node scripts/copy-assets.js -o .cache/documentation",
         "build:lite": "yarn workspace folio-lite build",
-        "build:studio": "yarn build:cloud",
         "build:landing": "node scripts/site.js -c resources/sites/landing.json -o .cache/landing && node scripts/copy-assets.js -o .cache/landing",
-        "build:server": "yarn workspace folio-server build",
         "build:website": "yarn build:docs && yarn build:landing",
+        "build:workers": "yarn build:shared && yarn build:auth && yarn build:storage",
         "prebuild:dist": "node scripts/obfuscate-css.js --input node_modules/lowcss/low.css --input node_modules/lowcss-helpers/index.css --output obfuscate.map.json",
         "postbuild:dist": "node scripts/purge-css.js --input folio-react/folio.js --output folio-react/folio.css --config obfuscate.map.json",
         "copy:app": "yarn copy:studio",
@@ -34,20 +35,28 @@
         "clean": "rm -rf www",
         "deploy:ai": "yarn workspace folio-ai deploy",
         "dev": "serve www -p 8080",
-        "dev:ai": "yarn workspace folio-ai dev",
         "dev:app": "yarn dev:studio",
         "dev:docs": "serve .cache/documentation -p 8080",
         "dev:landing": "serve .cache/landing -p 8080",
         "dev:lite": "cross-env NODE_ENV=development yarn workspace folio-lite dev",
         "dev:studio": "cross-env NODE_ENV=development yarn workspace folio-studio dev",
-        "start": "cross-env NODE_ENV=development DEBUG='folio:*' yarn workspace folio-cloud start",
-        "ping": "cross-env NODE_ENV=development DEBUG='folio:*' yarn workspace folio-cloud ping",
+        "start:auth": "cross-env NODE_ENV=development DEBUG='folio:*' node --conditions=development folio.js start:auth --port 3001",
+        "start:storage": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js --conditions=development start:storage --port 3002",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "typecheck": "yarn typecheck:cloud",
-        "typecheck:ai": "yarn workspace folio-ai typecheck",
-        "typecheck:cloud": "yarn workspace folio-cloud typecheck",
-        "typecheck:lite": "yarn workspace folio-lite typecheck",
-        "typecheck:studio": "yarn workspace folio-studio typecheck"
+        "typecheck": "yarn typecheck:workers",
+        "typecheck:workers": "yarn workspace folio-shared typecheck",
+        "typecheck:lite": "yarn workspace folio-lite typecheck"
+    },
+    "imports": {
+        "#folio-shared": {
+            "development": "./workers/shared/dist/index.js"
+        },
+        "#folio-auth": {
+            "development": "./workers/auth/dist/index.js"
+        },
+        "#folio-storage": {
+            "development": "./workers/storage/dist/index.js"
+        }
     },
     "dependencies": {
         "@josemi-icons/svg": "^0.7.0",
