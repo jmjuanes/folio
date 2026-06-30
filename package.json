@@ -41,17 +41,23 @@
         "dev:landing": "serve .cache/landing -p 8080",
         "dev:lite": "cross-env NODE_ENV=development yarn workspace folio-lite dev",
         "dev:studio": "cross-env NODE_ENV=development yarn workspace folio-studio dev",
-        "start:auth": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js start:auth --port 3001",
-        "start:storage": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js start:storage --port 3002",
+        "start:auth": "cross-env NODE_ENV=development DEBUG='folio:*' node --conditions=development folio.js start:auth --port 3001",
+        "start:storage": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js --conditions=development start:storage --port 3002",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
         "typecheck": "yarn typecheck:workers",
         "typecheck:workers": "yarn workspace folio-shared typecheck",
         "typecheck:lite": "yarn workspace folio-lite typecheck"
     },
     "imports": {
-        "#folio-shared": "./workers/shared/dist/index.js",
-        "#folio-auth": "./workers/auth/dist/index.js",
-        "#folio-storage": "./workers/storage/dist/index.js"
+        "#folio-shared": {
+            "development": "./workers/shared/dist/index.js"
+        },
+        "#folio-auth": {
+            "development": "./workers/auth/dist/index.js"
+        },
+        "#folio-storage": {
+            "development": "./workers/storage/dist/index.js"
+        }
     },
     "dependencies": {
         "@josemi-icons/svg": "^0.7.0",
