@@ -35,7 +35,7 @@
         "clean": "rm -rf www",
         "deploy:ai": "yarn workspace folio-ai deploy",
         "dev": "serve www -p 8080",
-        "dev:app": "yarn dev:studio",
+        "dev:app": "cross-env NODE_ENV=development FOLIO_PROFILE=development yarn workspace folio-app dev",
         "dev:docs": "serve .cache/documentation -p 8080",
         "dev:landing": "serve .cache/landing -p 8080",
         "dev:lite": "cross-env NODE_ENV=development yarn workspace folio-lite dev",
