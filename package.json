@@ -61,8 +61,8 @@
     "dependencies": {
         "@josemi-icons/svg": "^0.7.0",
         "lowcss": "^0.33.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7"
     },
     "devDependencies": {
         "@babel/core": "^7.25.7",
@@ -93,7 +93,7 @@
         "mikel-press": "^0.38.1",
         "picomatch": "^4.0.2",
         "purgecss": "^7.0.2",
-        "react-test-renderer": "^18.2.0",
+        "react-test-renderer": "^19.2.7",
         "serve": "^14.2.4",
         "webpack": "^5.95.0",
         "webpack-cli": "^6.0.1"
