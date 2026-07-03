@@ -77,7 +77,7 @@ export const DialogsProvider = (props: DialogsProviderProps): React.JSX.Element 
 
     // Render dialog context provider
     return (
-        <DialogsContext.Provider value={{ showDialog, hideDialog }}>
+        <DialogsContext value={{ showDialog, hideDialog }}>
             {props.children}
             {!!DialogComponent && createPortal([
                 <Overlay key="dialog:overlay" className="z-50" />,
@@ -92,6 +92,6 @@ export const DialogsProvider = (props: DialogsProviderProps): React.JSX.Element 
                     </Dialog.Content>
                 </Centered>,
             ], document.body)}
-        </DialogsContext.Provider>
+        </DialogsContext>
     );
 };

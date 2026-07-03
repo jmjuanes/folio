@@ -1014,8 +1014,8 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
 
     // return the actions provider
     return (
-        <ActionsContext.Provider value={actionsManager}>
+        <ActionsContext value={actionsManager}>
             {props.children}
-        </ActionsContext.Provider>
+        </ActionsContext>
     );
 };

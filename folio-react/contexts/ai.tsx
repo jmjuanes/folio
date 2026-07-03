@@ -132,8 +132,8 @@ export const AiProvider = ({ host, children }: AiProviderProps): JSX.Element => 
     }, [host]);
 
     return (
-        <AiContext.Provider value={{ host, quotas, updateQuotas }}>
+        <AiContext value={{ host, quotas, updateQuotas }}>
             {children}
-        </AiContext.Provider>
+        </AiContext>
     );
 };

@@ -139,9 +139,9 @@ export const WorkbenchProvider = (props: WorkbenchProviderProps): JSX.Element =>
     }, [parts]);
 
     return (
-        <WorkbenchContext.Provider value={{ parts, isViewOpen, openView, closeView, toggleView }}>
+        <WorkbenchContext value={{ parts, isViewOpen, openView, closeView, toggleView }}>
             {props.children}
-        </WorkbenchContext.Provider>
+        </WorkbenchContext>
     );
 };
 
@@ -182,9 +182,9 @@ export const WorkbenchSlot = (props: WorkbenchSlotProps): JSX.Element | null => 
             {parts[props.part].map((view: View, index: number) => {
                 const Component = view.component as ElementType;
                 return (
-                    <WorkbenchViewContext.Provider key={index} value={view}>
+                    <WorkbenchViewContext key={index} value={view}>
                         <Component />
-                    </WorkbenchViewContext.Provider>
+                    </WorkbenchViewContext>
                 );
             })}
         </Fragment>

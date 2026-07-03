@@ -90,8 +90,8 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
     }, [props.components]);
 
     return (
-        <EditorComponentsContext.Provider value={editorComponents}>
+        <EditorComponentsContext value={editorComponents}>
             {props.children}
-        </EditorComponentsContext.Provider>
+        </EditorComponentsContext>
     );
 };

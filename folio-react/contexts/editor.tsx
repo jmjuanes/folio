@@ -102,10 +102,10 @@ export const EditorProvider = (props: EditorProviderProps): React.JSX.Element =>
 
     // Render editor context provider
     return (
-        <EditorContext.Provider value={[editor, update]}>
+        <EditorContext value={[editor, update]}>
             <div className={"relative overflow-hidden h-full w-full select-none"}>
                 {props.children}
             </div>
-        </EditorContext.Provider>
+        </EditorContext>
     );
 };
