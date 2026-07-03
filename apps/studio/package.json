@@ -12,11 +12,11 @@
     "dependencies": {
         "@josemi-icons/react": "^0.7.0",
         "classnames": "^2.5.1",
-        "lowcss": "^0.33.0",
-        "lowcss-forms": "^0.33.0",
-        "lowcss-helpers": "^0.33.0",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0",
+        "lowcss": "^0.34.1",
+        "lowcss-forms": "^0.34.1",
+        "lowcss-helpers": "^0.34.1",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7",
         "uid": "^2.0.2"
     },
     "devDependencies": {

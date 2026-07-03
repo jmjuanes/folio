@@ -60,7 +60,7 @@
     },
     "dependencies": {
         "@josemi-icons/svg": "^0.7.0",
-        "lowcss": "^0.33.0",
+        "lowcss": "^0.34.1",
         "react": "^19.2.7",
         "react-dom": "^19.2.7"
     },

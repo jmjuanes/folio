@@ -24,8 +24,8 @@
         "alure": "^0.1.0",
         "browser-fs-access": "^0.37.0",
         "classnames": "^2.5.1",
-        "lowcss": "^0.33.0",
-        "lowcss-helpers": "^0.33.0",
+        "lowcss": "^0.34.1",
+        "lowcss-helpers": "^0.34.1",
         "react-use": "^17.5.1",
         "uid": "^2.0.2"
     },
