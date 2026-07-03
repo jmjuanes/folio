@@ -42,18 +42,18 @@ describe("Minimap", () => {
 
     it("should render without crashing", () => {
         const { getByTestId } = render(
-            <EditorContext.Provider value={[mockEditor, 0]}>
+            <EditorContext value={[mockEditor, 0]}>
                 <Minimap />
-            </EditorContext.Provider>
+            </EditorContext>
         );
         expect(getByTestId("minimap")).toBeInTheDocument();
     });
 
     it("should render an SVG with the correct number of elements", () => {
         const { container } = render(
-            <EditorContext.Provider value={[mockEditor, 0]}>
+            <EditorContext value={[mockEditor, 0]}>
                 <Minimap />
-            </EditorContext.Provider>
+            </EditorContext>
         );
 
         const svg = container.querySelector("svg");
@@ -74,16 +74,16 @@ describe("Minimap", () => {
         };
 
         const { container, rerender } = render(
-            <EditorContext.Provider value={[mockEditor, 0]}>
+            <EditorContext value={[mockEditor, 0]}>
                 <Minimap />
-            </EditorContext.Provider>
+            </EditorContext>
         );
         const initialWidth = parseFloat(getVisibleRect(container).getAttribute("width") || "0");
 
         rerender(
-            <EditorContext.Provider value={[zoomedEditor, 0]}>
+            <EditorContext value={[zoomedEditor, 0]}>
                 <Minimap />
-            </EditorContext.Provider>
+            </EditorContext>
         );
         const zoomedWidth = parseFloat(getVisibleRect(container).getAttribute("width") || "0");
 
@@ -98,17 +98,17 @@ describe("Minimap", () => {
         };
 
         const { container, rerender } = render(
-            <EditorContext.Provider value={[mockEditor, 0]}>
+            <EditorContext value={[mockEditor, 0]}>
                 <Minimap />
-            </EditorContext.Provider>
+            </EditorContext>
         );
         const initialX = parseFloat(getVisibleRect(container).getAttribute("x") || "0");
         const initialY = parseFloat(getVisibleRect(container).getAttribute("y") || "0");
 
         rerender(
-            <EditorContext.Provider value={[translatedEditor, 0]}>
+            <EditorContext value={[translatedEditor, 0]}>
                 <Minimap />
-            </EditorContext.Provider>
+            </EditorContext>
         );
         const translatedX = parseFloat(getVisibleRect(container).getAttribute("x") || "0");
         const translatedY = parseFloat(getVisibleRect(container).getAttribute("y") || "0");
@@ -123,9 +123,9 @@ describe("Minimap", () => {
             getElements: () => [],
         };
         const { container } = render(
-            <EditorContext.Provider value={[emptyEditor, 0]}>
+            <EditorContext value={[emptyEditor, 0]}>
                 <Minimap />
-            </EditorContext.Provider>
+            </EditorContext>
         );
 
         // Only the visible area rect should be rendered
