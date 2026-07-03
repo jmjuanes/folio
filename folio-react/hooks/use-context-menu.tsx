@@ -25,9 +25,9 @@ export const ContextMenuWrapper = (): JSX.Element => {
     const { getContext } = useSurface();
     const { top, left } = getContext();
     return (
-        <ContexMenuPositionContext.Provider value={{ top: top as number, left: left as number }}>
+        <ContexMenuPositionContext value={{ top: top as number, left: left as number }}>
             <ContextMenu />
-        </ContexMenuPositionContext.Provider>
+        </ContexMenuPositionContext>
     );
 };
 
