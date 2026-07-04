@@ -21,7 +21,7 @@ import { useActions } from "../contexts/actions.tsx";
 import { useCursor } from "../hooks/use-cursor.js";
 import { renderElement } from "./elements/index.jsx";
 import { SvgContainer } from "./svg.tsx";
-import { Grid } from "./grid.jsx";
+import { Grid } from "./grid.tsx";
 import { clearFocus } from "../utils/dom.js";
 import { preventDefault, isTouchOrPenEvent, isInputTarget } from "../utils/events.js";
 import type { EditorPointEvent, EditorKeyboardEvent } from "../lib/events.ts";

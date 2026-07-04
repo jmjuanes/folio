@@ -9,7 +9,7 @@ export const useAssets = () => {
 
 // Assets provider component
 export const AssetsProvider = props => (
-    <AssetsContext.Provider value={props.value || {}}>
+    <AssetsContext value={props.value || {}}>
         {props.children}
-    </AssetsContext.Provider>
+    </AssetsContext>
 );

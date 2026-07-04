@@ -85,7 +85,7 @@ export const ConfirmProvider = props => {
     }, [confirm, hideConfirm]);
 
     return (
-        <ConfirmContext.Provider value={{confirm, showConfirm, hideConfirm}}>
+        <ConfirmContext value={{confirm, showConfirm, hideConfirm}}>
             {props.children}
             {confirm?.visible && createPortal([
                 <React.Fragment key="dialog:confirm">
@@ -113,6 +113,6 @@ export const ConfirmProvider = props => {
                     </Centered>
                 </React.Fragment>
             ], document.body)}
-        </ConfirmContext.Provider>
+        </ConfirmContext>
     );
 };
