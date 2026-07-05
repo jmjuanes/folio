@@ -1,8 +1,8 @@
 import { Fragment, useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { useAlure as useSurface } from "alure";
 import { CloseIcon } from "@josemi-icons/react";
 import { useAi } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.tsx";
+import { useSurface } from "../contexts/surface.tsx";
 import { Ai as AiComponents } from "./ui/ai.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";

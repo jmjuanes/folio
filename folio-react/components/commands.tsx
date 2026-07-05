@@ -1,10 +1,10 @@
 import { Fragment, useState, useRef, useMemo, useCallback, useEffect } from "react";
-import { useAlure as useSurface } from "alure";
 import { renderIcon } from "@josemi-icons/react";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions, ActionCategory } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
+import { useSurface } from "../contexts/surface.tsx";
 import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
