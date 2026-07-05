@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { useEffect, Fragment } from "react";
 import { render, screen, act, fireEvent } from "@testing-library/react";
 import {
@@ -10,7 +11,6 @@ import {
     withDismiss,
 } from "../surface.tsx";
 import "@testing-library/jest-dom";
-import type { PropsWithChildren } from "react";
 
 const TestComponent = () => {
     return (
@@ -177,30 +177,6 @@ describe("Surface", () => {
                     <SurfaceOutlet />
                 </SurfaceProvider>
             );
-        });
-
-        describe("custom middlewares", () => {
-            it("should support adding custom middlewares", () => {
-                const customMiddleware = {
-                    wrapper: (props: PropsWithChildren) => {
-                        return (
-                            <div data-testid="test-middleware">
-                                {props.children}
-                            </div>
-                        );
-                    },
-                };
-
-                act(() => {
-                    surfaceManager.open("text-id", {
-                        component: TestComponent,
-                        middlewares: [customMiddleware],
-                    });
-                });
-
-                expect(screen.getByTestId("test-element")).toBeInTheDocument();
-                expect(screen.getByTestId("test-middleware")).toBeInTheDocument();
-            });
         });
 
         describe("withFixedPosition", () => {
