@@ -21,7 +21,6 @@
     },
     "devDependencies": {
         "@josemi-icons/react": "^0.7.0",
-        "alure": "^0.1.0",
         "browser-fs-access": "^0.37.0",
         "classnames": "^2.5.1",
         "lowcss": "^0.34.1",
