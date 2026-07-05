@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { useAlure as useSurface } from "alure";
 import { Button, ButtonVariant } from "../components/ui/button.tsx";
 import { Dialog } from "../components/ui/dialog.tsx";
+import { useSurface } from "../contexts/surface.tsx";
 import { useDialog } from "./use-dialog.tsx";
 import type { JSX } from "react";
 

@@ -1,8 +1,8 @@
 import { Fragment } from "react";
-import { AlureOutlet as SurfaceOutlet, AlureProvider as SurfaceProvider } from "alure";
 import { EditorProvider, useEditor } from "../contexts/editor.tsx";
 import { EditorComponentsProvider, useEditorComponents } from "../contexts/editor-components.tsx";
 import { LibraryProvider } from "../contexts/library.tsx";
+import { SurfaceOutlet, SurfaceProvider } from "../contexts/surface.tsx";
 import { PreferencesProvider, usePreferences } from "../contexts/preferences.tsx";
 import { ToolsProvider } from "../contexts/tools.tsx";
 import { ActionsProvider, useActions} from "../contexts/actions.tsx";

@@ -275,8 +275,8 @@ export const LibraryProvider = (props: LibraryProviderProps): React.JSX.Element 
 
     // render library context provider
     return (
-        <LibraryContext.Provider value={libraryApi}>
+        <LibraryContext value={libraryApi}>
             {props.children}
-        </LibraryContext.Provider>
+        </LibraryContext>
     );
 };

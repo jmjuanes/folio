@@ -1,5 +1,4 @@
 import { Fragment, useEffect, useCallback, useState, useMemo } from "react";
-import { useAlure as useSurface } from "alure";
 import { ImageIcon, DownloadIcon, ClipboardIcon } from "@josemi-icons/react";
 import {
     EXPORT_FORMATS,
@@ -18,6 +17,7 @@ import { Dialog } from "./ui/dialog.tsx";
 import { Overlay } from "./ui/overlay.tsx";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.tsx";
+import { useSurface } from "../contexts/surface.tsx";
 import transparentBg from "../assets/transparent.svg";
 import type { JSX, ReactNode } from "react";
 

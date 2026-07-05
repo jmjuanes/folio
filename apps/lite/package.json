@@ -13,11 +13,11 @@
         "@josemi-icons/react": "^0.7.0",
         "classnames": "^2.5.1",
         "idb-keyval": "^6.2.2",
-        "lowcss": "^0.33.0",
-        "lowcss-forms": "^0.33.0",
-        "lowcss-helpers": "^0.33.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "lowcss": "^0.34.1",
+        "lowcss-forms": "^0.34.1",
+        "lowcss-helpers": "^0.34.1",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7"
     },
     "devDependencies": {
         "@babel/core": "^7.25.7",

@@ -1,5 +1,5 @@
 import { useCallback, useContext, createContext } from "react";
-import { useAlure as useSurface, withDismiss, withFixedPosition } from "alure";
+import { useSurface, withDismiss, withFixedPosition } from "../contexts/surface.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import type { JSX } from "react";
@@ -25,9 +25,9 @@ export const ContextMenuWrapper = (): JSX.Element => {
     const { getContext } = useSurface();
     const { top, left } = getContext();
     return (
-        <ContexMenuPositionContext.Provider value={{ top: top as number, left: left as number }}>
+        <ContexMenuPositionContext value={{ top: top as number, left: left as number }}>
             <ContextMenu />
-        </ContexMenuPositionContext.Provider>
+        </ContexMenuPositionContext>
     );
 };
 

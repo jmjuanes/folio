@@ -65,8 +65,8 @@ export const usePreferences = (): Preferences => {
 export const PreferencesProvider = (props: PreferencesProviderProps): JSX.Element => {
     const userPreferences = props.preferences;
     return (
-        <UserPreferencesContext.Provider value={userPreferences}>
+        <UserPreferencesContext value={userPreferences}>
             {props.children}
-        </UserPreferencesContext.Provider>
+        </UserPreferencesContext>
     );
 };

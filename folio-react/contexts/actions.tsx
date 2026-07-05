@@ -1,5 +1,4 @@
 import React from "react";
-import { useAlure as useSurface, withDismiss } from "alure";
 import { uid } from "uid/secure";
 import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN, PREFERENCES } from "../constants.js";
 import { EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT } from "../constants.js";
@@ -9,6 +8,7 @@ import { useEditorComponents } from "./editor-components.tsx";
 import { Part, useWorkbench } from "./workbench.tsx";
 import { usePreferences } from "./preferences.tsx";
 import { useConfirm } from "../hooks/use-confirm.tsx";
+import { useSurface, withDismiss } from "./surface.tsx";
 import { useTools } from "./tools.tsx";
 import { usePrompt } from "../hooks/use-prompt.tsx";
 import { getShortcutKey } from "../lib/actions.ts";
@@ -1014,8 +1014,8 @@ export const ActionsProvider = (props: ActionsProviderProps): React.JSX.Element 
 
     // return the actions provider
     return (
-        <ActionsContext.Provider value={actionsManager}>
+        <ActionsContext value={actionsManager}>
             {props.children}
-        </ActionsContext.Provider>
+        </ActionsContext>
     );
 };

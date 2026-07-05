@@ -348,8 +348,8 @@ export const ToolsProvider = (props: ToolsProviderProps): React.JSX.Element => {
     }), [tools]);
 
     return (
-        <ToolsContext.Provider value={toolsManager}>
+        <ToolsContext value={toolsManager}>
             {props.children}
-        </ToolsContext.Provider>
+        </ToolsContext>
     );
 };
