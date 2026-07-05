@@ -1,5 +1,5 @@
 import { Fragment, useCallback } from "react";
-import { useAlure as useSurface, withDismiss, withPortal } from "alure";
+import { useSurface, withDismiss, withPortal } from "../contexts/surface.tsx";
 import { Centered } from "../components/ui/centered.tsx";
 import { Overlay } from "../components/ui/overlay.tsx";
 import type { ElementType, JSX } from "react";

@@ -1,5 +1,5 @@
 import { useCallback, useContext, createContext } from "react";
-import { useAlure as useSurface, withDismiss, withFixedPosition } from "alure";
+import { useSurface, withDismiss, withFixedPosition } from "../contexts/surface.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import type { JSX } from "react";

@@ -1,10 +1,10 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { useAlure as useSurface } from "alure";
 import { FORM_OPTIONS, PREFERENCES } from "../constants.js";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay } from "./ui/overlay.tsx";
 import { Form } from "./form/index.jsx";
+import { useSurface } from "../contexts/surface.tsx";
 import { useUserPreferences, DEFAULT_PREFERENCES } from "../contexts/preferences.tsx";
 import type { JSX, ReactNode } from "react";
 

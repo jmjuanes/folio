@@ -1,8 +1,8 @@
 import { Fragment, useMemo } from "react";
-import { useAlure as useSurface } from "alure";
 import { ACTIONS } from "../constants.js";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
+import { useSurface } from "../contexts/surface.tsx";
 import { printShortcut } from "../lib/actions.ts";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
