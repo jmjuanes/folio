@@ -39,8 +39,6 @@ export const useClients = (): Clients => {
 // main clients provider
 export const ClientsProvider = (props: PropsWithChildren): JSX.Element =>  {
     const [clients, setClients] = useState<Clients | null>(null);
-
-    // initialize clients
     useEffect(() => {
         createClientsFromProfile().then(initialClients => {
             setClients(initialClients);
@@ -55,8 +53,8 @@ export const ClientsProvider = (props: PropsWithChildren): JSX.Element =>  {
     }
     
     return (
-        <ClientsContext.Provider value={clients}>
+        <ClientsContext value={clients}>
             {props.children}
-        </ClientsContext.Provider>
+        </ClientsContext>
     );
 };
