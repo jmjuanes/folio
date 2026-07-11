@@ -12,6 +12,7 @@
             ],
             "folio-react": [
                 "../folio-react/index.jsx",
+                "../folio-react/*"
             ],
         }
     }
