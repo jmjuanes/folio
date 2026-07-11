@@ -7,11 +7,12 @@ import { Preferences as PreferencesDialog, PreferencesContent } from "folio-reac
 import { Loading } from "folio-react/components/loading.jsx";
 import type { JSX } from "react";
 import type { Preferences } from "folio-react/contexts/preferences.tsx";
-import type { StorageService } from "../types/service.ts";
+import type { StorageClient } from "../types/clients.ts";
 
 export type EditorProps = {
-    id: string;
-    storage: StorageService;
+    dataId: string;
+    preferencesId: string;
+    storage: StorageClient;
 };
 
 // internal method to change the document title
@@ -19,14 +20,15 @@ export type EditorProps = {
 //     document.title = `${title} - folio lite`;
 // };
 
-export const Editor = ({ id, storage }: EditorProps): JSX.Element => {
+export const Editor = ({ dataId, preferencesId, storage }: EditorProps): JSX.Element => {
     const [ready, setReady] = useState<boolean>(false);
     const [preferences, setPreferences] = useState<Partial<Preferences> | null>(null);
     // const currentTitle = useRef<string>("Untitled");
 
     // we are using a reference to the initial preferences to prevent saving the same loaded preferences
     // when the component is initialized
-    const initialPreferences = useRef<object>(null);
+    const initialPreferences = useRef<any>(null);
+    const initialData = useRef<any>(null);
 
     const componentsOverrides = useMemo(() => {
         return {
@@ -49,33 +51,39 @@ export const Editor = ({ id, storage }: EditorProps): JSX.Element => {
     // default preferences for folio-lite app
     const mergedPreferences = useMemo(() => {
         return {
-            [PREFERENCES.AI_ENABLED]: false,
+            // [PREFERENCES.AI_ENABLED]: false,
             ...preferences,
         };
     }, [preferences]);
 
     // this is a wrapper around store.getInitialData to get and update the document title
     const handleDataLoad = useCallback(() => {
-        storage.getDocument(id).then(data => {
+        return storage.get(dataId).then(data => {
             // if (data?.value?.title) {
             //     setDocumentTitle(data.title);
             //     currentTitle.current = data.title;
             // }
-            return data?.value;
+            initialData.current = data;
+            return data?.value || {};
         });
-    }, [id, storage]);
+    }, [dataId, storage]);
 
     // when the data in the editor changes, run store.updateData
     const handleDataChange = useCallback((data: any) => {
-        storage.updateDocument(id, {
+        // TODO: we have to include the metadata in the data submitted to the storage
+        storage.update(dataId, {
             value: data,
+            metadata: {
+                ...(initialData?.current?.metadata || {}),
+                updated_at: Date.now(),
+            },
         });
         // update the document title if it has changed
         // if (data?.title && data.title !== currentTitle.current) {
         //     setDocumentTitle(data.title);
         //     currentTitle.current = data.title;
         // }
-    }, [storage]);
+    }, [dataId, storage]);
 
     // when the library in the editor changes, run store.updateLibrary
     // const handleLibraryChange = useCallback((library: any) => {
@@ -84,24 +92,29 @@ export const Editor = ({ id, storage }: EditorProps): JSX.Element => {
 
     // when the component is mounted, fetch preferences
     useEffect(() => {
-        storage.getPreferences()
-            .then(savedPreferences => {
-                initialPreferences.current = savedPreferences || {};
+        storage.get(preferencesId)
+            .then(data => {
+                initialPreferences.current = data || {};
             })
             .catch(error => {
                 console.error(error);
                 initialPreferences.current = {};
             })
             .finally(() => {
-                setPreferences(initialPreferences.current);
+                setPreferences(initialPreferences.current?.value || {});
                 setReady(true);
             });
-    }, [id, storage]);
+    }, [preferencesId, storage]);
 
     // when preferences change, call useEffect to update the preferences storage
     useEffect(() => {
-        if (preferences && preferences !== initialPreferences.current) {
-            storage.updatePreferences(preferences);
+        if (preferences && preferences !== initialPreferences.current?.value) {
+            storage.update(preferencesId, {
+                value: preferences,
+                metadata: {
+                    updated_at: Date.now(),
+                },
+            });
         }
     }, [storage, preferences]);
 
