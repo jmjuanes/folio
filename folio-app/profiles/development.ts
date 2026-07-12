@@ -8,12 +8,15 @@ export default {
         return Promise.resolve({});
     },
     services: {
-        localStorage: {
-            dbName: "folio",
-            storeName: "folio-store",
-            initialize: async (store: UseStore) => {
-                // TODO: initialize storage
-            },
+        // localStorage: {
+        //     dbName: "folio",
+        //     storeName: "folio-store",
+        //     initialize: async (store: UseStore) => {
+        //         // TODO: initialize storage
+        //     },
+        // },
+        authentication: {
+            host: "/_auth",
         },
     },
 } as Profile;

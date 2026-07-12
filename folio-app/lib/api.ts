@@ -1,3 +1,5 @@
+import { TOKEN_KEY } from "../constants.ts";
+
 export type ApiClient = (method: string, path: string, data?: any) => Promise<any>;
 
 // internal method to reject the promise with a standardized error format
@@ -11,7 +13,6 @@ const rejectResponse = (response: any): Promise<Error> => {
 
 export const createApiClient = (host: string = ""): ApiClient => {
     return (method: string, path: string, data?: any): Promise<any> => {
-        const requestUrl = new URL(path, host).href;
         // construct the URL based on the base URL and path
         const options: RequestInit = {
             method: method || "GET",
@@ -20,15 +21,16 @@ export const createApiClient = (host: string = ""): ApiClient => {
             },
         };
         // include the Authorization header if token is set
-        // if (token) {
-        //     (options.headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
-        // }
+        const token = window.localStorage.getItem(TOKEN_KEY) || null;
+        if (token) {
+            (options.headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+        }
         // include the body if method is POST or PATCH and data is provided
         if (data && (method === "POST" || method === "PATCH" || method === "PUT")) {
             options.body = JSON.stringify(data);
         }
         // perform the request
-        return fetch(requestUrl, options)
+        return fetch(host + path, options)
             .then(response => {
                 // if the response is not ok, we throw an error
                 if (!response.ok) {

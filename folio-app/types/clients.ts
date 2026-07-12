@@ -1,3 +1,7 @@
+export type Credentials = {
+    token?: string;
+};
+
 export type Document = {
     name?: string;
     id?: string;
@@ -5,7 +9,6 @@ export type Document = {
     metadata?: object;
 };
 
-// general interface to access to storage
 export interface StorageClient {
     list(): Promise<Document[]>;
     get(id: string): Promise<Document>;
@@ -14,3 +17,8 @@ export interface StorageClient {
     delete(id: string): Promise<void>;
 };
 
+export interface AuthenticationClient {
+    login(credentials: Credentials): Promise<void>;
+    logout(): Promise<void>;
+    isAuthenticated(): Promise<boolean>;
+};

@@ -1,14 +1,14 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import profile from "@profile";
-import { createLocalStorageClient } from "../clients/local.ts";
-import { createRemoteStorageClient } from "../clients/remote.ts";
+import { createRemoteStorageClient, createLocalStorageClient } from "../clients/storage.ts";
+import { createAuthenticationClient } from "../clients/authentication.ts";
 import type { PropsWithChildren, JSX } from "react";
-import type { StorageClient } from "../types/clients";
+import type { StorageClient, AuthenticationClient } from "../types/clients";
 
 export type Clients = {
     localStorage?: StorageClient | null;
     remoteStorage?: StorageClient | null;
-    authentication?: null;
+    authentication?: AuthenticationClient | null;
 };
 
 // create clients from profile
@@ -16,6 +16,7 @@ const createClientsFromProfile = async (): Promise<Clients> => {
     const clients: Clients = {
         localStorage: null,
         remoteStorage: null,
+        authentication: null,
     };
     // initialize local storage client
     if (profile?.services?.localStorage) {
@@ -24,6 +25,10 @@ const createClientsFromProfile = async (): Promise<Clients> => {
     // initialize remote storage client
     if (profile?.services?.remoteStorage) {
         clients.remoteStorage = await createRemoteStorageClient(profile.services.remoteStorage);
+    }
+    // initialize authentication
+    if (profile?.services?.authentication) {
+        clients.authentication = await createAuthenticationClient(profile.services.authentication);
     }
     return Promise.resolve(clients);
 };

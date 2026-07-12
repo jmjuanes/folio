@@ -1,5 +1,9 @@
 import type { UseStore } from "idb-keyval";
 
+export type AuthenticationConfig = {
+    host: string;
+};
+
 export type LocalStorageConfig = {
     dbName: string;
     storeName: string;
@@ -16,5 +20,6 @@ export type Profile = {
     services?: {
         localStorage?: LocalStorageConfig;
         remoteStorage?: RemoteStorageConfig;
+        authentication?: AuthenticationConfig;
     }
 };
