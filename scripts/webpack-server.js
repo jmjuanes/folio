@@ -45,10 +45,10 @@ export const createServer = (rules = []) => {
                     response.setHeader(name, headers[name]);
                 });
                 // 2.1 send JSON data calling the provided function
-                if (rule.response?.fn) {
-                    rule.response.fn(request).then(data => {
-                        response.status(rule.response?.status || 200);
-                        response.json(data);
+                if (typeof rule.response === "function") {
+                    rule.response(request).then(ruleResponse => {
+                        response.status(ruleResponse?.status || 200);
+                        response.json(ruleResponse?.body || {});
                     });
                 }
                 // 2.2. if the rule has a data property, use it to send the data object
