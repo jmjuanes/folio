@@ -9,7 +9,7 @@
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
     "workspaces": [
-        "folio-app",
+        "app",
         "folio-react",
         "workers/*"
     ],
