@@ -6,21 +6,23 @@ import { Centered } from "folio-react/components/ui/centered.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
 import { useClients } from "../contexts/clients.tsx";
 import { useConfiguration } from "../contexts/configuration.tsx";
+import * as styles from "../index.css";
+
 import type { JSX } from "react";
 
-const LoginMessageAlert = ({ title, content }: { title: string, content: string }): JSX.Element => {
-    return (
-        <div className="text-xs text-gray-700 mb-4 border-1 border-gray-200 p-3 rounded-md leading-relaxed">
-            <div className="flex items-center gap-1 mb-1">
-                <div className="flex items-center text-sm">
-                    <ExclamationCircleIcon />
-                </div>
-                <div className="font-bold">{title}</div>
-            </div>
-            <div className="">{content}</div>
-        </div>
-    );
-};
+// const LoginMessageAlert = ({ title, content }: { title: string, content: string }): JSX.Element => {
+//     return (
+//         <div className="text-xs text-gray-700 mb-4 border-1 border-gray-200 p-3 rounded-md leading-relaxed">
+//             <div className="flex items-center gap-1 mb-1">
+//                 <div className="flex items-center text-sm">
+//                     <ExclamationCircleIcon />
+//                 </div>
+//                 <div className="font-bold">{title}</div>
+//             </div>
+//             <div className="">{content}</div>
+//         </div>
+//     );
+// };
 
 // @description login component
 export const Login = (): JSX.Element => {
@@ -50,18 +52,18 @@ export const Login = (): JSX.Element => {
     }, [authentication]);
 
     return (
-        <Centered className="h-screen">
-            <div className="w-96 pb-20">
-                <div className="font-serif text-5xl mb-4 leading-none font-brand select-none">
+        <Centered style={{ height: "100%" }}>
+            <div className={styles.login}>
+                <div className={styles.loginTitle}>
                     <span>{configuration?.login_title || configuration?.title || "folio."}</span>
                 </div>
-                <div className="text-sm text-gray-700 mb-4">
+                <div className={styles.loginDescription}>
                     <span>You need to log in with your access token to continue.</span>
                 </div>
-                <div className="mb-5">
+                <div className={styles.formField}>
                     <input
                         type="text"
-                        className="w-full p-2 border-1 border-gray-200 text-gray-950 text-sm rounded-md outline-gray-950"
+                        className={styles.formInput}
                         placeholder="Enter your access token..."
                         ref={accessTokenRef}
                         disabled={loading}
@@ -72,10 +74,11 @@ export const Login = (): JSX.Element => {
                             }
                         }}
                     />
-                    <div className="text-2xs text-gray-600 mt-1">
+                    <div className={styles.formHelper}>
                         Your access token is printed in the terminal where you run the server. If you don't have it, please contact your administrator.
                     </div>
                 </div>
+                {/*
                 {(configuration?.login_messages || []).map((message: any, index: number) => (
                     <LoginMessageAlert
                         key={index}
@@ -83,9 +86,10 @@ export const Login = (): JSX.Element => {
                         content={message.content}
                     />
                 ))}
-                <div className="w-full">
-                    <Button className="w-full" disabled={loading} onClick={handleLogin}>
-                        <span className="font-bold">Continue</span>
+                */}
+                <div>
+                    <Button style={{ width: "100%" }} disabled={loading} onClick={handleLogin}>
+                        <span style={{ fontWeight: "bold" }}>Continue</span>
                     </Button>
                 </div>
             </div>
