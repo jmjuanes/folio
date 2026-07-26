@@ -4,8 +4,9 @@ import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { createServer } from "../scripts/webpack-server.js";
 
+import authenticationRules from "./__stubs/authentication.js";
+import storageRules from "./__stubs/storage.js";
 import pkg from "../package.json" with { type: "json" };
-// import rules from "./__stubs/rules.json" with { type: "json" };
 
 export default {
     mode: process.env.NODE_ENV || "development",
@@ -43,7 +44,10 @@ export default {
                 // {from: /^\/index.html$/, to: "app.html"},
             ],
         },
-        // setupMiddlewares: createServer(rules),
+        setupMiddlewares: createServer([
+            ...authenticationRules,
+            ...storageRules,
+        ]),
         devMiddleware: {
             writeToDisk: true,
         },
@@ -77,6 +81,20 @@ export default {
             {
                 test: /\.(png|jpg|jpeg|svg)$/,
                 type: "asset/inline",
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    "style-loader",
+                    {
+                        loader: "css-loader",
+                        options: {
+                            modules: {
+                                localIdentName: "[name]__[local]___[hash:base64:5]",
+                            },
+                        },
+                    },
+                ],
             },
         ],
     },
