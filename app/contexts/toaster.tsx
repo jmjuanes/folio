@@ -1,15 +1,20 @@
 import { createContext, useContext, useState, useMemo, useRef } from "react";
 import classNames from "classnames";
 import { renderIcon } from "@josemi-icons/react";
-import type { JSX, PropsWithChildren } from "react";
+import * as styles from "../index.css";
+
+import type { JSX, PropsWithChildren, CSSProperties } from "react";
 
 // amount of time in milliseconds to wait before automatically removing a toast
 const TOAST_DURATION = 4000;
 
 export type Toast = {
     message?: string;
+    messageClassName?: string;
+    messageStyle?: CSSProperties;
     icon?: string; // optional icon
     iconClassName?: string; // optional icon class name
+    iconStyle?: CSSProperties;
     duration?: number; // duration in milliseconds
 };
 
@@ -34,27 +39,20 @@ export const useToaster = (): Toaster => {
 };
 
 // Toast component
-export const ToastComponent = ({ toast }: { toast: Toast }): JSX.Element => {
-    const toastClass = classNames({
-        "flex items-start gap-2 px-4 py-4 rounded-lg shadow-sm": true,
-        "bg-gray-950 text-white": true,
-    });
-
-    return (
-        <div className={toastClass}>
-            {toast?.icon && (
-                <div className={classNames("flex leading-none", toast.iconClassName)}>
-                    {renderIcon(toast.icon)}
-                </div>
-            )}
-            <div className="flex flex-col gap-1 mt-px">
-                <div className="min-h-4 font-bold tracking-tight leading-none text-sm">
-                    {toast?.message || ""}
-                </div>
+export const ToastComponent = ({ toast }: { toast: Toast }): JSX.Element => (
+    <div className={styles.toasterToast}>
+        {toast?.icon && (
+            <div className={classNames(styles.toasterToastIcon, toast.iconClassName)}>
+                {renderIcon(toast.icon)}
+            </div>
+        )}
+        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div className={classNames(styles.toasterToastMessage, toast.messageClassName)}>
+                {toast?.message || ""}
             </div>
         </div>
-    );
-};
+    </div>
+);
 
 // ToasterProvider component
 export const ToasterProvider = (props: PropsWithChildren): JSX.Element => {
@@ -81,7 +79,9 @@ export const ToasterProvider = (props: PropsWithChildren): JSX.Element => {
             },
             dismiss: () => {
                 clearTimeout(toastTimmer.current);
-                setToast({ visible: false, data: null });
+                setToast(prevToast => {
+                    return Object.assign({}, prevToast, { visible: false });
+                });
             },
         } as Toaster;
     }, [ setToast ]);
@@ -89,13 +89,13 @@ export const ToasterProvider = (props: PropsWithChildren): JSX.Element => {
     return (
         <ToasterContext value={toaster}>
             {props.children}
-            {toast?.data && (
-                <div className="fixed bottom-0 left-half z-50" style={{ transform: "translateX(-50%)" }}>
-                    <div className="relative" style={{ transition: "bottom 0.3s linear", bottom: toast.visible ? "1rem" : "-6rem" }}>
+            <div className={styles.toaster}>
+                <div style={{ position: "relative", transition: "bottom 0.3s linear", bottom: toast.visible ? "1rem" : "-6rem" }}>
+                    {toast?.data && (
                         <ToastComponent toast={toast.data} />
-                    </div>
+                    )}
                 </div>
-            )}
+            </div>
         </ToasterContext>
     );
 };
