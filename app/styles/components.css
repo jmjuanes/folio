@@ -3,6 +3,9 @@
 /* main app layout */
 .layout {
     background-color: var(--folio-color-background);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     height: 100%;
     left: 0;
     padding: 0;
@@ -11,6 +14,7 @@
     width: 100%;
 }
 .layoutContent {
+    display: block;
     height: 100%;
     overflow: hidden;
     width: 100%;
