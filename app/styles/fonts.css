@@ -1,0 +1,22 @@
+:root {
+    --folio-fontFamily-body: "Inter", sans-serif;
+    --folio-fontFamily-heading: "Fraunces", serif;
+}
+
+/* font used in body */
+.fontFamilyBody {
+    font-family: var(--folio-fontFamily-body);
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* font used in headings */
+.fontFamilyHeading {
+    font-family: var(--folio-fontFamily-heading);
+    font-optical-sizing: auto;
+    font-weight: 800 !important;
+    font-style: normal;
+    font-variation-settings: "SOFT" 100, "WONK" 0;
+    /* letter-spacing: -0.2rem; */
+}

@@ -10,7 +10,6 @@ import { Logo } from "./Logo.tsx";
 // import { useConfiguration } from "../contexts/configuration.tsx";
 
 import * as formStyles from "folio-react/styles/form.css";
-import { fontFamilyHeading } from "folio-react/styles/utilities.css";
 import * as styles from "../styles/components.css";
 
 import type { JSX } from "react";
@@ -63,12 +62,7 @@ export const Login = (): JSX.Element => {
         <Centered style={{ height: "100%" }}>
             <div className={styles.login}>
                 <div className={styles.loginTitle}>
-                    <Logo
-                        className={fontFamilyHeading}
-                        style={{
-                            letterSpacing: "-0.1rem",
-                        }}
-                    />
+                    <Logo />
                 </div>
                 <div className={styles.loginDescription}>
                     <span>You need to log in with your access token to continue.</span>

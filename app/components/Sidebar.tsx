@@ -1,5 +1,4 @@
 import { useEffect, useCallback, useState, useRef, useMemo } from "react";
-import { createPortal } from "react-dom";
 import { useToggle } from "react-use";
 import classNames from "classnames";
 import { renderIcon, DotsIcon } from "@josemi-icons/react";
@@ -14,7 +13,6 @@ import { Logo } from "./Logo.tsx";
 import { groupByDate, formatDate } from "../utils/dates.ts";
 
 import * as styles from "../styles/components.css";
-import { fontSize2xl, fontFamilyHeading } from "folio-react/styles/utilities.css";
 
 import type { JSX, SyntheticEvent } from "react";
 
@@ -236,12 +234,7 @@ export const Sidebar = (): JSX.Element => {
             <div className={styles.sidebarHeader}>
                 <div style={{}}>
                     {!collapsed && (
-                        <Logo
-                            className={classNames(fontSize2xl, fontFamilyHeading)}
-                            style={{
-                                letterSpacing: "-0.1rem",
-                            }}
-                        />
+                        <Logo className={styles.sidebarLogo} />
                     )}
                 </div>
                 <div style={{ flexShrink: "0" }}>

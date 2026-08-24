@@ -1,5 +1,12 @@
 @import url("../../folio-react/styles/variables.css");
 
+/* home route component */
+.homeTitle {
+    composes: fontFamilyHeading from "./fonts.css";
+    font-size: 4rem;
+    letter-spacing: -0.1rem;
+}
+
 /* main app layout */
 .layout {
     background-color: var(--folio-color-background);
@@ -38,6 +45,7 @@
 
 /* logo component */
 .logo {
+    composes: fontFamilyHeading from "./fonts.css";
     letter-spacing: -0.1rem;
     line-height: 1;
     user-select: none;
@@ -60,6 +68,9 @@
 }
 .sidebarExpanded {
     width: 16rem;
+}
+.sidebarLogo {
+    font-size: var(--folio-fontSize-2xl);
 }
 .sidebarHeader {
     align-items: center;
