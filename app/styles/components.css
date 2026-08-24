@@ -1,5 +1,21 @@
 @import url("../../folio-react/styles/variables.css");
 
+/* main app layout */
+.layout {
+    background-color: var(--folio-color-background);
+    height: 100%;
+    left: 0;
+    padding: 0;
+    /* position: fixed; */
+    top: 0;
+    width: 100%;
+}
+.layoutContent {
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+}
+
 /* login styles */
 .login {
     width: var(--folio-container-sm);
