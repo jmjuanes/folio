@@ -1,0 +1,178 @@
+@import url("../../folio-react/styles/variables.css");
+
+/* login styles */
+.login {
+    width: var(--folio-container-sm);
+}
+.loginTitle {
+    font-size: var(--folio-fontSize-5xl);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 1rem;
+    user-select: none;
+}
+.loginDescription {
+    font-size: var(--folio-fontSize-sm);
+    margin-bottom: 1rem;
+}
+
+/* logo component */
+.logo {
+    letter-spacing: -0.1rem;
+    line-height: 1;
+    user-select: none;
+}
+
+/* sidebar component */
+.sidebar {
+    border-right: solid 1px var(--folio-color-border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    justify-content: space-between;
+    padding: 0.5rem;
+    transition: width 0.25s ease-in-out;
+}
+.sidebarCollapsed {
+    cursor: e-resize;
+    width: 5rem;
+}
+.sidebarExpanded {
+    width: 16rem;
+}
+.sidebarHeader {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    padding: 0.75rem;
+    position: sticky;
+    top: 0;
+    user-select: none;;
+    z-index: 50;
+}
+.sidebarBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 0.75rem 0 0.75rem;
+}
+.sidebarFooter {
+    padding: 0.75rem;
+}
+
+/* action button displayed in the sidebar */
+.sidebarActionButton {
+    align-items: center;
+    border-radius: var(--folio-radii-md);
+    cursor: pointer;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    height: 2rem;
+    overflow: hidden;
+    padding: 0.25rem 0.5rem;
+}
+.sidebarActionButton:hover {
+    background-color: var(--folio-color-accent);
+}
+.sidebarActionButtonIcon {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    font-size: var(--folio-fontSize-xl);
+    justify-content: center;
+    width: 1.5rem;
+}
+.sidebarActionButtonText {
+    flex-shrink: 0;
+    font-size: var(--folio-fontSize-sm);
+    font-weight: 500;
+}
+/* wrapper to display action buttons */
+.sidebarActionButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+/* sidebar document button */
+.sidebarDocumentButton {
+    align-items: center;
+    border-radius: var(--folio-radii-md);
+    display: flex;
+    padding: 0.25rem 0.5rem;
+    position: relative;
+    width: 100%;
+}
+.sidebarDocumentButton:hover, 
+.sidebarDocumentButtonActive {
+    background-color: var(--folio-color-accent);
+}
+.sidebarDocumentButtonContent {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 0.5rem;
+    overflow: hidden;
+    width: 100%;
+}
+.sidebarDocumentButtonContentIcon {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    font-size: var(--folio-fontSize-lg);
+}
+.sidebarDocumentButtonContentText {
+    flex-shrink: 0;
+    font-size: var(--folio-fontSize-sm);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 8rem;
+}
+.sidebarDocumentButtonAction {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    margin-left: auto;
+    opacity: 0;
+    padding: 0;
+}
+.sidebarDocumentButton:hover > .sidebarDocumentButtonAction {
+    opacity: 1;
+}
+.sidebarDocumentButtonActionIcon {
+    align-items: center;
+    border-radius: var(--folio-radii-sm);
+    display: flex;
+    padding: 0.25rem;
+}
+.sidebarDocumentButtonActionItem:hover {
+    background-color: var(--folio-color-border);
+}
+.sidebarDocumentButtonPopover {
+    width: 12rem;
+}
+
+/* sidebar group */
+.sidebarGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.sidebarGroupTitle {
+    color: var(--folio-color-muted);
+    display: flex;
+    font-size: var(--folio-fontSize-xs);
+    font-weight: 700;
+    padding: 0 0.5rem;
+    overflow: hidden;
+}
+
