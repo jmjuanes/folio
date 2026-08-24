@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router";
 import { ExclamationCircleIcon } from "@josemi-icons/react";
@@ -5,8 +6,12 @@ import { Button } from "folio-react/components/ui/button.tsx";
 import { Centered } from "folio-react/components/ui/centered.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
 import { useClients } from "../contexts/clients.tsx";
-import { useConfiguration } from "../contexts/configuration.tsx";
-import * as styles from "../index.css";
+import { Logo } from "./Logo.tsx";
+// import { useConfiguration } from "../contexts/configuration.tsx";
+
+import * as formStyles from "folio-react/styles/form.css";
+import { fontFamilyHeading } from "folio-react/styles/utilities.css";
+import * as styles from "../styles/components.css";
 
 import type { JSX } from "react";
 
@@ -28,10 +33,13 @@ import type { JSX } from "react";
 export const Login = (): JSX.Element => {
     const navigate = useNavigate();
     const toaster = useToaster();
-    const configuration = useConfiguration();
+    // const configuration = useConfiguration();
     const { authentication } = useClients();
     const [loading, setLoading] = useState<boolean>(false);
     const accessTokenRef = useRef<HTMLInputElement>(null);
+
+    // get visible title
+    // const title = configuration?.login_title || configuration?.title || null;
 
     const handleLogin = useCallback(() => {
         const accessToken = (accessTokenRef.current?.value || "").trim();
@@ -55,15 +63,20 @@ export const Login = (): JSX.Element => {
         <Centered style={{ height: "100%" }}>
             <div className={styles.login}>
                 <div className={styles.loginTitle}>
-                    <span>{configuration?.login_title || configuration?.title || "folio."}</span>
+                    <Logo
+                        className={fontFamilyHeading}
+                        style={{
+                            letterSpacing: "-0.1rem",
+                        }}
+                    />
                 </div>
                 <div className={styles.loginDescription}>
                     <span>You need to log in with your access token to continue.</span>
                 </div>
-                <div className={styles.formField}>
+                <div className={formStyles.formField}>
                     <input
                         type="text"
-                        className={styles.formInput}
+                        className={formStyles.formInput}
                         placeholder="Enter your access token..."
                         ref={accessTokenRef}
                         disabled={loading}
@@ -74,7 +87,7 @@ export const Login = (): JSX.Element => {
                             }
                         }}
                     />
-                    <div className={styles.formHelper}>
+                    <div className={formStyles.formHelper}>
                         Your access token is printed in the terminal where you run the server. If you don't have it, please contact your administrator.
                     </div>
                 </div>
