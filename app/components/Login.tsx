@@ -1,7 +1,5 @@
-import classNames from "classnames";
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router";
-import { ExclamationCircleIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.tsx";
 import { Centered } from "folio-react/components/ui/centered.tsx";
 import { useToaster } from "../contexts/toaster.tsx";
@@ -85,15 +83,6 @@ export const Login = (): JSX.Element => {
                         Your access token is printed in the terminal where you run the server. If you don't have it, please contact your administrator.
                     </div>
                 </div>
-                {/*
-                {(configuration?.login_messages || []).map((message: any, index: number) => (
-                    <LoginMessageAlert
-                        key={index}
-                        title={message.title}
-                        content={message.content}
-                    />
-                ))}
-                */}
                 <div>
                     <Button style={{ width: "100%" }} disabled={loading} onClick={handleLogin}>
                         <span style={{ fontWeight: "bold" }}>Continue</span>
