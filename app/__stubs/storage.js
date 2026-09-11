@@ -54,4 +54,20 @@ export default [
             },
         },
     },
+    {
+        method: "GET",
+        path: "/_storage/preferences",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        response: {
+            body: {
+                data: {
+                    id: "preferences",
+                    value: {},
+                    metadata: {},
+                },
+            },
+        },
+    },
 ];
