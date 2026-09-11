@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
-import { PREFERENCES } from "folio-react/constants.js";
+// import { PREFERENCES } from "folio-react/constants.js";
 import { Editor as FolioEditor } from "folio-react/components/editor.tsx";
 import { Title } from "folio-react/components/title.tsx";
 // import { Library } from "folio-react/components/library.tsx";
@@ -8,6 +8,8 @@ import { Loading } from "folio-react/components/loading.jsx";
 import type { JSX } from "react";
 import type { Preferences } from "folio-react/contexts/preferences.tsx";
 import type { StorageClient } from "../types/clients.ts";
+
+import * as styles from "../styles/components.css";
 
 export type EditorProps = {
     dataId: string;
@@ -22,7 +24,7 @@ export type EditorProps = {
 
 export const Editor = ({ dataId, preferencesId, storage }: EditorProps): JSX.Element => {
     const [ready, setReady] = useState<boolean>(false);
-    const [preferences, setPreferences] = useState<Partial<Preferences> | null>(null);
+    const [preferences, setPreferences] = useState<any>(null);
     // const currentTitle = useRef<string>("Untitled");
 
     // we are using a reference to the initial preferences to prevent saving the same loaded preferences
@@ -120,7 +122,7 @@ export const Editor = ({ dataId, preferencesId, storage }: EditorProps): JSX.Ele
 
     if (!ready || !preferences) {
         return (
-            <Loading className="h-screen flex items-center justify-center" />
+            <Loading className={styles.loading} />
         );
     }
 
