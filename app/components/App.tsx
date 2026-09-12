@@ -1,26 +1,27 @@
 import { useMemo } from "react";
-import { createHashRouter, RouterProvider, useParams } from "react-router";
+import { createHashRouter, RouterProvider, useParams, Outlet } from "react-router";
 import { useClients } from "../contexts/clients.tsx";
-import { Welcome } from "./welcome.tsx";
-import { Layout } from "./Layout.tsx";
+import { Welcome } from "./Welcome.tsx";
 import { Home } from "./Home.tsx";
 import { Editor } from "./Editor.tsx";
+import { Sidebar } from "./Sidebar.tsx";
 import { Login } from "./Login.tsx";
 import { AuthenticationProvider } from "../contexts/authentication.tsx";
 import { AppStateProvider } from "../contexts/AppState.tsx";
 import { LocalStorageKeys, RemoteStorageKeys } from "../constants.ts";
+import * as styles from "../styles/components.css";
 import type { JSX } from "react";
 import type { StorageClient } from "../types/clients.ts";
 
 // Board editor wrapper for remote storage: reads the board id from the URL
-const RemoteBoardEditor = ({ storage }: { storage: StorageClient }): JSX.Element => {
+const RemoteEditor = (props: { storage: StorageClient; resource: string; }): JSX.Element => {
     const { id } = useParams<{ id: string }>();
     return (
         <Editor
-            key={`remote:${id}`}
-            dataId={`board:${id}`}
+            key={`remote:${props.resource}:${id}`}
+            dataId={`${props.resource}:${id}`}
             preferencesId={RemoteStorageKeys.PREFERENCES}
-            storage={storage}
+            storage={props.storage}
         />
     );
 };
@@ -59,7 +60,12 @@ export const App = (): JSX.Element => {
                     {
                         Component: () => (
                             <AppStateProvider client={clients.remoteStorage as StorageClient}>
-                                <Layout />
+                                <div className={styles.layout}>
+                                    <Sidebar />
+                                    <div className={styles.layoutContent}>
+                                        <Outlet />
+                                    </div>
+                                </div>
                             </AppStateProvider>
                         ),
                         children: [
@@ -68,9 +74,10 @@ export const App = (): JSX.Element => {
                                 Component: Home,
                             },
                             {
-                                path: "/:id",
+                                path: "/boards/:id",
                                 Component: () => (
-                                    <RemoteBoardEditor
+                                    <RemoteEditor
+                                        resource="board"
                                         storage={clients.remoteStorage as StorageClient}
                                     />
                                 ),
