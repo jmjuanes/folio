@@ -19,16 +19,14 @@ export const createAuthenticationClient = (config: AuthenticationConfig) => {
             window.localStorage.removeItem(TOKEN_KEY);
             return Promise.resolve();
         },
-        isAuthenticated: () => {
+        getAuthenticatedUser: () => {
             // 1. check if token is saved in local storage and it has the correg structure
             const token = window.localStorage.getItem(TOKEN_KEY);
             if (!token || typeof token !== "string") {
-                return Promise.resolve(false);
+                return Promise.reject(new Error("user is not logged"));
             }
             // 2. validate that this token can be used to perform requests to the auth api
-            // return api("GET", "/me");
-            // TODO: implement an advanced verification of the token
-            return Promise.resolve(true);
+            return api("GET", "/me");
         },
     } as AuthenticationClient);
 };
