@@ -70,4 +70,14 @@ export default [
             },
         },
     },
+    {
+        method: "POST",
+        path: "/_storage/preferences",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        response: {
+            body: {},
+        },
+    },
 ];
