@@ -1,0 +1,16 @@
+@import url("../../folio-react/styles/reset.css");
+@import url("../../folio-react/styles/variables.css");
+
+/* note: added .rootWrapper class but is deprecated, use .root instead */
+.root, .rootWrapper {
+    composes: fontFamilyBody from "../../folio-react/styles/fonts.css";
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: var(--folio-color-background);
+    color: var(--folio-color-foreground);
+    font-size: 16px;
+    display: flex;
+}
