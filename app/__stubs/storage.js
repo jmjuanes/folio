@@ -55,6 +55,16 @@ export default [
         },
     },
     {
+        method: "PATCH",
+        path: "/_storage/board1",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        response: {
+            body: {},
+        },
+    },
+    {
         method: "GET",
         path: "/_storage/preferences",
         headers: {
@@ -71,7 +81,7 @@ export default [
         },
     },
     {
-        method: "POST",
+        method: "PATCH",
         path: "/_storage/preferences",
         headers: {
             "Content-Type": "application/json"
