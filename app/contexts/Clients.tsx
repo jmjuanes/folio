@@ -1,9 +1,11 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import profile from "@profile";
+import { Loading } from "folio-react/components/loading.jsx";
 import { createRemoteStorageClient, createLocalStorageClient } from "../clients/storage.ts";
 import { createAuthenticationClient } from "../clients/authentication.ts";
+import * as sharedStyles from "../styles/shared.css";
 import type { PropsWithChildren, JSX } from "react";
-import type { StorageClient, AuthenticationClient } from "../types/clients";
+import type { StorageClient, AuthenticationClient } from "../types/clients.ts";
 
 export type Clients = {
     localStorage?: StorageClient | null;
@@ -18,17 +20,17 @@ const createClientsFromProfile = async (): Promise<Clients> => {
         remoteStorage: null,
         authentication: null,
     };
-    // initialize local storage client
-    if (profile?.services?.localStorage) {
-        clients.localStorage = await createLocalStorageClient(profile.services.localStorage);
+    // initialize storage client
+    // note that at least a local or remote storage must be configured
+    if (profile?.localStorage) {
+        clients.localStorage = await createLocalStorageClient(profile.localStorage);
     }
-    // initialize remote storage client
-    if (profile?.services?.remoteStorage) {
-        clients.remoteStorage = await createRemoteStorageClient(profile.services.remoteStorage);
+    if (profile?.remoteStorage) {
+        clients.remoteStorage = await createRemoteStorageClient(profile.remoteStorage);
     }
-    // initialize authentication
-    if (profile?.services?.authentication) {
-        clients.authentication = await createAuthenticationClient(profile.services.authentication);
+    // initialize authentication client
+    if (profile?.authentication) {
+        clients.authentication = await createAuthenticationClient(profile.authentication);
     }
     return Promise.resolve(clients);
 };
@@ -44,16 +46,18 @@ export const useClients = (): Clients => {
 // main clients provider
 export const ClientsProvider = (props: PropsWithChildren): JSX.Element =>  {
     const [clients, setClients] = useState<Clients | null>(null);
+
+    // on mount, initialize clients
     useEffect(() => {
         createClientsFromProfile().then(initialClients => {
             setClients(initialClients);
         });
     }, []);
 
-    // if service is defined and is not initialized, display a loading screen
+    // if clients are not initialized, display a loading screen
     if (!clients) {
         return (
-            <div>Loading...</div>
+            <Loading className={sharedStyles.loading} />
         );
     }
     
