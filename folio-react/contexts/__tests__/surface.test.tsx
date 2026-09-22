@@ -28,7 +28,7 @@ const HookCaller = ({ onMount }: { onMount: (manager: any) => void }) => {
 
 describe("Surface", () => {
     describe("when using outside SurfaceProvider", () => {
-        let consoleSpy: jest.SpyInstance;
+        let consoleSpy: any;
 
         beforeAll(() => {
             consoleSpy = jest.spyOn(console, "error").mockImplementation(() => { });
