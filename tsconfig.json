@@ -1,5 +1,5 @@
 {
-    "extends": "../tsconfig.base.json",
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "allowJs": true,
         "allowImportingTsExtensions": true,
@@ -11,8 +11,8 @@
                 "./profiles/development.ts"
             ],
             "folio-react": [
-                "../folio-react/index.jsx",
-                "../folio-react/*"
+                "./folio-react/index.jsx",
+                "./folio-react/*"
             ],
         }
     }
