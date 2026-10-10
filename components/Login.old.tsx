@@ -2,9 +2,8 @@ import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "folio-react/components/ui/button.tsx";
 import { Centered } from "folio-react/components/ui/centered.tsx";
-import { useToaster } from "../contexts/toaster.tsx";
-import { useClients } from "../contexts/clients.tsx";
-import { Logo } from "./Logo.tsx";
+import { useToaster } from "../contexts/Toaster.tsx";
+import { useClients } from "../contexts/Clients.tsx";
 // import { useConfiguration } from "../contexts/configuration.tsx";
 
 import * as formStyles from "folio-react/styles/form.css";
@@ -60,10 +59,10 @@ export const Login = (): JSX.Element => {
         <Centered style={{ height: "100%" }}>
             <div className={styles.login}>
                 <div className={styles.loginTitle}>
-                    <Logo />
+                    <span>Welcome to Folio.</span>
                 </div>
-                <div className={styles.loginDescription}>
-                    <span>You need to log in with your access token to continue.</span>
+                <div className={styles.loginSubtitle}>
+                    <span>Sketch and design with freedom.</span>
                 </div>
                 <div className={formStyles.formField}>
                     <input
@@ -85,7 +84,7 @@ export const Login = (): JSX.Element => {
                 </div>
                 <div>
                     <Button style={{ width: "100%" }} disabled={loading} onClick={handleLogin}>
-                        <span style={{ fontWeight: "bold" }}>Continue</span>
+                        <b>Continue</b>
                     </Button>
                 </div>
             </div>
