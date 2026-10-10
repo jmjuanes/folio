@@ -1,11 +1,10 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import profile from "@profile";
 import { Loading } from "folio-react/components/loading.jsx";
-import { createRemoteStorageClient, createLocalStorageClient } from "../clients/storage.ts";
-import { createAuthenticationClient } from "../clients/authentication.ts";
-import * as sharedStyles from "../styles/shared.css";
+import { createRemoteStorageClient, createLocalStorageClient } from "../lib/clients/storage.ts";
+import { createAuthenticationClient } from "../lib/clients/authentication.ts";
 import type { PropsWithChildren, JSX } from "react";
-import type { StorageClient, AuthenticationClient } from "../types/clients.ts";
+import type { StorageClient, AuthenticationClient } from "../lib/clients/types.ts";
 
 export type Clients = {
     localStorage?: StorageClient | null;
@@ -57,7 +56,7 @@ export const ClientsProvider = (props: PropsWithChildren): JSX.Element =>  {
     // if clients are not initialized, display a loading screen
     if (!clients) {
         return (
-            <Loading className={sharedStyles.loading} />
+            <Loading className="w-full h-full" />
         );
     }
     
