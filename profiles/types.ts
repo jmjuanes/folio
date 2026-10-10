@@ -17,9 +17,7 @@ export type RemoteStorageConfig = {
 export type Profile = {
     name?: string;
     config?: object | (() => Promise<object>);
-    services?: {
-        localStorage?: LocalStorageConfig;
-        remoteStorage?: RemoteStorageConfig;
-        authentication?: AuthenticationConfig;
-    }
+    localStorage?: LocalStorageConfig;
+    remoteStorage?: RemoteStorageConfig;
+    authentication?: AuthenticationConfig;
 };

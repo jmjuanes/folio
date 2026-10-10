@@ -1,8 +1,8 @@
 import * as idb from "idb-keyval";
 import type { UseStore } from "idb-keyval";
-import { createApiClient } from "../lib/api.ts";
-import type { StorageClient, Document } from "../types/clients.ts";
-import type { LocalStorageConfig, RemoteStorageConfig } from "../types/profile.ts";
+import { createApiClient } from "../api.ts";
+import type { StorageClient, StorageDocument } from "./types.ts";
+import type { LocalStorageConfig, RemoteStorageConfig } from "../../profiles/types.ts";
 
 export const createLocalStorageClient = async (options: LocalStorageConfig): Promise<StorageClient> => {
     // 1. create the store
@@ -21,10 +21,10 @@ export const createLocalStorageClient = async (options: LocalStorageConfig): Pro
                 metadata: {},
             });
         },
-        create: (data: Document) => {
+        create: (data: StorageDocument) => {
             return idb.set(data.id as string, data.value, store);
         },
-        update: (id: string, data: Partial<Document>) => {
+        update: (id: string, data: Partial<StorageDocument>) => {
             return idb.update(id, (prevValue) => ({ ...prevValue, ...data.value }), store);
         },
         delete: (id: string) => {

@@ -1,7 +1,7 @@
-import { createApiClient } from "../lib/api.ts";
-import { TOKEN_KEY } from "../constants.ts";
-import type { AuthenticationClient, Credentials } from "../types/clients.ts";
-import type { AuthenticationConfig } from "../types/profile.ts";
+import { createApiClient } from "../api.ts";
+import { TOKEN_KEY } from "../../constants.ts";
+import type { AuthenticationClient, Credentials } from "./types.ts";
+import type { AuthenticationConfig } from "../../profiles/types.ts";
 
 export const createAuthenticationClient = (config: AuthenticationConfig) => {
     const api = createApiClient(config.host);
