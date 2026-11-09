@@ -1,5 +1,5 @@
 import * as idb from "idb-keyval";
-import type { Profile } from "./types.ts";
+import type { Profile } from "../lib/types/profile.ts";
 import type { UseStore } from "idb-keyval";
 
 export default {
@@ -7,6 +7,17 @@ export default {
     config: () => {
         return Promise.resolve({});
     },
+    clients: [
+        {
+            id: "remote",
+            type: "keyval",
+            label: "Persistent",
+            options: {
+                authenticationHost: "/_auth",
+                storageHost: "/_storage",
+            },
+        }
+    ],
     // localStorage: {
     //     dbName: "folio",
     //     storeName: "folio-store",
@@ -14,10 +25,4 @@ export default {
     //         // TODO: initialize storage
     //     },
     // },
-    authentication: {
-        host: "/_auth",
-    },
-    remoteStorage: {
-        host: "/_storage",
-    },
 } as Profile;

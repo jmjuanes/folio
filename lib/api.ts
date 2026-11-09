@@ -1,6 +1,8 @@
-import { TOKEN_KEY } from "../constants.ts";
-
 export type ApiClient = (method: string, path: string, data?: any) => Promise<any>;
+
+export type ApiClientOptions = {
+    prepareOptions?: (requestOptions: RequestInit) => void;
+};
 
 // internal method to reject the promise with a standardized error format
 const rejectResponse = (response: any): Promise<Error> => {
@@ -11,26 +13,29 @@ const rejectResponse = (response: any): Promise<Error> => {
     return Promise.reject(new Error("An error occurred while processing the request."));
 };
 
-export const createApiClient = (host: string = ""): ApiClient => {
+export const createApiClient = (host: string = "", options?: ApiClientOptions): ApiClient => {
     return (method: string, path: string, data?: any): Promise<any> => {
         // construct the URL based on the base URL and path
-        const options: RequestInit = {
+        const requestOptions: RequestInit = {
             method: method || "GET",
             headers: {
                 "Content-Type": "application/json",
             },
         };
         // include the Authorization header if token is set
-        const token = window.localStorage.getItem(TOKEN_KEY) || null;
-        if (token) {
-            (options.headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+        // const token = window.localStorage.getItem(TOKEN_KEY) || null;
+        // if (token) {
+        //     (options.headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+        // }
+        if (typeof options?.prepareOptions === "function") {
+            options.prepareOptions(requestOptions);
         }
         // include the body if method is POST or PATCH and data is provided
         if (data && (method === "POST" || method === "PATCH" || method === "PUT")) {
-            options.body = JSON.stringify(data);
+            requestOptions.body = JSON.stringify(data);
         }
         // perform the request
-        return fetch(host + path, options)
+        return fetch(host + path, requestOptions)
             .then(response => {
                 // if the response is not ok, we throw an error
                 if (!response.ok) {
