@@ -1,5 +1,4 @@
-import { useEffect, useCallback, useState, useRef, useMemo } from "react";
-import { Link } from "react-router";
+import { useCallback, useMemo, Fragment } from "react";
 import { useToggle } from "react-use";
 import classNames from "classnames";
 import { renderIcon, DotsIcon } from "@josemi-icons/react";
@@ -7,24 +6,21 @@ import { Dropdown, DropdownPortalPosition } from "folio-react/components/ui/drop
 // import { useDialog } from "folio-react/contexts/dialogs.tsx";
 // import { useConfirm } from "folio-react/contexts/confirm.jsx";
 // import { useConfiguration } from "../contexts/configuration.tsx";
-import { useToaster } from "../contexts/Toaster.tsx";
+import { useClients } from "../contexts/clients.tsx";
+import { useStorage } from "../contexts/storage.tsx";
+import { useSession } from "../contexts/session.tsx";
+import { useLocation, useNavigate } from "../contexts/router.tsx";
+import { useToaster } from "../contexts/toaster.tsx";
 // import { RenameDocumentDialog } from "./dialogs/rename-document.tsx";
 import { groupByDate, formatDate } from "../lib/utils/dates.ts";
 import type { JSX, SyntheticEvent } from "react";
-
-export type SidebarDocument = {
-    id: string;
-    name: string;
-    created_at: string;
-    updated_at: string;
-};
 
 type ActionButtonProps = {
     href?: string;
     icon?: string;
     text?: string;
     collapsed?: boolean;
-    onClick: (event: SyntheticEvent) => void;
+    onClick?: (event: SyntheticEvent) => void;
 };
 
 // @description action button component (create, import, settings, etc.)
@@ -53,23 +49,21 @@ type DocumentButtonProps = {
     name: string;
     created_at: string;
     updated_at: string;
-    onDownload: () => void;
-    onDuplicate: () => void;
-    onDelete: () => void;
 };
 
 const DocumentButton = (props: DocumentButtonProps): JSX.Element => {
+    const currentLocation = useLocation();
+    const storage = useStorage();
     // const { showDialog } = useDialog();
     // const { showConfirm } = useConfirm();
     const toaster = useToaster();
 
     const title = props?.name || "Untitled";
-    const active = false; // app.isBoardOpen(props?.id);
+    const active = props.id === currentLocation; // app.isBoardOpen(props?.id);
 
     // listener to handle renaming the document
     // it will close the actions menu and call the onRename callback if provided
-    const handleRename = useCallback((event: SyntheticEvent) => {
-        event.preventDefault();
+    const handleRename = useCallback(() => {
         // setActionsMenuOpen(false);
         // showDialog({
         //     component: ({ onClose }) => (
@@ -77,14 +71,12 @@ const DocumentButton = (props: DocumentButtonProps): JSX.Element => {
         //     ),
         //     dialogClassName: "w-full max-w-sm",
         // });
-    }, [props.id]);
+    }, [storage, props.id]);
 
     // listener to save a local copy of the document
     // it will close the actions menu and execute the save as action
-    const handleSaveAs = useCallback((event: SyntheticEvent) => {
-        event.preventDefault();
-        // setActionsMenuOpen(false);
-        // app.downloadDocument(props.id)
+    const handleSaveAs = useCallback(() => {
+        // storage.downloadDocument(props.id)
         //     .then(() => {
         //         toaster.success("Document saved.");
         //     })
@@ -92,27 +84,24 @@ const DocumentButton = (props: DocumentButtonProps): JSX.Element => {
         //         console.error(error);
         //         toaster.error(error?.message || "An error occurred while saving the document.");
         //     });
-    }, [props.id]);
+    }, [storage, props.id]);
 
     // listener to handle duplicating the document
-    const handleDuplicate = useCallback((event: SyntheticEvent) => {
-        event.preventDefault();
-        // setActionsMenuOpen(false);
-        // app.duplicateDocument(props.id)
+    const handleDuplicate = useCallback(() => {
+        // storage.duplicateDocument(props.id)
         //     .then((newDocument) => {
-        //         app.refresh();
-        //         toaster.success(`Duplicate saved as '${newDocument?.name || "Untitled"}'.`);
+        //         toaster.success("Document duplicated");
+        //         navigation.navigate({ board: newDocument.id });
         //     })
         //     .catch(error => {
         //         console.error(error);
         //         toaster.error(error?.message || "An error occurred while duplicating the document.");
         //     });
-    }, [props.id]);
+    }, [storage, props.id]);
 
     // listener to handle deletion of a document
     // it will close the actions menu and call the onDelete callback if provided
-    const handleDelete = useCallback((event: SyntheticEvent) => {
-        event.preventDefault();
+    const handleDelete = useCallback(() => {
         // setActionsMenuOpen(false);
         // showConfirm({
         //     title: "Delete Document",
@@ -134,7 +123,7 @@ const DocumentButton = (props: DocumentButtonProps): JSX.Element => {
         //             });
         //     },
         // });
-    }, [props.id, active]);
+    }, [storage, props.id, active]);
 
     const itemClass = classNames({
         "relative group rounded-md w-full flex items-center py-1 px-2": true,
@@ -142,7 +131,7 @@ const DocumentButton = (props: DocumentButtonProps): JSX.Element => {
         "hover:bg-gray-200 text-gray-600 hover:text-gray-900": !active,
     });
     return (
-        <Link to={`/${props.id}`} className={itemClass} title={title}>
+        <a href={`#${props.id}`} className={itemClass} title={title}>
             <div className="cursor-pointer flex items-center gap-2 overflow-hidden w-full">
                 <div className="text-lg flex items-center text-gray-600 shrink-0">
                     {renderIcon("file")}
@@ -193,16 +182,13 @@ const DocumentButton = (props: DocumentButtonProps): JSX.Element => {
                     </Dropdown>
                 )}
             />
-        </Link>
+        </a>
     );
 };
 
 type GroupedDocumentsProps = {
     title: string;
-    documents: SidebarDocument[],
-    onDocumentDownload: (id: string) => void;
-    onDocumentDuplicate: (id: string) => void;
-    onDocumentDelete: (id: string) => void;
+    documents: any[],
 };
 
 const GroupedDocuments = (props: GroupedDocumentsProps): JSX.Element => (
@@ -214,12 +200,9 @@ const GroupedDocuments = (props: GroupedDocumentsProps): JSX.Element => (
             <DocumentButton
                 key={`document:item:${index}:${item.id}`}
                 id={item.id}
-                name={item.name}
-                created_at={item.created_at}
-                updated_at={item.updated_at}
-                onDownload={() => props.onDocumentDownload(item.id)}
-                onDuplicate={() => props.onDocumentDuplicate(item.id)}
-                onDelete={() => props.onDocumentDelete(item.id)}
+                name={item.metadata.name}
+                created_at={item.metadata.created_at}
+                updated_at={item.metadata.updated_at}
             />
         ))}
     </div>
@@ -227,20 +210,15 @@ const GroupedDocuments = (props: GroupedDocumentsProps): JSX.Element => (
 
 // @description separator for the sidebar
 const Separator = (): JSX.Element => (
-    <div className="border-t-1 border-gray-200 w-full shrink-0 my-2" />
+    <div className="h-px bg-gray-200 w-full shrink-0 my-2" />
 );
 
-export type SidebarProps = {
-    documents: SidebarDocument[];
-    defaultCollapsed: boolean;
-    onDocumentDownload: (id: string) => void;
-    onDocumentDuplicate: (id: string) => void;
-    onDocumentDelete: (id: string) => void;
-};
-
 // export the sidebar component
-export const Sidebar = (props: SidebarProps): JSX.Element => {
-    const [collapsed, toggleCollapsed] = useToggle(props.defaultCollapsed);
+export const Sidebar = (): JSX.Element => {
+    const [collapsed, toggleCollapsed] = useToggle(true);
+    const clients = useClients();
+    const session = useSession();
+    const storage = useStorage();
     const sidebarClass = classNames({
         "h-full shrink-0 flex flex-col justify-between": true,
         "w-16 cursor-e-resize": collapsed,
@@ -256,8 +234,17 @@ export const Sidebar = (props: SidebarProps): JSX.Element => {
 
     // group boards by the updated_at field
     const groups = useMemo(() => {
-        return groupByDate(props.documents || [], "updated_at");
-    }, [props.documents]);
+        return groupByDate(storage.documents || [], storageItem => {
+            return storageItem.metadata.updated_at;
+        });
+    }, [storage.documents]);
+
+    // display disconnect button
+    // it is only visible when there are more than one client or the client needs credentials
+    // to be set
+    const shouldDisplayDisconnectButton = useMemo(() => {
+        return clients.length > 1 || Object.keys(clients[0].client.fields || {}).length > 0;
+    }, [clients]);
 
     return (
         <div className={sidebarClass} style={{ transition: "width 0.25s ease-in-out" }} onClick={handleToggleCollapsed}>
@@ -283,12 +270,20 @@ export const Sidebar = (props: SidebarProps): JSX.Element => {
                 <div className="flex flex-col gap-4 h-full px-3 select-none">
                     <div className="flex flex-col gap-1 mb-2">
                         <ActionButton
+                            href="#"
+                            collapsed={collapsed}
+                            icon="home"
+                            text="Home"
+                        />
+                        <ActionButton
+                            href="#recents"
+                            collapsed={collapsed}
+                            icon="clock"
+                            text="Recents"
+                        />
+                        <ActionButton
                             onClick={(event: SyntheticEvent) => {
                                 event.stopPropagation();
-                                // app.createDocument(Collection.BOARD, {}).then((board: any) => {
-                                //     app.openBoard(board.id);
-                                //     app.refresh();
-                                // });
                             }}
                             collapsed={collapsed}
                             icon="plus"
@@ -297,10 +292,6 @@ export const Sidebar = (props: SidebarProps): JSX.Element => {
                         <ActionButton
                             onClick={(event: SyntheticEvent) => {
                                 event.stopPropagation();
-                                // app.importDocument().then((board: any) => {
-                                //     app.openBoard(board.id);
-                                //     app.refresh();
-                                // });
                             }}
                             collapsed={collapsed}
                             icon="upload"
@@ -311,59 +302,46 @@ export const Sidebar = (props: SidebarProps): JSX.Element => {
                         <GroupedDocuments
                             title="Today"
                             documents={groups.today}
-                            onDocumentDownload={props.onDocumentDownload}
-                            onDocumentDuplicate={props.onDocumentDuplicate}
-                            onDocumentDelete={props.onDocumentDelete}
                         />
                     )}
                     {!collapsed && groups.yesterday.length > 0 && (
                         <GroupedDocuments
                             title="Yesterday"
                             documents={groups.yesterday}
-                            onDocumentDownload={props.onDocumentDownload}
-                            onDocumentDuplicate={props.onDocumentDuplicate}
-                            onDocumentDelete={props.onDocumentDelete}
                         />
                     )}
                     {!collapsed && groups.thisWeek.length > 0 && (
                         <GroupedDocuments
                             title="This Week"
                             documents={groups.thisWeek}
-                            onDocumentDownload={props.onDocumentDownload}
-                            onDocumentDuplicate={props.onDocumentDuplicate}
-                            onDocumentDelete={props.onDocumentDelete}
                         />
                     )}
                     {!collapsed && groups.thisMonth.length > 0 && (
                         <GroupedDocuments
                             title="This Month"
                             documents={groups.thisMonth}
-                            onDocumentDownload={props.onDocumentDownload}
-                            onDocumentDuplicate={props.onDocumentDuplicate}
-                            onDocumentDelete={props.onDocumentDelete}
                         />
                     )}
                     {!collapsed && groups.others.length > 0 && (
                         <GroupedDocuments
                             title="Older Boards"
                             documents={groups.others}
-                            onDocumentDownload={props.onDocumentDownload}
-                            onDocumentDuplicate={props.onDocumentDuplicate}
-                            onDocumentDelete={props.onDocumentDelete}
                         />
                     )}
                 </div>
             </div>
             <div className="px-3 pt-3 pb-3">
-                <ActionButton
-                    onClick={(event: React.SyntheticEvent) => {
-                        event.stopPropagation();
-                        // app.logout();
-                    }}
-                    collapsed={collapsed}
-                    icon="logout"
-                    text="Sign out"
-                />
+                {shouldDisplayDisconnectButton && (
+                    <ActionButton
+                        onClick={(event: React.SyntheticEvent) => {
+                            event.stopPropagation();
+                            session.disconnect();
+                        }}
+                        collapsed={collapsed}
+                        icon="logout"
+                        text="Disconnect"
+                    />
+                )}
             </div>
         </div>
     );
