@@ -1,78 +1,73 @@
-import { Fragment, useMemo, useCallback, useRef, useEffect, useReducer } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
+import { Loading } from "folio-react/components/loading.jsx";
 import { Centered } from "folio-react/components/ui/centered.tsx";
 import { Overlay, OverlayVariant } from "folio-react/components/ui/overlay.tsx";
-import { ClientsProvider } from "./contexts/clients.tsx";
 import { SessionProvider, useSession } from "./contexts/session.tsx";
 import { StorageProvider, useStorage } from "./contexts/storage.tsx";
-import { ToasterProvider, useToaster } from "./contexts/toaster.tsx";
-import { RouterProvider, Switch, Route, useLocation } from "./contexts/router.tsx";
+import { ToasterProvider } from "./contexts/toaster.tsx";
+import { RouterProvider, Route, useLocation } from "./contexts/router.tsx";
 import { Welcome } from "./components/welcome.tsx";
 // import { Board } from "./components/Board.tsx";
-import { Recents } from "./components/recents.tsx";
-import { Sidebar } from "./components/sidebar.tsx";
 import { Connection } from "./components/connection.tsx";
 import type { JSX } from "react";
 
+// main app component
 const App = (): JSX.Element => {
     const session = useSession();
     const storage = useStorage();
     const currentLocation = useLocation();
+    const landed = useRef<boolean>(false);
 
-    // check if connection dialog should be displayed
-    const shouldDisplayConnectionDialog = useMemo(() => {
-        return !session?.state?.id;
-    }, [session?.state?.id]);
+    // when the app starts, open the last edited board (or create a new one if there are no boards)
+    // The welcome page is not a step of the startup, it is just a page that can be visited later
+    useEffect(() => {
+        if (session.status === "connected" && storage.ready && !landed.current) {
+            landed.current = true;
+            if (currentLocation === "") {
+                // app(AppActions.OPEN_LAST_EDITED_DOCUMENT).catch(console.error);
+            }
+        }
+    }, [session.status, storage.ready]);
 
-    // check if welcome dialog should be displayed
-    // const shouldDisplayWelcomeDialog = useMemo(() => {
-    //     return currentLocation === "" && storage.enabled && !shouldDisplayLoginDialog;
-    // }, [shouldDisplayLoginDialog, currentLocation, storage.enabled]);
-
-    // check if we have to display the connection dialog
-    if (shouldDisplayConnectionDialog) {
+    // wait until the documents of the storage are loaded
+    if (!storage.ready) {
         return (
-            <Fragment>
-                <Overlay variant={OverlayVariant.TRANSPARENT} className="z-50 glass" />
-                <Centered className="fixed h-full z-50">
-                    <Connection />
-                </Centered>
-            </Fragment>
+            <Loading className="w-full h-full" />
         );
     }
 
     return (
-        <div className="fixed top-0 left-0 h-full w-full bg-gray-100 text-gray-800 flex py-2 pr-2">
-            <Sidebar />
-            <div className="w-full h-full overflow-hidden rounded-3xl bg-white">
-                <Switch>
+        <div className="fixed top-0 left-0 h-full w-full text-gray-800">
+            {session.status === "connected" && (
+                <Fragment>
                     <Route test="" render={() => (
                         <Centered className="w-full h-full">
                             <Welcome />
                         </Centered>
                     )} />
-                    <Route test="recents" render={() => (
-                        <Recents />
-                    )} />
-                {/*
-                <Board key={currentLocation} />
-                */}
-                </Switch>
-            </div>
+                </Fragment>
+            )}
+            {session.status !== "connected" && (
+                <Fragment>
+                    <Overlay variant={OverlayVariant.TRANSPARENT} className="z-50 glass" />
+                    <Centered className="fixed h-full z-50">
+                        <Connection />
+                    </Centered>
+                </Fragment>
+            )}
         </div>
     );
 };
 
 createRoot(document.getElementById("root") as HTMLDivElement).render((
     <ToasterProvider>
-        <ClientsProvider>
-            <SessionProvider>
-                <StorageProvider>
-                    <RouterProvider>
-                        <App />
-                    </RouterProvider>
-                </StorageProvider>
-            </SessionProvider>
-        </ClientsProvider>
+        <SessionProvider>
+            <StorageProvider>
+                <RouterProvider>
+                    <App />
+                </RouterProvider>
+            </StorageProvider>
+        </SessionProvider>
     </ToasterProvider>
 ));
