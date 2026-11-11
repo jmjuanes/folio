@@ -1,5 +1,5 @@
 import * as idb from "idb-keyval";
-import type { Profile } from "../types/profile.ts";
+import type { Profile } from "../lib/types/profile.ts";
 import type { UseStore } from "idb-keyval";
 
 // internal utility method to rename an IDB key to another
@@ -13,8 +13,9 @@ export default {
     config: () => {
         return Promise.resolve({});
     },
-    services: {
-        local: {
+    client: {
+        type: "local",
+        options: {
             dbName: "folio",
             storeName: "folio-store",
             initialize: async (store: UseStore) => {
