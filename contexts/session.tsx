@@ -1,23 +1,27 @@
 import { createContext, useContext, useEffect, useCallback, useMemo, useState } from "react";
+import profile from "@profile";
 import { Loading } from "folio-react/components/loading.jsx";
-import { useClients } from "./clients.tsx";
+import { createClientFromProfile } from "../lib/clients/index.ts";
 import type { JSX, PropsWithChildren } from "react";
-import type { ClientEntry } from "./clients.tsx";
 import type { Client } from "../lib/types/client.ts";
 
+// internal key to restore sessions
 const SESSION_KEY = "folio:session";
 
-// session state: tracks the state of the connection
-export type SessionState = {
-    id: string | null;
-    status: "idle" | "connecting" | "connected" | "error";
-    error: null | any;
-};
+// restoring: looking for a previous session when the app starts
+// disconnected: waiting for the user to provide the credentials
+// connecting: credentials sent, waiting for the client
+// connected: the client is ready to be used
+export type SessionStatus = "restoring" | "disconnected" | "connecting" | "connected";
 
 export type Session = {
-    state: SessionState;
+    status: SessionStatus;
+    error: Error | null;
+    // fields requested by the client of this installation to connect
+    fields: Record<string, any>;
+    // client instance, only available when the session is connected
     client: Client | null;
-    connect: (id: string, credentials: any) => Promise<void>;
+    connect: (credentials?: any) => Promise<void>;
     disconnect: () => Promise<void>;
 };
 
@@ -28,81 +32,77 @@ export const useSession = (): Session => {
     return useContext(SessionContext);
 };
 
+// try to restore a previous session without asking anything to the user
+// a client can implement resume() to decide it (for example, checking a cookie session).
+// Clients that do not need any input connect automatically
+const resumeSession = async (client: Client): Promise<boolean> => {
+    if (typeof client.resume === "function") {
+        return client.resume();
+    }
+    return Promise.resolve(false);
+};
+
 // @description session provider
 export const SessionProvider = (props: PropsWithChildren): JSX.Element => {
-    const clients = useClients();
-    const [state, setState] = useState<SessionState>({ id: null, status: "idle", error: null });
-    const [loading, setLoading] = useState<boolean>(false);
-
-    const connect = useCallback(async (id: string, credentials = {}) => {
-        const entry = clients.find(client => client.id === id) as ClientEntry;
-        if (entry) {
-            setState({ id: null, status: "connecting", error: null });
-            try {
-                // await state.id && state.id !== id && entries.find(e => e.id === state.id)?.client.close();
-                if (typeof entry.client.validateCredentials === "function") {
-                    await entry.client.validateCredentials(credentials);
-                }
-                await entry.client.connect(credentials);
-                window.localStorage.setItem(SESSION_KEY, JSON.stringify({ id, credentials }));
-                setState({ id, status: "connected", error: null });
-            } catch (error) {
-                setState({ id: null, status: "error", error });
-            }
-        }
-    }, [clients, setState]);
-
-    const disconnect = useCallback(async () => {
-        const entry = clients.find(client => client.id === state.id);
-        await entry?.client.close();
-        window.localStorage.removeItem(SESSION_KEY);
-        setState({ id: null, status: "idle", error: null });
-    }, [clients, state.id]);
-
-    // get the initial client to connect
-    const initialClient = useMemo<{ id: string; credentials: any } | null>(() => {
-        const saved = JSON.parse(window.localStorage.getItem(SESSION_KEY) || "{}");
-        if (saved && saved?.id) {
-            return saved;
-        }
-        // check if we have only one client to connect and it does not need any configuration
-        else if (clients.length === 1) {
-            const fields = Object.keys(clients[0].client?.fields || {});
-            if (fields.length === 0) {
-                return { id: clients[0].id, credentials: {} };
-            }
-        }
-        // other case, no initial client to connect
-        return null;
-    }, [clients]);
+    const client = useMemo(() => createClientFromProfile(profile), []);
+    const [status, setStatus] = useState<SessionStatus>("restoring");
+    const [error, setError] = useState<Error | null>(null);
 
     // silent reconnection after loading
     useEffect(() => {
-        if (initialClient?.id) {
-            setLoading(true); // display the loading splash
-            connect(initialClient.id, initialClient.credentials).then(() => {
-                setLoading(false); // hide loading splash
-            });
+        let cancelled = false;
+        resumeSession(client).then(resumed => {
+            if (!cancelled) {
+                setStatus(resumed ? "connected" : "disconnected");
+            }
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, [client]);
+
+    const connect = useCallback(async (credentials: any = {}) => {
+        setStatus("connecting");
+        setError(null);
+        try {
+            if (typeof client.validateCredentials === "function") {
+                await client.validateCredentials(credentials);
+            }
+            await client.connect(credentials);
+            // window.localStorage.setItem(SESSION_KEY, JSON.stringify({ credentials }));
+            setStatus("connected");
         }
-    }, [clients]);
+        catch (error: any) {
+            setError(error);
+            setStatus("disconnected");
+        }
+    }, [client]);
 
-    // get active client instance
-    const activeClient = useMemo<Client | null>(() => {
-        return clients.find(client => client.id === state.id)?.client || null;
-    }, [state.id, clients]);
+    const disconnect = useCallback(async () => {
+        await client.close();
+        // window.localStorage.removeItem(SESSION_KEY);
+        setStatus("disconnected");
+    }, [client]);
 
-    // while we are reconnecting to the previous session, we will display the
-    // loading splash instead
-    if (loading) {
+    const session = useMemo<Session>(() => ({
+        status: status,
+        error: error,
+        fields: client.fields || {},
+        client: status === "connected" ? client : null,
+        connect: connect,
+        disconnect: disconnect,
+    }), [status, error, client, connect, disconnect]);
+
+    // while we are looking for a previous session, display the loading splash
+    if (status === "restoring") {
         return (
             <Loading className="w-full h-full" />
         );
     }
 
     return (
-        <SessionContext.Provider value={{ state, connect, disconnect, client: activeClient }}>
+        <SessionContext.Provider value={session}>
             {props.children}
         </SessionContext.Provider>
     );
 };
-

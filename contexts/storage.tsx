@@ -10,6 +10,8 @@ enum Collections {
 };
 
 export type Storage = {
+    // true when documents and preferences of the active client have been loaded
+    ready: boolean;
     documents: Entry[];
     preferences: any;
     // create or import documents
@@ -33,53 +35,56 @@ export const StorageProvider = (props: PropsWithChildren): JSX.Element => {
     const session = useSession();
     const [userDocuments, setUserDocuments] = useState<Entry[]>([]);
     const [userPreferences, setUserPreferences] = useState({});
+    const [ready, setReady] = useState<boolean>(false);
 
-    // client for which documents and preferences have been loaded
-    // (undefined = nothing loaded yet). The provider is ready when it matches the active client
+    // active client, it is only available when the session is connected
     const client = session.client;
 
-    // fetch user documents
+    // fetch user documents, sorted by the last edited first
     const fetchUserDocuments = useCallback(async () => {
         if (client) {
             const documentsList: Entry[] = await client?.list();
             return (documentsList || []).filter((item: any) => {
                 return item.id !== Collections.PREFERENCES;
             });
+            // .sort((a: any, b: any) => (b.metadata?.updated_at || 0) - (a.metadata?.updated_at || 0));
         }
         // if no storage client is configured, return an empty array
         return Promise.resolve([]);
     }, [client]);
 
-    // reset user documents when the client changes
-    useEffect(() => {
-        let cancelled = false;
+    // fetch user preferences
+    const fetchUserPreferences = useCallback(async () => {
         if (client) {
-            setUserDocuments([]);
-            fetchUserDocuments().then(newUserDocuments => {
-                if (!cancelled) {
-                    setUserDocuments(newUserDocuments);
-                }
-            });
+            return client.get(Collections.PREFERENCES).then(r => r?.value || {}).catch(() => ({}));
         }
-        // cancel the request when the client changes
-        return () => { cancelled = true; };
-    }, [client, fetchUserDocuments, setUserDocuments]);
+        // if no storage client is configured, return an empty preferences object
+        return Promise.resolve({});
+    }, [client]);
 
-    // fetch user preferences when the client changes
+    // initialize user data
+    const fetchInitialUserData = useCallback(() => {
+        return Promise.all([fetchUserDocuments(), fetchUserPreferences()]);
+    }, [fetchUserDocuments, fetchUserPreferences]);
+
+    // load documents and preferences every time the client changes
     useEffect(() => {
         let cancelled = false;
-        if (client) {
-            setUserPreferences({}); // reset previous preferences
-            client.get(Collections.PREFERENCES).then((response) => {
-                if (!cancelled) {
-                    setUserPreferences(response.value || {});
-                }
-            });
-        }
-        // when che client changes, we have to invalidate the previous call
-        // if no completed or in progress
-        return () => { cancelled = true; };
-    }, [client, setUserPreferences]);
+        setReady(false);
+        setUserDocuments([]);
+        setUserPreferences({});
+        fetchInitialUserData().then(([newUserDocuments, newUserPreferences]) => {
+            if (!cancelled) {
+                setUserDocuments(newUserDocuments);
+                setUserPreferences(newUserPreferences);
+                setReady(true);
+            }
+        });
+        // when the client changes, invalidate the calls that are still in progress
+        return () => {
+            cancelled = true;
+        };
+    }, [client, fetchInitialUserData]);
 
     const storage = useMemo<Storage>(() => {
         const refreshDocuments = async () => {
@@ -102,6 +107,7 @@ export const StorageProvider = (props: PropsWithChildren): JSX.Element => {
             return Promise.resolve(documentId);
         };
         return {
+            ready: ready,
             documents: userDocuments,
             preferences: userPreferences,
             createDocument: createDocument,
@@ -128,10 +134,10 @@ export const StorageProvider = (props: PropsWithChildren): JSX.Element => {
             updatePreferences: async (preferences: any) => {
                 const newPreferences = Object.assign({}, userPreferences, preferences);
                 setUserPreferences(newPreferences);
-                await client?.update(Collections.PREFERENCES, newPreferences);
+                await client?.update(Collections.PREFERENCES, { value: newPreferences });
             },
         } as Storage;
-    }, [client, userDocuments, userPreferences, fetchUserDocuments]);
+    }, [client, ready, userDocuments, userPreferences, fetchUserDocuments]);
 
     return (
         <StorageContext value={storage}>
