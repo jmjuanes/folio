@@ -5,9 +5,6 @@ import { createClientFromProfile } from "../lib/clients/index.ts";
 import type { JSX, PropsWithChildren } from "react";
 import type { Client } from "../lib/types/client.ts";
 
-// internal key to restore sessions
-const SESSION_KEY = "folio:session";
-
 // restoring: looking for a previous session when the app starts
 // disconnected: waiting for the user to provide the credentials
 // connecting: credentials sent, waiting for the client
@@ -39,6 +36,11 @@ const resumeSession = async (client: Client): Promise<boolean> => {
     if (typeof client.resume === "function") {
         return client.resume();
     }
+    // if no fields are required for configuring the client, continue
+    if (Object.keys(client.fields).length === 0) {
+        return Promise.resolve(true);
+    }
+    // other case, resume can not be performed
     return Promise.resolve(false);
 };
 
