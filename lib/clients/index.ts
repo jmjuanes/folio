@@ -1,12 +1,21 @@
 import { createLocalClient } from "./local.ts";
-import { createKeyvalClient } from "./keyval.ts";
-import type { ClientFactory } from "../types/client.ts";
+import { createHttpClient } from "./http.ts";
+import type { Profile } from "../types/profile.ts";
+import type { Client, ClientFactory } from "../types/client.ts";
 
 export const clientsFactory: Record<string, ClientFactory> = {
     "local": createLocalClient,
-    "keyval": createKeyvalClient,
+    "http": createHttpClient,
 };
 
-// export const createClient = (type: string, options: any): Promise<Client> => {
-//     return factory[type](options);
-// };
+// create the client of this installation from the profile
+// each installation has one single client, but the rest of the app only talks to the
+// Client interface, so any other kind of storage can be added to the factory
+export const createClientFromProfile = (profile: Profile): Client => {
+    const config = profile.client;
+    const factory = clientsFactory[config.type];
+    if (!factory) {
+        throw new Error(`Unknown client type: ${config.type}`);
+    }
+    return factory(config.options || {});
+};

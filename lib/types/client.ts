@@ -20,6 +20,10 @@ export type Field = {
 export interface Client {
     fields: Record<string, Field>;
     validateCredentials?: (credentials: any) => Promise<void>;
+    // optional: try to recover a previous session without asking anything to the user
+    // (for example, from a saved token or a cookie session). It resolves to true if the client is connected.
+    // Clients without fields and without resume() are connected automatically
+    resume?: () => Promise<boolean>;
     connect: (credentials?: any) => Promise<void>;
     close: () => Promise<void>;
     list(): Promise<Entry[]>;

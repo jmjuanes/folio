@@ -1,4 +1,5 @@
 import { createApiClient } from "../api.ts";
+import { TOKEN_KEY } from "../../constants.ts";
 import type { ClientFactory } from "../types/client.ts";
 
 export type KeyvalOptions = {
@@ -7,7 +8,7 @@ export type KeyvalOptions = {
 };
 
 export const createKeyvalClient: ClientFactory = (options: KeyvalOptions) =>  {
-    const token = { current: null };
+    const token: { current: string | null } = { current: null };
     const storageApi = createApiClient(options.storageHost, {
         prepareOptions: requestOptions => {
             // const token = window.localStorage.getItem(TOKEN_KEY) || null;
@@ -33,11 +34,30 @@ export const createKeyvalClient: ClientFactory = (options: KeyvalOptions) =>  {
                 return resolve();
             });
         },
+        // recover the session saved by a previous connection
+        resume: async () => {
+            const savedToken = window.localStorage.getItem(TOKEN_KEY);
+            if (!savedToken) {
+                return false;
+            }
+            token.current = savedToken;
+            try {
+                await storageApi("GET", "/");
+                return true;
+            }
+            catch (error) {
+                // the saved token is not valid anymore
+                token.current = null;
+                window.localStorage.removeItem(TOKEN_KEY);
+                return false;
+            }
+        },
         connect: async (credentials: any) => {
             const authenticationApi = createApiClient(options.authenticationHost);
             const response = await authenticationApi("POST", "/login", credentials);
             if (response?.token) {
                 token.current = response.token;
+                window.localStorage.setItem(TOKEN_KEY, response.token);
                 return Promise.resolve();
             }
             // no token returned in response, send as error
@@ -45,6 +65,7 @@ export const createKeyvalClient: ClientFactory = (options: KeyvalOptions) =>  {
         },
         close: async () => {
             token.current = null;
+            window.localStorage.removeItem(TOKEN_KEY);
         },
         list: () => {
             return storageApi("GET", "/");
