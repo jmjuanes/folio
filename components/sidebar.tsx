@@ -6,7 +6,6 @@ import { Dropdown, DropdownPortalPosition } from "folio-react/components/ui/drop
 // import { useDialog } from "folio-react/contexts/dialogs.tsx";
 // import { useConfirm } from "folio-react/contexts/confirm.jsx";
 // import { useConfiguration } from "../contexts/configuration.tsx";
-import { useClients } from "../contexts/clients.tsx";
 import { useStorage } from "../contexts/storage.tsx";
 import { useSession } from "../contexts/session.tsx";
 import { useLocation, useNavigate } from "../contexts/router.tsx";
@@ -216,7 +215,6 @@ const Separator = (): JSX.Element => (
 // export the sidebar component
 export const Sidebar = (): JSX.Element => {
     const [collapsed, toggleCollapsed] = useToggle(true);
-    const clients = useClients();
     const session = useSession();
     const storage = useStorage();
     const sidebarClass = classNames({
@@ -240,11 +238,10 @@ export const Sidebar = (): JSX.Element => {
     }, [storage.documents]);
 
     // display disconnect button
-    // it is only visible when there are more than one client or the client needs credentials
-    // to be set
+    // it is only visible when the client of this installation needs credentials to connect
     const shouldDisplayDisconnectButton = useMemo(() => {
-        return clients.length > 1 || Object.keys(clients[0].client.fields || {}).length > 0;
-    }, [clients]);
+        return Object.keys(session.fields || {}).length > 0;
+    }, [session.fields]);
 
     return (
         <div className={sidebarClass} style={{ transition: "width 0.25s ease-in-out" }} onClick={handleToggleCollapsed}>
