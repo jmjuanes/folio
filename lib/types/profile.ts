@@ -1,10 +1,10 @@
-export type ProfileClientConfig = {
-    type: "http" | "local";
-    options: Record<string, any>;
-};
+import type { Config } from "./config.ts";
 
 export type Profile = {
     name?: string;
-    config?: object | (() => Promise<object>);
-    client: ProfileClientConfig;
+    config: Partial<Config>;
+    client?: {
+        type: "http" | "local";
+        options: Record<string, any>;
+    };
 };
