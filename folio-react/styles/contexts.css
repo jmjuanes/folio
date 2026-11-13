@@ -1,0 +1,29 @@
+@import url("./variables.css");
+
+/* toaster context */
+.toaster {
+    bottom: 0;
+    left: 50%;
+    position: fixed;
+    transform: translateX(-50%);
+    z-index: 50;
+}
+.toasterToast {
+    align-items: center;
+    background-color: var(--folio-color-primary);
+    border-radius: var(--folio-radii-lg);
+    color: var(--folio-color-primary-foreground);
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+}
+.toasterToastIcon {
+    display: flex;
+    line-height: 1;
+}
+.toasterToastMessage {
+    font-size: var(--folio-fontSize-sm);
+    font-weight: 700;
+    line-height: 1;
+    min-height: 1rem;
+}
