@@ -15,9 +15,9 @@ export type Storage = {
     documents: Entry[];
     preferences: any;
     // create or import documents
-    createDocument: (value?: any) => Promise<string>;
+    createDocument: (value?: any, metadata?: any) => Promise<string>;
     getDocument: (id: string) => Promise<any>;
-    updateDocument: (id: string, value: any) => Promise<void>;
+    updateDocument: (id: string, value: any, metadata?: any) => Promise<void>;
     deleteDocument: (id: string) => Promise<void>;
     // preferences
     updatePreferences: (value: any) => Promise<void>;
@@ -92,15 +92,14 @@ export const StorageProvider = (props: PropsWithChildren): JSX.Element => {
                 setUserDocuments(newUserDocuments);
             });
         };
-        const createDocument = async (value: any = {}) => {
+        const createDocument = async (value: any, metadata?: any) => {
             const documentId = uuid();
-            const now = Date.now();
             await client?.create(documentId, {
                 value: value || {},
                 metadata: {
-                    created_at: now,
-                    updated_at: now,
-                    name: value?.title || "Untitled",
+                    ...(metadata || {}),
+                    created_at: Date.now(),
+                    updated_at: Date.now(),
                 },
             });
             await refreshDocuments();
@@ -116,14 +115,14 @@ export const StorageProvider = (props: PropsWithChildren): JSX.Element => {
                     return response.value || {};
                 });
             },
-            updateDocument: async (id: string, value: any) => {
+            updateDocument: async (id: string, value: any, metadata: any) => {
                 const documentMetadata = userDocuments.find(entry => entry.id === id);
                 await client?.update(id, {
                     value: value || {},
                     metadata: {
                         ...documentMetadata?.metadata,
+                        ...(metadata || {}),
                         updated_at: Date.now(),
-                        name: value?.title || "Untitled",
                     },
                 });
             },
@@ -134,7 +133,12 @@ export const StorageProvider = (props: PropsWithChildren): JSX.Element => {
             updatePreferences: async (preferences: any) => {
                 const newPreferences = Object.assign({}, userPreferences, preferences);
                 setUserPreferences(newPreferences);
-                await client?.update(Collections.PREFERENCES, { value: newPreferences });
+                await client?.update(Collections.PREFERENCES, {
+                    value: newPreferences,
+                    metadata: {
+                        updated_at: Date.now(),
+                    },
+                });
             },
         } as Storage;
     }, [client, ready, userDocuments, userPreferences, fetchUserDocuments]);
