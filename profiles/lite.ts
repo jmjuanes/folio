@@ -10,8 +10,8 @@ const idbRename = async (prevKey: string, newKey: string, store: UseStore) => {
 
 export default {
     name: "Folio Lite",
-    config: () => {
-        return Promise.resolve({});
+    config: {
+        "ui.welcome.showRecents": false,
     },
     client: {
         type: "local",
@@ -20,19 +20,15 @@ export default {
             storeName: "folio-store",
             initialize: async (store: UseStore) => {
                 const keys: string[] = await idb.keys(store);
+                // rename all keys starting with the word 'folio:'
                 if (keys.includes("folio:version")) {
-                    // 1. rename all keys starting with the word 'folio:'
                     for (const prevKey of keys) {
                         if (prevKey.startsWith("folio:")) {
                             await idbRename(prevKey, prevKey.replace("folio:", ""), store);
                         }
                     }
-                    // 2. check if we have to rename 'data' to 'board:default'
-                    if (keys.includes("folio:data")) {
-                        await idbRename("data", "board:default", store);
-                    }
-                    // 3. remove unused keys
-                    await idb.del("folio:version", store);
+                    // the key version is not longer needed, so we can remove it
+                    await idb.del("version", store);
                 }
             },
         },
