@@ -10,17 +10,19 @@ type History = {
 };
 
 // @description history based on the hash fragment of the url
-const hashHistory: History = {
-    get: () => (window.location.hash || "#").replace("#", ""),
-    push: to => {
-        window.location.hash = to || "";
-    },
-    subscribe: listener => {
-        window.addEventListener("hashchange", listener);
-        return () => {
-            window.removeEventListener("hashchange", listener);
-        };
-    },
+const createHashHistory = (): History => {
+    return {
+        get: () => (window.location.hash || "#").replace("#", ""),
+        push: to => {
+            window.location.hash = to || "";
+        },
+        subscribe: listener => {
+            window.addEventListener("hashchange", listener);
+            return () => {
+                window.removeEventListener("hashchange", listener);
+            };
+        },
+    };
 };
 
 // @description history that lives in memory (useful for tests, SSR, embedded apps...)
@@ -68,15 +70,17 @@ export type RouterProviderProps = PropsWithChildren<{
 
 // main router provider
 export const RouterProvider = (props: RouterProviderProps): JSX.Element => {
-    const { router = "hash", initialLocation } = props;
     const history = useMemo(() => {
-        return router === "memory" ? createMemoryHistory(initialLocation) : hashHistory;
-    }, [router, initialLocation]);
-    const location = useSyncExternalStore(history.subscribe, history.get);
-    const value = useMemo(() => ({ location, navigate: history.push }), [location, history]);
+        if (props.router === "memory") {
+            return createMemoryHistory(props.initialLocation || "");
+        }
+        // default -> hash routing
+        return createHashHistory();
+    }, [props.router, props.initialLocation]);
+    const currentLocation = useSyncExternalStore(history.subscribe, history.get);
 
     return (
-        <RouterContext.Provider value={value}>
+        <RouterContext.Provider value={{ location: currentLocation, navigate: history.push }}>
             {props.children}
         </RouterContext.Provider>
     );
