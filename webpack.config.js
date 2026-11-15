@@ -36,7 +36,7 @@ export default {
     resolve: {
         alias: {
             "folio-react": resolve("./folio-react/"),
-            "@profile": resolve("./profiles/development.ts"),
+            "@profile": resolve(`./profiles/${process.env.FOLIO_PROFILE || "development"}.ts`),
         },
         extensions: [".tsx", ".ts", ".js", ".jsx"],
     },
