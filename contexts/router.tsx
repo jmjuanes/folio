@@ -1,46 +1,82 @@
-import { useContext, createContext, useCallback, useState, useEffect, Children, isValidElement } from "react";
+import { useContext, createContext, useMemo, useSyncExternalStore, Children, isValidElement } from "react";
 import type { JSX, PropsWithChildren, ReactNode } from "react";
 
-// @description get current hash fragment
-const getCurrentHash = (): string => {
-    return (window.location.hash || "#").replace("#", "");
+export type RouterMode = "hash" | "memory";
+
+type History = {
+    get: () => string;
+    push: (to: string) => void;
+    subscribe: (listener: () => void) => () => void;
+};
+
+// @description history based on the hash fragment of the url
+const hashHistory: History = {
+    get: () => (window.location.hash || "#").replace("#", ""),
+    push: to => {
+        window.location.hash = to || "";
+    },
+    subscribe: listener => {
+        window.addEventListener("hashchange", listener);
+        return () => {
+            window.removeEventListener("hashchange", listener);
+        };
+    },
+};
+
+// @description history that lives in memory (useful for tests, SSR, embedded apps...)
+const createMemoryHistory = (initialLocation = ""): History => {
+    const listeners = new Set<() => void>();
+    let location = initialLocation;
+    return {
+        get: () => location,
+        push: to => {
+            location = to || "";
+            listeners.forEach(listener => listener());
+        },
+        subscribe: listener => {
+            listeners.add(listener);
+            return () => {
+                listeners.delete(listener);
+            };
+        },
+    };
+};
+
+// router context value
+type RouterContextValue = {
+    location: string;
+    navigate: (to: string) => void;
 };
 
 // internal router context
-export const RouterContext = createContext<string>("");
+export const RouterContext = createContext<RouterContextValue>({} as RouterContextValue);
 
 // @description hook to access to the current location
 export const useLocation = (): string => {
-    return useContext(RouterContext);
+    return useContext(RouterContext).location;
 };
 
-// @description hook to create a navigation to redirect to a new path
+// @description hook to get the function to navigate to a new path
 export const useNavigate = () => {
-    return useCallback((to: string) => {
-        window.location.hash = to || "";
-    }, []);
+    return useContext(RouterContext).navigate;
 };
+
+export type RouterProviderProps = PropsWithChildren<{
+    router?: RouterMode;
+    initialLocation?: string; // only used in memory mode
+}>;
 
 // main router provider
-export const RouterProvider = (props: PropsWithChildren): JSX.Element => {
-    const [currentLocation, setCurrentLocation] = useState(() => {
-        return getCurrentHash();
-    });
-
-    // hook to listen for changes in the hash
-    useEffect(() => {
-        const handleHashChange = () => {
-            setCurrentLocation(getCurrentHash());
-        };
-        window.addEventListener("hashchange", handleHashChange);
-        // when app is unmounted, remove hashchange listener
-        return () => {
-            window.removeEventListener("hashchange", handleHashChange);
-        };
-    }, [setCurrentLocation]);
+export const RouterProvider = (props: RouterProviderProps): JSX.Element => {
+    const { router = "hash", initialLocation } = props;
+    const history = useMemo(() => {
+        return router === "memory" ? createMemoryHistory(initialLocation) : hashHistory;
+    }, [router, initialLocation]);
+    const location = useSyncExternalStore(history.subscribe, history.get);
+    const value = useMemo(() => ({ location, navigate: history.push }), [location, history]);
 
     return (
-        <RouterContext.Provider value={currentLocation}>
+        <RouterContext.Provider value={value}>
             {props.children}
         </RouterContext.Provider>
     );
