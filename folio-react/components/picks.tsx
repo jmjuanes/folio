@@ -12,7 +12,7 @@ export const Picks = (): React.JSX.Element | null => {
     const editor = useEditor();
     const { getToolById } = useTools();
     const picksClassName = classNames({
-        "absolute left-half p-1 rounded-lg shadow-md bottom-full mb-3": true,
+        "absolute p-1 rounded-lg shadow-md bottom-full mb-3": true,
         "bg-white border-1 border-gray-200 shadow-sm": true,
     });
     // get the active tool configuration
@@ -31,7 +31,7 @@ export const Picks = (): React.JSX.Element | null => {
     }
 
     return (
-        <div className={picksClassName} style={{ transform: "translateX(-50%)" }}>
+        <div className={picksClassName} style={{ left: "50%", transform: "translateX(-50%)" }}>
             <Form
                 className="flex flex-row gap-2"
                 data={editor.getDefaults()}

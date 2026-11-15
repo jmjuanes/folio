@@ -209,7 +209,7 @@ const optionTypes = {
             className={classNames({
                 "w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
                 "bg-white border-1 border-gray-200 text-gray-900": true,
-            })}
+            }, props.className)}
             defaultValue={props.value}
             placeholder={props.placeholder}
             onChange={event => props.onChange(event.target.value)}
