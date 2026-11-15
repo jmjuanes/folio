@@ -3,8 +3,8 @@ import {
     getBoundingRectangle,
     simplifyPath,
     getPointDistanceToLine,
-    Point,
 } from "../math.ts";
+import type { Point } from "../math.ts";
 
 
 describe("getPointsDistance", () => {
