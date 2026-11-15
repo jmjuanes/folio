@@ -5,8 +5,8 @@ import type { JSX, PropsWithChildren } from "react";
 import type { Entry } from "../lib/types/client.ts";
 
 enum Collections {
-    BOARD = "board",
     PREFERENCES = "preferences",
+    LIBRARY = "library",
 };
 
 export type Storage = {
@@ -45,7 +45,7 @@ export const StorageProvider = (props: PropsWithChildren): JSX.Element => {
         if (client) {
             const documentsList: Entry[] = await client?.list();
             return (documentsList || []).filter((item: any) => {
-                return item.id !== Collections.PREFERENCES;
+                return item.id !== Collections.PREFERENCES && item.id !== Collections.LIBRARY;
             });
             // .sort((a: any, b: any) => (b.metadata?.updated_at || 0) - (a.metadata?.updated_at || 0));
         }
@@ -116,14 +116,15 @@ export const StorageProvider = (props: PropsWithChildren): JSX.Element => {
                 });
             },
             updateDocument: async (id: string, value: any, metadata: any) => {
-                const documentMetadata = userDocuments.find(entry => entry.id === id);
+                const userDocument = userDocuments.find(entry => entry.id === id);
+                if (userDocument?.metadata) {
+                    Object.assign(userDocument.metadata, metadata || {}, {
+                        updated_at: Date.now(),
+                    });
+                }
                 await client?.update(id, {
                     value: value || {},
-                    metadata: {
-                        ...documentMetadata?.metadata,
-                        ...(metadata || {}),
-                        updated_at: Date.now(),
-                    },
+                    metadata: userDocument?.metadata || {},
                 });
             },
             deleteDocument: async (id: string) => {

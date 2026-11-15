@@ -1,12 +1,14 @@
-import { useState, useCallback, useMemo } from "react";
+import { Fragment, useState, useCallback, useMemo } from "react";
 import { ExclamationCircleIcon } from "@josemi-icons/react";
+import { Centered } from "folio-react/components/ui/centered.tsx";
+import { Overlay, OverlayVariant } from "folio-react/components/ui/overlay.tsx";
 import { Button, ButtonVariant } from "folio-react/components/ui/button.tsx";
 import { Form } from "folio-react/components/form/index.jsx";
 import { FORM_OPTIONS } from "folio-react/constants.js";
 import { useSession } from "../contexts/session.tsx";
 import type { JSX } from "react";
 
-export const Connection = (): JSX.Element => {
+export const ConnectionContent = (): JSX.Element => {
     const session = useSession();
     const [credentials, setCredentials] = useState({});
 
@@ -63,5 +65,16 @@ export const Connection = (): JSX.Element => {
                 )}
             </div>
         </div>
+    );
+};
+
+export const Connection = (): JSX.Element => {
+    return (
+        <Fragment>
+            <Overlay variant={OverlayVariant.TRANSPARENT} className="z-50 glass" />
+            <Centered className="fixed h-full z-50">
+                <ConnectionContent />
+            </Centered>
+        </Fragment>
     );
 };

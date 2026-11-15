@@ -1,11 +1,13 @@
 import { createLocalClient } from "./local.ts";
 import { createHttpClient } from "./http.ts";
+import { createMemoryClient } from "./memory.ts";
 import type { Profile } from "../types/profile.ts";
 import type { Client, ClientFactory } from "../types/client.ts";
 
 export const clientsFactory: Record<string, ClientFactory> = {
     "local": createLocalClient,
     "http": createHttpClient,
+    "memory": createMemoryClient,
 };
 
 // create the client of this installation from the profile

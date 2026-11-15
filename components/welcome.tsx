@@ -1,103 +1,71 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import { renderIcon, DrawingIcon, FolderIcon, ClockIcon, FileIcon } from "@josemi-icons/react";
+import { Fragment, useMemo } from "react";
+import { renderIcon, DrawingIcon, FolderIcon } from "@josemi-icons/react";
 import { Button } from "folio-react/components/ui/button.tsx";
-import { loadFromJson } from "folio-react/lib/json.js";
-import { useStorage } from "../contexts/storage.tsx";
+import { Centered } from "folio-react/components/ui/centered.tsx";
+import { Overlay } from "folio-react/components/ui/overlay.tsx";
+import { useApp } from "../hooks/use-app.ts";
+import { getConfig } from "../lib/config.ts";
 import type { JSX } from "react";
 
-type RecentDocumentProps = {
-    id: string;
-    name: string;
-};
-
-const RecentDocument = (props: RecentDocumentProps): JSX.Element => (
-    <a href="" className="rounded-md border-1 border-gray-200 flex items-center gap-2 cursor-pointer p-2 opacity-60 hover:opacity-80">
-        <div className="flex items-center text-lg">
-            <FileIcon />
-        </div>
-        <div className="text-sm font-medium">{props.name}</div>
-    </a>
-);
-
-export const Welcome = (): JSX.Element => {
-    const storage = useStorage();
-    const loading = useRef(false);
-
-    // get recent documents from storage
-    const recentDocuments = (storage.documents || []).slice(0, 4);
-
-    // handle closing the welcome dialog
-    const handleClose = useCallback(() => {
-        // if (!loading.current) {
-        //     app.dispatch(AppActions.OPEN_LAST_EDITED_DOCUMENT);
-        // }
-    }, []);
-
-    // handle load board from file
-    const handleLoad = useCallback(() => {
-        // if (!loading.current) {
-        //     loading.current = true;
-        //     app.dispatch(AppActions.IMPORT_DOCUMENT).catch((error: any) => {
-        //         console.error(error);
-        //         loading.current = false;
-        //     });
-        // }
-    }, []);
-
-    // handle start drawing
-    const handleCreate = useCallback(() => {
-        // if (!loading.current) {
-        //     loading.current = true;
-        //     app.dispatch(AppActions.CREATE_DOCUMENT).catch((error: any) => {
-        //         console.error(error);
-        //         loading.current = false;
-        //     });
-        // }
+export const WelcomeContent = (): JSX.Element => {
+    const app = useApp();
+    const features = useMemo(() => {
+        return getConfig("ui.welcome.features") || [];
     }, []);
 
     return (
-        <div className="w-full max-w-xl mx-auto p-6">
-            <div className="pb-8 select-none">
-                <div className="mb-2 leading-none font-bold text-5xl text-center">
-                    <span>Welcome back!</span>
+        <div className="w-full max-w-lg p-8 rounded-3xl border-1 border-gray-200 bg-white shadow-lg">
+            <div className="pt-12 pb-8 select-none">
+                <div className="mb-4 leading-none">
+                    <span className="font-bold text-7xl tracking-tight">folio</span>
+                    <span className="font-medium text-7xl text-gray-600 tracking-tight">lite</span>
                 </div>
-                <div className="text-lg text-center">
-                    <span>Pick up where you left off, or start something new.</span>
+                <div className="">
+                    Welcome to <b>folio</b>, the minimal and infinite whiteboard for sketching and prototyping.
                 </div>
             </div>
+            {features.length > 0 && (
+                <div className="flex gap-2 w-full pb-6">
+                    {features.map(feature => (
+                        <div key={feature.title} className="rounded-md p-4 w-full bg-gray-100">
+                            <div className="text-3xl flex mb-1">
+                                {renderIcon(feature.icon)}
+                            </div>
+                            <div className="text-sm font-bold">
+                                {feature.title}
+                            </div>
+                            <div className="text-2xs">
+                                {feature.description}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
             <div className="flex items-center gap-2 mb-6">
-                <Button className="w-full" onClick={handleCreate}>
+                <Button className="w-full" onClick={() => app.createDocument()}>
                     <div className="flex items-center text-lg">
                         <DrawingIcon />
                     </div>
                     <div className="font-bold">Start drawing</div>
                 </Button>
-                <Button variant="secondary" className="w-full" onClick={handleLoad}>
+                <Button variant="secondary" className="w-full" onClick={() => app.importDocument()}>
                     <div className="flex items-center text-lg">
                         <FolderIcon />
                     </div>
                     <div className="font-medium">Load from file</div>
                 </Button>
             </div>
-            {recentDocuments.length > 0 && (
-                <div className="mt-8">
-                    <div className="mb-3 flex items-center gap-1 leading-none opacity-60 text-sm">
-                        <div className="flex items-center">
-                            <ClockIcon />
-                        </div>
-                        <div className="font-medium">Recent boards</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                        {recentDocuments.map(recentDocument => (
-                            <RecentDocument
-                                key={recentDocument.id}
-                                id={recentDocument.id || "-"}
-                                name={recentDocument.metadata?.name || "-"}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
         </div>
+    );
+};
+
+export const Welcome = (): JSX.Element => {
+    return (
+        <Fragment>
+            <Overlay className="z-50 glass" />
+            <Centered className="fixed h-full z-50">
+                <WelcomeContent />
+            </Centered>
+        </Fragment>
     );
 };

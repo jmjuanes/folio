@@ -11,7 +11,21 @@ const idbRename = async (prevKey: string, newKey: string, store: UseStore) => {
 export default {
     name: "Folio Lite",
     config: {
-        "ui.welcome.showRecents": false,
+        "routing.mode": "memory",
+        "routing.restoreLastEditedDocument": true,
+        "ui.welcome.enabled": true,
+        "ui.welcome.features": [
+            {
+                icon: "shield-check",
+                title: "Privacy First.",
+                description: "Folio uses the local storage of your browser to ensure that your drawings are accessible only to you.",
+            },
+            {
+                icon: "drawing",
+                title: "Boundless Canvas.",
+                description: "Unleash your imagination on an infinite canvas for sketching, prototyping, and creating.",
+            },
+        ],
     },
     client: {
         type: "local",

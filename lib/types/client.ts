@@ -1,9 +1,7 @@
 export type Entry = {
     id?: string;
     value?: any;
-    metadata?: {
-        name?: string;
-        created_at?: number;
+    metadata?: any & {
         updated_at?: number;
     };
 };

@@ -2,6 +2,10 @@ import profile from "@profile";
 import type { Config, ConfigKey } from "./types/config.ts";
 
 export const defaultConfig: Config = {
+    "routing.mode": "memory",
+    "routing.restoreLastEditedDocument": false,
+    "ui.sidebar.enabled": false,
+    "ui.welcome.enabled": true,
     "ui.welcome.showRecents": true,
     "ui.welcome.features": [],
 };
