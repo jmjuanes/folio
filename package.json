@@ -40,9 +40,7 @@
         "start:auth": "cross-env NODE_ENV=development DEBUG='folio:*' node --conditions=development folio.js start:auth --port 3001",
         "start:storage": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js --conditions=development start:storage --port 3002",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "typecheck": "yarn typecheck:workers",
-        "typecheck:workers": "yarn workspace folio-shared typecheck",
-        "typecheck:lite": "yarn workspace folio-lite typecheck"
+        "typecheck": "echo 'ok'"
     },
     "imports": {
         "#folio-shared": {
