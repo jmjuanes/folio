@@ -1,16 +1,22 @@
 import { jest, expect, describe, it } from "@jest/globals";
 
-jest.unstable_mockModule("../../utils/blob.js", () => ({
-    blobToDataUrl: jest.fn(b => {
+jest.unstable_mockModule("../utils/blob.js", () => ({
+    blobToDataUrl: jest.fn((b: string) => {
         return jest.fn().mockResolvedValue("BLOB_" + b);
     }),
 }));
 
-globalThis.fetch = jest.fn().mockResolvedValue({
-    ok: true,
-    text: jest.fn().mockResolvedValue("@font-face { font-family: 'Roboto'; src: url('https://example.com/roboto.woff2'); }"),
-    blob: jest.fn().mockResolvedValue("FILE_BLOB"),
-});
+globalThis.fetch = jest.fn(() => {
+    return Promise.resolve({
+        ok: true,
+        text: jest.fn(() => {
+            return Promise.resolve("@font-face { font-family: 'Roboto'; src: url('https://example.com/roboto.woff2'); }");
+        }),
+        blob: jest.fn(() => {
+            return Promise.resolve("FILE_BLOB");
+        }),
+    });
+}) as jest.Mock;
 
 const { getFontsCss } = await import("../fonts.js");
 
