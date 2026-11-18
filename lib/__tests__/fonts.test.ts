@@ -18,7 +18,7 @@ globalThis.fetch = jest.fn(() => {
     });
 }) as jest.Mock;
 
-const { getFontsCss } = await import("../fonts.js");
+const { getFontsCss } = await import("../fonts.ts");
 
 describe("getFontsCss", () => {
     it("should return css with @import for external fonts when 'embed' option is set to false", async () => {
