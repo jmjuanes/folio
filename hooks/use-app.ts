@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { loadFromJson, saveAsJson } from "folio-react/lib/json.js";
+import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { useStorage } from "../contexts/storage.tsx";
 import { useNavigate } from "../contexts/router.tsx";
 
