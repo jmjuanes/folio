@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { renderIcon } from "@josemi-icons/react";
-import { printShortcut } from "../../utils/shortcuts.ts";
+import { printShortcut } from "../../lib/utils/shortcuts.ts";
 
 export type CommandContentProps = {
     className?: string;

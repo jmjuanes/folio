@@ -6,7 +6,7 @@ import {
     createLibraryComponent,
     createLibraryCollection,
 } from "../lib/library.ts";
-import { promisifyValue } from "../utils/promises.js";
+import { promisifyValue } from "../lib/utils/promises.js";
 import { VERSION } from "../constants.ts";
 import type { Library, LibraryComponent, LibraryCollection } from "../lib/library.ts";
 

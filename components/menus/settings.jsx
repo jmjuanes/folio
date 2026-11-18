@@ -1,6 +1,6 @@
 import React from "react";
 import { FORM_OPTIONS } from "../../constants.ts";
-import { BACKGROUND_COLOR_PALETTE } from "../../utils/colors.js";
+import { BACKGROUND_COLOR_PALETTE } from "../../lib/utils/colors.ts";
 import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.tsx";
 import { Form } from "../form/index.jsx";

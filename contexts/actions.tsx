@@ -15,7 +15,7 @@ import { getShortcutKey } from "../lib/actions.ts";
 import { exportToFile, exportToClipboard } from "../lib/export.js";
 import { loadFromJson, saveAsJson } from "../lib/json.js";
 import { loadLibraryFromJson, saveLibraryAsJson } from "../lib/library.ts";
-import { getKeyFromKeyCode } from "../utils/keys.js";
+import { getKeyFromKeyCode } from "../lib/utils/keys.js";
 import type { LibraryCollection } from "../lib/library.ts";
 
 export enum ActionCategory {

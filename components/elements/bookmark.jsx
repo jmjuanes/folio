@@ -2,8 +2,8 @@ import React from "react";
 import {ImageIcon, renderIcon} from "@josemi-icons/react";
 import {TRANSPARENT, NONE, BOOKMARK_WIDTH, BOOKMARK_OFFSET} from "../../constants.ts";
 import {useAssets} from "../../contexts/assets.jsx";
-import {copyTextToClipboard} from "../../utils/clipboard.js";
-import {stopEventPropagation} from "../../utils/events.js";
+import {copyTextToClipboard} from "../../lib/utils/clipboard.js";
+import {stopEventPropagation} from "../../lib/utils/events.js";
 
 // @private bookmark action button
 const BookmarkActionButton = props => (

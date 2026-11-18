@@ -12,7 +12,7 @@ import {
     getElementsBoundingRectangle,
 } from "../lib/elements.js";
 import { useEditor } from "../contexts/editor.tsx";
-import { getRectangle } from "../utils/math.ts";
+import { getRectangle } from "../lib/utils/math.ts";
 
 export type DimensionLabel = {
     value: string; // label to be displayed in the dimension badge

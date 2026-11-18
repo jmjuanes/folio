@@ -13,10 +13,9 @@ import {
     getBalancedDash,
     getPointsDistance,
     convertRadiansToDegrees,
-} from "../../utils/math.ts";
+} from "../../lib/utils/math.ts";
 import { getElementSize } from "../../lib/elements.js";
-
-import type { Point } from "../../utils/math.ts";
+import type { Point } from "../../lib/utils/math.ts";
 
 export type DrawPoint = { x: number, y: number };
 

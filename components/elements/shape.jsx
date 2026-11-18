@@ -18,12 +18,12 @@ import {
     getEllipsePerimeter,
     getPointsDistance,
     getCenter,
-} from "../../utils/math.ts";
+} from "../../lib/utils/math.ts";
 import {
     getPolygonPath,
     getPolygonHatchPath,
     getEllipseHatchPath,
-} from "../../utils/paths.js";
+} from "../../lib/utils/paths.js";
 import { getElementSize } from "../../lib/elements.js";
 
 const HatchFill = props => {

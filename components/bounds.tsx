@@ -11,8 +11,8 @@ import {
 } from "../lib/elements.js";
 import { useEditor } from "../contexts/editor.tsx";
 import { SvgContainer } from "./svg.tsx";
-import { getRectanglePath } from "../utils/paths.js";
-import type { Point } from "../utils/math.ts";
+import { getRectanglePath } from "../lib/utils/paths.js";
+import type { Point } from "../lib/utils/math.ts";
 
 // alias to generate the rectangle path from two points
 const getRectanglePathFromPoints = (p1: Point, p2: Point): string => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { stopEventPropagation } from "../../utils/events.js";
+import { stopEventPropagation } from "../../lib/utils/events.js";
 
 type PlaceholderProps = {
     value?: string;

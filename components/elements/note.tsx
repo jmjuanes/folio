@@ -11,7 +11,7 @@ import {
     NOTE_TEXT_FONT,
     NOTE_TEXT_SIZE,
 } from "../../constants.ts";
-import { measureText } from "../../utils/math.ts";
+import { measureText } from "../../lib/utils/math.ts";
 import { EditableText } from "./editable-text.tsx";
 
 export type NoteElementProps = {

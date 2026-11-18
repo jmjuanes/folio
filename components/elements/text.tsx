@@ -5,7 +5,7 @@ import {
     TEXT_ALIGNS,
     TEXT_VERTICAL_ALIGNS,
 } from "../../constants.ts";
-import { convertRadiansToDegrees, measureText } from "../../utils/math.ts";
+import { convertRadiansToDegrees, measureText } from "../../lib/utils/math.ts";
 import { EditableText } from "./editable-text.tsx";
 import { getElementSize } from "../../lib/elements.js";
 

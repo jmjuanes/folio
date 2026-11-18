@@ -1,7 +1,7 @@
 import React from "react";
 import { NONE } from "../constants.ts";
 import { SvgContainer } from "./svg.tsx";
-import { hypotenuse } from "../utils/math.ts";
+import { hypotenuse } from "../lib/utils/math.ts";
 
 export type PointerPoint = {
     x: number;

@@ -47,7 +47,7 @@ import {
     STROKE_COLOR_PALETTE,
     TEXT_COLOR_PALETTE,
     NOTE_COLOR_PALETTE,
-} from "../utils/colors.js";
+} from "../lib/utils/colors.ts";
 import {
     ArrowIcon,
     ArrowConnectorIcon,

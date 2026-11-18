@@ -1,6 +1,6 @@
 import React from "react";
 import { useAssets } from "../../contexts/assets.jsx";
-import { convertRadiansToDegrees, getCenter } from "../../utils/math.ts";
+import { convertRadiansToDegrees, getCenter } from "../../lib/utils/math.ts";
 import { getElementSize } from "../../lib/elements.js";
 
 export type ImageElementProps = {

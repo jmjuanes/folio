@@ -11,7 +11,7 @@ import {
 import { Island } from "./ui/island.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { getElementsBoundingRectangle, getElementSize } from "../lib/elements.js";
-import { convertRadiansToDegrees } from "../utils/math.ts";
+import { convertRadiansToDegrees } from "../lib/utils/math.ts";
 
 // extracted minimap generation to a separated hook
 export const useMinimap = (width: number, height: number) => {

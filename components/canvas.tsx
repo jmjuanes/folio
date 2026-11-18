@@ -22,8 +22,8 @@ import { useCursor } from "../hooks/use-cursor.js";
 import { renderElement } from "./elements/index.jsx";
 import { SvgContainer } from "./svg.tsx";
 import { Grid } from "./grid.tsx";
-import { clearFocus } from "../utils/dom.js";
-import { preventDefault, isTouchOrPenEvent, isInputTarget } from "../utils/events.js";
+import { clearFocus } from "../lib/utils/dom.js";
+import { preventDefault, isTouchOrPenEvent, isInputTarget } from "../lib/utils/events.js";
 import type { EditorPointEvent, EditorKeyboardEvent } from "../lib/events.ts";
 import type { JSX, ReactNode, CSSProperties } from "react";
 

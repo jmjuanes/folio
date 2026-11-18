@@ -9,8 +9,8 @@ import {
     OPACITY_NONE,
     ARROW_SHAPES,
 } from "../../constants.ts";
-import {getBalancedDash, getPointsDistance} from "../../utils/math.ts";
-import {getCurvePath, getConnectorPath} from "../../utils/paths.js";
+import {getBalancedDash, getPointsDistance} from "../../lib/utils/math.ts";
+import {getCurvePath, getConnectorPath} from "../../lib/utils/paths.js";
 import {Arrowhead} from "./arrow-head.jsx";
 
 export const ArrowElement = props => {

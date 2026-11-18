@@ -11,7 +11,7 @@ import {
 import { useEditor } from "../contexts/editor.tsx";
 import { SvgContainer } from "./svg.tsx";
 import { getElementConfig } from "../lib/elements.js";
-import { convertRadiansToDegrees } from "../utils/math.ts";
+import { convertRadiansToDegrees } from "../lib/utils/math.ts";
 
 export type HandlerPosition = {
     id?: string;

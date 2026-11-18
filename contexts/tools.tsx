@@ -13,7 +13,7 @@ import {
     FORM_OPTIONS,
     FILE_EXTENSIONS,
 } from "../constants.ts";
-import { STROKE_COLOR_PICK, TEXT_COLOR_PICK } from "../utils/colors.js";
+import { STROKE_COLOR_PICK, TEXT_COLOR_PICK } from "../lib/utils/colors.ts";
 import {
     ArrowIcon,
     ArrowConnectorIcon,
@@ -22,7 +22,7 @@ import {
 } from "../components/icons.jsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { getStickerImage } from "../lib/stickers.js";
-import { blobToDataUrl } from "../utils/blob.js";
+import { blobToDataUrl } from "../lib/utils/blob.js";
 
 export type PickValue = {
     value: any;
