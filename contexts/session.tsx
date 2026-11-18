@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useCallback, useMemo, useState } from "react";
 import profile from "@profile";
-import { Loading } from "folio-react/components/loading.jsx";
+import { Loading } from "../components/loading.jsx";
 import { createClientFromProfile } from "../lib/clients/index.ts";
 import type { JSX, PropsWithChildren } from "react";
 import type { Client } from "../lib/types/client.ts";

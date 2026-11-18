@@ -1,11 +1,6 @@
 {
     "compilerOptions": {
         "resolveJsonModule": true,
-        "paths": {
-            "folio-react/*": [
-                "./folio-react/*"
-            ]
-        }
     },
     "exclude": [
         "node_modules/**/*",

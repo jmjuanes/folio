@@ -1,8 +1,8 @@
 import { Fragment, useMemo } from "react";
 import { renderIcon, DrawingIcon, FolderIcon } from "@josemi-icons/react";
-import { Button } from "folio-react/components/ui/button.tsx";
-import { Centered } from "folio-react/components/ui/centered.tsx";
-import { Overlay } from "folio-react/components/ui/overlay.tsx";
+import { Button } from "./ui/button.tsx";
+import { Centered } from "./ui/centered.tsx";
+import { Overlay } from "./ui/overlay.tsx";
 import { useApp } from "../hooks/use-app.ts";
 import { getConfig } from "../lib/config.ts";
 import type { JSX } from "react";
