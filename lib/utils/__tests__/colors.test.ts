@@ -1,4 +1,4 @@
-import {isValidHexColor, colorShade} from "./colors.js";
+import { isValidHexColor, colorShade } from "../colors.js";
 
 describe("isValidHExColor", () => {
     it("should return 'true' if the provided value is a hex color", () => {

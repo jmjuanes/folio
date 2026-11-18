@@ -3,23 +3,23 @@ export const DEFAULT_STROKE_COLOR_SHADE = 3;
 export const DEFAULT_TEXT_COLOR_SHADE = 4;
 
 // Check if the provided color is a valid hex color
-export const isValidHexColor = value => {
-    return value && value.startsWith("#") && (value.length === 4 || value.length === 7 || value.length === 9);
+export const isValidHexColor = (value: string = ""): boolean => {
+    return !!value && value.startsWith("#") && (value.length === 4 || value.length === 7 || value.length === 9);
 };
 
 // Generate a darker or lighten version of the specified color
-export const colorShade = (color, amount) => {
+export const colorShade = (color: string, amount: number): string => {
     return "#" + color.replace(/^#/, "").replace(/../g, color => {
         return Math.max(Math.min(255, parseInt(color, 16) + amount), 0).toString(16).padStart(2, "0");
     });
 };
 
-const colorsFromList = list => {
+const colorsFromList = (list: string = ""): string[] => {
     return list.split("-").map(color => "#" + color);
 };
 
 // Global colors
-export const COLORS = {
+export const COLORS: Record<string, string | string[]> = {
     // Basic colors
     white: "#ffffff",
     black: "#000000",
@@ -57,18 +57,21 @@ export const BACKGROUND_COLORS = {
 };
 
 // Pick a color from the color palette
-export const pickColor = (name, shade = 0) => {
-    return (Array.isArray(COLORS[name]) ? COLORS[name][shade] : COLORS[name]) || COLORS.black;
+export const pickColor = (name: string, shade: number = 0): string => {
+    if (COLORS[name]) {
+        return Array.isArray(COLORS[name]) ? COLORS[name][shade] : COLORS[name];
+    }
+    return COLORS.black as string;
 };
 
 // Generate a color palette from specified color shade
-const generateColorPalette = shade => {
+const generateColorPalette = (shade: number): string[] => {
     return Object.keys(COLORS).map(colorName => {
         return pickColor(colorName, shade);
     });
 };
 
-const generateColorPick = shade => {
+const generateColorPick = (shade: number): string[] => {
     return ["black", "blue", "green", "yellow", "red"].map(color => {
         return pickColor(color, shade);
     });

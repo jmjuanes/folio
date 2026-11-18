@@ -1,4 +1,4 @@
-import { STICKYNOTE_COLORS } from "./lib/utils/colors.js";
+import { STICKYNOTE_COLORS } from "./lib/utils/colors.ts";
 
 export const VERSION = "15";
 
