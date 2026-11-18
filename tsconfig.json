@@ -11,5 +11,10 @@
                 "./profiles/development.ts"
             ],
         }
-    }
+    },
+    "exclude": [
+        "node_modules/**/*",
+        "**/*.jsx?",
+        "workers/**/*"
+    ]
 }
