@@ -3,7 +3,7 @@ import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
-import { FORM_OPTIONS } from "../../../constants.js";
+import { FORM_OPTIONS } from "../../../constants.ts";
 import { Form } from "../index.jsx";
 
 describe("<Form />", () => {

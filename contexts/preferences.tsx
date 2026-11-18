@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from "react";
-import { PREFERENCES } from "../constants.js";
+import { PREFERENCES } from "../constants.ts";
 import type { JSX } from "react";
 
 export type Preferences = {

@@ -1,4 +1,4 @@
-import { ELEMENTS, CHANGES, TOOLS, FIELDS } from "../../constants.js";
+import { ELEMENTS, CHANGES, TOOLS, FIELDS } from "../../constants.ts";
 import { getElementConfig } from "../elements.js";
 import { ToolState } from "../tool.ts";
 import type { EditorPointEvent } from "../events.ts";

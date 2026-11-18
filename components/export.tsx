@@ -5,7 +5,7 @@ import {
     EXPORT_PADDING,
     FORM_OPTIONS,
     TRANSPARENT,
-} from "../constants.js";
+} from "../constants.ts";
 import {
     exportToDataURL,
     exportToFile,

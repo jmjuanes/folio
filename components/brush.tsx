@@ -5,7 +5,7 @@ import {
     BRUSH_STROKE_COLOR,
     BRUSH_STROKE_WIDTH,
     BRUSH_STROKE_DASH,
-} from "../constants.js";
+} from "../constants.ts";
 import { SvgContainer } from "./svg.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import type { ToolState } from "../lib/tool.ts";

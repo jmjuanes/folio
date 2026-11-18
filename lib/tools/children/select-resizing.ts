@@ -4,7 +4,7 @@ import {
     HANDLERS,
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
-} from "../../../constants.js";
+} from "../../../constants.ts";
 import { ToolState } from "../../tool.ts";
 import {
     getElementConfig,

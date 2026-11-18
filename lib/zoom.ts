@@ -1,4 +1,4 @@
-import { ZOOM_MAX, ZOOM_MIN } from "../constants.js";
+import { ZOOM_MAX, ZOOM_MIN } from "../constants.ts";
 import { getElementsBoundingRectangle } from "./elements.js";
 
 export type CameraView = {

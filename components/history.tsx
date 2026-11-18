@@ -1,4 +1,4 @@
-import { ACTIONS } from "../constants.js";
+import { ACTIONS } from "../constants.ts";
 import { useEditor } from "../contexts/editor.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { Island } from "./ui/island.tsx";

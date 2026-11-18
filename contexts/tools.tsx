@@ -12,7 +12,7 @@ import {
     STROKE_WIDTHS,
     FORM_OPTIONS,
     FILE_EXTENSIONS,
-} from "../constants.js";
+} from "../constants.ts";
 import { STROKE_COLOR_PICK, TEXT_COLOR_PICK } from "../utils/colors.js";
 import {
     ArrowIcon,

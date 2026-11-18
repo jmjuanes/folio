@@ -1,5 +1,5 @@
 import { Fragment, useMemo } from "react";
-import { ACTIONS } from "../constants.js";
+import { ACTIONS } from "../constants.ts";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { useSurface } from "../contexts/surface.tsx";

@@ -5,7 +5,7 @@ import {
     ERASER_OPACITY,
     ERASER_SIZE,
     ERASER_FADE_DELAY,
-} from "../../constants.js";
+} from "../../constants.ts";
 import { getElementNormalizedPosition } from "../elements.js";
 import { ToolState } from "../tool.ts";
 import type { EditorPointEvent } from "../events.ts";

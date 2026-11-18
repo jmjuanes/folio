@@ -3,7 +3,7 @@ import {
     GRID_SIZE,
     CHANGES,
     KEYS,
-} from "../../../constants.js";
+} from "../../../constants.ts";
 import { isArrowKey } from "../../utils/keys.js";
 import { isInputTarget } from "../../utils/events.js";
 import { getElementConfig } from "../../elements.js";

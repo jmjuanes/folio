@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { FORM_OPTIONS, PREFERENCES } from "../constants.js";
+import { FORM_OPTIONS, PREFERENCES } from "../constants.ts";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay } from "./ui/overlay.tsx";

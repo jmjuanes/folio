@@ -7,7 +7,7 @@ import {
     SCREENSHOT_STROKE_COLOR,
     SCREENSHOT_STROKE_WIDTH,
     TRANSPARENT,
-} from "../constants.js";
+} from "../constants.ts";
 import {Handlers} from "./handlers.jsx";
 import {SvgContainer} from "./svg.tsx";
 import {ObjectDimensions} from "./object-dimensions.jsx";

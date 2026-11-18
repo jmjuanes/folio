@@ -1,6 +1,6 @@
 import React from "react";
 import {ImageIcon, renderIcon} from "@josemi-icons/react";
-import {TRANSPARENT, NONE, BOOKMARK_WIDTH, BOOKMARK_OFFSET} from "../../constants.js";
+import {TRANSPARENT, NONE, BOOKMARK_WIDTH, BOOKMARK_OFFSET} from "../../constants.ts";
 import {useAssets} from "../../contexts/assets.jsx";
 import {copyTextToClipboard} from "../../utils/clipboard.js";
 import {stopEventPropagation} from "../../utils/events.js";

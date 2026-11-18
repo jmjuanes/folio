@@ -4,7 +4,7 @@ import {
     FONT_FACES,
     TEXT_ALIGNS,
     TEXT_VERTICAL_ALIGNS,
-} from "../../constants.js";
+} from "../../constants.ts";
 import { convertRadiansToDegrees, measureText } from "../../utils/math.ts";
 import { EditableText } from "./editable-text.tsx";
 import { getElementSize } from "../../lib/elements.js";

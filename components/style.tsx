@@ -41,7 +41,7 @@ import {
     ARROWHEADS,
     ARROW_SHAPES,
     FORM_OPTIONS,
-} from "../constants.js";
+} from "../constants.ts";
 import {
     FILL_COLOR_PALETTE,
     STROKE_COLOR_PALETTE,

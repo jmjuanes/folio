@@ -9,7 +9,7 @@ import { ActionsProvider, useActions} from "../contexts/actions.tsx";
 import { WorkbenchProvider, WorkbenchSlot, Part, useWorkbench } from "../contexts/workbench.tsx";
 import { Canvas } from "./canvas.tsx";
 import { Island } from "./ui/island.tsx";
-import { ACTIONS, PREFERENCES } from "../constants.js";
+import { ACTIONS, PREFERENCES } from "../constants.ts";
 import type { JSX, PropsWithChildren } from "react";
 import type { ToolsOverrides } from "../contexts/tools.tsx";
 import type { ActionsOverrides } from "../contexts/actions.tsx";

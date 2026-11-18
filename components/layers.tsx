@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { CloseIcon } from "@josemi-icons/react";
 import { useEditor } from "../contexts/editor.tsx";
 import { exportToDataURL } from "../lib/export.js";
-import { FIELDS, TOOLS, TRANSPARENT } from "../constants.js";
+import { FIELDS, TOOLS, TRANSPARENT } from "../constants.ts";
 import type { JSX, CSSProperties, PropsWithChildren } from "react";
 
 // Layers preview variables

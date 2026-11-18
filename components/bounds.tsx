@@ -4,7 +4,7 @@ import {
     BOUNDS_STROKE_WIDTH,
     BOUNDS_STROKE_DASH,
     BOUNDS_STROKE_COLOR,
-} from "../constants.js";
+} from "../constants.ts";
 import {
     getElementsBoundingRectangle,
     getElementBounds,

@@ -1,6 +1,6 @@
 import React from "react";
 import { useMount, useDebounce } from "react-use";
-import { TOOLS } from "../constants.js";
+import { TOOLS } from "../constants.ts";
 import { createEditor } from "../lib/editor.js";
 import { defaultTools } from "../lib/tools/index.ts";
 import { Loading } from "../components/loading.jsx";

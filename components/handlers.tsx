@@ -1,5 +1,5 @@
 import React from "react";
-import { CURSORS, HANDLERS, HANDLERS_FILL_COLOR, HANDLERS_STROKE_COLOR } from "../constants.js";
+import { CURSORS, HANDLERS, HANDLERS_FILL_COLOR, HANDLERS_STROKE_COLOR } from "../constants.ts";
 import {
     isCornerHandler,
     isEdgeHandler,

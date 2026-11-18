@@ -1,5 +1,5 @@
 import React from "react";
-import { ELEMENTS } from "../../constants.js";
+import { ELEMENTS } from "../../constants.ts";
 import { AssetsProvider } from "../../contexts/assets.jsx";
 import { ArrowElement } from "./arrow.jsx";
 import { DrawElement } from "./draw.tsx";

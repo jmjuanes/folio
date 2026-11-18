@@ -6,7 +6,7 @@ import {
     OBJECT_DIMENSIONS_FILL_COLOR,
     OBJECT_DIMENSIONS_TEXT_COLOR,
     OBJECT_DIMENSIONS_TEXT_SIZE,
-} from "../constants.js";
+} from "../constants.ts";
 import {
     getElementSize,
     getElementsBoundingRectangle,

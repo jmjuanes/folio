@@ -7,7 +7,7 @@ import {
     MINIMAP_VISIBLE_RADIUS,
     MINIMAL_ELEMENT_FILL,
     MINIMAP_ELEMENT_RADIUS,
-} from "../constants.js";
+} from "../constants.ts";
 import { Island } from "./ui/island.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { getElementsBoundingRectangle, getElementSize } from "../lib/elements.js";

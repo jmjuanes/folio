@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { TOOLS } from "../constants.js";
+import { TOOLS } from "../constants.ts";
 import { Form } from "./form/index.jsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useTools } from "../contexts/tools.tsx";

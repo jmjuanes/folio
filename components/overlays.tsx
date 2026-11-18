@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { TOOLS } from "../constants.js";
+import { TOOLS } from "../constants.ts";
 import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import type { JSX } from "react";

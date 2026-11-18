@@ -1,4 +1,4 @@
-import { HANDLERS } from "../constants.js";
+import { HANDLERS } from "../constants.ts";
 import { rotatePoints } from "../utils/math.ts";
 import type { Point } from "../utils/math.ts";
 

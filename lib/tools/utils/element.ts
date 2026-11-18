@@ -1,4 +1,4 @@
-import { CHANGES, GRID_SIZE, SNAP_THRESHOLD } from "../../../constants.js";
+import { CHANGES, GRID_SIZE, SNAP_THRESHOLD } from "../../../constants.ts";
 
 // @description remove the provided text element from editor and history
 // @param {editor} editor - the current editor instance

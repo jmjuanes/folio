@@ -7,7 +7,7 @@ import { useContextMenu } from "../hooks/use-context-menu.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
-import { ACTIONS, TOOLS, ELEMENTS, PREFERENCES } from "../constants.js";
+import { ACTIONS, TOOLS, ELEMENTS, PREFERENCES } from "../constants.ts";
 
 import type { ToolState } from "../lib/tool.ts";
 import type { ElementTool } from "../lib/tools/element.ts";

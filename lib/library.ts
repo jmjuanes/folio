@@ -7,7 +7,7 @@ import {
     LIBRARY_THUMBNAIL_BACKGROUND,
     LIBRARY_THUMBNAIL_HEIGHT,
     LIBRARY_THUMBNAIL_WIDTH,
-} from "../constants.js";
+} from "../constants.ts";
 import { exportToDataURL } from "./export.js";
 import { getElementsBoundingRectangle } from "./elements.js";
 import { migrateElements } from "./migrate.js";

@@ -11,7 +11,7 @@ import {
     OPACITY_FULL,
     HATCH_ANGLE,
     HATCH_GAP,
-} from "../../constants.js";
+} from "../../constants.ts";
 import {
     convertRadiansToDegrees,
     getBalancedDash,

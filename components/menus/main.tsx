@@ -1,7 +1,7 @@
 import React from "react";
 import { Fragment } from "react";
 import classnames from "classnames";
-import { ACTIONS, PREFERENCES } from "../../constants.js";
+import { ACTIONS, PREFERENCES } from "../../constants.ts";
 import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.tsx";
 import { useEditor } from "../../contexts/editor.tsx";

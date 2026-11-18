@@ -1,4 +1,4 @@
-import { IS_DARWIN } from "../constants.js";
+import { IS_DARWIN } from "../constants.ts";
 
 // @description utility function to get the correct shortcut key
 export const getShortcutKey = (command: string): string => {

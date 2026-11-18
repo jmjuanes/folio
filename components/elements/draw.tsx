@@ -7,7 +7,7 @@ import {
     GRID_SIZE,
     OPACITY_FULL,
     OPACITY_NONE,
-} from "../../constants.js";
+} from "../../constants.ts";
 import {
     getCenter,
     getBalancedDash,

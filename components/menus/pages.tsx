@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { BarsIcon, LockIcon, DotsIcon } from "@josemi-icons/react";
-import { ACTIONS, EXPORT_PADDING } from "../../constants.js";
+import { ACTIONS, EXPORT_PADDING } from "../../constants.ts";
 import { Dropdown } from "../ui/dropdown.tsx";
 import { Island } from "../ui/island.tsx";
 import { useActions } from "../../contexts/actions.tsx";

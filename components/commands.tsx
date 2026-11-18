@@ -9,7 +9,7 @@ import { Command } from "./ui/command.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Dialog } from "./ui/dialog.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
-import { PREFERENCES } from "../constants.js";
+import { PREFERENCES } from "../constants.ts";
 import type { JSX, ReactNode } from "react";
 import type { ActionItem } from "../contexts/actions.tsx";
 

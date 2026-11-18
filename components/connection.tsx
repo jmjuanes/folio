@@ -4,7 +4,7 @@ import { Centered } from "folio-react/components/ui/centered.tsx";
 import { Overlay, OverlayVariant } from "folio-react/components/ui/overlay.tsx";
 import { Button, ButtonVariant } from "folio-react/components/ui/button.tsx";
 import { Form } from "folio-react/components/form/index.jsx";
-import { FORM_OPTIONS } from "folio-react/constants.js";
+import { FORM_OPTIONS } from "folio-react/constants.ts";
 import { useSession } from "../contexts/session.tsx";
 import type { JSX } from "react";
 

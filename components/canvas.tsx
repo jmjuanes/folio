@@ -10,7 +10,7 @@ import {
     ZOOM_MIN,
     ZOOM_MAX,
     ZOOM_STEP,
-} from "../constants.js";
+} from "../constants.ts";
 import { getTranslateCoordinatesForZoomAtPoint } from "../lib/zoom.ts";
 import { AssetsProvider } from "../contexts/assets.jsx";
 import { useEditor } from "../contexts/editor.tsx";

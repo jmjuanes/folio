@@ -1,5 +1,5 @@
 import React from "react";
-import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../constants.js";
+import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../constants.ts";
 import { Island } from "./ui/island.tsx";
 import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 import { useEditor } from "../contexts/editor.tsx";

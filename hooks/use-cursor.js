@@ -1,4 +1,4 @@
-import {CURSORS, TOOLS} from "../constants.js";
+import {CURSORS, TOOLS} from "../constants.ts";
 import {useEditor} from "../contexts/editor.tsx";
 
 export const useCursor = () => {

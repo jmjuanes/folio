@@ -1,5 +1,5 @@
 import React from "react";
-import { FIELDS, STICKER_WIDTH, STICKER_HEIGHT } from "../../constants.js";
+import { FIELDS, STICKER_WIDTH, STICKER_HEIGHT } from "../../constants.ts";
 import { getStickerImage } from "../../lib/stickers.js";
 
 export type StickerElementProps = {

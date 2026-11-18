@@ -1,6 +1,6 @@
 import React from "react";
 import { SvgContainer } from "./svg.tsx";
-import { NONE, SNAPS_STROKE_COLOR, SNAPS_STROKE_WIDTH } from "../constants.js";
+import { NONE, SNAPS_STROKE_COLOR, SNAPS_STROKE_WIDTH } from "../constants.ts";
 import { useEditor } from "../contexts/editor.tsx";
 
 export type SnapsProps = {

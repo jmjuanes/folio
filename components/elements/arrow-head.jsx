@@ -1,5 +1,5 @@
 import React from "react";
-import {ARROWHEADS, NONE} from "../../constants.js";
+import {ARROWHEADS, NONE} from "../../constants.ts";
 
 export const Arrowhead = props => {
     const size = props.strokeWidth * 2 + 4;

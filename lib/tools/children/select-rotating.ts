@@ -1,4 +1,4 @@
-import { FIELDS, CHANGES } from "../../../constants.js";
+import { FIELDS, CHANGES } from "../../../constants.ts";
 import { ToolState } from "../../tool.ts";
 import { clampAngle, snapAngle, rotatePoints } from "../../utils/math.ts";
 import type { EditorPointEvent } from "../../events.ts";

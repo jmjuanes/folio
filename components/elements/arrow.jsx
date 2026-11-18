@@ -8,7 +8,7 @@ import {
     OPACITY_FULL,
     OPACITY_NONE,
     ARROW_SHAPES,
-} from "../../constants.js";
+} from "../../constants.ts";
 import {getBalancedDash, getPointsDistance} from "../../utils/math.ts";
 import {getCurvePath, getConnectorPath} from "../../utils/paths.js";
 import {Arrowhead} from "./arrow-head.jsx";

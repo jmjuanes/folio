@@ -1,7 +1,7 @@
 import React from "react";
 import { uid } from "uid/secure";
-import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN, PREFERENCES } from "../constants.js";
-import { EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT } from "../constants.js";
+import { ACTIONS, ZOOM_STEP, TOOLS, FORM_OPTIONS, IS_DARWIN, PREFERENCES } from "../constants.ts";
+import { EXPORT_FORMATS, EXPORT_PADDING, TRANSPARENT } from "../constants.ts";
 import { useEditor } from "./editor.tsx";
 import { useLibrary } from "./library.tsx";
 import { useEditorComponents } from "./editor-components.tsx";

@@ -1,4 +1,4 @@
-import { ELEMENTS } from "../constants.js";
+import { ELEMENTS } from "../constants.ts";
 import { getElementConfig, createElement } from "./elements.js";
 
 export const parseElementsFromAiResponse = (responseElements: any[]): any[] => {

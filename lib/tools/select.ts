@@ -1,4 +1,4 @@
-import { TOOLS } from "../../constants.js";
+import { TOOLS } from "../../constants.ts";
 import { ToolState } from "../tool.ts";
 
 import { SelectDraggingState } from "./children/select-dragging.ts";

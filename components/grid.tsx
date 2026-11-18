@@ -1,4 +1,4 @@
-import { GRID_SIZE } from "../constants.js";
+import { GRID_SIZE } from "../constants.ts";
 import { SvgContainer } from "./svg.tsx";
 import type { JSX } from "react";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import {EXPORT_PADDING} from "../constants.js";
+import {EXPORT_PADDING} from "../constants.ts";
 import {useEditor} from "../contexts/editor.tsx";
 import {exportToDataURL} from "../lib/export.js";
 

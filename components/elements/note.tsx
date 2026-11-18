@@ -10,7 +10,7 @@ import {
     NOTE_TEXT_COLOR,
     NOTE_TEXT_FONT,
     NOTE_TEXT_SIZE,
-} from "../../constants.js";
+} from "../../constants.ts";
 import { measureText } from "../../utils/math.ts";
 import { EditableText } from "./editable-text.tsx";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { NONE } from "../constants.js";
+import { NONE } from "../constants.ts";
 import { SvgContainer } from "./svg.tsx";
 import { hypotenuse } from "../utils/math.ts";
 
