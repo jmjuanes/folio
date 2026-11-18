@@ -1,6 +1,6 @@
 import { HANDLERS } from "../constants.ts";
-import { rotatePoints } from "../utils/math.ts";
-import type { Point } from "../utils/math.ts";
+import { rotatePoints } from "./utils/math.ts";
+import type { Point } from "./utils/math.ts";
 
 export type Corner = "top-left" | "top-right" | "bottom-right" | "bottom-left";
 export type Edge = "top" | "right" | "bottom" | "left";

@@ -11,7 +11,7 @@ import {
 import { exportToDataURL } from "./export.js";
 import { getElementsBoundingRectangle } from "./elements.js";
 import { migrateElements } from "./migrate.js";
-import { blobToText } from "../utils/blob.js";
+import { blobToText } from "./utils/blob.js";
 
 // @description library collection item
 export type LibraryCollection = {
