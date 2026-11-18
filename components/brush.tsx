@@ -9,8 +9,8 @@ import {
 import { SvgContainer } from "./svg.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import type { ToolState } from "../lib/tool.ts";
-import { SelectBrushingState } from "../tools/children/select-brushing.ts";
-import type { SelectionArea } from "../tools/children/select-brushing.ts";
+import { SelectBrushingState } from "../lib/tools/children/select-brushing.ts";
+import type { SelectionArea } from "../lib/tools/children/select-brushing.ts";
 
 export type BrushProps = {
     fillColor?: string;

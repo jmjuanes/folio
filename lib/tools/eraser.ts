@@ -5,10 +5,10 @@ import {
     ERASER_OPACITY,
     ERASER_SIZE,
     ERASER_FADE_DELAY,
-} from "../constants.js";
-import { getElementNormalizedPosition } from "../lib/elements.js";
-import { ToolState } from "../lib/tool.ts";
-import type { EditorPointEvent } from "../lib/events.ts";
+} from "../../constants.js";
+import { getElementNormalizedPosition } from "../elements.js";
+import { ToolState } from "../tool.ts";
+import type { EditorPointEvent } from "../events.ts";
 
 const getPointerPosition = (event: EditorPointEvent): [number, number] => {
     return [

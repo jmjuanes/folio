@@ -3,15 +3,15 @@ import {
     GRID_SIZE,
     CHANGES,
     KEYS,
-} from "../../constants.js";
+} from "../../../constants.js";
 import { isArrowKey } from "../../utils/keys.js";
 import { isInputTarget } from "../../utils/events.js";
-import { getElementConfig } from "../../lib/elements.js";
-import { ToolState } from "../../lib/tool.ts";
+import { getElementConfig } from "../../elements.js";
+import { ToolState } from "../../tool.ts";
 import { removeTextElement, getSnappedCoordinate } from "../utils/element.ts";
 
-import type { EditorKeyboardEvent } from "../../lib/events.ts";
-import type { EditorPointEvent } from "../../lib/events.ts";
+import type { EditorKeyboardEvent } from "../../events.ts";
+import type { EditorPointEvent } from "../../events.ts";
 
 export class SelectIdleState extends ToolState {
     private activeElement: any | null = null;

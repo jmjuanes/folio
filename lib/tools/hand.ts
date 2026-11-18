@@ -1,6 +1,6 @@
-import { TOOLS } from "../constants.js";
-import { ToolState } from "../lib/tool.ts";
-import type { EditorPointEvent } from "../lib/events.ts";
+import { TOOLS } from "../../constants.js";
+import { ToolState } from "../tool.ts";
+import type { EditorPointEvent } from "../events.ts";
 
 export class HandTool extends ToolState {
     id = TOOLS.DRAG;

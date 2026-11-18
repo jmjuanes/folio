@@ -1,6 +1,6 @@
-import { ToolState } from "../../lib/tool.ts";
-import type { EditorPointEvent } from "../../lib/events.ts";
-import { isRotationHandler } from "../../lib/handlers.ts";
+import { ToolState } from "../../tool.ts";
+import type { EditorPointEvent } from "../../events.ts";
+import { isRotationHandler } from "../../handlers.ts";
 
 export class SelectPointingState extends ToolState {
     onEnter(event: EditorPointEvent) {

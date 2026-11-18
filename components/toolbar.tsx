@@ -10,7 +10,7 @@ import { usePreferences } from "../contexts/preferences.tsx";
 import { ACTIONS, TOOLS, ELEMENTS, PREFERENCES } from "../constants.js";
 
 import type { ToolState } from "../lib/tool.ts";
-import type { ElementTool } from "../tools/element.ts";
+import type { ElementTool } from "../lib/tools/element.ts";
 import type { ToolItem } from "../contexts/tools.tsx";
 
 export type ToolbarButtonProps = {

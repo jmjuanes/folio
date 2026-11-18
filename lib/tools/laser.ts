@@ -4,9 +4,9 @@ import {
     LASER_SIZE,
     LASER_FADE_DELAY,
     LASER_FADE_DURATION,
-} from "../constants.js";
-import { ToolState } from "../lib/tool.ts";
-import type { EditorPointEvent } from "../lib/events.ts";
+} from "../../constants.ts";
+import { ToolState } from "../tool.ts";
+import type { EditorPointEvent } from "../events.ts";
 
 export class LaserTool extends ToolState {
     id = TOOLS.LASER;

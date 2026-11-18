@@ -1,5 +1,5 @@
-import { ToolState } from "../../lib/tool.ts";
-import type { EditorPointEvent } from "../../lib/events.ts";
+import { ToolState } from "../../tool.ts";
+import type { EditorPointEvent } from "../../events.ts";
 
 export type SelectionArea = {
     x1: number;

@@ -2,9 +2,9 @@ import React from "react";
 import { useMount, useDebounce } from "react-use";
 import { TOOLS } from "../constants.js";
 import { createEditor } from "../lib/editor.js";
-import { defaultTools } from "../tools/index.ts";
+import { defaultTools } from "../lib/tools/index.ts";
 import { Loading } from "../components/loading.jsx";
-import { promisifyValue } from "../utils/promises.js";
+import { promisifyValue } from "../lib/utils/promises.js";
 
 export type Editor = any;
 

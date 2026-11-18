@@ -4,15 +4,15 @@ import {
     HANDLERS,
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
-} from "../../constants.js";
-import { ToolState } from "../../lib/tool.ts";
+} from "../../../constants.js";
+import { ToolState } from "../../tool.ts";
 import {
     getElementConfig,
     getElementMinimumSize,
     getElementSize,
     getElementSnappingPoints,
     getElementsSnappingEdges,
-} from "../../lib/elements.js";
+} from "../../elements.js";
 import { getSnappedCoordinate } from "../utils/element.ts";
 import {
     isNodeHandler,
@@ -21,14 +21,14 @@ import {
     computeResizeDelta,
     clampCornerResizeToMinSize,
     clampEdgeResizeToMinSize,
-} from "../../lib/handlers.ts";
+} from "../../handlers.ts";
 import {
     getRectangle,
     getPointProjectionToLine,
     getCenter,
 } from "../../utils/math.ts";
 
-import type { EditorPointEvent } from "../../lib/events.ts";
+import type { EditorPointEvent } from "../../events.ts";
 import type { Point } from "../../utils/math.ts";
 
 export class SelectResizingState extends ToolState {

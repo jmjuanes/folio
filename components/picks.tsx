@@ -6,7 +6,7 @@ import { useEditor } from "../contexts/editor.tsx";
 import { useTools } from "../contexts/tools.tsx";
 import { ToolState } from "../lib/tool.ts";
 import type { ToolItem } from "../contexts/tools.tsx";
-import type { ElementTool } from "../tools/element.ts";
+import type { ElementTool } from "../lib/tools/element.ts";
 
 export const Picks = (): React.JSX.Element | null => {
     const editor = useEditor();

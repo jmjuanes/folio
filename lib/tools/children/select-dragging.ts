@@ -4,17 +4,17 @@ import {
     ELEMENTS,
     SNAP_EDGE_X,
     SNAP_EDGE_Y,
-} from "../../constants.js";
+} from "../../../constants.js";
 import { getSnappedCoordinate } from "../utils/element.ts";
-import { ToolState } from "../../lib/tool.ts";
+import { ToolState } from "../../tool.ts";
 import {
     getElementConfig,
     getElementsSnappingEdges,
     getElementSnappingPoints,
     getElementsBoundingRectangle,
-} from "../../lib/elements.js";
+} from "../../elements.js";
 
-import type { EditorPointEvent } from "../../lib/events.ts";
+import type { EditorPointEvent } from "../../events.ts";
 
 export class SelectDraggingState extends ToolState {
     private dragged: boolean = false;

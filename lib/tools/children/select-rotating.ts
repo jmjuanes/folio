@@ -1,7 +1,7 @@
-import { FIELDS, CHANGES } from "../../constants.js";
-import { ToolState } from "../../lib/tool.ts";
+import { FIELDS, CHANGES } from "../../../constants.js";
+import { ToolState } from "../../tool.ts";
 import { clampAngle, snapAngle, rotatePoints } from "../../utils/math.ts";
-import type { EditorPointEvent } from "../../lib/events.ts";
+import type { EditorPointEvent } from "../../events.ts";
 
 export class SelectRotatingState extends ToolState {
     private rotated: boolean = false;

@@ -1,7 +1,7 @@
-import { ELEMENTS, CHANGES, TOOLS, FIELDS } from "../constants.js";
-import { getElementConfig } from "../lib/elements.js";
-import { ToolState } from "../lib/tool.ts";
-import type { EditorPointEvent } from "../lib/events.ts";
+import { ELEMENTS, CHANGES, TOOLS, FIELDS } from "../../constants.js";
+import { getElementConfig } from "../elements.js";
+import { ToolState } from "../tool.ts";
+import type { EditorPointEvent } from "../events.ts";
 
 export class ElementTool extends ToolState {
     id = TOOLS.ELEMENT;
