@@ -1,0 +1,20 @@
+import {CURSORS, TOOLS} from "../constants.ts";
+import {useEditor} from "../contexts/editor.tsx";
+
+export const useCursor = () => {
+    const editor = useEditor();
+
+    // Move action --> grab or grabbing cursor
+    if (editor.state.tool === TOOLS.DRAG) {
+        // return status === STATUS.DRAGGING ? CURSORS.GRABBING : CURSORS.GRAB;
+        return CURSORS.GRAB;
+    }
+
+    // Check for active tool or erase action --> cross cursor
+    else if (editor.state.tool !== TOOLS.SELECT) {
+        return CURSORS.CROSS;
+    }
+
+    // No cursor to display
+    return CURSORS.NONE;
+};

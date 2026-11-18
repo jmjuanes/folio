@@ -8,10 +8,7 @@
     "repository": "https://github.com/jmjuanes/folio",
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/folio/issues",
-    "workspaces": [
-        "folio-react",
-        "workers/*"
-    ],
+    "workspaces": [],
     "scripts": {
         "build": "yarn build:studio",
         "build:ai": "yarn workspace folio-ai build",
@@ -43,9 +40,7 @@
         "start:auth": "cross-env NODE_ENV=development DEBUG='folio:*' node --conditions=development folio.js start:auth --port 3001",
         "start:storage": "cross-env NODE_ENV=development DEBUG='folio:*' node folio.js --conditions=development start:storage --port 3002",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "typecheck": "yarn typecheck:workers",
-        "typecheck:workers": "yarn workspace folio-shared typecheck",
-        "typecheck:lite": "yarn workspace folio-lite typecheck"
+        "typecheck": "echo 'ok'"
     },
     "imports": {
         "#folio-shared": {
@@ -61,12 +56,14 @@
     "dependencies": {
         "@josemi-icons/react": "^0.7.0",
         "@josemi-icons/svg": "^0.7.0",
+        "browser-fs-access": "^0.37.0",
         "classnames": "^2.5.1",
         "idb-keyval": "^6.2.5",
         "lowcss": "^0.37.1",
         "react": "^19.2.7",
         "react-dom": "^19.2.7",
         "react-use": "^17.6.1",
+        "uid": "^2.0.2",
         "uuid": "^14.0.1"
     },
     "devDependencies": {

@@ -1,4 +1,4 @@
-import { Centered } from "folio-react/components/ui/centered.tsx";
+import { Centered } from "./ui/centered.tsx";
 import type { JSX } from "react";
 
 // not found component

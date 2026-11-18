@@ -1,5 +1,5 @@
 import { FileIcon } from "@josemi-icons/react";
-import { Button } from "folio-react/components/ui/button.tsx";
+import { Button } from "./ui/button.tsx";
 import { useStorage } from "../contexts/storage.tsx";
 import { useNavigate } from "../contexts/router.tsx";
 import { getRelativeTimeString } from "../lib/utils/dates.ts";

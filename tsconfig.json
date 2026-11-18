@@ -10,10 +10,11 @@
             "@profile": [
                 "./profiles/development.ts"
             ],
-            "folio-react": [
-                "./folio-react/index.jsx",
-                "./folio-react/*"
-            ],
         }
-    }
+    },
+    "exclude": [
+        "node_modules/**/*",
+        "**/*.jsx?",
+        "workers/**/*"
+    ]
 }

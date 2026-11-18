@@ -1,10 +1,10 @@
 import { Fragment, useState, useCallback, useMemo } from "react";
 import { ExclamationCircleIcon } from "@josemi-icons/react";
-import { Centered } from "folio-react/components/ui/centered.tsx";
-import { Overlay, OverlayVariant } from "folio-react/components/ui/overlay.tsx";
-import { Button, ButtonVariant } from "folio-react/components/ui/button.tsx";
-import { Form } from "folio-react/components/form/index.jsx";
-import { FORM_OPTIONS } from "folio-react/constants.js";
+import { Centered } from "./ui/centered.tsx";
+import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
+import { Button, ButtonVariant } from "./ui/button.tsx";
+import { Form } from "./form/index.jsx";
+import { FORM_OPTIONS } from "../constants.ts";
 import { useSession } from "../contexts/session.tsx";
 import type { JSX } from "react";
 

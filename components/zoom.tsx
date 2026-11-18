@@ -1,0 +1,95 @@
+import React from "react";
+import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../constants.ts";
+import { Island } from "./ui/island.tsx";
+import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
+import { useEditor } from "../contexts/editor.tsx";
+import { useActions } from "../contexts/actions.tsx";
+
+type ZoomDropdownItemProps = {
+    disabled?: boolean,
+    icon: string,
+    text: string,
+    onClick: () => void,
+};
+
+const ZoomDropdownItem = (props: ZoomDropdownItemProps): React.JSX.Element => (
+    <Dropdown.Item disabled={props.disabled} onClick={props.onClick}>
+        <Dropdown.Icon icon={props.icon} />
+        <span>{props.text}</span>
+    </Dropdown.Item>
+);
+
+export const Zoom = (): React.JSX.Element => {
+    const editor = useEditor();
+    const { dispatchAction } = useActions();
+    const zoom = editor.getZoom();
+    const selection = editor.getSelection();
+    return (
+        <Island>
+            <Island.Button
+                icon="zoom-out"
+                disabled={zoom <= ZOOM_MIN}
+                onClick={() => {
+                    dispatchAction(ACTIONS.ZOOM_OUT);
+                }}
+            />
+            <div className="flex items-center justify-center w-16 h-full select-none">
+                <Dropdown.Portal
+                    id="zoom:options"
+                    position={DropdownPortalPosition.BOTTOM_RIGHT}
+                    toggleClassName="flex items-center"
+                    contentClassName="absolute z-50 mt-2 w-48"
+                    toggleRender={() => (
+                        <Island.Button
+                            className="text-xs"
+                            text={(
+                                <span className="text-xs text-center">
+                                    {((zoom ?? 1) * 100).toFixed(0) + "%"}
+                                </span>
+                            )}
+                            showChevron={true}
+                        />
+                    )}
+                    contentRender={(closeDropdown) => (
+                        <Dropdown className="w-full">
+                            <ZoomDropdownItem
+                                icon="search-check"
+                                text="Zoom to 100%"
+                                disabled={zoom === 1}
+                                onClick={() => {
+                                    closeDropdown?.();
+                                    dispatchAction(ACTIONS.ZOOM_RESET);
+                                }}
+                            />
+                            <ZoomDropdownItem
+                                icon="arrows-maximize"
+                                text="Zoom to fit"
+                                disabled={editor.getElements().length === 0}
+                                onClick={() => {
+                                    closeDropdown?.();
+                                    dispatchAction(ACTIONS.ZOOM_FIT);
+                                }}
+                            />
+                            <ZoomDropdownItem
+                                icon="box-selection"
+                                text="Zoom to selection"
+                                disabled={selection.length === 0}
+                                onClick={() => {
+                                    closeDropdown?.();
+                                    dispatchAction(ACTIONS.ZOOM_FIT_SELECTION);
+                                }}
+                            />
+                        </Dropdown>
+                    )}
+                />
+            </div>
+            <Island.Button
+                icon="zoom-in"
+                disabled={ZOOM_MAX <= zoom}
+                onClick={() => {
+                    dispatchAction(ACTIONS.ZOOM_IN);
+                }}
+            />
+        </Island>
+    );
+};
