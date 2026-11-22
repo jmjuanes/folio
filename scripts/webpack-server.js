@@ -26,7 +26,7 @@ export const createServer = (rules = []) => {
         });
 
         // set middleware to catch all requests
-        devServer.app.all("*", (request, response, next) => {
+        devServer.app.all("/*splat", (request, response, next) => {
             // find the rule that matches the request
             const rule = rules.find(rule => {
                 return rule.method === request.method && request.originalUrl === rule.path;
