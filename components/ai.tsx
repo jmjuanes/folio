@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { CloseIcon } from "@josemi-icons/react";
+import { CloseIcon } from "mochicons/react";
 import { useAi } from "../contexts/ai.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useSurface } from "../contexts/surface.tsx";

@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useCallback, useState, useMemo } from "react";
-import { ImageIcon, DownloadIcon, ClipboardIcon } from "@josemi-icons/react";
+import { ImageIcon, DownloadIcon, ClipboardIcon } from "mochicons/react";
 import {
     EXPORT_FORMATS,
     EXPORT_PADDING,

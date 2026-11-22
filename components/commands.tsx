@@ -1,5 +1,5 @@
 import { Fragment, useState, useRef, useMemo, useCallback, useEffect } from "react";
-import { renderIcon } from "@josemi-icons/react";
+import { renderIcon } from "mochicons/react";
 import { useTools } from "../contexts/tools.tsx";
 import { useActions, ActionCategory } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";

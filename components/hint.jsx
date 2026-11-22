@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { ArrowUpIcon, ArrowDownIcon } from "@josemi-icons/react";
+import { ArrowUpIcon, ArrowDownIcon } from "mochicons/react";
 
 export const HINT_POSITION_TOP = "top";
 export const HINT_POSITION_BOTTOM = "bottom";

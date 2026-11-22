@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { ChevronDownIcon, CloseIcon } from "@josemi-icons/react";
+import { ChevronDownIcon, CloseIcon } from "mochicons/react";
 import { Dropdown } from "../ui/dropdown.tsx";
 
 export type DropdownSelectValue = {

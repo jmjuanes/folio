@@ -1,6 +1,6 @@
 import { useMemo, useCallback, useState, useEffect, Fragment } from "react";
 import classNames from "classnames";
-import { CloseIcon } from "@josemi-icons/react";
+import { CloseIcon } from "mochicons/react";
 import { useEditor } from "../contexts/editor.tsx";
 import { exportToDataURL } from "../lib/export.js";
 import { FIELDS, TOOLS, TRANSPARENT } from "../constants.ts";

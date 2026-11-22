@@ -1,5 +1,5 @@
 import { Fragment, useState, useCallback, useMemo } from "react";
-import { ExclamationCircleIcon } from "@josemi-icons/react";
+import { ExclamationCircleIcon } from "mochicons/react";
 import { Centered } from "./ui/centered.tsx";
 import { Overlay, OverlayVariant } from "./ui/overlay.tsx";
 import { Button, ButtonVariant } from "./ui/button.tsx";

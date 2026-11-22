@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useMemo, useRef } from "react";
 import classNames from "classnames";
-import { renderIcon } from "@josemi-icons/react";
+import { renderIcon } from "mochicons/react";
 import type { JSX, PropsWithChildren, CSSProperties } from "react";
 
 // amount of time in milliseconds to wait before automatically removing a toast

@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, Fragment } from "react";
-import { PlusIcon } from "@josemi-icons/react";
-import { renderIcon } from "@josemi-icons/react";
+import { PlusIcon } from "mochicons/react";
+import { renderIcon } from "mochicons/react";
 import classNames from "classnames";
 import { ACTIONS } from "../constants.ts";
 import { Button } from "../components/ui/button.tsx";

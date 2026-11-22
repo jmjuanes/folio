@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { DrawingIcon, FolderIcon, ClockIcon, FileIcon } from "@josemi-icons/react";
+import { DrawingIcon, FolderIcon, ClockIcon, FileIcon } from "mochicons/react";
 import { Button } from "./ui/button.tsx";
 import { useStorage } from "../contexts/storage.tsx";
 import { useApp } from "../hooks/use-app.ts";

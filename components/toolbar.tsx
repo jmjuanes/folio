@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { LockIcon, UnlockIcon, renderIcon } from "@josemi-icons/react";
+import { LockIcon, UnlockIcon, renderIcon } from "mochicons/react";
 import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu } from "../hooks/use-context-menu.tsx";

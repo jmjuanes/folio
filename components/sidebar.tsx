@@ -1,7 +1,7 @@
 import { useCallback, useMemo, Fragment } from "react";
 import { useToggle } from "react-use";
 import classNames from "classnames";
-import { renderIcon, DotsIcon } from "@josemi-icons/react";
+import { renderIcon, DotsIcon } from "mochicons/react";
 import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
 // import { useDialog } from "../contexts/dialogs.tsx";
 // import { useConfirm } from "../contexts/confirm.jsx";

@@ -3,7 +3,7 @@ import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
-jest.unstable_mockModule("@josemi-icons/react", () => ({
+jest.unstable_mockModule("mochicons", () => ({
     CheckIcon: () => null,
     renderIcon: icon => icon.toUpperCase(),
 }));
