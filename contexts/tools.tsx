@@ -1,6 +1,6 @@
 import React from "react";
 import { fileOpen } from "browser-fs-access";
-import { SquareIcon, CircleIcon, TriangleIcon } from "@josemi-icons/react";
+import { SquareIcon, CircleIcon, TriangleIcon } from "mochicons/react";
 import {
     ELEMENTS,
     TOOLS,

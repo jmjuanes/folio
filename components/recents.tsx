@@ -1,4 +1,4 @@
-import { FileIcon } from "@josemi-icons/react";
+import { FileIcon } from "mochicons/react";
 import { Button } from "./ui/button.tsx";
 import { useStorage } from "../contexts/storage.tsx";
 import { useNavigate } from "../contexts/router.tsx";

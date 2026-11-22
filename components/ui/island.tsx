@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { renderIcon, ChevronDownIcon } from "@josemi-icons/react";
+import { renderIcon, ChevronDownIcon } from "mochicons/react";
 
 export type IslandProps = {
     children: React.ReactNode,

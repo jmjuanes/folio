@@ -1,5 +1,5 @@
 import { Fragment, useMemo } from "react";
-import { renderIcon, DrawingIcon, FolderIcon } from "@josemi-icons/react";
+import { renderIcon, DrawingIcon, FolderIcon } from "mochicons/react";
 import { Button } from "./ui/button.tsx";
 import { Centered } from "./ui/centered.tsx";
 import { Overlay } from "./ui/overlay.tsx";

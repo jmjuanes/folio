@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronRightIcon } from "@josemi-icons/react";
+import { ChevronRightIcon } from "mochicons/react";
 import { ACTIONS, ELEMENTS, PREFERENCES } from "../constants.ts";
 import { ContextMenu as Menu } from "./ui/context-menu.tsx";
 import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";

@@ -1,7 +1,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
-import { CheckIcon, renderIcon } from "@josemi-icons/react";
+import { CheckIcon, renderIcon } from "mochicons/react";
 
 export type DropdownProps = React.HTMLAttributes<HTMLDivElement> & {
     className?: string,

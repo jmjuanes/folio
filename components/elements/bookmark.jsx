@@ -1,5 +1,5 @@
 import React from "react";
-import {ImageIcon, renderIcon} from "@josemi-icons/react";
+import {ImageIcon, renderIcon} from "mochicons/react";
 import {TRANSPARENT, NONE, BOOKMARK_WIDTH, BOOKMARK_OFFSET} from "../../constants.ts";
 import {useAssets} from "../../contexts/assets.jsx";
 import {copyTextToClipboard} from "../../lib/utils/clipboard.js";

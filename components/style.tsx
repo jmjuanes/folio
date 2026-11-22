@@ -23,7 +23,7 @@ import {
     TrashIcon,
     TriangleIcon,
     UnlockIcon,
-} from "@josemi-icons/react";
+} from "mochicons/react";
 import {
     ACTIONS,
     FIELDS,

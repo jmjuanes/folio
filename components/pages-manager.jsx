@@ -1,7 +1,7 @@
 import React from "react";
 import {useUpdate} from "react-use";
 import classNames from "classnames";
-import { DotsVerticalIcon, CheckIcon } from "@josemi-icons/react";
+import { DotsVerticalIcon, CheckIcon } from "mochicons/react";
 import { Island } from "./island.tsx";
 import { Dropdown } from "./ui/dropdown.tsx";
 import { useEditor } from "../contexts/editor.tsx";

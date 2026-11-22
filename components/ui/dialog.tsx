@@ -1,6 +1,6 @@
 import React, { HtmlHTMLAttributes } from "react";
 import classNames from "classnames";
-import { CloseIcon } from "@josemi-icons/react";
+import { CloseIcon } from "mochicons/react";
 
 export type DialogProps = HtmlHTMLAttributes<HTMLDivElement> & {
     className?: string;

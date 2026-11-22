@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import classNames from "classnames";
-import { renderIcon } from "@josemi-icons/react";
+import { renderIcon } from "mochicons/react";
 import type { JSX, ReactNode } from "react";
 
 export type AiPromptProps = {

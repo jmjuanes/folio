@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { renderIcon } from "@josemi-icons/react";
+import { renderIcon } from "mochicons/react";
 
 export enum AlertVariant {
     WARNING = "warning",
