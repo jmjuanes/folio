@@ -54,12 +54,11 @@
         }
     },
     "dependencies": {
-        "@josemi-icons/react": "^0.7.0",
-        "@josemi-icons/svg": "^0.7.0",
         "browser-fs-access": "^0.37.0",
         "classnames": "^2.5.1",
         "idb-keyval": "^6.2.5",
-        "lowcss": "^0.37.1",
+        "lowcss": "^0.39.0",
+        "mochicons": "^0.8.1",
         "react": "^19.2.7",
         "react-dom": "^19.2.7",
         "react-use": "^17.6.1",
