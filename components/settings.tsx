@@ -1,10 +1,11 @@
-import React from "react";
-import { FORM_OPTIONS } from "../../constants.ts";
-import { BACKGROUND_COLOR_PALETTE } from "../../lib/utils/colors.ts";
-import { Dropdown } from "../ui/dropdown.tsx";
-import { Island } from "../ui/island.tsx";
-import { Form } from "../form/index.jsx";
-import { useEditor } from "../../contexts/editor.tsx";
+import { useCallback } from "react";
+import { FORM_OPTIONS } from "../constants.ts";
+import { BACKGROUND_COLOR_PALETTE } from "../lib/utils/colors.ts";
+import { Dropdown } from "./ui/dropdown.tsx";
+import { Island } from "./ui/island.tsx";
+import { Form } from "./form/index.jsx";
+import { useEditor } from "../contexts/editor.tsx";
+import type { ReactNode, JSX } from "react";
 
 // settings fields
 const FIELDS = {
@@ -43,11 +44,11 @@ const sections = {
     },
 };
 
-const getValue = (obj, path) => {
+const getValue = (obj: any, path: string) => {
     return path.split(".").reduce((o, key) => o[key], obj);
 };
 
-const setValue = (obj, path, value) => {
+const setValue = (obj: any = {}, path: string, value: any) => {
     let i = 0;
     const pathItems = path.split(".");
     for (i = 0; i < pathItems.length - 1; i++) {
@@ -66,7 +67,7 @@ export const SettingsMenuContent = () => {
     }));
 
     // perform a change in the editor configuration
-    const handleChange = React.useCallback((key, value) => {
+    const handleChange = useCallback((key: string, value: any) => {
         setValue(editor, key, value);
         editor.dispatchChange();
         editor.update();
@@ -82,17 +83,31 @@ export const SettingsMenuContent = () => {
     );
 };
 
+export type SettingsMenuProps = {
+    children: ReactNode;
+};
+
 // @description settings menu
-export const SettingsMenu = props => {
+export const SettingsMenu = (props: SettingsMenuProps): JSX.Element => {
     // use the default content if no children are provided
     const content = props.children ?? <SettingsMenuContent />;
 
     return (
-        <div className="flex relative group" tabIndex="0">
-            <Island.Button icon="sliders" />
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-60 z-40">
-                {content}
-            </Dropdown>
+        <div className="flex items-center justify-center w-16 h-full select-none">
+            <Dropdown.Portal
+                id="settings:options"
+                position="bottom-left"
+                toggleClassName="flex items-center"
+                contentClassName="absolute z-50 mt-2 w-60"
+                toggleRender={(active) => (
+                    <Island.Button active={active} icon="sliders" />
+                )}
+                contentRender={() => (
+                    <Dropdown className="w-full">
+                        {content}
+                    </Dropdown>
+                )}
+            />
         </div>
     );
 };
