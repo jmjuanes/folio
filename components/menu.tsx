@@ -1,41 +1,40 @@
-import React from "react";
 import { Fragment } from "react";
 import classnames from "classnames";
-import { ACTIONS, PREFERENCES } from "../../constants.ts";
-import { Dropdown } from "../ui/dropdown.tsx";
-import { Island } from "../ui/island.tsx";
-import { useEditor } from "../../contexts/editor.tsx";
-import { usePreferences } from "../../contexts/preferences.tsx";
-import { useEditorComponents } from "../../contexts/editor-components.tsx";
-import { useActions } from "../../contexts/actions.tsx";
-import { printShortcut } from "../../lib/actions.ts";
-import type { JSX } from "react";
+import { ACTIONS, PREFERENCES } from "../constants.ts";
+import { Dropdown } from "./ui/dropdown.tsx";
+import { Island } from "./ui/island.tsx";
+import { useEditor } from "../contexts/editor.tsx";
+import { usePreferences } from "../contexts/preferences.tsx";
+import { useEditorComponents } from "../contexts/editor-components.tsx";
+import { useActions } from "../contexts/actions.tsx";
+import { printShortcut } from "../lib/actions.ts";
+import type { JSX, SyntheticEvent } from "react";
 
-export type MainMenuLinkProps = {
-    url?: string,
+export type MenuLinkProps = {
+    url: string,
     icon?: string,
     text: string,
 };
 
 // wrapper to display links in the main menu
-export const MainMenuLink = (props: MainMenuLinkProps): React.JSX.Element => (
-    <Dropdown.Item as="a" href={props.url || "#"} target="_blank">
+export const MenuLink = (props: MenuLinkProps): JSX.Element => (
+    <Dropdown.Item as="a" href={props.url} target="_blank">
         <Dropdown.Icon icon={props.icon || "external-link"} />
         <span>{props.text}</span>
     </Dropdown.Item>
 );
 
-export type MainMenuActionProps = {
+export type MenuActionProps = {
     className?: string,
     disabled?: boolean,
     text: string,
     icon: string,
     shortcut?: string | string[],
-    onClick: (event: React.SyntheticEvent) => void,
+    onClick: (event: SyntheticEvent) => void,
 };
 
 // wrapper to display a button in the menu for an action
-export const MainMenuAction = (props: MainMenuActionProps): React.JSX.Element => (
+export const MenuAction = (props: MenuActionProps): JSX.Element => (
     <Dropdown.Item className={props.className} disabled={!!props.disabled} onClick={props.onClick}>
         <Dropdown.Icon icon={props.icon} />
         <span>{props.text}</span>
@@ -48,37 +47,37 @@ export const MainMenuAction = (props: MainMenuActionProps): React.JSX.Element =>
 );
 
 // alias to Dropdown.Separator
-export const MainMenuSeparator = (): React.JSX.Element => (
+export const MenuSeparator = (): JSX.Element => (
     <Dropdown.Separator />
 );
 
 // menu links wrapper
-export const MainMenuLinks = (): React.JSX.Element => (
-    <React.Fragment>
-        <MainMenuLink
+export const MenuLinks = (): JSX.Element => (
+    <Fragment>
+        <MenuLink
             url={process.env.URL_HOMEPAGE}
             icon="info-circle"
             text="About folio"
         />
-        <MainMenuLink
+        <MenuLink
             url={process.env.URL_ISSUES}
             icon="bug"
             text="Report an issue"
         />
-        <MainMenuLink
+        <MenuLink
             url={process.env.URL_REPOSITORY}
             icon="code"
             text="Source code"
         />
-    </React.Fragment>
+    </Fragment>
 );
 
 // action to open a .folio file from the local computer of the user
-export const MainMenuOpenAction = (): React.JSX.Element => {
+export const MenuOpenAction = (): JSX.Element => {
     const { dispatchAction, getShortcutByActionId } = useActions();
     const shortcutsEnabled = true;
     return (
-        <MainMenuAction
+        <MenuAction
             icon="folder"
             text="Open..."
             shortcut={shortcutsEnabled && getShortcutByActionId(ACTIONS.OPEN)}
@@ -90,11 +89,11 @@ export const MainMenuOpenAction = (): React.JSX.Element => {
 };
 
 // action to save the current content to a file
-export const MainMenuSaveAction = (): React.JSX.Element => {
+export const MenuSaveAction = (): JSX.Element => {
     const { dispatchAction, getShortcutByActionId } = useActions();
     const shortcutsEnabled = true;
     return (
-        <MainMenuAction
+        <MenuAction
             icon="download"
             text="Save a copy"
             shortcut={shortcutsEnabled && getShortcutByActionId(ACTIONS.SAVE)}
@@ -106,13 +105,13 @@ export const MainMenuSaveAction = (): React.JSX.Element => {
 };
 
 // action to export the current page to an image
-export const MainMenuExportAction = (): React.JSX.Element => {
+export const MenuExportAction = (): JSX.Element => {
     const { dispatchAction, getShortcutByActionId } = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
     const shortcutsEnabled = true;
     return (
-        <MainMenuAction
+        <MenuAction
             icon="image"
             text="Export as image"
             shortcut={shortcutsEnabled && getShortcutByActionId(ACTIONS.SHOW_EXPORT_DIALOG)}
@@ -128,12 +127,12 @@ export const MainMenuExportAction = (): React.JSX.Element => {
 };
 
 // action to remove the content of the board
-export const MainMenuResetAction = (): React.JSX.Element => {
+export const MenuResetAction = (): JSX.Element => {
     const { dispatchAction } = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
     return (
-        <MainMenuAction
+        <MenuAction
             icon="trash"
             text="Reset"
             disabled={elements.length === 0}
@@ -148,10 +147,10 @@ export const MainMenuResetAction = (): React.JSX.Element => {
 };
 
 // action to display the shortcuts menu
-export const MainMenuShowShortcutsAction = (): React.JSX.Element => {
+export const MenuShowShortcutsAction = (): JSX.Element => {
     const { dispatchAction } = useActions();
     return (
-        <MainMenuAction
+        <MenuAction
             icon="keyboard"
             text="Keyboard shortcuts"
             onClick={() => {
@@ -162,10 +161,10 @@ export const MainMenuShowShortcutsAction = (): React.JSX.Element => {
 };
 
 // action to display the editor preferences dialog
-export const MainMenuPreferencesAction = (): JSX.Element => {
+export const MenuPreferencesAction = (): JSX.Element => {
     const { dispatchAction } = useActions();
     return (
-        <MainMenuAction
+        <MenuAction
             icon="sliders"
             text="Preferences"
             onClick={() => {
@@ -176,47 +175,57 @@ export const MainMenuPreferencesAction = (): JSX.Element => {
 };
 
 // @description default content of the main menu
-export const MainMenuContent = (): React.JSX.Element => {
+export const MenuContent = (): JSX.Element => {
     const preferences = usePreferences();
     const { Preferences } = useEditorComponents();
     return (
-        <React.Fragment>
-            <MainMenuOpenAction />
-            <MainMenuSaveAction />
-            <MainMenuExportAction />
-            <MainMenuResetAction />
+        <Fragment>
+            <MenuOpenAction />
+            <MenuSaveAction />
+            <MenuExportAction />
+            <MenuResetAction />
             {(!!preferences[PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED] || !!Preferences) && (
                 <Fragment>
-                    <MainMenuSeparator />
+                    <MenuSeparator />
                     {!!preferences[PREFERENCES.KEYBOARD_SHORTCUTS_ENABLED] && (
-                        <MainMenuShowShortcutsAction />
+                        <MenuShowShortcutsAction />
                     )}
                     {!!Preferences && (
-                        <MainMenuPreferencesAction />
+                        <MenuPreferencesAction />
                     )}
                 </Fragment>
             )}
-            <MainMenuSeparator />
-            <MainMenuLinks />
-        </React.Fragment>
+            <MenuSeparator />
+            <MenuLinks />
+        </Fragment>
     );
 };
 
 // props for the main menu component
-export type MainMenuProps = {
+export type MenuProps = {
     children?: React.ReactNode,
 };
 
 // @description main menu component
-export const MainMenu = (props: MainMenuProps): React.JSX.Element => {
-    const content = props.children ?? <MainMenuContent />;
+export const Menu = (props: MenuProps): JSX.Element => {
+    const content = props.children ?? <MenuContent />;
 
     return (
-        <div className="flex relative group" tabIndex="0">
-            <Island.Button icon="bars" />
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-56 z-40">
-                {content}
-            </Dropdown>
+        <div className="flex items-center justify-center w-16 h-full select-none">
+            <Dropdown.Portal
+                id="menu:options"
+                position="bottom-left"
+                toggleClassName="flex items-center"
+                contentClassName="absolute z-50 mt-2 w-56"
+                toggleRender={(active) => (
+                    <Island.Button active={active} icon="bars" />
+                )}
+                contentRender={() => (
+                    <Dropdown className="w-full">
+                        {content}
+                    </Dropdown>
+                )}
+            />
         </div>
     );
 };
