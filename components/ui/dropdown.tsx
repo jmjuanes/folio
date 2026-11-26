@@ -97,7 +97,7 @@ Dropdown.Label = ({ className, ...props }: DropdownLabelProps): JSX.Element => (
     />
 );
 
-export type DropdownItemProps = HTMLAttributes<HTMLDivElement> & {
+export type DropdownItemProps = HTMLAttributes<HTMLLinkElement> & {
     as?: string | JSXElementConstructor<any>,
     className?: string,
     disabled?: boolean,
@@ -159,7 +159,7 @@ Dropdown.Shortcut = ({ className, ...props }: DropdownShortcutProps): JSX.Elemen
     <div className={classNames("ml-auto text-xs text-right text-gray-600", className)} {...props} />
 );
 
-export type DropdownCheckItemProps = HTMLAttributes<HTMLDivElement> & {
+export type DropdownCheckItemProps = HTMLAttributes<HTMLLinkElement> & {
     checked?: boolean,
     className?: string,
     disabled?: boolean,
