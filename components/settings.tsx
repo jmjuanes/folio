@@ -58,7 +58,7 @@ const setValue = (obj: any = {}, path: string, value: any) => {
 };
 
 // @description settings menu content
-export const SettingsMenuContent = () => {
+export const SettingsContent = () => {
     const editor = useEditor();
 
     // get values from the editor configuration
@@ -83,14 +83,14 @@ export const SettingsMenuContent = () => {
     );
 };
 
-export type SettingsMenuProps = {
+export type SettingsProps = {
     children: ReactNode;
 };
 
 // @description settings menu
-export const SettingsMenu = (props: SettingsMenuProps): JSX.Element => {
+export const Settings = (props: SettingsProps): JSX.Element => {
     // use the default content if no children are provided
-    const content = props.children ?? <SettingsMenuContent />;
+    const content = props.children ?? <SettingsContent />;
 
     return (
         <div className="flex items-center justify-center w-16 h-full select-none">
