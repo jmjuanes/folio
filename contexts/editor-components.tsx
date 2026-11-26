@@ -5,7 +5,7 @@ import { Export } from "../components/export.tsx";
 import { KeyboardShortcuts } from "../components/keyboard-shortcuts.tsx";
 import { MainMenu } from "../components/menus/main.tsx";
 import { PagesMenu } from "../components/menus/pages.tsx";
-import { SettingsMenu } from "../components/menus/settings.jsx";
+import { SettingsMenu } from "../components/settings.tsx";
 import { Commands } from "../components/commands.tsx";
 import { Style } from "../components/style.tsx";
 import { History } from "../components/history.tsx";
