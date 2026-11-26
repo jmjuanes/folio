@@ -2,7 +2,7 @@ import React from "react";
 import { ChevronRightIcon } from "mochicons/react";
 import { ACTIONS, ELEMENTS, PREFERENCES } from "../constants.ts";
 import { ContextMenu as Menu } from "./ui/context-menu.tsx";
-import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
+import { Dropdown } from "./ui/dropdown.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useEditorComponents } from "../contexts/editor-components.tsx";
 import { useContextMenu, useContextMenuPosition } from "../hooks/use-context-menu.tsx";
@@ -201,7 +201,7 @@ export const ContextMenuContent = (): React.JSX.Element => {
                     <Menu.Separator />
                     <Dropdown.Portal
                         id="contextMenu:export"
-                        position={DropdownPortalPosition.TOP_RIGHT}
+                        position="top-right"
                         toggleClassName="flex items-center w-full min-w-0"
                         contentClassName="absolute z-50 w-40"
                         contentStyle={{

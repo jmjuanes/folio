@@ -2,7 +2,7 @@ import { useCallback, useMemo, Fragment } from "react";
 import { useToggle } from "react-use";
 import classNames from "classnames";
 import { renderIcon, DotsIcon } from "mochicons/react";
-import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
+import { Dropdown } from "./ui/dropdown.tsx";
 // import { useDialog } from "../contexts/dialogs.tsx";
 // import { useConfirm } from "../contexts/confirm.jsx";
 // import { useConfiguration } from "../contexts/configuration.tsx";
@@ -141,7 +141,7 @@ const DocumentButton = (props: DocumentButtonProps): JSX.Element => {
             </div>
             <Dropdown.Portal
                 id="sidebar:document:action"
-                position={DropdownPortalPosition.BOTTOM_RIGHT}
+                position="bottom-right"
                 toggleClassName="flex items-center cursor-pointer ml-auto"
                 toggleRender={() => (
                     <div className="flex items-center p-1 rounded-sm hover:bg-gray-200 text-gray-600">
