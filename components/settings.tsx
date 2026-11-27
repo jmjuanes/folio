@@ -93,7 +93,7 @@ export const Settings = (props: SettingsProps): JSX.Element => {
     const content = props.children ?? <SettingsContent />;
 
     return (
-        <div className="flex items-center justify-center w-16 h-full select-none">
+        <div className="flex items-center justify-center h-full select-none">
             <Dropdown.Portal
                 id="settings:options"
                 position="bottom-left"

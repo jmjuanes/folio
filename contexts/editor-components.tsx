@@ -4,7 +4,7 @@ import { ContextMenu } from "../components/context-menu.tsx";
 import { Export } from "../components/export.tsx";
 import { KeyboardShortcuts } from "../components/keyboard-shortcuts.tsx";
 import { Menu } from "../components/menu.tsx";
-import { PagesMenu } from "../components/menus/pages.tsx";
+import { Pages } from "../components/pages.tsx";
 import { Settings } from "../components/settings.tsx";
 import { Commands } from "../components/commands.tsx";
 import { Style } from "../components/style.tsx";
@@ -67,7 +67,7 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Preferences: null,
             // menus
             MainMenu: Menu,
-            PagesMenu: PagesMenu,
+            PagesMenu: Pages,
             SettingsMenu: Settings,
             // panels
             Style: Style,
