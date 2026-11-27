@@ -1,13 +1,14 @@
-import React from "react";
+import { useEffect, useState, useMemo, useCallback, Fragment } from "react";
 import classNames from "classnames";
 import { BarsIcon, LockIcon, DotsIcon } from "mochicons/react";
-import { ACTIONS, EXPORT_PADDING } from "../../constants.ts";
-import { Dropdown } from "../ui/dropdown.tsx";
-import { Island } from "../ui/island.tsx";
-import { useActions } from "../../contexts/actions.tsx";
-import { useEditor } from "../../contexts/editor.tsx";
-import { exportToDataURL } from "../../lib/export.js";
-import type { Page } from "../../lib/pages.ts";
+import { ACTIONS, EXPORT_PADDING } from "../constants.ts";
+import { Dropdown } from "./ui/dropdown.tsx";
+import { Island } from "./ui/island.tsx";
+import { useActions } from "../contexts/actions.tsx";
+import { useEditor } from "../contexts/editor.tsx";
+import { exportToDataURL } from "../lib/export.js";
+import type { Page } from "../lib/pages.ts";
+import type { JSX, CSSProperties, PointerEvent, ReactNode } from "react";
 
 const PAGES_ITEM_HEIGHT = 37;
 const PAGES_PREVIEW_WIDTH = 140;
@@ -16,8 +17,8 @@ const PAGES_PREVIEW_HEIGHT = 80;
 // Tiny hook to generate the preview of the page
 const usePagePreview = (page: Page): string | null => {
     const editor = useEditor();
-    const [previewImage, setPreviewImage] = React.useState<string | null>(null);
-    React.useEffect(() => {
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    useEffect(() => {
         const previewOptions = {
             assets: editor.assets,
             width: PAGES_PREVIEW_WIDTH * 2,
@@ -53,7 +54,7 @@ const usePagePreview = (page: Page): string | null => {
 // };
 
 // just a wrapper component for the page actions item
-const PageActionsItem = ({ text, icon, onClick }: { text: string; icon: string; onClick: () => void }): React.JSX.Element => (
+const PageActionsItem = ({ text, icon, onClick }: { text: string; icon: string; onClick: () => void }): JSX.Element => (
     <Dropdown.Item onClick={onClick}>
         <Dropdown.Icon icon={icon} />
         <span>{text}</span>
@@ -64,19 +65,19 @@ const PageActionsItem = ({ text, icon, onClick }: { text: string; icon: string; 
 type PageItemProps = {
     title: string;
     active: boolean;
-    style?: React.CSSProperties;
+    style?: CSSProperties;
     moving: boolean;
     readonly?: boolean;
     onClick: () => void;
     onEdit: () => void;
     onDuplicate: () => void;
     onDelete: () => void;
-    onMove: (event: React.PointerEvent<HTMLDivElement>) => void;
+    onMove: (event: PointerEvent<HTMLDivElement>) => void;
 };
 
 // @private page item component
-const PageItem = ({ title, active, style, onClick, ...props }: PageItemProps): React.JSX.Element => {
-    const moveButtonStyle = React.useMemo(() => {
+const PageItem = ({ title, active, style, onClick, ...props }: PageItemProps): JSX.Element => {
+    const moveButtonStyle = useMemo(() => {
         return {
             cursor: props.moving ? "grabbing" : "grab",
             touchAction: "none",
@@ -157,16 +158,16 @@ const initializeSortedPages = (pages: Page[]) => {
 };
 
 // @description content of the pages menu component
-export const PagesMenuContent = (): React.JSX.Element => {
+export const PagesContent = (): JSX.Element => {
     const editor = useEditor();
     const { dispatchAction } = useActions();
-    const [sortedPages, setSortedPages] = React.useState(() => {
+    const [sortedPages, setSortedPages] = useState(() => {
         return initializeSortedPages(editor.pages);
     });
     const activePage = editor.getActivePage();
 
     // Handle page move
-    const handlePageMove = React.useCallback((event: React.PointerEvent<HTMLDivElement>, page: Page) => {
+    const handlePageMove = useCallback((event: PointerEvent<HTMLDivElement>, page: Page) => {
         event.preventDefault();
         // Update the selected page
         sortedPages[page.id].selected = true;
@@ -174,7 +175,7 @@ export const PagesMenuContent = (): React.JSX.Element => {
         let currentIndex = sortedPages[page.id].index;
 
         // Handle pointer move
-        const handlePointerMove = (e: PointerEvent) => {
+        const handlePointerMove = (e: any) => {
             e.preventDefault();
             // pageMove.current.y = e.clientY - event.nativeEvent.clientY;
             const nextSortedPages = { ...sortedPages };
@@ -195,7 +196,7 @@ export const PagesMenuContent = (): React.JSX.Element => {
         };
 
         // Handle pointer up
-        const handlePointerUp = (e: PointerEvent) => {
+        const handlePointerUp = (e: any) => {
             e.preventDefault();
             document.removeEventListener("pointermove", handlePointerMove);
             document.removeEventListener("pointerup", handlePointerUp);
@@ -222,7 +223,7 @@ export const PagesMenuContent = (): React.JSX.Element => {
     }, [editor]);
 
     return (
-        <React.Fragment>
+        <Fragment>
             <Dropdown.Header>
                 <div className="text-sm font-bold mr-auto">Pages</div>
                 <Dropdown.HeaderButton
@@ -266,16 +267,16 @@ export const PagesMenuContent = (): React.JSX.Element => {
                     ))}
                 </div>
             </div>
-        </React.Fragment>
+        </Fragment>
     );
 };
 
-export type PagesMenuProps = {
-    children?: React.ReactNode,
+export type PagesProps = {
+    children?: ReactNode,
 };
 
 // @description pages menu wrapper
-export const PagesMenu = (props: PagesMenuProps): React.JSX.Element => {
+export const Pages = (props: PagesProps): JSX.Element => {
     const editor = useEditor();
     const activePage = editor.getActivePage();
 
@@ -284,26 +285,37 @@ export const PagesMenu = (props: PagesMenuProps): React.JSX.Element => {
     const pagesKey = (editor?.pages || []).map((page: any) => page.id).join("-");
 
     // get the content to display
-    const content = props.children ?? <PagesMenuContent key={"pages:" + pagesKey} />;
+    const content = props.children ?? <PagesContent key={"pages:" + pagesKey} />;
 
     return (
-        <div className="flex relative group" tabIndex={0}>
-            <Island.Button
-                text={(
-                    <div className="flex items-center gap-1">
-                        {activePage.readonly && (
-                            <div className="flex items-center text-yellow-700 text-base">
-                                <LockIcon />
+        <div className="flex items-center justify-center h-full select-none">
+            <Dropdown.Portal
+                id="menu:options"
+                position="bottom-left"
+                toggleClassName="flex items-center"
+                contentClassName="absolute z-50 mt-2 w-64"
+                toggleRender={(active) => (
+                    <Island.Button
+                        active={active}
+                        text={(
+                            <div className="flex items-center gap-1">
+                                {activePage.readonly && (
+                                    <div className="flex items-center text-yellow-700 text-base">
+                                        <LockIcon />
+                                    </div>
+                                )}
+                                <div className="w-32 truncate">{activePage.title}</div>
                             </div>
                         )}
-                        <div className="w-32 truncate">{activePage.title}</div>
-                    </div>
+                        showChevron={true}
+                    />
                 )}
-                showChevron={true}
+                contentRender={() => (
+                    <Dropdown className="w-full">
+                        {content}
+                    </Dropdown>
+                )}
             />
-            <Dropdown className="hidden group-focus-within:block top-full left-0 mt-2 w-64 z-40">
-                {content}
-            </Dropdown>
         </div>
     );
 };
