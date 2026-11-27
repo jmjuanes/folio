@@ -66,9 +66,9 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Commands: Commands,
             Preferences: null,
             // menus
-            MainMenu: Menu,
-            PagesMenu: Pages,
-            SettingsMenu: Settings,
+            Menu: Menu,
+            Pages: Pages,
+            Settings: Settings,
             // panels
             Style: Style,
             History: History,
