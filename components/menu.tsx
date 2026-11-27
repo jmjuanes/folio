@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import classnames from "classnames";
 import { ACTIONS, PREFERENCES } from "../constants.ts";
-import { Dropdown } from "./ui/dropdown.tsx";
+import { Dropdown, useDropdownPortal } from "./ui/dropdown.tsx";
 import { Island } from "./ui/island.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { usePreferences } from "../contexts/preferences.tsx";
@@ -74,6 +74,7 @@ export const MenuLinks = (): JSX.Element => (
 
 // action to open a .folio file from the local computer of the user
 export const MenuOpenAction = (): JSX.Element => {
+    const dropdown = useDropdownPortal();
     const { dispatchAction, getShortcutByActionId } = useActions();
     const shortcutsEnabled = true;
     return (
@@ -82,6 +83,7 @@ export const MenuOpenAction = (): JSX.Element => {
             text="Open..."
             shortcut={shortcutsEnabled && getShortcutByActionId(ACTIONS.OPEN)}
             onClick={() => {
+                dropdown.close();
                 dispatchAction(ACTIONS.OPEN);
             }}
         />
@@ -90,6 +92,7 @@ export const MenuOpenAction = (): JSX.Element => {
 
 // action to save the current content to a file
 export const MenuSaveAction = (): JSX.Element => {
+    const dropdown = useDropdownPortal();
     const { dispatchAction, getShortcutByActionId } = useActions();
     const shortcutsEnabled = true;
     return (
@@ -98,6 +101,7 @@ export const MenuSaveAction = (): JSX.Element => {
             text="Save a copy"
             shortcut={shortcutsEnabled && getShortcutByActionId(ACTIONS.SAVE)}
             onClick={() => {
+                dropdown.close();
                 dispatchAction(ACTIONS.SAVE);
             }}
         />
@@ -106,6 +110,7 @@ export const MenuSaveAction = (): JSX.Element => {
 
 // action to export the current page to an image
 export const MenuExportAction = (): JSX.Element => {
+    const dropdown = useDropdownPortal();
     const { dispatchAction, getShortcutByActionId } = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
@@ -120,6 +125,7 @@ export const MenuExportAction = (): JSX.Element => {
                 "pointer-events-none": elements.length === 0,
             })}
             onClick={() => {
+                dropdown.close();
                 dispatchAction(ACTIONS.SHOW_EXPORT_DIALOG, { elements });
             }}
         />
@@ -128,6 +134,7 @@ export const MenuExportAction = (): JSX.Element => {
 
 // action to remove the content of the board
 export const MenuResetAction = (): JSX.Element => {
+    const dropdown = useDropdownPortal();
     const { dispatchAction } = useActions();
     const editor = useEditor();
     const elements = editor.getElements();
@@ -140,6 +147,7 @@ export const MenuResetAction = (): JSX.Element => {
                 "pointer-events-none": elements.length === 0,
             })}
             onClick={() => {
+                dropdown.close();
                 dispatchAction(ACTIONS.CLEAR);
             }}
         />
@@ -148,12 +156,14 @@ export const MenuResetAction = (): JSX.Element => {
 
 // action to display the shortcuts menu
 export const MenuShowShortcutsAction = (): JSX.Element => {
+    const dropdown = useDropdownPortal();
     const { dispatchAction } = useActions();
     return (
         <MenuAction
             icon="keyboard"
             text="Keyboard shortcuts"
             onClick={() => {
+                dropdown.close();
                 dispatchAction(ACTIONS.SHOW_KEYBOARD_SHORTCUTS_DIALOG);
             }}
         />
@@ -162,12 +172,14 @@ export const MenuShowShortcutsAction = (): JSX.Element => {
 
 // action to display the editor preferences dialog
 export const MenuPreferencesAction = (): JSX.Element => {
+    const dropdown = useDropdownPortal();
     const { dispatchAction } = useActions();
     return (
         <MenuAction
             icon="sliders"
             text="Preferences"
             onClick={() => {
+                dropdown.close();
                 dispatchAction(ACTIONS.SHOW_PREFERENCES_DIALOG);
             }}
         />

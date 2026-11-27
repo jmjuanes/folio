@@ -1,8 +1,9 @@
-import { Fragment, useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { Fragment, useState, useRef, useCallback, useMemo } from "react";
+import { useContext, createContext } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 import { CheckIcon, renderIcon } from "mochicons/react";
-import type { JSX, ReactNode, HTMLAttributes, PointerEvent, JSXElementConstructor } from "react";
+import type { JSX, HTMLAttributes, PointerEvent, JSXElementConstructor } from "react";
 import type { CSSProperties } from "react";
 
 export type DropdownProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -181,6 +182,16 @@ Dropdown.CheckItem = ({ checked = false, children, ...props }: DropdownCheckItem
     </Dropdown.Item>
 );
 
+export type DropdownPortalContext = {
+    close: () => void;
+};
+
+export const DropdownPortal = createContext<DropdownPortalContext>({} as DropdownPortalContext);
+
+export const useDropdownPortal = (): DropdownPortalContext => {
+    return useContext(DropdownPortal);
+};
+
 export type DropdownPortalProps = {
     id: string,
     position?: "top-left" | "top-right" | "bottom-left" | "bottom-right",
@@ -228,9 +239,7 @@ Dropdown.Portal = (props: DropdownPortalProps): JSX.Element => {
     }, [setVisible, props.disabled]);
 
     // internal method to hide the dropdown
-    const handleHideDropdown = useCallback(() => {
-        setVisible(false);
-    }, [setVisible]);
+    const handleClose = useCallback(() => setVisible(false), [setVisible]);
 
     // useEffect(() => {
     //     if (visible) {
@@ -267,21 +276,21 @@ Dropdown.Portal = (props: DropdownPortalProps): JSX.Element => {
                 {props.toggleRender(visible)}
             </div>
             {visible && coordinatesStyle && (
-                <Fragment>
+                <DropdownPortal value={{ close: handleClose }}>
                     {createPortal(
                         <div
                             className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50"
-                            onClick={handleHideDropdown}
+                            onClick={handleClose}
                         />,
                         document.body
                     )}
                     {createPortal(
                         <div ref={contentRef} className={props.contentClassName} style={coordinatesStyle}>
-                            {props.contentRender(handleHideDropdown)}
+                            {props.contentRender(handleClose)}
                         </div>,
                         document.body
                     )}
-                </Fragment>
+                </DropdownPortal>
             )}
         </Fragment>
     );

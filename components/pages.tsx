@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useCallback, Fragment } from "react";
 import classNames from "classnames";
 import { BarsIcon, LockIcon, DotsIcon } from "mochicons/react";
 import { ACTIONS, EXPORT_PADDING } from "../constants.ts";
-import { Dropdown } from "./ui/dropdown.tsx";
+import { Dropdown, useDropdownPortal } from "./ui/dropdown.tsx";
 import { Island } from "./ui/island.tsx";
 import { useActions } from "../contexts/actions.tsx";
 import { useEditor } from "../contexts/editor.tsx";
@@ -159,6 +159,7 @@ const initializeSortedPages = (pages: Page[]) => {
 
 // @description content of the pages menu component
 export const PagesContent = (): JSX.Element => {
+    const dropdown = useDropdownPortal();
     const editor = useEditor();
     const { dispatchAction } = useActions();
     const [sortedPages, setSortedPages] = useState(() => {
@@ -248,6 +249,7 @@ export const PagesContent = (): JSX.Element => {
                                 zIndex: sortedPages[page.id].selected ? 100 : 0,
                             }}
                             onClick={() => {
+                                dropdown.close();
                                 editor.setActivePage(page);
                                 editor.update();
                             }}
