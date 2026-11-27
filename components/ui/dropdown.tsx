@@ -232,21 +232,21 @@ Dropdown.Portal = (props: DropdownPortalProps): JSX.Element => {
         setVisible(false);
     }, [setVisible]);
 
-    useEffect(() => {
-        if (visible) {
-            const handleClickOutside = (event: MouseEvent) => {
-                event.preventDefault();
-                const target = event.target as HTMLDivElement;
-                if (contentRef.current && !contentRef.current.contains(target)) {
-                    setVisible(false);
-                }
-            };
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => {
-                document.removeEventListener("mousedown", handleClickOutside);
-            };
-        }
-    }, [visible]);
+    // useEffect(() => {
+    //     if (visible) {
+    //         const handleClickOutside = (event: MouseEvent) => {
+    //             event.preventDefault();
+    //             const target = event.target as HTMLDivElement;
+    //             if (contentRef.current && !contentRef.current.contains(target)) {
+    //                 setVisible(false);
+    //             }
+    //         };
+    //         document.addEventListener("mousedown", handleClickOutside);
+    //         return () => {
+    //             document.removeEventListener("mousedown", handleClickOutside);
+    //         };
+    //     }
+    // }, [visible]);
 
     const coordinatesStyle = useMemo(() => {
         if (coordinates.current) {
@@ -269,7 +269,10 @@ Dropdown.Portal = (props: DropdownPortalProps): JSX.Element => {
             {visible && coordinatesStyle && (
                 <Fragment>
                     {createPortal(
-                        <div className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50" />,
+                        <div
+                            className="fixed top-0 left-0 right-0 bottom-0 bg-transparent z-50"
+                            onClick={handleHideDropdown}
+                        />,
                         document.body
                     )}
                     {createPortal(
