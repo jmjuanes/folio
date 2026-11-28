@@ -1,7 +1,7 @@
 import React from "react";
 import { ACTIONS, ZOOM_MIN, ZOOM_MAX } from "../constants.ts";
 import { Island } from "./ui/island.tsx";
-import { Dropdown, DropdownPortalPosition } from "./ui/dropdown.tsx";
+import { Dropdown } from "./ui/dropdown.tsx";
 import { useEditor } from "../contexts/editor.tsx";
 import { useActions } from "../contexts/actions.tsx";
 
@@ -36,7 +36,7 @@ export const Zoom = (): React.JSX.Element => {
             <div className="flex items-center justify-center w-16 h-full select-none">
                 <Dropdown.Portal
                     id="zoom:options"
-                    position={DropdownPortalPosition.BOTTOM_RIGHT}
+                    position="bottom-right"
                     toggleClassName="flex items-center"
                     contentClassName="absolute z-50 mt-2 w-48"
                     toggleRender={() => (

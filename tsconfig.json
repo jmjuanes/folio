@@ -9,12 +9,13 @@
         "paths": {
             "@profile": [
                 "./profiles/development.ts"
-            ],
+            ]
         }
     },
     "exclude": [
-        "node_modules/**/*",
-        "**/*.jsx?",
-        "workers/**/*"
+        "node_modules",
+        "**/*.jsx",
+        "**/*.js",
+        "workers"
     ]
 }

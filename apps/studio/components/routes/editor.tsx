@@ -2,13 +2,13 @@ import React from "react";
 import { exportToDataURL } from "folio-react/lib/export.js";
 import { Editor } from "folio-react/components/editor.tsx";
 import {
-    MainMenu,
-    MainMenuOpenAction,
-    MainMenuSaveAction,
-    MainMenuExportAction,
-    MainMenuResetAction,
-    MainMenuSeparator,
-    MainMenuShowShortcutsAction,
+    Menu,
+    MenuOpenAction,
+    MenuSaveAction,
+    MenuExportAction,
+    MenuResetAction,
+    MenuSeparator,
+    MenuShowShortcutsAction,
 } from "folio-react/components/menus/main.tsx";
 import { Loading } from "folio-react/components/loading.jsx";
 import { useAppState } from "../../contexts/app-state.tsx";
@@ -132,15 +132,15 @@ export const EditorRoute = (props: any): React.JSX.Element => {
 
     // gneerate custom components for the editor
     const customComponents = React.useMemo(() => ({
-        MainMenu: () => (
-            <MainMenu>
-                <MainMenuOpenAction />
-                <MainMenuSaveAction />
-                <MainMenuExportAction />
-                <MainMenuResetAction />
-                <MainMenuSeparator />
-                <MainMenuShowShortcutsAction />
-            </MainMenu>
+        Menu: () => (
+            <Menu>
+                <MenuOpenAction />
+                <MenuSaveAction />
+                <MenuExportAction />
+                <MenuResetAction />
+                <MenuSeparator />
+                <MenuShowShortcutsAction />
+            </Menu>
         ),
     }), []);
 

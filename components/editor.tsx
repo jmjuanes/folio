@@ -82,9 +82,9 @@ export const EditorTitlebar = (): JSX.Element => {
     const { dispatchAction } = useActions();
     const { isViewOpen } = useWorkbench();
     const {
-        MainMenu,
-        PagesMenu,
-        SettingsMenu,
+        Menu,
+        Pages,
+        Settings,
         Title,
         History,
         Zoom,
@@ -93,9 +93,9 @@ export const EditorTitlebar = (): JSX.Element => {
     return (
         <div className="w-full flex justify-between">
             <div className="z-30 flex gap-2 pointer-events-auto">
-                {!!MainMenu && (
+                {!!Menu && (
                     <Island>
-                        <MainMenu />
+                        <Menu />
                     </Island>
                 )}
                 <Island>
@@ -105,8 +105,8 @@ export const EditorTitlebar = (): JSX.Element => {
                             <Island.Separator />
                         </Fragment>
                     )}
-                    {!!PagesMenu && <PagesMenu />}
-                    {!!SettingsMenu && <SettingsMenu />}
+                    {!!Pages && <Pages />}
+                    {!!Settings && <Settings />}
                     {false && (
                         <Island.Button
                             icon="sparkles"

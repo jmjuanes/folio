@@ -90,7 +90,6 @@ export default {
                 test: /\.(j|t)sx?$/,
                 include: [
                     resolve("."),
-                    resolve("./folio-react"),
                 ],
                 exclude: /(node_modules|www)/,
                 loader: "babel-loader",

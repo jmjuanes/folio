@@ -1,10 +1,19 @@
-import React from "react";
+import { useRef } from "react";
 import classNames from "classnames";
-import {isValidHexColor} from "../../lib/utils/colors.ts";
+import { isValidHexColor } from "../../lib/utils/colors.ts";
+import type { JSX } from "react/jsx-runtime";
 
-export const ColorPicker = ({value = "", values = [], showInput = true, showPalette = true, onChange}) => {
-    const inputRef = React.useRef(null);
-    const pickerRef = React.useRef(null);
+export type ColorPickerProps = {
+    value?: string;
+    values?: string[];
+    showInput?: boolean;
+    showPalette?: boolean;
+    onChange?: (color: string) => void;
+};
+
+export const ColorPicker = ({ showPalette = true, showInput = true, ...props }: ColorPickerProps): JSX.Element => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const pickerRef = useRef<HTMLInputElement>(null);
     return (
         <div data-testid="colorpicker" className="flex flex-col gap-2 w-full">
             {showInput && (
@@ -16,27 +25,31 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                             "border-1 border-gray-200": true,
                         })}
                         style={{
-                            backgroundColor: value,
+                            backgroundColor: props.value,
                             minWidth: "2rem",
                             cursor: "pointer",
                         }}
                         onClick={() => {
-                            pickerRef.current.value = value;
-                            pickerRef.current.click();
+                            if (pickerRef.current && props.value) {
+                                pickerRef.current.value = props.value;
+                                pickerRef.current.click();
+                            }
                         }}
                     />
                     <input
                         data-testid="colorpicker-pick"
                         ref={pickerRef}
                         type="color"
-                        defaultValue={value}
+                        defaultValue={props.value}
                         className="w-0 p-0 m-0"
                         style={{
                             visibility: "hidden",
                         }}
                         onChange={event => {
-                            inputRef.current.value = event.target.value;
-                            onChange?.(event.target.value);
+                            if (showInput && inputRef.current) {
+                                inputRef.current.value = event.target.value;
+                            }
+                            props.onChange?.(event.target.value);
                         }}
                     />
                     <input
@@ -47,21 +60,21 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                             "w-full px-2 py-0 h-8 rounded-md outline-0 text-xs": true,
                             "bg-white border-1 border-gray-200 text-gray-900": true,
                         })}
-                        defaultValue={value}
+                        defaultValue={props.value}
                         style={{
                             fontFamily: "monospace",
                         }}
                         onChange={event => {
                             if (isValidHexColor(event.target.value)) {
-                                onChange?.(event.target.value);
+                                props.onChange?.(event.target.value);
                             }
                         }}
                     />
                 </div>
             )}
-            {(values?.length > 0 && showPalette) && (
+            {((props.values || []).length > 0 && showPalette) && (
                 <div data-testid="colorpicker-values" className="grid gap-1 grid-cols-6 w-full">
-                    {values.map(color => (
+                    {(props.values || []).map((color: string) => (
                         <div
                             key={color}
                             data-testid="colorpicker-value"
@@ -76,7 +89,7 @@ export const ColorPicker = ({value = "", values = [], showInput = true, showPale
                                 if (showInput && inputRef.current) {
                                     inputRef.current.value = color;
                                 }
-                                onChange?.(color);
+                                props.onChange?.(color);
                             }}
                         />
                     ))}

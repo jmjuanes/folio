@@ -3,9 +3,9 @@ import { Loading } from "../components/loading.jsx";
 import { ContextMenu } from "../components/context-menu.tsx";
 import { Export } from "../components/export.tsx";
 import { KeyboardShortcuts } from "../components/keyboard-shortcuts.tsx";
-import { MainMenu } from "../components/menus/main.tsx";
-import { PagesMenu } from "../components/menus/pages.tsx";
-import { SettingsMenu } from "../components/menus/settings.jsx";
+import { Menu } from "../components/menu.tsx";
+import { Pages } from "../components/pages.tsx";
+import { Settings } from "../components/settings.tsx";
 import { Commands } from "../components/commands.tsx";
 import { Style } from "../components/style.tsx";
 import { History } from "../components/history.tsx";
@@ -66,9 +66,9 @@ export const EditorComponentsProvider = (props: EditorComponentsProviderProps): 
             Commands: Commands,
             Preferences: null,
             // menus
-            MainMenu: MainMenu,
-            PagesMenu: PagesMenu,
-            SettingsMenu: SettingsMenu,
+            Menu: Menu,
+            Pages: Pages,
+            Settings: Settings,
             // panels
             Style: Style,
             History: History,
