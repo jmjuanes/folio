@@ -1,8 +1,8 @@
 import React from "react";
 import classNames from "classnames";
 import { FORM_OPTIONS } from "../../constants.ts";
-import { ColorPicker } from "./color-picker.jsx";
-import { FontPicker } from "./font-picker.jsx";
+import { ColorPicker } from "./color-picker.js";
+import { FontPicker } from "./font-picker.tsx";
 import { DropdownSelect } from "./dropdown-select.tsx";
 
 // Tiny utility to check if a value is active
@@ -41,7 +41,7 @@ const optionTypes = {
         <DropdownSelect {...props} />
     ),
     [FORM_OPTIONS.SELECT]: props => (
-        <div className={props.className || "grid grid-cols-5 gap-1 w-full"}>
+        <div className={props.className || "grid grid-cols-6 gap-1 w-full"}>
             {(props.values || []).map(item => {
                 if (!checkIsVisible(item.value, props.value, props.isVisible, props.data)) {
                     return null;
