@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { FORM_OPTIONS } from "../../constants.ts";
-import { ColorPicker } from "./color-picker.js";
+import { ColorPicker } from "./color-picker.tsx";
 import { FontPicker } from "./font-picker.tsx";
 import { DropdownSelect } from "./dropdown-select.tsx";
 
