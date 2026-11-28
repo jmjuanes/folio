@@ -11,12 +11,12 @@ export type ColorPickerProps = {
     onChange?: (color: string) => void;
 };
 
-export const ColorPicker = (props: ColorPickerProps): JSX.Element => {
+export const ColorPicker = ({ showPalette = true, showInput = true, ...props }: ColorPickerProps): JSX.Element => {
     const inputRef = useRef<HTMLInputElement>(null);
     const pickerRef = useRef<HTMLInputElement>(null);
     return (
         <div data-testid="colorpicker" className="flex flex-col gap-2 w-full">
-            {props.showInput && (
+            {showInput && (
                 <div className="flex items-center w-full">
                     <div
                         data-testid="colorpicker-preview"
@@ -46,7 +46,7 @@ export const ColorPicker = (props: ColorPickerProps): JSX.Element => {
                             visibility: "hidden",
                         }}
                         onChange={event => {
-                            if (props.showInput && inputRef.current) {
+                            if (showInput && inputRef.current) {
                                 inputRef.current.value = event.target.value;
                             }
                             props.onChange?.(event.target.value);
@@ -72,7 +72,7 @@ export const ColorPicker = (props: ColorPickerProps): JSX.Element => {
                     />
                 </div>
             )}
-            {((props.values || []).length > 0 && props.showPalette) && (
+            {((props.values || []).length > 0 && showPalette) && (
                 <div data-testid="colorpicker-values" className="grid gap-1 grid-cols-6 w-full">
                     {(props.values || []).map((color: string) => (
                         <div
@@ -86,7 +86,7 @@ export const ColorPicker = (props: ColorPickerProps): JSX.Element => {
                                 backgroundColor: color,
                             }}
                             onClick={() => {
-                                if (props.showInput && inputRef.current) {
+                                if (showInput && inputRef.current) {
                                     inputRef.current.value = color;
                                 }
                                 props.onChange?.(color);
