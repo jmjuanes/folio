@@ -1,9 +1,9 @@
-import { expect, it, jest } from "@jest/globals";
+import { jest } from "@jest/globals";
 import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
-import { FontPicker } from "../font-picker.jsx";
+import { FontPicker } from "../font-picker.tsx";
 
 describe("<FontPicker />", () => {
     const fonts = ["Arial", "Courier New", "Georgia", "Verdana"];

@@ -1,9 +1,9 @@
-import { expect, jest } from "@jest/globals";
+import { jest } from "@jest/globals";
 import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
-import { ColorPicker } from "../color-picker.jsx";
+import { ColorPicker } from "../color-picker.js";
 
 describe("<ColorPicker />", () => {
     const colors = ["#fff", "#000", "#eaea"]
