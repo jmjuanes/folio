@@ -1,127 +1,48 @@
 # =============================================================================
 # Folio Docker Image
 # =============================================================================
-# This Dockerfile builds a production-ready container for the Folio whiteboard.
+# One container with the editor and the server that saves your boards in SQLite.
+# The server has no authentication: use it on your machine or in a trusted network.
 #
 # Build: docker build -t folio .
-# Run:   docker run -p 8080:8080 folio
+# Run:   docker run -p 127.0.0.1:8080:8080 -v folio:/data folio
 # =============================================================================
 
-# Use specific Node.js version with Alpine for minimal footprint and security
-FROM node:26-alpine AS base
+# -----------------------------------------------------------------------------
+# Build the editor with the 'server' profile
+# -----------------------------------------------------------------------------
+FROM node:26-alpine AS build
+WORKDIR /build
+COPY . .
+RUN yarn install --frozen-lockfile --network-timeout 300000
+RUN FOLIO_PROFILE=server NODE_ENV=production yarn webpack build
 
-# install yarn using corepack
-# RUN corepack enable && corepack prepare yarn@stable --activate
-RUN npm install -g yarn
-
-# Set environment variables
-ENV FOLIO_APPDIR=/opt/folio \
-    FOLIO_PORT=8080
-
-# Install security updates and required packages
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache tini nginx supervisor && \
-    rm -rf /var/cache/apk/*
-
-# Create application directory with proper ownership
-RUN mkdir -p $FOLIO_APPDIR && \
-    chown -R node:node $FOLIO_APPDIR
-
-# Set working directory
-WORKDIR $FOLIO_APPDIR
-
-# =============================================================================
-# Server Build Stage
-# =============================================================================
-FROM base AS server
-
-# Copy stuff from workers folder
-COPY --chown=node:node workers/ .
-COPY --chown=node:node docker/package.json ./package.json
-
-# Install dependencies with security optimizations
-RUN yarn install --frozen-lockfile --network-timeout 300000 && \
-    yarn workspace folio-shared build && \
-    yarn workspace folio-auth build && \
-    yarn workspace folio-storage build && \
-    yarn install --frozen-lockfile --production --network-timeout 300000 && \
-    yarn cache clean && \
-    find node_modules -name "*.md" -delete && \
-    find node_modules -name "*.txt" -delete && \
-    find node_modules -name "LICENSE*" -delete
-
-# =============================================================================
-# Application Build Stage
-# =============================================================================
-# FROM base AS app
-# 
-# # Copy workspace configuration files first
-# COPY --chown=node:node . .
-# 
-# # Install root dependencies to set up workspaces
-# RUN yarn install --frozen-lockfile
-# 
-# # Build the application
-# RUN yarn build:studio
-
-# =============================================================================
-# Production Stage
-# =============================================================================
-FROM base
-
-# Set environment variables
+# -----------------------------------------------------------------------------
+# Production image: Node.js, the server (a single file) and the built editor
+# -----------------------------------------------------------------------------
+FROM node:26-alpine
 ENV NODE_ENV=production \
-    # Security headers
-    NODE_OPTIONS="--max-old-space-size=512" \
-    # Disable npm update check
-    NO_UPDATE_NOTIFIER=true
+    FOLIO_HOST=0.0.0.0 \
+    FOLIO_PORT=8080 \
+    FOLIO_DATABASE=/data/folio.sqlite \
+    FOLIO_PUBLIC=/app/public
+WORKDIR /app
+COPY server/index.ts ./server/index.ts
+COPY --from=build /build/www ./public
 
-# Copy third-party configurations
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY docker/supervisord.conf /etc/supervisord.conf
+# the database lives in a volume
+RUN mkdir -p /data && chown node:node /data
+VOLUME /data
+USER node
+EXPOSE 8080
 
-# Copy application files with proper ownership
-COPY --chown=node:node folio.js ./folio.js
-COPY --chown=node:node config.yaml ./config.yaml
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD node -e "fetch('http://127.0.0.1:' + process.env.FOLIO_PORT + '/api/status').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
-# Copy builds from previous stage
-COPY --from=server --chown=node:node $FOLIO_APPDIR/package.json ./package.json
-COPY --from=server --chown=node:node $FOLIO_APPDIR/node_modules ./node_modules
-COPY --from=server --chown=node:node $FOLIO_APPDIR/auth ./auth
-COPY --from=server --chown=node:node $FOLIO_APPDIR/shared ./shared
-COPY --from=server --chown=node:node $FOLIO_APPDIR/storage ./storage
-# COPY --from=app --chown=node:node $FOLIO_APPDIR/apps/studio/www ./public
+LABEL org.opencontainers.image.title="Folio" \
+      org.opencontainers.image.description="A minimalistic digital whiteboard for sketching and prototyping" \
+      org.opencontainers.image.vendor="Josemi Juanes" \
+      org.opencontainers.image.url="https://josemi.xyz/folio" \
+      org.opencontainers.image.source="https://github.com/jmjuanes/folio"
 
-# Set proper permissions for executable files
-RUN chmod +x folio.js
-
-# Create data directory with proper ownership for SQLite
-RUN mkdir -p $FOLIO_APPDIR/data && \
-    chown -R node:node $FOLIO_APPDIR/data && \
-    chmod 775 $FOLIO_APPDIR/data
-
-# Create volume for persistent data
-VOLUME [$FOLIO_APPDIR/data]
-
-# Expose port (documented for users, not for security)
-EXPOSE $FOLIO_PORT
-
-# Add health check to monitor application status
-# HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-#     CMD node ./folio.js ping
-
-# Add labels for better container management
-LABEL maintainer="Josemi Juanes <hello@josemi.xyz>"
-LABEL description="A minimalistic digital whiteboard for sketching and prototyping"
-LABEL org.opencontainers.image.title="Folio"
-LABEL org.opencontainers.image.description="A minimalistic digital whiteboard for sketching and prototyping"
-LABEL org.opencontainers.image.vendor="Josemi Juanes"
-LABEL org.opencontainers.image.url="https://josemi.xyz/folio"
-LABEL org.opencontainers.image.source="https://github.com/jmjuanes/folio"
-
-# Use custom entrypoint for proper initialization
-ENTRYPOINT ["/sbin/tini", "--"]
-
-# Start the application
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["node", "--disable-warning=ExperimentalWarning", "server/index.ts"]
