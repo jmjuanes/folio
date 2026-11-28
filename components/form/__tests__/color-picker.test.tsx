@@ -3,7 +3,7 @@ import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
-import { ColorPicker } from "../color-picker.js";
+import { ColorPicker } from "../color-picker.tsx";
 
 describe("<ColorPicker />", () => {
     const colors = ["#fff", "#000", "#eaea"]
