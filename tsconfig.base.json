@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
-        "resolveJsonModule": true,
+        "resolveJsonModule": true
     },
     "exclude": [
-        "node_modules/**/*",
+        "node_modules",
+        "**/*.jsx",
         "**/*.js"
     ]
 }
